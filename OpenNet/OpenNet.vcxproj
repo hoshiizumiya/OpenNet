@@ -214,6 +214,7 @@
     <ClCompile Include="Pages\NetworkSettingsPage.xaml.cpp">
       <DependentUpon>Pages\NetworkSettingsPage.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="module.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>
