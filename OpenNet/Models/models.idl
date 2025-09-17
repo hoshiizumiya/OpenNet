@@ -1,0 +1,73 @@
+﻿namespace OpenNet.Models
+{
+    // Summary: Supported connection protocols across the app transport stack.
+    // 摘要：应用传输栈支持的连接协议。
+    // Values:
+    // - Auto: System chooses based on environment and settings.
+    //   自动：系统根据环境和设置选择。
+    // - TCP/UDP/UTP: Raw transports; uTP is BitTorrent's UDP-based transport.
+    //   TCP/UDP/UTP：原始传输协议；uTP 是 BitTorrent 基于 UDP 的传输协议。
+    // - BitTorrent/DHT: Swarm protocol and distributed hash table overlay.
+    //   BitTorrent/DHT：群协议和分布式哈希表覆盖。
+    // - WebRTC: ICE-based transport (STUN/TURN/ICE candidates).
+    //   WebRTC：基于 ICE 的传输（STUN/TURN/ICE 候选）。
+    // - HTTP: Control/diagnostics or fallback.
+    //   HTTP：控制/诊断或回退。
+    enum ConnectionProtocol
+    {
+        Auto,         // Auto 自动
+        TCP,          // TCP
+        UDP,          // UDP
+        UTP,          // UTP
+        BitTorrent,   // BitTorrent
+        DHT,          // DHT
+        WebRTC,       // WebRTC
+        HTTP,         // HTTP
+    };
+
+    // Summary: Priority for choosing IP protocol family.
+    // 摘要：选择 IP 协议族的优先级。
+    // Values:
+    // - IPv4First/IPv6First: Prefer specific family first with fallback.
+    //   IPv4First/IPv6First：优先选择特定协议族，失败时回退。
+    // - IPv4Only/IPv6Only: Restrict to a specific family only.
+    //   IPv4Only/IPv6Only：仅限于特定协议族。
+    // - Auto: Decide at runtime using availability and heuristics.
+    //   Auto：运行时根据可用性和启发式方法决定。
+    enum IPProtocolPriority
+    {
+        IPv4First,    // IPv4 优先
+        IPv6First,    // IPv6 优先
+        IPv4Only,     // 仅 IPv4
+        IPv6Only,     // 仅 IPv6
+        Auto,         // 自动
+    };
+
+    // Summary: Minimal model for protocol options used by UI.
+    // 摘要：UI 使用的协议选项最小模型。
+    // Usage:
+    // - Implement methods in C++ (e.g., Models/NetworkInfo.cpp).
+    //   在 C++ 中实现方法（如 Models/NetworkInfo.cpp）。
+    // - SupportedProtocols returns the list bound to protocol ComboBox.
+    //   SupportedProtocols 返回绑定到协议下拉框的列表。
+    // - PreferredProtocol is bound two-way to user choice.
+    //   PreferredProtocol 与用户选择双向绑定。
+    runtimeclass NetModel
+    {
+        // Summary: Create a NetModel with default values.
+        // 摘要：使用默认值创建 NetModel。
+        NetModel();
+
+        // Summary: Read-only list of supported protocols in current build/context.
+        // 摘要：当前构建/上下文支持的协议只读列表。
+        // Return: IVectorView<ConnectionProtocol>
+        // 返回：IVectorView<ConnectionProtocol>
+        Windows.Foundation.Collections.IVectorView<OpenNet.Models.ConnectionProtocol> SupportedProtocols{ get; };
+        
+        // Summary: Preferred protocol for new connections.
+        // 摘要：新连接的首选协议。
+        // Get/Set: ConnectionProtocol value chosen by user or default.
+        // 获取/设置：用户选择或默认的 ConnectionProtocol 值。
+        OpenNet.Models.ConnectionProtocol PreferredProtocol;
+    };
+}

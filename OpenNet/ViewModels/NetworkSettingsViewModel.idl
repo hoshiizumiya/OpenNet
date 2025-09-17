@@ -1,0 +1,47 @@
+﻿// NetworkSettingsViewModel.idl
+// Summary: WinRT ViewModel contract for network settings (for XAML binding).
+// Notes:
+// - Implement in C++ under winrt::OpenNet::ViewModels::{implementation,factory_implementation}.
+// - Keep properties aligned with Settings UI and persistence.
+
+import "Models/models.idl"; // Ensure OpenNet.Models enums are resolved
+
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass NetworkSettingsViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        // Summary: Construct a NetworkSettingsViewModel with default values.
+        NetworkSettingsViewModel();
+
+        // IPv4/IPv6 configuration
+        // Summary: Enable/disable IPv4 stack usage
+        Boolean IPv4Enabled;
+        // Summary: Enable/disable IPv6 stack usage
+        Boolean IPv6Enabled;
+
+        // Summary: Preferred IP protocol family selection strategy
+        OpenNet.Models.IPProtocolPriority ProtocolPriority;
+
+        // Summary: Preferred transport protocol for new connections
+        OpenNet.Models.ConnectionProtocol PreferredProtocol;
+
+        // Encryption
+        // Summary: Toggle end-to-end encryption for transfers
+        Boolean EncryptionEnabled;
+
+        // Ports
+        // Summary: Primary listen port
+        UInt16 ListenPort;
+        // Summary: Current firewall enabled state (read-only, detected by app)
+        Boolean FirewallEnabled { get; };
+
+        // Methods
+        // Summary: Initialize the ViewModel (load settings, prepare collections)
+        void Initialize();
+        // Summary: Persist current settings to storage
+        void SaveSettings();
+        // Summary: Load settings from storage into the ViewModel
+        void LoadSettings();
+    };
+}

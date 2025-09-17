@@ -1,0 +1,18 @@
+﻿// NetworkViewModel.idl
+// Summary: Minimal WinRT metadata for NetworkViewModel to satisfy build/merge.
+// Notes:
+// - The C++ implementation currently uses a native ObservableObject-based struct
+//   (OpenNet::ViewModels::NetworkViewModel in C++). This IDL only provides a
+//   minimal WinRT runtimeclass so the toolchain generates a valid winmd.
+// - No properties are exposed here yet; expand later when you want XAML to bind
+//   directly to this ViewModel via WinRT.
+
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass NetworkViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        // Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
+        NetworkViewModel();
+    };
+}

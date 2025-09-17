@@ -1,0 +1,11 @@
+﻿import "ViewModels/MainViewModel.idl";
+
+namespace OpenNet
+{
+    [default_interface]
+    runtimeclass MainWindow : Microsoft.UI.Xaml.Window
+    {
+        MainWindow();
+        OpenNet.ViewModels.MainViewModel ViewModel { get; };
+    }
+}

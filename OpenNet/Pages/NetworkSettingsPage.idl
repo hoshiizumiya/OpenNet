@@ -1,0 +1,11 @@
+﻿import "ViewModels/NetworkSettingsViewModel.idl";
+
+namespace OpenNet.Pages
+{
+    [default_interface]
+    runtimeclass NetworkSettingsPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        NetworkSettingsPage();
+        OpenNet.ViewModels.NetworkSettingsViewModel ViewModel { get; };
+    }
+}

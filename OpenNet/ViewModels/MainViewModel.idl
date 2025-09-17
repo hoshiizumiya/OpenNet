@@ -1,0 +1,55 @@
+﻿namespace OpenNet.ViewModels
+{
+	[default_interface]
+	runtimeclass MainViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		MainViewModel();
+
+		// 基本状态 / Basic State
+		String StatusText;
+		Boolean IsConnected;
+
+		// 展示信息 / Display Info
+		String AppVersion { get; };
+		String UserName { get; };
+		String DeviceName { get; };
+
+		// 导航状态 / Navigation State
+		Boolean IsHomePageSelected;
+		Boolean IsNetworkPageSelected;
+		Boolean IsPeerPageSelected;
+		Boolean IsTransferPageSelected;
+		Boolean IsSettingsPageSelected;
+
+		// 快速统计 / Quick Stats
+		Int32 ConnectedPeersCount { get; };
+		Int32 ActiveTransfersCount { get; };
+		String TotalBytesTransferredText { get; };
+		String CurrentTransferSpeedText { get; };
+
+		// 网络状态 / Network Status
+		String NetworkStatusText { get; };
+		String NetworkQualityText { get; };
+
+		// 活动列表 / Activities
+		Windows.Foundation.Collections.IObservableVector<String> RecentActivities { get; };
+
+		// 错误与通知 / Error & Notification
+		String LastError { get; };
+		Boolean HasError { get; };
+		String LastNotification { get; };
+		Boolean HasNotification { get; };
+
+		// 命令 / Commands
+		Microsoft.UI.Xaml.Input.ICommand ShowAboutCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand NavigateToPageCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand StartNetworkDetectionCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand ConnectToPeerCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand RefreshCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand ClearErrorCommand { get; };
+
+		// 方法 / Methods
+		void Initialize();
+		void UpdateStatus(String status);
+	}
+}

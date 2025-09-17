@@ -1,0 +1,342 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xaml" />
+    <Page Include="Themes\Generic.xaml">
+      <Filter>Themes</Filter>
+    </Page>
+    <Page Include="Pages\NetworkSettingsPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="MainWindow.idl" />
+    <Midl Include="Models\models.idl">
+      <Filter>Models</Filter>
+    </Midl>
+    <Midl Include="ViewModels\MainViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\SettingsViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\TransferViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\PeerViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\NetworkViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\ObservableObject.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="Pages\NetworkSettingsPage.idl">
+      <Filter>Pages</Filter>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="ViewModels\MainViewModel.cpp" />
+    <ClCompile Include="Core\NetworkDetector.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\NetworkInfo.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\MainViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\NetworkSettingsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\PeerViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\SettingsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\TransferViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\NetworkViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ObservableObject.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\Sqlite\sqlite3.c">
+      <Filter>ThirdPatry\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\NetModel.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="ViewModels\MainViewModel.h" />
+    <ClInclude Include="Core\CryptoManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\FileTransferEngine.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NetworkDetector.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\P2PManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\NetworkInfo.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\PeerInfo.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\TransferInfo.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\MainViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\NetworkSettingsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\NetworkViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ObservableObject.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\PeerViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\SettingsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\TransferViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\Sqlite\sqlite3.h">
+      <Filter>ThirdPatry\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="Models\NetModel.h" />
+    <ClInclude Include="ViewModels\ObservableMixin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SmallTile.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SmallTile.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SmallTile.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SmallTile.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square150x150Logo.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square150x150Logo.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square150x150Logo.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square150x150Logo.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square150x150Logo.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Wide310x150Logo.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Wide310x150Logo.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Wide310x150Logo.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Wide310x150Logo.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Wide310x150Logo.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\LargeTile.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\LargeTile.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\LargeTile.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\LargeTile.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\LargeTile.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.targetsize-16.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.targetsize-24.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.targetsize-32.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.targetsize-48.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.targetsize-256.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-unplated_targetsize-16.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-unplated_targetsize-24.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-unplated_targetsize-32.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-unplated_targetsize-48.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-unplated_targetsize-256.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-lightunplated_targetsize-16.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-lightunplated_targetsize-24.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-lightunplated_targetsize-32.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-lightunplated_targetsize-48.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\Square44x44Logo.altform-lightunplated_targetsize-256.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SplashScreen.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SplashScreen.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SplashScreen.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SplashScreen.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\SplashScreen.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\BadgeLogo.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\BadgeLogo.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\BadgeLogo.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\BadgeLogo.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\BadgeLogo.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\StoreLogo.scale-100.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\StoreLogo.scale-125.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\StoreLogo.scale-150.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\StoreLogo.scale-200.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+    <Image Include="Assets\AppIcons\StoreLogo.scale-400.png">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{ae5a0548-f283-4027-86e1-fdeef7890657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\AppIcons">
+      <UniqueIdentifier>{b5c611d7-3348-47b2-8cbc-dcdbb9b4c809}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core">
+      <UniqueIdentifier>{25f4f7a9-a6a6-42d7-a58a-67d0c9cc9100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModels">
+      <UniqueIdentifier>{bbc0eb31-a734-4422-8390-49e5083355b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{50e5bf60-9e2a-458d-9ce3-e99b668889c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdPatry">
+      <UniqueIdentifier>{7bbd171c-6c44-4be9-a17a-53c054053c44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Themes">
+      <UniqueIdentifier>{854975a4-ced1-42ff-8d93-dd91a7854850}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pages">
+      <UniqueIdentifier>{775be7c6-6dd1-4ce1-bd2a-644ed61cd0bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ThirdPatry\sqlite">
+      <UniqueIdentifier>{44edee1c-33f7-44a2-9bb4-b859145622ac}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="vcpkg-configuration.json" />
+    <None Include="vcpkg.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
+    <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
+  </ItemGroup>
+</Project>

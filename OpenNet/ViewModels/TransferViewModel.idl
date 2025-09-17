@@ -1,0 +1,11 @@
+﻿import "ViewModels/ObservableObject.idl"; // Base class for property change notifications
+
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass TransferViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        // Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
+        TransferViewModel();
+    };
+}
