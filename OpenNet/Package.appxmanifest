@@ -41,6 +41,7 @@
         Square44x44Logo="Assets\AppIcons\Square44x44Logo.png">
         <uap:DefaultTile Wide310x150Logo="Assets\AppIcons\Wide310x150Logo.png"  Square71x71Logo="Assets\AppIcons\SmallTile.png" Square310x310Logo="Assets\AppIcons\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\AppIcons\SplashScreen.png" />
+        <uap:LockScreen BadgeLogo="Assets\AppIcons\BadgeLogo.png" Notification="badge"/>
       </uap:VisualElements>
     </Application>
   </Applications>

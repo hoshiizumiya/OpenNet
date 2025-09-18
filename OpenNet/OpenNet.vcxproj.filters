@@ -11,6 +11,7 @@
     <Page Include="Pages\NetworkSettingsPage.xaml">
       <Filter>Pages</Filter>
     </Page>
+    <Page Include="Pages\HomePage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -322,6 +323,9 @@
     </Filter>
     <Filter Include="ThirdPatry\sqlite">
       <UniqueIdentifier>{44edee1c-33f7-44a2-9bb4-b859145622ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Helpers">
+      <UniqueIdentifier>{d2535c01-702d-4139-a773-5bdf1cd070a2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -9,7 +9,11 @@
     Title="OpenNet"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Window.SystemBackdrop>
+        <MicaBackdrop Kind="BaseAlt" />
+    </Window.SystemBackdrop>
+
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -17,18 +21,51 @@
         </Grid.RowDefinitions>
 
         <!--  标题栏 / Title Bar  -->
-        <Border
+        <!--  Background="{ThemeResource SystemAccentColor}"  -->
+        <TitleBar
+            x:Name="AppTitleBar"
+            Title="{StaticResource AppTitleName}"
             Grid.Row="0"
-            Padding="16,8"
-            Background="{ThemeResource SystemAccentColor}">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                </Grid.ColumnDefinitions>
+            Height="48"
+            IsBackButtonVisible="True">
 
-                <StackPanel
-                    Grid.Column="0"
+            <TitleBar.LeftHeader>
+                <Image
+                    x:Name="HeadLogo"
+                    Width="16"
+                    Margin="10,0,10,0"
+                    AutomationProperties.AccessibilityView="Raw"
+                    Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+            </TitleBar.LeftHeader>
+
+            <TitleBar.Content>
+                <AutoSuggestBox
+                    x:Name="SearchBox"
+                    MinWidth="364"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    PlaceholderText="Search anything"
+                    QueryIcon="Find"
+                    UpdateTextOnSelect="False" />
+            </TitleBar.Content>
+
+            <TitleBar.RightHeader>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Foreground="White"
+                        Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" />
+                    <Button
+                        Width="40"
+                        Height="40"
+                        Command="{x:Bind ViewModel.ShowAboutCommand}"
+                        Content="ℹ️"
+                        Style="{StaticResource AccentButtonStyle}" />
+                </StackPanel>
+            </TitleBar.RightHeader>
+
+
+            <!--<StackPanel
                     VerticalAlignment="Center"
                     Orientation="Horizontal">
                     <TextBlock
@@ -36,302 +73,101 @@
                         FontSize="24"
                         Text="🌟" />
                     <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        Foreground="White"
-                        Text="{StaticResource AppTitleName}" />
-                    <TextBlock
                         Margin="8,0,0,0"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="White"
                         Opacity="0.8"
                         Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}" />
-                </StackPanel>
+                </StackPanel>-->
+        </TitleBar>
 
-                <StackPanel
-                    Grid.Column="1"
-                    Orientation="Horizontal"
-                    Spacing="8">
+        <!--  导航面板 / Navigation Panel  -->
+        <NavigationView
+            Grid.Row="1"
+            Background="{ThemeResource LayerFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="0,0,1,0">
+            <NavigationView.MenuItems>
+                <StackPanel Padding="8" Spacing="4">
+                    <!--  主页 / Home  -->
+                    <RadioButton
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
+                        CommandParameter="0"
+                        Content="🏠 主页 / Home"
+                        IsChecked="{x:Bind ViewModel.IsHomePageSelected, Mode=TwoWay}" />
+
+                    <!--  网络状态 / Network Status  -->
+                    <RadioButton
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
+                        CommandParameter="1"
+                        Content="🌐 网络状态 / Network"
+                        IsChecked="{x:Bind ViewModel.IsNetworkPageSelected, Mode=TwoWay}" />
+
+                    <!--  节点列表 / Peer List  -->
+                    <RadioButton
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
+                        CommandParameter="2"
+                        Content="👥 节点列表 / Peers"
+                        IsChecked="{x:Bind ViewModel.IsPeerPageSelected, Mode=TwoWay}" />
+
+                    <!--  文件传输 / File Transfer  -->
+                    <RadioButton
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
+                        CommandParameter="3"
+                        Content="📁 文件传输 / Transfer"
+                        IsChecked="{x:Bind ViewModel.IsTransferPageSelected, Mode=TwoWay}" />
+
+                    <!--  设置 / Settings  -->
+                    <RadioButton
+                        Width="180"
+                        HorizontalAlignment="Left"
+                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
+                        CommandParameter="4"
+                        Content="⚙️ 设置 / Settings"
+                        IsChecked="{x:Bind ViewModel.IsSettingsPageSelected, Mode=TwoWay}" />
+
+                    <Rectangle
+                        Height="1"
+                        Margin="8,16"
+                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+
+                    <!--  快速统计 / Quick Statistics  -->
                     <TextBlock
-                        VerticalAlignment="Center"
-                        Foreground="White"
-                        Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" />
-                    <Button
-                        Width="32"
-                        Height="32"
-                        Command="{x:Bind ViewModel.ShowAboutCommand}"
-                        Content="ℹ️"
-                        Style="{StaticResource AccentButtonStyle}" />
-                </StackPanel>
-            </Grid>
-        </Border>
+                        Margin="8,0"
+                        FontWeight="SemiBold"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="快速统计 / Quick Stats" />
 
-        <!--  主内容区 / Main Content Area  -->
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="200" />
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-
-            <!--  导航面板 / Navigation Panel  -->
-            <Border
-                Grid.Column="0"
-                Background="{ThemeResource LayerFillColorDefaultBrush}"
-                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                BorderThickness="0,0,1,0">
-                <ScrollViewer>
-                    <StackPanel Padding="8" Spacing="4">
-                        <!--  主页 / Home  -->
-                        <RadioButton
-                            Width="180"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                            CommandParameter="0"
-                            Content="🏠 主页 / Home"
-                            IsChecked="{x:Bind ViewModel.IsHomePageSelected, Mode=TwoWay}" />
-
-                        <!--  网络状态 / Network Status  -->
-                        <RadioButton
-                            Width="180"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                            CommandParameter="1"
-                            Content="🌐 网络状态 / Network"
-                            IsChecked="{x:Bind ViewModel.IsNetworkPageSelected, Mode=TwoWay}" />
-
-                        <!--  节点列表 / Peer List  -->
-                        <RadioButton
-                            Width="180"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                            CommandParameter="2"
-                            Content="👥 节点列表 / Peers"
-                            IsChecked="{x:Bind ViewModel.IsPeerPageSelected, Mode=TwoWay}" />
-
-                        <!--  文件传输 / File Transfer  -->
-                        <RadioButton
-                            Width="180"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                            CommandParameter="3"
-                            Content="📁 文件传输 / Transfer"
-                            IsChecked="{x:Bind ViewModel.IsTransferPageSelected, Mode=TwoWay}" />
-
-                        <!--  设置 / Settings  -->
-                        <RadioButton
-                            Width="180"
-                            HorizontalAlignment="Left"
-                            Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                            CommandParameter="4"
-                            Content="⚙️ 设置 / Settings"
-                            IsChecked="{x:Bind ViewModel.IsSettingsPageSelected, Mode=TwoWay}" />
-
-                        <Rectangle
-                            Height="1"
-                            Margin="8,16"
-                            Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
-
-                        <!--  快速统计 / Quick Statistics  -->
-                        <TextBlock
-                            Margin="8,0"
-                            FontWeight="SemiBold"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="快速统计 / Quick Stats" />
-
-                        <StackPanel Margin="8,8,8,0" Spacing="4">
-                            <TextBlock>
-                                <Run Text="连接节点 / Connected:" />
-                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock>
-                                <Run Text="活跃传输 / Active:" />
-                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.ActiveTransfersCount, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock>
-                                <Run Text="传输总量 / Total:" />
-                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.TotalBytesTransferredText, Mode=OneWay}" />
-                            </TextBlock>
-                            <TextBlock>
-                                <Run Text="当前速度 / Speed:" />
-                                <Run FontWeight="Bold" Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay}" />
-                            </TextBlock>
-                        </StackPanel>
+                    <StackPanel Margin="8,8,8,0" Spacing="4">
+                        <TextBlock>
+                            <Run Text="连接节点 / Connected:" />
+                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="活跃传输 / Active:" />
+                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.ActiveTransfersCount, Mode=OneWay}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="传输总量 / Total:" />
+                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.TotalBytesTransferredText, Mode=OneWay}" />
+                        </TextBlock>
+                        <TextBlock>
+                            <Run Text="当前速度 / Speed:" />
+                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay}" />
+                        </TextBlock>
                     </StackPanel>
-                </ScrollViewer>
-            </Border>
-
-            <!--  内容区 / Content Area  -->
-            <Grid Grid.Column="1">
-                <!--  主页内容 / Home Content  -->
-                <ScrollViewer x:Name="HomeContent" Visibility="{x:Bind ViewModel.IsHomePageSelected, Mode=OneWay}">
-                    <StackPanel Padding="24" Spacing="24">
-                        <TextBlock
-                            FontSize="28"
-                            FontWeight="Bold"
-                            Text="欢迎使用 OpenNet / Welcome to OpenNet" />
-
-                        <TextBlock
-                            FontSize="16"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="安全、高效的点对点文件传输解决方案 / Secure and efficient peer-to-peer file transfer solution" />
-
-                        <!--  快速操作 / Quick Actions  -->
-                        <Border
-                            Padding="16"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <StackPanel Spacing="16">
-                                <TextBlock
-                                    FontSize="18"
-                                    FontWeight="SemiBold"
-                                    Text="快速操作 / Quick Actions" />
-
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="Auto" />
-                                        <RowDefinition Height="Auto" />
-                                    </Grid.RowDefinitions>
-
-                                    <Button
-                                        Grid.Row="0"
-                                        Grid.Column="0"
-                                        Margin="4"
-                                        Command="{x:Bind ViewModel.StartNetworkDetectionCommand}">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="🔍" />
-                                            <TextBlock Text="检测网络 / Detect Network" />
-                                        </StackPanel>
-                                    </Button>
-
-                                    <Button
-                                        Grid.Row="0"
-                                        Grid.Column="1"
-                                        Margin="4"
-                                        Command="{x:Bind ViewModel.ConnectToPeerCommand}">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="🔗" />
-                                            <TextBlock Text="连接节点 / Connect" />
-                                        </StackPanel>
-                                    </Button>
-
-                                    <Button
-                                        Grid.Row="0"
-                                        Grid.Column="2"
-                                        Margin="4"
-                                        Command="{x:Bind ViewModel.RefreshCommand}">
-                                        <StackPanel Orientation="Horizontal" Spacing="8">
-                                            <TextBlock Text="🔄" />
-                                            <TextBlock Text="刷新 / Refresh" />
-                                        </StackPanel>
-                                    </Button>
-                                </Grid>
-                            </StackPanel>
-                        </Border>
-
-                        <!--  网络状态 / Network Status  -->
-                        <Border
-                            Padding="16"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <StackPanel Spacing="12">
-                                <TextBlock
-                                    FontSize="18"
-                                    FontWeight="SemiBold"
-                                    Text="网络状态 / Network Status" />
-
-                                <TextBlock FontSize="14" Text="{x:Bind ViewModel.NetworkStatusText, Mode=OneWay}" />
-
-                                <TextBlock>
-                                    <Run Text="网络质量 / Quality: " />
-                                    <Run FontWeight="Bold" Text="{x:Bind ViewModel.NetworkQualityText, Mode=OneWay}" />
-                                </TextBlock>
-                            </StackPanel>
-                        </Border>
-
-                        <!--  最近活动 / Recent Activities  -->
-                        <Border
-                            Padding="16"
-                            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="8">
-                            <StackPanel Spacing="12">
-                                <TextBlock
-                                    FontSize="18"
-                                    FontWeight="SemiBold"
-                                    Text="最近活动 / Recent Activities" />
-
-                                <ListView
-                                    MaxHeight="200"
-                                    ItemsSource="{x:Bind ViewModel.RecentActivities, Mode=OneWay}"
-                                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                                    <ListView.ItemTemplate>
-                                        <DataTemplate x:DataType="x:String">
-                                            <TextBlock
-                                                Margin="0,2"
-                                                FontSize="12"
-                                                Text="{Binding}"
-                                                TextWrapping="Wrap" />
-                                        </DataTemplate>
-                                    </ListView.ItemTemplate>
-                                </ListView>
-                            </StackPanel>
-                        </Border>
-                    </StackPanel>
-                </ScrollViewer>
-
-                <!--  网络状态页面 / Network Status Page  -->
-                <Grid x:Name="NetworkContent" Visibility="{x:Bind ViewModel.IsNetworkPageSelected, Mode=OneWay}">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="网络状态页面 / Network Status Page" />
-                </Grid>
-
-                <!--  节点列表页面 / Peer List Page  -->
-                <Grid x:Name="PeerContent" Visibility="{x:Bind ViewModel.IsPeerPageSelected, Mode=OneWay}">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="节点列表页面 / Peer List Page" />
-                </Grid>
-
-                <!--  文件传输页面 / File Transfer Page  -->
-                <Grid x:Name="TransferContent" Visibility="{x:Bind ViewModel.IsTransferPageSelected, Mode=OneWay}">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="文件传输页面 / File Transfer Page" />
-                </Grid>
-
-                <!--  设置页面 / Settings Page  -->
-                <Grid x:Name="SettingsContent" Visibility="{x:Bind ViewModel.IsSettingsPageSelected, Mode=OneWay}">
-                    <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        FontSize="24"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="设置页面 / Settings Page" />
-                </Grid>
-            </Grid>
-        </Grid>
+                </StackPanel>
+            </NavigationView.MenuItems>
+        </NavigationView>
 
         <!--  状态栏 / Status Bar  -->
         <Border
@@ -374,10 +210,9 @@
                         Spacing="8"
                         Visibility="{x:Bind ViewModel.HasNotification, Mode=OneWay}">
                         <TextBlock FontSize="12" Text="ℹ️" />
-                        <TextBlock
-                            FontSize="12"
-                            Foreground="{ThemeResource SystemAccentColor}"
-                            Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}" />
+
+                        <!--  Foreground="{ThemeResource SystemAccentColor}"  -->
+                        <TextBlock FontSize="12" Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}" />
                     </StackPanel>
                 </StackPanel>
 

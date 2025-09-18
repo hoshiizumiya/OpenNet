@@ -11,6 +11,10 @@ namespace winrt::OpenNet::ViewModels::implementation
     {
         MainViewModel();
 
+        // 基本方法 / Basic Methods
+        // Summary: 初始化视图模型
+        void Initialize();
+
         // 基本属性 / Basic Properties
         // Summary: 当前状态文本
         // Return: 状态字符串
@@ -72,9 +76,6 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring LastNotification() const { return m_lastNotification; }
         bool HasNotification() const { return !m_lastNotification.empty(); }
 
-        // 基本方法 / Basic Methods
-        // Summary: 初始化视图模型
-        void Initialize();
         // Summary: 更新状态文本
         // Param status: 新的状态字符串
         void UpdateStatus(winrt::hstring const& status);
