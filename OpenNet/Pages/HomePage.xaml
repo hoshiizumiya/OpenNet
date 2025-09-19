@@ -13,7 +13,7 @@
         <!--  内容区 / Content Area  -->
         <Grid>
             <!--  主页内容 / Home Content  -->
-            <ScrollViewer x:Name="HomeContent" Visibility="{x:Bind ViewModel.IsHomePageSelected, Mode=OneWay}">
+            <ScrollViewer x:Name="HomeContent">
                 <StackPanel Padding="24" Spacing="24">
                     <TextBlock
                         FontSize="28"
@@ -140,7 +140,7 @@
             </ScrollViewer>
 
             <!--  网络状态页面 / Network Status Page  -->
-            <Grid x:Name="NetworkContent" Visibility="{x:Bind ViewModel.IsNetworkPageSelected, Mode=OneWay}">
+            <Grid x:Name="NetworkContent">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -150,7 +150,7 @@
             </Grid>
 
             <!--  节点列表页面 / Peer List Page  -->
-            <Grid x:Name="PeerContent" Visibility="{x:Bind ViewModel.IsPeerPageSelected, Mode=OneWay}">
+            <Grid x:Name="PeerContent">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -160,7 +160,7 @@
             </Grid>
 
             <!--  文件传输页面 / File Transfer Page  -->
-            <Grid x:Name="TransferContent" Visibility="{x:Bind ViewModel.IsTransferPageSelected, Mode=OneWay}">
+            <Grid x:Name="TransferContent">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
@@ -170,7 +170,7 @@
             </Grid>
 
             <!--  设置页面 / Settings Page  -->
-            <Grid x:Name="SettingsContent" Visibility="{x:Bind ViewModel.IsSettingsPageSelected, Mode=OneWay}">
+            <Grid x:Name="SettingsContent">
                 <TextBlock
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"

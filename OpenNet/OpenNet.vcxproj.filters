@@ -12,6 +12,12 @@
       <Filter>Pages</Filter>
     </Page>
     <Page Include="Pages\HomePage.xaml" />
+    <Page Include="Styles\NavigationView.xaml" />
+    <Page Include="Pages\ContactsPage.xaml" />
+    <Page Include="Pages\TasksPage.xaml" />
+    <Page Include="Pages\FilesPage.xaml" />
+    <Page Include="Pages\ServersPage.xaml" />
+    <Page Include="Pages\SettingsPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -42,6 +48,7 @@
     <Midl Include="Pages\NetworkSettingsPage.idl">
       <Filter>Pages</Filter>
     </Midl>
+    <Midl Include="Helpers\NavItemIconHelper.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -77,6 +84,8 @@
       <Filter>ThirdPatry\sqlite</Filter>
     </ClCompile>
     <ClCompile Include="Models\NetModel.cpp" />
+    <ClCompile Include="Helpers\WindowHelper.cpp" />
+    <ClCompile Include="Helpers\NavItemIconHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -128,6 +137,8 @@
     </ClInclude>
     <ClInclude Include="Models\NetModel.h" />
     <ClInclude Include="ViewModels\ObservableMixin.h" />
+    <ClInclude Include="Helpers\WindowHelper.h" />
+    <ClInclude Include="Helpers\NavItemIconHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">

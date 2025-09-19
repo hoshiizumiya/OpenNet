@@ -23,12 +23,6 @@ namespace winrt::OpenNet::ViewModels::implementation
     void MainViewModel::Initialize()
     {
         StatusText(L"就绪 / Ready");
-        // 默认显示主页
-        IsHomePageSelected(true);
-        IsNetworkPageSelected(false);
-        IsPeerPageSelected(false);
-        IsTransferPageSelected(false);
-        IsSettingsPageSelected(false);
     }
 
     // Summary: 更新状态文本并记录到活动列表

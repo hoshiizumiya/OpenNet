@@ -1,0 +1,9 @@
+﻿namespace OpenNet.Pages
+{
+    [default_interface]
+    runtimeclass SettingsPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        SettingsPage();
+        Int32 MyProperty;
+    }
+}

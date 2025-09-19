@@ -45,18 +45,6 @@ namespace winrt::OpenNet::ViewModels::implementation
         // Summary: 设备名文本（状态栏）
         winrt::hstring DeviceName() const { return m_deviceName; }
 
-        // 导航选中状态 / Navigation selection states
-        bool IsHomePageSelected() const { return m_isHomeSelected; }
-        void IsHomePageSelected(bool v) { if (m_isHomeSelected != v) { m_isHomeSelected = v; OnPropertyChanged(L"IsHomePageSelected"); } }
-        bool IsNetworkPageSelected() const { return m_isNetworkSelected; }
-        void IsNetworkPageSelected(bool v) { if (m_isNetworkSelected != v) { m_isNetworkSelected = v; OnPropertyChanged(L"IsNetworkPageSelected"); } }
-        bool IsPeerPageSelected() const { return m_isPeerSelected; }
-        void IsPeerPageSelected(bool v) { if (m_isPeerSelected != v) { m_isPeerSelected = v; OnPropertyChanged(L"IsPeerPageSelected"); } }
-        bool IsTransferPageSelected() const { return m_isTransferSelected; }
-        void IsTransferPageSelected(bool v) { if (m_isTransferSelected != v) { m_isTransferSelected = v; OnPropertyChanged(L"IsTransferPageSelected"); } }
-        bool IsSettingsPageSelected() const { return m_isSettingsSelected; }
-        void IsSettingsPageSelected(bool v) { if (m_isSettingsSelected != v) { m_isSettingsSelected = v; OnPropertyChanged(L"IsSettingsPageSelected"); } }
-
         // 快速统计 / Quick stats
         int32_t ConnectedPeersCount() const { return m_connectedPeersCount; }
         int32_t ActiveTransfersCount() const { return m_activeTransfersCount; }

@@ -27,11 +27,15 @@
             Title="{StaticResource AppTitleName}"
             Grid.Row="0"
             Height="48"
-            IsBackButtonVisible="True">
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Top"
+            BackRequested="AppTitleBar_BackRequested"
+            IsBackButtonVisible="{x:Bind NavFrame.CanGoBack, Mode=OneWay}"
+            IsTabStop="False">
 
             <TitleBar.LeftHeader>
                 <Image
-                    x:Name="HeadLogo"
+                    x:Name="titleBarIcon"
                     Width="16"
                     Margin="10,0,10,0"
                     AutomationProperties.AccessibilityView="Raw"
@@ -61,6 +65,8 @@
                         Command="{x:Bind ViewModel.ShowAboutCommand}"
                         Content="ℹ️"
                         Style="{StaticResource AccentButtonStyle}" />
+                    <!--  头像与账号区域  -->
+
                 </StackPanel>
             </TitleBar.RightHeader>
 
@@ -84,89 +90,110 @@
 
         <!--  导航面板 / Navigation Panel  -->
         <NavigationView
+            x:Name="NavView"
             Grid.Row="1"
-            Background="{ThemeResource LayerFillColorDefaultBrush}"
-            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-            BorderThickness="0,0,1,0">
+            HighContrastAdjustment="None"
+            IsBackButtonVisible="Collapsed"
+            IsPaneToggleButtonVisible="False"
+            IsSettingsVisible="False"
+            ItemInvoked="NavView_ItemInvoked"
+            Style="{StaticResource MainNavigationViewStyle}">
             <NavigationView.MenuItems>
-                <StackPanel Padding="8" Spacing="4">
-                    <!--  主页 / Home  -->
-                    <RadioButton
-                        Width="180"
-                        HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                        CommandParameter="0"
-                        Content="🏠 主页 / Home"
-                        IsChecked="{x:Bind ViewModel.IsHomePageSelected, Mode=TwoWay}" />
+                <!--  主页 / Home  -->
+                <NavigationViewItem
+                    Content="🏠 主页 / Home"
+                    Icon="Home"
+                    Tag="home" />
 
-                    <!--  网络状态 / Network Status  -->
-                    <RadioButton
-                        Width="180"
-                        HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                        CommandParameter="1"
-                        Content="🌐 网络状态 / Network"
-                        IsChecked="{x:Bind ViewModel.IsNetworkPageSelected, Mode=TwoWay}" />
+                <NavigationViewItem Content="Contacts" Tag="contacts">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE716;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
 
-                    <!--  节点列表 / Peer List  -->
-                    <RadioButton
-                        Width="180"
-                        HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                        CommandParameter="2"
-                        Content="👥 节点列表 / Peers"
-                        IsChecked="{x:Bind ViewModel.IsPeerPageSelected, Mode=TwoWay}" />
+                <NavigationViewItem Content="Tasks" Tag="tasks">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE7C4;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
 
-                    <!--  文件传输 / File Transfer  -->
-                    <RadioButton
-                        Width="180"
-                        HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                        CommandParameter="3"
-                        Content="📁 文件传输 / Transfer"
-                        IsChecked="{x:Bind ViewModel.IsTransferPageSelected, Mode=TwoWay}" />
+                <!--  设备文件  -->
+                <NavigationViewItem Content="📁 设备文件" Tag="files">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8B7;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
 
-                    <!--  设置 / Settings  -->
-                    <RadioButton
-                        Width="180"
-                        HorizontalAlignment="Left"
-                        Command="{x:Bind ViewModel.NavigateToPageCommand}"
-                        CommandParameter="4"
-                        Content="⚙️ 设置 / Settings"
-                        IsChecked="{x:Bind ViewModel.IsSettingsPageSelected, Mode=TwoWay}" />
+                <NavigationViewItem Content="网络" Tag="net">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE968;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
 
-                    <Rectangle
+                <NavigationViewItem Content="Servers" Tag="servers">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC26;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+
+                <!--<Rectangle
                         Height="1"
                         Margin="8,16"
-                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />
+                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />-->
 
-                    <!--  快速统计 / Quick Statistics  -->
-                    <TextBlock
+                <!--  快速统计 / Quick Statistics  -->
+                <!--<TextBlock
                         Margin="8,0"
                         FontWeight="SemiBold"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="快速统计 / Quick Stats" />
 
-                    <StackPanel Margin="8,8,8,0" Spacing="4">
-                        <TextBlock>
+                <StackPanel Margin="8,8,8,0" Spacing="4">
+                    <TextBlock>
                             <Run Text="连接节点 / Connected:" />
                             <Run FontWeight="Bold" Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay}" />
-                        </TextBlock>
-                        <TextBlock>
+                    </TextBlock>
+                    <TextBlock>
                             <Run Text="活跃传输 / Active:" />
                             <Run FontWeight="Bold" Text="{x:Bind ViewModel.ActiveTransfersCount, Mode=OneWay}" />
-                        </TextBlock>
-                        <TextBlock>
+                    </TextBlock>
+                    <TextBlock>
                             <Run Text="传输总量 / Total:" />
                             <Run FontWeight="Bold" Text="{x:Bind ViewModel.TotalBytesTransferredText, Mode=OneWay}" />
-                        </TextBlock>
-                        <TextBlock>
+                    </TextBlock>
+                    <TextBlock>
                             <Run Text="当前速度 / Speed:" />
                             <Run FontWeight="Bold" Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay}" />
-                        </TextBlock>
-                    </StackPanel>
-                </StackPanel>
+                    </TextBlock>
+                </StackPanel>-->
             </NavigationView.MenuItems>
+
+            <!--  底部⚙️设置区  -->
+            <NavigationView.FooterMenuItems>
+                <!--<NavigationViewItem
+                    Content="Contribute"
+                    SelectsOnInvoked="False"
+                    Tag="Contribute">
+                    <NavigationViewItem.Icon>
+                        <ImageIcon Opacity="0.6" Source="{ThemeResource GitHubIconImage}" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>-->
+                <NavigationViewItem
+                    Content="Settings"
+                    Icon="Setting"
+                    Tag="Settings" />
+            </NavigationView.FooterMenuItems>
+
+            <NavigationView.Content>
+                <Frame
+                    x:Name="NavFrame"
+                    Navigated="NavFrame_Navigated"
+                    Navigating="NavFrame_Navigating" />
+            </NavigationView.Content>
+
+
+
         </NavigationView>
 
         <!--  状态栏 / Status Bar  -->

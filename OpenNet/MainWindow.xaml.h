@@ -11,7 +11,6 @@ namespace winrt::OpenNet::implementation
     {
         MainWindow();
 
-        // define a property to hold the ViewModel
         MainViewModel ViewModel();
 
 		// Window State management methods
@@ -22,6 +21,18 @@ namespace winrt::OpenNet::implementation
 
     private:
         MainViewModel m_viewModel;
+        void NavigateToType(Windows::UI::Xaml::Interop::TypeName const& type, winrt::Windows::Foundation::IInspectable const& parameter);
+
+    public:
+        // Legacy name kept for compatibility
+        void Navigate(winrt::hstring const& tag, winrt::Windows::Foundation::IInspectable const& parameter = nullptr);
+        // Preferred explicit name
+        void NavigateTag(winrt::hstring const& tag, winrt::Windows::Foundation::IInspectable const& parameter = nullptr);
+
+        void AppTitleBar_BackRequested(winrt::Microsoft::UI::Xaml::Controls::TitleBar const& sender, winrt::Windows::Foundation::IInspectable const& args);
+        void NavView_ItemInvoked(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs const& args);
+        void NavFrame_Navigating(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const& args);
+        void NavFrame_Navigated(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args);
     };
 }
 

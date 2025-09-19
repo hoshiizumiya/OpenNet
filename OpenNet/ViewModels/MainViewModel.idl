@@ -14,13 +14,6 @@
 		String UserName { get; };
 		String DeviceName { get; };
 
-		// 导航状态 / Navigation State
-		Boolean IsHomePageSelected;
-		Boolean IsNetworkPageSelected;
-		Boolean IsPeerPageSelected;
-		Boolean IsTransferPageSelected;
-		Boolean IsSettingsPageSelected;
-
 		// 快速统计 / Quick Stats
 		Int32 ConnectedPeersCount { get; };
 		Int32 ActiveTransfersCount { get; };

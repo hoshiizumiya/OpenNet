@@ -135,6 +135,11 @@
     <ClInclude Include="Core\FileTransferEngine.h" />
     <ClInclude Include="Core\NetworkDetector.h" />
     <ClInclude Include="Core\P2PManager.h" />
+    <ClInclude Include="Helpers\NavItemIconHelper.h">
+      <DependentUpon>Helpers\NavItemIconHelper.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Helpers\WindowHelper.h" />
     <ClInclude Include="Models\NetModel.h">
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -151,6 +156,14 @@
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Pages\ContactsPage.xaml.h">
+      <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Pages\FilesPage.xaml.h">
+      <DependentUpon>Pages\FilesPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Pages\HomePage.xaml.h">
       <DependentUpon>Pages\HomePage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -158,6 +171,18 @@
     <!--这里的内容依赖为同一个-->
     <ClInclude Include="Pages\NetworkSettingsPage.xaml.h">
       <DependentUpon>Pages\NetworkSettingsPage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Pages\ServersPage.xaml.h">
+      <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Pages\SettingsPage.xaml.h">
+      <DependentUpon>Pages\SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Pages\TasksPage.xaml.h">
+      <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
@@ -200,15 +225,36 @@
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
     <Page Include="MainWindow.xaml" />
+    <Page Include="Pages\ContactsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\FilesPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Pages\HomePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\NetworkSettingsPage.xaml" />
+    <Page Include="Pages\ServersPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\TasksPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Styles\NavigationView.xaml" />
     <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\NetworkDetector.cpp">
     </ClCompile>
+    <ClCompile Include="Helpers\NavItemIconHelper.cpp">
+      <DependentUpon>Helpers\NavItemIconHelper.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Helpers\WindowHelper.cpp" />
     <ClCompile Include="Models\NetModel.cpp">
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -217,8 +263,28 @@
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Pages\ContactsPage.xaml.cpp">
+      <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\FilesPage.xaml.cpp">
+      <DependentUpon>Pages\FilesPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Pages\HomePage.xaml.cpp">
       <DependentUpon>Pages\HomePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\ServersPage.xaml.cpp">
+      <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\SettingsPage.xaml.cpp">
+      <DependentUpon>Pages\SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\TasksPage.xaml.cpp">
+      <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\NetworkViewModel.cpp">
@@ -271,11 +337,22 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <Midl Include="Helpers\NavItemIconHelper.idl">
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="MainWindow.idl">
       <SubType>Code</SubType>
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Midl>
     <Midl Include="Models\models.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\ContactsPage.idl">
+      <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\FilesPage.idl">
+      <DependentUpon>Pages\FilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Pages\HomePage.idl">
@@ -284,6 +361,18 @@
     </Midl>
     <Midl Include="Pages\NetworkSettingsPage.idl">
       <DependentUpon>Pages\NetworkSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\ServersPage.idl">
+      <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\SettingsPage.idl">
+      <DependentUpon>Pages\SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\TasksPage.idl">
+      <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">

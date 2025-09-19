@@ -9,7 +9,6 @@ namespace winrt::OpenNet::Pages::implementation
     {
         NetworkSettingsPage();
 
-        // IDL: OpenNet.ViewModels.NetworkSettingsViewModel ViewModel { get; }
         winrt::OpenNet::ViewModels::NetworkSettingsViewModel ViewModel() { return m_viewModel ? m_viewModel : (m_viewModel = winrt::OpenNet::ViewModels::NetworkSettingsViewModel()); }
 
     private:
