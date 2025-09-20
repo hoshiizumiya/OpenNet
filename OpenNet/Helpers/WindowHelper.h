@@ -15,7 +15,7 @@
 #include <winrt/Microsoft.UI.Content.h>  // for ContentIslandEnvironment
 #include <winrt/Windows.Foundation.Metadata.h>
 
-namespace MicrosoftDocsGallery::Helpers::WinUIWindowHelper
+namespace OpenNet::Helpers::WinUIWindowHelper
 {
     struct WindowHelper
     {

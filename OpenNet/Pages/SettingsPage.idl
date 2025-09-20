@@ -4,6 +4,5 @@
     runtimeclass SettingsPage : Microsoft.UI.Xaml.Controls.Page
     {
         SettingsPage();
-        Int32 MyProperty;
     }
 }

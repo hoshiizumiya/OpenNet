@@ -1,12 +1,11 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
+#include "Helpers/WindowHelper.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
-
-// To learn more about WinUI, the WinUI project structure,
-// and more about our project templates, see: http://aka.ms/winui-project-info.
+using namespace Microsoft::UI::Windowing;
 
 namespace winrt::OpenNet::implementation
 {
@@ -39,5 +38,33 @@ namespace winrt::OpenNet::implementation
     {
         window = make<MainWindow>();
         window.Activate();
+
+		//Get AppWindow and Set Title and Size
+        auto appWindow = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetAppWindow(window);
+
+        //AppWindow.Title()
+        //appWindow.Resize(Windows::Graphics::SizeInt32(width, height));
+        OverlappedPresenter presenter = OverlappedPresenter::Create();
+        //presenter.PreferredMinimumHeight() = MinHeight;
+        //presenter.PreferredMinimumWidth() = MinWidth;
+        appWindow.SetPresenter(presenter);
+        //appWindow.SetIcon(L"/Assets/AppIcons/");WE NEED A ICO FILE!
+
+        // Language Hot-Reload supprot
+        auto supportedLanguages = Windows::Globalization::ApplicationLanguages::Languages();
+
+        // 构建输出字符串
+        std::wstring out;
+        out.reserve(256);
+        out += L"Supported languages:\n";
+        for (auto const& lang : supportedLanguages)
+        {
+            // lang 是 winrt::hstring，可以通过 c_str() 获取 wchar_t*
+            out += std::wstring(lang.c_str());
+            out += L"\n";
+        }
+
+        // 输出到调试输出（Visual Studio 的输出窗口）
+        OutputDebugStringW(out.c_str());
     }
 }

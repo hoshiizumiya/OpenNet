@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="HomePageRoot"
     mc:Ignorable="d">
 
     <Grid>
@@ -13,20 +14,21 @@
         <!--  内容区 / Content Area  -->
         <Grid>
             <!--  主页内容 / Home Content  -->
-            <ScrollViewer x:Name="HomeContent">
+            <ScrollViewer x:Name="HomeContent" x:Uid="HomeContent">
                 <StackPanel Padding="24" Spacing="24">
                     <TextBlock
+                        x:Uid="HomeTitle"
                         FontSize="28"
-                        FontWeight="Bold"
-                        Text="欢迎使用 OpenNet / Welcome to OpenNet" />
+                        FontWeight="Bold" />
 
                     <TextBlock
+                        x:Uid="HomeSubtitle"
                         FontSize="16"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="安全、高效的点对点文件传输解决方案 / Secure and efficient peer-to-peer file transfer solution" />
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
 
                     <!--  快速操作 / Quick Actions  -->
                     <Border
+                        x:Uid="QuickActionsCard"
                         Padding="16"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -34,9 +36,9 @@
                         CornerRadius="8">
                         <StackPanel Spacing="16">
                             <TextBlock
+                                x:Uid="QuickActionsTitle"
                                 FontSize="18"
-                                FontWeight="SemiBold"
-                                Text="快速操作 / Quick Actions" />
+                                FontWeight="SemiBold" />
 
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -50,35 +52,38 @@
                                 </Grid.RowDefinitions>
 
                                 <Button
+                                    x:Uid="DetectNetworkButton"
                                     Grid.Row="0"
                                     Grid.Column="0"
                                     Margin="4"
                                     Command="{x:Bind ViewModel.StartNetworkDetectionCommand}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <TextBlock Text="🔍" />
-                                        <TextBlock Text="检测网络 / Detect Network" />
+                                        <TextBlock x:Uid="DetectNetworkButtonText" />
                                     </StackPanel>
                                 </Button>
 
                                 <Button
+                                    x:Uid="ConnectPeerButton"
                                     Grid.Row="0"
                                     Grid.Column="1"
                                     Margin="4"
                                     Command="{x:Bind ViewModel.ConnectToPeerCommand}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <TextBlock Text="🔗" />
-                                        <TextBlock Text="连接节点 / Connect" />
+                                        <TextBlock x:Uid="ConnectPeerButtonText" />
                                     </StackPanel>
                                 </Button>
 
                                 <Button
+                                    x:Uid="RefreshButton"
                                     Grid.Row="0"
                                     Grid.Column="2"
                                     Margin="4"
                                     Command="{x:Bind ViewModel.RefreshCommand}">
                                     <StackPanel Orientation="Horizontal" Spacing="8">
                                         <TextBlock Text="🔄" />
-                                        <TextBlock Text="刷新 / Refresh" />
+                                        <TextBlock x:Uid="RefreshButtonText" />
                                     </StackPanel>
                                 </Button>
                             </Grid>
@@ -87,6 +92,7 @@
 
                     <!--  网络状态 / Network Status  -->
                     <Border
+                        x:Uid="NetworkStatusCard"
                         Padding="16"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -94,14 +100,14 @@
                         CornerRadius="8">
                         <StackPanel Spacing="12">
                             <TextBlock
+                                x:Uid="NetworkStatusTitle"
                                 FontSize="18"
-                                FontWeight="SemiBold"
-                                Text="网络状态 / Network Status" />
+                                FontWeight="SemiBold" />
 
-                            <TextBlock FontSize="14" Text="{x:Bind ViewModel.NetworkStatusText, Mode=OneWay}" />
+                            <TextBlock x:Uid="NetworkStatusTextBlock" FontSize="14" Text="{x:Bind ViewModel.NetworkStatusText, Mode=OneWay}" />
 
                             <TextBlock>
-                                <Run Text="网络质量 / Quality: " />
+                                <Run x:Uid="NetworkQualityLabelRun" />
                                 <Run FontWeight="Bold" Text="{x:Bind ViewModel.NetworkQualityText, Mode=OneWay}" />
                             </TextBlock>
                         </StackPanel>
@@ -109,6 +115,7 @@
 
                     <!--  最近活动 / Recent Activities  -->
                     <Border
+                        x:Uid="RecentActivitiesCard"
                         Padding="16"
                         Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
@@ -116,11 +123,12 @@
                         CornerRadius="8">
                         <StackPanel Spacing="12">
                             <TextBlock
+                                x:Uid="RecentActivitiesTitle"
                                 FontSize="18"
-                                FontWeight="SemiBold"
-                                Text="最近活动 / Recent Activities" />
+                                FontWeight="SemiBold" />
 
                             <ListView
+                                x:Uid="RecentActivitiesList"
                                 MaxHeight="200"
                                 ItemsSource="{x:Bind ViewModel.RecentActivities, Mode=OneWay}"
                                 ScrollViewer.VerticalScrollBarVisibility="Auto">
@@ -140,43 +148,43 @@
             </ScrollViewer>
 
             <!--  网络状态页面 / Network Status Page  -->
-            <Grid x:Name="NetworkContent">
+            <Grid x:Name="NetworkContent" x:Uid="NetworkContent">
                 <TextBlock
+                    x:Uid="NetworkPagePlaceholder"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="网络状态页面 / Network Status Page" />
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             </Grid>
 
             <!--  节点列表页面 / Peer List Page  -->
-            <Grid x:Name="PeerContent">
+            <Grid x:Name="PeerContent" x:Uid="PeerContent">
                 <TextBlock
+                    x:Uid="PeerPagePlaceholder"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="节点列表页面 / Peer List Page" />
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             </Grid>
 
             <!--  文件传输页面 / File Transfer Page  -->
-            <Grid x:Name="TransferContent">
+            <Grid x:Name="TransferContent" x:Uid="TransferContent">
                 <TextBlock
+                    x:Uid="TransferPagePlaceholder"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="文件传输页面 / File Transfer Page" />
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             </Grid>
 
             <!--  设置页面 / Settings Page  -->
-            <Grid x:Name="SettingsContent">
+            <Grid x:Name="SettingsContent" x:Uid="SettingsContent">
                 <TextBlock
+                    x:Uid="SettingsPagePlaceholder"
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="设置页面 / Settings Page" />
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
             </Grid>
         </Grid>
     </Grid>

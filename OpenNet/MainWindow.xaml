@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="OpenNet"
+    x:Uid="MainWindowRoot"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
@@ -24,7 +24,7 @@
         <!--  Background="{ThemeResource SystemAccentColor}"  -->
         <TitleBar
             x:Name="AppTitleBar"
-            Title="{StaticResource AppTitleName}"
+            x:Uid="AppTitleBar"
             Grid.Row="0"
             Height="48"
             HorizontalAlignment="Stretch"
@@ -45,10 +45,10 @@
             <TitleBar.Content>
                 <AutoSuggestBox
                     x:Name="SearchBox"
+                    x:Uid="SearchBox"
                     MinWidth="364"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Center"
-                    PlaceholderText="Search anything"
                     QueryIcon="Find"
                     UpdateTextOnSelect="False" />
             </TitleBar.Content>
@@ -56,10 +56,12 @@
             <TitleBar.RightHeader>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBlock
+                        x:Uid="StatusTextBlock"
                         VerticalAlignment="Center"
                         Foreground="White"
                         Text="{x:Bind ViewModel.StatusText, Mode=OneWay}" />
                     <Button
+                        x:Uid="AboutButton"
                         Width="40"
                         Height="40"
                         Command="{x:Bind ViewModel.ShowAboutCommand}"
@@ -91,6 +93,7 @@
         <!--  导航面板 / Navigation Panel  -->
         <NavigationView
             x:Name="NavView"
+            x:Uid="NavView"
             Grid.Row="1"
             HighContrastAdjustment="None"
             IsBackButtonVisible="Collapsed"
@@ -101,36 +104,35 @@
             <NavigationView.MenuItems>
                 <!--  主页 / Home  -->
                 <NavigationViewItem
-                    Content="🏠 主页 / Home"
+                    x:Uid="NavItem_Home"
                     Icon="Home"
                     Tag="home" />
 
-                <NavigationViewItem Content="Contacts" Tag="contacts">
+                <NavigationViewItem x:Uid="NavItem_Contacts" Tag="contacts">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE716;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Tasks" Tag="tasks">
+                <NavigationViewItem x:Uid="NavItem_Tasks" Tag="tasks">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE7C4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <!--  设备文件  -->
-                <NavigationViewItem Content="📁 设备文件" Tag="files">
+                <NavigationViewItem x:Uid="NavItem_Files" Tag="files">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8B7;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="网络" Tag="net">
+                <NavigationViewItem x:Uid="NavItem_Network" Tag="net">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE968;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem Content="Servers" Tag="servers">
+                <NavigationViewItem x:Uid="NavItem_Servers" Tag="servers">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC26;" />
                     </NavigationViewItem.Icon>
@@ -180,7 +182,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>-->
                 <NavigationViewItem
-                    Content="Settings"
+                    x:Uid="NavItem_Settings"
                     Icon="Setting"
                     Tag="Settings" />
             </NavigationView.FooterMenuItems>
@@ -192,12 +194,11 @@
                     Navigating="NavFrame_Navigating" />
             </NavigationView.Content>
 
-
-
         </NavigationView>
 
         <!--  状态栏 / Status Bar  -->
         <Border
+            x:Uid="StatusBar"
             Grid.Row="2"
             Padding="16,8"
             Background="{ThemeResource LayerFillColorDefaultBrush}"
@@ -215,15 +216,18 @@
                     Spacing="16">
                     <!--  错误信息 / Error Information  -->
                     <StackPanel
+                        x:Uid="ErrorInfoPanel"
                         Orientation="Horizontal"
                         Spacing="8"
                         Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}">
-                        <TextBlock FontSize="12" Text="❌" />
+                        <TextBlock x:Uid="ErrorIcon" FontSize="12" Text="❌" />
                         <TextBlock
+                            x:Uid="ErrorText"
                             FontSize="12"
                             Foreground="Red"
                             Text="{x:Bind ViewModel.LastError, Mode=OneWay}" />
                         <Button
+                            x:Uid="ClearErrorButton"
                             Width="20"
                             Height="20"
                             Command="{x:Bind ViewModel.ClearErrorCommand}"
@@ -233,13 +237,12 @@
 
                     <!--  通知信息 / Notification Information  -->
                     <StackPanel
+                        x:Uid="NotificationPanel"
                         Orientation="Horizontal"
                         Spacing="8"
                         Visibility="{x:Bind ViewModel.HasNotification, Mode=OneWay}">
-                        <TextBlock FontSize="12" Text="ℹ️" />
-
-                        <!--  Foreground="{ThemeResource SystemAccentColor}"  -->
-                        <TextBlock FontSize="12" Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}" />
+                        <TextBlock x:Uid="NotificationIcon" FontSize="12" Text="ℹ️" />
+                        <TextBlock x:Uid="NotificationText" FontSize="12" Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}" />
                     </StackPanel>
                 </StackPanel>
 
@@ -248,11 +251,11 @@
                     Orientation="Horizontal"
                     Spacing="16">
                     <TextBlock>
-                        <Run Text="用户 / User: " />
+                        <Run x:Uid="UserLabelRun" />
                         <Run FontWeight="Bold" Text="{x:Bind ViewModel.UserName, Mode=OneWay}" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="设备 / Device: " />
+                        <Run x:Uid="DeviceLabelRun" />
                         <Run FontWeight="Bold" Text="{x:Bind ViewModel.DeviceName, Mode=OneWay}" />
                     </TextBlock>
                 </StackPanel>

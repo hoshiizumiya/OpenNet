@@ -9,7 +9,7 @@ using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
 using namespace Microsoft::UI::Xaml;
 
-namespace MicrosoftDocsGallery::Helpers::WinUIWindowHelper
+namespace OpenNet::Helpers::WinUIWindowHelper
 {
 
     Window WindowHelper::CreateHostWindow()
