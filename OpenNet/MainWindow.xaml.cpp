@@ -11,6 +11,8 @@
 #include "Pages/NetworkSettingsPage.xaml.h"
 #include "Pages/ServersPage.xaml.h"
 #include "Pages/SettingsPage.xaml.h"
+
+#include "Helpers/WindowHelper.h"
 #include "ViewModels/MainViewModel.h"
 
 using namespace winrt;
@@ -21,175 +23,235 @@ using MainViewModel = winrt::OpenNet::ViewModels::MainViewModel;
 
 namespace winrt::OpenNet::implementation
 {
-    MainWindow::MainWindow()
-    {
-        InitializeComponent();
-        SetTitleBar(AppTitleBar());
-        InitWindowStyle(*this);
+	MainWindow::MainWindow()
+	{
+		InitializeComponent();
+		SetTitleBar(AppTitleBar());
+		InitWindowStyle(*this);
 
-        m_viewModel = MainViewModel{};
-        m_viewModel.Initialize();
+		m_viewModel = MainViewModel{};
+		m_viewModel.Initialize();
 
-        NavFrame().Navigated({ this, &MainWindow::NavFrame_Navigated });
-        NavFrame().Navigating({ this, &MainWindow::NavFrame_Navigating });
-        NavView().ItemInvoked({ this, &MainWindow::NavView_ItemInvoked });
+		NavFrame().Navigated({ this, &MainWindow::NavFrame_Navigated });
+		NavFrame().Navigating({ this, &MainWindow::NavFrame_Navigating });
+		NavView().ItemInvoked({ this, &MainWindow::NavView_ItemInvoked });
 
-        openHomePage();
-    }
+		openHomePage();
+	}
 
-    MainViewModel MainWindow::ViewModel()
-    {
-        return m_viewModel;
-    }
+	MainViewModel MainWindow::ViewModel()
+	{
+		return m_viewModel;
+	}
 
-    IAsyncAction MainWindow::SetIconAsync(Microsoft::UI::Windowing::AppWindow window)
-    {
-        if (!window) co_return;
-        try { /* set icon placeholder */ } catch (...) {}
-        co_return;
-    }
+	IAsyncAction MainWindow::SetIconAsync(Microsoft::UI::Windowing::AppWindow window)
+	{
+		if (!window) co_return;
+		try { /* set icon placeholder */ }
+		catch (...) {}
+		co_return;
+	}
 
-    void MainWindow::InitWindowStyle(Window const& window)
-    {
-        window.ExtendsContentIntoTitleBar(true);
-        if (auto appWindow = window.AppWindow())
-        {
-            appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
-            SetIconAsync(appWindow);
-        }
-    }
+	void MainWindow::InitWindowStyle(Window const& window)
+	{
+		window.ExtendsContentIntoTitleBar(true);
+		if (auto appWindow = window.AppWindow())
+		{
+			appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
+			SetIconAsync(appWindow);
+		}
+	}
 
-    void MainWindow::SaveWindowState() {}
-    void MainWindow::RestoreWindowState() {}
+	void MainWindow::SaveWindowState() {}
+	void MainWindow::RestoreWindowState() {}
 
-    void MainWindow::UpdateNavigationSelection(hstring const& tag)
-    {
-        if (tag.empty()) return;
-        auto nav = NavView();
-        for (auto const& obj : nav.MenuItems())
-        {
-            if (auto nvi = obj.try_as<NavigationViewItem>())
-            {
-                if (unbox_value_or<hstring>(nvi.Tag(), L"") == tag)
-                {
-                    if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
-                    return;
-                }
-            }
-        }
-        for (auto const& obj : nav.FooterMenuItems())
-        {
-            if (auto nvi = obj.try_as<NavigationViewItem>())
-            {
-                auto itemTag = unbox_value_or<hstring>(nvi.Tag(), L"");
-                if (itemTag == tag || (tag == L"settings" && itemTag == L"Settings"))
-                {
-                    if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
-                    return;
-                }
-            }
-        }
-    }
+	void MainWindow::UpdateNavigationSelection(hstring const& tag)
+	{
+		if (tag.empty()) return;
+		auto nav = NavView();
+		for (auto const& obj : nav.MenuItems())
+		{
+			if (auto nvi = obj.try_as<NavigationViewItem>())
+			{
+				if (unbox_value_or<hstring>(nvi.Tag(), L"") == tag)
+				{
+					if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
+					return;
+				}
+			}
+		}
+		for (auto const& obj : nav.FooterMenuItems())
+		{
+			if (auto nvi = obj.try_as<NavigationViewItem>())
+			{
+				auto itemTag = unbox_value_or<hstring>(nvi.Tag(), L"");
+				if (itemTag == tag || (tag == L"settings" && itemTag == L"Settings"))
+				{
+					if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
+					return;
+				}
+			}
+		}
+	}
 
-    void MainWindow::openHomePage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::HomePage>()) { UpdateNavigationSelection(L"home"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::HomePage>());
-        UpdateNavigationSelection(L"home");
-    }
-    void MainWindow::openContactsPage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::ContactsPage>()) { UpdateNavigationSelection(L"contacts"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ContactsPage>());
-        UpdateNavigationSelection(L"contacts");
-    }
-    void MainWindow::openTasksPage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::TasksPage>()) { UpdateNavigationSelection(L"tasks"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::TasksPage>());
-        UpdateNavigationSelection(L"tasks");
-    }
-    void MainWindow::openFilesPage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::FilesPage>()) { UpdateNavigationSelection(L"files"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::FilesPage>());
-        UpdateNavigationSelection(L"files");
-    }
-    void MainWindow::openNetworkSettingsPage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>()) { UpdateNavigationSelection(L"net"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>());
-        UpdateNavigationSelection(L"net");
-    }
-    void MainWindow::openServersPage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::ServersPage>()) { UpdateNavigationSelection(L"servers"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ServersPage>());
-        UpdateNavigationSelection(L"servers");
-    }
-    void MainWindow::openSettingsPage()
-    {
-        if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::SettingsPage>()) { UpdateNavigationSelection(L"Settings"); return; }
-        NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPage>());
-        UpdateNavigationSelection(L"Settings");
-    }
+	void MainWindow::openHomePage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::HomePage>()) { UpdateNavigationSelection(L"home"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::HomePage>());
+		UpdateNavigationSelection(L"home");
+	}
+	void MainWindow::openContactsPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::ContactsPage>()) { UpdateNavigationSelection(L"contacts"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ContactsPage>());
+		UpdateNavigationSelection(L"contacts");
+	}
+	void MainWindow::openTasksPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::TasksPage>()) { UpdateNavigationSelection(L"tasks"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::TasksPage>());
+		UpdateNavigationSelection(L"tasks");
+	}
+	void MainWindow::openFilesPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::FilesPage>()) { UpdateNavigationSelection(L"files"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::FilesPage>());
+		UpdateNavigationSelection(L"files");
+	}
+	void MainWindow::openNetworkSettingsPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>()) { UpdateNavigationSelection(L"net"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>());
+		UpdateNavigationSelection(L"net");
+	}
+	void MainWindow::openServersPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::ServersPage>()) { UpdateNavigationSelection(L"servers"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ServersPage>());
+		UpdateNavigationSelection(L"servers");
+	}
+	void MainWindow::openSettingsPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::SettingsPage>()) { UpdateNavigationSelection(L"Settings"); return; }
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPage>());
+		UpdateNavigationSelection(L"Settings");
+	}
 
-    void MainWindow::NavView_ItemInvoked(NavigationView const&, NavigationViewItemInvokedEventArgs const& args)
-    {
-        hstring tag;
-        if (auto container = args.InvokedItemContainer())
-        {
-            tag = unbox_value_or<hstring>(container.Tag(), L"");
-        }
-        Navigate(tag);
-    }
+	void MainWindow::NavView_ItemInvoked(NavigationView const&, NavigationViewItemInvokedEventArgs const& args)
+	{
+		hstring tag;
+		if (auto container = args.InvokedItemContainer())
+		{
+			tag = unbox_value_or<hstring>(container.Tag(), L"");
+		}
+		Navigate(tag);
+	}
 
-    void MainWindow::Navigate(hstring const& tag)
-    {
-        auto weak = get_weak();
-        this->DispatcherQueue().TryEnqueue([weak, tag]() {
-            if (auto self = weak.get())
-            {
-                auto frame = self->NavFrame();
-                auto content = frame.Content();
+	void MainWindow::Navigate(hstring const& tag)
+	{
+		auto weak = get_weak();
+		this->DispatcherQueue().TryEnqueue([weak, tag]() {
+			if (auto self = weak.get())
+			{
+				auto frame = self->NavFrame();
+				auto content = frame.Content();
 
-                if (tag == L"home") { if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return; self->openHomePage(); return; }
-                if (tag == L"contacts") { if (content && content.try_as<winrt::OpenNet::Pages::ContactsPage>()) return; self->openContactsPage(); return; }
-                if (tag == L"tasks") { if (content && content.try_as<winrt::OpenNet::Pages::TasksPage>()) return; self->openTasksPage(); return; }
-                if (tag == L"files") { if (content && content.try_as<winrt::OpenNet::Pages::FilesPage>()) return; self->openFilesPage(); return; }
-                if (tag == L"net") { if (content && content.try_as<winrt::OpenNet::Pages::NetworkSettingsPage>()) return; self->openNetworkSettingsPage(); return; }
-                if (tag == L"servers") { if (content && content.try_as<winrt::OpenNet::Pages::ServersPage>()) return; self->openServersPage(); return; }
-                if (tag == L"settings" || tag == L"Settings") { if (content && content.try_as<winrt::OpenNet::Pages::SettingsPage>()) return; self->openSettingsPage(); return; }
+				if (tag == L"home") { if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return; self->openHomePage(); return; }
+				if (tag == L"contacts") { if (content && content.try_as<winrt::OpenNet::Pages::ContactsPage>()) return; self->openContactsPage(); return; }
+				if (tag == L"tasks") { if (content && content.try_as<winrt::OpenNet::Pages::TasksPage>()) return; self->openTasksPage(); return; }
+				if (tag == L"files") { if (content && content.try_as<winrt::OpenNet::Pages::FilesPage>()) return; self->openFilesPage(); return; }
+				if (tag == L"net") { if (content && content.try_as<winrt::OpenNet::Pages::NetworkSettingsPage>()) return; self->openNetworkSettingsPage(); return; }
+				if (tag == L"servers") { if (content && content.try_as<winrt::OpenNet::Pages::ServersPage>()) return; self->openServersPage(); return; }
+				if (tag == L"settings") { if (content && content.try_as<winrt::OpenNet::Pages::SettingsPage>()) return; self->openSettingsPage(); return; }
 
-                if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return; 
-                self->openHomePage();
-            }
-        });
-    }
+				if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return;
+				self->openHomePage();
+			}
+										   });
+	}
 
-    void MainWindow::NavFrame_Navigating(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&)
-    {
-    }
+	void MainWindow::NavFrame_Navigating(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&)
+	{
+	}
 
-    void MainWindow::AppTitleBar_BackRequested(Microsoft::UI::Xaml::Controls::TitleBar const&, IInspectable const&)
-    {
-        if (NavFrame().CanGoBack())
-        {
-            NavFrame().GoBack();
-        }
-    }
+	void MainWindow::AppTitleBar_BackRequested(Microsoft::UI::Xaml::Controls::TitleBar const&, IInspectable const&)
+	{
+		if (NavFrame().CanGoBack())
+		{
+			NavFrame().GoBack();
+		}
+	}
 
-    void MainWindow::NavFrame_Navigated(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
-    {
-        auto name = e.SourcePageType().Name;
-        hstring tag;
-        if (name == xaml_typename<winrt::OpenNet::Pages::HomePage>().Name) tag = L"home";
-        else if (name == xaml_typename<winrt::OpenNet::Pages::ContactsPage>().Name) tag = L"contacts";
-        else if (name == xaml_typename<winrt::OpenNet::Pages::TasksPage>().Name) tag = L"tasks";
-        else if (name == xaml_typename<winrt::OpenNet::Pages::FilesPage>().Name) tag = L"files";
-        else if (name == xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>().Name) tag = L"net";
-        else if (name == xaml_typename<winrt::OpenNet::Pages::ServersPage>().Name) tag = L"servers";
-        else if (name == xaml_typename<winrt::OpenNet::Pages::SettingsPage>().Name) tag = L"Settings";
-        if (!tag.empty()) UpdateNavigationSelection(tag);
-    }
+	void MainWindow::NavFrame_Navigated(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
+	{
+		auto name = e.SourcePageType().Name;
+		hstring tag;
+		if (name == xaml_typename<winrt::OpenNet::Pages::HomePage>().Name) tag = L"home";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::ContactsPage>().Name) tag = L"contacts";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::TasksPage>().Name) tag = L"tasks";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::FilesPage>().Name) tag = L"files";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>().Name) tag = L"net";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::ServersPage>().Name) tag = L"servers";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::SettingsPage>().Name) tag = L"Settings";
+		if (!tag.empty()) UpdateNavigationSelection(tag);
+	}
+
+	// New navigation pattern with SelectionChanged event 重构导航模式，使用 SelectionChanged 事件
+	//void MainWindow::NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& /*sender*/, 
+	//										  winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
+	//{
+	//	if (auto item = args.SelectedItem().try_as<NavigationViewItem>())
+	//	{
+	//		auto tag = unbox_value_or<hstring>(item.Tag(), L"");
+	//		NavigateTo(tag);
+	//	}
+	//}
+
+	//void MainWindow::NavigateTo(hstring const& tag)
+	//{
+	//	auto rootHwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(*this);
+	//	IInspectable rootHwndBoxed = nullptr;
+	//	if (rootHwnd)
+	//	{
+	//		rootHwndBoxed = winrt::box_value(
+	//			static_cast<uint64_t>(reinterpret_cast<uintptr_t>(rootHwnd))
+	//		);
+	//	}
+	//	else { rootHwndBoxed = winrt::box_value(static_cast<uint64_t>(NULL)); }
+
+	//	if (tag == L"home")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::HomePage>(), rootHwndBoxed);
+	//	}
+	//	else if (tag == L"contacts")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ContactsPage>(), rootHwndBoxed);
+	//	}
+	//	else if (tag == L"tasks")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::TasksPage>(), rootHwndBoxed);
+	//	}
+	//	else if (tag == L"files")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::FilesPage>(), rootHwndBoxed);
+	//	}
+	//	else if (tag == L"net")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>(), rootHwndBoxed);
+	//	}
+	//	else if (tag == L"servers")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ServersPage>(), rootHwndBoxed);
+	//	}
+	//	else if (tag == L"settings")
+	//	{
+	//		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPage>(), rootHwndBoxed);
+	//	}
+
+	//}
+
+
+
+
+
 }

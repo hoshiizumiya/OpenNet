@@ -54,6 +54,9 @@ namespace winrt::OpenNet::implementation
         // (Future extension placeholders similar to sample)
         void LoadFavorites() {} // no-op for now
         bool m_favoritesLoaded{ false };
+    public:
+        //void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
+        //void NavigateTo(hstring const& tag);
     };
 }
 

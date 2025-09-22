@@ -42,8 +42,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring AppVersion() const { return m_appVersion; }
         // Summary: 用户名文本（状态栏）
         winrt::hstring UserName() const { return m_userName; }
-        // Summary: 设备名文本（状态栏）
-        winrt::hstring DeviceName() const { return m_deviceName; }
+        // Summary: 端口状态
+        winrt::hstring PortState() const { return m_portState; }
 
         // 快速统计 / Quick stats
         int32_t ConnectedPeersCount() const { return m_connectedPeersCount; }
@@ -94,7 +94,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         bool m_isConnected{};
         winrt::hstring m_appVersion;
         winrt::hstring m_userName;
-        winrt::hstring m_deviceName;
+        winrt::hstring m_portState;
 
         // 导航状态 / Navigation state
         bool m_isHomeSelected{ true };

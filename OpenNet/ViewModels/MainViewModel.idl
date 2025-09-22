@@ -12,7 +12,7 @@
 		// 展示信息 / Display Info
 		String AppVersion { get; };
 		String UserName { get; };
-		String DeviceName { get; };
+		String PortState { get; };
 
 		// 快速统计 / Quick Stats
 		Int32 ConnectedPeersCount { get; };

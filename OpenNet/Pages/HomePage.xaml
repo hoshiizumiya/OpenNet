@@ -22,9 +22,9 @@
                         FontWeight="Bold" />
 
                     <TextBlock
-                        x:Uid="HomeSubtitle"
                         FontSize="16"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Test" />
 
                     <!--  快速操作 / Quick Actions  -->
                     <Border
@@ -104,7 +104,10 @@
                                 FontSize="18"
                                 FontWeight="SemiBold" />
 
-                            <TextBlock x:Uid="NetworkStatusTextBlock" FontSize="14" Text="{x:Bind ViewModel.NetworkStatusText, Mode=OneWay}" />
+                            <TextBlock
+                                x:Uid="NetworkStatusTextBlock"
+                                FontSize="14"
+                                Text="{x:Bind ViewModel.NetworkStatusText, Mode=OneWay}" />
 
                             <TextBlock>
                                 <Run x:Uid="NetworkQualityLabelRun" />
@@ -147,45 +150,7 @@
                 </StackPanel>
             </ScrollViewer>
 
-            <!--  网络状态页面 / Network Status Page  -->
-            <Grid x:Name="NetworkContent" x:Uid="NetworkContent">
-                <TextBlock
-                    x:Uid="NetworkPagePlaceholder"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-            </Grid>
 
-            <!--  节点列表页面 / Peer List Page  -->
-            <Grid x:Name="PeerContent" x:Uid="PeerContent">
-                <TextBlock
-                    x:Uid="PeerPagePlaceholder"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-            </Grid>
-
-            <!--  文件传输页面 / File Transfer Page  -->
-            <Grid x:Name="TransferContent" x:Uid="TransferContent">
-                <TextBlock
-                    x:Uid="TransferPagePlaceholder"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-            </Grid>
-
-            <!--  设置页面 / Settings Page  -->
-            <Grid x:Name="SettingsContent" x:Uid="SettingsContent">
-                <TextBlock
-                    x:Uid="SettingsPagePlaceholder"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    FontSize="24"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-            </Grid>
         </Grid>
     </Grid>
 </Page>

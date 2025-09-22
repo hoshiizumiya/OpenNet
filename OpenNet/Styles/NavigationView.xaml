@@ -444,7 +444,7 @@
                                             <ScrollViewer
                                                 x:Name="FooterItemsScrollViewer"
                                                 VerticalAnchorRatio="1"
-                                                VerticalScrollBarVisibility="Disabled"
+                                                VerticalScrollBarVisibility="Visible"
                                                 VerticalScrollMode="Disabled">
                                                 <ItemsRepeater x:Name="FooterMenuItemsHost" AutomationProperties.AccessibilityView="Content" />
                                             </ScrollViewer>

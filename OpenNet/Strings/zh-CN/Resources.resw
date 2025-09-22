@@ -147,14 +147,8 @@
   <data name="UserLabelRun.Text" xml:space="preserve">
     <value>用户:</value>
   </data>
-  <data name="DeviceLabelRun.Text" xml:space="preserve">
-    <value>设备:</value>
-  </data>
   <data name="HomeTitle.Text" xml:space="preserve">
     <value>欢迎使用 OpenNet</value>
-  </data>
-  <data name="HomeSubtitle.Text" xml:space="preserve">
-    <value>安全高效的点对点文件传输解决方案</value>
   </data>
   <data name="QuickActionsTitle.Text" xml:space="preserve">
     <value>快速操作</value>
@@ -177,19 +171,16 @@
   <data name="RecentActivitiesTitle.Text" xml:space="preserve">
     <value>最近活动</value>
   </data>
-  <data name="NetworkPagePlaceholder.Text" xml:space="preserve">
-    <value>网络状态页面</value>
+  <data name="NetworkSettingsPagePlaceholder.Text" xml:space="preserve">
+    <value>网络设置页面 (占位符)</value>
   </data>
-  <data name="PeerPagePlaceholder.Text" xml:space="preserve">
-    <value>节点列表页面</value>
-  </data>
-  <data name="TransferPagePlaceholder.Text" xml:space="preserve">
-    <value>文件传输页面</value>
+  <data name="MainWindowRoot" xml:space="preserve">
+    <value>OpenNet</value>
   </data>
   <data name="SettingsPagePlaceholder.Text" xml:space="preserve">
     <value>设置页面</value>
   </data>
-  <data name="NetworkSettingsPagePlaceholder.Text" xml:space="preserve">
-    <value>网络设置页面 (占位符)</value>
+  <data name="PortState" xml:space="preserve">
+    <value>端口状态</value>
   </data>
 </root>

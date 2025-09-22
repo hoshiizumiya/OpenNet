@@ -13,7 +13,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         , m_isConnected(false)
         , m_appVersion(L"v0.1.0")
         , m_userName(L"Guest")
-        , m_deviceName(L"This PC")
+		, m_portState(L"检测中")
     {
         m_recentActivities = single_threaded_observable_vector<hstring>();
         m_recentActivities.Append(L"应用已启动 / App started");

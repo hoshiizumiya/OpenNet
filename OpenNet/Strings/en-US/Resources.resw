@@ -147,14 +147,8 @@
   <data name="UserLabelRun.Text" xml:space="preserve">
     <value>User:</value>
   </data>
-  <data name="DeviceLabelRun.Text" xml:space="preserve">
-    <value>Device:</value>
-  </data>
   <data name="HomeTitle.Text" xml:space="preserve">
     <value>Welcome to OpenNet</value>
-  </data>
-  <data name="HomeSubtitle.Text" xml:space="preserve">
-    <value>Secure and efficient peer-to-peer file transfer solution</value>
   </data>
   <data name="QuickActionsTitle.Text" xml:space="preserve">
     <value>Quick Actions</value>
@@ -177,19 +171,16 @@
   <data name="RecentActivitiesTitle.Text" xml:space="preserve">
     <value>Recent Activities</value>
   </data>
-  <data name="NetworkPagePlaceholder.Text" xml:space="preserve">
-    <value>Network Status Page</value>
+  <data name="NetworkSettingsPagePlaceholder.Text" xml:space="preserve">
+    <value>Network Settings Page (Placeholder)</value>
   </data>
-  <data name="PeerPagePlaceholder.Text" xml:space="preserve">
-    <value>Peer List Page</value>
-  </data>
-  <data name="TransferPagePlaceholder.Text" xml:space="preserve">
-    <value>File Transfer Page</value>
+  <data name="MainWindowRoot" xml:space="preserve">
+    <value>OpenNet - a p2p client</value>
   </data>
   <data name="SettingsPagePlaceholder.Text" xml:space="preserve">
     <value>Settings Page</value>
   </data>
-  <data name="NetworkSettingsPagePlaceholder.Text" xml:space="preserve">
-    <value>Network Settings Page (Placeholder)</value>
+  <data name="PortState" xml:space="preserve">
+    <value>PortState</value>
   </data>
 </root>
