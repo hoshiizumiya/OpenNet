@@ -18,6 +18,7 @@
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace Microsoft::UI::Xaml;
+using namespace Microsoft::UI::Windowing;
 using namespace Microsoft::UI::Xaml::Controls;
 using MainViewModel = winrt::OpenNet::ViewModels::MainViewModel;
 
@@ -44,10 +45,22 @@ namespace winrt::OpenNet::implementation
 		return m_viewModel;
 	}
 
-	IAsyncAction MainWindow::SetIconAsync(Microsoft::UI::Windowing::AppWindow window)
+	IAsyncAction MainWindow::SetIconAsync(Microsoft::UI::Windowing::AppWindow appWindow)
 	{
-		if (!window) co_return;
-		try { /* set icon placeholder */ }
+		if (!appWindow) co_return;
+		try
+		{
+			//Get AppWindow and Set Title and Size
+			//auto appWindow = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetAppWindow(window);
+
+			//AppWindow.Title()
+			//appWindow.Resize(Windows::Graphics::SizeInt32(width, height));
+			//OverlappedPresenter presenter = OverlappedPresenter::Create();Not right api!!
+			//presenter.PreferredMinimumHeight() = 400;//MinHeight;
+			//presenter.PreferredMinimumWidth() = 400;//MinWidth;
+			//appWindow.SetPresenter(presenter);
+			//appWindow.SetIcon(L"ms-appx:///Assets/AppIcons/win32.ico");//WE NEED A ICO FILE!
+		}
 		catch (...) {}
 		co_return;
 	}

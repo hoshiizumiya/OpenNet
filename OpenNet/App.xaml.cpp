@@ -1,7 +1,6 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
-#include "Helpers/WindowHelper.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -39,18 +38,7 @@ namespace winrt::OpenNet::implementation
         window = make<MainWindow>();
         window.Activate();
 
-		//Get AppWindow and Set Title and Size
-        auto appWindow = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetAppWindow(window);
-
-        //AppWindow.Title()
-        //appWindow.Resize(Windows::Graphics::SizeInt32(width, height));
-        OverlappedPresenter presenter = OverlappedPresenter::Create();
-        //presenter.PreferredMinimumHeight() = MinHeight;
-        //presenter.PreferredMinimumWidth() = MinWidth;
-        appWindow.SetPresenter(presenter);
-        //appWindow.SetIcon(L"/Assets/AppIcons/");WE NEED A ICO FILE!
-
-        // Language Hot-Reload supprot
+        // Language Hot-Reload support
         auto supportedLanguages = Windows::Globalization::ApplicationLanguages::Languages();
 
         // 构建输出字符串

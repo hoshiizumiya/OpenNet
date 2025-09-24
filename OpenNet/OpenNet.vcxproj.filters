@@ -308,6 +308,7 @@
     <Image Include="Assets\AppIcons\StoreLogo.scale-400.png">
       <Filter>Assets\AppIcons</Filter>
     </Image>
+    <Image Include="Assets\AppIcons\win32.ico" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

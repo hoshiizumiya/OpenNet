@@ -1,9 +1,4 @@
-﻿#pragma once
-#ifndef TORRENT_LINKING_SHARED
-#define TORRENT_LINKING_SHARED
-#endif // !TORRENT_LINKING_SHARED
-
-#include "pch.h"
+﻿#include "pch.h"
 #include "libtorrentHandle.h"
 
 #include <libtorrent/session.hpp>

@@ -7,15 +7,11 @@
 #include <memory>
 #include <mutex>
 
-namespace libtorrent
-{
-    class session;
-    struct add_torrent_params;
-    struct torrent_handle;
-    struct torrent_status;
-    struct alert;
-    struct settings_pack;
-}
+// 直接包含 libtorrent 头，避免与 inline namespace 冲突
+#include <libtorrent/fwd.hpp>
+#include <libtorrent/session.hpp>
+#include <libtorrent/alert.hpp>
+#include <libtorrent/settings_pack.hpp>
 
 namespace OpenNet::Core::Torrent
 {
