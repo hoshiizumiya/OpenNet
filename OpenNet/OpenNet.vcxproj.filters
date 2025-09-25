@@ -68,6 +68,7 @@
     <Midl Include="ViewModels\TaskViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
+    <Midl Include="ViewModels\TasksViewModel.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -113,6 +114,7 @@
     <ClCompile Include="ViewModels\TaskViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
+    <ClCompile Include="ViewModels\TasksViewModel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -174,6 +176,18 @@
     <ClInclude Include="ViewModels\TaskViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
+    <ClInclude Include="Helpers\ObjectConverter.hpp" />
+    <ClInclude Include="mvvm_framework\delegate_command.h" />
+    <ClInclude Include="mvvm_framework\delegate_command_builder.h" />
+    <ClInclude Include="mvvm_framework\mvvm_diagnostics.h" />
+    <ClInclude Include="mvvm_framework\name_of.h" />
+    <ClInclude Include="mvvm_framework\notify_property_changed.h" />
+    <ClInclude Include="mvvm_framework\property_macros.h" />
+    <ClInclude Include="mvvm_framework\view.h" />
+    <ClInclude Include="mvvm_framework\view_model.h" />
+    <ClInclude Include="mvvm_framework\view_model_base.h" />
+    <ClInclude Include="mvvm_framework\view_sync_data_context.h" />
+    <ClInclude Include="ViewModels\TasksViewModel.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -393,6 +407,7 @@
     <None Include="packages.config" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
+    <None Include="mvvm_framework\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

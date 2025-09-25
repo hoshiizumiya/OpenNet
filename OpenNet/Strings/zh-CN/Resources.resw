@@ -186,4 +186,13 @@
   <data name="HomeTitleTip" xml:space="preserve">
     <value>现代界面的软件</value>
   </data>
+  <data name="TaskStartButton.Label" xml:space="preserve">
+    <value>启动</value>
+  </data>
+  <data name="TaskPauseButton.Label" xml:space="preserve">
+    <value>暂停</value>
+  </data>
+  <data name="TaskNewButton.Label" xml:space="preserve">
+    <value>新建任务</value>
+  </data>
 </root>

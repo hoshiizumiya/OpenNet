@@ -144,6 +144,7 @@
       <DependentUpon>Helpers\NavItemIconHelper.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Helpers\ObjectConverter.hpp" />
     <ClInclude Include="Helpers\WindowHelper.h" />
     <ClInclude Include="Models\NetModel.h">
       <DependentUpon>Models\models.idl</DependentUpon>
@@ -161,6 +162,16 @@
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="mvvm_framework\delegate_command.h" />
+    <ClInclude Include="mvvm_framework\delegate_command_builder.h" />
+    <ClInclude Include="mvvm_framework\mvvm_diagnostics.h" />
+    <ClInclude Include="mvvm_framework\name_of.h" />
+    <ClInclude Include="mvvm_framework\notify_property_changed.h" />
+    <ClInclude Include="mvvm_framework\property_macros.h" />
+    <ClInclude Include="mvvm_framework\view.h" />
+    <ClInclude Include="mvvm_framework\view_model.h" />
+    <ClInclude Include="mvvm_framework\view_model_base.h" />
+    <ClInclude Include="mvvm_framework\view_sync_data_context.h" />
     <ClInclude Include="Pages\ContactsPage.xaml.h">
       <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -222,10 +233,14 @@
       <DependentUpon>ViewModels\SettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="ViewModels\TaskViewModel.h">
-	      <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
+    <ClInclude Include="ViewModels\TasksViewModel.h">
+      <DependentUpon>ViewModels\TasksViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+	  <ClInclude Include="ViewModels\TaskViewModel.h">
+		  <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
+		  <SubType>Code</SubType>
+	  </ClInclude>
     <ClInclude Include="ViewModels\TransferViewModel.h">
       <DependentUpon>ViewModels\TransferViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -341,10 +356,14 @@
       <DependentUpon>ViewModels\SettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="ViewModels\TaskViewModel.cpp">
-	      <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
+    <ClCompile Include="ViewModels\TasksViewModel.cpp">
+      <DependentUpon>ViewModels\TasksViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+	  <ClCompile Include="ViewModels\TaskViewModel.cpp">
+		  <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
+		  <SubType>Code</SubType>
+	  </ClCompile>
     <ClCompile Include="ViewModels\TransferViewModel.cpp">
       <DependentUpon>ViewModels\TransferViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -404,9 +423,12 @@
     <Midl Include="ViewModels\SettingsViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="ViewModels\TaskViewModel.idl">
+    <Midl Include="ViewModels\TasksViewModel.idl">
       <SubType>Code</SubType>
-	</Midl>
+    </Midl>
+	  <Midl Include="ViewModels\TaskViewModel.idl">
+		  <SubType>Code</SubType>
+	  </Midl>
     <Midl Include="ViewModels\TransferViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -484,6 +506,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="mvvm_framework\README.md" />
     <None Include="packages.config" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />

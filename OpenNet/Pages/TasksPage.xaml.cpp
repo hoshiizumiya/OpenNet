@@ -12,5 +12,8 @@ namespace winrt::OpenNet::Pages::implementation
 	TasksPage::TasksPage()
 	{
 		InitializeComponent();
+		// Create and attach the view-model
+		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
+		this->DataContext(m_viewModel); // optional, helpful for {Binding} consumers and designer
 	}
 }

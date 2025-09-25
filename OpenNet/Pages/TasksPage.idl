@@ -1,11 +1,13 @@
-﻿namespace OpenNet.Pages
+﻿import "ViewModels/TasksViewModel.idl";
+
+namespace OpenNet.Pages
 {
     [default_interface]
     runtimeclass TasksPage : Microsoft.UI.Xaml.Controls.Page
     {
         TasksPage();
 
-
-            
+        // Strongly-typed view model for x:Bind
+        OpenNet.ViewModels.TasksViewModel ViewModel { get; };
     }
 }

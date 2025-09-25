@@ -186,4 +186,13 @@
   <data name="HomeTitleTip" xml:space="preserve">
     <value>A morden window app</value>
   </data>
+  <data name="TaskStartButton.Label" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="TaskPauseButton.Label" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="TaskNewButton.Label" xml:space="preserve">
+    <value>New Task</value>
+  </data>
 </root>

@@ -1,0 +1,18 @@
+﻿import "ViewModels/TaskViewModel.idl";
+
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass TasksViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TasksViewModel();
+
+        // Collection bound to ListView
+        Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> Tasks { get; };
+
+        // Commands for toolbar (placeholders for now)
+        Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand PauseCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
+    }
+}
