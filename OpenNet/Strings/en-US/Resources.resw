@@ -183,4 +183,7 @@
   <data name="PortState" xml:space="preserve">
     <value>PortState</value>
   </data>
+  <data name="HomeTitleTip" xml:space="preserve">
+    <value>A morden window app</value>
+  </data>
 </root>

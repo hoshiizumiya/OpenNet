@@ -11,13 +11,27 @@
     <Page Include="Pages\NetworkSettingsPage.xaml">
       <Filter>Pages</Filter>
     </Page>
-    <Page Include="Pages\HomePage.xaml" />
-    <Page Include="Styles\NavigationView.xaml" />
-    <Page Include="Pages\ContactsPage.xaml" />
-    <Page Include="Pages\TasksPage.xaml" />
-    <Page Include="Pages\FilesPage.xaml" />
-    <Page Include="Pages\ServersPage.xaml" />
-    <Page Include="Pages\SettingsPage.xaml" />
+    <Page Include="Pages\TasksPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="Pages\SettingsPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="Pages\ServersPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="Pages\HomePage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="Pages\ContactsPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
+    <Page Include="Styles\NavigationView.xaml">
+      <Filter>Styles</Filter>
+    </Page>
+    <Page Include="Pages\FilesPage.xaml">
+      <Filter>Pages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -48,7 +62,12 @@
     <Midl Include="Pages\NetworkSettingsPage.idl">
       <Filter>Pages</Filter>
     </Midl>
-    <Midl Include="Helpers\NavItemIconHelper.idl" />
+    <Midl Include="Helpers\NavItemIconHelper.idl">
+      <Filter>Helpers</Filter>
+    </Midl>
+    <Midl Include="ViewModels\TaskViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -84,9 +103,16 @@
       <Filter>ThirdPatry\sqlite</Filter>
     </ClCompile>
     <ClCompile Include="Models\NetModel.cpp" />
-    <ClCompile Include="Helpers\WindowHelper.cpp" />
     <ClCompile Include="Helpers\NavItemIconHelper.cpp" />
-    <ClCompile Include="Core\torrentCore\libtorrentHandle.cpp" />
+    <ClCompile Include="Helpers\WindowHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\torrentCore\libtorrentHandle.cpp">
+      <Filter>Core\torrentCore</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\TaskViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -138,9 +164,16 @@
     </ClInclude>
     <ClInclude Include="Models\NetModel.h" />
     <ClInclude Include="ViewModels\ObservableMixin.h" />
-    <ClInclude Include="Helpers\WindowHelper.h" />
     <ClInclude Include="Helpers\NavItemIconHelper.h" />
-    <ClInclude Include="Core\torrentCore\libtorrentHandle.h" />
+    <ClInclude Include="Helpers\WindowHelper.h">
+      <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\torrentCore\libtorrentHandle.h">
+      <Filter>Core\torrentCore</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\TaskViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -308,7 +341,9 @@
     <Image Include="Assets\AppIcons\StoreLogo.scale-400.png">
       <Filter>Assets\AppIcons</Filter>
     </Image>
-    <Image Include="Assets\AppIcons\win32.ico" />
+    <Image Include="Assets\AppIcons\win32.ico">
+      <Filter>Assets\AppIcons</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -340,6 +375,12 @@
     </Filter>
     <Filter Include="Helpers">
       <UniqueIdentifier>{d2535c01-702d-4139-a773-5bdf1cd070a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Styles">
+      <UniqueIdentifier>{172a2679-24b3-4263-85e8-296789ec06ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\torrentCore">
+      <UniqueIdentifier>{b551d157-3814-44d1-8031-64907be98514}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

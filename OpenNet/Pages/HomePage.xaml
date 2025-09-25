@@ -24,7 +24,7 @@
                     <TextBlock
                         FontSize="16"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="Test" />
+                        x:Uid="HomeTitleTip" />
 
                     <!--  快速操作 / Quick Actions  -->
                     <Border

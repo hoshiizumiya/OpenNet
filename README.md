@@ -1,3 +1,3 @@
-﻿# Weclome to the OpenNet project.
+﻿# Welcome to the OpenNet project.
 
-It is not presently in a usable state, but we are working on it.
+Now the main dev purpose is to make torrent download workable at taskPage.

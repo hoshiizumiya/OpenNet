@@ -183,4 +183,7 @@
   <data name="PortState" xml:space="preserve">
     <value>端口状态</value>
   </data>
+  <data name="HomeTitleTip" xml:space="preserve">
+    <value>现代界面的软件</value>
+  </data>
 </root>

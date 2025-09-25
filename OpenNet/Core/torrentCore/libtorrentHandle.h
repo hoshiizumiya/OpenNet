@@ -8,6 +8,10 @@
 #include <mutex>
 
 // 直接包含 libtorrent 头，避免与 inline namespace 冲突
+//forward declarations  前置声明
+//Forward declaring types from the libtorrent namespace is discouraged as it may break in future releases.Instead include libtorrent / fwd.hpp for forward declarations of all public types in libtorrent.
+//不建议在 libtorrent 命名空间中提前声明类型，因为这可能在未来的版本中出现问题。相反，应包含 libtorrent / fwd.hpp 以声明 libtorrent 中所有公共类型的提前声明。
+
 #include <libtorrent/fwd.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/alert.hpp>
