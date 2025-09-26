@@ -13,5 +13,6 @@ namespace OpenNet.ViewModels
         String Progress;
         String DownloadRate;
         String Remaining;
+        String AddDate;
     };
 }

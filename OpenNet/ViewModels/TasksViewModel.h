@@ -13,51 +13,52 @@
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
-    // ViewModel managing torrent tasks list populated from libtorrent
-    struct TasksViewModel : TasksViewModelT<TasksViewModel>, ::mvvm::view_model<TasksViewModel>
-    {
-        TasksViewModel();
+	// ViewModel managing torrent tasks list populated from libtorrent
+	struct TasksViewModel : TasksViewModelT<TasksViewModel>, ::mvvm::view_model<TasksViewModel>
+	{
+		TasksViewModel();
 
-        // IObservableVector of TaskViewModel for binding
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> Tasks() const { return m_tasks; }
+		// IObservableVector of TaskViewModel for TaskProperty to x:Bind on xaml
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> Tasks() const { return m_tasks; }
 
-        // Toolbar commands
-        winrt::Microsoft::UI::Xaml::Input::ICommand StartCommand() const { return m_startCommand; }
-        winrt::Microsoft::UI::Xaml::Input::ICommand PauseCommand() const { return m_pauseCommand; }
-        winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand() const { return m_newCommand; }
+		// Toolbar commands
+		winrt::Microsoft::UI::Xaml::Input::ICommand StartCommand() const { return m_startCommand; }
+		winrt::Microsoft::UI::Xaml::Input::ICommand PauseCommand() const { return m_pauseCommand; }
+		// add new task
+		winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand() const { return m_newCommand; }
 
-        // lifecycle
-        void Initialize();
-        void Shutdown();
+		// lifecycle
+		void Initialize();
+		void Shutdown();
 
-        // Internal: wire to native core
-        void WireLibtorrentCallbacks();
+		// Internal: wire to native core
+		void WireLibtorrentCallbacks();
 
-        // Dispatcher accessor required by mvvm::view_model_base
-        winrt::Microsoft::UI::Dispatching::DispatcherQueue Dispatcher() const { return m_dispatcher; }
+		// Dispatcher accessor required by mvvm::view_model_base
+		winrt::Microsoft::UI::Dispatching::DispatcherQueue Dispatcher() const { return m_dispatcher; }
 
-    private:
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
+	private:
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
 
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_startCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_pauseCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_startCommand{ nullptr };
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_pauseCommand{ nullptr };
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
 
-        std::unique_ptr<::OpenNet::Core::Torrent::LibtorrentHandle> m_core;
-        std::mutex m_coreMutex;
+		std::unique_ptr<::OpenNet::Core::Torrent::LibtorrentHandle> m_core;
+		std::mutex m_coreMutex;
 
-        // Helper: find existing item by name
-        winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateItem(winrt::hstring const& name);
+		// Helper: find existing item by name
+		winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateItem(winrt::hstring const& name);
 
-        void OnProgress(::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent const& e);
-        void OnFinished(std::string const& name);
-        void OnError(std::string const& msg);
-    };
+		void OnProgress(::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent const& e);
+		void OnFinished(std::string const& name);
+		void OnError(std::string const& msg);
+	};
 }
 
 namespace winrt::OpenNet::ViewModels::factory_implementation
 {
-    struct TasksViewModel : TasksViewModelT<TasksViewModel, implementation::TasksViewModel>
-    {
-    };
+	struct TasksViewModel : TasksViewModelT<TasksViewModel, implementation::TasksViewModel>
+	{
+	};
 }

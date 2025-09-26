@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "MainViewModel.h"
 #include "ViewModels/MainViewModel.g.cpp"
+#include "Core/torrentCore/libtorrentHandle.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -23,6 +24,8 @@ namespace winrt::OpenNet::ViewModels::implementation
     void MainViewModel::Initialize()
     {
         StatusText(L"就绪 / Ready");
+
+        InitializeTorrentCore();
     }
 
     // Summary: 更新状态文本并记录到活动列表
@@ -34,5 +37,13 @@ namespace winrt::OpenNet::ViewModels::implementation
         {
             m_recentActivities.Append(status);
         }
+    }
+
+    IAsyncAction MainViewModel::InitializeTorrentCore()
+    {
+		auto LibtorrentInitCore = new ::OpenNet::Core::Torrent::LibtorrentHandle();
+        //co_await resume_background();
+        LibtorrentInitCore->Initialize();
+        //co_await m_dispatcher;
     }
 }

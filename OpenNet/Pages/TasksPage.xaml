@@ -17,10 +17,28 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <!--  NewWindow  -->
+        <!--<AutoSuggestBox Width="280" QueryIcon="Find" />-->
+        <AutoSuggestBox
+            x:Name="SearchBox"
+            Width="280"
+            Margin="12,6"
+            HorizontalAlignment="Left"
+            PlaceholderText="Search"
+            QueryIcon="Find" />
+        <!--  TextChanged="SearchBox_TextChanged"  -->
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
-            <AppBarButton x:Uid="TaskStartButton" Icon="Play" Command="{x:Bind ViewModel.StartCommand}" />
-            <AppBarButton x:Uid="TaskPauseButton" Icon="Pause" Command="{x:Bind ViewModel.PauseCommand}" />
-            <AppBarButton x:Uid="TaskNewButton" Icon="Add" Command="{x:Bind ViewModel.NewCommand}" />
+            <AppBarButton
+                x:Uid="TaskStartButton"
+                Command="{x:Bind ViewModel.StartCommand}"
+                Icon="Play" />
+            <AppBarButton
+                x:Uid="TaskPauseButton"
+                Command="{x:Bind ViewModel.PauseCommand}"
+                Icon="Pause" />
+            <AppBarButton
+                x:Uid="TaskNewButton"
+                Command="{x:Bind ViewModel.NewCommand}"
+                Icon="Add" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton Icon="Setting" Label="Settings">
                     <AppBarButton.KeyboardAccelerators>
@@ -29,14 +47,13 @@
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
 
-            <!--<AutoSuggestBox Width="280" QueryIcon="Find"/>-->
         </CommandBar>
 
         <SplitView
             Grid.Row="1"
             DisplayMode="Inline"
             IsPaneOpen="True"
-            OpenPaneLength="260">
+            OpenPaneLength="50">
             <SplitView.Pane>
                 <!--  WinUI TreeView  -->
                 <muxc:TreeView />
@@ -68,6 +85,7 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
                         <TextBlock
                             Grid.Column="0"
@@ -77,6 +95,7 @@
                         <TextBlock Grid.Column="2" Text="Progress" />
                         <TextBlock Grid.Column="3" Text="DL Rate" />
                         <TextBlock Grid.Column="4" Text="Remaining" />
+                        <TextBlock Grid.Column="5" Text="Add Date" />
                     </Grid>
 
                     <!--  列表  -->
@@ -101,6 +120,7 @@
                                     <TextBlock Grid.Column="2" Text="{x:Bind Progress, Mode=OneWay}" />
                                     <TextBlock Grid.Column="3" Text="{x:Bind DownloadRate, Mode=OneWay}" />
                                     <TextBlock Grid.Column="4" Text="{x:Bind Remaining, Mode=OneWay}" />
+                                    <TextBlock Grid.Column="4" Text="{x:Bind AddDate, Mode=OneWay}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>

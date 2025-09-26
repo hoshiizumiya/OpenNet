@@ -3,17 +3,17 @@
 #include "ViewModels/TasksViewModel.g.cpp"
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Windows.Foundation.h>
+#include "Core/torrentCore/libtorrentHandle.h"
 
 using namespace std::string_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
-    TasksViewModel::TasksViewModel()
-        : ::mvvm::view_model<TasksViewModel>(winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread())
+    TasksViewModel::TasksViewModel() : ::mvvm::view_model<TasksViewModel>(winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread())
     {
         m_tasks = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TaskViewModel>();
 
-        // Simple commands (wire actual behavior later) - specify template arg and use winrt::make for C++14
+        // Simple commands (wire actual behavior later) - specify template arg and use winrt::make
         m_startCommand = winrt::make<mvvm::delegate_command<winrt::Windows::Foundation::IInspectable>>(
             [this](winrt::Windows::Foundation::IInspectable const&)
             {
@@ -34,6 +34,8 @@ namespace winrt::OpenNet::ViewModels::implementation
             [this](winrt::Windows::Foundation::IInspectable const&)
             {
                 // open add magnet dialog in future
+				//::OpenNet::Core::Torrent::LibtorrentHandle::LibtorrentInitCore->AddMagnet("magnet:?xt=urn:btih:9a316b69b22250a87b794ab9002137576dea4302&tr=https%3A%2F%2Ftr.bangumi.moe%3A9696%2Fannounce&tr=http%3A%2F%2Ftr.bangumi.moe%3A6969%2Fannounce&tr=udp%3A%2F%2Ftr.bangumi.moe%3A6969%2Fannounce&tr=http%3A%2F%2Fopen.acgtracker.com%3A1096%2Fannounce&tr=http%3A%2F%2F208.67.16.113%3A8000%2Fannounce&tr=udp%3A%2F%2F208.67.16.113%3A8000%2Fannounce&tr=http%3A%2F%2Ftracker.ktxp.com%3A6868%2Fannounce&tr=http%3A%2F%2Ftracker.ktxp.com%3A7070%2Fannounce&tr=http%3A%2F%2Ft2.popgo.org%3A7456%2Fannonce&tr=http%3A%2F%2Fbt.sc-ol.com%3A2710%2Fannounce&tr=http%3A%2F%2Fshare.camoe.cn%3A8080%2Fannounce&tr=http%3A%2F%2F61.154.116.205%3A8000%2Fannounce&tr=http%3A%2F%2Fbt.rghost.net%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.openbittorrent.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.publicbt.com%3A80%2Fannounce&tr=http%3A%2F%2Ftracker.prq.to%2Fannounce&tr=http%3A%2F%2Fopen.nyaatorrents.info%3A6544%2Fannounce");
+
             }
         );
 

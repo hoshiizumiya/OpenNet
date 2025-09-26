@@ -30,12 +30,16 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring Remaining() const { return m_remaining; }
         void Remaining(winrt::hstring const& v) { SetProperty(m_remaining, v, L"Remaining"); }
 
+        winrt::hstring AddDate() const { return m_addDate; }
+        void AddDate(winrt::hstring const& v) { SetProperty(m_addDate, v, L"AddDate"); }
+
     private:
         winrt::hstring m_name;
         winrt::hstring m_size;
         winrt::hstring m_progress;
         winrt::hstring m_downloadRate;
         winrt::hstring m_remaining;
+        winrt::hstring m_addDate;
     };
 }
 

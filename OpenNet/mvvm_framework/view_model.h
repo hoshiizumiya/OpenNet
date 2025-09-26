@@ -1,4 +1,4 @@
-//*********************************************************
+﻿//*********************************************************
 //
 //    Copyright (c) Millennium R&D Team. All rights reserved.
 //    This code is licensed under the MIT License.
@@ -33,7 +33,7 @@ namespace mvvm
                 m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
                 //if (!m_dispatcher)
                 //{
-                //    // ���ԴӴ��ڻ�ȡ DispatcherQueue
+                //    // 尝试从窗口获取 DispatcherQueue
                 //    if (auto window = winrt::Microsoft::UI::Xaml::Window::Current())
                 //    {
                 //        m_dispatcher = window.DispatcherQueue();

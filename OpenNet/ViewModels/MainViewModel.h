@@ -68,6 +68,9 @@ namespace winrt::OpenNet::ViewModels::implementation
         // Param status: 新的状态字符串
         void UpdateStatus(winrt::hstring const& status);
 
+		// Summary: 初始化核心组件（P2P引擎）
+        Windows::Foundation::IAsyncAction InitializeTorrentCore();
+
         // INotifyPropertyChanged add/remove
         winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler) { return m_propertyChanged.add(handler); }
         void PropertyChanged(winrt::event_token const& token) noexcept { m_propertyChanged.remove(token); }
