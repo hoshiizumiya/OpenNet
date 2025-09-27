@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "MainViewModel.h"
 #include "ViewModels/MainViewModel.g.cpp"
-#include "Core/torrentCore/libtorrentHandle.h"
+#include "Core/P2PManager.h"
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -41,9 +41,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 
     IAsyncAction MainViewModel::InitializeTorrentCore()
     {
-		auto LibtorrentInitCore = new ::OpenNet::Core::Torrent::LibtorrentHandle();
-        //co_await resume_background();
-        LibtorrentInitCore->Initialize();
-        //co_await m_dispatcher;
+        // 使用单例管理 torrent 核心，异步后台初始化
+        auto ui = winrt::apartment_context();
+        UpdateStatus(L"初始化 P2P Core...");
+        co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+        if (::OpenNet::Core::P2PManager::Instance().IsTorrentCoreInitialized())
+        {
+            co_await ui;
+            UpdateStatus(L"P2P Core 已就绪");
+        }
+        else
+        {
+            co_await ui;
+            UpdateStatus(L"P2P Core 初始化失败");
+        }
     }
 }

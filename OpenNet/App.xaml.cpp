@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
+#include "Helpers/WindowHelper.h"
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -36,6 +37,7 @@ namespace winrt::OpenNet::implementation
     void App::OnLaunched([[maybe_unused]] LaunchActivatedEventArgs const& e)
     {
         window = make<MainWindow>();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
         window.Activate();
 
         // Language Hot-Reload support

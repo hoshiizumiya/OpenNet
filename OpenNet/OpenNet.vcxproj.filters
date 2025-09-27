@@ -115,6 +115,7 @@
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\TasksViewModel.cpp" />
+    <ClCompile Include="Core\P2PManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
