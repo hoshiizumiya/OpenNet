@@ -25,6 +25,7 @@ namespace winrt::OpenNet::Pages::implementation
 		InitializeComponent();
 		// Create and attach the view-model
 		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
+		// for runtime binding we may do not need the data context
 		this->DataContext(m_viewModel);
 		//this->CacheMode();
 		// subscribe to AddTaskRequested to show modal dialog

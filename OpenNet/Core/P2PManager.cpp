@@ -12,6 +12,7 @@ namespace OpenNet::Core
         return inst;
     }
 
+    // 确保核心已经完成初始化
     IAsyncAction P2PManager::EnsureTorrentCoreInitializedAsync()
     {
         if (m_isTorrentCoreInitialized.load()) co_return;

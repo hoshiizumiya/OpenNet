@@ -551,7 +551,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.ML.1.8.2091\build\native\Microsoft.WindowsAppSDK.ML.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.ML.1.8.2091\build\native\Microsoft.WindowsAppSDK.ML.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.250916003\build\native\Microsoft.WindowsAppSDK.Runtime.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.250916003\build\native\Microsoft.WindowsAppSDK.Runtime.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.13\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.13\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -585,6 +585,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.250916003\build\native\Microsoft.WindowsAppSDK.Runtime.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.250916003\build\native\Microsoft.WindowsAppSDK.Runtime.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.250916003\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.13\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.13\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.17\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

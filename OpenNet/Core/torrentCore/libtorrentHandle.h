@@ -16,6 +16,7 @@
 #include <libtorrent/session.hpp>
 #include <libtorrent/alert.hpp>
 #include <libtorrent/settings_pack.hpp>
+#include <libtorrent/socket.hpp>
 
 namespace OpenNet::Core::Torrent
 {

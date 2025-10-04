@@ -28,6 +28,10 @@
         <!--  TextChanged="SearchBox_TextChanged"  -->
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
             <AppBarButton
+                x:Uid="TaskNewButton"
+                Command="{x:Bind ViewModel.NewCommand}"
+                Icon="Add" />
+            <AppBarButton
                 x:Uid="TaskStartButton"
                 Command="{x:Bind ViewModel.StartCommand}"
                 Icon="Play" />
@@ -36,9 +40,9 @@
                 Command="{x:Bind ViewModel.PauseCommand}"
                 Icon="Pause" />
             <AppBarButton
-                x:Uid="TaskNewButton"
-                Command="{x:Bind ViewModel.NewCommand}"
-                Icon="Add" />
+                x:Uid="TaskDeleteButton"
+                Command="{x:Bind ViewModel.DeleteCommand}"
+                Icon="Delete" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton Icon="Setting" Label="Settings">
                     <AppBarButton.KeyboardAccelerators>

@@ -19,9 +19,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> Tasks() const { return m_tasks; }
 
+		winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand() const { return m_newCommand; }
 		winrt::Microsoft::UI::Xaml::Input::ICommand StartCommand() const { return m_startCommand; }
 		winrt::Microsoft::UI::Xaml::Input::ICommand PauseCommand() const { return m_pauseCommand; }
-		winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand() const { return m_newCommand; }
+		winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand() const { return m_deleteCommand; }
 
 		void Initialize();
 		void Shutdown();
@@ -34,9 +35,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	private:
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
 		winrt::Microsoft::UI::Xaml::Input::ICommand m_startCommand{ nullptr };
 		winrt::Microsoft::UI::Xaml::Input::ICommand m_pauseCommand{ nullptr };
-		winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_deleteCommand{ nullptr };
 
 		winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateItem(winrt::hstring const& name);
 		void OnProgress(const struct ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e);

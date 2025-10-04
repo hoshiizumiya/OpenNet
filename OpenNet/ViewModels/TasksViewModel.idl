@@ -11,9 +11,10 @@ namespace OpenNet.ViewModels
         Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> Tasks { get; };
 
         // Commands for toolbar (placeholders for now)
+        Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand PauseCommand { get; };
-        Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand DeleteCommand{ get; };
 
         // Event raised to request adding a task (string parameter can carry task name or data)
         event Windows.Foundation.EventHandler<String> AddTaskRequested;
