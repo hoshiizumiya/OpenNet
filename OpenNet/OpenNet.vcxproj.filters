@@ -69,6 +69,8 @@
       <Filter>ViewModels</Filter>
     </Midl>
     <Midl Include="ViewModels\TasksViewModel.idl" />
+    <Midl Include="mvvm_framework\mvvm_framework_events.idl" />
+    <Midl Include="mvvm_framework\mvvm_framework_inf.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -116,6 +118,7 @@
     </ClCompile>
     <ClCompile Include="ViewModels\TasksViewModel.cpp" />
     <ClCompile Include="Core\P2PManager.cpp" />
+    <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -189,6 +192,11 @@
     <ClInclude Include="mvvm_framework\view_model_base.h" />
     <ClInclude Include="mvvm_framework\view_sync_data_context.h" />
     <ClInclude Include="ViewModels\TasksViewModel.h" />
+    <ClInclude Include="mvvm_framework\async_command.h" />
+    <ClInclude Include="mvvm_framework\async_command_builder.h" />
+    <ClInclude Include="mvvm_framework\mvvm_framework_events.h" />
+    <ClInclude Include="mvvm_framework\mvvm_hresult_helper.h" />
+    <ClInclude Include="mvvm_framework\subscription_tracker.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">

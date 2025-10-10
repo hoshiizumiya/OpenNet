@@ -102,7 +102,7 @@ namespace winrt::OpenNet::Pages::implementation
 					}
 				}
 				}();
-						});*/
+					});*/
 
 		// 替换原来的 browseBtn.Click 代码片段
 		browseBtn.Click(
@@ -151,4 +151,18 @@ namespace winrt::OpenNet::Pages::implementation
 			}
 		}
 	}
+
+    void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
+                                                    Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
+    {
+        (void)sender;
+        auto item = args.SelectedItem().try_as<Microsoft::UI::Xaml::Controls::NavigationViewItem>();
+        if (!item) return;
+        auto tag = unbox_value_or<winrt::hstring>(item.Tag(), L"");
+        if (tag.empty()) return;
+        if (m_viewModel)
+        {
+            m_viewModel.ApplyFilter(tag);
+        }
+    }
 }

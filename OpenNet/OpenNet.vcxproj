@@ -67,7 +67,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Configuration">
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v145</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
@@ -162,12 +162,17 @@
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="mvvm_framework\async_command.h" />
+    <ClInclude Include="mvvm_framework\async_command_builder.h" />
     <ClInclude Include="mvvm_framework\delegate_command.h" />
     <ClInclude Include="mvvm_framework\delegate_command_builder.h" />
     <ClInclude Include="mvvm_framework\mvvm_diagnostics.h" />
+    <ClInclude Include="mvvm_framework\mvvm_framework_events.h" />
+    <ClInclude Include="mvvm_framework\mvvm_hresult_helper.h" />
     <ClInclude Include="mvvm_framework\name_of.h" />
     <ClInclude Include="mvvm_framework\notify_property_changed.h" />
     <ClInclude Include="mvvm_framework\property_macros.h" />
+    <ClInclude Include="mvvm_framework\subscription_tracker.h" />
     <ClInclude Include="mvvm_framework\view.h" />
     <ClInclude Include="mvvm_framework\view_model.h" />
     <ClInclude Include="mvvm_framework\view_model_base.h" />
@@ -289,6 +294,7 @@
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp" />
     <ClCompile Include="Pages\ContactsPage.xaml.cpp">
       <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -381,6 +387,8 @@
     <Midl Include="Models\models.idl">
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="mvvm_framework\mvvm_framework_events.idl" />
+    <Midl Include="mvvm_framework\mvvm_framework_inf.idl" />
     <Midl Include="Pages\ContactsPage.idl">
       <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
       <SubType>Code</SubType>

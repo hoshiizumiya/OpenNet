@@ -13,6 +13,10 @@ namespace winrt::OpenNet::Pages::implementation
 		// Expose strongly-typed ViewModel for x:Bind
 		winrt::OpenNet::ViewModels::TasksViewModel ViewModel() const { return m_viewModel; }
 
+		// Filter nav selection (must be public for XAML wiring)
+		void FilterNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender,
+			winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
+
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::event_token m_addTaskToken{};

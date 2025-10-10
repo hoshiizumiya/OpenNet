@@ -1,4 +1,4 @@
-//*********************************************************
+﻿//*********************************************************
 //
 //    Copyright (c) Millennium R&D Team. All rights reserved.
 //    This code is licensed under the MIT License.
@@ -20,10 +20,10 @@ namespace mvvm
 {
     using namespace std::literals;
 
-    template <typename Derived, typename ViewModel>
-    struct __declspec(empty_bases) view : view_model_base<Derived>
+    template <typename Derived, typename ViewModelT>
+    struct __declspec(empty_bases) view : ViewModelBase<Derived>
     {
-        using view_model_type = typename ViewModel;
+        using view_model_type = typename ViewModelT;
 
         friend typename Derived;
 
@@ -34,22 +34,22 @@ namespace mvvm
 
         view_model_type ViewModel()
         {
-            return base::get_property(m_viewModel);
+            return base::GetProperty(m_viewModel);
         }
         void ViewModel(view_model_type const& value)
         {
-            base::set_property(m_viewModel, value, NAME_OF(view, ViewModel));
+            base::SetProperty(m_viewModel, value, NAME_OF(view, ViewModelT));
         }
 
     protected:
         view()
         {
-            static_assert(std::is_base_of_v<view_model_base<Derived>, Derived>, "Derived class must inherit from view_model_base");
+            static_assert(std::is_base_of_v<ViewModelBase<Derived>, Derived>, "Derived class must inherit from ViewModelBase");
         }
 
     private:
         view_model_type m_viewModel;
-        using base = typename view_model_base<Derived>;
+        using base = typename ViewModelBase<Derived>;
     };
 }
 

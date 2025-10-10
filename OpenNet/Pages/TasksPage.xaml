@@ -59,8 +59,20 @@
             IsPaneOpen="True"
             OpenPaneLength="50">
             <SplitView.Pane>
-                <!--  WinUI TreeView  -->
-                <muxc:TreeView />
+                <!-- 左侧筛选导航 / Left-side filter navigation -->
+                <muxc:NavigationView x:Name="FilterNavView"
+                                     PaneDisplayMode="LeftCompact"
+                                     IsBackButtonVisible="Collapsed"
+                                     IsPaneToggleButtonVisible="False"
+                                     IsSettingsVisible="False"
+                                     SelectionChanged="FilterNavView_SelectionChanged">
+                    <muxc:NavigationView.MenuItems>
+                        <muxc:NavigationViewItem Content="全部任务" Tag="AllTasks" Icon="ViewAll" IsSelected="True" />
+                        <muxc:NavigationViewItem Content="正在下载" Tag="Downloading" Icon="Download" />
+                        <muxc:NavigationViewItem Content="已完成" Tag="Completed" Icon="Accept" />
+                        <muxc:NavigationViewItem Content="已失败" Tag="Failed" Icon="Cancel" />
+                    </muxc:NavigationView.MenuItems>
+                </muxc:NavigationView>
             </SplitView.Pane>
 
             <Grid>
@@ -91,22 +103,23 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
+                        
                         <TextBlock
+                            x:Uid="Header_TaskName"
                             Grid.Column="0"
-                            FontWeight="SemiBold"
-                            Text="Name" />
-                        <TextBlock Grid.Column="1" Text="Size" />
-                        <TextBlock Grid.Column="2" Text="Progress" />
-                        <TextBlock Grid.Column="3" Text="DL Rate" />
-                        <TextBlock Grid.Column="4" Text="Remaining" />
-                        <TextBlock Grid.Column="5" Text="Add Date" />
+                            FontWeight="SemiBold"/>
+                        <TextBlock x:Uid="Header_Size" Grid.Column="1" Text="Size" />
+                        <TextBlock x:Uid="Header_Progress" Grid.Column="2" Text="Progress" />
+                        <TextBlock x:Uid="Header_DLRate" Grid.Column="3" Text="DL Rate" />
+                        <TextBlock x:Uid="Header_Remaining" Grid.Column="4" Text="Remaining" />
+                        <TextBlock x:Uid="Header_AddDate" Grid.Column="5" Text="Add Date" />
                     </Grid>
 
                     <!--  列表  -->
                     <ListView
                         x:Name="TasksList"
                         Grid.Row="1"
-                        ItemsSource="{x:Bind ViewModel.Tasks, Mode=OneWay}"
+                        ItemsSource="{x:Bind ViewModel.FilteredTasks, Mode=OneWay}"
                         SelectionMode="Extended">
                         <ListView.ItemTemplate>
                             <!--  在这里写DataType可以在绑定时省略命名空间前缀  -->
@@ -118,13 +131,14 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="2*" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" />
                                     <TextBlock Grid.Column="1" Text="{x:Bind Size, Mode=OneWay}" />
                                     <TextBlock Grid.Column="2" Text="{x:Bind Progress, Mode=OneWay}" />
                                     <TextBlock Grid.Column="3" Text="{x:Bind DownloadRate, Mode=OneWay}" />
                                     <TextBlock Grid.Column="4" Text="{x:Bind Remaining, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="4" Text="{x:Bind AddDate, Mode=OneWay}" />
+                                    <TextBlock Grid.Column="5" Text="{x:Bind AddDate, Mode=OneWay}" />
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -140,14 +154,13 @@
                     resizedirection="rows" />-->
 
                 <!--  下方多标签  -->
-                <muxc:TabView Grid.Row="2">
-                    <muxc:TabViewItem Header="Summary">
-                        <TextBlock Margin="12" Text="Summary content" />
-                    </muxc:TabViewItem>
-                    <muxc:TabViewItem Header="Peers">
-                        <TextBlock Margin="12" Text="Peers content" />
-                    </muxc:TabViewItem>
-                </muxc:TabView>
+                <!--SelectionChanged=""-->
+                <muxc:SelectorBar Grid.Row="2" x:Name="Task_SelectBar">
+                    <muxc:SelectorBarItem x:Uid="Task_SummaryContent" x:Name="SummaryContent" IsSelected="True">
+                    </muxc:SelectorBarItem>
+                    <muxc:SelectorBarItem x:Uid="Task_PeersList" x:Name="PeersList">
+                    </muxc:SelectorBarItem>
+                </muxc:SelectorBar>
             </Grid>
         </SplitView>
     </Grid>

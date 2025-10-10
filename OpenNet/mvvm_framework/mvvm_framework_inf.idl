@@ -1,0 +1,30 @@
+﻿import "mvvm_framework/mvvm_framework_events.idl";
+
+namespace Mvvm.Framework.Core
+{
+    interface ICommandCleanup
+    {
+        void DetachAllDependencies();
+        void ClearAllSubscribers();
+        void ResetHandlers();
+        void Cancel(); // 异步命令实现为 Cancel(); 同步命令为空实现
+    }
+
+    interface IViewModelCleanup
+    {
+        // 由 VM 实现，依次调用 CancelRunning -> DetachAllDependencies
+        // -> ClearAllSubscribers -> ResetHandlers
+        void FrameworkCleanup();
+    }
+
+    interface IAutoCleanupRegister
+    {
+        // 由 VM 实现：注册清理函数到自动清理列表，在 VM 销毁时自动调用
+        void RegisterForAutoCleanup(Object obj);
+    }
+
+    interface IAsyncCommandObserver
+    {
+        void OnExecutionStateChanged(const Mvvm.Framework.Core.ExecutionStateChangedEventArgs args);
+    }
+}

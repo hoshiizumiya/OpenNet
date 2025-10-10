@@ -195,4 +195,28 @@
   <data name="TaskNewButton.Label" xml:space="preserve">
     <value>New Task</value>
   </data>
+  <data name="Header_TaskName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Header_Size.Text" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Header_Progress.Text" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="Header_DLRate.Text" xml:space="preserve">
+    <value>DL Rate</value>
+  </data>
+  <data name="Header_Remaining.Text" xml:space="preserve">
+    <value>Remaining</value>
+  </data>
+  <data name="Header_AddDate.Text" xml:space="preserve">
+    <value>Add Date</value>
+  </data>
+  <data name="Task_SummaryContent.Text" xml:space="preserve">
+    <value>Summary</value>
+  </data>
+  <data name="Task_PeersList.Text" xml:space="preserve">
+    <value>PeersList</value>
+  </data>
 </root>

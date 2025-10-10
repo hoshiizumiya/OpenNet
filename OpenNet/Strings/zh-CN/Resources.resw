@@ -195,4 +195,28 @@
   <data name="TaskNewButton.Label" xml:space="preserve">
     <value>新建任务</value>
   </data>
+  <data name="Header_TaskName.Text" xml:space="preserve">
+    <value>任务名称</value>
+  </data>
+  <data name="Header_Size.Text" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="Header_Progress.Text" xml:space="preserve">
+    <value>进度</value>
+  </data>
+  <data name="Header_DLRate.Text" xml:space="preserve">
+    <value>下载速率</value>
+  </data>
+  <data name="Header_Remaining.Text" xml:space="preserve">
+    <value>剩余</value>
+  </data>
+  <data name="Header_AddDate.Text" xml:space="preserve">
+    <value>添加日期</value>
+  </data>
+  <data name="Task_SummaryContent.Text" xml:space="preserve">
+    <value>概览</value>
+  </data>
+  <data name="Task_PeersList.Text" xml:space="preserve">
+    <value>用户</value>
+  </data>
 </root>

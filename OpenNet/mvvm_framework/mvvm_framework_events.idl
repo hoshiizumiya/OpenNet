@@ -1,0 +1,85 @@
+﻿namespace Mvvm.Framework.Core
+{
+    runtimeclass CanExecuteRequestedEventArgs
+    {
+        CanExecuteRequestedEventArgs(Object parameter);
+
+        Object Parameter { get; };
+        Boolean Handled { get; set; };
+    }
+    
+    runtimeclass CanExecuteCompletedEventArgs
+    {
+        CanExecuteCompletedEventArgs(Object parameter, Boolean result);
+
+        Object Parameter { get; };
+        Boolean Result { get; };
+    }
+
+    runtimeclass ExecuteRequestedEventArgs
+    {
+        ExecuteRequestedEventArgs(Object parameter);
+
+        Object Parameter { get; };
+    }
+
+    runtimeclass ExecuteCompletedEventArgs
+    {
+        ExecuteCompletedEventArgs(Object parameter, Int32 hresult);
+
+        Object Parameter { get; };
+        Boolean Succeeded { get; };
+        Int32 Error { get; };
+    }
+
+    enum ExecutionState
+    {
+        Started = 0,
+        Cancelling = 1,
+        Canceled = 2,
+        Succeeded = 3,
+        Failed = 4,
+    };
+
+    runtimeclass ExecutionStateChangedEventArgs
+    {
+        ExecutionStateChangedEventArgs(Object parameter, Mvvm.Framework.Core.ExecutionState State, Int32 error);
+        Object Parameter { get; };
+        Mvvm.Framework.Core.ExecutionState State { get; };
+        Int32 Error { get; };
+    }
+
+    // 在设置属性前触发，用于选择性地拦截框架校验（Handled）并取消属性数据更改操作（Cancel）
+    runtimeclass ValidationRequestedEventArgs
+    {
+        ValidationRequestedEventArgs(String propertyName, Object newValue);
+
+        String PropertyName { get; };
+        Object NewValue { get; };
+        Boolean Handled { get; set; }; // 置 true 表示：外部已处理校验，框架不再执行内置校验
+        Boolean Cancel  { get; set; }; // 置 true 表示：取消本次赋值（不调用 set_property）
+    }
+
+    // 内置校验执行完毕后触发，返回执行结果。执行结果包含数据是否有效，以及错误列表
+    runtimeclass ValidationCompletedEventArgs
+    {
+        ValidationCompletedEventArgs(String propertyName, Object newValue,
+                                    Boolean isValid,
+                                    Windows.Foundation.Collections.IVectorView<String> errors);
+
+        String PropertyName { get; };
+        Object NewValue { get; };
+        Boolean IsValid { get; };
+        Windows.Foundation.Collections.IVectorView<String> Errors { get; };
+    }
+
+    // 某属性错误集合变化时触发
+    runtimeclass ValidationErrorsChangedEventArgs
+    {
+        ValidationErrorsChangedEventArgs(String propertyName,
+                                Windows.Foundation.Collections.IVectorView<String> errors);
+
+        String PropertyName { get; };
+        Windows.Foundation.Collections.IVectorView<String> Errors { get; };
+    }
+}

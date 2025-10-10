@@ -1,4 +1,4 @@
-//*********************************************************
+﻿//*********************************************************
 //
 //    Copyright (c) Millennium R&D Team. All rights reserved.
 //    This code is licensed under the MIT License.
@@ -45,12 +45,12 @@ using namespace std::literals;
 #ifndef _DEFINE_PROPERTY_SCOPED_ACCESS_SET
 #define _DEFINE_PROPERTY_SCOPED_ACCESS_SET(type, name, access, defaultValue) \
     public: \
-        type name##() { return this->get_property(m_property##name); } \
+        type name##() { return this->GetProperty(m_property##name); } \
     access##: \
         void name##(type newValue) \
         { \
             constexpr auto propertyName = L""#name##sv; \
-            this->set_property(m_property##name, newValue, propertyName); \
+            this->SetProperty(m_property##name, newValue, propertyName); \
         } \
     private: \
         type m_property##name = defaultValue; \
@@ -73,12 +73,12 @@ using namespace std::literals;
 #ifndef _DEFINE_PROPERTY_CALLBACK_NO_NOTIFY_SCOPED_ACCESS_SET
 #define _DEFINE_PROPERTY_CALLBACK_NO_NOTIFY_SCOPED_ACCESS_SET(type, name, access, defaultValue) \
     public: \
-        type name##() { return this->get_property(m_property##name); } \
+        type name##() { return this->GetProperty(m_property##name); } \
     access##: \
         void name##(type newValue) \
         { \
             type oldValue; \
-            if (this->set_property(m_property##name, newValue, oldValue)) \
+            if (this->SetProperty(m_property##name, newValue, oldValue)) \
             { \
                 this->On##name##Changed(oldValue, newValue); \
             } \
@@ -106,13 +106,13 @@ using namespace std::literals;
 #ifndef _DEFINE_PROPERTY_CALLBACK_SCOPED_ACCESS_SET
 #define _DEFINE_PROPERTY_CALLBACK_SCOPED_ACCESS_SET(type, name, access, defaultValue) \
     public: \
-        type name##() { return this->get_property(m_property##name); } \
+        type name##() { return this->GetProperty(m_property##name); } \
     access##: \
         void name##(type newValue) \
         { \
             constexpr auto propertyName = L""#name##sv; \
             type oldValue; \
-            if (this->set_property(m_property##name, newValue, oldValue, propertyName)) \
+            if (this->SetProperty(m_property##name, newValue, oldValue, propertyName)) \
             { \
                 this->On##name##Changed(oldValue, newValue); \
             } \
@@ -140,9 +140,9 @@ using namespace std::literals;
 #ifndef _DEFINE_PROPERTY_NO_NOTIFY_SCOPED_ACCESS_SET
 #define _DEFINE_PROPERTY_NO_NOTIFY_SCOPED_ACCESS_SET(type, name, access, defaultValue) \
 public: \
-    type name##(){ return this->get_property(m_property##name); } \
+    type name##(){ return this->GetProperty(m_property##name); } \
 access##: \
-    void name##(type newValue) { this->set_property(m_property##name, newValue); } \
+    void name##(type newValue) { this->SetProperty(m_property##name, newValue); } \
 private: \
     type m_property##name = defaultValue; \
 public:
@@ -164,12 +164,12 @@ public:
 #ifndef _DEFINE_PROPERTY_NO_COMPARE_SCOPED_ACCESS_SET
 #define _DEFINE_PROPERTY_NO_COMPARE_SCOPED_ACCESS_SET(type, name, access, defaultValue) \
 public: \
-    type name##(){ return this->get_property(m_property##name); } \
+    type name##(){ return this->GetProperty(m_property##name); } \
 access##: \
     void name##(type value) \
     { \
         constexpr auto propertyName = L""#name##sv; \
-        this->set_property_no_compare(m_property##name, value, propertyName); \
+        this->SetPropertyNoCompare(m_property##name, value, propertyName); \
     } \
 private: \
     type m_property##name = defaultValue; \

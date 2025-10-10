@@ -1,4 +1,4 @@
-//*********************************************************
+﻿//*********************************************************
 //
 //    Copyright (c) Millennium R&D Team. All rights reserved.
 //    This code is licensed under the MIT License.
@@ -30,15 +30,15 @@ using namespace std::literals;
 /// can understand at compilation will always be false, leaving only the string_view to propertyName. By
 /// returing a wstring_view or string_view, the results of these can be directly compared to a wchar_t* or
 /// char*, respectively (const or not).
-/// _NAME_OF_pointerTypeT is necessary, because this macro will likely be used within conditional statements
+/// _NAME_OF_POINTER_TYPET is necessary, because this macro will likely be used within conditional statements
 /// where defining a type is not syntactically correct.
-/// _NAME_OF_makeFalse is necessary, because we should not assume the property type can be converted to
+/// _NAME_OF_MAKE_FALSE is necessary, because we should not assume the property type can be converted to
 /// a bool by the compiler. Although this code never runs, it must be syntactically correct for all cases.
 /// </description>
 #define NAME_OF(typeName, propertyName) \
 __pragma(warning(push)) \
 __pragma(warning(disable : 6237)) \
-    (false && details::_NAME_OF_makeFalse(details::_NAME_OF_pointerTypeT<typeName>()->propertyName()) ? L""sv : []{ constexpr auto name = (L""#propertyName##sv); return name; }() ) \
+    (false && details::_NAME_OF_MAKE_FALSE(details::_NAME_OF_POINTER_TYPET<typeName>()->propertyName()) ? L""sv : []{ constexpr auto name = (L""#propertyName##sv); return name; }() ) \
 __pragma(warning(pop))
 
 /// <summary>
@@ -48,20 +48,20 @@ __pragma(warning(pop))
 #define NAME_OF_NARROW(typeName, propertyName) \
 __pragma(warning(push)) \
 __pragma(warning(disable : 6237)) \
-    (false && details::_NAME_OF_makeFalse(details::_NAME_OF_pointerTypeT<typeName>()->propertyName()) ? ""sv : []{ constexpr auto name = (""#propertyName##sv); return name; }() ) \
+    (false && details::_NAME_OF_MAKE_FALSE(details::_NAME_OF_POINTER_TYPET<typeName>()->propertyName()) ? ""sv : []{ constexpr auto name = (""#propertyName##sv); return name; }() ) \
 __pragma(warning(pop))
 
 namespace details
 {
     template<typename T>
-    constexpr T* _NAME_OF_pointerTypeT()
+    constexpr T* _NAME_OF_POINTER_TYPET()
     {
         T* returnValue;
         return returnValue;
     }
 
     template<typename T>
-    constexpr bool _NAME_OF_makeFalse(T)
+    constexpr bool _NAME_OF_MAKE_FALSE(T)
     {
         return false;
     }

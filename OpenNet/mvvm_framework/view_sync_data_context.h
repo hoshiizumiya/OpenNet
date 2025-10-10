@@ -1,4 +1,4 @@
-//*********************************************************
+﻿//*********************************************************
 //
 //    Copyright (c) Millennium R&D Team. All rights reserved.
 //    This code is licensed under the MIT License.
@@ -20,12 +20,12 @@ namespace mvvm
 {
     using namespace std::literals;
 
-    template <typename Derived, typename ViewModel>
+    template <typename Derived, typename ViewModelT>
     struct __declspec(empty_bases) view_sync_data_context
-        : view_model_base<Derived>
+        : ViewModelBase<Derived>
     {
-        using view_model_type = typename ViewModel;
-        using view_base_type = typename view_sync_data_context<Derived, ViewModel>;
+        using view_model_type = typename ViewModelT;
+        using view_base_type = typename view_sync_data_context<Derived, ViewModelT>;
 
         friend typename Derived;
 

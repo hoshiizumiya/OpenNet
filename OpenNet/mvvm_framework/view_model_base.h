@@ -1,4 +1,4 @@
-//*********************************************************
+﻿//*********************************************************
 //
 //    Copyright (c) Millennium R&D Team. All rights reserved.
 //    This code is licensed under the MIT License.
@@ -19,16 +19,16 @@
 namespace mvvm
 {
     template <typename Derived>
-    struct __declspec(empty_bases)view_model_base : notify_property_changed<Derived>
+    struct __declspec(empty_bases)ViewModelBase : WrapNotifyPropertyChanged<Derived>
     {
         friend typename Derived;
 
         template <typename TValue>
-        inline TValue get_property_override(TValue const& valueField)
+        inline TValue GetPropertyOverride(TValue const& valueField)
         {
-            if (this->derived().has_thread_access())
+            if (this->derived().HasThreadAccess())
             {
-                return base::notify_property_changed::get_property_core(valueField);
+                return base::notify_property_changed::GetPropertyCore(valueField);
             }
 
             auto dispatcher = this->derived().Dispatcher();
@@ -40,21 +40,21 @@ namespace mvvm
                 {
                     operation = []() -> winrt::Windows::Foundation::IAsyncOperation<TValue>
                         {
-                            co_return base::notify_property_changed::get_property_core(valueField);
+                            co_return base::notify_property_changed::GetPropertyCore(valueField);
                         }();
                 });
             return operation.get();
         }
 
         template <typename TValue, typename TOldValue, bool compare, typename propertyNameType>
-        inline bool set_property_override(TValue& valueField, TValue const& newValue, TOldValue& oldValue, propertyNameType const& propertyNameOrNames)
+        inline bool SetPropertyOverride(TValue& valueField, TValue const& newValue, TOldValue& oldValue, propertyNameType const& propertyNameOrNames)
         {            
-            if (this->derived().has_thread_access())
+            if (this->derived().HasThreadAccess())
             {
-                return this->set_property_core<TValue, TOldValue, compare, propertyNameType>(std::forward<TValue&>(valueField), newValue, oldValue, propertyNameOrNames);
+                return this->SetPropertyCore<TValue, TOldValue, compare, propertyNameType>(std::forward<TValue&>(valueField), newValue, oldValue, propertyNameOrNames);
             }
 
-            auto dispatcher = this->derived().get_dispatcher_override();
+            auto dispatcher = this->derived().GetDispatcherOverride();
             if (!dispatcher)
                 return false;
 
@@ -63,7 +63,7 @@ namespace mvvm
                 {
                     operation = [&]() -> winrt::Windows::Foundation::IAsyncOperation<bool>
                         {
-                            co_return this->set_property_core<TValue, TOldValue, compare, propertyNameType>(
+                            co_return this->SetPropertyCore<TValue, TOldValue, compare, propertyNameType>(
                                 std::forward<TValue&>(valueField), newValue, oldValue, propertyNameOrNames);
                         }();
                 });
@@ -71,9 +71,10 @@ namespace mvvm
             return operation.get();
         }
 
-        winrt::Microsoft::UI::Dispatching::DispatcherQueue get_dispatcher_override() { return { nullptr }; }
+        winrt::Microsoft::UI::Dispatching::DispatcherQueue GetDispatcherOverride() { return { nullptr }; }
 
-        bool has_thread_access() const
+        // UI thread HTA check
+        bool HasThreadAccess() const
         {
             auto dispatcher = this->derived().Dispatcher();
             if (!dispatcher)
@@ -88,21 +89,21 @@ namespace mvvm
             return currentDispatcher && (currentDispatcher == dispatcher);
         }
 
-        void check_thread() const
+        void IsThreadAccessible() const
         {
-            if (!has_thread_access())
+            if (!HasThreadAccess())
             {
                 throw winrt::hresult_wrong_thread();
             }
         }
 
     protected:
-        // This is used to ensure that the derived class is actually derived from view_model_base
-        view_model_base()
+        // This is used to ensure that the derived class is actually derived from ViewModelBase
+        ViewModelBase()
         {
-            static_assert(std::is_base_of_v<view_model_base, Derived>, "Derived class must inherit from view_model_base");
+            static_assert(std::is_base_of_v<ViewModelBase, Derived>, "Derived class must inherit from ViewModelBase");
         }
-        using base = typename ::mvvm::notify_property_changed<Derived>;
+        using base = typename ::mvvm::WrapNotifyPropertyChanged<Derived>;
     };
 }
 

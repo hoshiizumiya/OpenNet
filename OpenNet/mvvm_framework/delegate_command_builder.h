@@ -57,7 +57,7 @@ namespace mvvm
 
         auto Build()
         {
-            return winrt::make<delegate_command<Parameter>>(
+            return winrt::make<DelegateCommand<Parameter>>(
                 m_notifier,
                 m_executeHandler,
                 m_canExecuteHandler,
