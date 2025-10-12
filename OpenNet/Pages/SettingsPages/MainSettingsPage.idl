@@ -1,0 +1,18 @@
+﻿namespace OpenNet.Pages.SettingsPages
+{
+	runtimeclass Folder : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		Folder();
+		String Name;
+	}
+
+	[default_interface]
+	runtimeclass MainSettingsPage : Microsoft.UI.Xaml.Controls.Page
+	{
+		MainSettingsPage();
+
+		// Use Object (Windows.Foundation.Object) as the element type in IDL; IInspectable cannot be used here
+        // 		void UpdateSettingsBarItems(Windows.Foundation.Collections.IObservableVector<Object> items);
+		void UpdateSettingsBarItems(Windows.Foundation.Collections.IObservableVector<OpenNet.Pages.SettingsPages.Folder> items);
+	}
+}

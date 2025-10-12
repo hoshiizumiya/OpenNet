@@ -34,6 +34,8 @@
 #include <winrt/Microsoft.UI.Xaml.Navigation.h>
 #include <winrt/Microsoft.UI.Xaml.Shapes.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
+
+// WinUIEssentials
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h> // Timeline and KeyFrame animations
 #include <winrt/Microsoft.UI.Xaml.Controls.AnimatedVisuals.h> // Pre-made icon animation
 #include <winrt/Microsoft.UI.Xaml.Documents.h>  // Rich text content and inline formatting

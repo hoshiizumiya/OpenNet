@@ -2,13 +2,29 @@
 #include "SettingsViewModel.h"
 
 #include <winrt/Windows.Data.Json.h>
+#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
 
 using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
+using namespace Microsoft::Windows::ApplicationModel::Resources;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+    // Helper: get resource string safely
+    static winrt::hstring GetStringFromResources(winrt::hstring const& key)
+    {
+        try
+        {
+            ResourceLoader rl;
+            return rl.GetString(key);
+        }
+        catch (...)
+        {
+            return key; // fallback to key if resource not found
+        }
+    }
+
     // Summary: 构造函数，初始化默认设置和集合
     SettingsViewModel::SettingsViewModel()
         : m_userName(L"Guest")
@@ -66,9 +82,34 @@ namespace winrt::OpenNet::ViewModels::implementation
         , m_hasUnsavedChanges(false)
     {
         m_availableLanguages = single_threaded_vector<hstring>();
-        m_availableLanguages.Append(L"Auto");
-        m_availableLanguages.Append(L"中文");
-        m_availableLanguages.Append(L"English");
+
+        // Use resource strings if available, fall back to defaults
+        try
+        {
+            ResourceLoader rl;
+            auto autoStr = rl.GetString(L"Lang_Auto");
+            auto chineseStr = rl.GetString(L"Lang_Chinese");
+            auto englishStr = rl.GetString(L"Lang_English");
+
+            if (!autoStr.empty() && !chineseStr.empty() && !englishStr.empty())
+            {
+                m_availableLanguages.Append(autoStr);
+                m_availableLanguages.Append(chineseStr);
+                m_availableLanguages.Append(englishStr);
+            }
+            else
+            {
+                m_availableLanguages.Append(L"Auto");
+                m_availableLanguages.Append(L"中文");
+                m_availableLanguages.Append(L"English");
+            }
+        }
+        catch (...)
+        {
+            m_availableLanguages.Append(L"Auto");
+            m_availableLanguages.Append(L"中文");
+            m_availableLanguages.Append(L"English");
+        }
 
         m_customPorts = single_threaded_observable_vector<hstring>();
         m_blockedPorts = single_threaded_observable_vector<hstring>();
@@ -166,6 +207,122 @@ namespace winrt::OpenNet::ViewModels::implementation
         wchar_t buf[64]{};
         swprintf(buf, 64, L"%.2f %s", bytesPerSecond, units[unit]);
         return buf;
+    }
+
+    // Localized text implementations
+    std::wstring SettingsViewModel::CurrentLanguageText() const
+    {
+        try
+        {
+            ResourceLoader rl;
+            switch (m_currentLanguage)
+            {
+            case Language::Auto: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
+            case Language::Chinese: return std::wstring(rl.GetString(L"Lang_Chinese").c_str());
+            case Language::English: return std::wstring(rl.GetString(L"Lang_English").c_str());
+            default: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
+            }
+        }
+        catch (...) {
+            switch (m_currentLanguage)
+            {
+            case Language::Auto: return L"自动 / Auto";
+            case Language::Chinese: return L"中文 / Chinese";
+            case Language::English: return L"English";
+            default: return L"自动 / Auto";
+            }
+        }
+    }
+
+    std::wstring SettingsViewModel::ProtocolPriorityText() const
+    {
+        try
+        {
+            ResourceLoader rl;
+            switch (m_protocolPriority)
+            {
+            case Models::IPProtocolPriority::IPv4First: return std::wstring(rl.GetString(L"Protocol_IPv4First").c_str());
+            case Models::IPProtocolPriority::IPv6First: return std::wstring(rl.GetString(L"Protocol_IPv6First").c_str());
+            case Models::IPProtocolPriority::IPv4Only: return std::wstring(rl.GetString(L"Protocol_IPv4Only").c_str());
+            case Models::IPProtocolPriority::IPv6Only: return std::wstring(rl.GetString(L"Protocol_IPv6Only").c_str());
+            case Models::IPProtocolPriority::Auto: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
+            default: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
+            }
+        }
+        catch (...) {
+            return std::wstring(L"自动选择 / Auto Select");
+        }
+    }
+
+    std::wstring SettingsViewModel::PreferredProtocolText() const
+    {
+        try
+        {
+            ResourceLoader rl;
+            switch (m_preferredProtocol)
+            {
+            case Models::ConnectionProtocol::Auto: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
+            case Models::ConnectionProtocol::TCP: return std::wstring(rl.GetString(L"ConnProtocol_TCP").c_str());
+            case Models::ConnectionProtocol::UDP: return std::wstring(rl.GetString(L"ConnProtocol_UDP").c_str());
+            case Models::ConnectionProtocol::UTP: return std::wstring(rl.GetString(L"ConnProtocol_UTP").c_str());
+            case Models::ConnectionProtocol::BitTorrent: return std::wstring(rl.GetString(L"ConnProtocol_BitTorrent").c_str());
+            case Models::ConnectionProtocol::DHT: return std::wstring(rl.GetString(L"ConnProtocol_DHT").c_str());
+            case Models::ConnectionProtocol::WebRTC: return std::wstring(rl.GetString(L"ConnProtocol_WebRTC").c_str());
+            case Models::ConnectionProtocol::HTTP: return std::wstring(rl.GetString(L"ConnProtocol_HTTP").c_str());
+            default: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
+            }
+        }
+        catch (...) {
+            return std::wstring(L"自动选择 / Auto Select");
+        }
+    }
+
+    std::wstring SettingsViewModel::EncryptionLevelText() const
+    {
+        try
+        {
+            ResourceLoader rl;
+            switch (m_encryptionLevel)
+            {
+            case EncryptionLevel::None: return std::wstring(rl.GetString(L"Enc_None").c_str());
+            case EncryptionLevel::Basic: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
+            case EncryptionLevel::Strong: return std::wstring(rl.GetString(L"Enc_Strong").c_str());
+            default: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
+            }
+        }
+        catch (...) {
+            switch (m_encryptionLevel)
+            {
+            case EncryptionLevel::None: return L"无加密 / None";
+            case EncryptionLevel::Basic: return L"基础加密 / Basic";
+            case EncryptionLevel::Strong: return L"强加密 / Strong";
+            default: return L"基础加密 / Basic";
+            }
+        }
+    }
+
+    std::wstring SettingsViewModel::CurrentThemeText() const
+    {
+        try
+        {
+            ResourceLoader rl;
+            switch (m_currentTheme)
+            {
+            case Theme::Auto: return std::wstring(rl.GetString(L"Theme_Auto").c_str());
+            case Theme::Light: return std::wstring(rl.GetString(L"Theme_Light").c_str());
+            case Theme::Dark: return std::wstring(rl.GetString(L"Theme_Dark").c_str());
+            default: return std::wstring(rl.GetString(L"Theme_Auto").c_str());
+            }
+        }
+        catch (...) {
+            switch (m_currentTheme)
+            {
+            case Theme::Auto: return L"自动 / Auto";
+            case Theme::Light: return L"浅色 / Light";
+            case Theme::Dark: return L"深色 / Dark";
+            default: return L"自动 / Auto";
+            }
+        }
     }
 
     // Summary: 序列化设置（占位）

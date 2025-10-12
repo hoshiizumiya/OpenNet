@@ -219,4 +219,130 @@
   <data name="Task_PeersList.Text" xml:space="preserve">
     <value>用户</value>
   </data>
+
+  <!-- Added localization keys for settings and protocols -->
+  <data name="Lang_Auto" xml:space="preserve">
+    <value>自动 / Auto</value>
+  </data>
+  <data name="Lang_Chinese" xml:space="preserve">
+    <value>中文 / Chinese</value>
+  </data>
+  <data name="Lang_English" xml:space="preserve">
+    <value>英文 / English</value>
+  </data>
+
+  <data name="Protocol_IPv4First" xml:space="preserve">
+    <value>IPv4优先 / IPv4 First</value>
+  </data>
+  <data name="Protocol_IPv6First" xml:space="preserve">
+    <value>IPv6优先 / IPv6 First</value>
+  </data>
+  <data name="Protocol_IPv4Only" xml:space="preserve">
+    <value>仅IPv4 / IPv4 Only</value>
+  </data>
+  <data name="Protocol_IPv6Only" xml:space="preserve">
+    <value>仅IPv6 / IPv6 Only</value>
+  </data>
+  <data name="Protocol_Auto" xml:space="preserve">
+    <value>自动选择 / Auto Select</value>
+  </data>
+
+  <data name="ConnProtocol_Auto" xml:space="preserve">
+    <value>自动选择 / Auto Select</value>
+  </data>
+  <data name="ConnProtocol_TCP" xml:space="preserve">
+    <value>TCP协议 / TCP Protocol</value>
+  </data>
+  <data name="ConnProtocol_UDP" xml:space="preserve">
+    <value>UDP协议 / UDP Protocol</value>
+  </data>
+  <data name="ConnProtocol_UTP" xml:space="preserve">
+    <value>uTP协议 / uTP Protocol</value>
+  </data>
+  <data name="ConnProtocol_BitTorrent" xml:space="preserve">
+    <value>BitTorrent协议 / BitTorrent Protocol</value>
+  </data>
+  <data name="ConnProtocol_DHT" xml:space="preserve">
+    <value>DHT网络 / DHT Network</value>
+  </data>
+  <data name="ConnProtocol_WebRTC" xml:space="preserve">
+    <value>WebRTC协议 / WebRTC Protocol</value>
+  </data>
+  <data name="ConnProtocol_HTTP" xml:space="preserve">
+    <value>HTTP协议 / HTTP Protocol</value>
+  </data>
+
+  <data name="Enc_None" xml:space="preserve">
+    <value>无加密 / None</value>
+  </data>
+  <data name="Enc_Basic" xml:space="preserve">
+    <value>基础加密 / Basic</value>
+  </data>
+  <data name="Enc_Strong" xml:space="preserve">
+    <value>强加密 / Strong</value>
+  </data>
+
+  <data name="Theme_Auto" xml:space="preserve">
+    <value>自动 / Auto</value>
+  </data>
+  <data name="Theme_Light" xml:space="preserve">
+    <value>浅色 / Light</value>
+  </data>
+  <data name="Theme_Dark" xml:space="preserve">
+    <value>深色 / Dark</value>
+  </data>
+
+  <!-- SettingsPage localization keys -->
+  <data name="Generiall.Text" xml:space="preserve">
+    <value>常规</value>
+  </data>
+
+  <data name="StartPage.Header" xml:space="preserve">
+    <value>默认启动页面</value>
+  </data>
+  <data name="StartPage.Description" xml:space="preserve">
+    <value>指定应用启动时显示的页面。</value>
+  </data>
+
+  <data name="SoftToolBackground.Header" xml:space="preserve">
+    <value>个性化背景</value>
+  </data>
+  <data name="SoftToolBackground.Description" xml:space="preserve">
+    <value>设置应用的背景。</value>
+  </data>
+
+  <data name="SoftLanguage.Header" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="SoftLanguage.Description" xml:space="preserve">
+    <value>设置应用语言。</value>
+  </data>
+
+  <data name="OpenToml.Header" xml:space="preserve">
+    <value>打开 TOML 文件</value>
+  </data>
+  <data name="OpenToml.Description" xml:space="preserve">
+    <value>打开设置文件。</value>
+  </data>
+
+  <data name="SpSwttingsl.Text" xml:space="preserve">
+    <value>串口设置</value>
+  </data>
+  <data name="SpSettings_Text.Text" xml:space="preserve">
+    <value>串口设置</value>
+  </data>
+
+  <data name="DowFlashl.Text" xml:space="preserve">
+    <value>下载闪存设置</value>
+  </data>
+  <data name="DfSettingsl.Header" xml:space="preserve">
+    <value>下载闪存设置</value>
+  </data>
+
+  <data name="Aboutl.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="AbputTl.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
 </root>

@@ -59,18 +59,32 @@
             IsPaneOpen="True"
             OpenPaneLength="50">
             <SplitView.Pane>
-                <!-- 左侧筛选导航 / Left-side filter navigation -->
-                <muxc:NavigationView x:Name="FilterNavView"
-                                     PaneDisplayMode="LeftCompact"
-                                     IsBackButtonVisible="Collapsed"
-                                     IsPaneToggleButtonVisible="False"
-                                     IsSettingsVisible="False"
-                                     SelectionChanged="FilterNavView_SelectionChanged">
+                <!--  左侧筛选导航 / Left-side filter navigation  -->
+                <muxc:NavigationView
+                    x:Name="FilterNavView"
+                    IsBackButtonVisible="Collapsed"
+                    IsPaneToggleButtonVisible="False"
+                    IsSettingsVisible="False"
+                    PaneDisplayMode="LeftCompact"
+                    SelectionChanged="FilterNavView_SelectionChanged">
                     <muxc:NavigationView.MenuItems>
-                        <muxc:NavigationViewItem Content="全部任务" Tag="AllTasks" Icon="ViewAll" IsSelected="True" />
-                        <muxc:NavigationViewItem Content="正在下载" Tag="Downloading" Icon="Download" />
-                        <muxc:NavigationViewItem Content="已完成" Tag="Completed" Icon="Accept" />
-                        <muxc:NavigationViewItem Content="已失败" Tag="Failed" Icon="Cancel" />
+                        <muxc:NavigationViewItem
+                            Content="全部任务"
+                            Icon="ViewAll"
+                            IsSelected="True"
+                            Tag="AllTasks" />
+                        <muxc:NavigationViewItem
+                            Content="正在下载"
+                            Icon="Download"
+                            Tag="Downloading" />
+                        <muxc:NavigationViewItem
+                            Content="已完成"
+                            Icon="Accept"
+                            Tag="Completed" />
+                        <muxc:NavigationViewItem
+                            Content="已失败"
+                            Icon="Cancel"
+                            Tag="Failed" />
                     </muxc:NavigationView.MenuItems>
                 </muxc:NavigationView>
             </SplitView.Pane>
@@ -103,16 +117,31 @@
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
-                        
+
                         <TextBlock
                             x:Uid="Header_TaskName"
                             Grid.Column="0"
-                            FontWeight="SemiBold"/>
-                        <TextBlock x:Uid="Header_Size" Grid.Column="1" Text="Size" />
-                        <TextBlock x:Uid="Header_Progress" Grid.Column="2" Text="Progress" />
-                        <TextBlock x:Uid="Header_DLRate" Grid.Column="3" Text="DL Rate" />
-                        <TextBlock x:Uid="Header_Remaining" Grid.Column="4" Text="Remaining" />
-                        <TextBlock x:Uid="Header_AddDate" Grid.Column="5" Text="Add Date" />
+                            FontWeight="SemiBold" />
+                        <TextBlock
+                            x:Uid="Header_Size"
+                            Grid.Column="1"
+                            Text="Size" />
+                        <TextBlock
+                            x:Uid="Header_Progress"
+                            Grid.Column="2"
+                            Text="Progress" />
+                        <TextBlock
+                            x:Uid="Header_DLRate"
+                            Grid.Column="3"
+                            Text="DL Rate" />
+                        <TextBlock
+                            x:Uid="Header_Remaining"
+                            Grid.Column="4"
+                            Text="Remaining" />
+                        <TextBlock
+                            x:Uid="Header_AddDate"
+                            Grid.Column="5"
+                            Text="Add Date" />
                     </Grid>
 
                     <!--  列表  -->
@@ -154,12 +183,13 @@
                     resizedirection="rows" />-->
 
                 <!--  下方多标签  -->
-                <!--SelectionChanged=""-->
-                <muxc:SelectorBar Grid.Row="2" x:Name="Task_SelectBar">
-                    <muxc:SelectorBarItem x:Uid="Task_SummaryContent" x:Name="SummaryContent" IsSelected="True">
-                    </muxc:SelectorBarItem>
-                    <muxc:SelectorBarItem x:Uid="Task_PeersList" x:Name="PeersList">
-                    </muxc:SelectorBarItem>
+                <!--  SelectionChanged=""  -->
+                <muxc:SelectorBar x:Name="Task_SelectBar" Grid.Row="2">
+                    <muxc:SelectorBarItem
+                        x:Name="SummaryContent"
+                        x:Uid="Task_SummaryContent"
+                        IsSelected="True" />
+                    <muxc:SelectorBarItem x:Name="PeersList" x:Uid="Task_PeersList" />
                 </muxc:SelectorBar>
             </Grid>
         </SplitView>

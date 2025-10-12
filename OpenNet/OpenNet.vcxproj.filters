@@ -4,7 +4,6 @@
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainWindow.xaml" />
     <Page Include="Themes\Generic.xaml">
       <Filter>Themes</Filter>
     </Page>
@@ -12,9 +11,6 @@
       <Filter>Pages</Filter>
     </Page>
     <Page Include="Pages\TasksPage.xaml">
-      <Filter>Pages</Filter>
-    </Page>
-    <Page Include="Pages\SettingsPage.xaml">
       <Filter>Pages</Filter>
     </Page>
     <Page Include="Pages\ServersPage.xaml">
@@ -31,6 +27,18 @@
     </Page>
     <Page Include="Pages\FilesPage.xaml">
       <Filter>Pages</Filter>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Filter>mvvm_framework</Filter>
+    </Page>
+    <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
+      <Filter>Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="Pages\SettingsPages\SettingsPage.xaml">
+      <Filter>Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="Pages\SettingsPages\AboutPage.xaml">
+      <Filter>Pages\SettingsPages</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -68,9 +76,15 @@
     <Midl Include="ViewModels\TaskViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
-    <Midl Include="ViewModels\TasksViewModel.idl" />
-    <Midl Include="mvvm_framework\mvvm_framework_events.idl" />
-    <Midl Include="mvvm_framework\mvvm_framework_inf.idl" />
+    <Midl Include="mvvm_framework\mvvm_framework_events.idl">
+      <Filter>mvvm_framework</Filter>
+    </Midl>
+    <Midl Include="mvvm_framework\mvvm_framework_inf.idl">
+      <Filter>mvvm_framework</Filter>
+    </Midl>
+    <Midl Include="ViewModels\TasksViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -117,8 +131,15 @@
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\TasksViewModel.cpp" />
-    <ClCompile Include="Core\P2PManager.cpp" />
-    <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp" />
+    <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp">
+      <Filter>mvvm_framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\P2PManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Pages\SettingsPages\Folder.cpp">
+      <Filter>Pages\SettingsPages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -169,7 +190,6 @@
       <Filter>ThirdPatry\sqlite</Filter>
     </ClInclude>
     <ClInclude Include="Models\NetModel.h" />
-    <ClInclude Include="ViewModels\ObservableMixin.h" />
     <ClInclude Include="Helpers\NavItemIconHelper.h" />
     <ClInclude Include="Helpers\WindowHelper.h">
       <Filter>Helpers</Filter>
@@ -180,23 +200,65 @@
     <ClInclude Include="ViewModels\TaskViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="Helpers\ObjectConverter.hpp" />
-    <ClInclude Include="mvvm_framework\delegate_command.h" />
-    <ClInclude Include="mvvm_framework\delegate_command_builder.h" />
-    <ClInclude Include="mvvm_framework\mvvm_diagnostics.h" />
-    <ClInclude Include="mvvm_framework\name_of.h" />
-    <ClInclude Include="mvvm_framework\notify_property_changed.h" />
-    <ClInclude Include="mvvm_framework\property_macros.h" />
-    <ClInclude Include="mvvm_framework\view.h" />
-    <ClInclude Include="mvvm_framework\view_model.h" />
-    <ClInclude Include="mvvm_framework\view_model_base.h" />
-    <ClInclude Include="mvvm_framework\view_sync_data_context.h" />
     <ClInclude Include="ViewModels\TasksViewModel.h" />
-    <ClInclude Include="mvvm_framework\async_command.h" />
-    <ClInclude Include="mvvm_framework\async_command_builder.h" />
-    <ClInclude Include="mvvm_framework\mvvm_framework_events.h" />
-    <ClInclude Include="mvvm_framework\mvvm_hresult_helper.h" />
-    <ClInclude Include="mvvm_framework\subscription_tracker.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="mvvm_framework\async_command.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\async_command_builder.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\delegate_command.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\delegate_command_builder.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\mvvm_diagnostics.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\mvvm_framework_events.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\mvvm_hresult_helper.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\name_of.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\notify_property_changed.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\view.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\view_model.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\view_model_base.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\view_sync_data_context.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\subscription_tracker.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="mvvm_framework\property_macros.h">
+      <Filter>mvvm_framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\ObjectConverter.hpp">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ObservableMixin.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Pages\ThemesSwitcher\SupportThemeToggle.h">
+      <Filter>Pages\ThemesSwitcher</Filter>
+    </ClInclude>
+    <ClInclude Include="Pages\SettingsPages\Folder.h">
+      <Filter>Pages\SettingsPages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -364,7 +426,7 @@
     <Image Include="Assets\AppIcons\StoreLogo.scale-400.png">
       <Filter>Assets\AppIcons</Filter>
     </Image>
-    <Image Include="Assets\AppIcons\win32.ico">
+    <Image Include="Assets\AppIcons\win3264.ico">
       <Filter>Assets\AppIcons</Filter>
     </Image>
   </ItemGroup>
@@ -405,6 +467,18 @@
     <Filter Include="Core\torrentCore">
       <UniqueIdentifier>{b551d157-3814-44d1-8031-64907be98514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="mvvm_framework">
+      <UniqueIdentifier>{fffe3c36-0f8e-4481-b97a-ccc76870e6b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{898f0c0c-461f-4218-9b56-300158176aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pages\SettingsPages">
+      <UniqueIdentifier>{69bf7159-e0d7-4f9b-82f8-4da7a509e3a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Pages\ThemesSwitcher">
+      <UniqueIdentifier>{b08cf51f-104f-4429-ac30-3550aa007be9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
@@ -423,7 +497,14 @@
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natstepfilter" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="Strings\en-US\Resources.resw" />
-    <PRIResource Include="Strings\zh-CN\Resources.resw" />
+    <PRIResource Include="Strings\zh-CN\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
 </Project>

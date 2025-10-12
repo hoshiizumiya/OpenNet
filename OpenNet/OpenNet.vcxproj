@@ -197,14 +197,24 @@
       <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPage.xaml.h">
-      <DependentUpon>Pages\SettingsPage.xaml</DependentUpon>
+    <ClInclude Include="Pages\SettingsPages\Folder.h" />
+    <ClInclude Include="Pages\SettingsPages\MainSettingsPage.xaml.h">
+      <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h">
+      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Pages\SettingsPages\AboutPage.xaml.h">
+      <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Pages\TasksPage.xaml.h">
       <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Pages\ThemesSwitcher\SupportThemeToggle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -212,6 +222,7 @@
     <ClInclude Include="MainWindow.xaml.h">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ThirdParty\Sqlite\sqlite3.h" />
     <ClInclude Include="ViewModels\MainViewModel.h">
       <DependentUpon>ViewModels\MainViewModel.idl</DependentUpon>
@@ -267,7 +278,13 @@
     <Page Include="Pages\ServersPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SettingsPage.xaml">
+    <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SettingsPages\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\SettingsPages\AboutPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\TasksPage.xaml">
@@ -311,8 +328,17 @@
       <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPage.xaml.cpp">
-      <DependentUpon>Pages\SettingsPage.xaml</DependentUpon>
+    <ClCompile Include="Pages\SettingsPages\Folder.cpp" />
+    <ClCompile Include="Pages\SettingsPages\MainSettingsPage.xaml.cpp">
+      <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\SettingsPages\SettingsPage.xaml.cpp">
+      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\SettingsPages\AboutPage.xaml.cpp">
+      <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Pages\TasksPage.xaml.cpp">
@@ -409,8 +435,16 @@
       <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\SettingsPage.idl">
-      <DependentUpon>Pages\SettingsPage.xaml</DependentUpon>
+    <Midl Include="Pages\SettingsPages\MainSettingsPage.idl">
+      <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\SettingsPages\SettingsPage.idl">
+      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Pages\SettingsPages\AboutPage.idl">
+      <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Pages\TasksPage.idl">
@@ -501,10 +535,7 @@
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-150.png" />
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-200.png" />
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-400.png" />
-    <Image Include="Assets\AppIcons\win32.ico">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </Image>
+    <Image Include="Assets\AppIcons\win3264.ico" />
   </ItemGroup>
   <!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging
@@ -532,6 +563,9 @@
     <PRIResource Include="Strings\zh-CN\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>

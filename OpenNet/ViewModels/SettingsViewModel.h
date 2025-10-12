@@ -63,16 +63,7 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }
 
-        std::wstring CurrentLanguageText() const
-        {
-            switch (m_currentLanguage)
-            {
-            case Language::Auto: return L"自动 / Auto";
-            case Language::Chinese: return L"中文 / Chinese";
-            case Language::English: return L"English";
-            default: return L"自动 / Auto";
-            }
-        }
+        std::wstring CurrentLanguageText() const; // implemented in cpp (localized)
 
         winrt::Windows::Foundation::Collections::IVector<winrt::hstring> AvailableLanguages() const
         {
@@ -106,18 +97,7 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }
 
-        std::wstring ProtocolPriorityText() const
-        {
-            switch (m_protocolPriority)
-            {
-            case Models::IPProtocolPriority::IPv4First: return L"IPv4优先 / IPv4 First";
-            case Models::IPProtocolPriority::IPv6First: return L"IPv6优先 / IPv6 First";
-            case Models::IPProtocolPriority::IPv4Only: return L"仅IPv4 / IPv4 Only";
-            case Models::IPProtocolPriority::IPv6Only: return L"仅IPv6 / IPv6 Only";
-            case Models::IPProtocolPriority::Auto: return L"自动选择 / Auto Select";
-            default: return L"自动选择 / Auto Select";
-            }
-        }
+        std::wstring ProtocolPriorityText() const; // implemented in cpp (localized)
 
         bool EnableIPv4() const { return m_enableIPv4; }
         void EnableIPv4(bool value) { SetProperty(m_enableIPv4, value, L"EnableIPv4"); OnSettingChanged(); }
@@ -133,21 +113,7 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }
 
-        std::wstring PreferredProtocolText() const
-        {
-            switch (m_preferredProtocol)
-            {
-            case Models::ConnectionProtocol::Auto: return L"自动选择 / Auto Select";
-            case Models::ConnectionProtocol::TCP: return L"TCP协议 / TCP Protocol";
-            case Models::ConnectionProtocol::UDP: return L"UDP协议 / UDP Protocol";
-            case Models::ConnectionProtocol::UTP: return L"uTP协议 / uTP Protocol";
-            case Models::ConnectionProtocol::BitTorrent: return L"BitTorrent协议 / BitTorrent Protocol";
-            case Models::ConnectionProtocol::DHT: return L"DHT网络 / DHT Network";
-            case Models::ConnectionProtocol::WebRTC: return L"WebRTC协议 / WebRTC Protocol";
-            case Models::ConnectionProtocol::HTTP: return L"HTTP协议 / HTTP Protocol";
-            default: return L"自动选择 / Auto Select";
-            }
-        }
+        std::wstring PreferredProtocolText() const; // implemented in cpp (localized)
 
         // STUN服务器设置 / STUN Server Settings
         winrt::Windows::Foundation::Collections::IVector<winrt::hstring> STUNServers() const
@@ -230,16 +196,7 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }
 
-        std::wstring EncryptionLevelText() const
-        {
-            switch (m_encryptionLevel)
-            {
-            case EncryptionLevel::None: return L"无加密 / None";
-            case EncryptionLevel::Basic: return L"基础加密 / Basic";
-            case EncryptionLevel::Strong: return L"强加密 / Strong";
-            default: return L"基础加密 / Basic";
-            }
-        }
+        std::wstring EncryptionLevelText() const; // implemented in cpp (localized)
 
         bool RequireAuthentication() const { return m_requireAuthentication; }
         void RequireAuthentication(bool value) { SetProperty(m_requireAuthentication, value, L"RequireAuthentication"); }
@@ -287,16 +244,7 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }
 
-        std::wstring CurrentThemeText() const
-        {
-            switch (m_currentTheme)
-            {
-            case Theme::Auto: return L"自动 / Auto";
-            case Theme::Light: return L"浅色 / Light";
-            case Theme::Dark: return L"深色 / Dark";
-            default: return L"自动 / Auto";
-            }
-        }
+        std::wstring CurrentThemeText() const; // implemented in cpp (localized)
 
         // 设置状态 / Settings Status
         bool HasUnsavedChanges() const { return m_hasUnsavedChanges; }

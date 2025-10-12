@@ -2,12 +2,13 @@
 
 #include "ViewModels/MainViewModel.h"
 #include "MainWindow.g.h"
+#include "Pages/ThemesSwitcher/SupportThemeToggle.h"
 
 using MainViewModel = winrt::OpenNet::ViewModels::MainViewModel;
 
 namespace winrt::OpenNet::implementation
 {
-    struct MainWindow : MainWindowT<MainWindow>
+    struct MainWindow : MainWindowT<MainWindow>, public SupportThemeToggle<MainWindow>
     {
         MainWindow();
 
@@ -42,7 +43,6 @@ namespace winrt::OpenNet::implementation
 
     private:
         // Window helpers
-        winrt::Windows::Foundation::IAsyncAction SetIconAsync(winrt::Microsoft::UI::Windowing::AppWindow window);
         void InitWindowStyle(winrt::Microsoft::UI::Xaml::Window const& window);
 
         // Selection update
@@ -54,9 +54,11 @@ namespace winrt::OpenNet::implementation
         // (Future extension placeholders similar to sample)
         void LoadFavorites() {} // no-op for now
         bool m_favoritesLoaded{ false };
+        // void RootGridXamlRoot_Changed(XamlRoot sender, XamlRootChangedEventArgs args);
     public:
         //void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
         //void NavigateTo(hstring const& tag);
+        void Grid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
     };
 }
 

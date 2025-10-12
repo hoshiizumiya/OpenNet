@@ -219,4 +219,58 @@
   <data name="Task_PeersList.Text" xml:space="preserve">
     <value>PeersList</value>
   </data>
+
+  <!-- SettingsPage localization keys -->
+  <data name="Generiall.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+
+  <data name="StartPage.Header" xml:space="preserve">
+    <value>Default start page</value>
+  </data>
+  <data name="StartPage.Description" xml:space="preserve">
+    <value>Specifies the page that is displayed when the app is launched.</value>
+  </data>
+
+  <data name="SoftToolBackground.Header" xml:space="preserve">
+    <value>Personalize the background</value>
+  </data>
+  <data name="SoftToolBackground.Description" xml:space="preserve">
+    <value>Set the background of the application.</value>
+  </data>
+
+  <data name="SoftLanguage.Header" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="SoftLanguage.Description" xml:space="preserve">
+    <value>Set the application language.</value>
+  </data>
+
+  <data name="OpenToml.Header" xml:space="preserve">
+    <value>Open TOML file</value>
+  </data>
+  <data name="OpenToml.Description" xml:space="preserve">
+    <value>Open the settings file.</value>
+  </data>
+
+  <data name="SpSwttingsl.Text" xml:space="preserve">
+    <value>Serial Port Settings</value>
+  </data>
+  <data name="SpSettings_Text.Text" xml:space="preserve">
+    <value>Serial Port Settings</value>
+  </data>
+
+  <data name="DowFlashl.Text" xml:space="preserve">
+    <value>Download Flash Settings</value>
+  </data>
+  <data name="DfSettingsl.Header" xml:space="preserve">
+    <value>Download Flash Settings</value>
+  </data>
+
+  <data name="Aboutl.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AbputTl.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
 </root>
