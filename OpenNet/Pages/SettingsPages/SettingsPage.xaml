@@ -578,7 +578,8 @@
             </Frame.ContentTransitions>
         </Frame>
 
-        <ScrollViewer
+        <ScrollView
+            x:Name="SettingsScrollView"
             Grid.Row="1"
             Grid.Column="1"
             Grid.ColumnSpan="2">
@@ -760,7 +761,7 @@
                         x:Name="StartPage"
                         x:Uid="StartPage"
                         Margin="0,3,0,3"
-                        Description="Specifies the page that is displayed when FSGravityTool is launched."
+                        Description="Specifies the page that is displayed when software is launched."
                         Header="Default start page">
                         <essential:SettingsCard.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xE8A1;" />
@@ -783,39 +784,25 @@
                         <Grid />
                     </essential:SettingsCard>
 
-                    <essential:SettingsExpander
-                        x:Name="SoftToolBackground"
-                        x:Uid="SoftToolBackground"
+                    <essential:SettingsCard
+                        x:Name="SoftPersonalization"
+                        x:Uid="SoftPersonalization"
                         Margin="0,3,0,3"
-                        Description="Set the background of FSGravityTool."
-                        Header="Personalize the background"
-                        IsExpanded="True">
-                        <essential:SettingsExpander.HeaderIcon>
-                            <FontIcon FontSize="12" Glyph="&#xEF1F;" />
-                        </essential:SettingsExpander.HeaderIcon>
-                        <Grid>
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                <ComboBox
-                                    x:Name="SoftBackgroundCombobox"
-                                    Width="150"
-                                    Margin="0,0,0,0"
-                                    SelectionChanged="SoftBackgroundCombobox_SelectionChanged" />
-                            </StackPanel>
-                        </Grid>
-                        <essential:SettingsExpander.Items>
-                            <essential:SettingsCard Description="Keep the application transparent when it is not in focus." Header="Keep transparent">
-                                <Grid>
-                                    <controls:ToggleSwitch x:Name="SoftBackgroundToggleSwitch" IsOn="False" />
-                                </Grid>
-                            </essential:SettingsCard>
-                        </essential:SettingsExpander.Items>
-                    </essential:SettingsExpander>
+                        Description="Personalize program UI display style"
+                        Header="Personalization"
+                        IsClickEnabled="True">
+                        <essential:SettingsCard.HeaderIcon>
+                            <FontIcon FontSize="12" Glyph="&#xE771;" />
+                        </essential:SettingsCard.HeaderIcon>
+
+                    </essential:SettingsCard>
 
                     <essential:SettingsExpander
                         x:Name="SoftBackground"
+                        x:Uid="SoftBackgroundColors"
                         Margin="0,3,0,3"
                         Description=""
-                        Header="">
+                        Header="Colors">
                         <essential:SettingsExpander.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xE790;" />
                         </essential:SettingsExpander.HeaderIcon>
@@ -835,12 +822,11 @@
                             </essential:SettingsCard>
                         </essential:SettingsExpander.Items>
                     </essential:SettingsExpander>
-
+                    <!--  Language Setting  -->
                     <essential:SettingsCard
                         x:Name="SoftLanguage"
                         x:Uid="SoftLanguage"
                         Margin="0,3,0,3"
-                        Description="Set the background of FSGravityTool."
                         Header="Language">
                         <essential:SettingsCard.HeaderIcon>
                             <FontIcon FontSize="12" Glyph="&#xF2B7;" />
@@ -856,25 +842,18 @@
                         </Grid>
                     </essential:SettingsCard>
 
-                    <essential:SettingsCard
-                        x:Name="OpenToml"
-                        x:Uid="OpenToml"
-                        Margin="0,3,0,3"
-                        Click="OpenToml_click"
-                        Description="Open the settings file."
-                        Header="Open TOML file"
-                        IsClickEnabled="True">
-                        <essential:SettingsCard.HeaderIcon>
-                            <FontIcon FontSize="12" Glyph="&#xE835;" />
-                        </essential:SettingsCard.HeaderIcon>
-
-                        <essential:SettingsCard.ActionIcon>
-                            <FontIcon FontSize="12" Glyph="&#xE8A7;" />
-                        </essential:SettingsCard.ActionIcon>
-                        <Grid>
-                            <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" />
-                        </Grid>
-                    </essential:SettingsCard>
+                    <!--  Restart prompt, initially hidden  -->
+                    <controls:InfoBar
+                        x:Name="RestartLanguageInfoBar"
+                        Title="Restart OpenNet to apply language change"
+                        Margin="0,2,0,3"
+                        IsClosable="True"
+                        IsOpen="False"
+                        Severity="Informational">
+                        <controls:InfoBar.ActionButton>
+                            <Button Click="RestartToApplyLanguage_Click" Content="Restart" />
+                        </controls:InfoBar.ActionButton>
+                    </controls:InfoBar>
 
                     <StackPanel.ChildrenTransitions>
                         <TransitionCollection>
@@ -883,7 +862,7 @@
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
-                <!--    -->
+
                 <StackPanel>
                     <TextBlock Margin="0,12,0,0" Text="" />
                     <TextBlock
@@ -938,9 +917,9 @@
                                     VerticalAlignment="Center"
                                     Glyph="&#xE8CB;" />
                                 <TextBlock
+                                    x:Uid="SpSettings_Text"
                                     Margin="12,0,12,0"
                                     VerticalAlignment="Center"
-                                    x:Uid="SpSettings_Text"
                                     Text="Serial Port Settings" />
 
                             </StackPanel>
@@ -963,7 +942,7 @@
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
-                <!--    -->
+
                 <StackPanel>
                     <TextBlock Margin="0,12,0,0" Text="" />
                     <TextBlock
@@ -1011,7 +990,8 @@
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
-                <!--    -->
+
+
                 <StackPanel>
                     <StackPanel>
                         <essential:SettingsCard
@@ -1064,7 +1044,7 @@
                         CornerRadius="4"
                         Visibility="Collapsed" />
                 </StackPanel>
-                <!--    -->
+
                 <StackPanel>
                     <TextBlock Margin="0,12,0,0" Text="" />
                     <TextBlock
@@ -1112,7 +1092,7 @@
                         </TransitionCollection>
                     </StackPanel.ChildrenTransitions>
                 </StackPanel>
-                <!--    -->
+
                 <StackPanel>
                     <TextBlock Margin="0,12,0,0" Text="" />
 
@@ -1131,7 +1111,13 @@
                 </StackPanel.ChildrenTransitions>
             </StackPanel>
 
-        </ScrollViewer>
+        </ScrollView>
+        <AnnotatedScrollBar
+            x:Name="annotatedScrollBar"
+            MaxHeight="500"
+            Margin="4,0,48,0"
+            HorizontalAlignment="Left"
+            DetailLabelRequested="AnnotatedScrollBar_DetailLabelRequested" />
     </Grid>
 
 </Page>

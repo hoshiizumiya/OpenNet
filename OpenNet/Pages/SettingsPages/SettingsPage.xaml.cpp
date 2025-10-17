@@ -4,6 +4,13 @@
 #include "Pages/SettingsPages/SettingsPage.g.cpp"
 #endif
 #include "MainSettingsPage.xaml.h"
+#include "../../MainWindow.xaml.h"
+#include "../../Helpers/WindowHelper.h"
+#include "winrt/Microsoft.Windows.AppLifecycle.h"
+// 添加缺失的 Imaging 头以解析 BitmapImage 的构造函数实现
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+// 用于解析字符串为整数
+#include <sstream>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -20,49 +27,96 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	SettingsPage::SettingsPage()
 	{
 		InitializeComponent();
+
+		// Capture initial language override at page creation
+		try
+		{
+			m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
+		}
+		catch (...)
+		{
+			m_initialLanguageOverride = L"";
+		}
+
+		// Build ComboBox items from ApplicationLanguages::Languages()
+		try
+		{
+			// Clear existing items if any
+			SoftLanguageCombobox().Items().Clear();
+
+			auto supported = ApplicationLanguages::Languages(); // IVectorView<hstring>
+			int32_t index = 0;
+			int32_t selectedIndex = 0; // default to Auto fallback
+
+			// Add an explicit "Auto" entry at index 0
+			auto autoItem = ComboBoxItem();
+			auto autoText = hstring(L"Auto");
+			autoItem.Content(box_value(autoText));
+			autoItem.Tag(box_value(hstring(L""))); // empty tag means follow system
+			SoftLanguageCombobox().Items().Append(autoItem);
+			index = 1;
+
+			// Append each supported language with its display name and tag
+			for (auto const& langTag : supported)
+			{
+				try
+				{
+					winrt::Windows::Globalization::Language lang{ langTag };
+					auto display = lang.DisplayName();
+					// Create ComboBoxItem with Content = display name, Tag = language tag
+					auto item = ComboBoxItem();
+					item.Content(box_value(display));
+					item.Tag(box_value(langTag));
+					SoftLanguageCombobox().Items().Append(item);
+
+					// If this tag matches PrimaryLanguageOverride, remember index
+					if (ApplicationLanguages::PrimaryLanguageOverride() == langTag)
+					{
+						selectedIndex = index;
+					}
+
+					++index;
+				}
+				catch (...)
+				{ /* ignore per-language failures */
+				}
+			}
+
+			// Set selected index (if PrimaryLanguageOverride empty, keep 0 = Auto)
+			try
+			{
+				auto current = ApplicationLanguages::PrimaryLanguageOverride();
+				if (current.empty())
+				{
+					SoftLanguageCombobox().SelectedIndex(0);
+				}
+				else
+				{
+					SoftLanguageCombobox().SelectedIndex(selectedIndex);
+				}
+			}
+			catch (...)
+			{
+				SoftLanguageCombobox().SelectedIndex(0);
+			}
+		}
+		catch (...)
+		{ /* ignore if languages enumeration fails */
+		}
+
+		Loaded({ this, &SettingsPage::AnnotatedScrollBarPage_Loaded });
+		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
+		SetDesktopBackground();
 	}
+
+	SettingsPage::~SettingsPage() noexcept = default;
+
 
 	void SettingsPage::Aboutp_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		// Navigate AboutFrame in this page
 		AboutFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>());
 		AboutFrame().Visibility(Visibility::Visible);
-
-		// Build items as observable vector of Folder runtimeclass (defined in IDL)
-		auto items = single_threaded_observable_vector<winrt::OpenNet::Pages::SettingsPages::Folder>();
-		auto folder1 = winrt::OpenNet::Pages::SettingsPages::Folder();
-		auto folder2 = winrt::OpenNet::Pages::SettingsPages::Folder();
-
-		// Try to get localized strings, fallback to literals
-		try
-		{
-			ResourceLoader rl;
-			auto nameSettings = rl.GetString(L"settings");
-			auto nameAbout = rl.GetString(L"about");
-			if (nameSettings.empty()) nameSettings = L"Settings";
-			if (nameAbout.empty()) nameAbout = L"About";
-			folder1.Name(nameSettings);
-			folder2.Name(nameAbout);
-		}
-		catch (...) {
-			folder1.Name(L"Settings");
-			folder2.Name(L"About");
-		}
-
-		items.Append(folder1);
-		items.Append(folder2);
-
-		// Update SettingsBar through the public helper on MainSettingsPage (runtime projection)
-		if (auto current = MainSettingsPage::Current)
-		{
-			current.UpdateSettingsBarItems(items);
-
-			// Navigate the SettingsFrame on the main settings page to AboutPage with slide-from-right transition
-			auto transition = SlideNavigationTransitionInfo();
-			transition.Effect(SlideNavigationTransitionEffect::FromRight);
-			// Navigate: parameter = empty IInspectable
-			current.SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(), winrt::Windows::Foundation::IInspectable{}, transition);
-		}
 	}
 
 	void SettingsPage::SPSettings_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -70,56 +124,65 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		// Placeholder for serial port settings click
 	}
 
-	void SettingsPage::OpenToml_click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
+	void SettingsPage::SoftLanguageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*args*/)
 	{
-		// Placeholder: opening TOML file handled by platform-specific code in original project.
+		auto combo = sender.try_as<ComboBox>();
+		if (!combo) return;
+
+		auto idx = combo.SelectedIndex();
+		if (idx < 0) return;
+
+		// Read the ComboBoxItem.Tag as the language tag (we stored it as boxed hstring)
+		winrt::hstring target;
+		auto sel = combo.SelectedItem().try_as<ComboBoxItem>();
+		if (sel)
+		{
+			auto boxed = sel.Tag();
+			if (boxed)
+			{
+				// Tag was stored as boxed hstring
+				target = unbox_value_or<hstring>(boxed, hstring(L""));
+			}
+		}
+
+		// Show/Hide restart banner depending on if it differs from initial
+		m_pendingLanguageOverride = target;
+		m_hasPendingLangChange = (m_pendingLanguageOverride != m_initialLanguageOverride);
+		RestartLanguageInfoBar().IsOpen(m_hasPendingLangChange);
+
+		// Map empty tag to auto behavior (follow system)
+		if (target.empty())
+		{
+			// Apply override with empty string to follow system
+			ApplicationLanguages::PrimaryLanguageOverride(L"");
+			return;
+		}
+
+		// If already set, no-op
+		if (ApplicationLanguages::PrimaryLanguageOverride() == target)
+		{
+			return;
+		}
+
+		// Apply language override
+		ApplicationLanguages::PrimaryLanguageOverride(target);
+
+		// Don't restart automatically; let user choose via InfoBar, there may cause task stop or data loss...
+		// Recreate main window to reload XAML resources with new language
+		// This way is not work, because the app must close.
+		//auto oldWindow = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowForElement(*this);
+		//auto newWindow = winrt::make<winrt::OpenNet::implementation::MainWindow>();
+		//::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(newWindow);
+		//oldWindow.Close();
+		//newWindow.Activate();
+		//winrt::Microsoft::Windows::AppLifecycle::AppInstance::Restart(L"/safemode");
+
+		//Future : use json/xml to define language option to aviod can not change back.
 	}
 
-	void SettingsPage::SoftLanguageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+	void SettingsPage::RestartToApplyLanguage_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		try
-		{
-			auto combo = sender.try_as<ComboBox>();
-			if (!combo) return;
-
-			auto idx = combo.SelectedIndex();
-			if (idx < 0) return;
-
-			// Map to language tag: index 0 = Auto, 1 = zh-CN (Chinese), 2 = en-US (English)
-			if (idx == 0)
-			{
-				ApplicationLanguages::PrimaryLanguageOverride(L""); // follow system
-			}
-			else if (idx == 1)
-			{
-				ApplicationLanguages::PrimaryLanguageOverride(L"zh-CN");
-			}
-			else if (idx == 2)
-			{
-				ApplicationLanguages::PrimaryLanguageOverride(L"en-US");
-			}
-
-			// Force reload of resources: create ResourceLoader instance which will use PrimaryLanguageOverride
-			try
-			{
-				ResourceLoader rl;
-				(void)rl.GetString(L"Lang_Auto");
-			}
-			catch (...) {
-			}
-
-			// Update DataContext to trigger bindings refresh
-			try
-			{
-				auto dc = this->DataContext();
-				this->DataContext(nullptr);
-				this->DataContext(dc);
-			}
-			catch (...) {
-			}
-		}
-		catch (...) {
-		}
+		winrt::Microsoft::Windows::AppLifecycle::AppInstance::Restart(L"");
 	}
 
 	void SettingsPage::SoftBackgroundCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
@@ -134,16 +197,108 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 	void SettingsPage::SetDesktopBackground()
 	{
-		// Safe no-op implementation: if DesktopBackgroundImage exists and has valid Source, leave it.
+		// 尝试读取系统壁纸路径；如果存在则设置为 BitmapImage，否则尝试读取纯色背景并设置 Border 背景色。
 		try
 		{
+			// 确保控件存在
 			auto img = DesktopBackgroundImage();
-			if (img && !img.Source())
+			auto border = DesktopBackgroundBorder();
+
+			// 获取系统壁纸路径
+			WCHAR wallpaperPathBuf[MAX_PATH]{};
+			if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPathBuf, 0))
 			{
-				// leave empty; real implementation can set a BitmapImage here
+				std::wstring wallpaperPath{ wallpaperPathBuf };
+
+				// 判断文件是否存在
+				bool fileExists = false;
+				if (!wallpaperPath.empty())
+				{
+					auto attrs = GetFileAttributesW(wallpaperPath.c_str());
+					fileExists = (attrs != INVALID_FILE_ATTRIBUTES && !(attrs & FILE_ATTRIBUTE_DIRECTORY));
+				}
+
+				if (fileExists && img)
+				{
+					// 构造 file:/// URI 并替换反斜杠为正斜杠
+					std::wstring uri = L"file:///" + wallpaperPath;
+					std::replace(uri.begin(), uri.end(), L'\\', L'/');
+
+					// 创建 BitmapImage 并设置为 Image.Source
+					winrt::Windows::Foundation::Uri fileUri{ uri };
+					BitmapImage bitmap{ fileUri };
+					img.Source(bitmap);
+
+					OutputDebugStringW(L"壁纸已更改！\n");
+					return;
+				}
+			}
+
+			// 如果没有可用壁纸，则尝试读取纯色背景（注册表：Control Panel\\Colors\\Background，格式 "R G B"）
+			WCHAR colorBuf[128]{};
+			DWORD bufSize = sizeof(colorBuf);
+			LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
+				L"Control Panel\\Colors",
+				L"Background",
+				RRF_RT_REG_SZ,
+				nullptr,
+				colorBuf,
+				&bufSize);
+			if (status == ERROR_SUCCESS && border)
+			{
+				std::wstring s{ colorBuf };
+				// 解析 "R G B"
+				int r = 0, g = 0, b = 0;
+				std::wistringstream iss(s);
+				if ((iss >> r >> g >> b))
+				{
+					Windows::UI::Color color{};
+					color.A = 255;
+					color.R = static_cast<uint8_t>(std::clamp(r, 0, 255));
+					color.G = static_cast<uint8_t>(std::clamp(g, 0, 255));
+					color.B = static_cast<uint8_t>(std::clamp(b, 0, 255));
+
+					auto brush = SolidColorBrush(color);
+					border.Background(brush);
+
+					OutputDebugStringW(L"纯色背景已设置！\n");
+					return;
+				}
 			}
 		}
-		catch (...) {
+		catch (...)
+		{
+			// 安全失败：不抛出
 		}
+	}
+
+	void SettingsPage::AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	{
+		SettingsScrollView().ScrollPresenter().VerticalScrollController() = annotatedScrollBar().ScrollController();
+	}
+
+	void SettingsPage::AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	{
+		// 解除控制器绑定，防止卸载后引用悬空
+		try
+		{
+			if (auto presenter = SettingsScrollView().ScrollPresenter())
+			{
+				presenter.VerticalScrollController(nullptr);
+			}
+		}
+		catch (...)
+		{
+		}
+	}
+
+	void SettingsPage::AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e)
+	{
+		// Provide a string as the tooltip content when hovering the mouse over the AnnotatedScrollBar's vertical rail. The string simply
+		// represents the color of the last item in the row computed from AnnotatedScrollBarDetailLabelRequestedEventArgs.ScrollOffset.
+		// e.Content() = GetOffsetLabel(e.ScrollOffset());
+		// 简单示例：展示偏移值；如需匹配示例，可按数据源计算标签文本
+		// e.Content(box_value(hstring(L"Label")));
+		e.Content(box_value(hstring(L"Offset: ") + to_hstring(e.ScrollOffset())));
 	}
 }

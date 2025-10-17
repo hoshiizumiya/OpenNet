@@ -27,21 +27,21 @@
         </Grid.ColumnDefinitions>
 
         <BreadcrumbBar
-            x:Name="SettingsBar"
+            x:Name="MainSettingsPageBar"
             Grid.Row="1"
             Grid.Column="1"
             Margin="0,-12,0,0"
             x:FieldModifier="Public">
             <BreadcrumbBar.ItemTemplate>
-                <DataTemplate>
-                    <BreadcrumbBarItem AutomationProperties.Name="{Binding Name}" Content="{Binding}">
+                <DataTemplate x:DataType="local:Folder">
+                    <BreadcrumbBarItem AutomationProperties.Name="{x:Bind Name}" Content="{x:Bind Name}">
                         <BreadcrumbBarItem.ContentTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="local:Folder">
                                 <TextBlock
                                     Height="60"
                                     Margin="10,0"
                                     FontSize="40"
-                                    Text="{Binding Name}" />
+                                    Text="{x:Bind Name}" />
                             </DataTemplate>
                         </BreadcrumbBarItem.ContentTemplate>
                     </BreadcrumbBarItem>

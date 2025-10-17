@@ -5,18 +5,38 @@
 #endif
 
 using namespace winrt;
-using namespace winrt::OpenNet::Pages::SettingsPages::implementation;
+using namespace winrt::Windows::Foundation::Collections;
 
-Folder::Folder()
+namespace winrt::OpenNet::Pages::SettingsPages::implementation
 {
-}
+	Folder::Folder()
+	{
+	}
 
-winrt::hstring Folder::Name()
-{
-    return m_name;
-}
+	winrt::hstring Folder::Name()
+	{
+		return m_name;
+	}
 
-void Folder::Name(winrt::hstring const& value)
-{
-    m_name = value;
+	void Folder::Name(winrt::hstring const& value)
+	{
+		m_name = value;
+
+		m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs
+			{
+				L"Name"
+			}
+		);
+	}
+
+	// must implement INotifyPropertyChanged to avoid Xaml warnings/errorsd();
+	winrt::event_token Folder::PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+	{
+		return m_propertyChanged.add(handler);
+	}
+
+	void Folder::PropertyChanged(winrt::event_token const& token) noexcept
+	{
+		m_propertyChanged.remove(token);
+	}
 }

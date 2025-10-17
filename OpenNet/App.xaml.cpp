@@ -42,7 +42,7 @@ namespace winrt::OpenNet::implementation
 
         // Language Hot-Reload support
         auto supportedLanguages = Windows::Globalization::ApplicationLanguages::Languages();
-
+        
         // 构建输出字符串
         std::wstring out;
         out.reserve(256);

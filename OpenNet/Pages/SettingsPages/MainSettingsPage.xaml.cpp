@@ -4,6 +4,8 @@
 #include "Pages/SettingsPages/MainSettingsPage.g.cpp"
 #endif
 
+#include "Folder.h"
+
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
@@ -24,31 +26,27 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 		// Navigate to SettingsPage by default
 		SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
-		
-		
-		// Populate SettingsBar with a single Folder item using localized resource if available
+
+		// Populate MainSettingsPageBar with a single Folder item using localized resource if available
 		auto items = single_threaded_observable_vector<winrt::OpenNet::Pages::SettingsPages::Folder>();
 		auto folder = winrt::OpenNet::Pages::SettingsPages::Folder();
-		try
-		{
-			// Try to get resource string, fallback to L"Settings"
-			auto rl = Microsoft::Windows::ApplicationModel::Resources::ResourceLoader();
-			auto name = rl.GetString(L"settings");
-			if (name.empty()) name = L"Settings";
-			folder.Name(name);
-		}
-		catch (...) { folder.Name(L"Settings"); }
+
+		// Try to get resource string, fallback to L"Settings"
+		//auto rl = Microsoft::Windows::ApplicationModel::Resources::ResourceLoader();
+		//auto name = rl.GetString(L"settings");
+		//if (name.empty()) name = L"Settings";
+		//folder.Name(name);
 
 		items.Append(folder);
-		SettingsBar().ItemsSource(items);
+		MainSettingsPageBar().ItemsSource(items);
 
 		// Hook up ItemClicked to handle breadcrumb trimming if needed
-		SettingsBar().ItemClicked({ this, &MainSettingsPage::SettingsBar_ItemClicked });
+		MainSettingsPageBar().ItemClicked({ this, &MainSettingsPage::SettingsBar_ItemClicked });
 	}
 
 	void MainSettingsPage::UpdateSettingsBarItems(winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::Pages::SettingsPages::Folder> const& items)
 	{
-		SettingsBar().ItemsSource(items);
+		MainSettingsPageBar().ItemsSource(items);
 	}
 
 	void MainSettingsPage::SettingsBar_ItemClicked(BreadcrumbBar const& /*sender*/, BreadcrumbBarItemClickedEventArgs const& args)
@@ -56,7 +54,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		// Trim items after clicked index
 		try
 		{
-			auto itemsObj = SettingsBar().ItemsSource();
+			auto itemsObj = MainSettingsPageBar().ItemsSource();
 			auto vec = itemsObj.try_as<IVector<IInspectable>>();
 			if (!vec) return;
 			int32_t count = static_cast<int32_t>(vec.Size());

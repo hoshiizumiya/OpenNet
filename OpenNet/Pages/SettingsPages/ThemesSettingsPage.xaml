@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.Pages.SettingsPages.ThemesSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:local="using:OpenNet.Pages.SettingsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid>
+        <!--<Button
+    VerticalAlignment="Bottom"
+    Click="ThemeButton_Click"
+    ToolTipService.ToolTip="{Binding RequestedTheme, ElementName=RootGrid, Converter={StaticResource ElementThemeToStringConverter}}">
+    <essential:SwitchPresenter
+        xmlns:theme="using:Microsoft.UI.Xaml"
+        x:Name="ThemeSwitcher"
+        Value="{Binding RequestedTheme, ElementName=RootGrid, Mode=OneWay}">
+        <essential:Case>
+            <TextBlock Text="🌙" />
+            <essential:Case.Value>
+                <theme:ElementTheme>Dark</theme:ElementTheme>
+            </essential:Case.Value>
+        </essential:Case>
+        <essential:Case>
+            <TextBlock Text="☀️" />
+            <essential:Case.Value>
+                <theme:ElementTheme>Light</theme:ElementTheme>
+            </essential:Case.Value>
+        </essential:Case>
+        <essential:Case>
+            <TextBlock Text="💻" />
+            <essential:Case.Value>
+                <theme:ElementTheme>Default</theme:ElementTheme>
+            </essential:Case.Value>
+        </essential:Case>
+    </essential:SwitchPresenter>
+</Button>-->
+        <essential:SettingsCard
+            x:Name="SoftPersonalization"
+            x:Uid="SoftPersonalization"
+            Margin="0,3,0,3"
+            Description="A SettingsCard can be made clickable and you can leverage the Command property or Click event."
+            Header=""
+            IsClickEnabled="True">
+            <essential:SettingsCard.HeaderIcon>
+                <FontIcon FontSize="12" Glyph="&#xE771;" />
+            </essential:SettingsCard.HeaderIcon>
+
+        </essential:SettingsCard>
+
+    </Grid>
+</Page>
