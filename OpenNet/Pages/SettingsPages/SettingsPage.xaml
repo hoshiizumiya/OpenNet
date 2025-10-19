@@ -9,7 +9,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    NavigationCacheMode="Enabled"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
     <!--  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"  -->
     <Page.Resources>

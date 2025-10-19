@@ -3,12 +3,15 @@
 #if __has_include("Pages/SettingsPages/SettingsPage.g.cpp")
 #include "Pages/SettingsPages/SettingsPage.g.cpp"
 #endif
+
 #include "MainSettingsPage.xaml.h"
 #include "../../MainWindow.xaml.h"
 #include "../../Helpers/WindowHelper.h"
 #include "winrt/Microsoft.Windows.AppLifecycle.h"
-// 添加缺失的 Imaging 头以解析 BitmapImage 的构造函数实现
+// 解析 BitmapImage 的构造函数实现
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
+
 // 用于解析字符串为整数
 #include <sstream>
 
@@ -24,19 +27,17 @@ using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::OpenNet::Pages::SettingsPages::implementation
 {
+	// 正确定义类静态成员（不要使用文件作用域的 static 关键字）
+	SettingsPage* SettingsPage::s_current = nullptr;
+
 	SettingsPage::SettingsPage()
 	{
 		InitializeComponent();
+		s_current = this;
 
 		// Capture initial language override at page creation
-		try
-		{
-			m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
-		}
-		catch (...)
-		{
-			m_initialLanguageOverride = L"";
-		}
+		m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
+		m_initialLanguageOverride = L"";
 
 		// Build ComboBox items from ApplicationLanguages::Languages()
 		try
@@ -59,27 +60,21 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			// Append each supported language with its display name and tag
 			for (auto const& langTag : supported)
 			{
-				try
+				winrt::Windows::Globalization::Language lang{ langTag };
+				auto display = lang.DisplayName();
+				// Create ComboBoxItem with Content = display name, Tag = language tag
+				auto item = ComboBoxItem();
+				item.Content(box_value(display));
+				item.Tag(box_value(langTag));
+				SoftLanguageCombobox().Items().Append(item);
+
+				// If this tag matches PrimaryLanguageOverride, remember index
+				if (ApplicationLanguages::PrimaryLanguageOverride() == langTag)
 				{
-					winrt::Windows::Globalization::Language lang{ langTag };
-					auto display = lang.DisplayName();
-					// Create ComboBoxItem with Content = display name, Tag = language tag
-					auto item = ComboBoxItem();
-					item.Content(box_value(display));
-					item.Tag(box_value(langTag));
-					SoftLanguageCombobox().Items().Append(item);
-
-					// If this tag matches PrimaryLanguageOverride, remember index
-					if (ApplicationLanguages::PrimaryLanguageOverride() == langTag)
-					{
-						selectedIndex = index;
-					}
-
-					++index;
+					selectedIndex = index;
 				}
-				catch (...)
-				{ /* ignore per-language failures */
-				}
+
+				++index;
 			}
 
 			// Set selected index (if PrimaryLanguageOverride empty, keep 0 = Auto)
@@ -109,14 +104,31 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		SetDesktopBackground();
 	}
 
-	SettingsPage::~SettingsPage() noexcept = default;
-
-
 	void SettingsPage::Aboutp_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
-		// Navigate AboutFrame in this page
 		AboutFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>());
 		AboutFrame().Visibility(Visibility::Visible);
+
+		auto items = single_threaded_observable_vector<winrt::OpenNet::Pages::SettingsPages::Folder>();
+		auto folder = winrt::OpenNet::Pages::SettingsPages::Folder();
+
+		folder.Name(L"Settings");
+		items.Append(folder);
+		folder.Name(L"About");
+		items.Append(folder);
+		MainSettingsPage::Current()->MainSettingsPageBar().ItemsSource(items);
+
+		// 不能写成 SlideNavigationTransitionInfo{ Effect = SlideNavigationTransitionEffect::FromRight };
+		// 这是 C# 的属性初始化语法，C++ 不支持，因此会导致 “未定义标识符 Effect”。
+		// 正确写法：
+		auto transitionInfo = SlideNavigationTransitionInfo{};
+		transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
+
+		MainSettingsPage::Current()->SettingsFrame().Navigate(
+			xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
+			nullptr,
+			transitionInfo
+		);
 	}
 
 	void SettingsPage::SPSettings_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -183,6 +195,11 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	void SettingsPage::RestartToApplyLanguage_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		winrt::Microsoft::Windows::AppLifecycle::AppInstance::Restart(L"");
+	}
+
+	SettingsPage* SettingsPage::Current()
+	{
+		return s_current;
 	}
 
 	void SettingsPage::SoftBackgroundCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
@@ -280,16 +297,11 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	void SettingsPage::AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
 		// 解除控制器绑定，防止卸载后引用悬空
-		try
-		{
-			if (auto presenter = SettingsScrollView().ScrollPresenter())
-			{
-				presenter.VerticalScrollController(nullptr);
-			}
-		}
-		catch (...)
-		{
-		}
+		//if (auto presenter = SettingsScrollView().ScrollPresenter())
+		//{
+		//	presenter.VerticalScrollController(nullptr);
+		//}
+
 	}
 
 	void SettingsPage::AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e)

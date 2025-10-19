@@ -20,13 +20,10 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 	void Folder::Name(winrt::hstring const& value)
 	{
+		if (m_name == value) return;
 		m_name = value;
 
-		m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs
-			{
-				L"Name"
-			}
-		);
+		m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ L"Name" });
 	}
 
 	// must implement INotifyPropertyChanged to avoid Xaml warnings/errorsd();

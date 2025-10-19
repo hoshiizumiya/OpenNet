@@ -34,17 +34,11 @@
             x:FieldModifier="Public">
             <BreadcrumbBar.ItemTemplate>
                 <DataTemplate x:DataType="local:Folder">
-                    <BreadcrumbBarItem AutomationProperties.Name="{x:Bind Name}" Content="{x:Bind Name}">
-                        <BreadcrumbBarItem.ContentTemplate>
-                            <DataTemplate x:DataType="local:Folder">
-                                <TextBlock
-                                    Height="60"
-                                    Margin="10,0"
-                                    FontSize="40"
-                                    Text="{x:Bind Name}" />
-                            </DataTemplate>
-                        </BreadcrumbBarItem.ContentTemplate>
-                    </BreadcrumbBarItem>
+                    <TextBlock
+                        Height="60"
+                        Margin="10,0"
+                        FontSize="40"
+                        Text="{x:Bind Name}" />
                 </DataTemplate>
             </BreadcrumbBar.ItemTemplate>
         </BreadcrumbBar>

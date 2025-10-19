@@ -5,6 +5,7 @@
 #endif
 
 #include "Folder.h"
+#include "SettingsPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -13,16 +14,13 @@ using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::OpenNet::Pages::SettingsPages::implementation
 {
-	// Define static member for outside class use
-	::winrt::OpenNet::Pages::SettingsPages::MainSettingsPage MainSettingsPage::Current{ nullptr };
+	MainSettingsPage* MainSettingsPage::s_current{ nullptr };
 
 	MainSettingsPage::MainSettingsPage()
 	{
 		InitializeComponent();
 		DataContext() = *this;
-
-		// assign Current for global access (similar to C# static property)
-		Current = *this;
+		s_current = this;
 
 		// Navigate to SettingsPage by default
 		SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
@@ -36,12 +34,18 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		//auto name = rl.GetString(L"settings");
 		//if (name.empty()) name = L"Settings";
 		//folder.Name(name);
+		folder.Name(L"Settings");
 
 		items.Append(folder);
 		MainSettingsPageBar().ItemsSource(items);
 
 		// Hook up ItemClicked to handle breadcrumb trimming if needed
 		MainSettingsPageBar().ItemClicked({ this, &MainSettingsPage::SettingsBar_ItemClicked });
+	}
+
+	MainSettingsPage* MainSettingsPage::Current()
+	{
+		return s_current;
 	}
 
 	void MainSettingsPage::UpdateSettingsBarItems(winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::Pages::SettingsPages::Folder> const& items)
@@ -52,21 +56,20 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	void MainSettingsPage::SettingsBar_ItemClicked(BreadcrumbBar const& /*sender*/, BreadcrumbBarItemClickedEventArgs const& args)
 	{
 		// Trim items after clicked index
-		try
+		auto itemsObj = MainSettingsPageBar().ItemsSource();
+		auto vec = itemsObj.try_as<IVector<IInspectable>>();
+		if (!vec) return;
+		int32_t count = static_cast<int32_t>(vec.Size());
+		for (int32_t i = count - 1; i >= args.Index() + 1; --i)
 		{
-			auto itemsObj = MainSettingsPageBar().ItemsSource();
-			auto vec = itemsObj.try_as<IVector<IInspectable>>();
-			if (!vec) return;
-			int32_t count = static_cast<int32_t>(vec.Size());
-			for (int32_t i = count - 1; i >= args.Index() + 1; --i)
-			{
-				vec.RemoveAtEnd();
-			}
-
-			// Navigate back to SettingsPage when breadcrumb trimmed
-			SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
+			vec.RemoveAtEnd();
 		}
-		catch (...) {
+
+		// Navigate back to SettingsPage when breadcrumb trimmed
+		SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
+		if (auto page = SettingsPage::Current())
+		{
+			page->AboutFrame().Visibility(Microsoft::UI::Xaml::Visibility::Collapsed);
 		}
 	}
 
