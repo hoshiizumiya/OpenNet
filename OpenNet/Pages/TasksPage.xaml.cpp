@@ -58,7 +58,11 @@ namespace winrt::OpenNet::Pages::implementation
 			{
 				init->Initialize(hwnd);
 			}
+#ifdef _DEBUG
 			OutputDebugString(L"Pick path success");
+
+#endif
+
 		}
 
 		Windows::Storage::StorageFolder folder = co_await picker.PickSingleFolderAsync();
@@ -104,9 +108,10 @@ namespace winrt::OpenNet::Pages::implementation
 				}();
 					});*/
 
-		// 替换原来的 browseBtn.Click 代码片段
+					// 替换原来的 browseBtn.Click 代码片段
 		browseBtn.Click(
-			[weakPage = get_weak(), savePathBox](IInspectable const&, RoutedEventArgs const&) -> winrt::fire_and_forget {
+			[weakPage = get_weak(), savePathBox](IInspectable const&, RoutedEventArgs const&) -> winrt::fire_and_forget
+			{
 				// 避免协程内未捕获异常导致早期结束 + 框架试图重复调度
 				try
 				{
@@ -152,17 +157,17 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
-    void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
-                                                    Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
-    {
-        (void)sender;
-        auto item = args.SelectedItem().try_as<Microsoft::UI::Xaml::Controls::NavigationViewItem>();
-        if (!item) return;
-        auto tag = unbox_value_or<winrt::hstring>(item.Tag(), L"");
-        if (tag.empty()) return;
-        if (m_viewModel)
-        {
-            m_viewModel.ApplyFilter(tag);
-        }
-    }
+	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,
+		Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
+	{
+		(void)sender;
+		auto item = args.SelectedItem().try_as<Microsoft::UI::Xaml::Controls::NavigationViewItem>();
+		if (!item) return;
+		auto tag = unbox_value_or<winrt::hstring>(item.Tag(), L"");
+		if (tag.empty()) return;
+		if (m_viewModel)
+		{
+			m_viewModel.ApplyFilter(tag);
+		}
+	}
 }

@@ -606,10 +606,10 @@
                                 Stretch="UniformToFill" />
 
                             <Border
-                                Width="200"
-                                Height="120"
-                                Margin="0,0,9,24"
-                                HorizontalAlignment="Right"
+                                Width="130"
+                                Height="80"
+                                Margin="10,0,9,80"
+                                HorizontalAlignment="Left"
                                 VerticalAlignment="Bottom"
                                 Background="Transparent"
                                 CornerRadius="{ThemeResource ControlCornerRadius}">

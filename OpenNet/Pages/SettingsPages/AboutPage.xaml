@@ -230,25 +230,7 @@
                                                 FontWeight="Black"
                                                 Text="Github Copilot" />
                                             <LineBreak />
-                                            <Run
-                                                FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
-                                                FontSize="22"
-                                                FontWeight="Black"
-                                                Text="Gemini" />
                                             <LineBreak />
-                                            <LineBreak />
-                                            <Run
-                                                FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
-                                                FontWeight="Normal"
-                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                                Text="Payload" />
-                                            <LineBreak />
-                                            <Run
-                                                FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
-                                                FontSize="22"
-                                                FontWeight="Black"
-                                                Text="Asumoyz" />
-                                            <LineBreak /><LineBreak />
                                             <Run
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontWeight="Normal"

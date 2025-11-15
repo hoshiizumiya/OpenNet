@@ -4,6 +4,7 @@
 #include "Pages/SettingsPages/SettingsPage.g.cpp"
 #endif
 
+#include "Folder.h"
 #include "MainSettingsPage.xaml.h"
 #include "../../MainWindow.xaml.h"
 #include "../../Helpers/WindowHelper.h"
@@ -37,7 +38,13 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 		// Capture initial language override at page creation
 		m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
-		m_initialLanguageOverride = L"";
+#ifdef _DEBUG
+		OutputDebugString(ApplicationLanguages::PrimaryLanguageOverride().c_str());
+
+#endif // _DEBUG
+
+		// m_initialLanguageOverride = L"";
+		// 不要把初始值强制设为空，否则将导致重启后也被判定为“与初始不同”
 
 		// Build ComboBox items from ApplicationLanguages::Languages()
 		try
@@ -78,45 +85,74 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			}
 
 			// Set selected index (if PrimaryLanguageOverride empty, keep 0 = Auto)
-			try
-			{
-				auto current = ApplicationLanguages::PrimaryLanguageOverride();
-				if (current.empty())
-				{
-					SoftLanguageCombobox().SelectedIndex(0);
-				}
-				else
-				{
-					SoftLanguageCombobox().SelectedIndex(selectedIndex);
-				}
-			}
-			catch (...)
+			auto current = ApplicationLanguages::PrimaryLanguageOverride();
+			if (current.empty())
 			{
 				SoftLanguageCombobox().SelectedIndex(0);
 			}
+			else
+			{
+				SoftLanguageCombobox().SelectedIndex(selectedIndex);
+			}
 		}
 		catch (...)
-		{ /* ignore if languages enumeration fails */
+		{
+			SoftLanguageCombobox().SelectedIndex(0);
 		}
+
 
 		Loaded({ this, &SettingsPage::AnnotatedScrollBarPage_Loaded });
 		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
 		SetDesktopBackground();
+
+		// 启动时根据当前状态关闭“需要重启”提示
+		m_hasPendingLangChange = false;
+		if (auto infoBar = RestartLanguageInfoBar())
+		{
+			infoBar.IsOpen(false);
+		}
 	}
 
 	void SettingsPage::Aboutp_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
-		AboutFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>());
-		AboutFrame().Visibility(Visibility::Visible);
+		// --- ISSUE AND FIX ---
+		// The original code created one 'Folder' object and added it twice,
+		// changing its name in between. This results in the BreadcrumbBar
+		// showing two items that both point to the same object, so both display the last name set ("About").
+		//
+		// The fix is to create two distinct 'Folder' objects.
 
-		auto items = single_threaded_observable_vector<winrt::OpenNet::Pages::SettingsPages::Folder>();
-		auto folder = winrt::OpenNet::Pages::SettingsPages::Folder();
+		// 1. Get the current items from the MainSettingsPage's BreadcrumbBar.
+		auto mainSettingsPage = MainSettingsPage::Current();
+		if (!mainSettingsPage) return;
 
-		folder.Name(L"Settings");
-		items.Append(folder);
-		folder.Name(L"About");
-		items.Append(folder);
-		MainSettingsPage::Current()->MainSettingsPageBar().ItemsSource(items);
+		auto itemsSource = mainSettingsPage->MainSettingsPageBar().ItemsSource();
+		auto breadcrumbItems = itemsSource.try_as<IObservableVector<IInspectable>>();
+		if (!breadcrumbItems)
+		{
+			// If the source is not an IObservableVector or is null, create a new one.
+			// This makes the code more robust.
+			breadcrumbItems = single_threaded_observable_vector<IInspectable>();
+			mainSettingsPage->MainSettingsPageBar().ItemsSource(breadcrumbItems);
+		}
+
+
+		// 2. Clear existing items beyond the root "Settings" item if necessary.
+		// This handles cases where the user might navigate elsewhere before coming here.
+		// A simpler approach is to just rebuild the list. Let's do that.
+		breadcrumbItems.Clear();
+
+		// 3. Create and add the "Settings" folder.
+		auto settingsFolder = winrt::make<winrt::OpenNet::Pages::SettingsPages::implementation::Folder>();
+		settingsFolder.Name(L"Settings"); // Assuming you have a Folder class with a Name property.
+		breadcrumbItems.Append(settingsFolder);
+
+
+		// 4. Create and add the "About" folder. This is the new, separate object.
+		auto aboutFolder = winrt::make<winrt::OpenNet::Pages::SettingsPages::implementation::Folder>();
+		aboutFolder.Name(L"About");
+		breadcrumbItems.Append(aboutFolder);
+
 
 		// 不能写成 SlideNavigationTransitionInfo{ Effect = SlideNavigationTransitionEffect::FromRight };
 		// 这是 C# 的属性初始化语法，C++ 不支持，因此会导致 “未定义标识符 Effect”。
@@ -215,79 +251,72 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	void SettingsPage::SetDesktopBackground()
 	{
 		// 尝试读取系统壁纸路径；如果存在则设置为 BitmapImage，否则尝试读取纯色背景并设置 Border 背景色。
-		try
+		auto img = DesktopBackgroundImage();
+		auto border = DesktopBackgroundBorder();
+
+		// 获取系统壁纸路径
+		WCHAR wallpaperPathBuf[MAX_PATH]{};
+		if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPathBuf, 0))
 		{
-			// 确保控件存在
-			auto img = DesktopBackgroundImage();
-			auto border = DesktopBackgroundBorder();
+			std::wstring wallpaperPath{ wallpaperPathBuf };
 
-			// 获取系统壁纸路径
-			WCHAR wallpaperPathBuf[MAX_PATH]{};
-			if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPathBuf, 0))
+			// 判断文件是否存在
+			bool fileExists = false;
+			if (!wallpaperPath.empty())
 			{
-				std::wstring wallpaperPath{ wallpaperPathBuf };
-
-				// 判断文件是否存在
-				bool fileExists = false;
-				if (!wallpaperPath.empty())
-				{
-					auto attrs = GetFileAttributesW(wallpaperPath.c_str());
-					fileExists = (attrs != INVALID_FILE_ATTRIBUTES && !(attrs & FILE_ATTRIBUTE_DIRECTORY));
-				}
-
-				if (fileExists && img)
-				{
-					// 构造 file:/// URI 并替换反斜杠为正斜杠
-					std::wstring uri = L"file:///" + wallpaperPath;
-					std::replace(uri.begin(), uri.end(), L'\\', L'/');
-
-					// 创建 BitmapImage 并设置为 Image.Source
-					winrt::Windows::Foundation::Uri fileUri{ uri };
-					BitmapImage bitmap{ fileUri };
-					img.Source(bitmap);
-
-					OutputDebugStringW(L"壁纸已更改！\n");
-					return;
-				}
+				auto attrs = GetFileAttributesW(wallpaperPath.c_str());
+				fileExists = (attrs != INVALID_FILE_ATTRIBUTES && !(attrs & FILE_ATTRIBUTE_DIRECTORY));
 			}
 
-			// 如果没有可用壁纸，则尝试读取纯色背景（注册表：Control Panel\\Colors\\Background，格式 "R G B"）
-			WCHAR colorBuf[128]{};
-			DWORD bufSize = sizeof(colorBuf);
-			LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
-				L"Control Panel\\Colors",
-				L"Background",
-				RRF_RT_REG_SZ,
-				nullptr,
-				colorBuf,
-				&bufSize);
-			if (status == ERROR_SUCCESS && border)
+			if (fileExists && img)
 			{
-				std::wstring s{ colorBuf };
-				// 解析 "R G B"
-				int r = 0, g = 0, b = 0;
-				std::wistringstream iss(s);
-				if ((iss >> r >> g >> b))
-				{
-					Windows::UI::Color color{};
-					color.A = 255;
-					color.R = static_cast<uint8_t>(std::clamp(r, 0, 255));
-					color.G = static_cast<uint8_t>(std::clamp(g, 0, 255));
-					color.B = static_cast<uint8_t>(std::clamp(b, 0, 255));
+				// 构造 file:/// URI 并替换反斜杠为正斜杠
+				std::wstring uri = L"file:///" + wallpaperPath;
+				std::replace(uri.begin(), uri.end(), L'\\', L'/');
 
-					auto brush = SolidColorBrush(color);
-					border.Background(brush);
+				// 创建 BitmapImage 并设置为 Image.Source
+				winrt::Windows::Foundation::Uri fileUri{ uri };
+				BitmapImage bitmap{ fileUri };
+				img.Source(bitmap);
 
-					OutputDebugStringW(L"纯色背景已设置！\n");
-					return;
-				}
+				OutputDebugStringW(L"壁纸已更改！\n");
+				return;
 			}
 		}
-		catch (...)
+
+		// 如果没有可用壁纸，则尝试读取纯色背景（注册表：Control Panel\\Colors\\Background，格式 "R G B"）
+		WCHAR colorBuf[128]{};
+		DWORD bufSize = sizeof(colorBuf);
+		LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
+			L"Control Panel\\Colors",
+			L"Background",
+			RRF_RT_REG_SZ,
+			nullptr,
+			colorBuf,
+			&bufSize);
+		if (status == ERROR_SUCCESS && border)
 		{
-			// 安全失败：不抛出
+			std::wstring s{ colorBuf };
+			// 解析 "R G B"
+			int r = 0, g = 0, b = 0;
+			std::wistringstream iss(s);
+			if ((iss >> r >> g >> b))
+			{
+				Windows::UI::Color color{};
+				color.A = 255;
+				color.R = static_cast<uint8_t>(std::clamp(r, 0, 255));
+				color.G = static_cast<uint8_t>(std::clamp(g, 0, 255));
+				color.B = static_cast<uint8_t>(std::clamp(b, 0, 255));
+
+				auto brush = SolidColorBrush(color);
+				border.Background(brush);
+
+				OutputDebugStringW(L"纯色背景已设置！\n");
+				return;
+			}
 		}
 	}
+
 
 	void SettingsPage::AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{

@@ -40,7 +40,10 @@
     <Page Include="Pages\SettingsPages\AboutPage.xaml">
       <Filter>Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml" />
+    <Page Include="Controls\HomePage\Header\HeaderCarousel.xaml" />
+    <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml">
+      <Filter>Pages\SettingsPages</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -138,7 +141,9 @@
     <ClCompile Include="Core\P2PManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\Folder.cpp" />
+    <ClCompile Include="Pages\SettingsPages\Folder.cpp">
+      <Filter>Pages\SettingsPages</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -255,7 +260,9 @@
     <ClInclude Include="Pages\ThemesSwitcher\SupportThemeToggle.h">
       <Filter>Pages\ThemesSwitcher</Filter>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\Folder.h" />
+    <ClInclude Include="Pages\SettingsPages\Folder.h">
+      <Filter>Pages\SettingsPages</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">

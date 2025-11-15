@@ -59,4 +59,15 @@
     <uap:Capability Name="removableStorage"/>
     <Capability Name="privateNetworkClientServer"/>
   </Capabilities>
+
+	<!--In order to host the C# component from C++, you must add the following Extension group and list the activatable classes-->
+	<!--<Extensions>
+		<Extension Category="windows.activatableClass.inProcessServer">
+			<InProcessServer>
+				<Path>WinRT.Host.dll</Path>
+				<ActivatableClass ActivatableClassId="WCTCsClassLibrary.MainPageUserControl" ThreadingModel="both" />
+				<ActivatableClass ActivatableClassId="WCTCsClassLibrary.WCTCsClassLibrary_XamlTypeInfo.XamlMetaDataProvider" ThreadingModel="both" />
+			</InProcessServer>
+		</Extension>
+	</Extensions>-->
 </Package>

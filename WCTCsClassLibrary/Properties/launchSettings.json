@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "WCTCsClassLibrary": {
+      "commandName": "Project",
+      "nativeDebugging": true
+    }
+  }
+}

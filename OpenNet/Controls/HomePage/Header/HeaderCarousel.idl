@@ -1,0 +1,9 @@
+﻿namespace OpenNet.Controls.HomePage.Header
+{
+    [default_interface]
+    runtimeclass HeaderCarousel : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        HeaderCarousel();
+
+    }
+}
