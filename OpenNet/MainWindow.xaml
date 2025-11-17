@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<essential:WindowEx
+<Window
     x:Class="OpenNet.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -9,13 +9,11 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="MainWindowRoot"
     Title="OpenNet"
-    MinWidth="800"
-    MinHeight="600"
     mc:Ignorable="d">
 
-    <essential:WindowEx.SystemBackdrop>
+    <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt" />
-    </essential:WindowEx.SystemBackdrop>
+    </Window.SystemBackdrop>
 
     <Grid x:Name="RootGrid" Loaded="Grid_Loaded">
         <Grid.RowDefinitions>
@@ -278,4 +276,4 @@
             </Grid>
         </Border>
     </Grid>
-</essential:WindowEx>
+</Window>

@@ -3,6 +3,9 @@
 
 #include <shlwapi.h> // For PathRemoveFileSpec
 #pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "comctl32.lib")  // For SetWindowSubclass
+
+#include <commctrl.h>  // For SetWindowSubclass
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -12,6 +15,37 @@ using namespace winrt::Microsoft::UI::Windowing;
 
 namespace OpenNet::Helpers::WinUIWindowHelper
 {
+	// 窗口子类化回调函数 / Window Subclass Callback
+	LRESULT CALLBACK WindowMinSizeSubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+	{
+		if (uMsg == WM_GETMINMAXINFO)
+		{
+			LPMINMAXINFO lpMMI = reinterpret_cast<LPMINMAXINFO>(lParam);
+
+			// 从窗口属性中获取最小尺寸
+			HANDLE minWidthHandle = GetPropW(hWnd, L"MinWidth");
+			HANDLE minHeightHandle = GetPropW(hWnd, L"MinHeight");
+
+			if (minWidthHandle && minHeightHandle)
+			{
+				int minWidth = static_cast<int>(reinterpret_cast<INT_PTR>(minWidthHandle));
+				int minHeight = static_cast<int>(reinterpret_cast<INT_PTR>(minHeightHandle));
+
+				lpMMI->ptMinTrackSize.x = minWidth;
+				lpMMI->ptMinTrackSize.y = minHeight;
+			}
+		}
+		else if (uMsg == WM_NCDESTROY)
+		{
+			// 清理：移除子类化
+			RemoveWindowSubclass(hWnd, WindowMinSizeSubclassProc, uIdSubclass);
+			RemovePropW(hWnd, L"MinWidth");
+			RemovePropW(hWnd, L"MinHeight");
+		}
+
+		return DefSubclassProc(hWnd, uMsg, wParam, lParam);
+	}
+
 	Window WindowHelper::CreateHostWindow()
 	{
 		Window newWindow = Window();
@@ -112,7 +146,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 	}
 
 	// Need more investegation, this function is not working as expected. We now use essential lib to set the window size.
-	void WindowHelper::SetWindowMinSize(Window const& window, double const& width, double const& height)
+	void WindowHelper::SetWindowMinSize2(Window const& window, double const& width, double const& height)
 	{
 		auto windowContent = window.Content().try_as<FrameworkElement>();
 		//OverlappedPresenter presenter = OverlappedPresenter::Create();
@@ -136,10 +170,51 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		auto scale = GetXamlRootContent(window).XamlRoot().RasterizationScale();
 		double minWidth = width * scale;
 		double minHeight = height * scale;
-		presenter.PreferredMinimumHeight() = (int)minWidth;
-		presenter.PreferredMinimumWidth() = (int)minHeight;
+		presenter.PreferredMinimumHeight() = (int)minHeight;
+		presenter.PreferredMinimumWidth() = (int)minWidth;
 
-		GetAppWindow(window).SetPresenter(presenter);
+		// GetAppWindow(window).SetPresenter(presenter);
+	}
+
+	// Win32 version - Set Window Minimum Size
+	void WindowHelper::SetWindowMinSize(Window const& window, double const& width, double const& height)
+	{
+		auto windowContent = window.Content().try_as<FrameworkElement>();
+		if (!windowContent)
+		{
+			OutputDebugString(L"Window content is not a FrameworkElement.\n");
+			return;
+		}
+
+		if (!windowContent.XamlRoot())
+		{
+			OutputDebugString(L"Window content's XamlRoot is null.\n");
+			return;
+		}
+
+		auto scale = windowContent.XamlRoot().RasterizationScale();
+		int minWidth = static_cast<int>(width * scale);
+		int minHeight = static_cast<int>(height * scale);
+
+		HWND hwnd = GetWindowHandleFromWindow(window);
+		if (!hwnd)
+		{
+			OutputDebugString(L"Failed to get HWND from window.\n");
+			return;
+		}
+
+		// 存储最小尺寸到窗口属性
+		SetPropW(hwnd, L"MinWidth", reinterpret_cast<HANDLE>(static_cast<INT_PTR>(minWidth)));
+		SetPropW(hwnd, L"MinHeight", reinterpret_cast<HANDLE>(static_cast<INT_PTR>(minHeight)));
+
+		// 子类化窗口以处理 WM_GETMINMAXINFO 消息
+		SetWindowSubclass(hwnd, WindowMinSizeSubclassProc, 0, 0);
+#ifdef _DEBUG
+		std::wstring debugMsg = L"Set minimum size: " + std::to_wstring(minWidth) + L"x" + std::to_wstring(minHeight) + L"\n";
+		OutputDebugString(debugMsg.c_str());
+
+#endif
+
 	}
 
 }

@@ -276,16 +276,7 @@
   <data name="Enc_Strong" xml:space="preserve">
     <value>强加密 / Strong</value>
   </data>
-  <data name="Theme_Auto" xml:space="preserve">
-    <value>自动 / Auto</value>
-  </data>
-  <data name="Theme_Light" xml:space="preserve">
-    <value>浅色 / Light</value>
-  </data>
-  <data name="Theme_Dark" xml:space="preserve">
-    <value>深色 / Dark</value>
-  </data>
-  <data name="Generiall.Text" xml:space="preserve">
+  <data name="General.Text" xml:space="preserve">
     <value>常规</value>
   </data>
   <data name="StartPage.Header" xml:space="preserve">
@@ -323,5 +314,17 @@
   </data>
   <data name="SoftPersonalization.Header" xml:space="preserve">
     <value>个性化</value>
+  </data>
+  <data name="SoftPersonalization.Description" xml:space="preserve">
+    <value>个性化程序的界面展示样式</value>
+  </data>
+  <data name="ThemesLight.Content" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="ThemesDark.Content" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="ThemesDefault.Content" xml:space="preserve">
+    <value>和 Windows 设置一致</value>
   </data>
 </root>

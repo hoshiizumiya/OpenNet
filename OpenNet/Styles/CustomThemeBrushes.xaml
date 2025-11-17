@@ -1,0 +1,111 @@
+﻿<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--  Custom Color Resources  -->
+    <Color x:Key="SystemNaviControlBackgroundLightColor">#80FFFFFF</Color>
+    <Color x:Key="SystemNaviControlBackgroundDarkColor">#48505050</Color>
+    <Color x:Key="SystemRxboxControlBackgroundLightColor">#90FFFFFF</Color>
+    <Color x:Key="SystemRxboxControlBackgroundDarkColor">#44252525</Color>
+
+    <ResourceDictionary.ThemeDictionaries>
+        <!--  Light Theme Acrylic Brushes  -->
+        <ResourceDictionary x:Key="Light">
+            <AcrylicBrush
+                x:Key="CustomWindowDefaultBrush"
+                FallbackColor="#FFFFFF"
+                TintColor="#FFFFFF"
+                TintLuminosityOpacity="1"
+                TintOpacity="1" />
+            <AcrylicBrush
+                x:Key="CustomWindowAcrylicThinBrush"
+                FallbackColor="#FFFFFF"
+                TintColor="#E6E6E6"
+                TintLuminosityOpacity="0.4"
+                TintOpacity="0.0" />
+            <AcrylicBrush
+                x:Key="CustomWindowAcrylicBaseBrush"
+                FallbackColor="#F9F9F9"
+                TintColor="#F9F9F9"
+                TintLuminosityOpacity="0.88"
+                TintOpacity="0.1" />
+            <AcrylicBrush
+                x:Key="CustomWindowAcrylicBrush"
+                FallbackColor="#FFFFFF"
+                TintColor="#EFEFEF"
+                TintLuminosityOpacity="0.95"
+                TintOpacity="0.3" />
+            <AcrylicBrush
+                x:Key="CustomWindowMicaBrush"
+                FallbackColor="#FFFFFF"
+                TintColor="#F7F7F7"
+                TintLuminosityOpacity="0.9"
+                TintOpacity="0.1" />
+            <AcrylicBrush
+                x:Key="CustomWindowMicaAltBrush"
+                FallbackColor="#FFFFFF"
+                TintColor="#F6F6F6"
+                TintLuminosityOpacity="0.78"
+                TintOpacity="0.1" />
+            <AcrylicBrush
+                x:Key="CustomWindowTransparentBrush"
+                FallbackColor="#FFFFFF"
+                Opacity="0"
+                TintColor="#FFFFFF"
+                TintLuminosityOpacity="1"
+                TintOpacity="1" />
+            <SolidColorBrush x:Key="CustomNaviBoxSolidColorBrush" Color="{ThemeResource SystemNaviControlBackgroundLightColor}" />
+            <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemRxboxControlBackgroundLightColor}" />
+        </ResourceDictionary>
+
+        <!--  Dark Theme Acrylic Brushes  -->
+        <ResourceDictionary x:Key="Dark">
+            <AcrylicBrush
+                x:Key="CustomWindowDefaultBrush"
+                FallbackColor="#000000"
+                TintColor="#000000"
+                TintLuminosityOpacity="1"
+                TintOpacity="1" />
+            <AcrylicBrush
+                x:Key="CustomWindowAcrylicThinBrush"
+                FallbackColor="#000000"
+                TintColor="#161616"
+                TintLuminosityOpacity="0.23"
+                TintOpacity="0.0" />
+            <AcrylicBrush
+                x:Key="CustomWindowAcrylicBaseBrush"
+                FallbackColor="#000000"
+                TintColor="#262626"
+                TintLuminosityOpacity="0.75"
+                TintOpacity="0.1" />
+            <AcrylicBrush
+                x:Key="CustomWindowAcrylicBrush"
+                FallbackColor="#000000"
+                TintColor="#161616"
+                TintLuminosityOpacity="0.85"
+                TintOpacity="0.4" />
+            <AcrylicBrush
+                x:Key="CustomWindowMicaBrush"
+                FallbackColor="#000000"
+                TintColor="#161616"
+                TintLuminosityOpacity="0.9"
+                TintOpacity="0.6" />
+            <AcrylicBrush
+                x:Key="CustomWindowMicaAltBrush"
+                FallbackColor="#000000"
+                TintColor="#060606"
+                TintLuminosityOpacity="0.9"
+                TintOpacity="0.0" />
+            <AcrylicBrush
+                x:Key="CustomWindowTransparentBrush"
+                FallbackColor="#000000"
+                Opacity="0"
+                TintColor="#000000"
+                TintLuminosityOpacity="1"
+                TintOpacity="1" />
+            <SolidColorBrush x:Key="CustomNaviBoxSolidColorBrush" Color="{ThemeResource SystemNaviControlBackgroundDarkColor}" />
+            <SolidColorBrush x:Key="CustomRxBoxSolidColorBrush" Color="{ThemeResource SystemRxboxControlBackgroundDarkColor}" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

@@ -10,6 +10,7 @@
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
+using namespace winrt::Microsoft::UI::Xaml::Media::Animation;
 using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::OpenNet::Pages::SettingsPages::implementation
@@ -22,25 +23,18 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		DataContext() = *this;
 		s_current = this;
 
-		// Navigate to SettingsPage by default
+		// Navigate to SettingsPage (General) by default
 		SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
 
-		// Populate MainSettingsPageBar with a single Folder item using localized resource if available
+		// Set General as selected by default
+		SettingsNavView().SelectedItem(GeneralNavItem());
+
+		// Populate MainSettingsPageBar with a single Folder item
 		auto items = single_threaded_observable_vector<winrt::OpenNet::Pages::SettingsPages::Folder>();
 		auto folder = winrt::OpenNet::Pages::SettingsPages::Folder();
-
-		// Try to get resource string, fallback to L"Settings"
-		//auto rl = Microsoft::Windows::ApplicationModel::Resources::ResourceLoader();
-		//auto name = rl.GetString(L"settings");
-		//if (name.empty()) name = L"Settings";
-		//folder.Name(name);
 		folder.Name(L"Settings");
-
 		items.Append(folder);
 		MainSettingsPageBar().ItemsSource(items);
-
-		// Hook up ItemClicked to handle breadcrumb trimming if needed
-		MainSettingsPageBar().ItemClicked({ this, &MainSettingsPage::SettingsBar_ItemClicked });
 	}
 
 	MainSettingsPage* MainSettingsPage::Current()
@@ -59,18 +53,91 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		auto itemsObj = MainSettingsPageBar().ItemsSource();
 		auto vec = itemsObj.try_as<IVector<IInspectable>>();
 		if (!vec) return;
+		
 		int32_t count = static_cast<int32_t>(vec.Size());
 		for (int32_t i = count - 1; i >= args.Index() + 1; --i)
 		{
 			vec.RemoveAtEnd();
 		}
 
-		// Navigate back to SettingsPage when breadcrumb trimmed
-		SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
-		if (auto page = SettingsPage::Current())
+		// Navigate back to appropriate page based on breadcrumb depth
+		if (args.Index() == 0)
 		{
-			page->AboutFrame().Visibility(Microsoft::UI::Xaml::Visibility::Collapsed);
+			// Navigate back to General Settings (root)
+			auto transitionInfo = SlideNavigationTransitionInfo{};
+			transitionInfo.Effect(SlideNavigationTransitionEffect::FromLeft);
+			
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
+				nullptr,
+				transitionInfo
+			);
+			SettingsNavView().SelectedItem(GeneralNavItem());
+			
+			if (auto page = SettingsPage::Current())
+			{
+				page->AboutFrame().Visibility(Microsoft::UI::Xaml::Visibility::Collapsed);
+			}
 		}
 	}
 
+	void MainSettingsPage::SettingsNavView_SelectionChanged(NavigationView const& /*sender*/, NavigationViewSelectionChangedEventArgs const& args)
+	{
+		if (auto selectedItem = args.SelectedItem().try_as<NavigationViewItem>())
+		{
+			auto tag = unbox_value_or<hstring>(selectedItem.Tag(), L"");
+			
+			// Create slide transition
+			auto transitionInfo = SlideNavigationTransitionInfo{};
+			transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
+
+			// Update breadcrumb
+			auto itemsObj = MainSettingsPageBar().ItemsSource();
+			auto breadcrumbItems = itemsObj.try_as<IObservableVector<IInspectable>>();
+			if (breadcrumbItems)
+			{
+				// Keep only root "Settings" item
+				while (breadcrumbItems.Size() > 1)
+				{
+					breadcrumbItems.RemoveAtEnd();
+				}
+
+				// Add new category if not general
+				if (tag != L"general")
+				{
+					auto categoryFolder = winrt::make<winrt::OpenNet::Pages::SettingsPages::implementation::Folder>();
+					categoryFolder.Name(unbox_value_or<hstring>(selectedItem.Content(), L""));
+					breadcrumbItems.Append(categoryFolder);
+				}
+			}
+
+			// Navigate to appropriate page
+			if (tag == L"general")
+			{
+				SettingsFrame().Navigate(
+					xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
+					nullptr,
+					transitionInfo
+				);
+			}
+			else if (tag == L"about")
+			{
+				SettingsFrame().Navigate(
+					xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
+					nullptr,
+					transitionInfo
+				);
+			}
+			// For now, other categories navigate to general settings as placeholder
+			// TODO: Create separate pages for Network, SerialPort, DownloadFlash
+			else
+			{
+				SettingsFrame().Navigate(
+					xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
+					nullptr,
+					transitionInfo
+				);
+			}
+		}
+	}
 }

@@ -13,11 +13,13 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		MainSettingsPage();
 		static MainSettingsPage* Current();
 
-		// Breadcrumb handler referenced in cpp
+		// Breadcrumb handler
 		void SettingsBar_ItemClicked(Microsoft::UI::Xaml::Controls::BreadcrumbBar const&, Microsoft::UI::Xaml::Controls::BreadcrumbBarItemClickedEventArgs const& args);
 
-		// Expose a helper so other pages can update the SettingsBar without accessing implementation internals
-		// void UpdateSettingsBarItems(winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> const& items);
+		// Navigation handler
+		void SettingsNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
+
+		// Helper to update breadcrumb items
 		void UpdateSettingsBarItems(winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::Pages::SettingsPages::Folder> const& items);
 	};
 }

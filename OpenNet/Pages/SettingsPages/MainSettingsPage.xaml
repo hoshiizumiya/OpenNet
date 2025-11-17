@@ -14,46 +14,101 @@
         </Grid.Resources>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="12" />
-            <RowDefinition Height="48" />
-            <!--  36  -->
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="60" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="60" />
         </Grid.ColumnDefinitions>
 
-        <BreadcrumbBar
-            x:Name="MainSettingsPageBar"
-            Grid.Row="1"
-            Grid.Column="1"
-            Margin="0,-12,0,0"
-            x:FieldModifier="Public">
-            <BreadcrumbBar.ItemTemplate>
-                <DataTemplate x:DataType="local:Folder">
-                    <TextBlock
-                        Height="60"
-                        Margin="10,0"
-                        FontSize="40"
-                        Text="{x:Bind Name}" />
-                </DataTemplate>
-            </BreadcrumbBar.ItemTemplate>
-        </BreadcrumbBar>
-
-        <Frame
-            x:Name="SettingsFrame"
-            Grid.Row="2"
+        <NavigationView
+            x:Name="SettingsNavView"
+            Grid.Row="0"
             Grid.Column="0"
             Grid.ColumnSpan="3"
-            x:FieldModifier="Public">
-            <Frame.ContentTransitions>
-                <TransitionCollection>
-                    <NavigationThemeTransition />
-                </TransitionCollection>
-            </Frame.ContentTransitions>
-        </Frame>
+            CompactPaneLength="70"
+            IsBackButtonVisible="Collapsed"
+            IsSettingsVisible="False"
+            OpenPaneLength="200"
+            PaneDisplayMode="Left"
+            SelectionChanged="SettingsNavView_SelectionChanged">
+            <NavigationView.Header>
+                <BreadcrumbBar
+                    x:Name="MainSettingsPageBar"
+                    Margin="0,-12,0,0"
+                    x:FieldModifier="Public"
+                    ItemClicked="SettingsBar_ItemClicked">
+                    <BreadcrumbBar.ItemTemplate>
+                        <DataTemplate x:DataType="local:Folder">
+                            <TextBlock
+                                Height="60"
+                                Margin="10,0"
+                                FontSize="40"
+                                Text="{x:Bind Name}" />
+                        </DataTemplate>
+                    </BreadcrumbBar.ItemTemplate>
+                </BreadcrumbBar>
+            </NavigationView.Header>
+            
+            <NavigationView.MenuItems>
+                <NavigationViewItem
+                    x:Name="GeneralNavItem"
+                    Content="General"
+                    Icon="Setting"
+                    Tag="general">
+                    <NavigationViewItem.InfoBadge>
+                        <InfoBadge />
+                    </NavigationViewItem.InfoBadge>
+                </NavigationViewItem>
+
+                <NavigationViewItemSeparator />
+
+                <NavigationViewItem
+                    x:Name="NetworkNavItem"
+                    Content="Network"
+                    Tag="network">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE968;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    x:Name="SerialPortNavItem"
+                    Content="Serial Port"
+                    Tag="serialport">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE8CB;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    x:Name="DownloadFlashNavItem"
+                    Content="Download Flash"
+                    Tag="downloadflash">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xEC59;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItemSeparator />
+
+                <NavigationViewItem
+                    x:Name="AboutNavItem"
+                    Content="About"
+                    Tag="about">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE946;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+            </NavigationView.MenuItems>
+
+            <Frame x:Name="SettingsFrame" x:FieldModifier="Public">
+                <Frame.ContentTransitions>
+                    <TransitionCollection>
+                        <NavigationThemeTransition />
+                    </TransitionCollection>
+                </Frame.ContentTransitions>
+            </Frame>
+        </NavigationView>
     </Grid>
 </Page>

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.251105000\build\native\Microsoft.WindowsAppSDK.WinUI.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.251105000\build\native\Microsoft.WindowsAppSDK.WinUI.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.251106002\build\native\Microsoft.WindowsAppSDK.Runtime.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.251106002\build\native\Microsoft.WindowsAppSDK.Runtime.props')" />
@@ -7,7 +8,6 @@
   <Import Project="..\packages\Microsoft.WindowsAppSDK.AI.1.8.39\build\native\Microsoft.WindowsAppSDK.AI.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.AI.1.8.39\build\native\Microsoft.WindowsAppSDK.AI.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.Foundation.1.8.251104000\build\native\Microsoft.WindowsAppSDK.Foundation.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.1.8.251104000\build\native\Microsoft.WindowsAppSDK.Foundation.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props')" />
-  <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.DWrite.1.8.25090401\build\Microsoft.WindowsAppSDK.DWrite.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.DWrite.1.8.25090401\build\Microsoft.WindowsAppSDK.DWrite.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.Base.1.8.250831001\build\native\Microsoft.WindowsAppSDK.Base.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Base.1.8.250831001\build\native\Microsoft.WindowsAppSDK.Base.props')" />
@@ -25,10 +25,10 @@
       have a name that matches the .winmd
     -->
     <TargetName>$(RootNamespace)</TargetName>
-    <DefaultLanguage>zh-CN</DefaultLanguage>
+    <DefaultLanguage>en-US</DefaultLanguage>
     <MinimumVisualStudioVersion>16.0</MinimumVisualStudioVersion>
     <AppContainerApplication>false</AppContainerApplication>
-    <AppxPackage>true</AppxPackage>
+    <AppxPackage>True</AppxPackage>
     <ApplicationType>Windows Store</ApplicationType>
     <ApplicationTypeRevision>10.0</ApplicationTypeRevision>
     <WindowsTargetPlatformVersion>10.0.26100.0</WindowsTargetPlatformVersion>
@@ -38,6 +38,9 @@
     <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
     <CppWinRTLibs>true</CppWinRTLibs>
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
+    <!-- Self contained framework enables us to run in environments without deploying SDKs -->
+    <!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
+    <!-- <WindowsAppSdkUndockedRegFreeWinRTInitialize>true</WindowsAppSdkUndockedRegFreeWinRTInitialize> -->
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -98,7 +101,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PreprocessorDefinitions>TORRENT_NO_DEPRECATE;TORRENT_LINKING_SHARED;NOMINMAX;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TORRENT_NO_DEPRECATE;TORRENT_LINKING_SHARED;NOMINMAX;DISABLE_XAML_GENERATED_MAIN;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)vcpkg_installed\x64-windows\include;$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc11</LanguageStandard_C>
@@ -116,7 +119,7 @@
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)vcpkg_installed\x64-windows\include;$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc11</LanguageStandard_C>
-      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</FunctionLevelLinking>
     </ClCompile>
     <Link>
@@ -132,14 +135,18 @@
     </AppxManifest>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="Controls\HomePage\Header\HeaderCarousel.xaml.h">
       <DependentUpon>Controls\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Controls\SpeedGraph\SpeedGraph.xaml.h">
+      <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Core\CryptoManager.h" />
+    <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h" />
+    <ClInclude Include="Core\DataGraph\ReadableUnitConverterWinRT.h" />
+    <ClInclude Include="Core\DataGraph\SpeedGraphData.h" />
     <ClInclude Include="Core\FileTransferEngine.h" />
     <ClInclude Include="Core\NetworkDetector.h" />
     <ClInclude Include="Core\P2PManager.h" />
@@ -149,6 +156,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Helpers\ObjectConverter.hpp" />
+    <ClInclude Include="Helpers\ThemeHelper.h" />
     <ClInclude Include="Helpers\WindowHelper.h" />
     <ClInclude Include="Models\NetModel.h">
       <DependentUpon>Models\models.idl</DependentUpon>
@@ -206,13 +214,12 @@
       <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h">
-      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="Pages\SettingsPages\AboutPage.xaml.h">
       <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h">
+      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="Pages\SettingsPages\ThemesSettingsPage.xaml.h">
       <DependentUpon>Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
@@ -222,7 +229,6 @@
       <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\ThemesSwitcher\SupportThemeToggle.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -232,6 +238,7 @@
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ThirdParty\Sqlite\sqlite3.h" />
+    <ClInclude Include="ViewModels\ViewModelLocator.h" />
     <ClInclude Include="ViewModels\MainViewModel.h">
       <DependentUpon>ViewModels\MainViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -275,6 +282,9 @@
     <Page Include="Controls\HomePage\Header\HeaderCarousel.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="Pages\ContactsPage.xaml">
       <SubType>Designer</SubType>
@@ -292,19 +302,19 @@
     <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SettingsPages\SettingsPage.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Pages\SettingsPages\AboutPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\SettingsPages\SettingsPage.xaml" />
     <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Pages\TasksPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Styles\CustomThemeBrushes.xaml" />
     <Page Include="Styles\NavigationView.xaml" />
+    <Page Include="Styles\SettingsStyles.xaml" />
     <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -312,6 +322,12 @@
       <DependentUpon>Controls\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Controls\SpeedGraph\SpeedGraph.xaml.cpp">
+      <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp" />
+    <ClCompile Include="Core\DataGraph\SpeedGraphData.cpp" />
     <ClCompile Include="Core\P2PManager.cpp" />
     <ClCompile Include="Core\torrentCore\libtorrentHandle.cpp" />
     <ClCompile Include="Core\NetworkDetector.cpp">
@@ -320,7 +336,9 @@
       <DependentUpon>Helpers\NavItemIconHelper.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Helpers\ThemeHelper.cpp" />
     <ClCompile Include="Helpers\WindowHelper.cpp" />
+    <ClCompile Include="main.cpp" />
     <ClCompile Include="Models\NetModel.cpp">
       <DependentUpon>Models\models.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -351,13 +369,12 @@
       <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\SettingsPage.xaml.cpp">
-      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="Pages\SettingsPages\AboutPage.xaml.cpp">
       <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="Pages\SettingsPages\SettingsPage.xaml.cpp">
+      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="Pages\SettingsPages\ThemesSettingsPage.xaml.cpp">
       <DependentUpon>Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
@@ -367,6 +384,7 @@
       <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\ViewModelLocator.cpp" />
     <ClCompile Include="ViewModels\NetworkViewModel.cpp">
       <DependentUpon>ViewModels\NetworkViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -429,6 +447,11 @@
       <DependentUpon>Controls\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Controls\SpeedGraph\SpeedGraph.idl">
+      <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Core\DataGraph\ReadableUnitConverterWinRT.idl" />
     <Midl Include="Helpers\NavItemIconHelper.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -465,7 +488,7 @@
       <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\SettingsPages\SettingsPage.idl">
+	<Midl Include="Pages\SettingsPages\SettingsPage.idl">
       <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
@@ -576,8 +599,11 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Directory.Build.props" />
+    <None Include="HybridCRT.props" />
     <None Include="mvvm_framework\README.md" />
     <None Include="packages.config" />
+    <None Include="Resource.aps" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
   </ItemGroup>
@@ -597,6 +623,9 @@
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>
@@ -615,7 +644,6 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.DWrite.1.8.25090401\build\Microsoft.WindowsAppSDK.DWrite.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.DWrite.1.8.25090401\build\Microsoft.WindowsAppSDK.DWrite.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets')" />
     <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3595.46\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3595.46\build\native\Microsoft.Web.WebView2.targets')" />
-    <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Foundation.1.8.251104000\build\native\Microsoft.WindowsAppSDK.Foundation.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.1.8.251104000\build\native\Microsoft.WindowsAppSDK.Foundation.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.AI.1.8.39\build\native\Microsoft.WindowsAppSDK.AI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.AI.1.8.39\build\native\Microsoft.WindowsAppSDK.AI.targets')" />
@@ -623,7 +651,9 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.251106002\build\native\Microsoft.WindowsAppSDK.Runtime.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.251106002\build\native\Microsoft.WindowsAppSDK.Runtime.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.251105000\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.251105000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.21\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.21\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets')" />
+    <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -641,8 +671,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Widgets.1.8.250904007\build\native\Microsoft.WindowsAppSDK.Widgets.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.3595.46\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.3595.46\build\native\Microsoft.Web.WebView2.targets'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.6901\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.InteractiveExperiences.1.8.251104001\build\native\Microsoft.WindowsAppSDK.InteractiveExperiences.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.Foundation.1.8.251104000\build\native\Microsoft.WindowsAppSDK.Foundation.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.Foundation.1.8.251104000\build\native\Microsoft.WindowsAppSDK.Foundation.props'))" />
@@ -657,6 +685,9 @@
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.251105000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.251105000\build\native\Microsoft.WindowsAppSDK.WinUI.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.21\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.21\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

@@ -1,0 +1,14 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="ARM64" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="OpenNet\OpenNet.vcxproj" Id="ae5a0548-f283-4027-86e1-fdeef7890657">
+     <Deploy />
+  </Project>
+  <Project Path="WCTCsClassLibrary\WCTCsClassLibrary.csproj">
+    <Deploy />
+  </Project>
+</Solution>

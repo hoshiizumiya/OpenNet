@@ -23,10 +23,13 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		if (m_name == value) return;
 		m_name = value;
 
-		m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ L"Name" });
+		m_propertyChanged(
+			*this,
+			winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ L"Name" }
+		);
 	}
 
-	// must implement INotifyPropertyChanged to avoid Xaml warnings/errorsd();
+	// must implement INotifyPropertyChanged to avoid Xaml warnings/errors.
 	winrt::event_token Folder::PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
 	{
 		return m_propertyChanged.add(handler);

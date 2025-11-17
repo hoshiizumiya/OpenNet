@@ -1,6 +1,6 @@
 ﻿# 🎉欢迎来到 OpenNet 项目
 
-[简体中文](README_zh-CN.md)
+![logo](https://github.com/hoshiizumiya/OpenNet/blob/dev_master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png)
 
 ## 概览
 

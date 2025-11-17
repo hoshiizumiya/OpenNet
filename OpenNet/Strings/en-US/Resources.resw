@@ -219,7 +219,7 @@
   <data name="Task_PeersList.Text" xml:space="preserve">
     <value>PeersList</value>
   </data>
-  <data name="Generiall.Text" xml:space="preserve">
+  <data name="General.Text" xml:space="preserve">
     <value>General</value>
   </data>
   <data name="StartPage.Header" xml:space="preserve">
@@ -257,5 +257,17 @@
   </data>
   <data name="SoftPersonalization.Header" xml:space="preserve">
     <value>Personalization</value>
+  </data>
+  <data name="SoftPersonalization.Description" xml:space="preserve">
+    <value>Personalize program UI display style</value>
+  </data>
+  <data name="ThemesLight.Content" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="ThemesDark.Content" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="ThemesDefault.Content" xml:space="preserve">
+    <value>Use system setting</value>
   </data>
 </root>

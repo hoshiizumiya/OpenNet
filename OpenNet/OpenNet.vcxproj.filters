@@ -34,14 +34,25 @@
     <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
       <Filter>Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="Pages\SettingsPages\SettingsPage.xaml">
-      <Filter>Pages\SettingsPages</Filter>
-    </Page>
     <Page Include="Pages\SettingsPages\AboutPage.xaml">
       <Filter>Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="Controls\HomePage\Header\HeaderCarousel.xaml" />
     <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml">
+      <Filter>Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="Controls\HomePage\Header\HeaderCarousel.xaml">
+      <Filter>Controls\HomePage\Header</Filter>
+    </Page>
+    <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
+      <Filter>Controls\SpeedGraph</Filter>
+    </Page>
+    <Page Include="Styles\SettingsStyles.xaml">
+      <Filter>Themes</Filter>
+    </Page>
+    <Page Include="Styles\CustomThemeBrushes.xaml">
+      <Filter>Themes</Filter>
+    </Page>
+    <Page Include="Pages\SettingsPages\SettingsPage.xaml">
       <Filter>Pages\SettingsPages</Filter>
     </Page>
   </ItemGroup>
@@ -88,6 +99,12 @@
     </Midl>
     <Midl Include="ViewModels\TasksViewModel.idl">
       <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="Core\DataGraph\ReadableUnitConverterWinRT.idl">
+      <Filter>Core\DataGraph</Filter>
+    </Midl>
+    <Midl Include="Pages\SettingsPages\SettingsPage.idl">
+      <Filter>Pages\SettingsPages</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +161,19 @@
     <ClCompile Include="Pages\SettingsPages\Folder.cpp">
       <Filter>Pages\SettingsPages</Filter>
     </ClCompile>
+    <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp">
+      <Filter>Core\DataGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DataGraph\SpeedGraphData.cpp">
+      <Filter>Core\DataGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\ViewModelLocator.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\ThemeHelper.cpp">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -257,11 +287,23 @@
     <ClInclude Include="ViewModels\ObservableMixin.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="Pages\ThemesSwitcher\SupportThemeToggle.h">
-      <Filter>Pages\ThemesSwitcher</Filter>
-    </ClInclude>
     <ClInclude Include="Pages\SettingsPages\Folder.h">
       <Filter>Pages\SettingsPages</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h">
+      <Filter>Core\DataGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DataGraph\ReadableUnitConverterWinRT.h">
+      <Filter>Core\DataGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DataGraph\SpeedGraphData.h">
+      <Filter>Core\DataGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\ViewModelLocator.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\ThemeHelper.h">
+      <Filter>Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -483,18 +525,30 @@
     <Filter Include="Pages\ThemesSwitcher">
       <UniqueIdentifier>{b08cf51f-104f-4429-ac30-3550aa007be9}</UniqueIdentifier>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
+    <Filter Include="Controls">
+      <UniqueIdentifier>{f64d18af-00d4-4982-a2e3-9f2822bfcdfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\HomePage">
+      <UniqueIdentifier>{3d39471c-12c4-47c2-8a1b-154e6d281042}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\HomePage\Header">
+      <UniqueIdentifier>{2235ebba-aa7c-4f75-ac55-bc0b0ce626a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls\SpeedGraph">
+      <UniqueIdentifier>{52e4432b-554b-4c5f-a2b3-27854db84b74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\DataGraph">
+      <UniqueIdentifier>{ec481637-b160-491f-a326-b558a89c62fb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
     <None Include="mvvm_framework\README.md" />
+    <None Include="Resource.aps" />
+    <None Include="Directory.Build.props" />
+    <None Include="HybridCRT.props" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
@@ -510,5 +564,11 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
 </Project>

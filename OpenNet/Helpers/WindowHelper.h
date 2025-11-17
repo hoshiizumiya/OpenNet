@@ -67,6 +67,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 
 		// Set the MinSize of Current Window 设置窗口最小尺寸
         static void SetWindowMinSize(winrt::Microsoft::UI::Xaml::Window const& window, double const& width, double const& height);
+        static void SetWindowMinSize2(winrt::Microsoft::UI::Xaml::Window const& window, double const& width, double const& height);
 
         static winrt::Microsoft::UI::Xaml::Window CreateHostWindow();
         static void TrackWindow(winrt::Microsoft::UI::Xaml::Window const& window);

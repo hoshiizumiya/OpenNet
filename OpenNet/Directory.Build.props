@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- 查找路径 -->
+  <PropertyGroup>
+    <_ParentProps>$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))</_ParentProps>
+  </PropertyGroup>
+
+  <!--
+       找到了才 Import 父级（全局）配置文件，
+       这会导致继承父级所特有的配置，并保留当前项目特定的配置
+   -->
+  <Import Project="$(_ParentProps)" Condition="'$(_ParentProps)' != ''" />
+  <!-- 下面这个是关键，它引入了 混合CRT 的配置文件-->
+  <Import Project="$(MSBuildThisFileDirectory)HybridCRT.props" />
+</Project>

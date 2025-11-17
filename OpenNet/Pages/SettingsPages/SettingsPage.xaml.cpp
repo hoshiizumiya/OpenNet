@@ -4,14 +4,18 @@
 #include "Pages/SettingsPages/SettingsPage.g.cpp"
 #endif
 
+#include <winrt/Windows.System.h>
 #include "Folder.h"
 #include "MainSettingsPage.xaml.h"
 #include "../../MainWindow.xaml.h"
 #include "../../Helpers/WindowHelper.h"
+#include "../../Helpers/ThemeHelper.h"
 #include "winrt/Microsoft.Windows.AppLifecycle.h"
 // 解析 BitmapImage 的构造函数实现
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
+#include <winrt/Microsoft.UI.Dispatching.h> 
+#include <wil/cppwinrt_helpers.h>
 
 // 用于解析字符串为整数
 #include <sstream>
@@ -35,6 +39,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	{
 		InitializeComponent();
 		s_current = this;
+		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 
 		// Capture initial language override at page creation
 		m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
@@ -76,6 +81,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 				SoftLanguageCombobox().Items().Append(item);
 
 				// If this tag matches PrimaryLanguageOverride, remember index
+				// Tips: PrimaryLanguageOverride will persist between app sessions. First run is empty, after user selection it will be set. 
 				if (ApplicationLanguages::PrimaryLanguageOverride() == langTag)
 				{
 					selectedIndex = index;
@@ -101,7 +107,12 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		}
 
 
-		Loaded({ this, &SettingsPage::AnnotatedScrollBarPage_Loaded });
+		Loaded({ this,
+			&SettingsPage::AnnotatedScrollBarPage_Loaded
+			});
+		Loaded({ this,
+			&SettingsPage::OnSettingsPageLoadedAsync
+			});
 		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
 		SetDesktopBackground();
 
@@ -142,9 +153,9 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		// A simpler approach is to just rebuild the list. Let's do that.
 		breadcrumbItems.Clear();
 
-		// 3. Create and add the "Settings" folder.
+		// 3. Create and add the "Settings" folder. 
 		auto settingsFolder = winrt::make<winrt::OpenNet::Pages::SettingsPages::implementation::Folder>();
-		settingsFolder.Name(L"Settings"); // Assuming you have a Folder class with a Name property.
+		settingsFolder.Name(L"Settings");
 		breadcrumbItems.Append(settingsFolder);
 
 
@@ -233,6 +244,22 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		winrt::Microsoft::Windows::AppLifecycle::AppInstance::Restart(L"");
 	}
 
+	Windows::Foundation::IAsyncAction SettingsPage::GithubDefaultLaunch()
+	{
+		// Launch the URI.
+		if (co_await Windows::System::Launcher::LaunchUriAsync(m_githubReleaseLinkUri))
+		{
+			// URI launched.
+		}
+		else
+		{
+#ifdef DEBUG
+			OutputDebugStringW(L"Fail to launch GitHub Release Page\n");
+#endif
+
+		}
+	}
+
 	SettingsPage* SettingsPage::Current()
 	{
 		return s_current;
@@ -246,6 +273,38 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	void SettingsPage::StartPageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
 	{
 		// Start page selection handling (not implemented)
+	}
+
+	void SettingsPage::themeMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*e*/)
+	{
+		// Read selected theme from ComboBoxItem.Tag
+		hstring tag;
+		if (auto combo = sender.try_as<ComboBox>())
+		{
+			if (auto sel = combo.SelectedItem().try_as<ComboBoxItem>())
+			{
+				auto boxed = sel.Tag();
+				if (boxed) tag = unbox_value_or<hstring>(boxed, L"");
+			}
+		}
+
+		if (tag.empty()) return;
+
+		// Convert tag to ElementTheme
+		ElementTheme desired = ElementTheme::Default;
+		if (tag == L"Light") desired = ElementTheme::Light;
+		else if (tag == L"Dark") desired = ElementTheme::Dark;
+		else desired = ElementTheme::Default;
+
+		// Update theme using ThemeHelper (persists to storage)
+		::OpenNet::Helpers::ThemeHelper::RootTheme(desired);
+
+		// Apply to current window
+		auto window = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowForElement(*this);
+		if (window)
+		{
+			::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+		}
 	}
 
 	void SettingsPage::SetDesktopBackground()
@@ -341,5 +400,46 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		// 简单示例：展示偏移值；如需匹配示例，可按数据源计算标签文本
 		// e.Content(box_value(hstring(L"Label")));
 		e.Content(box_value(hstring(L"Offset: ") + to_hstring(e.ScrollOffset())));
+	}
+	winrt::Windows::Foundation::IAsyncAction SettingsPage::OnSettingsPageLoadedAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		// Switch to background thread for any heavy initialization
+		co_await winrt::resume_background();
+
+		// Perform any heavy initialization here
+
+		// Switch back to UI thread to update controls
+		co_await wil::resume_foreground(m_dispatcher);
+
+		// Load current theme from ThemeHelper
+		ElementTheme currentTheme = ::OpenNet::Helpers::ThemeHelper::RootTheme();
+
+		// Set ComboBox selection based on saved theme
+		if (auto combo = themeMode())
+		{
+			switch (currentTheme)
+			{
+			case ElementTheme::Light:  combo.SelectedIndex(0); break;
+			case ElementTheme::Dark:   combo.SelectedIndex(1); break;
+			default:                   combo.SelectedIndex(2); break; // Default/Auto
+			}
+		}
+
+		m_loadAction = nullptr;
+		co_return;
+	}
+	void SettingsPage::AppUpdateCheckButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+
+	}
+	void SettingsPage::AutoCheckUpdateCheckbox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+	}
+	void SettingsPage::AutoCheckUpdateCheckbox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+	}
+	void SettingsPage::goGithubButton_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	{
+		GithubDefaultLaunch();
 	}
 }

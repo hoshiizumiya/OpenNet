@@ -1,0 +1,15 @@
+﻿namespace OpenNet.Controls.SpeedGraph
+{
+    [default_interface]
+    runtimeclass SpeedGraph : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        SpeedGraph();
+
+        void SetSpeed(Double percent, UInt64 speed);
+
+        void Pause();
+        void Error();
+
+        Microsoft.UI.Xaml.Media.PointCollection Points{ get; };
+    }
+}
