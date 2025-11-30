@@ -556,19 +556,58 @@ namespace OpenNet::Core::Torrent
 
     bool TorrentStateManager::ExportToFile(std::wstring const& filePath)
     {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+        // Don't hold lock while doing I/O - load data first, then write
+        std::vector<TaskMetadata> tasks;
+        
+        // Load all tasks with lock held
+        {
+            std::lock_guard lk(m_dbMutex);
+            if (!m_db) return false;
+            
+            // Inline query to avoid recursive locking
+            const char* sql = R"(
+                SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
+                       total_size, downloaded_size, status, resume_data 
+                FROM tasks ORDER BY added_timestamp DESC;
+            )";
 
+            sqlite3_stmt* stmt = nullptr;
+            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+            if (rc != SQLITE_OK) return false;
+
+            while (sqlite3_step(stmt) == SQLITE_ROW)
+            {
+                TaskMetadata metadata;
+                metadata.taskId = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
+                metadata.magnetUri = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
+                metadata.savePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+                
+                auto namePtr = sqlite3_column_text(stmt, 3);
+                metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
+                
+                metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
+                metadata.totalSize = sqlite3_column_int64(stmt, 5);
+                metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
+                metadata.status = sqlite3_column_int(stmt, 7);
+
+                const void* blobData = sqlite3_column_blob(stmt, 8);
+                int blobSize = sqlite3_column_bytes(stmt, 8);
+                if (blobData && blobSize > 0)
+                {
+                    metadata.resumeData.assign(
+                        static_cast<const uint8_t*>(blobData),
+                        static_cast<const uint8_t*>(blobData) + blobSize
+                    );
+                }
+
+                tasks.push_back(std::move(metadata));
+            }
+            sqlite3_finalize(stmt);
+        }
+
+        // Now write to file without lock
         try
         {
-            // Export all tasks to a JSON-like format using libtorrent's bencode
-            std::vector<TaskMetadata> tasks;
-            
-            // Temporarily unlock and reload tasks
-            m_dbMutex.unlock();
-            tasks = LoadAllTasks();
-            m_dbMutex.lock();
-
             lt::entry exportData;
             lt::entry::list_type& taskList = exportData["tasks"].list();
 
@@ -613,8 +652,8 @@ namespace OpenNet::Core::Torrent
 
     bool TorrentStateManager::ImportFromFile(std::wstring const& filePath)
     {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+        // Read file first without lock, then save to database
+        std::vector<TaskMetadata> tasksToImport;
 
         try
         {
@@ -655,25 +694,28 @@ namespace OpenNet::Core::Torrent
                     );
                 }
 
-                // Generate new task ID if empty or duplicate
+                // Generate new task ID if empty
                 if (metadata.taskId.empty())
                 {
                     metadata.taskId = GenerateTaskId();
                 }
 
-                // Temporarily unlock to save metadata
-                m_dbMutex.unlock();
-                SaveTaskMetadata(metadata);
-                m_dbMutex.lock();
+                tasksToImport.push_back(std::move(metadata));
             }
-
-            return true;
         }
         catch (std::exception const& ex)
         {
-            OutputDebugStringA(("ImportFromFile error: " + std::string(ex.what()) + "\n").c_str());
+            OutputDebugStringA(("ImportFromFile read error: " + std::string(ex.what()) + "\n").c_str());
             return false;
         }
+
+        // Now save all tasks to database
+        for (auto const& metadata : tasksToImport)
+        {
+            SaveTaskMetadata(metadata);
+        }
+
+        return true;
     }
 
     std::string TorrentStateManager::GenerateTaskId()

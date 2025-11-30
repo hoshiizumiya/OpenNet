@@ -7,6 +7,8 @@
 #include "Core/torrentCore/TorrentStateManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 
+#include <ctime>
+
 using namespace std::string_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -152,6 +154,25 @@ namespace winrt::OpenNet::ViewModels::implementation
     {
     }
 
+    // Helper function to format timestamp to date string
+    static winrt::hstring FormatTimestamp(int64_t timestamp)
+    {
+        if (timestamp <= 0) return L"-";
+        
+        std::time_t time = static_cast<std::time_t>(timestamp);
+        std::tm tm_buf{};
+#ifdef _WIN32
+        localtime_s(&tm_buf, &time);
+#else
+        localtime_r(&time, &tm_buf);
+#endif
+        wchar_t buf[64];
+        swprintf(buf, 64, L"%04d-%02d-%02d %02d:%02d",
+            tm_buf.tm_year + 1900, tm_buf.tm_mon + 1, tm_buf.tm_mday,
+            tm_buf.tm_hour, tm_buf.tm_min);
+        return winrt::hstring{ buf };
+    }
+
     void TasksViewModel::LoadSavedTasks()
     {
         auto dispatcher = m_dispatcher;
@@ -170,6 +191,9 @@ namespace winrt::OpenNet::ViewModels::implementation
                         : winrt::to_hstring(task.name);
                     
                     auto vm = self->FindOrCreateItemByTaskId(task.taskId, name);
+                    
+                    // Set add date from timestamp
+                    vm.AddDate(FormatTimestamp(task.addedTimestamp));
                     
                     // Set progress based on status
                     if (task.status == 3) // Completed
@@ -226,7 +250,10 @@ namespace winrt::OpenNet::ViewModels::implementation
         }
         auto vm = winrt::make<winrt::OpenNet::ViewModels::implementation::TaskViewModel>();
         vm.Name(name);
-        vm.AddDate(winrt::clock().now().time_since_epoch().count() ? L"" : L""); // placeholder
+        // Set current time as add date for new items
+        auto now = std::chrono::system_clock::now();
+        auto timestamp = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
+        vm.AddDate(FormatTimestamp(timestamp));
         m_tasks.Append(vm);
         return vm;
     }
@@ -244,7 +271,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         
         auto vm = winrt::make<winrt::OpenNet::ViewModels::implementation::TaskViewModel>();
         vm.Name(name);
-        vm.AddDate(L""); // placeholder
+        // Date will be set by the caller with the correct timestamp
         m_tasks.Append(vm);
         return vm;
     }
