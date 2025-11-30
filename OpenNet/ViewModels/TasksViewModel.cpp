@@ -106,6 +106,15 @@ namespace winrt::OpenNet::ViewModels::implementation
     {
     }
 
+    void TasksViewModel::SelectedTask(winrt::OpenNet::ViewModels::TaskViewModel const& value)
+    {
+        if (m_selectedTask != value)
+        {
+            m_selectedTask = value;
+            RaisePropertyChanged(L"SelectedTask");
+        }
+    }
+
     winrt::OpenNet::ViewModels::TaskViewModel TasksViewModel::FindOrCreateItem(winrt::hstring const& name)
     {
         for (auto const& item : m_tasks)
@@ -154,6 +163,10 @@ namespace winrt::OpenNet::ViewModels::implementation
                 auto item = self->FindOrCreateItem(name);
                 item.Progress(to_hstring_percent(e.progressPercent));
                 item.DownloadRate(to_hstring_rate(e.downloadRateKB));
+                item.DownloadSpeedKB(static_cast<uint64_t>(e.downloadRateKB));
+                item.ProgressPercent(static_cast<double>(e.progressPercent));
+                // Update speed graph for this task
+                item.UpdateSpeedGraph(static_cast<double>(e.progressPercent), static_cast<uint64_t>(e.downloadRateKB));
                 if (item.Size().empty()) item.Size(L"-");
                 if (item.Remaining().empty()) item.Remaining(L"-");
                 self->RebuildFiltered();

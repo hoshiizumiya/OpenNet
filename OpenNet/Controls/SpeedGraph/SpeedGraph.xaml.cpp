@@ -117,6 +117,23 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
         winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
     }
 
+    void SpeedGraph::Reset()
+    {
+        // Reset the graph data to initial state
+        m_graphData.Reset();
+        m_hasData = false;
+        
+        // Reset the size for the new data
+        m_graphData.NewSize(ActualSize());
+        
+        // Update visual state to show "no data" text
+        GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+        SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+        
+        // Go back to normal visual state
+        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Normal", false);
+    }
+
     void winrt::OpenNet::Controls::SpeedGraph::implementation::SpeedGraph::UserControl_SizeChanged(
         winrt::Windows::Foundation::IInspectable const&,
         winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)

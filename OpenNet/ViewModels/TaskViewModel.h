@@ -1,14 +1,16 @@
 ﻿#pragma once
 #include "ViewModels/TaskViewModel.g.h"
 #include "ViewModels/ObservableMixin.h"
+#include "Core/DataGraph/SpeedGraphData.h"
 #include <winrt/Microsoft.UI.Xaml.Data.h>
+#include <winrt/Microsoft.UI.Xaml.Media.h>
 #include <string>
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
     struct TaskViewModel : TaskViewModelT<TaskViewModel>, ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>
     {
-        TaskViewModel() = default;
+        TaskViewModel();
 
         // Make mixin helpers visible
         using ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>::SetProperty;
@@ -33,6 +35,20 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring AddDate() const { return m_addDate; }
         void AddDate(winrt::hstring const& v) { SetProperty(m_addDate, v, L"AddDate"); }
 
+        // Numeric speed value for SpeedGraph
+        uint64_t DownloadSpeedKB() const { return m_downloadSpeedKB; }
+        void DownloadSpeedKB(uint64_t v) { SetProperty(m_downloadSpeedKB, v, L"DownloadSpeedKB"); }
+
+        // Numeric progress percent for SpeedGraph
+        double ProgressPercent() const { return m_progressPercent; }
+        void ProgressPercent(double v) { SetProperty(m_progressPercent, v, L"ProgressPercent"); }
+
+        // SpeedGraph points for visualization
+        winrt::Microsoft::UI::Xaml::Media::PointCollection SpeedGraphPoints();
+
+        // Update speed graph with new data
+        void UpdateSpeedGraph(double percent, uint64_t speedKB);
+
     private:
         winrt::hstring m_name;
         winrt::hstring m_size;
@@ -40,6 +56,9 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring m_downloadRate;
         winrt::hstring m_remaining;
         winrt::hstring m_addDate;
+        uint64_t m_downloadSpeedKB{ 0 };
+        double m_progressPercent{ 0.0 };
+        SpeedGraphData m_speedGraphData;
     };
 }
 

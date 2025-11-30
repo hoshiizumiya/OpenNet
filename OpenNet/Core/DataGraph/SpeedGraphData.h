@@ -62,4 +62,14 @@ public:
 	{
 		return m_points.GetAt(m_points.Size() - 2);
 	}
+
+	// Reset the graph data to initial state
+	void Reset()
+	{
+		m_points = nullptr;
+		m_total = 0;
+		m_currentMax = 1024 * 1024;
+		m_ratio = 1.0f;
+		m_currentPercent = 0.0;
+	}
 };

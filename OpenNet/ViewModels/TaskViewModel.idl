@@ -14,5 +14,17 @@ namespace OpenNet.ViewModels
         String DownloadRate;
         String Remaining;
         String AddDate;
+
+        // Download speed in KB/s (numeric value for SpeedGraph)
+        UInt64 DownloadSpeedKB;
+
+        // Progress percent as numeric value (0-100) for SpeedGraph
+        Double ProgressPercent;
+
+        // PointCollection for the speed graph visualization
+        Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };
+
+        // Call to update speed graph with new data point
+        void UpdateSpeedGraph(Double percent, UInt64 speedKB);
     };
 }

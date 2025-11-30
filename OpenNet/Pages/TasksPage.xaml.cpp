@@ -6,12 +6,14 @@
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Microsoft.UI.Xaml.h>
+#include <winrt/Microsoft.UI.Xaml.Data.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Storage.Pickers.h>
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Storage.AccessCache.h>
 #include "Core/P2PManager.h"
 #include "Helpers/WindowHelper.h"
+#include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include <shobjidl.h> // For IInitializeWithWindow
 
 using namespace winrt;
@@ -34,6 +36,7 @@ namespace winrt::OpenNet::Pages::implementation
 
 	TasksPage::~TasksPage()
 	{
+		UnsubscribeFromSelectedTaskChanges();
 		if (m_viewModel && m_addTaskToken.value)
 		{
 			m_viewModel.AddTaskRequested(m_addTaskToken);
@@ -168,6 +171,111 @@ namespace winrt::OpenNet::Pages::implementation
 		if (m_viewModel)
 		{
 			m_viewModel.ApplyFilter(tag);
+		}
+	}
+
+	void TasksPage::TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
+	{
+		(void)sender;
+		(void)args;
+		
+		auto listView = TasksList();
+		if (!listView) return;
+		
+		auto speedGraph = TaskSpeedGraph();
+		
+		// Unsubscribe from previous task's property changes
+		UnsubscribeFromSelectedTaskChanges();
+		
+		auto selectedItem = listView.SelectedItem();
+		if (selectedItem)
+		{
+			auto taskVm = selectedItem.try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
+			if (taskVm && m_viewModel)
+			{
+				// Reset the speed graph when selecting a different task
+				if (speedGraph)
+				{
+					speedGraph.Reset();
+				}
+				
+				m_viewModel.SelectedTask(taskVm);
+				
+				// Subscribe to the new task's property changes
+				SubscribeToSelectedTaskChanges(taskVm);
+				
+				UpdateSpeedGraphForSelectedTask();
+			}
+		}
+		else
+		{
+			if (m_viewModel)
+			{
+				m_viewModel.SelectedTask(nullptr);
+			}
+			// Reset speed graph when no task is selected
+			if (speedGraph)
+			{
+				speedGraph.Reset();
+			}
+		}
+	}
+
+	void TasksPage::TaskSpeedGraph_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+	{
+		(void)sender;
+		(void)e;
+		// Update the speed graph when size changes
+		UpdateSpeedGraphForSelectedTask();
+	}
+
+	void TasksPage::UpdateSpeedGraphForSelectedTask()
+	{
+		if (!m_viewModel) return;
+		
+		auto selectedTask = m_viewModel.SelectedTask();
+		if (!selectedTask) return;
+
+		// Get the SpeedGraph control
+		auto speedGraph = TaskSpeedGraph();
+		if (!speedGraph) return;
+
+		// Update the speed graph with the selected task's current speed data
+		auto percent = selectedTask.ProgressPercent();
+		auto speedKB = selectedTask.DownloadSpeedKB();
+		speedGraph.SetSpeed(percent, speedKB * 1024);  // Convert KB to bytes
+	}
+
+	void TasksPage::SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const& task)
+	{
+		if (!task) return;
+		
+		m_currentSubscribedTask = task;
+		m_selectedTaskPropertyChangedToken = task.PropertyChanged({ this, &TasksPage::OnSelectedTaskPropertyChanged });
+	}
+
+	void TasksPage::UnsubscribeFromSelectedTaskChanges()
+	{
+		if (m_currentSubscribedTask && m_selectedTaskPropertyChangedToken.value)
+		{
+			m_currentSubscribedTask.PropertyChanged(m_selectedTaskPropertyChangedToken);
+			m_selectedTaskPropertyChangedToken = {};
+		}
+		m_currentSubscribedTask = nullptr;
+	}
+
+	void TasksPage::OnSelectedTaskPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
+	{
+		(void)sender;
+		
+		auto propertyName = args.PropertyName();
+		// Update speed graph when progress or speed changes
+		if (propertyName == L"ProgressPercent" || propertyName == L"DownloadSpeedKB")
+		{
+			UpdateSpeedGraphForSelectedTask();
 		}
 	}
 }

@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
     x:Uid="TasksPageRoot"
     mc:Ignorable="d">
 
@@ -149,7 +150,8 @@
                         x:Name="TasksList"
                         Grid.Row="1"
                         ItemsSource="{x:Bind ViewModel.FilteredTasks, Mode=OneWay}"
-                        SelectionMode="Extended">
+                        SelectionMode="Single"
+                        SelectionChanged="TasksList_SelectionChanged">
                         <ListView.ItemTemplate>
                             <!--  在这里写DataType可以在绑定时省略命名空间前缀  -->
                             <DataTemplate x:DataType="vm:TaskViewModel">
@@ -191,6 +193,15 @@
                         IsSelected="True" />
                     <muxc:SelectorBarItem x:Name="PeersList" x:Uid="Task_PeersList" />
                 </muxc:SelectorBar>
+                
+                <!--  下载进度图 / Download Progress Graph  -->
+                <Grid Grid.Row="2" Margin="0,40,0,0">
+                    <speedgraph:SpeedGraph 
+                        x:Name="TaskSpeedGraph"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        SizeChanged="TaskSpeedGraph_SizeChanged" />
+                </Grid>
             </Grid>
         </SplitView>
     </Grid>

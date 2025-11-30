@@ -9,6 +9,7 @@
 
         void Pause();
         void Error();
+        void Reset();
 
         Microsoft.UI.Xaml.Media.PointCollection Points{ get; };
     }
