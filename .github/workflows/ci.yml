@@ -52,7 +52,7 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: 'c82f74667287d3dc386bce81e44964370c91a289'
+          vcpkgGitCommitId: '4f8fe05871555c1798dbcb1957d0d595e94f7b57'
           runVcpkgInstall: false
 
       - name: Restore NuGet packages
