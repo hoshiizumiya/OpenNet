@@ -363,4 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 
 #vcpkg
-/OpenNet/vcpkg_installed/
+/OpenNet/vcpkg_installed/_codeql_detected_source_root
