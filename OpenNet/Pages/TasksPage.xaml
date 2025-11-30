@@ -94,6 +94,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="2*" />
                 </Grid.RowDefinitions>
 
@@ -185,7 +186,6 @@
                     resizedirection="rows" />-->
 
                 <!--  下方多标签  -->
-                <!--  SelectionChanged=""  -->
                 <muxc:SelectorBar x:Name="Task_SelectBar" Grid.Row="2">
                     <muxc:SelectorBarItem
                         x:Name="SummaryContent"
@@ -195,7 +195,7 @@
                 </muxc:SelectorBar>
                 
                 <!--  下载进度图 / Download Progress Graph  -->
-                <Grid Grid.Row="2" Margin="0,40,0,0">
+                <Grid Grid.Row="3" Padding="8">
                     <speedgraph:SpeedGraph 
                         x:Name="TaskSpeedGraph"
                         HorizontalAlignment="Stretch"
