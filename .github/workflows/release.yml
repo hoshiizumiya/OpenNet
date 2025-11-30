@@ -18,6 +18,8 @@ jobs:
       fail-fast: false
 
     runs-on: windows-latest
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
