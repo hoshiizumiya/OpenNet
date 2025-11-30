@@ -2,7 +2,9 @@
 #include "ViewModels/TasksViewModel.h"
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Windows.Foundation.h>
+#include <winrt/Windows.Storage.Pickers.h>
 #include "Core/P2PManager.h"
+#include "Core/torrentCore/TorrentStateManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 
 using namespace std::string_literals;
@@ -79,6 +81,49 @@ namespace winrt::OpenNet::ViewModels::implementation
             })
             .Build();
 
+        // ExportCommand: Export tasks to a file
+        m_exportCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .ExecuteAsync([](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+            {
+                co_await winrt::resume_background();
+                auto& mgr = ::OpenNet::Core::P2PManager::Instance();
+                if (mgr.StateManager())
+                {
+                    // Use a default export path in LocalFolder
+                    auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
+                    std::wstring exportPath = localFolder.Path().c_str();
+                    exportPath += L"\\tasks_export.dat";
+                    co_await mgr.ExportTasksAsync(exportPath);
+                }
+                co_return;
+            })
+            .Build();
+
+        // ImportCommand: Import tasks from a file
+        m_importCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+            {
+                co_await winrt::resume_background();
+                auto& mgr = ::OpenNet::Core::P2PManager::Instance();
+                if (mgr.StateManager())
+                {
+                    // Use a default import path in LocalFolder
+                    auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
+                    std::wstring importPath = localFolder.Path().c_str();
+                    importPath += L"\\tasks_export.dat";
+                    bool result = co_await mgr.ImportTasksAsync(importPath);
+                    if (result)
+                    {
+                        if (auto self = weak.get())
+                        {
+                            self->LoadSavedTasks();
+                        }
+                    }
+                }
+                co_return;
+            })
+            .Build();
+
         // 注册回调
         ::OpenNet::Core::P2PManager::Instance().SetProgressCallback([weak = get_weak()](const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
         {
@@ -99,11 +144,75 @@ namespace winrt::OpenNet::ViewModels::implementation
     void TasksViewModel::Initialize()
     {
         (void)::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+        LoadSavedTasks();
         RebuildFiltered();
     }
 
     void TasksViewModel::Shutdown()
     {
+    }
+
+    void TasksViewModel::LoadSavedTasks()
+    {
+        auto dispatcher = m_dispatcher;
+        if (!dispatcher) return;
+
+        auto tasks = ::OpenNet::Core::P2PManager::Instance().GetAllTasks();
+        
+        dispatcher.TryEnqueue([weak = get_weak(), tasks = std::move(tasks)]()
+        {
+            if (auto self = weak.get())
+            {
+                for (auto const& task : tasks)
+                {
+                    winrt::hstring name = task.name.empty() 
+                        ? winrt::to_hstring(task.magnetUri.substr(0, 40) + "...") 
+                        : winrt::to_hstring(task.name);
+                    
+                    auto vm = self->FindOrCreateItemByTaskId(task.taskId, name);
+                    
+                    // Set progress based on status
+                    if (task.status == 3) // Completed
+                    {
+                        vm.Progress(L"100%");
+                        vm.DownloadRate(L"0 KB/s");
+                    }
+                    else if (task.totalSize > 0 && task.downloadedSize > 0)
+                    {
+                        int percent = static_cast<int>((task.downloadedSize * 100) / task.totalSize);
+                        wchar_t buf[32];
+                        swprintf(buf, 32, L"%d%%", percent);
+                        vm.Progress(buf);
+                    }
+                    else
+                    {
+                        vm.Progress(L"0%");
+                    }
+                    
+                    // Format size
+                    if (task.totalSize > 0)
+                    {
+                        wchar_t sizeBuf[64];
+                        double sizeGB = task.totalSize / (1024.0 * 1024.0 * 1024.0);
+                        if (sizeGB >= 1.0)
+                        {
+                            swprintf(sizeBuf, 64, L"%.2f GB", sizeGB);
+                        }
+                        else
+                        {
+                            double sizeMB = task.totalSize / (1024.0 * 1024.0);
+                            swprintf(sizeBuf, 64, L"%.2f MB", sizeMB);
+                        }
+                        vm.Size(sizeBuf);
+                    }
+                    else
+                    {
+                        vm.Size(L"-");
+                    }
+                }
+                self->RebuildFiltered();
+            }
+        });
     }
 
     winrt::OpenNet::ViewModels::TaskViewModel TasksViewModel::FindOrCreateItem(winrt::hstring const& name)
@@ -118,6 +227,24 @@ namespace winrt::OpenNet::ViewModels::implementation
         auto vm = winrt::make<winrt::OpenNet::ViewModels::implementation::TaskViewModel>();
         vm.Name(name);
         vm.AddDate(winrt::clock().now().time_since_epoch().count() ? L"" : L""); // placeholder
+        m_tasks.Append(vm);
+        return vm;
+    }
+
+    winrt::OpenNet::ViewModels::TaskViewModel TasksViewModel::FindOrCreateItemByTaskId(std::string const& taskId, winrt::hstring const& name)
+    {
+        // First try to find by name (for display purposes)
+        for (auto const& item : m_tasks)
+        {
+            if (item.Name() == name)
+            {
+                return item;
+            }
+        }
+        
+        auto vm = winrt::make<winrt::OpenNet::ViewModels::implementation::TaskViewModel>();
+        vm.Name(name);
+        vm.AddDate(L""); // placeholder
         m_tasks.Append(vm);
         return vm;
     }

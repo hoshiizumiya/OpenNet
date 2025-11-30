@@ -151,6 +151,7 @@
     <ClInclude Include="Core\NetworkDetector.h" />
     <ClInclude Include="Core\P2PManager.h" />
     <ClInclude Include="Core\torrentCore\libtorrentHandle.h" />
+    <ClInclude Include="Core\torrentCore\TorrentStateManager.h" />
     <ClInclude Include="Helpers\NavItemIconHelper.h">
       <DependentUpon>Helpers\NavItemIconHelper.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -330,6 +331,7 @@
     <ClCompile Include="Core\DataGraph\SpeedGraphData.cpp" />
     <ClCompile Include="Core\P2PManager.cpp" />
     <ClCompile Include="Core\torrentCore\libtorrentHandle.cpp" />
+    <ClCompile Include="Core\torrentCore\TorrentStateManager.cpp" />
     <ClCompile Include="Core\NetworkDetector.cpp">
     </ClCompile>
     <ClCompile Include="Helpers\NavItemIconHelper.cpp">

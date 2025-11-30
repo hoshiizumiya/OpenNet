@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <unordered_map>
 
 // 直接包含 libtorrent 头，避免与 inline namespace 冲突
 //forward declarations  前置声明
@@ -17,6 +18,10 @@
 #include <libtorrent/alert.hpp>
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/socket.hpp>
+#include <libtorrent/torrent_handle.hpp>
+
+// Forward declaration
+namespace OpenNet::Core::Torrent { class TorrentStateManager; }
 
 namespace OpenNet::Core::Torrent
 {
@@ -48,16 +53,40 @@ namespace OpenNet::Core::Torrent
         void Stop();
         bool AddMagnet(std::string const& magnetUri, std::string const& savePath);
 
+        // Resume torrent from saved state (returns task ID if successful)
+        std::string AddTorrentFromResumeData(std::string const& taskId);
+
+        // Pause a specific torrent by task ID
+        void PauseTorrent(std::string const& taskId);
+
+        // Resume a specific torrent by task ID
+        void ResumeTorrent(std::string const& taskId);
+
+        // Remove a torrent by task ID
+        void RemoveTorrent(std::string const& taskId, bool deleteFiles = false);
+
+        // Save resume data for all active torrents
+        void SaveAllResumeData();
+
+        // Set the state manager for persistence
+        void SetStateManager(TorrentStateManager* stateManager);
+
         void SetProgressCallback(ProgressCallback cb);
         void SetFinishedCallback(FinishedCallback cb);
         void SetErrorCallback(ErrorCallback cb);
 
         bool IsRunning() const noexcept { return m_running.load(); }
 
+        // Get the task ID for a torrent name
+        std::string GetTaskIdByName(std::string const& name) const;
+
     private:
         void AlertLoop();
         void DispatchAlerts(std::vector<libtorrent::alert*> const& alerts);
         void ConfigureDefaultSettings(libtorrent::settings_pack& pack);
+        void HandleSaveResumeDataAlert(libtorrent::save_resume_data_alert const* alert);
+        void HandleSaveResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert const* alert);
+        void RequestResumeDataForTorrent(libtorrent::torrent_handle const& handle);
 
         std::unique_ptr<libtorrent::session> m_session;
         std::atomic<bool> m_running{ false };
@@ -69,6 +98,14 @@ namespace OpenNet::Core::Torrent
         ErrorCallback m_errorCb;
 
         std::atomic<bool> m_stopRequested{ false };
+
+        // State manager for persistence (not owned)
+        TorrentStateManager* m_stateManager{ nullptr };
+
+        // Mapping from task ID to torrent handle
+        mutable std::mutex m_torrentMapMutex;
+        std::unordered_map<std::string, libtorrent::torrent_handle> m_taskIdToHandle;
+        std::unordered_map<libtorrent::torrent_handle, std::string> m_handleToTaskId;
     };
 
 }
