@@ -1,0 +1,81 @@
+name: CI Build
+
+on:
+  push:
+    branches:
+      - main
+      - dev_master
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE.txt'
+  pull_request:
+    branches:
+      - main
+      - dev_master
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE.txt'
+
+env:
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        platform: [x64, ARM64]
+        configuration: [Release]
+      fail-fast: false
+    
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: nuget/setup-nuget@v2
+
+      - name: Export GitHub Actions cache environment variables
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@v11
+        with:
+          vcpkgDirectory: '${{ github.workspace }}/vcpkg'
+          vcpkgGitCommitId: 'c82f74667287d3dc386bce81e44964370c91a289'
+          runVcpkgInstall: false
+
+      - name: Restore NuGet packages
+        run: nuget restore OpenNet.sln
+
+      - name: Install vcpkg dependencies
+        run: |
+          $triplet = if ("${{ matrix.platform }}" -eq "ARM64") { "arm64-windows" } else { "x64-windows" }
+          cd OpenNet
+          ${{ github.workspace }}/vcpkg/vcpkg install --triplet $triplet
+        shell: pwsh
+
+      - name: Build solution
+        run: |
+          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /m
+        shell: pwsh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenNet-${{ matrix.platform }}-${{ matrix.configuration }}
+          path: |
+            OpenNet/${{ matrix.platform }}/${{ matrix.configuration }}/
+            !**/*.pdb
+            !**/*.ilk
+          retention-days: 7
