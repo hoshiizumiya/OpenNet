@@ -37,6 +37,12 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Setup .NET 10.0 Preview
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+          dotnet-quality: 'preview'
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
@@ -69,7 +75,7 @@ jobs:
 
       - name: Build solution
         run: |
-          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /m
+          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v143 /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /m
         shell: pwsh
 
       - name: Upload build artifacts
