@@ -11,12 +11,6 @@ env:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        platform: [x64]
-        configuration: [Release]
-      fail-fast: false
-
     runs-on: windows-latest
     permissions:
       contents: read
@@ -56,47 +50,108 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore OpenNet.sln
 
-      - name: Install vcpkg dependencies
+      - name: Install vcpkg dependencies for x64 and ARM64
         run: |
           cd OpenNet
           ${{ github.workspace }}/vcpkg/vcpkg install --triplet x64-windows
+          ${{ github.workspace }}/vcpkg/vcpkg install --triplet arm64-windows
           ${{ github.workspace }}/vcpkg/vcpkg integrate install
         shell: pwsh
 
-      - name: Build solution
+      - name: Build x64 Release
         run: |
-          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v143 /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
+          msbuild OpenNet.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="x64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
         shell: pwsh
 
-      - name: Create release package
+      - name: Build ARM64 Release
         run: |
-          $outputDir = "OpenNet/${{ matrix.platform }}/${{ matrix.configuration }}"
-          $packageName = "OpenNet_${{ matrix.platform }}"
+          msbuild OpenNet.sln /p:Configuration=Release /p:Platform=ARM64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="ARM64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
+        shell: pwsh
+
+      - name: Create x64 release package with 7z
+        run: |
+          $outputDir = "OpenNet/x64/Release"
+          $packageName = "OpenNet_x64"
           
           # Create a clean directory for release files
-          New-Item -ItemType Directory -Force -Path "release-${{ matrix.platform }}"
+          New-Item -ItemType Directory -Force -Path "release-x64"
           
-          # Copy AppX packages if they exist
-          if (Test-Path "$outputDir/AppX") {
-            Copy-Item -Path "$outputDir/AppX/*" -Destination "release-${{ matrix.platform }}/" -Recurse
+          # Copy AppX/MSIX packages if they exist
+          $appxPath = Get-ChildItem -Path $outputDir -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($appxPath) {
+            Copy-Item -Path $appxPath.FullName -Destination "release-x64/" -Force
           }
           
-          # Also copy loose files (exe, dll, etc.) if AppX doesn't exist
+          # Copy AppPackages folder if exists (MSIX sideload packages)
+          if (Test-Path "OpenNet/AppPackages") {
+            Get-ChildItem -Path "OpenNet/AppPackages" -Filter "*x64*" -Recurse | 
+              Copy-Item -Destination "release-x64/" -Force -Recurse
+          }
+          
+          # Copy AppX folder if exists
+          if (Test-Path "$outputDir/AppX") {
+            Copy-Item -Path "$outputDir/AppX/*" -Destination "release-x64/" -Recurse -Force
+          }
+          
+          # Also copy loose files (exe, dll, etc.) as fallback
           if (Test-Path "$outputDir/OpenNet.exe") {
             Get-ChildItem -Path $outputDir -Include *.exe,*.dll,*.pri,*.winmd -Recurse | 
               Where-Object { $_.FullName -notlike "*vcpkg_installed*" } |
-              Copy-Item -Destination "release-${{ matrix.platform }}/" -Force
+              Copy-Item -Destination "release-x64/" -Force
           }
           
-          # Create zip archive
-          Compress-Archive -Path "release-${{ matrix.platform }}/*" -DestinationPath "${packageName}.zip" -Force
+          # Compress with 7z
+          7z a -t7z "${packageName}.7z" "./release-x64/*"
         shell: pwsh
 
-      - name: Upload release artifact
+      - name: Create ARM64 release package with 7z
+        run: |
+          $outputDir = "OpenNet/ARM64/Release"
+          $packageName = "OpenNet_ARM64"
+          
+          # Create a clean directory for release files
+          New-Item -ItemType Directory -Force -Path "release-ARM64"
+          
+          # Copy AppX/MSIX packages if they exist
+          $appxPath = Get-ChildItem -Path $outputDir -Filter "*.msix" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($appxPath) {
+            Copy-Item -Path $appxPath.FullName -Destination "release-ARM64/" -Force
+          }
+          
+          # Copy AppPackages folder if exists (MSIX sideload packages)
+          if (Test-Path "OpenNet/AppPackages") {
+            Get-ChildItem -Path "OpenNet/AppPackages" -Filter "*ARM64*" -Recurse | 
+              Copy-Item -Destination "release-ARM64/" -Force -Recurse
+          }
+          
+          # Copy AppX folder if exists
+          if (Test-Path "$outputDir/AppX") {
+            Copy-Item -Path "$outputDir/AppX/*" -Destination "release-ARM64/" -Recurse -Force
+          }
+          
+          # Also copy loose files (exe, dll, etc.) as fallback
+          if (Test-Path "$outputDir/OpenNet.exe") {
+            Get-ChildItem -Path $outputDir -Include *.exe,*.dll,*.pri,*.winmd -Recurse | 
+              Where-Object { $_.FullName -notlike "*vcpkg_installed*" } |
+              Copy-Item -Destination "release-ARM64/" -Force
+          }
+          
+          # Compress with 7z
+          7z a -t7z "${packageName}.7z" "./release-ARM64/*"
+        shell: pwsh
+
+      - name: Upload x64 release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: OpenNet_${{ matrix.platform }}
-          path: OpenNet_${{ matrix.platform }}.zip
+          name: OpenNet_x64
+          path: OpenNet_x64.7z
+          retention-days: 7
+
+      - name: Upload ARM64 release artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenNet_ARM64
+          path: OpenNet_ARM64.7z
           retention-days: 7
 
   release:
@@ -112,11 +167,18 @@ jobs:
           name: OpenNet_x64
           path: ./artifacts
 
+      - name: Download ARM64 artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: OpenNet_ARM64
+          path: ./artifacts
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ./artifacts/OpenNet_x64.zip
+            ./artifacts/OpenNet_x64.7z
+            ./artifacts/OpenNet_ARM64.7z
           draft: false
           prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') || contains(github.ref_name, 'rc') }}
           generate_release_notes: true

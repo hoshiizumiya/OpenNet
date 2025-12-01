@@ -21,12 +21,6 @@ env:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        platform: [x64]
-        configuration: [Release]
-      fail-fast: false
-    
     runs-on: windows-latest
     permissions:
       contents: read
@@ -66,24 +60,40 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore OpenNet.sln
 
-      - name: Install vcpkg dependencies
+      - name: Install vcpkg dependencies for x64 and ARM64
         run: |
           cd OpenNet
           ${{ github.workspace }}/vcpkg/vcpkg install --triplet x64-windows
+          ${{ github.workspace }}/vcpkg/vcpkg install --triplet arm64-windows
           ${{ github.workspace }}/vcpkg/vcpkg integrate install
         shell: pwsh
 
-      - name: Build solution
+      - name: Build x64 Release
         run: |
-          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v143 /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
+          msbuild OpenNet.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="x64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
         shell: pwsh
 
-      - name: Upload build artifacts
+      - name: Build ARM64 Release
+        run: |
+          msbuild OpenNet.sln /p:Configuration=Release /p:Platform=ARM64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="ARM64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
+        shell: pwsh
+
+      - name: Upload x64 build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: OpenNet-${{ matrix.platform }}-${{ matrix.configuration }}
+          name: OpenNet-x64-Release
           path: |
-            OpenNet/${{ matrix.platform }}/${{ matrix.configuration }}/
+            OpenNet/x64/Release/
+            !**/*.pdb
+            !**/*.ilk
+          retention-days: 7
+
+      - name: Upload ARM64 build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenNet-ARM64-Release
+          path: |
+            OpenNet/ARM64/Release/
             !**/*.pdb
             !**/*.ilk
           retention-days: 7
