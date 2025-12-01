@@ -23,7 +23,7 @@ jobs:
   build:
     strategy:
       matrix:
-        platform: [x64, ARM64]
+        platform: [x64]
         configuration: [Release]
       fail-fast: false
     
@@ -68,14 +68,14 @@ jobs:
 
       - name: Install vcpkg dependencies
         run: |
-          $triplet = if ("${{ matrix.platform }}" -eq "ARM64") { "arm64-windows" } else { "x64-windows" }
           cd OpenNet
-          ${{ github.workspace }}/vcpkg/vcpkg install --triplet $triplet
+          ${{ github.workspace }}/vcpkg/vcpkg install --triplet x64-windows
+          ${{ github.workspace }}/vcpkg/vcpkg integrate install
         shell: pwsh
 
       - name: Build solution
         run: |
-          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v143 /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /m
+          msbuild OpenNet.sln /p:Configuration=${{ matrix.configuration }} /p:Platform=${{ matrix.platform }} /p:PlatformToolset=v143 /p:AppxBundlePlatforms="${{ matrix.platform }}" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
         shell: pwsh
 
       - name: Upload build artifacts
