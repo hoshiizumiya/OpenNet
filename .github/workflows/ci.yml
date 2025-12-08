@@ -27,15 +27,14 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
-      - name: Setup .NET 10.0 Preview
-        uses: actions/setup-dotnet@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
-          dotnet-quality: 'preview'
 
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
@@ -58,7 +57,7 @@ jobs:
           runVcpkgInstall: false
 
       - name: Restore NuGet packages
-        run: nuget restore OpenNet.sln
+        run: nuget restore OpenNet.slnx
 
       - name: Install vcpkg dependencies for x64 and ARM64
         run: |
@@ -70,12 +69,12 @@ jobs:
 
       - name: Build x64 Release
         run: |
-          msbuild OpenNet.sln /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="x64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
+          msbuild OpenNet.slnx /p:Configuration=Release /p:Platform=x64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="x64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
         shell: pwsh
 
       - name: Build ARM64 Release
         run: |
-          msbuild OpenNet.sln /p:Configuration=Release /p:Platform=ARM64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="ARM64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
+          msbuild OpenNet.slnx /p:Configuration=Release /p:Platform=ARM64 /p:PlatformToolset=v143 /p:AppxBundlePlatforms="ARM64" /p:AppxPackageSigningEnabled=false /p:UapAppxPackageBuildMode=SideloadOnly /p:VcpkgEnableManifest=true /p:VcpkgManifestInstall=false /m
         shell: pwsh
 
       - name: Upload x64 build artifacts
