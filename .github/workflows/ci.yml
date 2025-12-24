@@ -18,7 +18,10 @@ on:
 
 env:
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-
+  
+permissions:
+  packages: write
+  
 jobs:
   build:
     runs-on: windows-latest
@@ -53,17 +56,14 @@ jobs:
         uses: lukka/run-vcpkg@v11
         with:
           vcpkgDirectory: '${{ github.workspace }}/vcpkg'
-          vcpkgGitCommitId: '4f8fe05871555c1798dbcb1957d0d595e94f7b57'
           runVcpkgInstall: false
 
       - name: Restore NuGet packages
         run: nuget restore OpenNet.slnx
 
-      - name: Install vcpkg dependencies for x64 and ARM64
+      - name: Install vcpkg dependencies for VS
         run: |
           cd OpenNet
-          ${{ github.workspace }}/vcpkg/vcpkg install --triplet x64-windows
-          ${{ github.workspace }}/vcpkg/vcpkg install --triplet arm64-windows
           ${{ github.workspace }}/vcpkg/vcpkg integrate install
         shell: pwsh
 
