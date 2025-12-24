@@ -62,9 +62,7 @@ jobs:
         run: nuget restore OpenNet.slnx
 
       - name: Install vcpkg dependencies for VS
-        run: |
-          cd OpenNet
-          ${{ github.workspace }}/vcpkg/vcpkg integrate install
+        run:  ${{ github.workspace }}/vcpkg integrate install
         shell: pwsh
 
       - name: Build x64 Release
