@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+// Ensure custom control types are declared before including the generated XAML header.
+// The generated header (`Pages/TasksPage.g.h`) uses `winrt::OpenNet::Controls::SpeedGraph::SpeedGraph`
+// in its declarations. If that type is not visible at the point the generated header is included
+// the compiler will fail with errors such as "symbol must be a type" or "variable cannot have type void".
+#include "../Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "Pages/TasksPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 

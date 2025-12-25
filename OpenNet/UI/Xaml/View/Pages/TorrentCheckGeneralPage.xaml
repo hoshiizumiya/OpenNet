@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.TorrentCheckGeneralPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid
+        Height="800"
+        Padding="16"
+        RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="12">
+                <Border
+                    Padding="12"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <StackPanel Spacing="8">
+                        <TextBlock FontWeight="SemiBold" Text="Save Location" />
+                        <Grid
+                            ColumnDefinitions="Auto,*,Auto,Auto"
+                            ColumnSpacing="8"
+                            RowDefinitions="Auto,Auto,Auto"
+                            RowSpacing="8">
+                            <TextBlock
+                                Margin="0,0,4,0"
+                                VerticalAlignment="Center"
+                                Text="Save path:" />
+                            <TextBox Grid.Column="1" PlaceholderText="" />
+                            <Button
+                                Grid.Column="2"
+                                MinWidth="32"
+                                Content="▼" />
+                            <Button
+                                Grid.Column="3"
+                                MinWidth="36"
+                                Content="..." />
+
+                            <TextBlock
+                                Grid.Row="1"
+                                Margin="0,0,4,0"
+                                VerticalAlignment="Center"
+                                Text="Filename:" />
+                            <TextBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3" />
+
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="3"
+                                Content="Create subfolder for torrent containing only a single file" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="12"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <StackPanel Spacing="8">
+                        <TextBlock FontWeight="SemiBold" Text="Torrent Content" />
+                        <Grid
+                            ColumnDefinitions="Auto,*"
+                            ColumnSpacing="8"
+                            RowDefinitions="Auto,Auto,Auto,Auto"
+                            RowSpacing="4">
+                            <TextBlock Text="Name:" />
+                            <TextBlock
+                                Grid.Column="1"
+                                Text="2024-2025-1计算机网络A卷.pdf"
+                                TextTrimming="CharacterEllipsis" />
+
+                            <TextBlock Grid.Row="1" Text="Size:" />
+                            <TextBlock
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="337.3 KB" />
+
+                            <TextBlock Grid.Row="2" Text="Publisher:" />
+                            <TextBlock
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Text="" />
+                        </Grid>
+
+                        <Border
+                            Padding="12"
+                            Background="#FFE7CEF5"
+                            CornerRadius="2">
+                            <Grid ColumnDefinitions="*,*">
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    Foreground="Crimson"
+                                    Text="Disk Space: 0 B" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    HorizontalAlignment="Center"
+                                    Foreground="Crimson"
+                                    Text="Free Space: 0 B" />
+                            </Grid>
+                        </Border>
+
+                        <Border
+                            Padding="0"
+                            BorderBrush="Gray"
+                            BorderThickness="1"
+                            CornerRadius="2">
+                            <Grid RowDefinitions="Auto,*">
+                                <Grid
+                                    Padding="8"
+                                    Background="#FF2F2F2F"
+                                    ColumnDefinitions="*,140,80"
+                                    ColumnSpacing="8">
+                                    <TextBlock FontWeight="SemiBold" Text="File Name" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="SemiBold"
+                                        Text="Size" />
+                                    <TextBlock
+                                        Grid.Column="2"
+                                        HorizontalAlignment="Right"
+                                        FontWeight="SemiBold"
+                                        Text="%" />
+                                </Grid>
+                                <ScrollViewer
+                                    Grid.Row="1"
+                                    MinHeight="180"
+                                    VerticalScrollBarVisibility="Auto">
+                                    <StackPanel>
+                                        <Grid
+                                            Padding="8"
+                                            VerticalAlignment="Center"
+                                            ColumnDefinitions="Auto,*,140,80"
+                                            ColumnSpacing="8">
+                                            <CheckBox IsChecked="True" />
+                                            <TextBlock
+                                                Grid.Column="1"
+                                                Text="2024-2025-1计算机网络A卷.pdf"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                HorizontalAlignment="Right"
+                                                Text="337.3 KB" />
+                                            <TextBlock
+                                                Grid.Column="3"
+                                                HorizontalAlignment="Right"
+                                                Text="0.0%" />
+                                        </Grid>
+                                    </StackPanel>
+                                </ScrollViewer>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <Grid
+            Grid.Row="2"
+            ColumnDefinitions="*,Auto,Auto"
+            ColumnSpacing="12">
+            <StackPanel
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <CheckBox Content="Select All (1)" IsChecked="True" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="12">
+                <CheckBox Content="Video" />
+                <CheckBox Content="Audio" />
+                <CheckBox Content="Picture" />
+                <CheckBox Content="Other" IsChecked="True" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="2"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal"
+                Spacing="8">
+                <Button Content="Download Now" />
+                <Button Content="Download Later" />
+                <Button Content="Cancel" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

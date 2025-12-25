@@ -111,7 +111,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         if (m_selectedTask != value)
         {
             m_selectedTask = value;
-            RaisePropertyChanged(L"SelectedTask");
+            RaisePropertyChangedEvent(L"SelectedTask");
         }
     }
 

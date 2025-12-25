@@ -113,11 +113,11 @@
                     Icon="Home"
                     Tag="home" />
 
-                <NavigationViewItem x:Uid="NavItem_Contacts" Tag="contacts">
+                <!--<NavigationViewItem x:Uid="NavItem_Contacts" Tag="contacts">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE716;" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem>-->
 
                 <NavigationViewItem x:Uid="NavItem_Tasks" Tag="tasks">
                     <NavigationViewItem.Icon>
@@ -125,7 +125,7 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem x:Uid="NavItem_Files" Tag="files">
+                <!--<NavigationViewItem x:Uid="NavItem_Files" Tag="files">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8B7;" />
                     </NavigationViewItem.Icon>
@@ -141,7 +141,7 @@
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC26;" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem>-->
 
 
                 <!--<Rectangle

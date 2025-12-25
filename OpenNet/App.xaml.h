@@ -14,7 +14,6 @@ namespace winrt::OpenNet::implementation
 
 		static void HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);
 
-	private:
 		static inline winrt::Microsoft::UI::Xaml::Window window{ nullptr };
 	};
 }

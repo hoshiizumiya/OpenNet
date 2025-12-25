@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "SpeedGraph.xaml.h"
-#if __has_include("SpeedGraph.g.cpp")
-#include "SpeedGraph.g.cpp"
+#if __has_include("Controls/SpeedGraph/SpeedGraph.g.cpp")
+#include "Controls/SpeedGraph/SpeedGraph.g.cpp"
 #endif
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 #include <format>
