@@ -26,7 +26,7 @@
                     BorderThickness="1"
                     CornerRadius="4">
                     <StackPanel Spacing="8">
-                        <TextBlock FontWeight="SemiBold" Text="Save Location" />
+                        <TextBlock x:Uid="AddMagnet_SaveLabel" FontWeight="SemiBold" />
                         <Grid
                             ColumnDefinitions="Auto,*,Auto,Auto"
                             ColumnSpacing="8"
@@ -36,16 +36,25 @@
                                 Margin="0,0,4,0"
                                 VerticalAlignment="Center"
                                 Text="Save path:" />
-                            <TextBox Grid.Column="1" PlaceholderText="" />
-                            <Button
-                                Grid.Column="2"
-                                MinWidth="32"
-                                Content="▼" />
-                            <Button
-                                Grid.Column="3"
-                                MinWidth="36"
-                                Content="..." />
-
+                            <!--
+                                QuerySubmitted="Control2_QuerySubmitted"
+                                SuggestionChosen="Control2_SuggestionChosen"
+                                TextChanged="Control2_TextChanged"
+                            -->
+                            <AutoSuggestBox
+                                x:Name="TorrentCheckGeneralPageSavePath"
+                                x:Uid="TorrentCheckGeneralPageSavePath"
+                                Grid.Column="1">
+                                <AutoSuggestBox.QueryIcon>
+                                    <FontIcon HorizontalAlignment="Center" Glyph="&#xE70D;" />
+                                </AutoSuggestBox.QueryIcon>
+                            </AutoSuggestBox>
+                            <!--  pick a folder  -->
+                            <Button Grid.Column="2" Click="TorrentCheckGeneralPageFolderPicker_Click" MinWidth="36">
+                                <Button.Content>
+                                    <FontIcon Glyph="&#xEC50;" />
+                                </Button.Content>
+                            </Button>
                             <TextBlock
                                 Grid.Row="1"
                                 Margin="0,0,4,0"

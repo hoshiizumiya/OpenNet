@@ -5,6 +5,7 @@
 // in its declarations. If that type is not visible at the point the generated header is included
 // the compiler will fail with errors such as "symbol must be a type" or "variable cannot have type void".
 #include "../Controls/SpeedGraph/SpeedGraph.xaml.h"
+#include "UI/Xaml/View/Pages/TaskSummaryPage.xaml.h"
 #include "Pages/TasksPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 
@@ -26,10 +27,6 @@ namespace winrt::OpenNet::Pages::implementation
 		void TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,
 			winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
 
-		// SpeedGraph size changed handler
-		void TaskSpeedGraph_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
-
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::event_token m_addTaskToken{};
@@ -37,11 +34,7 @@ namespace winrt::OpenNet::Pages::implementation
 		winrt::OpenNet::ViewModels::TaskViewModel m_currentSubscribedTask{ nullptr };
 
 		void OnAddTaskRequested(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const&);
-		winrt::fire_and_forget ShowAddMagnetDialog();
-		Windows::Foundation::IAsyncOperation<hstring> PickFolderAsync();
 
-		// Update the SpeedGraph with selected task's data
-		void UpdateSpeedGraphForSelectedTask();
 		
 		// Subscribe/unsubscribe to selected task's property changes
 		void SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const& task);

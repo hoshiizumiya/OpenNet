@@ -7,7 +7,6 @@
     xmlns:local="using:OpenNet.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
     xmlns:vm="using:OpenNet.ViewModels"
     x:Uid="TasksPageRoot"
     mc:Ignorable="d">
@@ -193,15 +192,8 @@
                         IsSelected="True" />
                     <muxc:SelectorBarItem x:Name="PeersList" x:Uid="Task_PeersList" />
                 </muxc:SelectorBar>
+                <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
 
-                <!--  下载进度图 / Download Progress Graph  -->
-                <Grid Grid.Row="3" Padding="8">
-                    <speedgraph:SpeedGraph
-                        x:Name="TaskSpeedGraph"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Stretch"
-                        SizeChanged="TaskSpeedGraph_SizeChanged" />
-                </Grid>
             </Grid>
         </SplitView>
     </Grid>

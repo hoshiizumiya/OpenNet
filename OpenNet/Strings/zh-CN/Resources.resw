@@ -348,10 +348,13 @@
   <data name="FilterNavViewFailed.Content" xml:space="preserve">
     <value>已失败</value>
   </data>
-  <data name="AddMagnet_SaveLabel" xml:space="preserve">
+  <data name="AddMagnet_SaveLabel.Text" xml:space="preserve">
     <value>保存路径</value>
   </data>
   <data name="TorrentCheckModalWindow.Title" xml:space="preserve">
     <value>创建种子任务窗口</value>
+  </data>
+  <data name="TorrentCheckGeneralPageSavePath.PlaceholderText" xml:space="preserve">
+    <value>输入或选择一个文件夹路径作为保存路径</value>
   </data>
 </root>

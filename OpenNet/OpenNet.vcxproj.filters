@@ -56,10 +56,13 @@
       <Filter>Pages\SettingsPages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
-      <Filter>Controls\TorrentDetialsCheck</Filter>
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
-      <Filter>Controls\TorrentDetialsCheck</Filter>
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -557,6 +560,12 @@
     </Filter>
     <Filter Include="UI\Xaml\View">
       <UniqueIdentifier>{42d295c1-6bcb-403b-a0c5-e6154d0e037a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View\Windows">
+      <UniqueIdentifier>{f717f290-9757-4926-9717-daaf86781a5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View\Pages">
+      <UniqueIdentifier>{c987e384-6f36-46b2-91e1-bbd6207d2399}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

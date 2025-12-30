@@ -143,6 +143,10 @@
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -293,6 +297,9 @@
     <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -338,6 +345,10 @@
     </ClCompile>
     <ClCompile Include="Controls\SpeedGraph\SpeedGraph.xaml.cpp">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.cpp">
@@ -471,6 +482,10 @@
     </Midl>
     <Midl Include="Controls\SpeedGraph\SpeedGraph.idl">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskSummaryPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.idl">

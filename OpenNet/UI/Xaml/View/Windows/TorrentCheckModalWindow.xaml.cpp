@@ -67,12 +67,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void TorrentCheckModalWindow::ModalWindow_Closed(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::WindowEventArgs const&)
 	{
-		// Optional: reset presenter modal flag if needed or perform cleanup.
-		if (auto presenter = AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
+		// Reactivate the main application window when the modal window closes.
+		auto const& ownerWindow = winrt::OpenNet::implementation::App::window;
+		if (!ownerWindow)
 		{
-			presenter.IsModal(false);
-			AppWindow().SetPresenter(presenter);
+			return; // No owner available yet.
 		}
+		ownerWindow.Activate();
+
 	}
 
 

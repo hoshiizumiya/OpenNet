@@ -291,10 +291,14 @@
   <data name="FilterNavViewFailed.Content" xml:space="preserve">
     <value>Failed</value>
   </data>
-  <data name="AddMagnet_SaveLabel" xml:space="preserve">
+  <data name="AddMagnet_SaveLabel.Text" xml:space="preserve">
     <value>Save path</value>
   </data>
   <data name="TorrentCheckModalWindow.Title" xml:space="preserve">
     <value>Create a new bittorrent task window</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="TorrentCheckGeneralPageSavePath.PlaceholderText" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>
