@@ -6,15 +6,24 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="Create a new bittorrent task"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
         <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
-    <Grid Loaded="TorrentCreateGrid_Loaded" RowDefinitions="Auto, *">
-        <SelectorBar Grid.Row="0" SelectionChanged="TorrentCheckModalWindowSeleterBar_SelectionChanged">
+    <Grid Loaded="TorrentCreateGrid_Loaded" RowDefinitions="Auto, Auto, *">
+        <TitleBar
+            x:Name="TorrentCheckModalWindowTitleBar"
+            x:Uid="TorrentCheckModalWindowTitleBar"
+            Title="Create a new bittorrent task"
+            Grid.Row="0"
+            Height="32"
+            IsBackButtonVisible="False"
+            IsPaneToggleButtonVisible="False"
+            Subtitle="Preview" />
+
+        <SelectorBar Grid.Row="1" SelectionChanged="TorrentCheckModalWindowSeleterBar_SelectionChanged">
             <SelectorBar.Items>
                 <SelectorBarItem IsSelected="True" Text="General" />
                 <SelectorBarItem Text="Snapshots" />
@@ -25,7 +34,7 @@
         </SelectorBar>
         <Frame
             x:Name="TorrentCheckFrame"
-            Grid.Row="1"
+            Grid.Row="2"
             IsNavigationStackEnabled="False" />
 
     </Grid>

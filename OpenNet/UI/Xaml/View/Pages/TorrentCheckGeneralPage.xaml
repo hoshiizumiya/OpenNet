@@ -9,16 +9,16 @@
     mc:Ignorable="d">
 
     <Grid
-        Height="800"
-        Padding="16"
+        Padding="16,0,16,16"
+        VerticalAlignment="Stretch"
         RowSpacing="12">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <!--  Scrollable content  -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Spacing="12">
                 <Border
                     Padding="12"
@@ -33,14 +33,15 @@
                             RowDefinitions="Auto,Auto,Auto"
                             RowSpacing="8">
                             <TextBlock
+                                x:Uid="TorrentCheckGeneralPage_SavePathLabel"
                                 Margin="0,0,4,0"
-                                VerticalAlignment="Center"
-                                Text="Save path:" />
+                                VerticalAlignment="Center" />
                             <!--
                                 QuerySubmitted="Control2_QuerySubmitted"
                                 SuggestionChosen="Control2_SuggestionChosen"
                                 TextChanged="Control2_TextChanged"
                             -->
+
                             <AutoSuggestBox
                                 x:Name="TorrentCheckGeneralPageSavePath"
                                 x:Uid="TorrentCheckGeneralPageSavePath"
@@ -49,27 +50,34 @@
                                     <FontIcon HorizontalAlignment="Center" Glyph="&#xE70D;" />
                                 </AutoSuggestBox.QueryIcon>
                             </AutoSuggestBox>
+
                             <!--  pick a folder  -->
-                            <Button Grid.Column="2" Click="TorrentCheckGeneralPageFolderPicker_Click" MinWidth="36">
+                            <Button
+                                x:Uid="TorrentCheckGeneralPage_FolderPickerButton"
+                                Grid.Column="2"
+                                MinWidth="36"
+                                Click="TorrentCheckGeneralPageFolderPicker_Click">
                                 <Button.Content>
                                     <FontIcon Glyph="&#xEC50;" />
                                 </Button.Content>
                             </Button>
+
                             <TextBlock
+                                x:Uid="TorrentCheckGeneralPage_FileNameLabel"
                                 Grid.Row="1"
                                 Margin="0,0,4,0"
-                                VerticalAlignment="Center"
-                                Text="Filename:" />
+                                VerticalAlignment="Center" />
                             <TextBox
+                                x:Uid="TorrentCheckGeneralPage_FileNameTextBox"
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="3" />
 
                             <CheckBox
+                                x:Uid="TorrentCheckGeneralPage_CreateSubfolderCheckBox"
                                 Grid.Row="2"
                                 Grid.Column="1"
-                                Grid.ColumnSpan="3"
-                                Content="Create subfolder for torrent containing only a single file" />
+                                Grid.ColumnSpan="3" />
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -80,25 +88,25 @@
                     BorderThickness="1"
                     CornerRadius="4">
                     <StackPanel Spacing="8">
-                        <TextBlock FontWeight="SemiBold" Text="Torrent Content" />
+                        <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentContentTitle" FontWeight="SemiBold" />
                         <Grid
                             ColumnDefinitions="Auto,*"
                             ColumnSpacing="8"
                             RowDefinitions="Auto,Auto,Auto,Auto"
                             RowSpacing="4">
-                            <TextBlock Text="Name:" />
+                            <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentNameLabel" />
                             <TextBlock
                                 Grid.Column="1"
                                 Text="2024-2025-1计算机网络A卷.pdf"
                                 TextTrimming="CharacterEllipsis" />
 
-                            <TextBlock Grid.Row="1" Text="Size:" />
+                            <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentSizeLabel" Grid.Row="1" />
                             <TextBlock
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Text="337.3 KB" />
 
-                            <TextBlock Grid.Row="2" Text="Publisher:" />
+                            <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentPublisherLabel" Grid.Row="2" />
                             <TextBlock
                                 Grid.Row="2"
                                 Grid.Column="1"
@@ -111,14 +119,14 @@
                             CornerRadius="2">
                             <Grid ColumnDefinitions="*,*">
                                 <TextBlock
+                                    x:Uid="TorrentCheckGeneralPage_DiskSpace"
                                     HorizontalAlignment="Center"
-                                    Foreground="Crimson"
-                                    Text="Disk Space: 0 B" />
+                                    Foreground="Crimson" />
                                 <TextBlock
+                                    x:Uid="TorrentCheckGeneralPage_FreeSpace"
                                     Grid.Column="1"
                                     HorizontalAlignment="Center"
-                                    Foreground="Crimson"
-                                    Text="Free Space: 0 B" />
+                                    Foreground="Crimson" />
                             </Grid>
                         </Border>
 
@@ -133,17 +141,17 @@
                                     Background="#FF2F2F2F"
                                     ColumnDefinitions="*,140,80"
                                     ColumnSpacing="8">
-                                    <TextBlock FontWeight="SemiBold" Text="File Name" />
+                                    <TextBlock x:Uid="TorrentCheckGeneralPage_ListHeader_FileName" FontWeight="SemiBold" />
                                     <TextBlock
+                                        x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
                                         Grid.Column="1"
                                         HorizontalAlignment="Right"
-                                        FontWeight="SemiBold"
-                                        Text="Size" />
+                                        FontWeight="SemiBold" />
                                     <TextBlock
+                                        x:Uid="TorrentCheckGeneralPage_ListHeader_Percent"
                                         Grid.Column="2"
                                         HorizontalAlignment="Right"
-                                        FontWeight="SemiBold"
-                                        Text="%" />
+                                        FontWeight="SemiBold" />
                                 </Grid>
                                 <ScrollViewer
                                     Grid.Row="1"
@@ -178,36 +186,31 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!--  Sticky bottom bar (always visible)  -->
         <Grid
-            Grid.Row="2"
-            ColumnDefinitions="*,Auto,Auto"
+            Grid.Row="1"
+            VerticalAlignment="Bottom"
+            ColumnDefinitions="*,Auto"
             ColumnSpacing="12">
-            <StackPanel
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="8">
-                <CheckBox Content="Select All (1)" IsChecked="True" />
+            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                <CheckBox
+                    x:Uid="TorrentCheckGeneralPage_Filter_SelectAll"
+                    MinHeight="12"
+                    IsChecked="True" />
+                <CheckBox x:Uid="TorrentCheckGeneralPage_Filter_Video" />
+                <CheckBox x:Uid="TorrentCheckGeneralPage_Filter_Audio" />
+                <CheckBox x:Uid="TorrentCheckGeneralPage_Filter_Picture" />
+                <CheckBox x:Uid="TorrentCheckGeneralPage_Filter_Other" IsChecked="True" />
             </StackPanel>
 
             <StackPanel
                 Grid.Column="1"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="12">
-                <CheckBox Content="Video" />
-                <CheckBox Content="Audio" />
-                <CheckBox Content="Picture" />
-                <CheckBox Content="Other" IsChecked="True" />
-            </StackPanel>
-
-            <StackPanel
-                Grid.Column="2"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"
                 Spacing="8">
-                <Button Content="Download Now" />
-                <Button Content="Download Later" />
-                <Button Content="Cancel" />
+                <Button x:Uid="TorrentCheckGeneralPage_Action_DownloadNow" />
+                <Button x:Uid="TorrentCheckGeneralPage_Action_DownloadLater" />
+                <Button x:Uid="TorrentCheckGeneralPage_Action_Cancel" />
             </StackPanel>
         </Grid>
     </Grid>

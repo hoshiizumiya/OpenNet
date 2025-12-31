@@ -11,6 +11,7 @@
 #include <windowsx.h>
 #include <winuser.h>
 #include "Helpers/WindowHelper.h"
+#include "Helpers/ThemeHelper.h"
 #include "App.xaml.h"
 #include "../Pages/TorrentCheckGeneralPage.xaml.h"
 
@@ -25,10 +26,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		InitializeComponent();
 		AppWindow().Resize(winrt::Windows::Graphics::SizeInt32(1500, 1800));
+
+		SetTitleBar(TorrentCheckModalWindowTitleBar());
 		ExtendsContentIntoTitleBar(true);
 		AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 		// Set this modal window's owner (the main application window).
 		SetWindowOwner();
+
+		// Apply saved/custom theme to this window as well.
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
 
 		// Make the window modal and show it.
 		if (auto presenter = AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
@@ -97,6 +103,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		default:
 			break;
 		}
+
+		// This is also working to determine slide direction
 		if (currentSelectedIndex > m_selected_index)
 		{
 			slideInfo.Effect(SlideNavigationTransitionEffect::FromRight);
