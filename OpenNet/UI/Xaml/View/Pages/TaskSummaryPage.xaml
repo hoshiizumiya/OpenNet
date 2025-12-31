@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.TaskSummaryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
+    mc:Ignorable="d">
+
+
+    <!--  下载进度图 / Download Progress Graph  -->
+    <Grid Padding="8">
+        <speedgraph:SpeedGraph
+            x:Name="TaskSpeedGraph"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            SizeChanged="TaskSpeedGraph_SizeChanged" />
+    </Grid>
+</Page>

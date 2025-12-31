@@ -143,6 +143,18 @@
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Core\CryptoManager.h" />
     <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h" />
     <ClInclude Include="Core\DataGraph\ReadableUnitConverterWinRT.h" />
@@ -285,6 +297,15 @@
     <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="Pages\ContactsPage.xaml">
       <SubType>Designer</SubType>
@@ -324,6 +345,18 @@
     </ClCompile>
     <ClCompile Include="Controls\SpeedGraph\SpeedGraph.xaml.cpp">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp" />
@@ -451,6 +484,18 @@
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskSummaryPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="Core\DataGraph\ReadableUnitConverterWinRT.idl" />
     <Midl Include="Helpers\NavItemIconHelper.idl">
       <SubType>Code</SubType>
@@ -488,7 +533,7 @@
       <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-	<Midl Include="Pages\SettingsPages\SettingsPage.idl">
+    <Midl Include="Pages\SettingsPages\SettingsPage.idl">
       <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
@@ -653,7 +698,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.251106002\build\native\Microsoft.WindowsAppSDK.targets')" />
     <Import Project="..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.3.27\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.3.27\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -688,6 +733,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Graphics.Win2D.1.3.2\build\native\Microsoft.Graphics.Win2D.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.26100.7175\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.23\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.3.27\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.3.27\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

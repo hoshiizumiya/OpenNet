@@ -25,9 +25,13 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
         void Pause();
         void Error();
 
+        // Reset the graph data (clears existing data)
+        void Reset();
+
         winrt::Microsoft::UI::Xaml::Media::PointCollection Points();
     private:
-        SpeedGraphData& m_graphData{ ViewModelLocator::GetInstance().SpeedGraphData() };
+        // Each SpeedGraph instance now owns its own SpeedGraphData
+        SpeedGraphData m_graphData{};
 
         bool m_hasData{};
 

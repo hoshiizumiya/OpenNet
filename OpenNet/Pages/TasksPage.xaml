@@ -69,20 +69,20 @@
                     SelectionChanged="FilterNavView_SelectionChanged">
                     <muxc:NavigationView.MenuItems>
                         <muxc:NavigationViewItem
-                            Content="全部任务"
+                            x:Uid="FilterNavViewAllTasks"
                             Icon="ViewAll"
                             IsSelected="True"
                             Tag="AllTasks" />
                         <muxc:NavigationViewItem
-                            Content="正在下载"
+                            x:Uid="FilterNavViewDownloading"
                             Icon="Download"
                             Tag="Downloading" />
                         <muxc:NavigationViewItem
-                            Content="已完成"
+                            x:Uid="FilterNavViewCompleted"
                             Icon="Accept"
                             Tag="Completed" />
                         <muxc:NavigationViewItem
-                            Content="已失败"
+                            x:Uid="FilterNavViewFailed"
                             Icon="Cancel"
                             Tag="Failed" />
                     </muxc:NavigationView.MenuItems>
@@ -92,6 +92,7 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="2*" />
                 </Grid.RowDefinitions>
@@ -149,7 +150,8 @@
                         x:Name="TasksList"
                         Grid.Row="1"
                         ItemsSource="{x:Bind ViewModel.FilteredTasks, Mode=OneWay}"
-                        SelectionMode="Extended">
+                        SelectionChanged="TasksList_SelectionChanged"
+                        SelectionMode="Single">
                         <ListView.ItemTemplate>
                             <!--  在这里写DataType可以在绑定时省略命名空间前缀  -->
                             <DataTemplate x:DataType="vm:TaskViewModel">
@@ -183,7 +185,6 @@
                     resizedirection="rows" />-->
 
                 <!--  下方多标签  -->
-                <!--  SelectionChanged=""  -->
                 <muxc:SelectorBar x:Name="Task_SelectBar" Grid.Row="2">
                     <muxc:SelectorBarItem
                         x:Name="SummaryContent"
@@ -191,6 +192,8 @@
                         IsSelected="True" />
                     <muxc:SelectorBarItem x:Name="PeersList" x:Uid="Task_PeersList" />
                 </muxc:SelectorBar>
+                <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
+
             </Grid>
         </SplitView>
     </Grid>

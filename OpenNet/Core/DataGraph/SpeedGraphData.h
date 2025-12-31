@@ -13,6 +13,7 @@ class SpeedGraphData
 
 	constexpr float getX(uint64_t progressBytes)
 	{
+		if (m_total == 0) return 0.0f;
 		return m_graphSize.Width * (static_cast<float>(progressBytes) / m_total);
 	}
 
@@ -61,5 +62,18 @@ public:
 	[[nodiscard]] winrt::Windows::Foundation::Point GetLastPoint() const
 	{
 		return m_points.GetAt(m_points.Size() - 2);
+	}
+
+	// Reset the graph data to initial state
+	void Reset()
+	{
+		if (m_points)
+		{
+			m_points.Clear();
+		}
+		m_total = 0;
+		m_currentMax = 1024 * 1024;
+		m_ratio = 1.0f;
+		m_currentPercent = 0.0;
 	}
 };

@@ -12,6 +12,9 @@ namespace OpenNet.ViewModels
         // Filtered view for UI binding
         Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> FilteredTasks { get; };
 
+        // Currently selected task for displaying details (including SpeedGraph)
+        OpenNet.ViewModels.TaskViewModel SelectedTask;
+
         // Commands for toolbar (placeholders for now)
         Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };

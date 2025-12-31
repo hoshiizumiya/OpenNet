@@ -270,4 +270,35 @@
   <data name="ThemesDefault.Content" xml:space="preserve">
     <value>Use system setting</value>
   </data>
+  <data name="AddMagnetDialog_Title" xml:space="preserve">
+    <value>Add Magnet Link</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="FilterNavViewAllTasks.Content" xml:space="preserve">
+    <value>All tasks</value>
+  </data>
+  <data name="FilterNavViewDownloading.Content" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="FilterNavViewCompleted.Content" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="FilterNavViewFailed.Content" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="AddMagnet_SaveLabel.Text" xml:space="preserve">
+    <value>Save path</value>
+  </data>
+  <data name="TorrentCheckModalWindow.Title" xml:space="preserve">
+    <value>Create a new bittorrent task window</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="TorrentCheckGeneralPageSavePath.PlaceholderText" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
 </root>

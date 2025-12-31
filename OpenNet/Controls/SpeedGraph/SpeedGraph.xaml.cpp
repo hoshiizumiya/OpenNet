@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "SpeedGraph.xaml.h"
-#if __has_include("SpeedGraph.g.cpp")
-#include "SpeedGraph.g.cpp"
+#if __has_include("Controls/SpeedGraph/SpeedGraph.g.cpp")
+#include "Controls/SpeedGraph/SpeedGraph.g.cpp"
 #endif
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 #include <format>
@@ -115,6 +115,23 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
     void SpeedGraph::Error()
     {
         winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
+    }
+
+    void SpeedGraph::Reset()
+    {
+        // Reset the graph data to initial state
+        m_graphData.Reset();
+        m_hasData = false;
+        
+        // Reset the size for the new data
+        m_graphData.NewSize(ActualSize());
+        
+        // Update visual state to show "no data" text
+        GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+        SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+        
+        // Go back to normal visual state
+        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Normal", false);
     }
 
     void winrt::OpenNet::Controls::SpeedGraph::implementation::SpeedGraph::UserControl_SizeChanged(

@@ -24,6 +24,10 @@ namespace winrt::OpenNet::ViewModels::implementation
         // Filtered view for UI binding
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> FilteredTasks() const { return m_filteredTasks; }
 
+        // Currently selected task
+        winrt::OpenNet::ViewModels::TaskViewModel SelectedTask() const { return m_selectedTask; }
+        void SelectedTask(winrt::OpenNet::ViewModels::TaskViewModel const& value);
+
         winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand()   const { return m_newCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand StartCommand() const { return m_startCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand PauseCommand() const { return m_pauseCommand; }
@@ -44,6 +48,7 @@ namespace winrt::OpenNet::ViewModels::implementation
     private:
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_filteredTasks{ nullptr };
+        winrt::OpenNet::ViewModels::TaskViewModel m_selectedTask{ nullptr };
 
         winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_startCommand{ nullptr };

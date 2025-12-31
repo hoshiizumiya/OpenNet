@@ -3,7 +3,7 @@
 namespace OpenNet
 {
 	[default_interface]
-	runtimeclass MainWindow : WinUI3Package.WindowEx
+	runtimeclass MainWindow : Microsoft.UI.Xaml.Window
 	{
 		MainWindow();
 		OpenNet.ViewModels.MainViewModel ViewModel { get; };

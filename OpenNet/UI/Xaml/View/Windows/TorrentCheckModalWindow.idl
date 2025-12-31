@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+    [default_interface]
+    runtimeclass TorrentCheckModalWindow : Microsoft.UI.Xaml.Window
+    {
+        TorrentCheckModalWindow();
+    }
+}
