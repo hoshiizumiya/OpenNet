@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.View.Dialog
+{
+    [default_interface]
+    runtimeclass TorrentMetaDataDownloadDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+    {
+        TorrentMetaDataDownloadDialog();
+    }
+}

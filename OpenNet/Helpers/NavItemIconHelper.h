@@ -24,10 +24,10 @@ namespace winrt::OpenNet::Helpers::implementation
         static void SetStaticIconVisibility(winrt::Microsoft::UI::Xaml::DependencyObject const& obj, winrt::Microsoft::UI::Xaml::Visibility const& value);
 
     private:
-        static winrt::Microsoft::UI::Xaml::DependencyProperty m_SelectedIconProperty;
-        static winrt::Microsoft::UI::Xaml::DependencyProperty m_ShowNotificationDotProperty;
-        static winrt::Microsoft::UI::Xaml::DependencyProperty m_UnselectedIconProperty;
-        static winrt::Microsoft::UI::Xaml::DependencyProperty m_StaticIconVisibilityProperty;
+		static winrt::Microsoft::UI::Xaml::DependencyProperty s_selectedIconProperty;
+		static winrt::Microsoft::UI::Xaml::DependencyProperty s_showNotificationDotProperty;
+		static winrt::Microsoft::UI::Xaml::DependencyProperty s_unselectedIconProperty;
+		static winrt::Microsoft::UI::Xaml::DependencyProperty s_staticIconVisibilityProperty;
     };
 }
 

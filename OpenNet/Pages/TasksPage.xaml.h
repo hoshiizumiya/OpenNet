@@ -27,15 +27,18 @@ namespace winrt::OpenNet::Pages::implementation
 		void TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,
 			winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
 
+		// Show magnet link dialog
+		winrt::Windows::Foundation::IAsyncAction ShowAddMagnetDialog();
+
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::event_token m_addTaskToken{};
 		winrt::event_token m_selectedTaskPropertyChangedToken{};
 		winrt::OpenNet::ViewModels::TaskViewModel m_currentSubscribedTask{ nullptr };
 
-		void OnAddTaskRequested(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const&);
+		winrt::Windows::Foundation::IAsyncAction OnAddTaskRequested(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const&);
 
-		
+
 		// Subscribe/unsubscribe to selected task's property changes
 		void SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const& task);
 		void UnsubscribeFromSelectedTaskChanges();

@@ -1,0 +1,13 @@
+﻿namespace OpenNet.UI.Xaml.Control.Card
+{
+    [default_interface]
+    runtimeclass TitleCard : Microsoft.UI.Xaml.Controls.Control
+    {
+        TitleCard();
+
+        String Title;
+        Object TitleContent;
+        Object Content;
+        Microsoft.UI.Xaml.Visibility DividerVisibility;
+    }
+}

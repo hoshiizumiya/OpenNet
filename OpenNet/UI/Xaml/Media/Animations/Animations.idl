@@ -1,0 +1,27 @@
+﻿namespace OpenNet.UI.Xaml.Media.Animations
+{
+	[default_interface]
+	runtimeclass Implicit
+	{
+		Implicit();
+
+		static Microsoft.UI.Xaml.DependencyProperty AnimationsProperty{ get; };
+		static OpenNet.UI.Xaml.Media.Animations.ImplicitAnimationSet GetAnimations(Microsoft.UI.Xaml.DependencyObject obj);
+		static void SetAnimations(Microsoft.UI.Xaml.DependencyObject obj, OpenNet.UI.Xaml.Media.Animations.ImplicitAnimationSet value);
+	}
+
+	[default_interface]
+	[contentproperty("Children")]
+	runtimeclass ImplicitAnimationSet
+	{
+		ImplicitAnimationSet();
+		Microsoft.UI.Xaml.Media.Animation.TimelineCollection Children{ get; };
+	}
+
+	[default_interface]
+	runtimeclass OffsetAnimation : Microsoft.UI.Xaml.Media.Animation.Timeline
+	{
+		OffsetAnimation();
+		Windows.Foundation.TimeSpan OffsetDuration;
+	}
+}

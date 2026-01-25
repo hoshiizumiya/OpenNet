@@ -64,6 +64,10 @@
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
+      <Filter>UI\Xaml\View\Dialog</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -114,6 +118,10 @@
     </Midl>
     <Midl Include="Pages\SettingsPages\SettingsPage.idl">
       <Filter>Pages\SettingsPages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\Card\TitleCard.idl" />
+    <Midl Include="UI\Xaml\Media\Animations\Animations.idl">
+      <Filter>UI\Xaml\Media\Animations</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -182,7 +190,17 @@
     <ClCompile Include="Helpers\ThemeHelper.cpp">
       <Filter>Helpers</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Card\TitleCard.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="UI\Xaml\Media\Animations\Implicit.cpp">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Animations\ImplicitAnimationSet.cpp">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Animations\OffsetAnimation.cpp">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -313,6 +331,15 @@
     </ClInclude>
     <ClInclude Include="Helpers\ThemeHelper.h">
       <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Animations\ImplicitAnimationSet.h">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Animations\Implicit.h">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Animations\OffsetAnimation.h">
+      <Filter>UI\Xaml\Media\Animations</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -566,6 +593,15 @@
     </Filter>
     <Filter Include="UI\Xaml\View\Pages">
       <UniqueIdentifier>{c987e384-6f36-46b2-91e1-bbd6207d2399}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View\Dialog">
+      <UniqueIdentifier>{11704fb4-16c1-43e5-9577-16cb47d04909}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media">
+      <UniqueIdentifier>{a60a9496-d7a7-4e66-b431-1a3d5094aa94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Animations">
+      <UniqueIdentifier>{c2a48255-b645-43bf-9d06-8a55e624d5e7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

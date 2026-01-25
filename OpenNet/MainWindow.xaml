@@ -45,7 +45,7 @@
                     Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
             </TitleBar.LeftHeader>
 
-            <TitleBar.Content>
+            <!--<TitleBar.Content>
                 <AutoSuggestBox
                     x:Name="SearchBox"
                     x:Uid="SearchBox"
@@ -54,7 +54,7 @@
                     VerticalAlignment="Center"
                     QueryIcon="Find"
                     UpdateTextOnSelect="False" />
-            </TitleBar.Content>
+            </TitleBar.Content>-->
 
             <TitleBar.RightHeader>
                 <StackPanel Orientation="Horizontal" Spacing="8">

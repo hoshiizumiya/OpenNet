@@ -15,6 +15,7 @@
 #include "Core/P2PManager.h"
 #include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
+#include "UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -51,9 +52,22 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
-	void TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
+	//void TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
+	//{
+	//	make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>().Activate();
+	//}
+	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
 	{
-		make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>().Activate();
+		auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();
+		dialog.XamlRoot(this->XamlRoot());
+		co_await dialog.ShowAsync();
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TasksPage::ShowAddMagnetDialog()
+	{
+		auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();
+		dialog.XamlRoot(this->XamlRoot());
+		co_await dialog.ShowAsync();
 	}
 
 	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender,

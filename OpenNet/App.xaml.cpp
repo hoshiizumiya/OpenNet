@@ -32,6 +32,7 @@ namespace winrt::OpenNet::implementation
             if (IsDebuggerPresent())
             {
                 auto errorMessage = e.Message();
+                OutputDebugStringW((L"UnhandledException: " + std::wstring(errorMessage.c_str()) + L"\r\n").c_str());
                 __debugbreak();
             }
         });
