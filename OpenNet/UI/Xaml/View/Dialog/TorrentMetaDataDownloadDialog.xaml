@@ -6,17 +6,13 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    x:Name="UIXamlViewDialogTorrentMetaDataDownloadDialog"
-    x:Uid="UIXamlViewDialogTorrentMetaDataDownloadDialog"
-    Title="添加磁力链接 / Add Magnet"
-    CloseButtonText="取消"
+    x:Name="ViewDialogTorrentMetaDataDownloadDialog"
+    x:Uid="ViewDialogTorrentMetaDataDownloadDialog"
     DefaultButton="Primary"
-    PrimaryButtonText="确定"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
     <StackPanel Padding="16" Spacing="8">
-        <TextBlock Text="磁力链接 / Magnet Link:" />
         <TextBox
             x:Name="MagnetBox"
             MinWidth="480"

@@ -366,4 +366,7 @@
   <data name="TorrentCheckGeneralPage_Action_Cancel.Content" xml:space="preserve">
     <value>Cancel</value>
   </data>
+  <data name="ViewDialogTorrentMetaDataDownloadDialog.Title" xml:space="preserve">
+    <value>Add Magnet</value>
+  </data>
 </root>

@@ -6,12 +6,15 @@
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Microsoft.UI.Xaml.h>
+#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>  
 #include <winrt/Windows.Storage.Pickers.h>
 #include "Core/P2PManager.h"
+#include "Helpers/ThemeHelper.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
+using namespace winrt::Microsoft::Windows::ApplicationModel::Resources;
 using namespace winrt::Windows::Storage::Pickers;
 
 namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
@@ -19,10 +22,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	TorrentMetaDataDownloadDialog::TorrentMetaDataDownloadDialog()
 	{
 		InitializeComponent();
+		RequestedTheme(::OpenNet::Helpers::ThemeHelper::RootTheme());
+
+		CloseButtonText(ResourceLoader().GetString(L"Cancel"));
+		PrimaryButtonText(ResourceLoader().GetString(L"OK"));
 	}
 
-	void TorrentMetaDataDownloadDialog::OnPrimaryButtonClick(ContentDialog const& sender,
-															 ContentDialogButtonClickEventArgs const& args)
+	void TorrentMetaDataDownloadDialog::OnPrimaryButtonClick(ContentDialog const& sender, ContentDialogButtonClickEventArgs const& args)
 	{
 		(void)sender;
 		(void)args;
