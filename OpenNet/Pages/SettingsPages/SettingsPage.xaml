@@ -16,8 +16,8 @@
         <ResourceDictionary>
             <!--  Merge external resource dictionaries  -->
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Styles/SettingsStyles.xaml" />
-                <ResourceDictionary Source="/Styles/CustomThemeBrushes.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/SettingsStyles.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/CustomThemeBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>

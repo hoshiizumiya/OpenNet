@@ -178,14 +178,14 @@
 
             <!--  底部⚙️设置区  -->
             <NavigationView.FooterMenuItems>
-                <!--<NavigationViewItem
+                <NavigationViewItem
                     Content="Contribute"
                     SelectsOnInvoked="False"
                     Tag="Contribute">
                     <NavigationViewItem.Icon>
                         <ImageIcon Opacity="0.6" Source="{ThemeResource GitHubIconImage}" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
+                </NavigationViewItem>
                 <NavigationViewItem
                     x:Uid="NavItem_Settings"
                     Icon="Setting"

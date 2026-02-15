@@ -9,14 +9,40 @@
     x:Name="ViewDialogTorrentMetaDataDownloadDialog"
     x:Uid="ViewDialogTorrentMetaDataDownloadDialog"
     DefaultButton="Primary"
+    PrimaryButtonClick="OnPrimaryButtonClick"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
-    <StackPanel Padding="16" Spacing="8">
+    <StackPanel
+        x:Name="ViewDialogTorrentMetaDataDownloadDialogRoot"
+        Padding="16"
+        Spacing="8">
         <TextBox
             x:Name="MagnetBox"
             MinWidth="480"
-            PlaceholderText="magnet:?xt=..." />
-
+            MinHeight="300"
+            AcceptsReturn="False"
+            PlaceholderText="magnet:?xt=..."
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            TextWrapping="Wrap" />
+        <Button
+            x:Name="PasteTextFromTheClipboard"
+            x:Uid="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
+            AutomationProperties.Name="PasteTextFromTheClipboard"
+            Click="PasteTextFromTheClipboard_Click">
+            <Button.Content>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <FontIcon Glyph="&#xE16F;" />
+                </StackPanel>
+            </Button.Content>
+        </Button>
+        <InfoBar
+            x:Name="ViewDialogTorrentMetaDataDownloadDialogLinkErrorInfoBar"
+            x:Uid="ViewDialogTorrentMetaDataDownloadDialogLinkErrorInfoBar"
+            Title="Link error"
+            IsClosable="False"
+            IsOpen="{x:Bind IsLinkValid}"
+            Message="Error link format."
+            Severity="Error" />
     </StackPanel>
 </ContentDialog>

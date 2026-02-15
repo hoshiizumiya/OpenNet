@@ -7,6 +7,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	struct TorrentCheckModalWindow : TorrentCheckModalWindowT<TorrentCheckModalWindow>
 	{
 		TorrentCheckModalWindow();
+		TorrentCheckModalWindow(winrt::hstring const& torrentLink);
 
 		void SetWindowOwner();
 		void ModalWindow_Closed(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::WindowEventArgs const&);
@@ -15,9 +16,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void TorrentCreateGrid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		void RootGridXamlRoot_Changed(winrt::Microsoft::UI::Xaml::XamlRoot sender, winrt::Microsoft::UI::Xaml::XamlRootChangedEventArgs args);
 
-
 	private:
+		void InitializeWindow();
+		void StartParseMetadata();
+
 		uint32_t m_selected_index{};
+		winrt::hstring m_torrentLink{};
 	};
 }
 

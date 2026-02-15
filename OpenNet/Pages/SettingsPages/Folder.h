@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "pch.h"
+
 #include "Pages/SettingsPages/Folder.g.h"
 
 namespace winrt::OpenNet::Pages::SettingsPages::implementation

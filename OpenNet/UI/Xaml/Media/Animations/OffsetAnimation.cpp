@@ -12,13 +12,33 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 	{
 	}
 
-	Windows::Foundation::TimeSpan OffsetAnimation::OffsetDuration() const
+	Microsoft::UI::Xaml::Media::Animation::EasingMode OffsetAnimation::EasingMode() const
 	{
-		return m_offsetDuration;
+		return m_easingMode;
 	}
 
-	void OffsetAnimation::OffsetDuration(Windows::Foundation::TimeSpan const& value)
+	void OffsetAnimation::EasingMode(Microsoft::UI::Xaml::Media::Animation::EasingMode const& value)
 	{
-		m_offsetDuration = value;
+		m_easingMode = value;
+	}
+
+	Windows::Foundation::Numerics::float3 OffsetAnimation::From() const
+	{
+		return m_from;
+	}
+
+	void OffsetAnimation::From(Windows::Foundation::Numerics::float3 const& value)
+	{
+		m_from = value;
+	}
+
+	Windows::Foundation::Numerics::float3 OffsetAnimation::To() const
+	{
+		return m_to;
+	}
+
+	void OffsetAnimation::To(Windows::Foundation::Numerics::float3 const& value)
+	{
+		m_to = value;
 	}
 }

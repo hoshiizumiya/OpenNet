@@ -4,5 +4,6 @@
     runtimeclass TorrentCheckModalWindow : Microsoft.UI.Xaml.Window
     {
         TorrentCheckModalWindow();
+        TorrentCheckModalWindow(String torrentLink);
     }
 }

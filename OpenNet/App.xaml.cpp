@@ -54,6 +54,7 @@ namespace winrt::OpenNet::implementation
         
         window.Activate();
 
+#if _DEBUG
         // Language Hot-Reload support
         auto supportedLanguages = Windows::Globalization::ApplicationLanguages::Languages();
         
@@ -71,6 +72,7 @@ namespace winrt::OpenNet::implementation
         // 输出到调试输出（Visual Studio 的输出窗口）
         OutputDebugStringW(out.c_str());
 
+#endif
         // 处理初始激活参数（例如命令行参数、文件打开等）
         auto activationArgs = AppInstance::GetCurrent().GetActivatedEventArgs();
         HandleActivation(activationArgs);

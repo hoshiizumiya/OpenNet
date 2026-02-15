@@ -25,6 +25,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	TorrentCheckModalWindow::TorrentCheckModalWindow()
 	{
 		InitializeComponent();
+		InitializeWindow();
+	}
+
+	TorrentCheckModalWindow::TorrentCheckModalWindow(winrt::hstring const& torrentLink)
+		: m_torrentLink(torrentLink)
+	{
+		InitializeComponent();
+		InitializeWindow();
+
+		// Start parsing metadata when window is initialized with a torrent link
+		StartParseMetadata();
+	}
+
+	void TorrentCheckModalWindow::InitializeWindow()
+	{
 		AppWindow().Resize(winrt::Windows::Graphics::SizeInt32(1500, 1800));
 
 		SetTitleBar(TorrentCheckModalWindowTitleBar());
@@ -45,6 +60,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		AppWindow().Show();
 
 		Closed({ this, &TorrentCheckModalWindow::ModalWindow_Closed });
+	}
+
+	void TorrentCheckModalWindow::StartParseMetadata()
+	{
+		// TODO: Implement torrent metadata parsing
+		// This method will be called when the window is constructed with a torrent link.
+		// It should:
+		// 1. Initialize a torrent session
+		// 2. Parse the metadata without starting the actual download
+		// 3. Pause the session after metadata is ready
+		// 4. Populate the UI with file information for user selection
+		// 5. Wait for user confirmation to resume download
+
+		// Example implementation structure:
+		// auto lifetime = get_strong();
+		// co_await ParseTorrentAsync(m_torrentLink);
 	}
 
 	// Sets the owner window of the modal window to the main app window.

@@ -67,7 +67,9 @@
     <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </Page>
-    <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Card</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -119,9 +121,11 @@
     <Midl Include="Pages\SettingsPages\SettingsPage.idl">
       <Filter>Pages\SettingsPages</Filter>
     </Midl>
-    <Midl Include="UI\Xaml\Control\Card\TitleCard.idl" />
     <Midl Include="UI\Xaml\Media\Animations\Animations.idl">
       <Filter>UI\Xaml\Media\Animations</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
+      <Filter>UI\Xaml\Control\Card</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -201,6 +205,10 @@
     <ClCompile Include="UI\Xaml\Media\Animations\OffsetAnimation.cpp">
       <Filter>UI\Xaml\Media\Animations</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Utils\Misc.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Animations\OpacityAnimation.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -341,6 +349,10 @@
     <ClInclude Include="UI\Xaml\Media\Animations\OffsetAnimation.h">
       <Filter>UI\Xaml\Media\Animations</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Utils\Misc.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Animations\OpacityAnimation.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -603,6 +615,18 @@
     <Filter Include="UI\Xaml\Media\Animations">
       <UniqueIdentifier>{c2a48255-b645-43bf-9d06-8a55e624d5e7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Utils">
+      <UniqueIdentifier>{a0191b50-163a-4fd2-a7fb-d9bdc122663b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\ModelIcons">
+      <UniqueIdentifier>{640531e3-f87b-463c-898a-57c7eb45544a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Control">
+      <UniqueIdentifier>{448375cc-a636-46d9-9b48-6e582841d77f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Control\Card">
+      <UniqueIdentifier>{8865e15d-8ee2-451f-8d77-e61c64ee16da}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -612,6 +636,12 @@
     <None Include="Resource.aps" />
     <None Include="Directory.Build.props" />
     <None Include="HybridCRT.props" />
+    <None Include="Assets\ModelIcons\GitHub.dark.svg">
+      <Filter>Assets\ModelIcons</Filter>
+    </None>
+    <None Include="Assets\ModelIcons\GitHub.light.svg">
+      <Filter>Assets\ModelIcons</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

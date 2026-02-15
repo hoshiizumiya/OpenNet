@@ -8,9 +8,17 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 	{
 		Implicit();
 
+		static winrt::Microsoft::UI::Xaml::DependencyProperty ShowAnimationsProperty();
+		static winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet GetShowAnimations(winrt::Microsoft::UI::Xaml::UIElement const& obj);
+		static void SetShowAnimations(winrt::Microsoft::UI::Xaml::UIElement const& obj, winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet const& value);
+
+		static winrt::Microsoft::UI::Xaml::DependencyProperty HideAnimationsProperty();
+		static winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet GetHideAnimations(winrt::Microsoft::UI::Xaml::UIElement const& obj);
+		static void SetHideAnimations(winrt::Microsoft::UI::Xaml::UIElement const& obj, winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet const& value);
+
 		static winrt::Microsoft::UI::Xaml::DependencyProperty AnimationsProperty();
-		static winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet GetAnimations(winrt::Microsoft::UI::Xaml::DependencyObject const& obj);
-		static void SetAnimations(winrt::Microsoft::UI::Xaml::DependencyObject const& obj, winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet const& value);
+		static winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet GetAnimations(winrt::Microsoft::UI::Xaml::UIElement const& obj);
+		static void SetAnimations(winrt::Microsoft::UI::Xaml::UIElement const& obj, winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet const& value);
 	};
 }
 

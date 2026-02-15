@@ -8,11 +8,19 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 	{
 		OffsetAnimation();
 
-		Windows::Foundation::TimeSpan OffsetDuration() const;
-		void OffsetDuration(Windows::Foundation::TimeSpan const& value);
+		Microsoft::UI::Xaml::Media::Animation::EasingMode EasingMode() const;
+		void EasingMode(Microsoft::UI::Xaml::Media::Animation::EasingMode const& value);
 
-	private:
-		Windows::Foundation::TimeSpan m_offsetDuration{};
+		Windows::Foundation::Numerics::float3 From() const;
+		void From(Windows::Foundation::Numerics::float3 const& value);
+
+		Windows::Foundation::Numerics::float3 To() const;
+		void To(Windows::Foundation::Numerics::float3 const& value);
+
+    private:
+		Microsoft::UI::Xaml::Media::Animation::EasingMode m_easingMode{};
+		Windows::Foundation::Numerics::float3 m_from{};
+		Windows::Foundation::Numerics::float3 m_to{};
 	};
 }
 

@@ -92,7 +92,7 @@
     <x:Double x:Key="RailNavigationViewItemContentPresenterMargin">0</x:Double>
 
     <animations:ImplicitAnimationSet x:Key="RailNavigationIconImplicitOffsetAnimation">
-        <animations:OffsetAnimation OffsetDuration="0:0:0.4" />
+        <animations:OffsetAnimation Duration="0:0:0.4" />
     </animations:ImplicitAnimationSet>
 
     <!--  Overrides default style added to Generic.xaml by NavigationView control at runtime  -->
