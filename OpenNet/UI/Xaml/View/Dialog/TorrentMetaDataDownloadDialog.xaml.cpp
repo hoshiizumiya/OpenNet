@@ -14,6 +14,9 @@
 #include "Helpers/ThemeHelper.h"
 #include "Core/Utils/Misc.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
+//#include "Helpers/WindowHelper.h"
+//#include "App.xaml.h"
+#include "Pages/TasksPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -34,11 +37,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 
 	void TorrentMetaDataDownloadDialog::OnPrimaryButtonClick(ContentDialog const& /*sender*/, ContentDialogButtonClickEventArgs const& args)
 	{
+		//HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(winrt::OpenNet::implementation::App::window);
+		//BOOL enabled = IsWindowEnabled(hwnd);
 		auto magnetBox = MagnetBox();
 
 		// auto magnet = to_string(magnetBox.Text());
 		const auto text = magnetBox.Text();
-		if (!Utils::Misc::isTorrentLink(text))
+		if (!Core::Utils::Misc::isTorrentLink(text))
 		{
 			// Prevent dialog from closing by marking link invalid which is bound to InfoBar
 			IsLinkValid(true);
@@ -49,10 +54,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		else
 		{
 			IsLinkValid(false);
-			// proceed to add magnet
-			// Convert to std::string (UTF-8)
 			std::string magnetUri = winrt::to_string(text);
-			auto TorrentCheckModalWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(text);
+
+			OpenNet::Pages::implementation::TasksPage::targetLink = text;
 		}
 	}
 
@@ -62,7 +66,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		if (clipboard.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
 		{
 			auto text = co_await clipboard.GetTextAsync();
-			if (Utils::Misc::isTorrentLink(text))
+			if (Core::Utils::Misc::isTorrentLink(text))
 			{
 				MagnetBox().Text(text);
 				IsLinkValid(false);

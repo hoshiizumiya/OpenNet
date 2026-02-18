@@ -1,16 +1,21 @@
 ﻿#include "pch.h"
+#include "App.xaml.h"
 #include "WindowHelper.h"
+#include "Core/Utils/Message.h"
 
 #include <shlwapi.h> // For PathRemoveFileSpec
 #include <wil/result.h>
+#include <commctrl.h>
 
 #pragma comment(lib, "shlwapi.lib")
+#pragma comment(lib, "bcrypt.lib")
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Windowing;
+using namespace Core::Utils::Message;
 
 namespace OpenNet::Helpers::WinUIWindowHelper
 {
@@ -23,11 +28,11 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		auto appWindow = GetAppWindow(newWindow);
 
 		newWindow.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const&)
-			{
-				auto closedWindow = sender.try_as<Window>();
-				auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
-				m_activeWindows.erase(it, m_activeWindows.end());
-			});
+						 {
+							 auto closedWindow = sender.try_as<Window>();
+							 auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
+							 m_activeWindows.erase(it, m_activeWindows.end());
+						 });
 
 		return newWindow;
 	}
@@ -39,14 +44,14 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		auto appWindow = GetAppWindow(window);
 
 		window.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const& /*args*/)
-			{
-				auto closedWindow = sender.try_as<Window>();
-				if (closedWindow)
-				{
-					auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
-					m_activeWindows.erase(it, m_activeWindows.end());
-				}
-			});
+					  {
+						  auto closedWindow = sender.try_as<Window>();
+						  if (closedWindow)
+						  {
+							  auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
+							  m_activeWindows.erase(it, m_activeWindows.end());
+						  }
+					  });
 	}
 
 	Window WindowHelper::GetWindowForElement(UIElement const& element)
@@ -139,5 +144,136 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		presenter.try_as<OverlappedPresenter>().PreferredMinimumHeight(static_cast<int32_t>(width * scale));
 		presenter.try_as<OverlappedPresenter>().PreferredMinimumWidth(static_cast<int32_t>(height * scale));
 	}
+	/*
+	void WindowHelper::AddNotifyIcon()
+	{
+
+		hstring appname = ResourceGetString(const_cast<wchar_t*>(L"NotifyIconName"));
+		guid gNotifyIcon("21a2acbc-3a44-43c8-860a-f8e7151b2623");
+		NOTIFYICONDATAW nid = {};
+		nid.cbSize = sizeof(NOTIFYICONDATAW);
+		nid.hWnd = GetWindowHandle();
+		nid.uID = 0;
+		nid.guidItem = gNotifyIcon;
+		nid.hBalloonIcon = 0;
+		nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_SHOWTIP | NIF_TIP | NIF_GUID | NIF_STATE;
+		nid.uCallbackMessage = NotifyIconCallbackMessage;
+		nid.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
+		wcscpy_s(nid.szTip, appname.c_str());
+		if (Shell_NotifyIconW(NIM_ADD, &nid))
+		{
+			Shell_NotifyIconW(NIM_SETVERSION, &nid);
+		}
+	}
+	*/
+
+	guid PlacementRestoration::GenerateTypeGuid(hstring const& typeName)
+	{
+		std::wstring_view name = typeName;
+
+		BCRYPT_ALG_HANDLE hAlg{};
+		BCRYPT_HASH_HANDLE hHash{};
+		DWORD hashLen{};
+		DWORD cbData{};
+
+		check_hresult(BCryptOpenAlgorithmProvider(
+			&hAlg,
+			BCRYPT_MD5_ALGORITHM,
+			nullptr,
+			0));
+
+		check_hresult(BCryptGetProperty(
+			hAlg,
+			BCRYPT_HASH_LENGTH,
+			reinterpret_cast<PUCHAR>(&hashLen),
+			sizeof(hashLen),
+			&cbData,
+			0));
+
+		std::vector<uint8_t> hash(hashLen);
+
+		check_hresult(BCryptCreateHash(
+			hAlg,
+			&hHash,
+			nullptr,
+			0,
+			nullptr,
+			0,
+			0));
+
+		check_hresult(BCryptHashData(
+			hHash,
+			reinterpret_cast<PUCHAR>(const_cast<wchar_t*>(name.data())),
+			static_cast<ULONG>(name.size() * sizeof(wchar_t)),
+			0));
+
+		check_hresult(BCryptFinishHash(
+			hHash,
+			hash.data(),
+			hashLen,
+			0));
+
+		BCryptDestroyHash(hHash);
+		BCryptCloseAlgorithmProvider(hAlg, 0);
+
+		return guid{
+			*reinterpret_cast<GUID*>(hash.data())
+		};
+	}
+
+	void PlacementRestoration::Enable(winrt::Microsoft::UI::Xaml::Window const& window)
+	{
+		using put_PersistedStateId_t = HRESULT(__stdcall*)(void*, void*);
+
+		using put_PlacementRestorationBehavior_t = HRESULT(__stdcall*)(void*, uint32_t);
+
+		using SaveCurrentPlacement_t = HRESULT(__stdcall*)(void*);
+
+		static const winrt::guid iidExperimental
+		{
+			L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}"
+		};
+
+		auto appWindow = window.AppWindow();
+		auto unk = appWindow.try_as<::IUnknown>();
+		if (!unk)
+			return;
+
+		void* experimentalRaw{};
+		if (FAILED(unk->QueryInterface(
+			reinterpret_cast<IID const&>(iidExperimental),
+			&experimentalRaw)))
+			return;
+
+		// 获取 vtable
+		auto vtbl = *reinterpret_cast<void***>(experimentalRaw);
+
+		// 计算 index
+		constexpr size_t putPersistIndex = 0x38 / sizeof(void*);
+		constexpr size_t putBehaviorIndex = 0x48 / sizeof(void*);
+		constexpr size_t saveIndex = 0x58 / sizeof(void*);
+
+		auto putPersist = reinterpret_cast<put_PersistedStateId_t>(vtbl[putPersistIndex]);
+
+		auto putBehavior = reinterpret_cast<put_PlacementRestorationBehavior_t>(vtbl[putBehaviorIndex]);
+
+		auto savePlacement = reinterpret_cast<SaveCurrentPlacement_t>(vtbl[saveIndex]);
+
+		// 设置行为
+		putBehavior(experimentalRaw, 0xFFFFFFFF);
+
+		auto typeName = winrt::get_class_name(window);
+		auto persistGuid = GenerateTypeGuid(typeName);
+
+		winrt::Windows::Foundation::IInspectable boxed = winrt::box_value(persistGuid);
+
+		putPersist(experimentalRaw, winrt::get_abi(boxed));
+
+		// 立即保存
+		savePlacement(experimentalRaw);
+
+		reinterpret_cast<::IUnknown*>(experimentalRaw)->Release();
+	}
+
 
 }

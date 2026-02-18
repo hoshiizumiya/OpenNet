@@ -3,6 +3,7 @@
 #ifndef WINDOWHELPER_H
 #define WINDOWHELPER_H
 
+#include <bcrypt.h>
 #include <vector>
 #include <minwindef.h>
 #include <winrt/base.h>
@@ -79,6 +80,13 @@ namespace OpenNet::Helpers::WinUIWindowHelper
             GetAppLocalFolderAsync();
     private:
         static inline std::vector<winrt::Microsoft::UI::Xaml::Window> m_activeWindows;
+    };
+
+    struct PlacementRestoration
+    {
+        static void Enable(winrt::Microsoft::UI::Xaml::Window const& window);
+    private:
+        static winrt::guid GenerateTypeGuid(winrt::hstring const& typeName);
     };
 
 }

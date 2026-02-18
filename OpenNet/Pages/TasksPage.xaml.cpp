@@ -52,15 +52,26 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
-	//void TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
-	//{
-	//	make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>().Activate();
-	//}
+	/*
+	Handler invoked when the view-model requests adding a new task.
+	 Behavior and important notes:
+	 - This is an async event handler (returns `IAsyncAction`) and uses `co_await`
+	   so the UI thread is not blocked while the dialog is displayed.
+	 - The dialog's `XamlRoot` is set from this page (`this->XamlRoot()`) so the
+	   dialog is presented in the correct window and visual tree, ensuring proper
+	   placement and light-dismiss behavior.
+	 - After the dialog completes, `TorrentCheckModalWindow(targetLink).Activate()`
+	   is called. `targetLink` is a static member on `TasksPage` that should contain
+	   the magnet/torrent link selected or entered by the user. The method itself
+	   does not validate `targetLink`; any validation or population of that value
+	   is expected to happen in the dialog or calling code.
+	 */
 	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
 	{
 		auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();
 		dialog.XamlRoot(this->XamlRoot());
 		co_await dialog.ShowAsync();
+		winrt::OpenNet::UI::Xaml::View::Windows::TorrentCheckModalWindow(targetLink).Activate();
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::ShowAddMagnetDialog()

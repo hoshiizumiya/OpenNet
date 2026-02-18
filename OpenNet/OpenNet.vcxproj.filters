@@ -209,6 +209,9 @@
       <Filter>Core\Utils</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Animations\OpacityAnimation.cpp" />
+    <ClCompile Include="Core\Utils\Message.cpp">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -353,6 +356,9 @@
       <Filter>Core\Utils</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Media\Animations\OpacityAnimation.h" />
+    <ClInclude Include="Core\Utils\Message.h">
+      <Filter>Core\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">

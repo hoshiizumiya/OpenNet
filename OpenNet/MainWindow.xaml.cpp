@@ -26,6 +26,7 @@ using namespace winrt::Windows::Foundation;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Windowing;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
+using namespace ::OpenNet::Helpers::WinUIWindowHelper;
 using MainViewModel = winrt::OpenNet::ViewModels::MainViewModel;
 
 namespace winrt::OpenNet::implementation
@@ -58,6 +59,7 @@ namespace winrt::OpenNet::implementation
 		if (auto appWindow = window.AppWindow())
 		{
 			appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
+			PlacementRestoration::Enable(*this);
 
 
 		}

@@ -67,7 +67,7 @@ namespace
     struct SplitToFriendlyUnitResult
     {
         double value;
-        Utils::Misc::SizeUnit unit;
+        Core::Utils::Misc::SizeUnit unit;
     };
 
     std::optional<SplitToFriendlyUnitResult> splitToFriendlyUnit(const int64_t bytes, const int unitThreshold = 1024)
@@ -78,12 +78,12 @@ namespace
         int i = 0;
         double value = static_cast<double>(bytes);
 
-        while ((value >= unitThreshold) && (i < static_cast<int>(Utils::Misc::SizeUnit::ExbiByte)))
+        while ((value >= unitThreshold) && (i < static_cast<int>(Core::Utils::Misc::SizeUnit::ExbiByte)))
         {
             value /= 1024.0;
             ++i;
         }
-        return { {value, static_cast<Utils::Misc::SizeUnit>(i)} };
+        return { {value, static_cast<Core::Utils::Misc::SizeUnit>(i)} };
     }
 
     std::wstring doubleToWString(double value, int precision)
@@ -130,7 +130,7 @@ namespace
 }
 
 
-winrt::hstring Utils::Misc::unitString(const SizeUnit unit, const bool isSpeed)
+winrt::hstring Core::Utils::Misc::unitString(const SizeUnit unit, const bool isSpeed)
 {
     const auto& unitStr = units[static_cast<int>(unit)];
     winrt::hstring result{ unitStr };
@@ -139,7 +139,7 @@ winrt::hstring Utils::Misc::unitString(const SizeUnit unit, const bool isSpeed)
     return result;
 }
 
-winrt::hstring Utils::Misc::friendlyUnit(const int64_t bytes, const bool isSpeed, const int precision)
+winrt::hstring Core::Utils::Misc::friendlyUnit(const int64_t bytes, const bool isSpeed, const int precision)
 {
     const std::optional<SplitToFriendlyUnitResult> result = splitToFriendlyUnit(bytes);
     if (!result)
@@ -160,7 +160,7 @@ winrt::hstring Utils::Misc::friendlyUnit(const int64_t bytes, const bool isSpeed
     return winrt::hstring{ finalStr };
 }
 
-winrt::hstring Utils::Misc::friendlyUnitCompact(const int64_t bytes)
+winrt::hstring Core::Utils::Misc::friendlyUnitCompact(const int64_t bytes)
 {
     // avoid 1000-1023 values, use next larger unit instead
     const std::optional<SplitToFriendlyUnitResult> result = splitToFriendlyUnit(bytes, 1000);
@@ -180,7 +180,7 @@ winrt::hstring Utils::Misc::friendlyUnitCompact(const int64_t bytes)
     return winrt::hstring{ valueStr + L" " + unit.substr(0, 1) };
 }
 
-int Utils::Misc::friendlyUnitPrecision(const SizeUnit unit)
+int Core::Utils::Misc::friendlyUnitPrecision(const SizeUnit unit)
 {
     // friendlyUnit's number of digits after the decimal point
     switch (unit)
@@ -197,14 +197,14 @@ int Utils::Misc::friendlyUnitPrecision(const SizeUnit unit)
     }
 }
 
-int64_t Utils::Misc::sizeInBytes(double size, const Utils::Misc::SizeUnit unit)
+int64_t Core::Utils::Misc::sizeInBytes(double size, const Core::Utils::Misc::SizeUnit unit)
 {
     for (int i = 0; i < static_cast<int>(unit); ++i)
         size *= 1024.0;
     return static_cast<int64_t>(size);
 }
 
-bool Utils::Misc::isPreviewable(const std::wstring& filePath)
+bool Core::Utils::Misc::isPreviewable(const std::wstring& filePath)
 {
     // Get file extension
     size_t lastDot = filePath.find_last_of(L'.');
@@ -226,14 +226,14 @@ bool Utils::Misc::isPreviewable(const std::wstring& filePath)
     return multimediaExtensions.find(extension) != multimediaExtensions.end();
 }
 
-bool Utils::Misc::isTorrentLink(const winrt::hstring& str)
+bool Core::Utils::Misc::isTorrentLink(const winrt::hstring& str)
 {
     std::wstring link{ str };
     return startsWithIgnoreCase(link, L"magnet:")
         || endsWithIgnoreCase(link, TORRENT_FILE_EXTENSION);
 }
 
-winrt::hstring Utils::Misc::userFriendlyDuration(const int64_t seconds, const int64_t maxCap, const TimeResolution resolution)
+winrt::hstring Core::Utils::Misc::userFriendlyDuration(const int64_t seconds, const int64_t maxCap, const TimeResolution resolution)
 {
     if (seconds < 0)
         return INFINITY_STR;
@@ -286,7 +286,7 @@ winrt::hstring Utils::Misc::userFriendlyDuration(const int64_t seconds, const in
     return winrt::hstring{ oss.str() };
 }
 
-winrt::hstring Utils::Misc::languageToLocalizedString(const std::wstring_view localeStr)
+winrt::hstring Core::Utils::Misc::languageToLocalizedString(const std::wstring_view localeStr)
 {
     std::wstring locale = toLower(localeStr);
 
@@ -375,7 +375,7 @@ winrt::hstring Utils::Misc::languageToLocalizedString(const std::wstring_view lo
     return winrt::hstring{ localeStr };
 }
 
-winrt::hstring Utils::Misc::parseHtmlLinks(const winrt::hstring& rawText)
+winrt::hstring Core::Utils::Misc::parseHtmlLinks(const winrt::hstring& rawText)
 {
     std::wstring result{ rawText };
 
@@ -424,7 +424,7 @@ winrt::hstring Utils::Misc::parseHtmlLinks(const winrt::hstring& rawText)
     return winrt::hstring{ result };
 }
 
-winrt::hstring Utils::Misc::osName()
+winrt::hstring Core::Utils::Misc::osName()
 {
     // Get Windows version info
     DWORD size = GetEnvironmentVariableW(L"OS", nullptr, 0);
@@ -458,7 +458,7 @@ winrt::hstring Utils::Misc::osName()
     return winrt::hstring{ oss.str() };
 }
 
-winrt::hstring Utils::Misc::boostVersionString()
+winrt::hstring Core::Utils::Misc::boostVersionString()
 {
     std::wostringstream oss;
     oss << BOOST_VERSION / 100000 << L"."
@@ -467,7 +467,7 @@ winrt::hstring Utils::Misc::boostVersionString()
     return winrt::hstring{ oss.str() };
 }
 
-winrt::hstring Utils::Misc::libtorrentVersionString()
+winrt::hstring Core::Utils::Misc::libtorrentVersionString()
 {
     const char* versionStr = lt::version();
     int len = std::strlen(versionStr);
@@ -479,7 +479,7 @@ winrt::hstring Utils::Misc::libtorrentVersionString()
     return winrt::hstring{ wideVersion };
 }
 
-winrt::hstring Utils::Misc::opensslVersionString()
+winrt::hstring Core::Utils::Misc::opensslVersionString()
 {
     const char* versionStr = ::OpenSSL_version(OPENSSL_VERSION);
     int len = std::strlen(versionStr);
@@ -500,7 +500,7 @@ winrt::hstring Utils::Misc::opensslVersionString()
     return winrt::hstring{ wideVersion };
 }
 
-winrt::hstring Utils::Misc::zlibVersionString()
+winrt::hstring Core::Utils::Misc::zlibVersionString()
 {
     const char* versionStr = zlibVersion();
     int len = std::strlen(versionStr);

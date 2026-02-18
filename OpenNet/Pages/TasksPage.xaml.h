@@ -30,6 +30,7 @@ namespace winrt::OpenNet::Pages::implementation
 		// Show magnet link dialog
 		winrt::Windows::Foundation::IAsyncAction ShowAddMagnetDialog();
 
+		inline static hstring targetLink;
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::event_token m_addTaskToken{};

@@ -34,7 +34,7 @@
 #include <winrt/base.h>
 
 /*  Miscellaneous utility functions */
-namespace Utils::Misc
+namespace Core::Utils::Misc
 {
     // use binary prefix standards from IEC 60027-2
     // see http://en.wikipedia.org/wiki/Kilobyte

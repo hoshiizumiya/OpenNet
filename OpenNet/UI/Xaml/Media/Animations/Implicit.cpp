@@ -44,7 +44,8 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 				auto animationSet = e.NewValue().try_as<winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet>();
 				if (!animationSet)
 				{
-					// TODO: SetImplicitShowAnimation(visual, nullptr) when composition API available
+					// 清除元素上之前设置的任何隐式*显示*动画
+					Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitShowAnimation(uiElement, nullptr);
 					return;
 				}
 
@@ -116,7 +117,8 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 				auto animationSet = e.NewValue().try_as<winrt::OpenNet::UI::Xaml::Media::Animations::ImplicitAnimationSet>();
 				if (!animationSet)
 				{
-					// TODO: SetImplicitHideAnimation(visual, nullptr) when composition API available
+					// 清除元素上之前设置的任何隐式*隐藏*动画
+					Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitHideAnimation(uiElement, nullptr);					return;
 					return;
 				}
 
