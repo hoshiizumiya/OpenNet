@@ -30,7 +30,19 @@
             <AppBarButton
                 x:Uid="TaskNewButton"
                 Command="{x:Bind ViewModel.NewCommand}"
-                Icon="Add" />
+                Icon="Add">
+                <muxc:AppBarButton.Flyout>
+                    <muxc:MenuFlyout>
+                        <muxc:MenuFlyoutItem
+                            x:Uid="TaskNewFromUrlButton"
+                            Command="{x:Bind ViewModel.NewFromUrlCommand}"
+                            Icon="Link" />
+                        <muxc:MenuFlyoutItem
+                            x:Uid="TaskNewFromFileButton"
+                            Command="{x:Bind ViewModel.NewFromFileCommand}"
+                            Icon="Document" />
+                    </muxc:MenuFlyout>
+            </AppBarButton>
             <AppBarButton
                 x:Uid="TaskStartButton"
                 Command="{x:Bind ViewModel.StartCommand}"

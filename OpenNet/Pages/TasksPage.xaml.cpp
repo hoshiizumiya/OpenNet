@@ -71,9 +71,14 @@ namespace winrt::OpenNet::Pages::implementation
 		auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();
 		dialog.XamlRoot(this->XamlRoot());
 		co_await dialog.ShowAsync();
+		// only dialog choose true and active the window
+		if (TODO)
+		{
+
+		}
 		winrt::OpenNet::UI::Xaml::View::Windows::TorrentCheckModalWindow(targetLink).Activate();
 	}
-
+	// 上面的方法应该删除，重构并使用下面的
 	winrt::Windows::Foundation::IAsyncAction TasksPage::ShowAddMagnetDialog()
 	{
 		auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();

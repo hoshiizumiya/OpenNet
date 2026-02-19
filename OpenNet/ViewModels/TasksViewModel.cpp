@@ -9,6 +9,7 @@ using namespace std::string_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+    // Tip: All constructions will do in winrt::make<>().
     TasksViewModel::TasksViewModel()
     {
         m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();

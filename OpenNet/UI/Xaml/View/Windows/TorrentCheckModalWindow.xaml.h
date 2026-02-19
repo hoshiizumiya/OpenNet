@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.g.h"
+#include <libtorrent/fwd.hpp>
+#include <winrt/Windows.Foundation.h>
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
@@ -19,9 +21,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	private:
 		void InitializeWindow();
 		void StartParseMetadata();
+		winrt::Windows::Foundation::IAsyncAction ParseTorrentMetadataAsync();
+		void OnMetadataParsingProgress(const std::string& status);
+		void OnMetadataParsingCompleted();
+		void OnMetadataParsingFailed(const std::string& errorMessage);
 
 		uint32_t m_selected_index{};
 		winrt::hstring m_torrentLink{};
+		std::string m_magnetUri{};
+		bool m_metadataReady{ false };
+		bool m_isParsingMetadata{ false };
 	};
 }
 
