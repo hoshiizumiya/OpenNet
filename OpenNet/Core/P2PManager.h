@@ -6,9 +6,11 @@
 #include <atomic>
 #include <functional>
 #include <string>
+#include <vector>
 
 // Include torrent core so nested ProgressEvent is known
 #include "Core/torrentCore/libtorrentHandle.h"
+#include "Core/torrentCore/TorrentStateManager.h"
 
 namespace OpenNet::Core
 {
@@ -35,8 +37,24 @@ namespace OpenNet::Core
 			return m_torrentCore.get();
 		}
 
+		// State manager access
+		::OpenNet::Core::Torrent::TorrentStateManager* StateManager() noexcept
+		{
+			return m_stateManager.get();
+		}
+
 		// Torrent operations
 		winrt::Windows::Foundation::IAsyncOperation<bool> AddMagnetAsync(std::string magnetUri, std::string savePath);
+
+		// Load all saved tasks and resume them
+		winrt::Windows::Foundation::IAsyncAction LoadAndResumeSavedTasksAsync();
+
+		// Get all saved task metadata
+		std::vector<::OpenNet::Core::Torrent::TaskMetadata> GetAllTasks();
+
+		// Import/Export task data
+		winrt::Windows::Foundation::IAsyncOperation<bool> ExportTasksAsync(std::wstring filePath);
+		winrt::Windows::Foundation::IAsyncOperation<bool> ImportTasksAsync(std::wstring filePath);
 
 		// Callback registration
 		using ProgressCb = std::function<void(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent&)>;
@@ -54,6 +72,7 @@ namespace OpenNet::Core
 		void WireCoreCallbacks();
 
 		std::unique_ptr<::OpenNet::Core::Torrent::LibtorrentHandle> m_torrentCore;
+		std::unique_ptr<::OpenNet::Core::Torrent::TorrentStateManager> m_stateManager;
 		std::mutex m_torrentMutex;
 		std::atomic<bool> m_isTorrentCoreInitialized{ false };
 		std::atomic<bool> m_initializing{ false };

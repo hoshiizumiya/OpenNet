@@ -32,6 +32,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::Microsoft::UI::Xaml::Input::ICommand StartCommand() const { return m_startCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand PauseCommand() const { return m_pauseCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand()const { return m_deleteCommand; }
+        winrt::Microsoft::UI::Xaml::Input::ICommand ExportCommand() const { return m_exportCommand; }
+        winrt::Microsoft::UI::Xaml::Input::ICommand ImportCommand() const { return m_importCommand; }
 
         void Initialize();
         void Shutdown();
@@ -54,6 +56,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::Microsoft::UI::Xaml::Input::ICommand m_startCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_pauseCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_deleteCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_exportCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_importCommand{ nullptr };
 
         // 缺失的调度器字段（原 cpp 使用但未声明）
         winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr };
@@ -62,9 +66,11 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring m_currentFilter{ L"AllTasks" };
 
         winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateItem(winrt::hstring const& name);
+        winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateItemByTaskId(std::string const& taskId, winrt::hstring const& name);
         void OnProgress(const struct ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e);
         void OnFinished(std::string const& name);
         void OnError(std::string const& msg);
+        void LoadSavedTasks();
 
         // Rebuild filtered view from full list according to current filter
         void RebuildFiltered();

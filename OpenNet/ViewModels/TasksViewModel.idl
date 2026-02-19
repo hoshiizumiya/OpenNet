@@ -20,6 +20,8 @@ namespace OpenNet.ViewModels
         Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand PauseCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand DeleteCommand{ get; };
+        Microsoft.UI.Xaml.Input.ICommand ExportCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand ImportCommand { get; };
 
         // Apply filter by tag: "AllTasks", "Downloading", "Completed", "Failed"
         void ApplyFilter(String tag);
