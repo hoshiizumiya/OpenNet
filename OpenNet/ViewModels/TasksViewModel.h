@@ -29,6 +29,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         void SelectedTask(winrt::OpenNet::ViewModels::TaskViewModel const& value);
 
         winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand()   const { return m_newCommand; }
+        winrt::Microsoft::UI::Xaml::Input::ICommand NewFromUrlCommand() const { return m_newFromUrlCommand; }
+        winrt::Microsoft::UI::Xaml::Input::ICommand NewFromFileCommand() const { return m_newFromFileCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand StartCommand() const { return m_startCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand PauseCommand() const { return m_pauseCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand()const { return m_deleteCommand; }
@@ -53,6 +55,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::OpenNet::ViewModels::TaskViewModel m_selectedTask{ nullptr };
 
         winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_newFromUrlCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_newFromFileCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_startCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_pauseCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_deleteCommand{ nullptr };

@@ -1,4 +1,19 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:OpenNet" />
+    xmlns:local="using:OpenNet">
+
+    <!--<Style TargetType="local:InputActiveDesktopAcrylicBackdrop" >
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:InputActiveDesktopAcrylicBackdrop">
+                    <Border
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}">
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>-->
+</ResourceDictionary>

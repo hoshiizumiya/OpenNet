@@ -1,8 +1,10 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
+#include "UI/Shell/NotifyIconContextMenu.xaml.h"
 #include "Helpers/WindowHelper.h"
 #include "Helpers/ThemeHelper.h"
+#include "Core/P2PManager.h"
 
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Windows.Storage.h>
@@ -45,12 +47,20 @@ namespace winrt::OpenNet::implementation
     /// <param name="e">Details about the launch request and process.</param>
     void App::OnLaunched([[maybe_unused]] Microsoft::UI::Xaml::LaunchActivatedEventArgs const& e)
     {
+        auto icon = make<OpenNet::UI::Shell::implementation::NotifyIconContextMenu>();
         // 创建窗口（首次启动）
         window = make<MainWindow>();
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
         
         // Apply saved theme to the window
         ::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+        
+        // 注册窗口关闭事件以清理资源
+        window.Closed([](const auto& sender, const auto& args)
+        {
+            // 在窗口完全关闭前进行清理
+            OutputDebugStringA("App: MainWindow closed event triggered\n");
+        });
         
         window.Activate();
 
@@ -153,6 +163,25 @@ namespace winrt::OpenNet::implementation
             FlashWindowEx(&fw);
         }
         // 可以添加更多激活类型的处理
+    }
+
+    App::~App()
+    {
+        // 在应用销毁时清理P2PManager资源
+        try
+        {
+            OutputDebugStringA("App: Destructor called, cleaning up P2PManager...\n");
+            ::OpenNet::Core::P2PManager::Instance().Shutdown();
+            OutputDebugStringA("App: Destructor completed\n");
+        }
+        catch (const std::exception& ex)
+        {
+            OutputDebugStringW((L"App: Cleanup error in destructor: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+        }
+        catch (...)
+        {
+            OutputDebugStringA("App: Unknown error in destructor\n");
+        }
     }
 
 }

@@ -46,6 +46,10 @@ namespace winrt::OpenNet::implementation
 
 		AppWindow().SetIcon(L"Assets/AppIcons/win3264.ico");
 		openHomePage();
+		Closed([this](auto&&, auto&&)
+		{
+			PlacementRestoration::Save(*this);
+		});
 	}
 
 	MainViewModel MainWindow::ViewModel()
@@ -60,6 +64,24 @@ namespace winrt::OpenNet::implementation
 		{
 			appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 			PlacementRestoration::Enable(*this);
+#ifdef _DEBUG
+			{
+				AppTitleBar().Subtitle(L"Dev");
+				//auto debugMenuItem = NavigationViewItem();
+				//debugMenuItem.Content(box_value(L"Debug Page"));
+				//debugMenuItem.Tag(box_value(L"debug"));
+				//NavView().MenuItems().Append(debugMenuItem);
+				//debugMenuItem.Invoke([this](auto&&, auto&&)
+				//{
+				//	if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::DebugPage>())
+				//	{
+				//		UpdateNavigationSelection(L"debug"); return;
+				//	}
+				//	NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::DebugPage>());
+				//	UpdateNavigationSelection(L"debug");
+				//});
+			}
+#endif
 
 
 		}
@@ -179,45 +201,45 @@ namespace winrt::OpenNet::implementation
 	{
 		auto weak = get_weak();
 		this->DispatcherQueue().TryEnqueue([weak, tag]()
+		{
+			if (auto self = weak.get())
 			{
-				if (auto self = weak.get())
+				auto frame = self->NavFrame();
+				auto content = frame.Content();
+
+				if (tag == L"home")
 				{
-					auto frame = self->NavFrame();
-					auto content = frame.Content();
-
-					if (tag == L"home")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return; self->openHomePage(); return;
-					}
-					if (tag == L"contacts")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::ContactsPage>()) return; self->openContactsPage(); return;
-					}
-					if (tag == L"tasks")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::TasksPage>()) return; self->openTasksPage(); return;
-					}
-					if (tag == L"files")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::FilesPage>()) return; self->openFilesPage(); return;
-					}
-					if (tag == L"net")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::NetworkSettingsPage>()) return; self->openNetworkSettingsPage(); return;
-					}
-					if (tag == L"servers")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::ServersPage>()) return; self->openServersPage(); return;
-					}
-					if (tag == L"settings")
-					{
-						if (content && content.try_as<winrt::OpenNet::Pages::SettingsPages::MainSettingsPage>()) return; self->openSettingsPage(); return;
-					}
-
-					if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return;
-					self->openHomePage();
+					if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return; self->openHomePage(); return;
 				}
-			});
+				if (tag == L"contacts")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::ContactsPage>()) return; self->openContactsPage(); return;
+				}
+				if (tag == L"tasks")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::TasksPage>()) return; self->openTasksPage(); return;
+				}
+				if (tag == L"files")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::FilesPage>()) return; self->openFilesPage(); return;
+				}
+				if (tag == L"net")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::NetworkSettingsPage>()) return; self->openNetworkSettingsPage(); return;
+				}
+				if (tag == L"servers")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::ServersPage>()) return; self->openServersPage(); return;
+				}
+				if (tag == L"settings")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::SettingsPages::MainSettingsPage>()) return; self->openSettingsPage(); return;
+				}
+
+				if (content && content.try_as<winrt::OpenNet::Pages::HomePage>()) return;
+				self->openHomePage();
+			}
+		});
 	}
 
 	void MainWindow::NavFrame_Navigating(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&)

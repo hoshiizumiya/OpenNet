@@ -5,7 +5,7 @@
 
 namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
-    struct TorrentMetaDataDownloadDialog : TorrentMetaDataDownloadDialogT<TorrentMetaDataDownloadDialog>, ::OpenNet::ViewModels::ObservableMixin<TorrentMetaDataDownloadDialog>
+	struct TorrentMetaDataDownloadDialog : TorrentMetaDataDownloadDialogT<TorrentMetaDataDownloadDialog>, ::OpenNet::ViewModels::ObservableMixin<TorrentMetaDataDownloadDialog>
 	{
 		TorrentMetaDataDownloadDialog();
 
@@ -17,9 +17,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		bool IsLinkValid();
 		void IsLinkValid(bool value);
 
-        // INotifyPropertyChanged is provided by mvvm::WrapNotifyPropertyChanged mixin
+		// Get the validated magnet link entered by user
+		winrt::hstring GetMagnetLink() const;
+
+		// INotifyPropertyChanged is provided by mvvm::WrapNotifyPropertyChanged mixin
 	private:
 		bool m_isLinkValid{ false };
+		winrt::hstring m_validatedMagnetLink{};
 	};
 }
 

@@ -20,7 +20,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         m_tasks = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TaskViewModel>();
         m_filteredTasks = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TaskViewModel>();
 
-        // NewCommand 需要访问 VM（触发事件），使用弱引用
+        // NewCommand: Shows the dropdown menu (no action here, menu items use their own commands)
         m_newCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
             .Execute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
             {
@@ -28,6 +28,26 @@ namespace winrt::OpenNet::ViewModels::implementation
                 {
                     self->m_addTaskRequested(*self, winrt::hstring());
                 }
+            })
+            .Build();
+
+        // NewFromUrlCommand: Trigger showing the magnet link dialog
+        m_newFromUrlCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .ExecuteAsync([](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+            {
+                // This will be handled by the code-behind in TasksPage
+                // The command simply triggers the event which the page handles
+                co_return;
+            })
+            .Build();
+
+        // NewFromFileCommand: Trigger showing the file picker dialog
+        m_newFromFileCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .ExecuteAsync([](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+            {
+                // This will be handled by the code-behind in TasksPage
+                // The command simply triggers the event which the page handles
+                co_return;
             })
             .Build();
 
@@ -238,7 +258,6 @@ namespace winrt::OpenNet::ViewModels::implementation
                 self->RebuildFiltered();
             }
         });
-    }
     }
 
     void TasksViewModel::SelectedTask(winrt::OpenNet::ViewModels::TaskViewModel const& value)

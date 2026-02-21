@@ -251,13 +251,9 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		// 计算 index
 		constexpr size_t putPersistIndex = 0x38 / sizeof(void*);
 		constexpr size_t putBehaviorIndex = 0x48 / sizeof(void*);
-		constexpr size_t saveIndex = 0x58 / sizeof(void*);
 
 		auto putPersist = reinterpret_cast<put_PersistedStateId_t>(vtbl[putPersistIndex]);
-
 		auto putBehavior = reinterpret_cast<put_PlacementRestorationBehavior_t>(vtbl[putBehaviorIndex]);
-
-		auto savePlacement = reinterpret_cast<SaveCurrentPlacement_t>(vtbl[saveIndex]);
 
 		// 设置行为
 		putBehavior(experimentalRaw, 0xFFFFFFFF);
@@ -269,7 +265,37 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 
 		putPersist(experimentalRaw, winrt::get_abi(boxed));
 
-		// 立即保存
+
+		reinterpret_cast<::IUnknown*>(experimentalRaw)->Release();
+	}
+
+	void PlacementRestoration::Save(winrt::Microsoft::UI::Xaml::Window const& window)
+	{
+		using SaveCurrentPlacement_t = HRESULT(__stdcall*)(void*);
+
+		static const winrt::guid iidExperimental
+		{
+			L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}"
+		};
+
+		auto appWindow = window.AppWindow();
+		auto unk = appWindow.try_as<::IUnknown>();
+		if (!unk)
+			return;
+
+		void* experimentalRaw{};
+		if (FAILED(unk->QueryInterface(
+			reinterpret_cast<IID const&>(iidExperimental),
+			&experimentalRaw)))
+			return;
+
+		auto vtbl = *reinterpret_cast<void***>(experimentalRaw);
+
+		constexpr size_t saveIndex = 0x58 / sizeof(void*);
+
+		auto savePlacement =
+			reinterpret_cast<SaveCurrentPlacement_t>(vtbl[saveIndex]);
+
 		savePlacement(experimentalRaw);
 
 		reinterpret_cast<::IUnknown*>(experimentalRaw)->Release();

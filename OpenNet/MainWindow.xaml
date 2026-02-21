@@ -16,6 +16,9 @@
     </Window.SystemBackdrop>
 
     <Grid x:Name="RootGrid" Loaded="Grid_Loaded">
+        <Grid.Resources>
+            <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind}" />
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -33,8 +36,7 @@
             VerticalAlignment="Top"
             BackRequested="AppTitleBar_BackRequested"
             IsBackButtonVisible="{x:Bind NavFrame.CanGoBack, Mode=OneWay}"
-            IsTabStop="False"
-            Subtitle="dev">
+            IsTabStop="False">
 
             <TitleBar.LeftHeader>
                 <Image

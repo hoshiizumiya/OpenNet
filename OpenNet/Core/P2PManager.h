@@ -43,6 +43,9 @@ namespace OpenNet::Core
 			return m_stateManager.get();
 		}
 
+		// 关闭和清理资源
+		void Shutdown();
+
 		// Torrent operations
 		winrt::Windows::Foundation::IAsyncOperation<bool> AddMagnetAsync(std::string magnetUri, std::string savePath);
 

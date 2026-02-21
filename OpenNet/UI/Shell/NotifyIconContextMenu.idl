@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Shell
+{
+    [default_interface]
+    runtimeclass NotifyIconContextMenu : WinUI3Package.WindowEx
+    {
+        NotifyIconContextMenu();
+
+    }
+}

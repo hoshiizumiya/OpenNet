@@ -82,22 +82,88 @@ namespace OpenNet::Core::Torrent
 
     void LibtorrentHandle::Stop()
     {
-        // Save session state before stopping
-        if (m_session && m_stateManager)
-        {
-            m_stateManager->SaveSessionState(*m_session);
-        }
+        OutputDebugStringA("LibtorrentHandle: Stopping...\n");
 
+        // Signal the alert loop to stop as soon as possible. Set the flag
+        // before joining the alert thread to avoid calling into libtorrent
+        // APIs from this thread while the alert loop may be holding locks.
         m_stopRequested = true;
-        if (m_running.exchange(false))
-        {
-            if (m_thread.joinable()) m_thread.join();
-        }
+        // Wake the alert loop so it can observe the stop request promptly.
         if (m_session)
         {
-            try { m_session.reset(); }
-            catch (...) {}
+            try {
+                m_session->post_torrent_updates();
+            } catch (...) {}
         }
+        
+        if (m_running.exchange(false))
+        {
+            if (m_thread.joinable())
+            {
+                OutputDebugStringA("LibtorrentHandle: Waiting for alert thread to finish...\n");
+                
+                // Wait with timeout to avoid hanging indefinitely
+                bool joined = false;
+                auto start = std::chrono::steady_clock::now();
+                while (!joined)
+                {
+                    auto elapsed = std::chrono::steady_clock::now() - start;
+                    if (elapsed > std::chrono::seconds(5))
+                    {
+                        OutputDebugStringA("LibtorrentHandle: Warning: Alert thread did not join within 5 seconds\n");
+                        // Detach the thread to avoid crash, but continue
+                        break;
+                    }
+                    
+                    if (m_thread.joinable())
+                    {
+                        m_thread.join();
+                        joined = true;
+                        OutputDebugStringA("LibtorrentHandle: Alert thread joined successfully\n");
+                    }
+                    else
+                    {
+                        std::this_thread::sleep_for(100ms);
+                    }
+                }
+            }
+        }
+        
+        // Save session state and then clear session. Do this after the
+        // alert thread has been joined so we don't contend for libtorrent
+        // internal locks between threads.
+        if (m_session && m_stateManager)
+        {
+            try
+            {
+                OutputDebugStringA("LibtorrentHandle: Saving session state\n");
+                m_stateManager->SaveSessionState(*m_session);
+            }
+            catch (const std::exception& ex)
+            {
+                OutputDebugStringW((L"LibtorrentHandle: Error saving session: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+            }
+        }
+
+        // Clear session
+        if (m_session)
+        {
+            try
+            {
+                OutputDebugStringA("LibtorrentHandle: Clearing session\n");
+                m_session.reset();
+            }
+            catch (const std::exception& ex)
+            {
+                OutputDebugStringW((L"LibtorrentHandle: Error clearing session: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+            }
+            catch (...)
+            {
+                OutputDebugStringA("LibtorrentHandle: Unknown error clearing session\n");
+            }
+        }
+        
+        OutputDebugStringA("LibtorrentHandle: Stop completed\n");
     }
 
     bool LibtorrentHandle::AddMagnet(std::string const& magnetUri, std::string const& savePath)
@@ -311,21 +377,46 @@ namespace OpenNet::Core::Torrent
 
     void LibtorrentHandle::AlertLoop()
     {
+        OutputDebugStringA("LibtorrentHandle: AlertLoop started\n");
+        
         while (!m_stopRequested.load())
         {
-            if (!m_session) break;
-            std::vector<lt::alert*> alerts;
-            m_session->pop_alerts(&alerts);
-            if (!alerts.empty())
+            if (!m_session)
             {
-                DispatchAlerts(alerts);
+                OutputDebugStringA("LibtorrentHandle: No session in AlertLoop, breaking\n");
+                break;
             }
-            if (m_session)
+            
+            try
             {
-                m_session->post_torrent_updates();
+                std::vector<lt::alert*> alerts;
+                // Use a timeout to avoid indefinite blocking
+                m_session->wait_for_alert(std::chrono::milliseconds(500));
+                m_session->pop_alerts(&alerts);
+                
+                if (!alerts.empty())
+                {
+                    DispatchAlerts(alerts);
+                }
+                
+                if (m_session && !m_stopRequested.load())
+                {
+                    m_session->post_torrent_updates();
+                }
             }
-            std::this_thread::sleep_for(500ms);
+            catch (const std::exception& ex)
+            {
+                OutputDebugStringW((L"LibtorrentHandle: AlertLoop error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+                std::this_thread::sleep_for(100ms);
+            }
+            catch (...)
+            {
+                OutputDebugStringA("LibtorrentHandle: AlertLoop unknown error\n");
+                std::this_thread::sleep_for(100ms);
+            }
         }
+        
+        OutputDebugStringA("LibtorrentHandle: AlertLoop exiting\n");
     }
 
     void LibtorrentHandle::DispatchAlerts(std::vector<lt::alert*> const& alerts)

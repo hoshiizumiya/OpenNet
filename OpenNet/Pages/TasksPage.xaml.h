@@ -17,34 +17,51 @@ namespace winrt::OpenNet::Pages::implementation
 		~TasksPage();
 
 		// Expose strongly-typed ViewModel for x:Bind
-		winrt::OpenNet::ViewModels::TasksViewModel ViewModel() const { return m_viewModel; }
+		winrt::OpenNet::ViewModels::TasksViewModel ViewModel() const
+		{
+			return m_viewModel;
+		}
 
 		// Filter nav selection (must be public for XAML wiring)
-		void FilterNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
+		void FilterNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 
 		// Task list selection changed handler
-		void TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
+		void TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
 
-		// Show magnet link dialog
-		winrt::Windows::Foundation::IAsyncAction ShowAddMagnetDialog();
+		// Task list right-click handlers
+		void TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 
-		inline static hstring targetLink;
+		// Context menu item handlers
+		void MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+
+		void OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+
+		void PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+
+		// Make these handlers public so XAML generated code can bind to them
+		winrt::Windows::Foundation::IAsyncAction MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::event_token m_addTaskToken{};
 		winrt::event_token m_selectedTaskPropertyChangedToken{};
 		winrt::OpenNet::ViewModels::TaskViewModel m_currentSubscribedTask{ nullptr };
 
+		// Handle when ViewModel requests adding a new task
 		winrt::Windows::Foundation::IAsyncAction OnAddTaskRequested(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const&);
 
+		// Process the torrent link and open the metadata check window
+		void ProcessAndShowTorrentMetadataWindow(winrt::hstring const& torrentLink);
 
 		// Subscribe/unsubscribe to selected task's property changes
 		void SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const& task);
 		void UnsubscribeFromSelectedTaskChanges();
-		void OnSelectedTaskPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
+		void OnSelectedTaskPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
+
+		// File operation helpers
+		winrt::Windows::Foundation::IAsyncAction PerformMoveTaskAsync();
+		winrt::Windows::Foundation::IAsyncAction ShowTaskPropertiesAsync();
 	};
 }
 

@@ -28,20 +28,25 @@
         <!--  TextChanged="SearchBox_TextChanged"  -->
         <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
             <AppBarButton
+                x:Name="TaskNewButton"
                 x:Uid="TaskNewButton"
-                Command="{x:Bind ViewModel.NewCommand}"
                 Icon="Add">
                 <muxc:AppBarButton.Flyout>
-                    <muxc:MenuFlyout>
+                    <muxc:MenuFlyout Placement="Bottom">
                         <muxc:MenuFlyoutItem
+                            x:Name="MenuItemAddFromLink"
                             x:Uid="TaskNewFromUrlButton"
-                            Command="{x:Bind ViewModel.NewFromUrlCommand}"
-                            Icon="Link" />
+                            Click="MenuItemAddFromLink_ClickAsync"
+                            Icon="Link"
+                            Text="From Link" />
                         <muxc:MenuFlyoutItem
+                            x:Name="MenuItemAddFromFile"
                             x:Uid="TaskNewFromFileButton"
-                            Command="{x:Bind ViewModel.NewFromFileCommand}"
-                            Icon="Document" />
+                            Click="MenuItemAddFromFile_ClickAsync"
+                            Icon="Document"
+                            Text="From File" />
                     </muxc:MenuFlyout>
+                </muxc:AppBarButton.Flyout>
             </AppBarButton>
             <AppBarButton
                 x:Uid="TaskStartButton"
@@ -162,8 +167,37 @@
                         x:Name="TasksList"
                         Grid.Row="1"
                         ItemsSource="{x:Bind ViewModel.FilteredTasks, Mode=OneWay}"
+                        RightTapped="TasksList_RightTapped"
                         SelectionChanged="TasksList_SelectionChanged"
                         SelectionMode="Single">
+                        <ListView.ContextFlyout>
+                            <MenuFlyout>
+                                <MenuFlyoutItem
+                                    x:Name="MoveTaskMenuItem"
+                                    x:Uid="MoveTaskMenuItem"
+                                    Click="MoveTaskMenuItem_Click"
+                                    Icon="MoveToFolder"
+                                    Text="Move to..." />
+                                <MenuFlyoutItem
+                                    x:Name="OpenTaskLocationMenuItem"
+                                    x:Uid="OpenTaskLocationMenuItem"
+                                    Click="OpenTaskLocationMenuItem_Click"
+                                    Icon="OpenFile"
+                                    Text="Open Location" />
+                                <MenuFlyoutSeparator />
+                                <MenuFlyoutItem
+                                    x:Name="PropertiesMenuItem"
+                                    x:Uid="PropertiesMenuItem"
+                                    Click="PropertiesMenuItem_Click"
+                                    Icon="More"
+                                    Text="Properties" />
+                            </MenuFlyout>
+                        </ListView.ContextFlyout>
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <muxc:ItemsStackPanel Orientation="Vertical" />
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
                             <!--  在这里写DataType可以在绑定时省略命名空间前缀  -->
                             <DataTemplate x:DataType="vm:TaskViewModel">

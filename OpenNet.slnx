@@ -5,8 +5,18 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+    <File Path="README_zh-CN.md" />
+  </Folder>
+  <Folder Name="/Solution Items/docs/">
+    <File Path="docs/cppwinrt-xamltypeinfo-build-guide.md" />
+  </Folder>
+  <Project Path="OpenNetUnitTest/OpenNetUnitTest.vcxproj" Id="1a0e0afc-ae59-4945-af19-3df6d5ae63e7">
+    <Deploy />
+  </Project>
   <Project Path="OpenNet\OpenNet.vcxproj" Id="ae5a0548-f283-4027-86e1-fdeef7890657">
-     <Deploy />
+    <Deploy />
   </Project>
   <Project Path="WCTCsClassLibrary\WCTCsClassLibrary.csproj">
     <Deploy />

@@ -28,9 +28,6 @@
     <Page Include="Pages\FilesPage.xaml">
       <Filter>Pages</Filter>
     </Page>
-    <Page Include="MainWindow.xaml">
-      <Filter>mvvm_framework</Filter>
-    </Page>
     <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
       <Filter>Pages\SettingsPages</Filter>
     </Page>
@@ -69,6 +66,12 @@
     </Page>
     <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml">
       <Filter>UI\Xaml\Control\Card</Filter>
+    </Page>
+    <Page Include="UI\Shell\NotifyIconContextMenu.xaml">
+      <Filter>UI\Shell</Filter>
+    </Page>
+    <Page Include="MainWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -215,6 +218,19 @@
     <ClCompile Include="Core\Utils\Message.cpp">
       <Filter>Core\Utils</Filter>
     </ClCompile>
+    <ClCompile Include="Core\IO\FileOperation.cpp">
+      <Filter>Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\FileSystem.cpp">
+      <Filter>Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AppEnvironment.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp">
+      <Filter>UI\Xaml\View\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -364,6 +380,18 @@
     <ClInclude Include="UI\Xaml\Media\Animations\OpacityAnimation.h" />
     <ClInclude Include="Core\Utils\Message.h">
       <Filter>Core\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IO\FileSystem.h">
+      <Filter>Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IO\FileOperation.h">
+      <Filter>Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\AppEnvironment.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h">
+      <Filter>UI\Xaml\View\Dialog</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -639,6 +667,15 @@
     <Filter Include="UI\Xaml\Control\Card">
       <UniqueIdentifier>{8865e15d-8ee2-451f-8d77-e61c64ee16da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\IO">
+      <UniqueIdentifier>{a8e23636-bebc-4885-980e-3f5729f7e6f6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Shell">
+      <UniqueIdentifier>{31d5d8ef-3702-43a4-86d5-948c718eaa85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Backdrop">
+      <UniqueIdentifier>{b22455aa-a07c-4864-8f77-a6a620df33a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -674,6 +711,6 @@
     <Manifest Include="app.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <AppxManifest Include="Package.appxmanifest" />
+    <AppxManifest Include="Package.Dev.appxmanifest" />
   </ItemGroup>
 </Project>

@@ -169,4 +169,55 @@ namespace OpenNet::Core
             if (m_errorCb) m_errorCb(err);
         });
     }
+
+    void P2PManager::Shutdown()
+    {
+        // 这个方法需要安全地关闭torrent核心
+        try
+        {
+            std::scoped_lock lk(m_torrentMutex);
+            
+            OutputDebugStringA("P2PManager: Shutting down...\n");
+            
+            // 保存所有恢复数据
+            if (m_torrentCore)
+            {
+                OutputDebugStringA("P2PManager: Saving all resume data...\n");
+                m_torrentCore->SaveAllResumeData();
+                
+                // 停止核心
+                OutputDebugStringA("P2PManager: Stopping torrent core...\n");
+                m_torrentCore->Stop();
+            }
+            
+            // 清空回调以避免在shutdown期间调用它们
+            {
+                std::scoped_lock cbLk(m_cbMutex);
+                m_progressCb = nullptr;
+                m_finishedCb = nullptr;
+                m_errorCb = nullptr;
+            }
+            
+            // 释放torrent核心资源
+            m_torrentCore.reset();
+            
+            // 可选：保存状态管理器数据
+            if (m_stateManager)
+            {
+                // 状态管理器通常会自己处理持久化
+            }
+            
+            m_isTorrentCoreInitialized.store(false);
+            
+            OutputDebugStringA("P2PManager: Shutdown completed successfully\n");
+        }
+        catch (const std::exception& ex)
+        {
+            OutputDebugStringW((L"P2PManager: Shutdown error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+        }
+        catch (...)
+        {
+            OutputDebugStringA("P2PManager: Unknown error during shutdown\n");
+        }
+    }
 }

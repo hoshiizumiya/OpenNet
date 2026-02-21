@@ -85,6 +85,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
     struct PlacementRestoration
     {
         static void Enable(winrt::Microsoft::UI::Xaml::Window const& window);
+        static void Save(winrt::Microsoft::UI::Xaml::Window const& window);
     private:
         static winrt::guid GenerateTypeGuid(winrt::hstring const& typeName);
     };

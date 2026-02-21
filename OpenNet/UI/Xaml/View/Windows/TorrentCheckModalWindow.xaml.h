@@ -22,11 +22,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void InitializeWindow();
 		void StartParseMetadata();
 		winrt::Windows::Foundation::IAsyncAction ParseTorrentMetadataAsync();
+
+		// Callback methods for metadata parsing progress
 		void OnMetadataParsingProgress(const std::string& status);
 		void OnMetadataParsingCompleted();
 		void OnMetadataParsingFailed(const std::string& errorMessage);
 
-		uint32_t m_selected_index{};
+		// Get valid temporary directory
+		static std::string GetTempDirectory();
+
+		// State and data members
+		uint32_t m_selectedTabIndex{};
 		winrt::hstring m_torrentLink{};
 		std::string m_magnetUri{};
 		bool m_metadataReady{ false };

@@ -54,9 +54,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		else
 		{
 			IsLinkValid(false);
-			std::string magnetUri = winrt::to_string(text);
-
-			OpenNet::Pages::implementation::TasksPage::targetLink = text;
+			m_validatedMagnetLink = text;
 		}
 	}
 
@@ -89,5 +87,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	{
 		// Use ObservableMixin helper to set and notify
 		this->SetProperty(m_isLinkValid, value, L"IsLinkValid");
+	}
+
+	winrt::hstring TorrentMetaDataDownloadDialog::GetMagnetLink() const
+	{
+		return m_validatedMagnetLink;
 	}
 }

@@ -25,6 +25,7 @@
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Media::Animation;
+using namespace winrt::Microsoft::UI::Windowing;
 using namespace winrt::OpenNet::UI::Xaml::View::Pages;
 using namespace winrt::Windows::Foundation;
 
@@ -44,8 +45,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		InitializeComponent();
 		InitializeWindow();
 
-		// Start parsing metadata when window is initialized with a torrent link
-		StartParseMetadata();
+		// Don't start parsing here - wait for window to load and display
+		// This is handled in TorrentCreateGrid_Loaded event handler
 	}
 
 	void TorrentCheckModalWindow::InitializeWindow()
@@ -61,8 +62,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		// Apply saved/custom theme to this window as well.
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
 
-		// Make the window modal and show it.
-		if (auto presenter = AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
+		//// Make the window modal and show it. Other way: AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>()
+		if (auto presenter = winrt::Microsoft::UI::Windowing::OverlappedPresenter::CreateForDialog())
 		{
 			presenter.IsModal(true);
 			AppWindow().SetPresenter(presenter);
@@ -82,7 +83,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		// Start async operation without waiting (fire and forget pattern)
 		// The async operation will manage its own lifetime via the window
-		ParseTorrentMetadataAsync().Completed([](auto const&, auto const&) {});
+		ParseTorrentMetadataAsync().Completed([](auto const&, auto const&)
+		{});
 	}
 
 	IAsyncAction TorrentCheckModalWindow::ParseTorrentMetadataAsync()
@@ -122,20 +124,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			if (!torrentCore->IsRunning())
 			{
 				torrentCore->Start();
-				// Give the core a moment to start by using std::this_thread::sleep_for
-				// Note: In production, use proper async delay mechanisms
-				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+				// Give the core a moment to start
+				co_await winrt::resume_after(std::chrono::milliseconds(500));
 			}
 
 			OnMetadataParsingProgress("Downloading torrent metadata...");
 
-			// Use a default save path for metadata-only operation
-			std::string tempSavePath = R"(C:\Temp\TorrentCheck)";
+			// Use proper temporary directory
+			std::string tempSavePath = GetTempDirectory();
+			if (tempSavePath.empty())
+			{
+				OnMetadataParsingFailed("Failed to get temporary directory");
+				m_isParsingMetadata = false;
+				co_return;
+			}
 
 			// Add the torrent with flags to only fetch metadata without downloading content
-			// This will:
-			// 1. Download the metadata
-			// 2. Pause immediately after metadata is ready
 			bool success = torrentCore->AddMagnet(torrentLink, tempSavePath);
 
 			if (!success)
@@ -145,15 +149,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				co_return;
 			}
 
-			// Wait for metadata to be ready (polling with timeout)
-			// In production, this should be event-driven via callbacks
+			// Wait for metadata to be ready with timeout
 			int maxAttempts = 120; // 60 seconds with 500ms sleep
 			int attempts = 0;
 
 			while (attempts < maxAttempts && !m_metadataReady)
 			{
-				// Sleep for 500ms in background thread
-				std::this_thread::sleep_for(std::chrono::milliseconds(500));
+				// Use async delay instead of blocking sleep
+				co_await winrt::resume_after(std::chrono::milliseconds(500));
 				attempts++;
 			}
 
@@ -166,7 +169,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				OnMetadataParsingFailed("Metadata download timeout");
 			}
 		}
-		catch (std::exception const& ex)
+		catch (const std::exception& ex)
 		{
 			OnMetadataParsingFailed(std::string("Error during metadata parsing: ") + ex.what());
 		}
@@ -180,36 +183,83 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void TorrentCheckModalWindow::OnMetadataParsingProgress(const std::string& status)
 	{
-		// TODO: Update UI with status message
-		// This can be connected to a TextBlock or ProgressRing in XAML
-		// For now, just output to debug
+		// Update UI with status message in the main UI thread
+		// TODO: Update ProgressRing and status TextBlock in XAML
+		// Example: StatusTextBlock().Text(winrt::to_hstring(status));
 		OutputDebugStringW(winrt::to_hstring(status).c_str());
+	}
+
+	std::string TorrentCheckModalWindow::GetTempDirectory()
+	{
+		try
+		{
+			// Use Windows API to get temp directory
+			wchar_t tempPath[MAX_PATH];
+			DWORD result = GetTempPathW(MAX_PATH, tempPath);
+			if (result == 0 || result > MAX_PATH)
+			{
+				return {};
+			}
+
+			std::wstring tempDir(tempPath);
+			// Append a subdirectory for torrent metadata
+			tempDir += L"OpenNet\\TorrentMetadata";
+
+			// Create directory if it doesn't exist
+			if (!CreateDirectoryW(tempDir.c_str(), nullptr))
+			{
+				DWORD error = GetLastError();
+				// ERROR_ALREADY_EXISTS is fine
+				if (error != ERROR_ALREADY_EXISTS)
+				{
+					return {};
+				}
+			}
+
+			// Convert wide string to regular string
+			int size = WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, nullptr, 0, nullptr, nullptr);
+			if (size <= 0)
+			{
+				return {};
+			}
+
+			std::string result_str(size - 1, 0);
+			WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, &result_str[0], size, nullptr, nullptr);
+			return result_str;
+		}
+		catch (...)
+		{
+			return {};
+		}
 	}
 
 	void TorrentCheckModalWindow::OnMetadataParsingCompleted()
 	{
 		m_metadataReady = true;
 
-		// TODO: Update UI to show file list for user selection
-		// Example:
-		// - Hide loading indicator
-		// - Show file tree view
-		// - Enable "Start Download" button
-		// - Navigate to the general page with metadata
+		// TODO: Update UI to show file list for user selection:
+		// 1. Hide loading indicator (ProgressRing)
+		// 2. Show file tree view with all files from the torrent
+		// 3. Enable checkboxes for each file for selective download
+		// 4. Display total size and selected size
+		// 5. Enable "Start Download" button
+		// 6. Navigate to TorrentCheckGeneralPage with metadata
 
-		OnMetadataParsingProgress("Metadata ready! Select files to download.");
+		OutputDebugStringW(L"Metadata ready! Ready to display file list for selection.");
 	}
 
 	void TorrentCheckModalWindow::OnMetadataParsingFailed(const std::string& errorMessage)
 	{
-		// TODO: Display error to user in UI
-		// Example:
-		// - Show error dialog
-		// - Update status text
-		// - Close window or reset state
+		// TODO: Display error to user in UI:
+		// 1. Hide loading indicator
+		// 2. Show error message in an InfoBar or MessageDialog
+		// 3. Provide option to retry or close the window
 
 		std::string fullError = "Metadata parsing failed: " + errorMessage;
 		OutputDebugStringW(winrt::to_hstring(fullError).c_str());
+
+		// Optionally close the window after a delay
+		// this->Close();
 	}
 
 	// Sets the owner window of the modal window to the main app window.
@@ -245,64 +295,63 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			return; // No owner available yet.
 		}
 		ownerWindow.Activate();
-
 	}
 
-
-	void TorrentCheckModalWindow::TorrentCheckModalWindowSeleterBar_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& /*args*/)
+	void TorrentCheckModalWindow::TorrentCheckModalWindowSeleterBar_SelectionChanged(
+		winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender,
+		winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& /*args*/)
 	{
-		auto item = sender.SelectedItem();
-		uint32_t currentSelectedIndex;
-		sender.Items().IndexOf(item, currentSelectedIndex);
-		SlideNavigationTransitionInfo slideInfo{};
-
-
-		switch (currentSelectedIndex)
+		// Get the selected tab index
+		auto selectedItem = sender.SelectedItem();
+		if (!selectedItem)
 		{
-		case 0:
-			TorrentCheckFrame().Navigate(xaml_typename<TorrentCheckGeneralPage>(), nullptr, slideInfo);
-			break;
-		case 1:
-			//TorrentCheckFrame().Navigate(xaml_typename<>(), nullptr, slideInfo);
-			break;
-		default:
-			break;
+			return;
 		}
 
-		// This is also working to determine slide direction
-		if (currentSelectedIndex > m_selected_index)
+		// Find the index of the selected item in the Items collection
+		auto items = sender.Items();
+		uint32_t selectedIndex = 0;
+		for (uint32_t i = 0; i < items.Size(); ++i)
 		{
-			slideInfo.Effect(SlideNavigationTransitionEffect::FromRight);
-		}
-		else if (currentSelectedIndex < m_selected_index)
-		{
-			slideInfo.Effect(SlideNavigationTransitionEffect::FromLeft);
-		}
-		m_selected_index = currentSelectedIndex;
-
-	}
-
-	void TorrentCheckModalWindow::TorrentCreateGrid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
-	{
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::SetWindowMinSize(*this, 640, 500);
-
-		if (auto rootGrid = sender.try_as<FrameworkElement>())
-		{
-			if (auto xamlRoot = rootGrid.XamlRoot())
+			if (items.GetAt(i) == selectedItem)
 			{
-				xamlRoot.Changed(
-					{
-						this, & TorrentCheckModalWindow::RootGridXamlRoot_Changed
-					}
-				);
+				selectedIndex = i;
+				break;
 			}
 		}
 
+		m_selectedTabIndex = selectedIndex;
+
+		// Navigate to the appropriate page based on selected tab
+		// TODO: Implement page navigation for each tab
+		// 0: General - TorrentCheckGeneralPage
+		// 1: Snapshots
+		// 2: Advanced
+		// 3: Publisher
+		// 4: Download Order
+
+		if (auto frame = TorrentCheckFrame())
+		{
+			// TODO: Navigate to the appropriate page with metadata
+			// Example:
+			// frame.Navigate(winrt::xaml_typename<TorrentCheckGeneralPage>(), m_torrentLink);
+		}
 	}
 
-	void TorrentCheckModalWindow::RootGridXamlRoot_Changed(XamlRoot /*sender*/, XamlRootChangedEventArgs /*args*/)
+	void TorrentCheckModalWindow::TorrentCreateGrid_Loaded(
+		winrt::Windows::Foundation::IInspectable const& /*sender*/,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
 	{
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::SetWindowMinSize(*this, 640, 500);
+		// Window has been loaded and displayed, NOW safe to start parsing metadata
+		// This prevents UI freezing - window displays first, then starts download
+		StartParseMetadata();
 	}
 
+	void TorrentCheckModalWindow::RootGridXamlRoot_Changed(
+		winrt::Microsoft::UI::Xaml::XamlRoot /*sender*/,
+		winrt::Microsoft::UI::Xaml::XamlRootChangedEventArgs /*args*/)
+	{
+		// Handle XamlRoot changes if needed
+		// This can be used to adjust window size or content layout
+	}
 }
