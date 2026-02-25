@@ -1,0 +1,29 @@
+﻿name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download Release Asset
+        run: |
+          url=$(jq -r '.release.assets[0].browser_download_url' <<< '${{ toJson(github.event) }}')
+          curl -L -o bundle.msixbundle "$url"
+
+      - name: Upload to Production
+        run: |
+          curl -X PUT -T bundle.msixbundle \
+            ${{ secrets.PROD_UPLOAD_URL }}
+
+      - name: Purge CDN
+        run: |
+          curl -X POST ${{ secrets.PURGE_URL }}
+
+      - name: Update Patch API
+        run: |
+          curl -X POST https://api.example.com/release/update \
+            -H "Authorization: Bearer ${{ secrets.PATCH_TOKEN }}"

@@ -691,6 +691,7 @@
     <None Include="Assets\ModelIcons\GitHub.light.svg">
       <Filter>Assets\ModelIcons</Filter>
     </None>
+    <None Include="OpenNet_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

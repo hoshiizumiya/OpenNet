@@ -6,8 +6,19 @@
     <Platform Name="x86" />
   </Configurations>
   <Folder Name="/Solution Items/">
+    <File Path=".gitignore" />
     <File Path="README.md" />
     <File Path="README_zh-CN.md" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/">
+    <File Path=".github/copilot-instructions.md" />
+    <File Path=".github/DEV_GUIDE_WINUI3_ATTACHED_PROPERTIES.md" />
+    <File Path=".github/STYLE_GUIDE_XAML_CONTROLS.md" />
+  </Folder>
+  <Folder Name="/Solution Items/.github/workflows/">
+    <File Path=".github/workflows/alpha.yml" />
+    <File Path=".github/workflows/canary.yml" />
+    <File Path=".github/workflows/release.yml" />
   </Folder>
   <Folder Name="/Solution Items/docs/">
     <File Path="docs/cppwinrt-xamltypeinfo-build-guide.md" />

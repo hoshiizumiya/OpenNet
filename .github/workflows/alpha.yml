@@ -1,0 +1,53 @@
+﻿name: Alpha
+
+on:
+  push:
+    tags:
+      - 'alpha-*'
+
+env:
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
+jobs:
+  alpha:
+    runs-on: windows-2025-vs2026
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - uses: microsoft/setup-msbuild@v2
+      - uses: nuget/setup-nuget@v2
+
+      - name: Restore Cert
+        run: |
+          $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
+          [IO.File]::WriteAllBytes("cert.pfx", $bytes)
+        shell: pwsh
+
+      - run: nuget restore OpenNet.slnx
+        shell: pwsh
+
+      - name: Build Bundle
+        run: |
+          msbuild OpenNet.slnx `
+            /p:Configuration=Release `
+            /p:Platform=x64 `
+            /p:AppxBundle=Always `
+            /p:AppxBundlePlatforms="x64|ARM64" `
+            /p:GenerateAppxPackageOnBuild=true `
+            /p:PackageCertificateKeyFile=cert.pfx `
+            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
+            /p:AppxPackageSigningEnabled=true `
+            /p:VcpkgEnableManifest=true `
+            /m
+        shell: pwsh
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          prerelease: true
+          files: "**/*.msixbundle"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

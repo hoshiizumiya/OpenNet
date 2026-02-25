@@ -1,0 +1,89 @@
+﻿name: Canary
+
+on:
+  push:
+    branches-ignore:
+      - l10n_develop
+      - master
+      - release
+      - dependabot/**
+    paths-ignore:
+      - '.gitattributes'
+      - '.github/**'
+      - '.gitignore'
+      - '.gitmodules'
+      - '**.md'
+      - 'LICENSE'
+      - '**.yml'
+
+env:
+  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+
+jobs:
+  canary:
+    runs-on: windows-2025-vs2026
+
+    permissions:
+        contents: write
+        packages: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          submodules: recursive
+
+      - uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+
+      - uses: microsoft/setup-msbuild@v2
+      - uses: nuget/setup-nuget@v2
+  
+      - name: Export GHA Cache Vars
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL);
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN);
+            
+      - run: nuget restore OpenNet.slnx
+        shell: pwsh
+
+      - name: Restore Certificate
+        run: |
+          $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
+          [IO.File]::WriteAllBytes("cert.pfx", $bytes)
+        shell: pwsh
+        
+      - name: Build MSIX Bundle
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        # Add additional options to the MSBuild command line here (like platform or verbosity level).
+        # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+        run: |
+          msbuild OpenNet.slnx `
+            /p:Configuration=Release `
+            /p:Platform="x64" `
+            /p:AppxBundle=Always `
+            /p:AppxBundlePlatforms="x64|ARM64" `
+            /p:GenerateAppxPackageOnBuild=true `
+            /p:UapAppxPackageBuildMode=SideloadOnly `
+            /p:AppxPackageSigningEnabled=true `
+            /p:PackageCertificateKeyFile=cert.pfx `
+            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
+            /p:VcpkgEnableManifest=true `
+            /m
+        shell: pwsh
+
+      - name: Copy SideloadReadme
+        run: copy SideloadReadme.md AppPackages\SideloadReadme.md
+
+      - name: Zip Archive
+        working-directory: ${{env.GITHUB_WORKSPACE}}
+        run: Compress-Archive -Path "AppPackages" -DestinationPath "OpenNet.Canary.zip"
+        shell: pwsh
+
+      - name: Upload Canary
+        uses: actions/upload-artifact@v6
+        with:
+          name: OpenNet.Canary
+          path: OpenNet.Canary.zip

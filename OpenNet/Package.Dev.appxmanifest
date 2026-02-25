@@ -10,8 +10,8 @@
 
   <Identity
     Name="6f29f01c-42c5-4e50-96a2-c0fbd90fc4aa.Debug"
-    Publisher="CN=Kanata"
-    Version="1.0.0.0" />
+    Publisher="CN=Millennium Science Technology R&amp;D Inst"
+    Version="0.0.1.0" />
 
   <mp:PhoneIdentity PhoneProductId="6f29f01c-42c5-4e50-96a2-c0fbd90fc4aa" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
