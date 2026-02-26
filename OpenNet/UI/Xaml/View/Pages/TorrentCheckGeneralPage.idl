@@ -1,8 +1,13 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages
+﻿import "ViewModels/TorrentMetadataViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages
 {
     [default_interface]
     runtimeclass TorrentCheckGeneralPage : Microsoft.UI.Xaml.Controls.Page
     {
         TorrentCheckGeneralPage();
+
+        // ViewModel for data binding
+        OpenNet.ViewModels.TorrentMetadataViewModel ViewModel{ get; };
     }
 }

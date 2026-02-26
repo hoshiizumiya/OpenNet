@@ -74,10 +74,18 @@ namespace OpenNet::Core
         co_return m_torrentCore->AddMagnet(magnetUri, savePath);
     }
 
+    IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath)
+    {
+        co_await EnsureTorrentCoreInitializedAsync();
+        std::scoped_lock lk(m_torrentMutex);
+        if (!m_torrentCore) co_return false;
+        co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath);
+    }
+
     IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()
     {
         co_await winrt::resume_background();
-        
+
         std::scoped_lock lk(m_torrentMutex);
         if (!m_stateManager || !m_torrentCore) co_return;
 
@@ -153,7 +161,7 @@ namespace OpenNet::Core
     void P2PManager::WireCoreCallbacks()
     {
         if (!m_torrentCore) return;
-        m_torrentCore->SetProgressCallback([this](const OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
+        m_torrentCore->SetProgressCallback([this](const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
         {
             std::scoped_lock lk(m_cbMutex);
             if (m_progressCb) m_progressCb(e);

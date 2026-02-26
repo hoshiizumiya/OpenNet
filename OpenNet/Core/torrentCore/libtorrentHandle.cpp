@@ -5,6 +5,7 @@
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_handle.hpp>
+#include <libtorrent/torrent_info.hpp>
 #include <libtorrent/magnet_uri.hpp>
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/settings_pack.hpp>
@@ -178,7 +179,7 @@ namespace OpenNet::Core::Torrent
 
             // Generate task ID and save metadata
             std::string taskId = TorrentStateManager::GenerateTaskId();
-            
+
             if (m_stateManager)
             {
                 TaskMetadata metadata;
@@ -193,7 +194,7 @@ namespace OpenNet::Core::Torrent
             }
 
             lt::torrent_handle handle = m_session->add_torrent(atp);
-            
+
             // Store mapping
             {
                 std::lock_guard lk(m_torrentMapMutex);
@@ -207,6 +208,56 @@ namespace OpenNet::Core::Torrent
         {
             std::lock_guard lk(m_cbMutex);
             if (m_errorCb) m_errorCb(std::string("AddMagnet error: ") + ex.what());
+            return false;
+        }
+    }
+
+    bool LibtorrentHandle::AddTorrentFile(std::string const& torrentFilePath, std::string const& savePath)
+    {
+        if (!Initialize()) return false;
+        try
+        {
+            // Load torrent info from file
+            lt::torrent_info ti(torrentFilePath);
+
+            lt::add_torrent_params atp;
+            atp.ti = std::make_shared<lt::torrent_info>(ti);
+            atp.save_path = savePath;
+            // Remove seed_mode flag for downloads
+            atp.flags &= ~lt::torrent_flags::seed_mode;
+
+            // Generate task ID and save metadata
+            std::string taskId = TorrentStateManager::GenerateTaskId();
+
+            if (m_stateManager)
+            {
+                TaskMetadata metadata;
+                metadata.taskId = taskId;
+                metadata.magnetUri = ""; // Not a magnet, store file path reference if needed
+                metadata.savePath = savePath;
+                metadata.name = ti.name();
+                metadata.totalSize = ti.total_size();
+                metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::system_clock::now().time_since_epoch()).count();
+                metadata.status = 1; // Downloading
+                m_stateManager->SaveTaskMetadata(metadata);
+            }
+
+            lt::torrent_handle handle = m_session->add_torrent(atp);
+
+            // Store mapping
+            {
+                std::lock_guard lk(m_torrentMapMutex);
+                m_taskIdToHandle[taskId] = handle;
+                m_handleToTaskId[handle] = taskId;
+            }
+
+            return true;
+        }
+        catch (std::exception const& ex)
+        {
+            std::lock_guard lk(m_cbMutex);
+            if (m_errorCb) m_errorCb(std::string("AddTorrentFile error: ") + ex.what());
             return false;
         }
     }

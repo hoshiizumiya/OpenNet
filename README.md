@@ -13,11 +13,11 @@ The main open-source library we currently use is `libtorrent`.
 
 1. Development environment requirements
 
-* Windows 11 24H2 or later — we recommend using the latest version of Windows 11.
-* We recommend VS 2026, which better supports large projects.
+* Windows 11 25H2 or later — we recommend using the latest version of Windows 11.
+* Visual Studio 2026.
 * Workloads: C++ Desktop Development, WinUI Desktop Development, and C++ WinUI app tools.
 * Windows 11 SDK (10.0.26100.0 or later)
-* MSVC v143 (VS 2026 use v145)
+* MSVC v145(or open solution and follow vs install prompts)
 * `vcpkg` package manager (the VS-integrated version is acceptable)
 
 2. Build the project

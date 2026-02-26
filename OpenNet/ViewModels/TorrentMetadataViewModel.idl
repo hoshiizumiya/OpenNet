@@ -1,0 +1,64 @@
+﻿import "ViewModels/ObservableObject.idl";
+
+namespace OpenNet.ViewModels
+{
+    // Represents a single file in the torrent for UI binding
+    [default_interface]
+    runtimeclass TorrentFileInfoViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TorrentFileInfoViewModel();
+
+        // File properties
+        String FileName;           // File name (last part of path)
+        String FilePath;           // Full relative path
+        String FileSize;           // Formatted size string (e.g., "1.5 GB")
+        Int64 FileSizeBytes;       // Raw size in bytes
+        Boolean IsSelected;        // Whether file is selected for download
+        Int32 Priority;            // Download priority (0-7)
+        Int32 FileIndex;           // Index in torrent file list
+        
+        // Display helpers
+        String PriorityText{ get; };   // Human-readable priority
+    }
+
+    // Represents the complete torrent metadata for UI binding
+    [default_interface]
+    runtimeclass TorrentMetadataViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TorrentMetadataViewModel();
+
+        // Torrent info
+        String TorrentName;
+        String InfoHash;
+        String TotalSize;              // Formatted total size
+        String SelectedSize;           // Formatted selected files size
+        String Comment;
+        String Creator;
+        String CreationDate;
+        Int32 PieceLength;
+        Int32 NumPieces;
+        Boolean IsPrivate;
+
+        // File list
+        Windows.Foundation.Collections.IObservableVector<TorrentFileInfoViewModel> Files{ get; };
+        Int32 TotalFileCount{ get; };
+        Int32 SelectedFileCount{ get; };
+
+        // Tracker list
+        Windows.Foundation.Collections.IObservableVector<String> Trackers{ get; };
+
+        // Download settings
+        String SavePath;
+        Boolean CreateSubfolder;
+        Boolean StartImmediately;
+
+        // Selection helpers
+        void SelectAll();
+        void DeselectAll();
+        void SelectByExtension(String extension);
+        void ToggleSelection(Int32 fileIndex);
+        
+        // Update selected size after selection changes
+        void RefreshSelectedSize();
+    }
+}

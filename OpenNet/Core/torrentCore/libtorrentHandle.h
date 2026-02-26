@@ -52,6 +52,7 @@ namespace OpenNet::Core::Torrent
         void Start();
         void Stop();
         bool AddMagnet(std::string const& magnetUri, std::string const& savePath);
+        bool AddTorrentFile(std::string const& torrentFilePath, std::string const& savePath);
 
         // Resume torrent from saved state (returns task ID if successful)
         std::string AddTorrentFromResumeData(std::string const& taskId);

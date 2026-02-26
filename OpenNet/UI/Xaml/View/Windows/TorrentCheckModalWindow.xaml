@@ -12,7 +12,8 @@
         <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
-    <Grid Loaded="TorrentCreateGrid_Loaded" RowDefinitions="Auto, Auto, *">
+    <Grid Loaded="TorrentCreateGrid_Loaded" RowDefinitions="Auto, Auto, *, Auto">
+        <!--  Title Bar  -->
         <TitleBar
             x:Name="TorrentCheckModalWindowTitleBar"
             x:Uid="TorrentCheckModalWindowTitleBar"
@@ -23,7 +24,11 @@
             IsPaneToggleButtonVisible="False"
             Subtitle="Preview" />
 
-        <SelectorBar Grid.Row="1" SelectionChanged="TorrentCheckModalWindowSeleterBar_SelectionChanged">
+        <!--  Tab Bar  -->
+        <SelectorBar
+            x:Name="TorrentCheckModalWindowSelectorBar"
+            Grid.Row="1"
+            SelectionChanged="TorrentCheckModalWindowSeleterBar_SelectionChanged">
             <SelectorBar.Items>
                 <SelectorBarItem IsSelected="True" Text="General" />
                 <SelectorBarItem Text="Snapshots" />
@@ -32,11 +37,108 @@
                 <SelectorBarItem Text="Download Order" />
             </SelectorBar.Items>
         </SelectorBar>
-        <Frame
-            x:Name="TorrentCheckFrame"
-            Grid.Row="2"
-            IsNavigationStackEnabled="False" />
 
+        <!--  Loading Panel  -->
+        <Grid
+            x:Name="LoadingPanel"
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="Collapsed">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="16">
+                <ProgressRing
+                    x:Name="LoadingProgressRing"
+                    Width="60"
+                    Height="60"
+                    IsActive="True"
+                    IsIndeterminate="True" />
+                <TextBlock
+                    x:Name="LoadingStatusText"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="Loading..." />
+                <Button
+                    HorizontalAlignment="Center"
+                    Click="CancelButton_Click"
+                    Content="Cancel" />
+            </StackPanel>
+        </Grid>
+
+        <!--  Error Panel  -->
+        <Grid
+            x:Name="ErrorPanel"
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Visibility="Collapsed">
+            <StackPanel
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                Spacing="16">
+                <FontIcon
+                    FontSize="48"
+                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                    Glyph="&#xEA39;" />
+                <TextBlock
+                    x:Name="ErrorMessageText"
+                    MaxWidth="400"
+                    HorizontalAlignment="Center"
+                    Style="{StaticResource BodyTextBlockStyle}"
+                    Text="An error occurred"
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                <StackPanel
+                    HorizontalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="12">
+                    <Button Click="RetryButton_Click" Content="Retry" />
+                    <Button Click="CancelButton_Click" Content="Close" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+
+        <!--  Content Panel (Frame for pages)  -->
+        <Grid x:Name="ContentPanel" Grid.Row="2">
+            <Frame x:Name="TorrentCheckFrame" IsNavigationStackEnabled="False" />
+        </Grid>
+
+        <!--  Bottom Action Bar  -->
+        <Grid
+            Grid.Row="3"
+            Padding="16,8"
+            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+            BorderThickness="0,1,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                Orientation="Horizontal"
+                Spacing="8">
+                <CheckBox Content="Start immediately" IsChecked="True" />
+            </StackPanel>
+
+            <StackPanel
+                Grid.Column="1"
+                Orientation="Horizontal"
+                Spacing="8">
+                <Button
+                    x:Name="StartDownloadButton"
+                    Click="StartDownloadButton_Click"
+                    Content="Start Download"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button
+                    x:Name="CloseButton"
+                    Click="CancelButton_Click"
+                    Content="Cancel" />
+            </StackPanel>
+        </Grid>
     </Grid>
 
 </Window>

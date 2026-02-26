@@ -20,12 +20,18 @@ env:
   VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
 
 jobs:
-  canary:
+
+  build:
     runs-on: windows-2025-vs2026
 
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64, ARM64]
+
     permissions:
-        contents: write
-        packages: write
+      contents: write
+      packages: write
 
     steps:
       - uses: actions/checkout@v5
@@ -34,81 +40,57 @@ jobs:
 
       - uses: microsoft/setup-msbuild@v2
       - uses: nuget/setup-nuget@v2
-  
-      - name: Export GHA Cache Vars
-        uses: actions/github-script@v7
-        with:
-          script: |
-            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL);
-            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN);
 
-      - name: Set up vcpkg
-        working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
-        run: vcpkg integrate install
-
-      - run: nuget restore OpenNet.slnx
+      - name: Restore NuGet
+        run: nuget restore OpenNet.slnx
         shell: pwsh
-
+        
       - name: Restore Certificate
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
           [IO.File]::WriteAllBytes("cert.pfx", $bytes)
         shell: pwsh
         
-      - name: Build MSIX Bundle
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        # Add additional options to the MSBuild command line here (like platform or verbosity level).
-        # See https://docs.microsoft.com/visualstudio/msbuild/msbuild-command-line-reference
+      - name: Build MSIX
         run: |
           msbuild OpenNet.slnx `
-            /p:Configuration=Release `
-            /p:Platform="x64" `
-            /p:AppxBundle=Always `
-            /p:AppxBundlePlatforms="x64|ARM64" `
-            /p:GenerateAppxPackageOnBuild=true `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:Platform=${{ matrix.platform }} `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile=cert.pfx `
+            /p:PackageCertificateKeyFile=../cert.pfx `
             /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
-            /p:VcpkgEnableManifest=true `
             /m
         shell: pwsh
-
-      - name: Copy SideloadReadme
-        run: copy SideloadReadme.md AppPackages\SideloadReadme.md
-
-      - name: Add date suffix to AppPackages
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        
+      - name: Generate Date
         run: |
           $date = Get-Date -Format yyyyMMdd
-          $dest = "AppPackages_$date"
-          if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
-          Rename-Item -Path "AppPackages" -NewName $dest
           Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
-          Write-Host "Renamed AppPackages -> $dest"
+        shell: pwsh
+        
+      - name: Zip Package
+        run: |
+          Compress-Archive `
+            -Path "Packages/*${{ matrix.platform }}*" `
+            -DestinationPath "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip"
         shell: pwsh
 
-      - name: Ensure 7zip present
+      - name: 7z Package
         run: |
           if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
             choco install 7zip -y
           }
-        shell: pwsh
 
-      - name: Zip Archive
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        run: Compress-Archive -Path "AppPackages_${{ env.DATE }}" -DestinationPath "OpenNet.Canary_${{ env.DATE }}.zip"
+          7z a -t7z -mx=9 `
+            "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z" `
+            "Packages\*${{ matrix.platform }}*"
         shell: pwsh
-
-      - name: 7z Archive
-        working-directory: ${{ env.GITHUB_WORKSPACE }}
-        run: 7z a -t7z -mx=9 "OpenNet.Canary_${{ env.DATE }}.7z" "AppPackages_${{ env.DATE }}\*"
-        shell: pwsh
-
-      - name: Upload Canary artifacts
+        
+      - name: Upload Canary Artifact
         uses: actions/upload-artifact@v6
         with:
-          name: OpenNet.Canary_${{ env.DATE }}
+          name: OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}
           path: |
-            OpenNet.Canary_${{ env.DATE }}.zip
-            OpenNet.Canary_${{ env.DATE }}.7z
+            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip
+            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z
