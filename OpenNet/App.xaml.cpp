@@ -78,8 +78,6 @@ namespace winrt::OpenNet::implementation
             out += std::wstring(lang.c_str());
             out += L"\n";
         }
-
-        // 输出到调试输出（Visual Studio 的输出窗口）
         OutputDebugStringW(out.c_str());
 
 #endif
@@ -88,6 +86,7 @@ namespace winrt::OpenNet::implementation
         HandleActivation(activationArgs);
     }
 
+    // To do：自定义激活，Windows集成
     void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
     {
         // 检查窗口是否存在

@@ -41,7 +41,11 @@ jobs:
           script: |
             core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL);
             core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN);
-            
+
+      - name: Set up vcpkg
+        working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
+        run: vcpkg integrate install
+
       - run: nuget restore OpenNet.slnx
         shell: pwsh
 
@@ -73,13 +77,38 @@ jobs:
       - name: Copy SideloadReadme
         run: copy SideloadReadme.md AppPackages\SideloadReadme.md
 
-      - name: Zip Archive
-        working-directory: ${{env.GITHUB_WORKSPACE}}
-        run: Compress-Archive -Path "AppPackages" -DestinationPath "OpenNet.Canary.zip"
+      - name: Add date suffix to AppPackages
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        run: |
+          $date = Get-Date -Format yyyyMMdd
+          $dest = "AppPackages_$date"
+          if (Test-Path $dest) { Remove-Item -Recurse -Force $dest }
+          Rename-Item -Path "AppPackages" -NewName $dest
+          Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
+          Write-Host "Renamed AppPackages -> $dest"
         shell: pwsh
 
-      - name: Upload Canary
+      - name: Ensure 7zip present
+        run: |
+          if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
+            choco install 7zip -y
+          }
+        shell: pwsh
+
+      - name: Zip Archive
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        run: Compress-Archive -Path "AppPackages_${{ env.DATE }}" -DestinationPath "OpenNet.Canary_${{ env.DATE }}.zip"
+        shell: pwsh
+
+      - name: 7z Archive
+        working-directory: ${{ env.GITHUB_WORKSPACE }}
+        run: 7z a -t7z -mx=9 "OpenNet.Canary_${{ env.DATE }}.7z" "AppPackages_${{ env.DATE }}\*"
+        shell: pwsh
+
+      - name: Upload Canary artifacts
         uses: actions/upload-artifact@v6
         with:
-          name: OpenNet.Canary
-          path: OpenNet.Canary.zip
+          name: OpenNet.Canary_${{ env.DATE }}
+          path: |
+            OpenNet.Canary_${{ env.DATE }}.zip
+            OpenNet.Canary_${{ env.DATE }}.7z
