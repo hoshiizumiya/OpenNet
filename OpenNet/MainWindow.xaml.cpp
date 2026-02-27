@@ -10,6 +10,7 @@
 #include "Pages/FilesPage.xaml.h"
 #include "Pages/NetworkSettingsPage.xaml.h"
 #include "Pages/ServersPage.xaml.h"
+#include "Pages/RSSPage.xaml.h"
 #include "Pages/SettingsPages/MainSettingsPage.xaml.h"
 
 #include "Helpers/WindowHelper.h"
@@ -46,6 +47,7 @@ namespace winrt::OpenNet::implementation
 
 		AppWindow().SetIcon(L"Assets/AppIcons/win3264.ico");
 		openHomePage();
+
 		Closed([this](auto&&, auto&&)
 		{
 			PlacementRestoration::Save(*this);
@@ -177,6 +179,15 @@ namespace winrt::OpenNet::implementation
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::ServersPage>());
 		UpdateNavigationSelection(L"servers");
 	}
+	void MainWindow::openRSSPage()
+	{
+		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::RSSPage>())
+		{
+			UpdateNavigationSelection(L"rss"); return;
+		}
+		NavFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::RSSPage>());
+		UpdateNavigationSelection(L"rss");
+	}
 	void MainWindow::openSettingsPage()
 	{
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::Pages::SettingsPages::MainSettingsPage>())
@@ -231,6 +242,10 @@ namespace winrt::OpenNet::implementation
 				{
 					if (content && content.try_as<winrt::OpenNet::Pages::ServersPage>()) return; self->openServersPage(); return;
 				}
+				if (tag == L"rss")
+				{
+					if (content && content.try_as<winrt::OpenNet::Pages::RSSPage>()) return; self->openRSSPage(); return;
+				}
 				if (tag == L"settings")
 				{
 					if (content && content.try_as<winrt::OpenNet::Pages::SettingsPages::MainSettingsPage>()) return; self->openSettingsPage(); return;
@@ -264,6 +279,7 @@ namespace winrt::OpenNet::implementation
 		else if (name == xaml_typename<winrt::OpenNet::Pages::FilesPage>().Name) tag = L"files";
 		else if (name == xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>().Name) tag = L"net";
 		else if (name == xaml_typename<winrt::OpenNet::Pages::ServersPage>().Name) tag = L"servers";
+		else if (name == xaml_typename<winrt::OpenNet::Pages::RSSPage>().Name) tag = L"rss";
 		else if (name == xaml_typename<winrt::OpenNet::Pages::SettingsPages::MainSettingsPage>().Name) tag = L"Settings";
 		if (!tag.empty()) UpdateNavigationSelection(tag);
 	}

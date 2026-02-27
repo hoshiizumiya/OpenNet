@@ -430,6 +430,10 @@ namespace OpenNet::Core::Torrent
     {
         OutputDebugStringA("LibtorrentHandle: AlertLoop started\n");
         
+        int emptyAlertCount = 0;
+        const int maxEmptyCount = 3;  // After 3 empty cycles, increase sleep time
+        std::chrono::milliseconds sleepTime(50);
+        
         while (!m_stopRequested.load())
         {
             if (!m_session)
@@ -441,29 +445,50 @@ namespace OpenNet::Core::Torrent
             try
             {
                 std::vector<lt::alert*> alerts;
-                // Use a timeout to avoid indefinite blocking
-                m_session->wait_for_alert(std::chrono::milliseconds(500));
+                // Wait with appropriate timeout based on activity
+                m_session->wait_for_alert(sleepTime);
                 m_session->pop_alerts(&alerts);
                 
                 if (!alerts.empty())
                 {
                     DispatchAlerts(alerts);
+                    // Reset counters and sleep time when we have activity
+                    emptyAlertCount = 0;
+                    sleepTime = std::chrono::milliseconds(50);
+                }
+                else
+                {
+                    // Gradually increase sleep time if no activity
+                    ++emptyAlertCount;
+                    if (emptyAlertCount >= maxEmptyCount)
+                    {
+                        sleepTime = std::chrono::milliseconds(200);
+                    }
                 }
                 
+                // Only request updates if we have torrents and are still running
                 if (m_session && !m_stopRequested.load())
                 {
-                    m_session->post_torrent_updates();
+                    std::lock_guard lk(m_torrentMapMutex);
+                    if (!m_taskIdToHandle.empty())
+                    {
+                        m_session->post_torrent_updates();
+                    }
                 }
             }
             catch (const std::exception& ex)
             {
                 OutputDebugStringW((L"LibtorrentHandle: AlertLoop error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
                 std::this_thread::sleep_for(100ms);
+                sleepTime = std::chrono::milliseconds(50);
+                emptyAlertCount = 0;
             }
             catch (...)
             {
                 OutputDebugStringA("LibtorrentHandle: AlertLoop unknown error\n");
                 std::this_thread::sleep_for(100ms);
+                sleepTime = std::chrono::milliseconds(50);
+                emptyAlertCount = 0;
             }
         }
         
@@ -476,25 +501,32 @@ namespace OpenNet::Core::Torrent
         {
             if (auto st = lt::alert_cast<lt::state_update_alert>(a))
             {
-                std::lock_guard lk(m_cbMutex);
-                if (!m_progressCb) continue;
-                for (auto const& s : st->status)
+                ProgressCallback progressCbCopy;
                 {
-                    ProgressEvent evt;
-                    evt.progressPercent = static_cast<int>(s.progress_ppm / 10000); // 1e6 -> %
-                    evt.downloadRateKB = static_cast<int>(s.download_rate / 1000);
-                    evt.uploadRateKB = static_cast<int>(s.upload_rate / 1000);
-                    evt.name = s.name;
-                    m_progressCb(evt);
-
-                    // Update progress in database
-                    if (m_stateManager)
+                    std::lock_guard lk(m_cbMutex);
+                    progressCbCopy = m_progressCb;
+                }
+                
+                if (progressCbCopy)
+                {
+                    for (auto const& s : st->status)
                     {
-                        std::lock_guard mapLk(m_torrentMapMutex);
-                        auto it = m_handleToTaskId.find(s.handle);
-                        if (it != m_handleToTaskId.end())
+                        ProgressEvent evt;
+                        evt.progressPercent = static_cast<int>(s.progress_ppm / 10000); // 1e6 -> %
+                        evt.downloadRateKB = static_cast<int>(s.download_rate / 1000);
+                        evt.uploadRateKB = static_cast<int>(s.upload_rate / 1000);
+                        evt.name = s.name;
+                        progressCbCopy(evt);
+
+                        // Update progress in database
+                        if (m_stateManager)
                         {
-                            m_stateManager->UpdateTaskProgress(it->second, s.total_done);
+                            std::lock_guard mapLk(m_torrentMapMutex);
+                            auto it = m_handleToTaskId.find(s.handle);
+                            if (it != m_handleToTaskId.end())
+                            {
+                                m_stateManager->UpdateTaskProgress(it->second, s.total_done);
+                            }
                         }
                     }
                 }
@@ -504,13 +536,18 @@ namespace OpenNet::Core::Torrent
                 // Request resume data when torrent finishes
                 RequestResumeDataForTorrent(tf->handle);
                 
-                std::lock_guard lk(m_cbMutex);
-                if (m_finishedCb)
+                FinishedCallback finishedCbCopy;
+                {
+                    std::lock_guard lk(m_cbMutex);
+                    finishedCbCopy = m_finishedCb;
+                }
+                
+                if (finishedCbCopy)
                 {
                     try
                     {
                         auto status = tf->handle.status();
-                        m_finishedCb(status.name);
+                        finishedCbCopy(status.name);
 
                         // Update status in database
                         if (m_stateManager)
@@ -536,8 +573,16 @@ namespace OpenNet::Core::Torrent
             }
             else if (auto se = lt::alert_cast<lt::session_error_alert>(a))
             {
-                std::lock_guard lk(m_cbMutex);
-                if (m_errorCb) m_errorCb(se->message());
+                ErrorCallback errorCbCopy;
+                {
+                    std::lock_guard lk(m_cbMutex);
+                    errorCbCopy = m_errorCb;
+                }
+                
+                if (errorCbCopy)
+                {
+                    errorCbCopy(se->message());
+                }
             }
             else if (auto te = lt::alert_cast<lt::torrent_error_alert>(a))
             {
@@ -552,13 +597,29 @@ namespace OpenNet::Core::Torrent
                     }
                 }
                 
-                std::lock_guard lk(m_cbMutex);
-                if (m_errorCb) m_errorCb(te->message());
+                ErrorCallback errorCbCopy;
+                {
+                    std::lock_guard lk(m_cbMutex);
+                    errorCbCopy = m_errorCb;
+                }
+                
+                if (errorCbCopy)
+                {
+                    errorCbCopy(te->message());
+                }
             }
             else if (auto fe = lt::alert_cast<lt::file_error_alert>(a))
             {
-                std::lock_guard lk(m_cbMutex);
-                if (m_errorCb) m_errorCb(fe->message());
+                ErrorCallback errorCbCopy;
+                {
+                    std::lock_guard lk(m_cbMutex);
+                    errorCbCopy = m_errorCb;
+                }
+                
+                if (errorCbCopy)
+                {
+                    errorCbCopy(fe->message());
+                }
             }
             else if (auto ma = lt::alert_cast<lt::metadata_received_alert>(a))
             {

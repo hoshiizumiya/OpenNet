@@ -6,6 +6,10 @@
 
 #include "Folder.h"
 #include "SettingsPage.xaml.h"
+#include "AboutPage.xaml.h"
+#include "ThemesSettingsPage.xaml.h"
+#include "Pages/NetworkSettingsPage.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -86,7 +90,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		if (auto selectedItem = args.SelectedItem().try_as<NavigationViewItem>())
 		{
 			auto tag = unbox_value_or<hstring>(selectedItem.Tag(), L"");
-			
+
 			// Create slide transition
 			auto transitionInfo = SlideNavigationTransitionInfo{};
 			transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
@@ -111,33 +115,61 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 				}
 			}
 
-			// Navigate to appropriate page
-			if (tag == L"general")
-			{
-				SettingsFrame().Navigate(
-					xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
-					nullptr,
-					transitionInfo
-				);
-			}
-			else if (tag == L"about")
-			{
-				SettingsFrame().Navigate(
-					xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
-					nullptr,
-					transitionInfo
-				);
-			}
-			// For now, other categories navigate to general settings as placeholder
-			// TODO: Create separate pages for Network, SerialPort, DownloadFlash
-			else
-			{
-				SettingsFrame().Navigate(
-					xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
-					nullptr,
-					transitionInfo
-				);
-			}
+			// Navigate based on tag
+			NavigateByTag(tag, transitionInfo);
+		}
+	}
+
+	void MainSettingsPage::NavigateByTag(hstring const& tag, SlideNavigationTransitionInfo const& transitionInfo)
+	{
+		if (tag == L"general")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
+				nullptr,
+				transitionInfo
+			);
+		}
+		else if (tag == L"about")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
+				nullptr,
+				transitionInfo
+			);
+		}
+		else if (tag == L"network" || tag == L"tracker")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>(),
+				nullptr,
+				transitionInfo
+			);
+		}
+		else if (tag == L"bittorrent" || tag == L"advanced")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::BittorrentSettingsPage>(),
+				nullptr,
+				transitionInfo
+			);
+		}
+		else if (tag == L"appearance")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::SettingsPages::ThemesSettingsPage>(),
+				nullptr,
+				transitionInfo
+			);
+		}
+		else
+		{
+			// Default: navigate to general settings as placeholder
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
+				nullptr,
+				transitionInfo
+			);
 		}
 	}
 }

@@ -2,7 +2,30 @@
 
 namespace OpenNet.ViewModels
 {
-    // Represents a single file in the torrent for UI binding
+    // Represents a node in the torrent file tree (can be a file or folder)
+    [default_interface]
+    runtimeclass TorrentFileNodeViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TorrentFileNodeViewModel();
+
+        // Node properties
+        String Name;               // File or folder name
+        String FullPath;           // Full relative path
+        String SizeText;           // Formatted size string (e.g., "1.5 GB")
+        Int64 SizeBytes;           // Raw size in bytes
+        Boolean IsSelected;        // Whether this node is selected
+        Boolean IsFolder;          // True if folder, false if file
+        Boolean IsExpanded;        // For folders, whether expanded in UI
+        Int32 FileIndex;           // File index (-1 for folders)
+        Int32 Priority;            // Download priority (0-7, for files)
+        String PriorityText{ get; };
+
+        // Children (for folders)
+        Windows.Foundation.Collections.IObservableVector<TorrentFileNodeViewModel> Children{ get; };
+        Boolean HasChildren{ get; };
+    }
+
+    // Represents a single file in the torrent for UI binding (kept for backward compatibility)
     [default_interface]
     runtimeclass TorrentFileInfoViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
@@ -16,7 +39,7 @@ namespace OpenNet.ViewModels
         Boolean IsSelected;        // Whether file is selected for download
         Int32 Priority;            // Download priority (0-7)
         Int32 FileIndex;           // Index in torrent file list
-        
+
         // Display helpers
         String PriorityText{ get; };   // Human-readable priority
     }
@@ -31,7 +54,9 @@ namespace OpenNet.ViewModels
         String TorrentName;
         String InfoHash;
         String TotalSize;              // Formatted total size
+        Int64 TotalSizeBytes;          // Raw total size in bytes
         String SelectedSize;           // Formatted selected files size
+        Int64 SelectedSizeBytes{ get; };  // Raw selected size in bytes
         String Comment;
         String Creator;
         String CreationDate;
@@ -39,8 +64,12 @@ namespace OpenNet.ViewModels
         Int32 NumPieces;
         Boolean IsPrivate;
 
-        // File list
+        // File list (flat list for backward compatibility)
         Windows.Foundation.Collections.IObservableVector<TorrentFileInfoViewModel> Files{ get; };
+
+        // Hierarchical file tree (for TreeView display)
+        Windows.Foundation.Collections.IObservableVector<TorrentFileNodeViewModel> FileTree{ get; };
+
         Int32 TotalFileCount{ get; };
         Int32 SelectedFileCount{ get; };
 
@@ -57,7 +86,7 @@ namespace OpenNet.ViewModels
         void DeselectAll();
         void SelectByExtension(String extension);
         void ToggleSelection(Int32 fileIndex);
-        
+
         // Update selected size after selection changes
         void RefreshSelectedSize();
     }

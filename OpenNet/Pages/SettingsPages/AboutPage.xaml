@@ -48,15 +48,14 @@
                 <StackPanel>
                     <Border
                         x:Name="CdhBorder"
-                        Width="400"
-                        Height="300"
+                        Width="180"
+                        Height="180"
                         Margin="0,6"
                         HorizontalAlignment="Left"
-                        Background="{ThemeResource LayerOnAcrylicFillColorDefaultBrush}"
                         CornerRadius="4">
                         <Image
                             HorizontalAlignment="Center"
-                            Source="ms-appx:///Assets/AppIcons/Square150x150Logo.scale-400.png"
+                            Source="ms-appx:///Assets/AppIcons/StoreLogo.scale-400.png"
                             Stretch="UniformToFill" />
                     </Border>
 

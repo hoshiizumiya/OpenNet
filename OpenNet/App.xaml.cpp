@@ -47,46 +47,54 @@ namespace winrt::OpenNet::implementation
     /// <param name="e">Details about the launch request and process.</param>
     void App::OnLaunched([[maybe_unused]] Microsoft::UI::Xaml::LaunchActivatedEventArgs const& e)
     {
-        auto icon = make<OpenNet::UI::Shell::implementation::NotifyIconContextMenu>();
-        // 创建窗口（首次启动）
+        // Create main window
         window = make<MainWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
-        
+        ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+
         // Apply saved theme to the window
         ::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
-        
-        // 注册窗口关闭事件以清理资源
-        window.Closed([](const auto& sender, const auto& args)
+
+        // Create and show system tray icon
+        trayIcon = winrt::make<OpenNet::UI::Shell::implementation::NotifyIconContextMenu>();
+        trayIcon.Show();
+
+        // Register window closing event - hide to tray instead of closing
+        window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
         {
-            // 在窗口完全关闭前进行清理
-            OutputDebugStringA("App: MainWindow closed event triggered\n");
+            // Cancel the close and hide to tray instead
+            args.Cancel(true);
+
+            // Hide the window
+            if (App::window)
+            {
+                App::window.AppWindow().Hide();
+            }
+
+            OutputDebugStringA("App: MainWindow hidden to tray\n");
         });
-        
+
         window.Activate();
 
 #if _DEBUG
         // Language Hot-Reload support
         auto supportedLanguages = Windows::Globalization::ApplicationLanguages::Languages();
-        
-        // 构建输出字符串
-        std::wstring out;
-        out.reserve(256);
-        out += L"Supported languages:\n";
+
+        std::wstring debugOut;
+        debugOut.reserve(256);
+        debugOut += L"Supported languages:\n";
         for (auto const& lang : supportedLanguages)
         {
-            // lang 是 winrt::hstring，可以通过 c_str() 获取 wchar_t*
-            out += std::wstring(lang.c_str());
-            out += L"\n";
+            debugOut += std::wstring(lang.c_str());
+            debugOut += L"\n";
         }
-        OutputDebugStringW(out.c_str());
-
+        OutputDebugStringW(debugOut.c_str());
 #endif
-        // 处理初始激活参数（例如命令行参数、文件打开等）
+        // Handle initial activation arguments
         auto activationArgs = AppInstance::GetCurrent().GetActivatedEventArgs();
         HandleActivation(activationArgs);
     }
 
-    // To do：自定义激活，Windows集成
+    // To do: Custom activation, Windows integration
     void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
     {
         // 检查窗口是否存在
@@ -166,10 +174,19 @@ namespace winrt::OpenNet::implementation
 
     App::~App()
     {
-        // 在应用销毁时清理P2PManager资源
+        // 在应用销毁时清理资源
         try
         {
-            OutputDebugStringA("App: Destructor called, cleaning up P2PManager...\n");
+            OutputDebugStringA("App: Destructor called, cleaning up...\n");
+
+            // Remove tray icon
+            if (trayIcon)
+            {
+                trayIcon.Remove();
+                trayIcon = nullptr;
+            }
+
+            // Shutdown P2PManager
             ::OpenNet::Core::P2PManager::Instance().Shutdown();
             OutputDebugStringA("App: Destructor completed\n");
         }

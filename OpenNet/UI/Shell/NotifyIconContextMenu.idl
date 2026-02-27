@@ -4,6 +4,15 @@
     runtimeclass NotifyIconContextMenu : WinUI3Package.WindowEx
     {
         NotifyIconContextMenu();
+        static Guid IconGuid{ get; };
 
+        // Show the tray icon
+        void Show();
+        // Remove the tray icon
+        void Remove();
+        // Show the main window
+        void ShowMainWindow();
+        // Exit the application
+        void ExitApplication();
     }
 }

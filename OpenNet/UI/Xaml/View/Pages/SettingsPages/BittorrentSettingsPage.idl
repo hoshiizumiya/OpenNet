@@ -1,0 +1,15 @@
+﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+{
+    [default_interface]
+    runtimeclass BittorrentSettingsPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        BittorrentSettingsPage();
+
+        // Advanced Options
+        Windows.Foundation.Collections.IObservableVector<Object> AdvancedOptions{ get; };
+        String SearchFilter;
+
+        void ApplySettings();
+        void ResetToDefaults();
+    }
+}

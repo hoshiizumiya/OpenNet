@@ -12,6 +12,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// ViewModel property
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel ViewModel() const { return m_viewModel; }
 
+		// Static helper for XAML binding to get folder/file icon
+		static winrt::hstring GetNodeIcon(bool isFolder)
+		{
+			return isFolder ? L"\uE8B7" : L"\uE8A5"; // Folder or Document icon
+		}
+
 		// Navigation
 		void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 
@@ -36,6 +42,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	private:
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel m_viewModel{ nullptr };
+
+		// Cached disk info for progress bar
+		uint64_t m_totalDiskBytes{ 0 };
+		uint64_t m_freeDiskBytes{ 0 };
 
 		// Helper to apply filters
 		void ApplyFilters();

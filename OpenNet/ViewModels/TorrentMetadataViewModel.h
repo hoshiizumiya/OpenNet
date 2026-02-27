@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "ViewModels/TorrentFileNodeViewModel.g.h"
 #include "ViewModels/TorrentFileInfoViewModel.g.h"
 #include "ViewModels/TorrentMetadataViewModel.g.h"
 #include "ViewModels/ObservableMixin.h"
@@ -10,7 +11,76 @@
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
-	// ViewModel for a single file in the torrent
+	// ViewModel for a node in the torrent file tree (folder or file)
+	struct TorrentFileNodeViewModel : TorrentFileNodeViewModelT<TorrentFileNodeViewModel>,
+		::OpenNet::ViewModels::ObservableMixin<TorrentFileNodeViewModel>
+	{
+		TorrentFileNodeViewModel();
+		TorrentFileNodeViewModel(winrt::hstring const& name, winrt::hstring const& fullPath, bool isFolder);
+
+		using ::OpenNet::ViewModels::ObservableMixin<TorrentFileNodeViewModel>::SetProperty;
+		using ::OpenNet::ViewModels::ObservableMixin<TorrentFileNodeViewModel>::RaisePropertyChanged;
+
+		// Properties
+		winrt::hstring Name() const { return m_name; }
+		void Name(winrt::hstring const& v) { SetProperty(m_name, v, L"Name"); }
+
+		winrt::hstring FullPath() const { return m_fullPath; }
+		void FullPath(winrt::hstring const& v) { SetProperty(m_fullPath, v, L"FullPath"); }
+
+		winrt::hstring SizeText() const { return m_sizeText; }
+		void SizeText(winrt::hstring const& v) { SetProperty(m_sizeText, v, L"SizeText"); }
+
+		int64_t SizeBytes() const { return m_sizeBytes; }
+		void SizeBytes(int64_t v) { SetProperty(m_sizeBytes, v, L"SizeBytes"); RaisePropertyChanged(L"SizeText"); }
+
+		bool IsSelected() const { return m_isSelected; }
+		void IsSelected(bool v);
+
+		bool IsFolder() const { return m_isFolder; }
+		void IsFolder(bool v) { SetProperty(m_isFolder, v, L"IsFolder"); }
+
+		bool IsExpanded() const { return m_isExpanded; }
+		void IsExpanded(bool v) { SetProperty(m_isExpanded, v, L"IsExpanded"); }
+
+		int32_t FileIndex() const { return m_fileIndex; }
+		void FileIndex(int32_t v) { SetProperty(m_fileIndex, v, L"FileIndex"); }
+
+		int32_t Priority() const { return m_priority; }
+		void Priority(int32_t v) { SetProperty(m_priority, v, L"Priority"); RaisePropertyChanged(L"PriorityText"); }
+
+		winrt::hstring PriorityText() const;
+
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> Children() { return m_children; }
+		bool HasChildren() const { return m_children.Size() > 0; }
+
+		// Helper to add child
+		void AddChild(winrt::OpenNet::ViewModels::TorrentFileNodeViewModel const& child);
+
+		// Helper to update selection recursively
+		void UpdateSelectionRecursive(bool selected);
+
+		// Helper to format file size
+		static winrt::hstring FormatFileSize(int64_t bytes);
+
+		// Allow access to m_isSelected for tree operations
+		bool m_isSelected{ true };
+
+	private:
+		winrt::hstring m_name;
+		winrt::hstring m_fullPath;
+		winrt::hstring m_sizeText;
+		int64_t m_sizeBytes{};
+		bool m_isFolder{ false };
+		bool m_isExpanded{ true };
+		int32_t m_fileIndex{ -1 };
+		int32_t m_priority{ 4 };
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> m_children{
+			winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel>()
+		};
+	};
+
+	// ViewModel for a single file in the torrent (kept for backward compatibility)
 	struct TorrentFileInfoViewModel : TorrentFileInfoViewModelT<TorrentFileInfoViewModel>,
 		::OpenNet::ViewModels::ObservableMixin<TorrentFileInfoViewModel>
 	{
@@ -77,8 +147,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring TotalSize() const { return m_totalSize; }
 		void TotalSize(winrt::hstring const& v) { SetProperty(m_totalSize, v, L"TotalSize"); }
 
+		int64_t TotalSizeBytes() const { return m_totalSizeBytes; }
+		void TotalSizeBytes(int64_t v) { SetProperty(m_totalSizeBytes, v, L"TotalSizeBytes"); }
+
 		winrt::hstring SelectedSize() const { return m_selectedSize; }
 		void SelectedSize(winrt::hstring const& v) { SetProperty(m_selectedSize, v, L"SelectedSize"); }
+
+		int64_t SelectedSizeBytes() const { return m_selectedSizeBytes; }
 
 		winrt::hstring Comment() const { return m_comment; }
 		void Comment(winrt::hstring const& v) { SetProperty(m_comment, v, L"Comment"); }
@@ -99,6 +174,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void IsPrivate(bool v) { SetProperty(m_isPrivate, v, L"IsPrivate"); }
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileInfoViewModel> Files() { return m_files; }
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> FileTree() { return m_fileTree; }
 		int32_t TotalFileCount() const { return m_files.Size(); }
 		int32_t SelectedFileCount() const;
 
@@ -126,11 +202,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 	private:
 		static winrt::hstring FormatSize(int64_t bytes);
 		static winrt::hstring FormatTimestamp(int64_t timestamp);
+		void BuildFileTree();
 
 		winrt::hstring m_torrentName;
 		winrt::hstring m_infoHash;
 		winrt::hstring m_totalSize;
+		int64_t m_totalSizeBytes{};
 		winrt::hstring m_selectedSize;
+		int64_t m_selectedSizeBytes{};
 		winrt::hstring m_comment;
 		winrt::hstring m_creator;
 		winrt::hstring m_creationDate;
@@ -139,6 +218,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		bool m_isPrivate{};
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileInfoViewModel> m_files;
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> m_fileTree{
+			winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel>()
+		};
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_trackers;
 
 		winrt::hstring m_savePath;
@@ -151,6 +233,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 namespace winrt::OpenNet::ViewModels::factory_implementation
 {
+	struct TorrentFileNodeViewModel : TorrentFileNodeViewModelT<TorrentFileNodeViewModel, implementation::TorrentFileNodeViewModel>
+	{
+	};
+
 	struct TorrentFileInfoViewModel : TorrentFileInfoViewModelT<TorrentFileInfoViewModel, implementation::TorrentFileInfoViewModel>
 	{
 	};

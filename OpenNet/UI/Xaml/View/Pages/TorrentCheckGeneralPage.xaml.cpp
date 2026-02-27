@@ -173,15 +173,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
-		auto tag = winrt::unbox_value_or<winrt::hstring>(checkBox.Tag(), L"");
-		if (!tag.empty())
-		{
-			m_viewModel.SelectByExtension(tag);
-			if (auto selectedSizeText = SelectedSizeText())
-			{
-				selectedSizeText.Text(m_viewModel.SelectedSize());
-			}
-		}
+		// Use ApplyFilters to correctly combine all checked filter categories
+		ApplyFilters();
 	}
 
 	void TorrentCheckGeneralPage::FilterCheckBox_Unchecked(
@@ -193,32 +186,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	void TorrentCheckGeneralPage::TorrentFileTreeView_SelectionChanged(
-		winrt::Microsoft::UI::Xaml::Controls::TreeView const& sender,
-		winrt::Microsoft::UI::Xaml::Controls::TreeViewSelectionChangedEventArgs const& args)
+		winrt::Microsoft::UI::Xaml::Controls::TreeView const&,
+		winrt::Microsoft::UI::Xaml::Controls::TreeViewSelectionChangedEventArgs const&)
 	{
-		// Sync TreeView selection with ViewModel IsSelected property
-		if (!m_viewModel) return;
-
-		// Handle added items
-		for (auto const& item : args.AddedItems())
-		{
-			if (auto fileInfo = item.try_as<winrt::OpenNet::ViewModels::TorrentFileInfoViewModel>())
-			{
-				fileInfo.IsSelected(true);
-			}
-		}
-
-		// Handle removed items
-		for (auto const& item : args.RemovedItems())
-		{
-			if (auto fileInfo = item.try_as<winrt::OpenNet::ViewModels::TorrentFileInfoViewModel>())
-			{
-				fileInfo.IsSelected(false);
-			}
-		}
-
-		m_viewModel.RefreshSelectedSize();
-		UpdateSelectedSizeDisplay();
+		// Selection is now handled by individual checkboxes, not TreeView selection
+		// This handler can be left empty or removed from the header
 	}
 
 	void TorrentCheckGeneralPage::FileCheckBox_Click(
@@ -233,6 +205,41 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	// Helper function to check if a filename ends with any extension in a comma-separated list
+	static bool MatchesExtensionList(const std::wstring& fileName, std::wstring_view extList)
+	{
+		if (fileName.empty()) return false;
+
+		// Parse comma-separated extensions
+		std::wstring list{ extList };
+		std::wstring::size_type start = 0;
+		std::wstring::size_type end = 0;
+
+		while ((end = list.find(L',', start)) != std::wstring::npos || start < list.length())
+		{
+			if (end == std::wstring::npos)
+				end = list.length();
+
+			std::wstring ext = list.substr(start, end - start);
+
+			// Trim whitespace
+			while (!ext.empty() && ext[0] == L' ') ext.erase(0, 1);
+			while (!ext.empty() && ext.back() == L' ') ext.pop_back();
+
+			// Check if filename ends with this extension
+			if (!ext.empty() && fileName.length() >= ext.length())
+			{
+				if (fileName.substr(fileName.length() - ext.length()) == ext)
+					return true;
+			}
+
+			start = end + 1;
+			if (start >= list.length())
+				break;
+		}
+		return false;
+	}
+
 	void TorrentCheckGeneralPage::ApplyFilters()
 	{
 		if (!m_viewModel) return;
@@ -243,81 +250,85 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool selectPicture = PictureFilterCheckBox() && PictureFilterCheckBox().IsChecked().Value();
 		bool selectOther = OtherFilterCheckBox() && OtherFilterCheckBox().IsChecked().Value();
 
-		// If no filters are selected, deselect all
-		bool anyFilterSelected = selectVideo || selectAudio || selectPicture || selectOther;
+		// Build extension list based on selected filters
+		std::wstring extensionList;
 
-		auto files = m_viewModel.Files();
-		for (uint32_t i = 0; i < files.Size(); ++i)
+		if (selectVideo)
 		{
-			auto file = files.GetAt(i);
-			std::wstring fileName{ file.FileName() };
-
-			// Get file extension (lowercase)
-			std::wstring ext;
-			auto dotPos = fileName.rfind(L'.');
-			if (dotPos != std::wstring::npos)
-			{
-				ext = fileName.substr(dotPos);
-				std::transform(ext.begin(), ext.end(), ext.begin(), ::towlower);
-			}
-
-			bool shouldSelect = false;
-
-			if (anyFilterSelected)
-			{
-				// Check if matches video extensions
-				if (selectVideo)
-				{
-					std::wstring videoExts(VideoExtensions);
-					if (videoExts.find(ext) != std::wstring::npos)
-					{
-						shouldSelect = true;
-					}
-				}
-
-				// Check if matches audio extensions
-				if (!shouldSelect && selectAudio)
-				{
-					std::wstring audioExts(AudioExtensions);
-					if (audioExts.find(ext) != std::wstring::npos)
-					{
-						shouldSelect = true;
-					}
-				}
-
-				// Check if matches picture extensions
-				if (!shouldSelect && selectPicture)
-				{
-					std::wstring pictureExts(PictureExtensions);
-					if (pictureExts.find(ext) != std::wstring::npos)
-					{
-						shouldSelect = true;
-					}
-				}
-
-				// Check if "Other" (not matching any known category)
-				if (!shouldSelect && selectOther)
-				{
-					std::wstring videoExts(VideoExtensions);
-					std::wstring audioExts(AudioExtensions);
-					std::wstring pictureExts(PictureExtensions);
-
-					bool isKnownType = 
-						videoExts.find(ext) != std::wstring::npos ||
-						audioExts.find(ext) != std::wstring::npos ||
-						pictureExts.find(ext) != std::wstring::npos;
-
-					if (!isKnownType && !ext.empty())
-					{
-						shouldSelect = true;
-					}
-				}
-			}
-
-			file.IsSelected(shouldSelect);
+			if (!extensionList.empty()) extensionList += L",";
+			extensionList += VideoExtensions;
+		}
+		if (selectAudio)
+		{
+			if (!extensionList.empty()) extensionList += L",";
+			extensionList += AudioExtensions;
+		}
+		if (selectPicture)
+		{
+			if (!extensionList.empty()) extensionList += L",";
+			extensionList += PictureExtensions;
 		}
 
-		m_viewModel.RefreshSelectedSize();
+		// If no filters selected, deselect all
+		if (!selectVideo && !selectAudio && !selectPicture && !selectOther)
+		{
+			m_viewModel.DeselectAll();
+		}
+		// If "Other" is the only one selected, we need special handling
+		else if (selectOther && !selectVideo && !selectAudio && !selectPicture)
+		{
+			// Select files that don't match known categories
+			auto files = m_viewModel.Files();
+			for (uint32_t i = 0; i < files.Size(); ++i)
+			{
+				auto file = files.GetAt(i);
+				std::wstring fileName{ file.FileName() };
+				std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::towlower);
+
+				bool isKnownType = 
+					MatchesExtensionList(fileName, VideoExtensions) ||
+					MatchesExtensionList(fileName, AudioExtensions) ||
+					MatchesExtensionList(fileName, PictureExtensions);
+
+				file.IsSelected(!isKnownType);
+			}
+			m_viewModel.RefreshSelectedSize();
+		}
+		else if (!extensionList.empty())
+		{
+			// If selectOther is also checked, we need to include files not matching known types
+			if (selectOther)
+			{
+				// Complex case: selected categories + other
+				auto files = m_viewModel.Files();
+				for (uint32_t i = 0; i < files.Size(); ++i)
+				{
+					auto file = files.GetAt(i);
+					std::wstring fileName{ file.FileName() };
+					std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::towlower);
+
+					bool matchesSelected = false;
+					if (selectVideo) matchesSelected = matchesSelected || MatchesExtensionList(fileName, VideoExtensions);
+					if (selectAudio) matchesSelected = matchesSelected || MatchesExtensionList(fileName, AudioExtensions);
+					if (selectPicture) matchesSelected = matchesSelected || MatchesExtensionList(fileName, PictureExtensions);
+
+					bool isKnownType = 
+						MatchesExtensionList(fileName, VideoExtensions) ||
+						MatchesExtensionList(fileName, AudioExtensions) ||
+						MatchesExtensionList(fileName, PictureExtensions);
+
+					// Select if matches selected category OR is "other" (unknown type)
+					file.IsSelected(matchesSelected || !isKnownType);
+				}
+				m_viewModel.RefreshSelectedSize();
+			}
+			else
+			{
+				// Simple case: just selected categories
+				m_viewModel.SelectByExtension(winrt::hstring(extensionList));
+			}
+		}
+
 		UpdateSelectedSizeDisplay();
 	}
 
@@ -328,6 +339,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (m_viewModel)
 			{
 				selectedSizeText.Text(m_viewModel.SelectedSize());
+				// Also update disk space display when selection changes
+				if (auto savePathBox = TorrentCheckGeneralPageSavePath())
+				{
+					UpdateDiskSpaceDisplay(savePathBox.Text());
+				}
 			}
 		}
 	}
@@ -353,14 +369,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		try
 		{
-			// Get drive root from path (e.g., "C:" from "C:\Users\...")
+			// Get drive root from path (e.g., "C:\" from "C:\Users\...")
 			std::wstring path{ savePath };
 			if (path.empty()) return;
 
-			// Ensure path ends with backslash for GetDiskFreeSpaceExW
-			if (path.back() != L'\\' && path.back() != L'/')
+			// Extract drive root (e.g., "C:\")
+			std::wstring drivePath;
+			if (path.length() >= 2 && path[1] == L':')
 			{
-				path += L'\\';
+				// Standard drive letter path (e.g., "C:\Users\...")
+				drivePath = path.substr(0, 2) + L"\\";
+			}
+			else if (path.length() >= 2 && path[0] == L'\\' && path[1] == L'\\')
+			{
+				// UNC path (e.g., "\\server\share") - use the path as is
+				drivePath = path;
+				if (drivePath.back() != L'\\')
+				{
+					drivePath += L'\\';
+				}
+			}
+			else
+			{
+				// Relative path or other format - try to use the path directly
+				drivePath = path;
+				if (!drivePath.empty() && drivePath.back() != L'\\')
+				{
+					drivePath += L'\\';
+				}
 			}
 
 			ULARGE_INTEGER freeBytesAvailable{};
@@ -368,16 +404,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ULARGE_INTEGER totalFreeBytes{};
 
 			if (GetDiskFreeSpaceExW(
-				path.c_str(),
+				drivePath.c_str(),
 				&freeBytesAvailable,
 				&totalBytes,
 				&totalFreeBytes))
 			{
-				// Format the sizes
-				std::wstring requiredStr = L"Required: " + FormatBytes(m_viewModel.SelectedSize().size());
-				std::wstring freeStr = L"Free: " + FormatBytes(totalFreeBytes.QuadPart);
+				m_totalDiskBytes = totalBytes.QuadPart;
+				m_freeDiskBytes = totalFreeBytes.QuadPart;
 
-				// Update UI
+				// Get required bytes from ViewModel
+				int64_t requiredBytes = m_viewModel ? m_viewModel.SelectedSizeBytes() : 0;
+
+				// Format the sizes
+				std::wstring requiredStr = FormatBytes(static_cast<ULONGLONG>(requiredBytes));
+				std::wstring freeStr = FormatBytes(totalFreeBytes.QuadPart);
+				std::wstring totalStr = FormatBytes(totalBytes.QuadPart);
+
+				// Update text displays
 				if (auto diskSpaceText = DiskSpaceText())
 				{
 					diskSpaceText.Text(winrt::hstring(requiredStr));
@@ -385,6 +428,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				if (auto freeSpaceText = FreeSpaceText())
 				{
 					freeSpaceText.Text(winrt::hstring(freeStr));
+				}
+				if (auto totalSpaceText = TotalSpaceText())
+				{
+					totalSpaceText.Text(winrt::hstring(totalStr));
+				}
+
+				// Update progress bar - show used space as percentage of total
+				if (auto progressBar = DiskSpaceProgressBar())
+				{
+					// Calculate usage percentage (used / total)
+					uint64_t usedBytes = totalBytes.QuadPart - totalFreeBytes.QuadPart;
+					double usagePercent = (static_cast<double>(usedBytes) / static_cast<double>(totalBytes.QuadPart)) * 100.0;
+					progressBar.Value(usagePercent);
+
+					// Check if there's enough space for the required download
+					bool hasEnoughSpace = static_cast<uint64_t>(requiredBytes) <= totalFreeBytes.QuadPart;
+					progressBar.ShowError(!hasEnoughSpace);
+					progressBar.ShowPaused(false);  // Don't show paused state, just error if not enough space
 				}
 			}
 		}

@@ -99,14 +99,10 @@ namespace OpenNet::Core::Torrent
         ErrorCallback m_errorCb;
 
         std::atomic<bool> m_stopRequested{ false };
-
-        // State manager for persistence (not owned)
-        TorrentStateManager* m_stateManager{ nullptr };
-
-        // Mapping from task ID to torrent handle
+        std::unordered_map<std::string, lt::torrent_handle> m_taskIdToHandle;
+        std::unordered_map<lt::torrent_handle, std::string, std::hash<lt::torrent_handle>> m_handleToTaskId;
         mutable std::mutex m_torrentMapMutex;
-        std::unordered_map<std::string, libtorrent::torrent_handle> m_taskIdToHandle;
-        std::unordered_map<libtorrent::torrent_handle, std::string> m_handleToTaskId;
+        TorrentStateManager* m_stateManager{ nullptr };
     };
 
 }

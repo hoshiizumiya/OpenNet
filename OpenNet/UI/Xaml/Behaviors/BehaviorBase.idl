@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.Behaviors
+{
+    [default_interface]
+    runtimeclass BehaviorBase : Microsoft.UI.Xaml.Controls.Control
+    {
+        BehaviorBase();
+    }
+}

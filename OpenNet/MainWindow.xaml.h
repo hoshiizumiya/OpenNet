@@ -21,6 +21,7 @@ namespace winrt::OpenNet::implementation
         void openFilesPage();
         void openNetworkSettingsPage();
         void openServersPage();
+        void openRSSPage();
         void openSettingsPage();
 
         // Navigation

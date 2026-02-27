@@ -49,7 +49,7 @@
                     </BreadcrumbBar.ItemTemplate>
                 </BreadcrumbBar>
             </NavigationView.Header>
-            
+
             <NavigationView.MenuItems>
                 <NavigationViewItem
                     x:Name="GeneralNavItem"
@@ -73,6 +73,33 @@
                 </NavigationViewItem>
 
                 <NavigationViewItem
+                    x:Name="BitTorrentNavItem"
+                    Content="BitTorrent"
+                    IsExpanded="True"
+                    Tag="bittorrent">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE896;" />
+                    </NavigationViewItem.Icon>
+                    <NavigationViewItem.MenuItems>
+                        <NavigationViewItem Content="Tracker" Tag="tracker">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE774;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="IP Filter" Tag="ipfilter">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE8D7;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                        <NavigationViewItem Content="Client Filter" Tag="clientfilter">
+                            <NavigationViewItem.Icon>
+                                <FontIcon Glyph="&#xE71C;" />
+                            </NavigationViewItem.Icon>
+                        </NavigationViewItem>
+                    </NavigationViewItem.MenuItems>
+                </NavigationViewItem>
+
+                <NavigationViewItem
                     x:Name="SerialPortNavItem"
                     Content="Serial Port"
                     Tag="serialport">
@@ -83,10 +110,37 @@
 
                 <NavigationViewItem
                     x:Name="DownloadFlashNavItem"
-                    Content="Download Flash"
+                    Content="Download/Flash"
                     Tag="downloadflash">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xEC59;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    x:Name="RSSNavItem"
+                    Content="RSS"
+                    Tag="rss">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE71A;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    x:Name="AppearanceNavItem"
+                    Content="Appearance"
+                    Tag="appearance">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE771;" />
+                    </NavigationViewItem.Icon>
+                </NavigationViewItem>
+
+                <NavigationViewItem
+                    x:Name="AdvancedNavItem"
+                    Content="Advanced"
+                    Tag="advanced">
+                    <NavigationViewItem.Icon>
+                        <FontIcon Glyph="&#xE90F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 

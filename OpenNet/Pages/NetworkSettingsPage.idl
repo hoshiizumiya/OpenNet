@@ -7,5 +7,9 @@ namespace OpenNet.Pages
     {
         NetworkSettingsPage();
         OpenNet.ViewModels.NetworkSettingsViewModel ViewModel { get; };
+
+        // Tracker properties
+        Windows.Foundation.Collections.IObservableVector<String> TrackerList{ get; };
+        Windows.Foundation.Collections.IObservableVector<String> SubscriptionList{ get; };
     }
 }

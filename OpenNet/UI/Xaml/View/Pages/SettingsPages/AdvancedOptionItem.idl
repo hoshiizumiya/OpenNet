@@ -1,0 +1,15 @@
+﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+{
+    [default_interface]
+    runtimeclass AdvancedOptionItem
+    {
+        AdvancedOptionItem();
+        AdvancedOptionItem(String optionName, String optionValue, Boolean isBoldOption);
+
+        String Name;
+        String Value;
+        String OriginalValue;
+        Windows.UI.Text.FontWeight FontWeight{ get; };
+        Boolean IsBold;
+    }
+}

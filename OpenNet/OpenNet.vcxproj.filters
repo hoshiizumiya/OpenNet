@@ -67,12 +67,12 @@
     <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml">
       <Filter>UI\Xaml\Control\Card</Filter>
     </Page>
-    <Page Include="UI\Shell\NotifyIconContextMenu.xaml">
-      <Filter>UI\Shell</Filter>
-    </Page>
     <Page Include="MainWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
+    <Page Include="UI\Shell\NotifyIconContextMenu.xaml" />
+    <Page Include="Pages\RSSPage.xaml" />
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -130,6 +130,10 @@
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <Filter>UI\Xaml\Control\Card</Filter>
     </Midl>
+    <Midl Include="ViewModels\TorrentMetadataViewModel.idl" />
+    <Midl Include="ViewModels\RSSViewModel.idl" />
+    <Midl Include="Pages\RSSPage.idl" />
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -231,6 +235,20 @@
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp" />
+    <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
+    <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp" />
+    <ClCompile Include="Core\RSS\RSSParser.cpp" />
+    <ClCompile Include="Core\RSS\RSSManager.cpp" />
+    <ClCompile Include="ViewModels\RSSViewModel.cpp" />
+    <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
+    <ClCompile Include="ViewModels\TrackersSettingsViewModel.cpp" />
+    <ClCompile Include="Core\RSS\RSSLinkResolver.cpp">
+      <Filter>Core\Rss</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp" />
+    <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp" />
+    <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp" />
+    <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -393,6 +411,20 @@
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
+    <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h" />
+    <ClInclude Include="ViewModels\TorrentMetadataViewModel.h" />
+    <ClInclude Include="Core\RSS\RSSTypes.h" />
+    <ClInclude Include="Core\RSS\RSSParser.h" />
+    <ClInclude Include="Core\RSS\RSSManager.h" />
+    <ClInclude Include="ViewModels\RSSViewModel.h" />
+    <ClInclude Include="Core\Torrent\TrackerManager.h" />
+    <ClInclude Include="ViewModels\TrackersSettingsViewModel.h" />
+    <ClInclude Include="Core\RSS\RSSLinkResolver.h">
+      <Filter>Core\Rss</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
+    <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -676,6 +708,9 @@
     <Filter Include="UI\Xaml\Media\Backdrop">
       <UniqueIdentifier>{b22455aa-a07c-4864-8f77-a6a620df33a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Rss">
+      <UniqueIdentifier>{10e84fea-0a8d-40c3-88ac-918f59810154}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -692,6 +727,7 @@
       <Filter>Assets\ModelIcons</Filter>
     </None>
     <None Include="OpenNet_TemporaryKey.pfx" />
+    <None Include="UI\Xaml\Behaviors\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

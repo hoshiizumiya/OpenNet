@@ -1,0 +1,62 @@
+﻿namespace OpenNet.ViewModels
+{
+    [bindable]
+    [default_interface]
+    runtimeclass RSSItemViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        RSSItemViewModel();
+
+        String Title{ get; };
+        String Description{ get; };
+        String Link{ get; };
+        String TorrentLink{ get; };
+        String PubDate{ get; };
+        String Category{ get; };
+        String FileSize{ get; };
+        Boolean IsDownloaded{ get; };
+        String FeedId{ get; };
+        String ItemGuid{ get; };
+    }
+
+    [bindable]
+    [default_interface]
+    runtimeclass RSSFeedViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        RSSFeedViewModel();
+
+        String Id{ get; };
+        String Title{ get; set; };
+        String Url{ get; set; };
+        String Description{ get; };
+        String SavePath{ get; set; };
+        Int32 UpdateIntervalMinutes{ get; set; };
+        Boolean AutoDownload{ get; set; };
+        String FilterPattern{ get; set; };
+        Boolean Enabled{ get; set; };
+        String LastUpdated{ get; };
+        Int32 ItemCount{ get; };
+        Windows.Foundation.Collections.IObservableVector<RSSItemViewModel> Items{ get; };
+    }
+
+    [bindable]
+    [default_interface]
+    runtimeclass RSSViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        RSSViewModel();
+
+        Windows.Foundation.Collections.IObservableVector<RSSFeedViewModel> Feeds{ get; };
+        RSSFeedViewModel SelectedFeed{ get; set; };
+        RSSItemViewModel SelectedItem{ get; set; };
+        Boolean HasSelectedFeed{ get; };
+        Boolean IsLoading{ get; };
+        String StatusMessage{ get; };
+
+        void AddFeed(String url, String name, String savePath);
+        void RemoveFeed(String feedId);
+        void RefreshFeed(String feedId);
+        void RefreshAllFeeds();
+        void DownloadItem(RSSItemViewModel item);
+        void UpdateFeedSettings(RSSFeedViewModel feed);
+        void SetStatusMessage(String message);
+    }
+}

@@ -9,5 +9,8 @@ namespace OpenNet.UI.Xaml.View.Pages
 
         // ViewModel for data binding
         OpenNet.ViewModels.TorrentMetadataViewModel ViewModel{ get; };
+
+        // Static helper for XAML binding to get folder/file icon
+        static String GetNodeIcon(Boolean isFolder);
     }
 }

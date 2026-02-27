@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "Pages/SettingsPages/MainSettingsPage.g.h"
+#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 
 namespace winrt::OpenNet::Pages::SettingsPages::implementation
 {
@@ -8,6 +9,10 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	{
 	private:
 		static MainSettingsPage* s_current;
+
+		// Navigate to page by tag
+		void NavigateByTag(winrt::hstring const& tag, 
+			winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionInfo const& transitionInfo);
 
 	public:
 		MainSettingsPage();

@@ -144,6 +144,9 @@
   <data name="NavItem_Settings.Content" xml:space="preserve">
     <value>Settings</value>
   </data>
+  <data name="NavItem_RSS.Content" xml:space="preserve">
+    <value>RSS</value>
+  </data>
   <data name="UserLabelRun.Text" xml:space="preserve">
     <value>User:</value>
   </data>
@@ -368,5 +371,126 @@
   </data>
   <data name="ViewDialogTorrentMetaDataDownloadDialog.Title" xml:space="preserve">
     <value>Add Magnet</value>
+  </data>
+  <!-- RSS Page -->
+  <data name="RSSPageTitle.Text" xml:space="preserve">
+    <value>RSS Subscriptions</value>
+  </data>
+  <data name="RSSPageSubtitle.Text" xml:space="preserve">
+    <value>Subscribe to torrent RSS feeds for automatic downloads</value>
+  </data>
+  <data name="RSSFeedsHeader.Text" xml:space="preserve">
+    <value>Feeds</value>
+  </data>
+  <data name="RSSItemsLabel.Text" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="RSSSelectFeedPlaceholder.Text" xml:space="preserve">
+    <value>Select a feed</value>
+  </data>
+  <data name="RSSAddFeedDialog.Title" xml:space="preserve">
+    <value>Add RSS Feed</value>
+  </data>
+  <data name="RSSAddFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="RSSAddFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.Header" xml:space="preserve">
+    <value>Feed URL</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/rss.xml</value>
+  </data>
+  <data name="RSSFeedNameTextBox.Header" xml:space="preserve">
+    <value>Name (optional)</value>
+  </data>
+  <data name="RSSFeedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>My RSS Feed</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.Header" xml:space="preserve">
+    <value>Save Path (optional)</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>Leave empty to use default</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.Title" xml:space="preserve">
+    <value>Feed Settings</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RSSSettingsTitleTextBox.Header" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RSSSettingsUrlTextBox.Header" xml:space="preserve">
+    <value>Feed URL</value>
+  </data>
+  <data name="RSSSettingsSavePathTextBox.Header" xml:space="preserve">
+    <value>Save Path</value>
+  </data>
+  <data name="RSSSettingsIntervalNumberBox.Header" xml:space="preserve">
+    <value>Update Interval (minutes)</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.Header" xml:space="preserve">
+    <value>Auto Download</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OnContent" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OffContent" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.Header" xml:space="preserve">
+    <value>Filter Pattern (regex)</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
+    <value>e.g., 1080p|720p</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
+    <value>Remove Feed</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RSSAddFeedTooltip" xml:space="preserve">
+    <value>Add new feed</value>
+  </data>
+  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+    <value>Refresh all feeds</value>
+  </data>
+  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+    <value>Refresh this feed</value>
+  </data>
+  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+    <value>Feed settings</value>
+  </data>
+  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+    <value>Remove feed</value>
+  </data>
+  <data name="RSSDownloadTooltip" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
+    <value>Required:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceFree.Text" xml:space="preserve">
+    <value>Free:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceTotal.Text" xml:space="preserve">
+    <value>Total:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_SelectedSizeLabel.Text" xml:space="preserve">
+    <value>Selected:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
+    <value>Priority</value>
   </data>
 </root>

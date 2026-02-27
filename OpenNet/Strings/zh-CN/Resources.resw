@@ -144,6 +144,9 @@
   <data name="NavItem_Settings.Content" xml:space="preserve">
     <value>设置</value>
   </data>
+  <data name="NavItem_RSS.Content" xml:space="preserve">
+    <value>RSS 订阅</value>
+  </data>
   <data name="UserLabelRun.Text" xml:space="preserve">
     <value>用户:</value>
   </data>
@@ -428,5 +431,126 @@
   </data>
   <data name="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip" xml:space="preserve">
     <value>从剪贴板复制</value>
+  </data>
+  <!-- RSS Page -->
+  <data name="RSSPageTitle.Text" xml:space="preserve">
+    <value>RSS 订阅</value>
+  </data>
+  <data name="RSSPageSubtitle.Text" xml:space="preserve">
+    <value>订阅 RSS 源以自动下载种子</value>
+  </data>
+  <data name="RSSFeedsHeader.Text" xml:space="preserve">
+    <value>订阅源</value>
+  </data>
+  <data name="RSSItemsLabel.Text" xml:space="preserve">
+    <value>项</value>
+  </data>
+  <data name="RSSSelectFeedPlaceholder.Text" xml:space="preserve">
+    <value>选择一个订阅源</value>
+  </data>
+  <data name="RSSAddFeedDialog.Title" xml:space="preserve">
+    <value>添加 RSS 订阅</value>
+  </data>
+  <data name="RSSAddFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="RSSAddFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.Header" xml:space="preserve">
+    <value>订阅源 URL</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/rss.xml</value>
+  </data>
+  <data name="RSSFeedNameTextBox.Header" xml:space="preserve">
+    <value>名称（可选）</value>
+  </data>
+  <data name="RSSFeedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>我的 RSS 订阅</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.Header" xml:space="preserve">
+    <value>保存路径（可选）</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>留空使用默认路径</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.Title" xml:space="preserve">
+    <value>订阅源设置</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RSSSettingsTitleTextBox.Header" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="RSSSettingsUrlTextBox.Header" xml:space="preserve">
+    <value>订阅源 URL</value>
+  </data>
+  <data name="RSSSettingsSavePathTextBox.Header" xml:space="preserve">
+    <value>保存路径</value>
+  </data>
+  <data name="RSSSettingsIntervalNumberBox.Header" xml:space="preserve">
+    <value>更新间隔（分钟）</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.Header" xml:space="preserve">
+    <value>自动下载</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OnContent" xml:space="preserve">
+    <value>已启用</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OffContent" xml:space="preserve">
+    <value>已禁用</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.Header" xml:space="preserve">
+    <value>过滤规则（正则表达式）</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
+    <value>例如：1080p|720p</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
+    <value>删除订阅源</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RSSAddFeedTooltip" xml:space="preserve">
+    <value>添加新订阅源</value>
+  </data>
+  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+    <value>刷新所有订阅源</value>
+  </data>
+  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+    <value>刷新此订阅源</value>
+  </data>
+  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+    <value>订阅源设置</value>
+  </data>
+  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+    <value>删除订阅源</value>
+  </data>
+  <data name="RSSDownloadTooltip" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
+    <value>需要:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceFree.Text" xml:space="preserve">
+    <value>可用:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceTotal.Text" xml:space="preserve">
+    <value>总计:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_SelectedSizeLabel.Text" xml:space="preserve">
+    <value>已选:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
+    <value>优先级</value>
   </data>
 </root>

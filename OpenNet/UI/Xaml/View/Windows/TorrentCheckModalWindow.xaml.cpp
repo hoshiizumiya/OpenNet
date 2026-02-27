@@ -321,9 +321,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		// Safely cancel any ongoing operations
 		if (m_metadataFetcher)
 		{
 			m_metadataFetcher->Cancel();
+			// Don't access m_metadataFetcher after Cancel() to avoid use-after-free
 		}
 		this->Close();
 	}
@@ -355,10 +357,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void TorrentCheckModalWindow::ModalWindow_Closed(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::WindowEventArgs const&)
 	{
-		// Cancel any ongoing operations
+		// Cancel any ongoing operations and clear the fetcher
 		if (m_metadataFetcher)
 		{
 			m_metadataFetcher->Cancel();
+			// Clear the unique_ptr to ensure proper cleanup
+			m_metadataFetcher.reset();
 		}
 
 		auto const& ownerWindow = winrt::OpenNet::implementation::App::window;

@@ -3,7 +3,7 @@
 #include "App.xaml.g.h"
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
-#include "UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.h"
+#include <winrt/OpenNet.UI.Shell.h>
 
 namespace winrt::OpenNet::implementation
 {
@@ -17,6 +17,7 @@ namespace winrt::OpenNet::implementation
 		static void HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);
 
 		static inline winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+		static inline winrt::OpenNet::UI::Shell::NotifyIconContextMenu trayIcon{ nullptr };
 
 	private:
 		void OnClosing(winrt::Microsoft::UI::Xaml::Window const& sender,

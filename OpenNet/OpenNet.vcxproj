@@ -152,14 +152,32 @@
     <ClInclude Include="Core\AppEnvironment.h" />
     <ClInclude Include="Core\IO\FileOperation.h" />
     <ClInclude Include="Core\IO\FileSystem.h" />
+    <ClInclude Include="Core\RSS\RSSLinkResolver.h" />
+    <ClInclude Include="Core\RSS\RSSManager.h" />
+    <ClInclude Include="Core\RSS\RSSParser.h" />
+    <ClInclude Include="Core\RSS\RSSTypes.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h" />
+    <ClInclude Include="Core\Torrent\TrackerManager.h" />
     <ClInclude Include="Core\Utils\Misc.h" />
     <ClInclude Include="Core\Utils\Message.h" />
     <ClInclude Include="UI\Shell\NotifyIconContextMenu.xaml.h">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\Behaviors\BehaviorBase.h">
+      <DependentUpon>UI\Xaml\Behaviors\BehaviorBase.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.h">
+      <DependentUpon>UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.h">
+      <DependentUpon>UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h" />
     <ClInclude Include="UI\Xaml\Control\Card\TitleCard.h">
       <DependentUpon>UI\Xaml\Control\Card\TitleCard.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -187,6 +205,11 @@
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h" />
     <ClInclude Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml.h">
       <DependentUpon>UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.h">
@@ -288,6 +311,10 @@
       <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Pages\RSSPage.xaml.h">
+      <DependentUpon>Pages\RSSPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -298,6 +325,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="ThirdParty\Sqlite\sqlite3.h" />
     <ClInclude Include="ViewModels\TorrentMetadataViewModel.h" />
+    <ClInclude Include="ViewModels\TrackersSettingsViewModel.h" />
     <ClInclude Include="ViewModels\ViewModelLocator.h" />
     <ClInclude Include="ViewModels\MainViewModel.h">
       <DependentUpon>ViewModels\MainViewModel.idl</DependentUpon>
@@ -328,6 +356,10 @@
       <DependentUpon>ViewModels\TasksViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\RSSViewModel.h">
+      <DependentUpon>ViewModels\RSSViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\TaskViewModel.h">
       <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -350,6 +382,9 @@
     </Page>
     <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
@@ -388,6 +423,9 @@
     <Page Include="Pages\TasksPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Pages\RSSPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles\CustomThemeBrushes.xaml" />
     <Page Include="Styles\NavigationView.xaml" />
     <Page Include="Styles\SettingsStyles.xaml" />
@@ -405,11 +443,24 @@
     <ClCompile Include="Core\AppEnvironment.cpp" />
     <ClCompile Include="Core\IO\FileOperation.cpp" />
     <ClCompile Include="Core\IO\FileSystem.cpp" />
+    <ClCompile Include="Core\RSS\RSSLinkResolver.cpp" />
+    <ClCompile Include="Core\RSS\RSSManager.cpp" />
+    <ClCompile Include="Core\RSS\RSSParser.cpp" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
+    <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
     <ClCompile Include="Core\Utils\Misc.cpp" />
     <ClCompile Include="Core\Utils\Message.cpp" />
     <ClCompile Include="UI\Shell\NotifyIconContextMenu.xaml.cpp">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\Card\TitleCard.cpp">
@@ -438,6 +489,11 @@
     <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp" />
     <ClCompile Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp" />
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.cpp">
@@ -511,7 +567,12 @@
       <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Pages\RSSPage.xaml.cpp">
+      <DependentUpon>Pages\RSSPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp" />
+    <ClCompile Include="ViewModels\TrackersSettingsViewModel.cpp" />
     <ClCompile Include="ViewModels\ViewModelLocator.cpp" />
     <ClCompile Include="ViewModels\NetworkViewModel.cpp">
       <DependentUpon>ViewModels\NetworkViewModel.idl</DependentUpon>
@@ -561,6 +622,10 @@
       <DependentUpon>ViewModels\TasksViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\RSSViewModel.cpp">
+      <DependentUpon>ViewModels\RSSViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\TaskViewModel.cpp">
       <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -583,6 +648,18 @@
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\Behaviors\BehaviorBase.idl">
+      <DependentUpon>UI\Xaml\Behaviors\BehaviorBase.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.idl">
+      <DependentUpon>UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.idl">
+      <DependentUpon>UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -593,6 +670,11 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.idl">
       <DependentUpon>UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskSummaryPage.idl">
@@ -660,6 +742,10 @@
       <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="Pages\RSSPage.idl">
+      <DependentUpon>Pages\RSSPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -676,6 +762,9 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\TasksViewModel.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\RSSViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\TaskViewModel.idl">
@@ -768,6 +857,7 @@
     <None Include="OpenNet_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Resource.aps" />
+    <None Include="UI\Xaml\Behaviors\README.md" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
   </ItemGroup>
@@ -832,7 +922,8 @@
     <Import Project="..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" />
     <Import Project="..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" />
     <Import Project="..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.4.4\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.4.4\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets" Condition="Exists('..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -872,6 +963,7 @@
     <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.4.4\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.4.4\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets'))" />
   </Target>
 </Project>
