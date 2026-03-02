@@ -47,6 +47,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		winrt::hstring m_initialLanguageOverride{};
 		winrt::hstring m_pendingLanguageOverride{};
 		bool m_hasPendingLangChange{ false };
+		bool m_isStartPageLoading{ false };
 	};
 }
 

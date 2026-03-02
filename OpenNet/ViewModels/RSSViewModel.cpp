@@ -223,7 +223,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         auto weak_this = get_weak();
         auto& manager = RSSManager::Instance();
 
-        // Initialize on background thread
+        // Ensure initialization is complete (idempotent if already done by App)
         co_await manager.InitializeAsync();
 
         // Resume on UI thread to update UI
@@ -235,6 +235,7 @@ namespace winrt::OpenNet::ViewModels::implementation
                     if (auto strong = weak_this.get())
                     {
                         strong->LoadFeeds();
+                        // Start is idempotent - safe to call even if already started by App
                         RSSManager::Instance().Start();
                     }
                 });

@@ -13,28 +13,4 @@ namespace winrt::OpenNet::Pages::implementation
 	{
 		InitializeComponent();
 	}
-
-	void HomePage::OnNavigatedTo(Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
-	{
-		// Expecting parameter to be OpenNet.ViewModels.MainViewModel
-		if (auto param = e.Parameter())
-		{
-			if (auto vm = param.try_as<winrt::OpenNet::ViewModels::MainViewModel>())
-			{
-				m_viewModel = vm;
-				try
-				{
-					if (Bindings)
-					{
-						Bindings->Update();
-					}
-				}
-				catch (...)
-				{
-				}
-			}
-		}
-
-		HomePageT<HomePage>::OnNavigatedTo(e);
-	}
 }

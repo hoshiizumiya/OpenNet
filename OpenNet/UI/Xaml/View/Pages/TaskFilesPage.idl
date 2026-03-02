@@ -1,0 +1,8 @@
+namespace OpenNet.UI.Xaml.View.Pages
+{
+    [default_interface]
+    runtimeclass TaskFilesPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        TaskFilesPage();
+    }
+}

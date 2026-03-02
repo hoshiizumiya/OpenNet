@@ -10,6 +10,7 @@
 #include "ThemesSettingsPage.xaml.h"
 #include "Pages/NetworkSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -56,8 +57,9 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		// Trim items after clicked index
 		auto itemsObj = MainSettingsPageBar().ItemsSource();
 		auto vec = itemsObj.try_as<IVector<IInspectable>>();
-		if (!vec) return;
-		
+		if (!vec)
+			return;
+
 		int32_t count = static_cast<int32_t>(vec.Size());
 		for (int32_t i = count - 1; i >= args.Index() + 1; --i)
 		{
@@ -70,14 +72,13 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			// Navigate back to General Settings (root)
 			auto transitionInfo = SlideNavigationTransitionInfo{};
 			transitionInfo.Effect(SlideNavigationTransitionEffect::FromLeft);
-			
+
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
 			SettingsNavView().SelectedItem(GeneralNavItem());
-			
+
 			if (auto page = SettingsPage::Current())
 			{
 				page->AboutFrame().Visibility(Microsoft::UI::Xaml::Visibility::Collapsed);
@@ -92,8 +93,9 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			auto tag = unbox_value_or<hstring>(selectedItem.Tag(), L"");
 
 			// Create slide transition
+			// TODO: Imporve effect based on tag place
 			auto transitionInfo = SlideNavigationTransitionInfo{};
-			transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
+			transitionInfo.Effect(SlideNavigationTransitionEffect::FromBottom);
 
 			// Update breadcrumb
 			auto itemsObj = MainSettingsPageBar().ItemsSource();
@@ -127,40 +129,42 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
 		}
 		else if (tag == L"about")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
 		}
 		else if (tag == L"network" || tag == L"tracker")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::Pages::NetworkSettingsPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
 		}
 		else if (tag == L"bittorrent" || tag == L"advanced")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::BittorrentSettingsPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
 		}
 		else if (tag == L"appearance")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::Pages::SettingsPages::ThemesSettingsPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
+		}
+		else if (tag == L"downloadflash")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::DownloadSettingsPage>(),
+				nullptr,
+				transitionInfo);
 		}
 		else
 		{
@@ -168,8 +172,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>(),
 				nullptr,
-				transitionInfo
-			);
+				transitionInfo);
 		}
 	}
 }

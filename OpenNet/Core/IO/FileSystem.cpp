@@ -21,18 +21,17 @@ namespace winrt::OpenNet::Core::IO
 		{
 			// 使用 Windows App SDK GetDefault() - 支持打包和不打包应用
 			// 注意：GetDefault() 需要包标识或AppContainer环境
-			auto appData = ApplicationData::GetDefault();
-			auto localFolder = appData.LocalFolder();
-			auto path = localFolder.Path();
+			auto localPath = ApplicationData::GetDefault().LocalPath();
 
 			// Convert to std::string
-			std::string appDataPath = winrt::to_string(path);
+			std::string appDataPath = winrt::to_string(localPath);
 
-			// Ensure OpenNet subfolder exists
-			std::string openNetPath = appDataPath + "\\OpenNet";
-			CreateDirectory(openNetPath);
+			// Ensure OpenNet subfolder exists 这个不应该用这个子文件夹的吧？？先注释了
+			//std::string openNetPath = appDataPath + "\\OpenNet";
+			//CreateDirectory(openNetPath);
 
-			return openNetPath;
+			//return openNetPath;
+			return appDataPath;
 		}
 		catch (...)
 		{

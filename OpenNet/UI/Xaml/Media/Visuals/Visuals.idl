@@ -1,0 +1,44 @@
+import "UI/Xaml/Media/Pipelines/PipelineBrush.idl";
+import "UI/Xaml/Media/Effects/Effects.idl";
+
+namespace OpenNet.UI.Xaml.Media.Visuals
+{
+    /// <summary>
+    /// A type responsible for creating Visual instances to attach to target elements.
+    /// </summary>
+    [default_interface]
+    unsealed runtimeclass AttachedVisualFactoryBase : Microsoft.UI.Xaml.DependencyObject
+    {
+    }
+
+    /// <summary>
+    /// A builder type for SpriteVisual instances using PipelineBuilder pipelines.
+    /// Uses a Source and Effects collection to build a composition visual.
+    /// </summary>
+    [default_interface]
+    runtimeclass PipelineVisualFactory : AttachedVisualFactoryBase
+    {
+        PipelineVisualFactory();
+
+        /// <summary>
+        /// Gets or sets the collection of pipeline effects to use.
+        /// These are applied in order to build the final visual effect.
+        /// </summary>
+        Windows.Foundation.Collections.IVector<OpenNet.UI.Xaml.Media.Effects.PipelineEffect> Effects;
+    }
+
+    /// <summary>
+    /// Attached properties to support attaching custom pipelines to UI elements.
+    /// </summary>
+    [default_interface]
+    runtimeclass UIElementExtensions
+    {
+        /// <summary>
+        /// Gets or sets the visual factory for a UIElement.
+        /// When set, a SpriteVisual will be created using the factory and attached to the element.
+        /// </summary>
+        static AttachedVisualFactoryBase GetVisualFactory(Microsoft.UI.Xaml.UIElement element);
+        static void SetVisualFactory(Microsoft.UI.Xaml.UIElement element, AttachedVisualFactoryBase value);
+        static Microsoft.UI.Xaml.DependencyProperty VisualFactoryProperty{ get; };
+    }
+}

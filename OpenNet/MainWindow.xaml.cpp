@@ -21,6 +21,10 @@
 #include <windows.h>
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/WinUI3Package.h>
+#include <winrt/Windows.Storage.h>
+
+#include "Core/P2PManager.h"
+#include "Core/DownloadManager.h"
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -46,11 +50,38 @@ namespace winrt::OpenNet::implementation
 		NavView().ItemInvoked({ this, &MainWindow::NavView_ItemInvoked });
 
 		AppWindow().SetIcon(L"Assets/AppIcons/win3264.ico");
-		openHomePage();
+
+		// Navigate to saved start page (default: home)
+		{
+			winrt::hstring startTag = L"home";
+			try
+			{
+				auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+				auto values = localSettings.Values();
+				if (values.HasKey(L"StartPage"))
+				{
+					startTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
+				}
+			}
+			catch (...) {}
+
+			if (startTag == L"tasks") openTasksPage();
+			else if (startTag == L"rss") openRSSPage();
+			else if (startTag == L"settings") openSettingsPage();
+			else openHomePage();
+		}
 
 		Closed([this](auto&&, auto&&)
 		{
 			PlacementRestoration::Save(*this);
+
+			// Gracefully shut down download engines so that resume data,
+			// session state, and child processes are properly cleaned up.
+			try { ::OpenNet::Core::P2PManager::Instance().Shutdown(); }
+			catch (...) { OutputDebugStringA("MainWindow: P2PManager shutdown error\n"); }
+
+			try { ::OpenNet::Core::DownloadManager::Instance().Shutdown(); }
+			catch (...) { OutputDebugStringA("MainWindow: DownloadManager shutdown error\n"); }
 		});
 	}
 

@@ -59,7 +59,10 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root"
+    xmlns=""
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -552,5 +555,421 @@
   </data>
   <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
     <value>优先级</value>
+  </data>
+  <!-- ===== BitTorrent 设置页 ===== -->
+  <data name="BT_Title.Text" xml:space="preserve">
+    <value>BitTorrent 设置</value>
+  </data>
+  <data name="BT_Subtitle.Text" xml:space="preserve">
+    <value>配置高级 BitTorrent 协议设置</value>
+  </data>
+  <data name="BT_Section_Connection.Text" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="BT_ListenInterfaces.Header" xml:space="preserve">
+    <value>监听接口</value>
+  </data>
+  <data name="BT_ListenInterfaces.Description" xml:space="preserve">
+    <value>用于传入连接的网络接口和端口（如 0.0.0.0:6881）</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Header" xml:space="preserve">
+    <value>最大连接数</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Description" xml:space="preserve">
+    <value>每个种子的最大对等连接数</value>
+  </data>
+  <data name="BT_Protocol.Header" xml:space="preserve">
+    <value>协议</value>
+  </data>
+  <data name="BT_Protocol.Description" xml:space="preserve">
+    <value>启用或禁用特定传输协议</value>
+  </data>
+  <data name="BT_IncomingTcp.Header" xml:space="preserve">
+    <value>传入 TCP</value>
+  </data>
+  <data name="BT_OutgoingTcp.Header" xml:space="preserve">
+    <value>传出 TCP</value>
+  </data>
+  <data name="BT_IncomingUtp.Header" xml:space="preserve">
+    <value>传入 uTP</value>
+  </data>
+  <data name="BT_OutgoingUtp.Header" xml:space="preserve">
+    <value>传出 uTP</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Header" xml:space="preserve">
+    <value>同一 IP 多连接</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Description" xml:space="preserve">
+    <value>允许同一 IP 地址的多个连接</value>
+  </data>
+  <data name="BT_AnonymousMode.Header" xml:space="preserve">
+    <value>匿名模式</value>
+  </data>
+  <data name="BT_AnonymousMode.Description" xml:space="preserve">
+    <value>对对等节点和 Tracker 隐藏客户端身份</value>
+  </data>
+  <data name="BT_Section_Discovery.Text" xml:space="preserve">
+    <value>对等节点发现</value>
+  </data>
+  <data name="BT_EnableDht.Header" xml:space="preserve">
+    <value>DHT（分布式哈希表）</value>
+  </data>
+  <data name="BT_EnableDht.Description" xml:space="preserve">
+    <value>启用去中心化对等节点发现</value>
+  </data>
+  <data name="BT_EnableLsd.Header" xml:space="preserve">
+    <value>本地服务发现 (LSD)</value>
+  </data>
+  <data name="BT_EnableUpnp.Header" xml:space="preserve">
+    <value>UPnP 端口映射</value>
+  </data>
+  <data name="BT_EnableNatpmp.Header" xml:space="preserve">
+    <value>NAT-PMP 端口映射</value>
+  </data>
+  <data name="BT_Section_Tracker.Text" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Header" xml:space="preserve">
+    <value>向所有层级通告</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Description" xml:space="preserve">
+    <value>同时向所有 Tracker 层级发送通告</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Header" xml:space="preserve">
+    <value>向所有 Tracker 通告</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Description" xml:space="preserve">
+    <value>向每个层级中的所有 Tracker 发送通告</value>
+  </data>
+  <data name="BT_Section_Limits.Text" xml:space="preserve">
+    <value>队列限制</value>
+  </data>
+  <data name="BT_ActiveDownloads.Header" xml:space="preserve">
+    <value>活动下载数</value>
+  </data>
+  <data name="BT_ActiveDownloads.Description" xml:space="preserve">
+    <value>最大同时下载种子数</value>
+  </data>
+  <data name="BT_ActiveSeeds.Header" xml:space="preserve">
+    <value>活动做种数</value>
+  </data>
+  <data name="BT_ActiveSeeds.Description" xml:space="preserve">
+    <value>最大同时做种种子数</value>
+  </data>
+  <data name="BT_ActiveLimit.Header" xml:space="preserve">
+    <value>活动种子总数</value>
+  </data>
+  <data name="BT_ActiveLimit.Description" xml:space="preserve">
+    <value>最大活动种子总数（下载 + 做种）</value>
+  </data>
+  <data name="BT_Section_SpeedLimits.Text" xml:space="preserve">
+    <value>速度限制</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Header" xml:space="preserve">
+    <value>下载速度限制</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Description" xml:space="preserve">
+    <value>最大下载速度（KB/s），0 = 无限制</value>
+  </data>
+  <data name="BT_UploadRateLimit.Header" xml:space="preserve">
+    <value>上传速度限制</value>
+  </data>
+  <data name="BT_UploadRateLimit.Description" xml:space="preserve">
+    <value>最大上传速度（KB/s），0 = 无限制</value>
+  </data>
+  <data name="BT_Section_Seeding.Text" xml:space="preserve">
+    <value>做种</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Header" xml:space="preserve">
+    <value>做种比率限制</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Description" xml:space="preserve">
+    <value>达到指定比率后停止做种（0 = 无限制）</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Header" xml:space="preserve">
+    <value>做种时间限制</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Description" xml:space="preserve">
+    <value>指定时间（分钟）后停止做种（0 = 无限制）</value>
+  </data>
+  <data name="BT_Section_Peer.Text" xml:space="preserve">
+    <value>对等节点</value>
+  </data>
+  <data name="BT_Timeouts.Header" xml:space="preserve">
+    <value>超时设置</value>
+  </data>
+  <data name="BT_Timeouts.Description" xml:space="preserve">
+    <value>配置对等连接超时</value>
+  </data>
+  <data name="BT_PeerTimeout.Header" xml:space="preserve">
+    <value>对等超时（秒）</value>
+  </data>
+  <data name="BT_HandshakeTimeout.Header" xml:space="preserve">
+    <value>握手超时（秒）</value>
+  </data>
+  <data name="BT_CloseRedundant.Header" xml:space="preserve">
+    <value>关闭冗余连接</value>
+  </data>
+  <data name="BT_CloseRedundant.Description" xml:space="preserve">
+    <value>关闭不再需要的连接</value>
+  </data>
+  <data name="BT_Section_DiskIO.Text" xml:space="preserve">
+    <value>磁盘 I/O</value>
+  </data>
+  <data name="BT_AioThreads.Header" xml:space="preserve">
+    <value>异步 I/O 线程数</value>
+  </data>
+  <data name="BT_AioThreads.Description" xml:space="preserve">
+    <value>异步磁盘操作的线程数</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Header" xml:space="preserve">
+    <value>哈希校验内存（MB）</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Description" xml:space="preserve">
+    <value>用于哈希校验的最大内存</value>
+  </data>
+  <data name="BT_Section_Identity.Text" xml:space="preserve">
+    <value>身份标识</value>
+  </data>
+  <data name="BT_UserAgent.Header" xml:space="preserve">
+    <value>用户代理</value>
+  </data>
+  <data name="BT_UserAgent.Description" xml:space="preserve">
+    <value>发送给 Tracker 的客户端标识字符串</value>
+  </data>
+  <data name="BT_Section_Encryption.Text" xml:space="preserve">
+    <value>加密</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Header" xml:space="preserve">
+    <value>加密策略</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Description" xml:space="preserve">
+    <value>对等连接的加密模式</value>
+  </data>
+  <data name="BT_Enc_Forced.Content" xml:space="preserve">
+    <value>强制</value>
+  </data>
+  <data name="BT_Enc_Enabled.Content" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="BT_Enc_Disabled.Content" xml:space="preserve">
+    <value>禁用</value>
+  </data>
+  <data name="BT_PreferRc4.Header" xml:space="preserve">
+    <value>首选 RC4 加密</value>
+  </data>
+  <data name="BT_PreferRc4.Description" xml:space="preserve">
+    <value>启用加密时优先使用 RC4 而非明文</value>
+  </data>
+  <data name="BT_Section_Proxy.Text" xml:space="preserve">
+    <value>代理</value>
+  </data>
+  <data name="BT_ProxyType.Header" xml:space="preserve">
+    <value>代理类型</value>
+  </data>
+  <data name="BT_ProxyType.Description" xml:space="preserve">
+    <value>选择 BitTorrent 流量的代理协议</value>
+  </data>
+  <data name="BT_Proxy_None.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="BT_Proxy_Socks4.Content" xml:space="preserve">
+    <value>SOCKS4</value>
+  </data>
+  <data name="BT_Proxy_Socks5.Content" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="BT_Proxy_Socks5Pw.Content" xml:space="preserve">
+    <value>SOCKS5（带密码）</value>
+  </data>
+  <data name="BT_Proxy_Http.Content" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="BT_Proxy_HttpPw.Content" xml:space="preserve">
+    <value>HTTP（带密码）</value>
+  </data>
+  <data name="BT_ProxyDetails.Header" xml:space="preserve">
+    <value>代理配置</value>
+  </data>
+  <data name="BT_ProxyDetails.Description" xml:space="preserve">
+    <value>配置代理服务器详细信息</value>
+  </data>
+  <data name="BT_ProxyHostname.Header" xml:space="preserve">
+    <value>主机名</value>
+  </data>
+  <data name="BT_ProxyPort.Header" xml:space="preserve">
+    <value>端口</value>
+  </data>
+  <data name="BT_ProxyUsername.Header" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="BT_ProxyPassword.Header" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="BT_ProxyPeerConn.Header" xml:space="preserve">
+    <value>代理对等连接</value>
+  </data>
+  <data name="BT_ProxyTrackerConn.Header" xml:space="preserve">
+    <value>代理 Tracker 连接</value>
+  </data>
+  <!-- ===== 下载设置页 ===== -->
+  <data name="DL_Section_SaveLocation.Text" xml:space="preserve">
+    <value>保存位置</value>
+  </data>
+  <data name="DL_DefaultSavePath.Header" xml:space="preserve">
+    <value>默认保存路径</value>
+  </data>
+  <data name="DL_DefaultSavePath.Description" xml:space="preserve">
+    <value>新种子的默认下载目录</value>
+  </data>
+  <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>（下载文件夹）</value>
+  </data>
+  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+  <data name="DL_PreallocateStorage.Header" xml:space="preserve">
+    <value>预分配磁盘空间</value>
+  </data>
+  <data name="DL_PreallocateStorage.Description" xml:space="preserve">
+    <value>下载开始前预留磁盘空间</value>
+  </data>
+  <data name="DL_Section_Behaviour.Text" xml:space="preserve">
+    <value>行为</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Header" xml:space="preserve">
+    <value>自动开始下载</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
+    <value>添加种子后自动开始下载</value>
+  </data>
+  <data name="DL_MoveCompleted.Header" xml:space="preserve">
+    <value>移动已完成下载</value>
+  </data>
+  <data name="DL_MoveCompleted.Description" xml:space="preserve">
+    <value>将已完成的下载移动到其他目录</value>
+  </data>
+  <data name="DL_MoveCompletedPath.Header" xml:space="preserve">
+    <value>目标文件夹</value>
+  </data>
+  <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
+    <value>已完成下载路径</value>
+  </data>
+  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
+    <value>新建 HTTP 下载</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.PrimaryButtonText" xml:space="preserve">
+    <value>下载</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.Header" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/file.zip</value>
+  </data>
+  <data name="HttpDownloadDialogPasteButtonText.Text" xml:space="preserve">
+    <value>从剪贴板粘贴</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.Header" xml:space="preserve">
+    <value>保存到</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
+    <value>默认下载目录</value>
+  </data>
+  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
+    <value>文件名（可选）</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.PlaceholderText" xml:space="preserve">
+    <value>留空则自动检测</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>无效的 URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>请输入有效的 HTTP、HTTPS 或 FTP 链接。</value>
+  </data>
+  <data name="PeerHeader_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerHeader_Client.Text" xml:space="preserve">
+    <value>客户端</value>
+  </data>
+  <data name="PeerHeader_Progress.Text" xml:space="preserve">
+    <value>进度</value>
+  </data>
+  <data name="PeerHeader_DLSpeed.Text" xml:space="preserve">
+    <value>下载速度</value>
+  </data>
+  <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
+    <value>上传速度</value>
+  </data>
+  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+    <value>已下载</value>
+  </data>
+  <data name="PeersList_EmptyState.Text" xml:space="preserve">
+    <value>当前无已连接节点</value>
+  </data>
+  <data name="Task_TrackersList.Text" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="TrackerHeader_URL.Text" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="TrackerHeader_Tier.Text" xml:space="preserve">
+    <value>层级</value>
+  </data>
+  <data name="TrackerHeader_Peers.Text" xml:space="preserve">
+    <value>节点数</value>
+  </data>
+  <data name="TrackerHeader_Status.Text" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="TrackerHeader_Message.Text" xml:space="preserve">
+    <value>消息</value>
+  </data>
+  <data name="TrackersList_EmptyState.Text" xml:space="preserve">
+    <value>暂无 Tracker 信息</value>
+  </data>
+  <data name="Task_FilesList.Text" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="FileHeader_Path.Text" xml:space="preserve">
+    <value>文件</value>
+  </data>
+  <data name="FileHeader_Size.Text" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="FileHeader_Progress.Text" xml:space="preserve">
+    <value>进度</value>
+  </data>
+  <data name="FileHeader_Done.Text" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="FileHeader_Priority.Text" xml:space="preserve">
+    <value>优先级</value>
+  </data>
+  <data name="FilePriority_Skip.Content" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="FilePriority_Low.Content" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.Content" xml:space="preserve">
+    <value>普通</value>
+  </data>
+  <data name="FilePriority_High.Content" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="FilesList_EmptyState.Text" xml:space="preserve">
+    <value>暂无文件信息</value>
   </data>
 </root>

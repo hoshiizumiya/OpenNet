@@ -21,11 +21,16 @@
 #include <shellapi.h> // For ShellExecute
 #include <winrt/Microsoft.UI.Windowing.h>
 #include "Core/P2PManager.h"
+#include "Core/DownloadManager.h"
 #include "Core/IO/FileSystem.h"
 #include "Core/AppEnvironment.h"
 #include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.xaml.h"
+#include "UI/Xaml/View/Dialog/HttpDownloadDialog.xaml.h"
+#include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -47,14 +52,13 @@ namespace winrt::OpenNet::Pages::implementation
 		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
 
 		// Subscribe to AddTaskRequested event (currently not used, but kept for compatibility)
-		m_addTaskToken = m_viewModel.AddTaskRequested({ this, &TasksPage::OnAddTaskRequested });
+		m_addTaskToken = m_viewModel.AddTaskRequested({this, &TasksPage::OnAddTaskRequested});
 
 		// Set up bottom panel to show Summary by default
 		if (auto frame = ContentFrame())
 		{
 			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSummaryPage>(), m_viewModel);
 		}
-
 	}
 
 	TasksPage::~TasksPage()
@@ -68,13 +72,13 @@ namespace winrt::OpenNet::Pages::implementation
 
 	// Handler invoked when the ViewModel requests adding a new task
 	// Currently not used, kept for backward compatibility
-	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const &, winrt::hstring const &)
 	{
 		co_return;
 	}
 
 	// Show dialog for user to enter or paste a magnet link
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const &sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const &e)
 	{
 		try
 		{
@@ -98,13 +102,13 @@ namespace winrt::OpenNet::Pages::implementation
 						}
 					}
 				}
-				catch (const std::exception& ex)
+				catch (const std::exception &ex)
 				{
 					OutputDebugStringW((L"ShowAddMagnetLinkDialog: GetMagnetLink error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 				}
 			}
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception &ex)
 		{
 			OutputDebugStringW((L"ShowAddMagnetLinkDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -115,7 +119,7 @@ namespace winrt::OpenNet::Pages::implementation
 	}
 
 	// Show file picker for user to select a .torrent file
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const &sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const &e)
 	{
 		if (sender == MenuFlyoutItem())
 		{
@@ -148,8 +152,8 @@ namespace winrt::OpenNet::Pages::implementation
 				auto baseStyle = Application::Current().Resources().Lookup(box_value(L"DefaultButtonStyle")).as<winrt::Microsoft::UI::Xaml::Style>();
 
 				btnStyle.BasedOn(baseStyle);
-				//btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::WidthProperty(), box_value(800.0)));
-				//btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::MaxWidthProperty(), box_value(1800.0)));
+				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::WidthProperty(), box_value(800.0)));
+				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::MaxWidthProperty(), box_value(1800.0)));
 				multiFileCheckDialog.PrimaryButtonStyle(btnStyle);
 				multiFileCheckDialog.SecondaryButtonText(L"Add to list");
 				multiFileCheckDialog.DefaultButton(ContentDialogButton::Primary);
@@ -159,15 +163,13 @@ namespace winrt::OpenNet::Pages::implementation
 				if (result == ContentDialogResult::Primary)
 				{
 					multiFileCheckDialog.Hide();
-					for (auto const& file : files)
+					for (auto const &file : files)
 					{
 						ProcessAndShowTorrentMetadataWindow(file.Path());
 					}
-
 				}
 				else if (result == ContentDialogResult::Secondary)
 				{
-
 				}
 				else
 				{
@@ -185,7 +187,7 @@ namespace winrt::OpenNet::Pages::implementation
 #endif // DEBUG
 			}
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception &ex)
 		{
 			OutputDebugStringW((L"ShowAddTorrentFileDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -195,8 +197,73 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
+	// Show HTTP download dialog for adding HTTP/HTTPS/FTP downloads
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromHttp_ClickAsync(
+		winrt::Windows::Foundation::IInspectable const & /*sender*/,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*e*/)
+	{
+		try
+		{
+			auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::HttpDownloadDialog>();
+			dialog.XamlRoot(this->XamlRoot());
+
+			auto result = co_await dialog.ShowAsync();
+
+			if (result == ContentDialogResult::Primary)
+			{
+				try
+				{
+					auto url = winrt::to_string(dialog.Url());
+					auto dir = winrt::to_string(dialog.SaveDirectory());
+					auto fileName = winrt::to_string(dialog.FileName());
+
+					if (!url.empty())
+					{
+						auto &dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+						if (dlMgr.IsAria2Available())
+						{
+							// Move off UI thread – SimplePost blocks with .get()
+							co_await winrt::resume_background();
+							auto gid = dlMgr.AddHttpDownload(url, dir, fileName);
+							if (!gid.empty())
+							{
+								OutputDebugStringW((L"HTTP download added with GID: " + winrt::to_hstring(gid) + L"\n").c_str());
+							}
+							else
+							{
+								OutputDebugStringW(L"Failed to add HTTP download\n");
+							}
+						}
+						else
+						{
+							// Show error: aria2 not available
+							ContentDialog errorDialog;
+							errorDialog.XamlRoot(this->XamlRoot());
+							errorDialog.Title(box_value(L"HTTP Download Unavailable"));
+							errorDialog.Content(box_value(L"The aria2 download engine is not available. Please ensure aria2c.exe is present alongside the application."));
+							errorDialog.CloseButtonText(L"OK");
+							co_await errorDialog.ShowAsync();
+						}
+					}
+				}
+				catch (const std::exception &ex)
+				{
+					OutputDebugStringW((L"HTTP download add error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+				}
+			}
+		}
+		catch (const std::exception &ex)
+		{
+			OutputDebugStringW((L"HttpDownloadDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+		}
+		catch (...)
+		{
+			OutputDebugStringA("HttpDownloadDialog unknown error\n");
+		}
+	}
+
 	// Process the torrent link/file and show the metadata check window
-	void TasksPage::ProcessAndShowTorrentMetadataWindow(hstring const& torrentLink)
+	void TasksPage::ProcessAndShowTorrentMetadataWindow(hstring const &torrentLink)
 	{
 		if (torrentLink.empty())
 		{
@@ -210,7 +277,7 @@ namespace winrt::OpenNet::Pages::implementation
 			checkWindow->Activate();
 			// The window manages its own lifetime - it will close when user closes it or operations complete
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception &ex)
 		{
 			// Log error if needed
 			OutputDebugStringW(L"Error creating torrent check window: ");
@@ -222,22 +289,25 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
-	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& /*sender*/, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
+	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const & /*sender*/, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const &args)
 	{
 		auto item = args.SelectedItem().try_as<Microsoft::UI::Xaml::Controls::NavigationViewItem>();
-		if (!item) return;
+		if (!item)
+			return;
 		auto tag = unbox_value_or<winrt::hstring>(item.Tag(), L"");
-		if (tag.empty()) return;
+		if (tag.empty())
+			return;
 		if (m_viewModel)
 		{
 			m_viewModel.ApplyFilter(tag);
 		}
 	}
 
-	void TasksPage::TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*args*/)
+	void TasksPage::TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const & /*args*/)
 	{
 		auto listView = TasksList();
-		if (!listView || !m_viewModel) return;
+		if (!listView || !m_viewModel)
+			return;
 
 		auto selectedItem = listView.SelectedItem();
 		auto taskVm = selectedItem.try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
@@ -245,12 +315,13 @@ namespace winrt::OpenNet::Pages::implementation
 		m_viewModel.SelectedTask(taskVm);
 	}
 
-	void TasksPage::SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const& task)
+	void TasksPage::SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const &task)
 	{
-		if (!task) return;
+		if (!task)
+			return;
 
 		m_currentSubscribedTask = task;
-		m_selectedTaskPropertyChangedToken = task.PropertyChanged({ this, &TasksPage::OnSelectedTaskPropertyChanged });
+		m_selectedTaskPropertyChangedToken = task.PropertyChanged({this, &TasksPage::OnSelectedTaskPropertyChanged});
 	}
 
 	void TasksPage::UnsubscribeFromSelectedTaskChanges()
@@ -263,23 +334,58 @@ namespace winrt::OpenNet::Pages::implementation
 		m_currentSubscribedTask = nullptr;
 	}
 
-	void TasksPage::OnSelectedTaskPropertyChanged(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
+	void TasksPage::OnSelectedTaskPropertyChanged(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const &args)
 	{
 		auto propertyName = args.PropertyName();
 		// Update speed graph when progress or speed changes
 		if (propertyName == L"ProgressPercent" || propertyName == L"DownloadSpeedKB")
 		{
 			// need investigate how to update SpeedGraph control
-			//UpdateSpeedGraphForSelectedTask();
+			// UpdateSpeedGraphForSelectedTask();
 		}
 	}
 
-	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const &sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const &args)
 	{
 		// Context flyout is handled automatically by XAML
 	}
 
-	void TasksPage::MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
+	void TasksPage::SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const &sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const & /*args*/)
+	{
+		if (m_viewModel)
+		{
+			m_viewModel.SetSearchFilter(sender.Text());
+		}
+	}
+
+	void TasksPage::Task_SelectBar_SelectionChanged(
+		winrt::Microsoft::UI::Xaml::Controls::SelectorBar const &sender,
+		winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const & /*args*/)
+	{
+		auto selectedItem = sender.SelectedItem();
+		auto frame = ContentFrame();
+		if (!selectedItem || !frame)
+			return;
+
+		if (selectedItem == SummaryContent())
+		{
+			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSummaryPage>(), m_viewModel);
+		}
+		else if (selectedItem == PeersList())
+		{
+			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPeersListPage>(), m_viewModel);
+		}
+		else if (selectedItem == TrackersList())
+		{
+			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskTrackersPage>(), m_viewModel);
+		}
+		else if (selectedItem == FilesList())
+		{
+			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskFilesPage>(), m_viewModel);
+		}
+	}
+
+	void TasksPage::MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
 	{
 		if (!m_currentSubscribedTask)
 		{
@@ -287,7 +393,7 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 
 		// 调用异步方法 - 不要等待，让它后台运行
-		//fire_and_forget
+		// fire_and_forget
 		PerformMoveTaskAsync();
 	}
 
@@ -308,7 +414,7 @@ namespace winrt::OpenNet::Pages::implementation
 			if (!selectedFolder)
 			{
 				OutputDebugStringA("PerformMoveTaskAsync: User cancelled folder selection\n");
-				co_return;  // 用户取消
+				co_return; // 用户取消
 			}
 
 			auto newPath = winrt::to_string(selectedFolder.Path());
@@ -332,14 +438,14 @@ namespace winrt::OpenNet::Pages::implementation
 			// TODO: bool success = FileOperation::MoveDirectory(currentPath, newPath, progressCallback);
 
 			// Step 5: 更新数据库和UI
-			// if (success) { 
+			// if (success) {
 			//   database.UpdateTaskPath(taskId, newPath);
 			//   viewModel.RefreshTask(taskId);
 			// }
 
 			OutputDebugStringW((L"Move task completed to: " + std::wstring(newPath.begin(), newPath.end()) + L"\n").c_str());
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception &ex)
 		{
 			OutputDebugStringW((L"PerformMoveTaskAsync error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -351,7 +457,7 @@ namespace winrt::OpenNet::Pages::implementation
 		co_return;
 	}
 
-	void TasksPage::OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
+	void TasksPage::OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
 	{
 		if (!m_currentSubscribedTask)
 		{
@@ -386,7 +492,7 @@ namespace winrt::OpenNet::Pages::implementation
 				OutputDebugStringW((L"Opened location: " + wpath + L"\n").c_str());
 			}
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception &ex)
 		{
 			OutputDebugStringW(winrt::to_hstring(ex.what()).c_str());
 		}
@@ -396,7 +502,7 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
-	void TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
+	void TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
 	{
 		if (!m_currentSubscribedTask)
 		{
@@ -432,14 +538,13 @@ namespace winrt::OpenNet::Pages::implementation
 				L"Progress: {}\n",
 				taskName.c_str(),
 				size.c_str(),
-				progress.c_str()
-			);
+				progress.c_str());
 
 			OutputDebugStringW(message.c_str());
 
 			// TODO: 显示为对话框而不是调试输出
 		}
-		catch (const std::exception& ex)
+		catch (const std::exception &ex)
 		{
 			OutputDebugStringW(winrt::to_hstring(ex.what()).c_str());
 		}

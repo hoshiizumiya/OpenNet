@@ -1,0 +1,132 @@
+import "UI/Xaml/Media/Pipelines/PipelineBrush.idl";
+
+namespace OpenNet.UI.Xaml.Media.Effects
+{
+    /// <summary>
+    /// Base class for all XAML pipeline effects.
+    /// </summary>
+    [default_interface]
+    unsealed runtimeclass PipelineEffect : Microsoft.UI.Xaml.DependencyObject, OpenNet.UI.Xaml.Media.Pipelines.IPipelineEffect
+    {
+        Boolean IsAnimatable;
+    }
+
+    /// <summary>
+    /// A Gaussian blur effect
+    /// </summary>
+    [default_interface]
+    runtimeclass BlurEffect : PipelineEffect
+    {
+        BlurEffect();
+        Double Amount;
+    }
+
+    /// <summary>
+    /// A saturation effect
+    /// </summary>
+    [default_interface]
+    runtimeclass SaturationEffect : PipelineEffect
+    {
+        SaturationEffect();
+        Double Value;
+    }
+
+    /// <summary>
+    /// An opacity effect
+    /// </summary>
+    [default_interface]
+    runtimeclass OpacityEffect : PipelineEffect
+    {
+        OpacityEffect();
+        Double Value;
+    }
+
+    /// <summary>
+    /// An exposure effect
+    /// </summary>
+    [default_interface]
+    runtimeclass ExposureEffect : PipelineEffect
+    {
+        ExposureEffect();
+        Double Amount;
+    }
+
+    /// <summary>
+    /// A hue rotation effect
+    /// </summary>
+    [default_interface]
+    runtimeclass HueRotationEffect : PipelineEffect
+    {
+        HueRotationEffect();
+        Double Angle;
+    }
+
+    /// <summary>
+    /// A sepia tone effect
+    /// </summary>
+    [default_interface]
+    runtimeclass SepiaEffect : PipelineEffect
+    {
+        SepiaEffect();
+        Double Intensity;
+    }
+
+    /// <summary>
+    /// A tint (color overlay) effect
+    /// </summary>
+    [default_interface]
+    runtimeclass TintEffect : PipelineEffect
+    {
+        TintEffect();
+        Windows.UI.Color Color;
+    }
+
+    /// <summary>
+    /// A grayscale effect (no parameters)
+    /// </summary>
+    [default_interface]
+    runtimeclass GrayscaleEffect : PipelineEffect
+    {
+        GrayscaleEffect();
+    }
+
+    /// <summary>
+    /// An invert color effect (no parameters)
+    /// </summary>
+    [default_interface]
+    runtimeclass InvertEffect : PipelineEffect
+    {
+        InvertEffect();
+    }
+
+    /// <summary>
+    /// A luminance-to-alpha effect (no parameters)
+    /// </summary>
+    [default_interface]
+    runtimeclass LuminanceToAlphaEffect : PipelineEffect
+    {
+        LuminanceToAlphaEffect();
+    }
+
+    /// <summary>
+    /// A shade (color multiply + crossfade) effect
+    /// </summary>
+    [default_interface]
+    runtimeclass ShadeEffect : PipelineEffect
+    {
+        ShadeEffect();
+        Windows.UI.Color Color;
+        Double Intensity;
+    }
+
+    /// <summary>
+    /// A temperature and tint adjustment effect
+    /// </summary>
+    [default_interface]
+    runtimeclass TemperatureAndTintEffect : PipelineEffect
+    {
+        TemperatureAndTintEffect();
+        Double Temperature;
+        Double Tint;
+    }
+}

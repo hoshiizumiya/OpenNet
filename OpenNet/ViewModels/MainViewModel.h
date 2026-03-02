@@ -3,6 +3,9 @@
 #include <winrt/Microsoft.UI.Xaml.Data.h>
 #include <winrt/Microsoft.UI.Xaml.Input.h>
 #include <winrt/Windows.Foundation.Collections.h>
+#include <winrt/Microsoft.UI.Dispatching.h>
+#include <thread>
+#include <atomic>
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -10,6 +13,7 @@ namespace winrt::OpenNet::ViewModels::implementation
     struct MainViewModel : MainViewModelT<MainViewModel>
     {
         MainViewModel();
+        ~MainViewModel();
 
         // 基本方法 / Basic Methods
         // Summary: 初始化视图模型
@@ -66,14 +70,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 
         // Summary: 更新状态文本
         // Param status: 新的状态字符串
-        void UpdateStatus(winrt::hstring const& status);
+        void UpdateStatus(winrt::hstring const &status);
 
-		// Summary: 初始化核心组件（P2P引擎）
+        // Summary: 初始化核心组件（P2P引擎）
         Windows::Foundation::IAsyncAction InitializeTorrentCore();
 
         // INotifyPropertyChanged add/remove
-        winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler) { return m_propertyChanged.add(handler); }
-        void PropertyChanged(winrt::event_token const& token) noexcept { m_propertyChanged.remove(token); }
+        winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const &handler) { return m_propertyChanged.add(handler); }
+        void PropertyChanged(winrt::event_token const &token) noexcept { m_propertyChanged.remove(token); }
 
         // 命令（暂为占位，后续接入实际逻辑）/ Commands (placeholders)
         winrt::Microsoft::UI::Xaml::Input::ICommand ShowAboutCommand() const { return m_showAboutCommand; }
@@ -84,11 +88,11 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::Microsoft::UI::Xaml::Input::ICommand ClearErrorCommand() const { return m_clearErrorCommand; }
 
         // 工具方法 / Utility
-        void OnPropertyChanged(winrt::hstring const& propertyName)
+        void OnPropertyChanged(winrt::hstring const &propertyName)
         {
             // Summary: 触发属性变更通知
             // Param propertyName: 变更属性名称
-            m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ propertyName });
+            m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{propertyName});
         }
 
     private:
@@ -100,21 +104,21 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring m_portState;
 
         // 导航状态 / Navigation state
-        bool m_isHomeSelected{ true };
-        bool m_isNetworkSelected{ false };
-        bool m_isPeerSelected{ false };
-        bool m_isTransferSelected{ false };
-        bool m_isSettingsSelected{ false };
+        bool m_isHomeSelected{true};
+        bool m_isNetworkSelected{false};
+        bool m_isPeerSelected{false};
+        bool m_isTransferSelected{false};
+        bool m_isSettingsSelected{false};
 
         // 快速统计 / Quick stats
-        int32_t m_connectedPeersCount{ 0 };
-        int32_t m_activeTransfersCount{ 0 };
-        winrt::hstring m_totalBytesTransferredText{ L"0 B" };
-        winrt::hstring m_currentTransferSpeedText{ L"0 bps" };
+        int32_t m_connectedPeersCount{0};
+        int32_t m_activeTransfersCount{0};
+        winrt::hstring m_totalBytesTransferredText{L"0 B"};
+        winrt::hstring m_currentTransferSpeedText{L"0 bps"};
 
         // 网络状态 / Network status
-        winrt::hstring m_networkStatusText{ L"未知 / Unknown" };
-        winrt::hstring m_networkQualityText{ L"N/A" };
+        winrt::hstring m_networkStatusText{L"未知 / Unknown"};
+        winrt::hstring m_networkQualityText{L"N/A"};
 
         // 活动列表 / Activities
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_recentActivities;
@@ -124,15 +128,21 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring m_lastNotification;
 
         // 命令 / Commands
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_showAboutCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_navigateToPageCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_startNetworkDetectionCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_connectToPeerCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_refreshCommand{ nullptr };
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_clearErrorCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_showAboutCommand{nullptr};
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_navigateToPageCommand{nullptr};
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_startNetworkDetectionCommand{nullptr};
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_connectToPeerCommand{nullptr};
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_refreshCommand{nullptr};
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_clearErrorCommand{nullptr};
 
         // 事件 / Events
         winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
+
+        // Speed refresh
+        winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{nullptr};
+        std::thread m_speedRefreshThread;
+        std::atomic<bool> m_stopSpeedRefresh{false};
+        void SpeedRefreshThreadEntry();
     };
 }
 namespace winrt::OpenNet::ViewModels::factory_implementation

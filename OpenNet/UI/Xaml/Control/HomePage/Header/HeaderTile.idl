@@ -1,0 +1,35 @@
+namespace OpenNet.UI.Xaml.Control.HomePage.Header
+{
+	[default_interface]
+	runtimeclass HeaderTile : Microsoft.UI.Xaml.Controls.Button
+	{
+		HeaderTile();
+
+		String ImageUrl;
+		static Microsoft.UI.Xaml.DependencyProperty ImageUrlProperty{ get; };
+
+		String Header;
+		static Microsoft.UI.Xaml.DependencyProperty HeaderProperty{ get; };
+
+		String Description;
+		static Microsoft.UI.Xaml.DependencyProperty DescriptionProperty{ get; };
+
+		String FeatureID;
+		static Microsoft.UI.Xaml.DependencyProperty FeatureIDProperty{ get; };
+
+		Boolean IsSelected;
+		static Microsoft.UI.Xaml.DependencyProperty IsSelectedProperty{ get; };
+	}
+
+	[default_interface]
+	runtimeclass HoverLight : Microsoft.UI.Xaml.Media.XamlLight
+	{
+		HoverLight();
+	}
+
+	[default_interface]
+	runtimeclass AmbLight : Microsoft.UI.Xaml.Media.XamlLight
+	{
+		AmbLight();
+	}
+}

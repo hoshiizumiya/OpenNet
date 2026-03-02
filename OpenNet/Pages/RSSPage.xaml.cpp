@@ -103,38 +103,27 @@ namespace winrt::OpenNet::Pages::implementation
 
     winrt::fire_and_forget RSSPage::ShowAddFeedDialog()
     {
-        // Ensure XamlRoot is available
-        if (!this->XamlRoot())
-        {
-            co_return;
-        }
-
-        // Clear previous values
-        FeedUrlTextBox().Text(L"");
-        FeedNameTextBox().Text(L"");
-        FeedSavePathTextBox().Text(L"");
-
         try
         {
-            AddFeedDialog().XamlRoot(this->XamlRoot());
-            auto result = co_await AddFeedDialog().ShowAsync();
+            auto dialog = winrt::make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::AddRSSFeedDialog>();
+            dialog.XamlRoot(this->XamlRoot());
+            auto result = co_await dialog.ShowAsync();
 
             if (result == ContentDialogResult::Primary)
             {
-                auto url = FeedUrlTextBox().Text();
+                auto url = dialog.FeedUrl();
                 if (!url.empty())
                 {
                     m_viewModel.AddFeed(
                         url,
-                        FeedNameTextBox().Text(),
-                        FeedSavePathTextBox().Text()
+                        dialog.FeedName(),
+                        dialog.FeedSavePath()
                     );
                 }
             }
         }
         catch (winrt::hresult_error const& ex)
         {
-            // Dialog might already be open or other error
             OutputDebugStringW((L"ShowAddFeedDialog error: " + std::wstring(ex.message().c_str()) + L"\n").c_str());
         }
     }
@@ -144,33 +133,26 @@ namespace winrt::OpenNet::Pages::implementation
         auto feed = m_viewModel.SelectedFeed();
         if (!feed) co_return;
 
-        // Ensure XamlRoot is available
         if (!this->XamlRoot())
         {
             co_return;
         }
 
-        // Populate dialog with current values
-        SettingsTitleTextBox().Text(feed.Title());
-        SettingsUrlTextBox().Text(feed.Url());
-        SettingsSavePathTextBox().Text(feed.SavePath());
-        SettingsIntervalNumberBox().Value(feed.UpdateIntervalMinutes());
-        SettingsAutoDownloadToggle().IsOn(feed.AutoDownload());
-        SettingsFilterTextBox().Text(feed.FilterPattern());
-
         try
         {
-            FeedSettingsDialog().XamlRoot(this->XamlRoot());
-            auto result = co_await FeedSettingsDialog().ShowAsync();
+            auto dialog = winrt::make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::RSSFeedSettingsDialog>();
+            dialog.SetFeed(feed);
+            dialog.XamlRoot(this->XamlRoot());
+            auto result = co_await dialog.ShowAsync();
 
             if (result == ContentDialogResult::Primary)
             {
-                feed.Title(SettingsTitleTextBox().Text());
-                feed.Url(SettingsUrlTextBox().Text());
-                feed.SavePath(SettingsSavePathTextBox().Text());
-                feed.UpdateIntervalMinutes(static_cast<int32_t>(SettingsIntervalNumberBox().Value()));
-                feed.AutoDownload(SettingsAutoDownloadToggle().IsOn());
-                feed.FilterPattern(SettingsFilterTextBox().Text());
+                feed.Title(dialog.FeedTitle());
+                feed.Url(dialog.FeedUrl());
+                feed.SavePath(dialog.FeedSavePath());
+                feed.UpdateIntervalMinutes(dialog.UpdateIntervalMinutes());
+                feed.AutoDownload(dialog.AutoDownload());
+                feed.FilterPattern(dialog.FilterPattern());
 
                 m_viewModel.UpdateFeedSettings(feed);
             }

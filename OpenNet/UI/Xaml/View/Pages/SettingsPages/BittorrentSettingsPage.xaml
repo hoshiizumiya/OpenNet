@@ -3,104 +3,372 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.BittorrentSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:controls="using:XamlToolkit.Labs.WinUI"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
-    <Grid Padding="24">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <Page.Resources>
+        <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+        <Style
+            x:Key="SettingsSectionHeaderTextBlockStyle"
+            BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+            TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Margin" Value="1,30,0,6" />
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
 
-        <!--  Header  -->
-        <StackPanel Grid.Row="0" Margin="0,0,0,16">
-            <TextBlock Style="{StaticResource TitleTextBlockStyle}" Text="BitTorrent Advanced Settings" />
-            <TextBlock
-                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                Style="{StaticResource CaptionTextBlockStyle}"
-                Text="Configure libtorrent session parameters" />
-        </StackPanel>
+    <ScrollViewer>
+        <Grid Padding="24">
+            <StackPanel
+                MaxWidth="1000"
+                HorizontalAlignment="Stretch"
+                Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
 
-        <!--  Search Box  -->
-        <AutoSuggestBox
-            x:Name="SearchBox"
-            Grid.Row="1"
-            Margin="0,0,0,16"
-            PlaceholderText="Search Options"
-            QueryIcon="Find"
-            TextChanged="SearchBox_TextChanged" />
+                <!--  Header  -->
+                <TextBlock x:Uid="BT_Title" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock
+                    x:Uid="BT_Subtitle"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}" />
 
-        <!--  Options ListView  -->
-        <ListView
-            x:Name="OptionsListView"
-            Grid.Row="2"
-            ItemsSource="{x:Bind AdvancedOptions}"
-            SelectionMode="Single">
-            <ListView.Header>
-                <Border
-                    x:Name="HeaderBorder"
-                    Padding="8,4,0,4"
-                    Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-                    CornerRadius="4">
-                    <controls:DataTable ColumnSpacing="16">
-                        <controls:DataColumn Content="Name" />
-                        <controls:DataColumn CanResize="False" Content="Value" />
-                    </controls:DataTable>
-                </Border>
-            </ListView.Header>
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="local:AdvancedOptionItem">
-                    <Grid Padding="12,8">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="200" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock
-                            VerticalAlignment="Center"
-                            FontWeight="{x:Bind FontWeight}"
-                            Text="{x:Bind Name}" />
-                        <TextBlock
-                            Grid.Column="1"
-                            FontWeight="{x:Bind FontWeight}"
-                            Text="{x:Bind Value}" />
-                    </Grid>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                <!--  Connection  -->
+                <TextBlock x:Uid="BT_Section_Connection" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 
-        <!--  Value Editor  -->
-        <Grid Grid.Row="3" Margin="0,16,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+                <essential:SettingsCard x:Uid="BT_ListenInterfaces">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE968;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <TextBox
+                        x:Name="ListenInterfacesTextBox"
+                        MinWidth="260"
+                        LostFocus="OnSettingChanged"
+                        PlaceholderText="0.0.0.0:6881,[::]:6881" />
+                </essential:SettingsCard>
 
-            <TextBlock
-                Margin="0,0,8,0"
-                VerticalAlignment="Center"
-                Text="Value:" />
-            <TextBox
-                x:Name="ValueTextBox"
-                Grid.Column="1"
-                PlaceholderText="Select an option to edit" />
-            <Button
-                Grid.Column="2"
-                Margin="8,0,0,0"
-                Click="ApplyButton_Click"
-                Content="Apply"
-                Style="{StaticResource AccentButtonStyle}" />
-            <Button
-                Grid.Column="3"
-                Margin="8,0,0,0"
-                Click="ResetButton_Click"
-                Content="Reset All" />
+                <essential:SettingsCard x:Uid="BT_ConnectionsLimit">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE839;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="ConnectionsLimitNumberBox"
+                        Maximum="65535"
+                        Minimum="1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsExpander x:Uid="BT_Protocol">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard x:Uid="BT_IncomingTcp">
+                            <ToggleSwitch x:Name="EnableIncomingTcpToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_OutgoingTcp">
+                            <ToggleSwitch x:Name="EnableOutgoingTcpToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_IncomingUtp">
+                            <ToggleSwitch x:Name="EnableIncomingUtpToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_OutgoingUtp">
+                            <ToggleSwitch x:Name="EnableOutgoingUtpToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_MultiConnPerIp">
+                            <ToggleSwitch x:Name="AllowMultipleConnectionsPerIpToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
+                <essential:SettingsCard x:Uid="BT_AnonymousMode">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE72E;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch x:Name="AnonymousModeToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Discovery  -->
+                <TextBlock x:Uid="BT_Section_Discovery" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_EnableDht">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE909;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch x:Name="EnableDhtToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_EnableLsd">
+                    <ToggleSwitch x:Name="EnableLsdToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_EnableUpnp">
+                    <ToggleSwitch x:Name="EnableUpnpToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_EnableNatpmp">
+                    <ToggleSwitch x:Name="EnableNatpmpToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Tracker  -->
+                <TextBlock x:Uid="BT_Section_Tracker" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_AnnounceAllTiers">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch x:Name="AnnounceToAllTiersToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_AnnounceAllTrackers">
+                    <ToggleSwitch x:Name="AnnounceToAllTrackersToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Limits  -->
+                <TextBlock x:Uid="BT_Section_Limits" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_ActiveDownloads">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE896;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="ActiveDownloadsNumberBox"
+                        Maximum="9999"
+                        Minimum="-1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_ActiveSeeds">
+                    <NumberBox
+                        x:Name="ActiveSeedsNumberBox"
+                        Maximum="9999"
+                        Minimum="-1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_ActiveLimit">
+                    <NumberBox
+                        x:Name="ActiveLimitNumberBox"
+                        Maximum="9999"
+                        Minimum="-1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Speed Limits  -->
+                <TextBlock x:Uid="BT_Section_SpeedLimits" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_DownloadRateLimit">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE896;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="DownloadRateLimitNumberBox"
+                        Maximum="999999"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_UploadRateLimit">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE898;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="UploadRateLimitNumberBox"
+                        Maximum="999999"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Seeding  -->
+                <TextBlock x:Uid="BT_Section_Seeding" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_SeedRatioLimit">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE72C;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="SeedRatioLimitNumberBox"
+                        Maximum="100"
+                        Minimum="0"
+                        SmallChange="0.1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_SeedTimeLimit">
+                    <NumberBox
+                        x:Name="SeedTimeLimitNumberBox"
+                        Maximum="99999"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Peer  -->
+                <TextBlock x:Uid="BT_Section_Peer" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsExpander x:Uid="BT_Timeouts">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE916;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard x:Uid="BT_PeerTimeout">
+                            <NumberBox
+                                x:Name="PeerTimeoutNumberBox"
+                                Maximum="600"
+                                Minimum="5"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_HandshakeTimeout">
+                            <NumberBox
+                                x:Name="HandshakeTimeoutNumberBox"
+                                Maximum="120"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
+                <essential:SettingsCard x:Uid="BT_CloseRedundant">
+                    <ToggleSwitch x:Name="CloseRedundantConnectionsToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Disk I/O  -->
+                <TextBlock x:Uid="BT_Section_DiskIO" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_AioThreads">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xEDA2;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="AioThreadsNumberBox"
+                        Maximum="64"
+                        Minimum="1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_CheckingMemUsage">
+                    <NumberBox
+                        x:Name="CheckingMemUsageNumberBox"
+                        Maximum="2048"
+                        Minimum="1"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Identity  -->
+                <TextBlock x:Uid="BT_Section_Identity" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_UserAgent">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE77B;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <TextBox
+                        x:Name="UserAgentTextBox"
+                        MinWidth="220"
+                        LostFocus="OnSettingChanged"
+                        PlaceholderText="libtorrent/2.0.11" />
+                </essential:SettingsCard>
+
+                <!--  Encryption  -->
+                <TextBlock x:Uid="BT_Section_Encryption" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_EncryptionPolicy">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE72E;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        x:Name="EncryptionPolicyComboBox"
+                        MinWidth="180"
+                        SelectionChanged="OnSettingChanged">
+                        <ComboBoxItem x:Uid="BT_Enc_Forced" Tag="0" />
+                        <ComboBoxItem x:Uid="BT_Enc_Enabled" Tag="1" />
+                        <ComboBoxItem x:Uid="BT_Enc_Disabled" Tag="2" />
+                    </ComboBox>
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="BT_PreferRc4">
+                    <ToggleSwitch x:Name="PreferRc4Toggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
+                <!--  Proxy  -->
+                <TextBlock x:Uid="BT_Section_Proxy" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="BT_ProxyType">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE968;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ComboBox
+                        x:Name="ProxyTypeComboBox"
+                        MinWidth="180"
+                        SelectionChanged="OnSettingChanged">
+                        <ComboBoxItem x:Uid="BT_Proxy_None" Tag="0" />
+                        <ComboBoxItem x:Uid="BT_Proxy_Socks4" Tag="1" />
+                        <ComboBoxItem x:Uid="BT_Proxy_Socks5" Tag="2" />
+                        <ComboBoxItem x:Uid="BT_Proxy_Socks5Pw" Tag="3" />
+                        <ComboBoxItem x:Uid="BT_Proxy_Http" Tag="4" />
+                        <ComboBoxItem x:Uid="BT_Proxy_HttpPw" Tag="5" />
+                    </ComboBox>
+                </essential:SettingsCard>
+
+                <essential:SettingsExpander x:Uid="BT_ProxyDetails">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard x:Uid="BT_ProxyHostname">
+                            <TextBox
+                                x:Name="ProxyHostnameTextBox"
+                                MinWidth="200"
+                                LostFocus="OnSettingChanged"
+                                PlaceholderText="proxy.example.com" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_ProxyPort">
+                            <NumberBox
+                                x:Name="ProxyPortNumberBox"
+                                Maximum="65535"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_ProxyUsername">
+                            <TextBox
+                                x:Name="ProxyUsernameTextBox"
+                                MinWidth="200"
+                                LostFocus="OnSettingChanged"
+                                PlaceholderText="" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_ProxyPassword">
+                            <PasswordBox
+                                x:Name="ProxyPasswordBox"
+                                MinWidth="200"
+                                LostFocus="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_ProxyPeerConn">
+                            <ToggleSwitch x:Name="ProxyPeerConnectionsToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard x:Uid="BT_ProxyTrackerConn">
+                            <ToggleSwitch x:Name="ProxyTrackerConnectionsToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
+            </StackPanel>
         </Grid>
-    </Grid>
+    </ScrollViewer>
 </Page>

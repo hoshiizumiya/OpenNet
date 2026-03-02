@@ -1,0 +1,12 @@
+﻿namespace OpenNet.UI.Xaml.View.Dialog
+{
+	[default_interface]
+	runtimeclass AddRSSFeedDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+	{
+		AddRSSFeedDialog();
+
+		String FeedUrl{ get; };
+		String FeedName{ get; };
+		String FeedSavePath{ get; };
+	}
+}

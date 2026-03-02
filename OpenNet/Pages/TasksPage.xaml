@@ -3,6 +3,7 @@
     x:Class="OpenNet.Pages.TasksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:XamlToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -13,8 +14,8 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
         </Grid.RowDefinitions>
         <!--  NewWindow  -->
         <!--<AutoSuggestBox Width="280" QueryIcon="Find" />-->
@@ -24,9 +25,10 @@
             Margin="12,6"
             HorizontalAlignment="Left"
             PlaceholderText="Search"
-            QueryIcon="Find" />
-        <!--  TextChanged="SearchBox_TextChanged"  -->
-        <CommandBar Grid.Row="0" DefaultLabelPosition="Right">
+            QueryIcon="Find"
+            TextChanged="SearchBox_TextChanged"/>
+        <CommandBar Grid.Row="0"
+                    DefaultLabelPosition="Right">
             <AppBarButton
                 x:Name="TaskNewButton"
                 x:Uid="TaskNewButton"
@@ -38,32 +40,44 @@
                             x:Uid="TaskNewFromUrlButton"
                             Click="MenuItemAddFromLink_ClickAsync"
                             Icon="Link"
-                            Text="From Link" />
+                            Text="From Link"/>
                         <muxc:MenuFlyoutItem
                             x:Name="MenuItemAddFromFile"
                             x:Uid="TaskNewFromFileButton"
                             Click="MenuItemAddFromFile_ClickAsync"
                             Icon="Document"
-                            Text="From File" />
+                            Text="From File"/>
+                        <muxc:MenuFlyoutSeparator/>
+                        <muxc:MenuFlyoutItem
+                            x:Name="MenuItemAddFromHttp"
+                            x:Uid="TaskNewFromHttpButton"
+                            Click="MenuItemAddFromHttp_ClickAsync"
+                            Text="HTTP Download">
+                            <muxc:MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE774;"/>
+                            </muxc:MenuFlyoutItem.Icon>
+                        </muxc:MenuFlyoutItem>
                     </muxc:MenuFlyout>
                 </muxc:AppBarButton.Flyout>
             </AppBarButton>
             <AppBarButton
                 x:Uid="TaskStartButton"
                 Command="{x:Bind ViewModel.StartCommand}"
-                Icon="Play" />
+                Icon="Play"/>
             <AppBarButton
                 x:Uid="TaskPauseButton"
                 Command="{x:Bind ViewModel.PauseCommand}"
-                Icon="Pause" />
+                Icon="Pause"/>
             <AppBarButton
                 x:Uid="TaskDeleteButton"
                 Command="{x:Bind ViewModel.DeleteCommand}"
-                Icon="Delete" />
+                Icon="Delete"/>
             <CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Setting" Label="Settings">
+                <AppBarButton Icon="Setting"
+                              Label="Settings">
                     <AppBarButton.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="I" Modifiers="Control" />
+                        <KeyboardAccelerator Key="I"
+                                             Modifiers="Control"/>
                     </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
@@ -89,36 +103,36 @@
                             x:Uid="FilterNavViewAllTasks"
                             Icon="ViewAll"
                             IsSelected="True"
-                            Tag="AllTasks" />
+                            Tag="AllTasks"/>
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewDownloading"
                             Icon="Download"
-                            Tag="Downloading" />
+                            Tag="Downloading"/>
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewCompleted"
                             Icon="Accept"
-                            Tag="Completed" />
+                            Tag="Completed"/>
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewFailed"
                             Icon="Cancel"
-                            Tag="Failed" />
+                            Tag="Failed"/>
                     </muxc:NavigationView.MenuItems>
                 </muxc:NavigationView>
             </SplitView.Pane>
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="2*"/>
                 </Grid.RowDefinitions>
 
                 <!--  顶部任务列表（使用内置 ListView 模拟 DataGrid 样式）  -->
                 <Grid Grid.Row="0">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
 
 
@@ -128,38 +142,43 @@
                         Padding="8,4"
                         Background="{ThemeResource SystemControlAcrylicWindowBrush}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="2*" />
-                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="2*"/>
                         </Grid.ColumnDefinitions>
 
                         <TextBlock
                             x:Uid="Header_TaskName"
                             Grid.Column="0"
-                            FontWeight="SemiBold" />
+                            FontWeight="SemiBold"/>
                         <TextBlock
                             x:Uid="Header_Size"
                             Grid.Column="1"
-                            Text="Size" />
+                            Text="Size"/>
                         <TextBlock
                             x:Uid="Header_Progress"
                             Grid.Column="2"
-                            Text="Progress" />
+                            Text="Progress"/>
                         <TextBlock
                             x:Uid="Header_DLRate"
                             Grid.Column="3"
-                            Text="DL Rate" />
+                            Text="DL Rate"/>
+                        <TextBlock
+                            x:Uid="Header_ULRate"
+                            Grid.Column="4"
+                            Text="UL Rate"/>
                         <TextBlock
                             x:Uid="Header_Remaining"
-                            Grid.Column="4"
-                            Text="Remaining" />
+                            Grid.Column="5"
+                            Text="Remaining"/>
                         <TextBlock
                             x:Uid="Header_AddDate"
-                            Grid.Column="5"
-                            Text="Add Date" />
+                            Grid.Column="6"
+                            Text="Add Date"/>
                     </Grid>
 
                     <!--  列表  -->
@@ -177,25 +196,25 @@
                                     x:Uid="MoveTaskMenuItem"
                                     Click="MoveTaskMenuItem_Click"
                                     Icon="MoveToFolder"
-                                    Text="Move to..." />
+                                    Text="Move to..."/>
                                 <MenuFlyoutItem
                                     x:Name="OpenTaskLocationMenuItem"
                                     x:Uid="OpenTaskLocationMenuItem"
                                     Click="OpenTaskLocationMenuItem_Click"
                                     Icon="OpenFile"
-                                    Text="Open Location" />
-                                <MenuFlyoutSeparator />
+                                    Text="Open Location"/>
+                                <MenuFlyoutSeparator/>
                                 <MenuFlyoutItem
                                     x:Name="PropertiesMenuItem"
                                     x:Uid="PropertiesMenuItem"
                                     Click="PropertiesMenuItem_Click"
                                     Icon="More"
-                                    Text="Properties" />
+                                    Text="Properties"/>
                             </MenuFlyout>
                         </ListView.ContextFlyout>
                         <ListView.ItemsPanel>
                             <ItemsPanelTemplate>
-                                <muxc:ItemsStackPanel Orientation="Vertical" />
+                                <muxc:ItemsStackPanel Orientation="Vertical"/>
                             </ItemsPanelTemplate>
                         </ListView.ItemsPanel>
                         <ListView.ItemTemplate>
@@ -203,42 +222,60 @@
                             <DataTemplate x:DataType="vm:TaskViewModel">
                                 <Grid Padding="8,6">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="3*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="2*" />
-                                        <ColumnDefinition Width="2*" />
+                                        <ColumnDefinition Width="3*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="2*"/>
+                                        <ColumnDefinition Width="2*"/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Grid.Column="0" Text="{x:Bind Name, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="1" Text="{x:Bind Size, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="2" Text="{x:Bind Progress, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="3" Text="{x:Bind DownloadRate, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="4" Text="{x:Bind Remaining, Mode=OneWay}" />
-                                    <TextBlock Grid.Column="5" Text="{x:Bind AddDate, Mode=OneWay}" />
+                                    <TextBlock Grid.Column="0"
+                                               Text="{x:Bind Name, Mode=OneWay}"/>
+                                    <TextBlock Grid.Column="1"
+                                               Text="{x:Bind Size, Mode=OneWay}"/>
+                                    <TextBlock Grid.Column="2"
+                                               Text="{x:Bind Progress, Mode=OneWay}"/>
+                                    <TextBlock Grid.Column="3"
+                                               Text="{x:Bind DownloadRate, Mode=OneWay}"/>
+                                    <TextBlock Grid.Column="4"
+                                               Text="{x:Bind UploadRate, Mode=OneWay}"/>
+                                    <TextBlock Grid.Column="5"
+                                               Text="{x:Bind Remaining, Mode=OneWay}"/>
+                                    <TextBlock Grid.Column="6"
+                                               Text="{x:Bind AddDate, Mode=OneWay}"/>
                                 </Grid>
                             </DataTemplate>
                         </ListView.ItemTemplate>
                     </ListView>
                 </Grid>
 
-                <!--  上下可调分隔条（WinUI 控件命名空间）  -->
-                <!--<muxc:gridsplitter
-                    grid.row="1"
-                    height="5"
-                    horizontalalignment="stretch"
-                    resizebehavior="basedonalignment"
-                    resizedirection="rows" />-->
+                <!--  上下可调分隔条（XamlToolkit GridSplitter）  -->
+                <controls:GridSplitter
+                    Grid.Row="1"
+                    Height="8"
+                    HorizontalAlignment="Stretch"
+                    ResizeBehavior="BasedOnAlignment"
+                    ResizeDirection="Rows"/>
 
                 <!--  下方多标签  -->
-                <muxc:SelectorBar x:Name="Task_SelectBar" Grid.Row="2">
+                <muxc:SelectorBar x:Name="Task_SelectBar"
+                                  Grid.Row="2"
+                                  SelectionChanged="Task_SelectBar_SelectionChanged">
                     <muxc:SelectorBarItem
                         x:Name="SummaryContent"
                         x:Uid="Task_SummaryContent"
-                        IsSelected="True" />
-                    <muxc:SelectorBarItem x:Name="PeersList" x:Uid="Task_PeersList" />
+                        IsSelected="True"/>
+                    <muxc:SelectorBarItem x:Name="PeersList"
+                                          x:Uid="Task_PeersList"/>
+                    <muxc:SelectorBarItem x:Name="TrackersList"
+                                          x:Uid="Task_TrackersList"/>
+                    <muxc:SelectorBarItem x:Name="FilesList"
+                                          x:Uid="Task_FilesList"/>
                 </muxc:SelectorBar>
-                <Frame x:Name="ContentFrame" IsNavigationStackEnabled="False" />
+                <Frame x:Name="ContentFrame"
+                       Grid.Row="3"
+                       IsNavigationStackEnabled="False"/>
 
             </Grid>
         </SplitView>

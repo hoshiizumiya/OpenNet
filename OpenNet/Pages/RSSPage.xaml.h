@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "Pages/RSSPage.g.h"
 #include "ViewModels/RSSViewModel.h"
+#include "UI/Xaml/View/Dialog/AddRSSFeedDialog.xaml.h"
+#include "UI/Xaml/View/Dialog/RSSFeedSettingsDialog.xaml.h"
 
 namespace winrt::OpenNet::Pages::implementation
 {

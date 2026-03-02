@@ -1,0 +1,27 @@
+namespace OpenNet.UI.Xaml.Media.Pipelines
+{
+    /// <summary>
+    /// Marker interface for pipeline effects that can be composed into a PipelineBrush.
+    /// </summary>
+    [uuid("A3E7F4B2-9C1D-4E8A-B6D5-2F0C7A8E3B14")]
+    [version(1)]
+    interface IPipelineEffect
+    {
+    };
+
+    /// <summary>
+    /// A XamlCompositionBrushBase that builds a composition effect pipeline.
+    /// Supports setting an effect pipeline in code via SetPipeline() or in XAML via the Source property.
+    /// </summary>
+    [default_interface]
+    runtimeclass PipelineBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        PipelineBrush();
+
+        /// <summary>
+        /// Gets or sets the IPipelineEffect that defines the brush pipeline (for XAML binding).
+        /// </summary>
+        IPipelineEffect Source;
+        static Microsoft.UI.Xaml.DependencyProperty SourceProperty{ get; };
+    }
+}

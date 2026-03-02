@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="OpenNet.UI.Xaml.View.Dialog.AddRSSFeedDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ViewDialogAddRSSFeedDialog"
+    x:Uid="RSSAddFeedDialog"
+    Title="Add RSS Feed"
+    DefaultButton="Primary"
+    PrimaryButtonClick="OnPrimaryButtonClick"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <StackPanel MinWidth="400" Spacing="16">
+        <TextBox
+            x:Name="FeedUrlTextBox"
+            x:Uid="RSSFeedUrlTextBox"
+            Header="Feed URL"
+            PlaceholderText="https://example.com/rss.xml" />
+        <TextBox
+            x:Name="FeedNameTextBox"
+            x:Uid="RSSFeedNameTextBox"
+            Header="Name (optional)"
+            PlaceholderText="My RSS Feed" />
+        <TextBox
+            x:Name="FeedSavePathTextBox"
+            x:Uid="RSSFeedSavePathTextBox"
+            Header="Save Path (optional)"
+            PlaceholderText="Leave empty to use default" />
+        <InfoBar
+            x:Name="UrlErrorInfoBar"
+            Title="URL error"
+            IsClosable="False"
+            IsOpen="False"
+            Message="Please enter a valid feed URL."
+            Severity="Error" />
+    </StackPanel>
+</ContentDialog>

@@ -11,7 +11,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	TaskSummaryPage::TaskSummaryPage()
 	{
-		// InitializeComponent();
+		InitializeComponent();
 	}
 
 	TaskSummaryPage::~TaskSummaryPage()

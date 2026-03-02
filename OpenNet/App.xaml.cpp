@@ -5,6 +5,7 @@
 #include "Helpers/WindowHelper.h"
 #include "Helpers/ThemeHelper.h"
 #include "Core/P2PManager.h"
+#include "Core/RSS/RSSManager.h"
 
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Windows.Storage.h>
@@ -72,6 +73,10 @@ namespace winrt::OpenNet::implementation
 
             OutputDebugStringA("App: MainWindow hidden to tray\n");
         });
+
+        // Initialize RSS Manager early so feeds update in the background
+        // regardless of whether the user navigates to the RSS page
+        InitializeRSSManagerAsync();
 
         window.Activate();
 
@@ -188,6 +193,10 @@ namespace winrt::OpenNet::implementation
 
             // Shutdown P2PManager
             ::OpenNet::Core::P2PManager::Instance().Shutdown();
+
+            // Stop RSS background updates
+            ::OpenNet::Core::RSS::RSSManager::Instance().Stop();
+
             OutputDebugStringA("App: Destructor completed\n");
         }
         catch (const std::exception& ex)
@@ -197,6 +206,21 @@ namespace winrt::OpenNet::implementation
         catch (...)
         {
             OutputDebugStringA("App: Unknown error in destructor\n");
+        }
+    }
+
+    winrt::fire_and_forget App::InitializeRSSManagerAsync()
+    {
+        try
+        {
+            auto& manager = ::OpenNet::Core::RSS::RSSManager::Instance();
+            co_await manager.InitializeAsync();
+            manager.Start();
+            OutputDebugStringA("App: RSS Manager initialized and started\n");
+        }
+        catch (...)
+        {
+            OutputDebugStringA("App: Failed to initialize RSS Manager\n");
         }
     }
 

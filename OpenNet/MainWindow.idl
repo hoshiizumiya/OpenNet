@@ -7,5 +7,6 @@ namespace OpenNet
 	{
 		MainWindow();
 		OpenNet.ViewModels.MainViewModel ViewModel { get; };
+		void Navigate(String tag);
 	}
 }

@@ -4,255 +4,199 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="NetworkSettingsPageRoot"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+        <Style
+            x:Key="SettingsSectionHeaderTextBlockStyle"
+            BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+            TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Margin" Value="1,30,0,6" />
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
+
     <ScrollViewer>
-        <StackPanel Margin="24" Spacing="16">
-
-            <!-- Page Header -->
-            <TextBlock 
-                Text="Network Settings" 
-                Style="{StaticResource TitleTextBlockStyle}"
-                Margin="0,0,0,16"/>
-
-            <!-- Custom Tracker Section -->
-            <Expander 
-                x:Name="TrackerExpander"
+        <Grid Padding="24">
+            <StackPanel
+                MaxWidth="1000"
                 HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE774;" Margin="0,0,12,0"/>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="Custom Trackers" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="Manage your custom tracker list" 
-                                       Style="{StaticResource CaptionTextBlockStyle}" 
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander.Header>
-                <Expander.Content>
-                    <StackPanel Spacing="12" Margin="0,12,0,0">
-                        <!-- Add Tracker Input -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox 
-                                x:Name="NewTrackerTextBox"
-                                PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)"/>
-                            <Button 
-                                Grid.Column="1" 
-                                Content="Add" 
-                                Margin="8,0,0,0"
-                                Click="AddTrackerButton_Click"
-                                Style="{StaticResource AccentButtonStyle}"/>
-                        </Grid>
+                Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
 
-                        <!-- Tracker List -->
-                        <ListView 
-                            x:Name="TrackerListView"
-                            ItemsSource="{x:Bind TrackerList}"
-                            MaxHeight="300"
-                            SelectionMode="None">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="x:String">
-                                    <Grid Padding="8,4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock 
-                                            Text="{x:Bind}" 
-                                            VerticalAlignment="Center"
-                                            TextTrimming="CharacterEllipsis"/>
-                                        <Button 
-                                            Grid.Column="1"
-                                            Content="&#xE74D;"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Background="Transparent"
-                                            Click="RemoveTrackerButton_Click"
-                                            Tag="{x:Bind}"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
+                <!--  I think we don't need a Page Header, BreadcrumbBar is OK and enough  -->
+                <!--<TextBlock
+                    Margin="0,0,0,16"
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="Network Settings" />-->
 
-                        <!-- Info Text -->
-                        <TextBlock 
-                            Text="These trackers will be automatically added to new torrents to help find peers."
-                            Style="{StaticResource CaptionTextBlockStyle}"
-                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            TextWrapping="Wrap"/>
-                    </StackPanel>
-                </Expander.Content>
-            </Expander>
+                <!--  Custom Tracker Section  -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Custom Trackers" />
 
-            <!-- Tracker Subscription Section -->
-            <Expander 
-                x:Name="SubscriptionExpander"
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch"
-                IsExpanded="True">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE8F1;" Margin="0,0,12,0"/>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="Tracker Subscriptions" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="Subscribe to tracker lists from URLs (.txt format)" 
-                                       Style="{StaticResource CaptionTextBlockStyle}" 
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander.Header>
-                <Expander.Content>
-                    <StackPanel Spacing="12" Margin="0,12,0,0">
-                        <!-- Subscription Name -->
-                        <TextBox 
-                            x:Name="SubscriptionNameTextBox"
-                            PlaceholderText="Subscription name (e.g., Public Trackers)"/>
-
-                        <!-- Subscription URL Input -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox 
-                                x:Name="SubscriptionUrlTextBox"
-                                PlaceholderText="Subscription URL (e.g., https://example.com/trackers.txt)"/>
-                            <Button 
-                                Grid.Column="1" 
-                                Content="Subscribe" 
-                                Margin="8,0,0,0"
-                                Click="AddSubscriptionButton_Click"
-                                Style="{StaticResource AccentButtonStyle}"/>
-                        </Grid>
-
-                        <!-- Subscription List -->
-                        <ListView 
-                            x:Name="SubscriptionListView"
-                            ItemsSource="{x:Bind SubscriptionList}"
-                            MaxHeight="200"
-                            SelectionMode="None">
-                            <ListView.ItemTemplate>
-                                <DataTemplate x:DataType="x:String">
-                                    <Grid Padding="8,4">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <TextBlock 
-                                            Text="{x:Bind}" 
-                                            VerticalAlignment="Center"
-                                            TextTrimming="CharacterEllipsis"/>
-                                        <Button 
-                                            Grid.Column="1"
-                                            Content="&#xE74D;"
-                                            FontFamily="Segoe MDL2 Assets"
-                                            Background="Transparent"
-                                            Click="RemoveSubscriptionButton_Click"
-                                            Tag="{x:Bind}"/>
-                                    </Grid>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-
-                        <!-- Popular Tracker Lists -->
-                        <StackPanel Spacing="4">
-                            <TextBlock 
-                                Text="Popular Tracker Lists:" 
+                <essential:SettingsExpander Description="Manage your custom tracker list" Header="Custom Trackers">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <Button
+                        Click="RefreshTrackersButton_Click"
+                        Content="Refresh"
+                        ToolTipService.ToolTip="Refresh all trackers" />
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard ContentAlignment="Left" Header="Add tracker">
+                            <Grid MinWidth="400">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="NewTrackerTextBox" PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)" />
+                                <Button
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    Click="AddTrackerButton_Click"
+                                    Content="Add"
+                                    Style="{StaticResource AccentButtonStyle}" />
+                            </Grid>
+                        </essential:SettingsCard>
+                        <essential:SettingsCard ContentAlignment="Left" Header="Tracker list">
+                            <ListView
+                                x:Name="TrackerListView"
+                                MaxHeight="300"
+                                ItemsSource="{x:Bind TrackerList}"
+                                SelectionMode="None">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Grid Padding="8,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="{x:Bind}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <Button
+                                                Grid.Column="1"
+                                                Background="Transparent"
+                                                Click="RemoveTrackerButton_Click"
+                                                Tag="{x:Bind}">
+                                                <FontIcon FontSize="12" Glyph="&#xE74D;" />
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </essential:SettingsCard>
+                        <essential:SettingsCard ContentAlignment="Left">
+                            <TextBlock
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
-                                FontWeight="SemiBold"/>
-                            <HyperlinkButton 
-                                Content="ngosang/trackerslist (Best)" 
-                                NavigateUri="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt"/>
-                            <HyperlinkButton 
-                                Content="ngosang/trackerslist (All)" 
-                                NavigateUri="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt"/>
-                        </StackPanel>
-                    </StackPanel>
-                </Expander.Content>
-            </Expander>
+                                Text="These trackers will be automatically added to new torrents to help find peers."
+                                TextWrapping="Wrap" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
 
-            <!-- Connection Settings Section -->
-            <Expander 
-                HorizontalAlignment="Stretch"
-                HorizontalContentAlignment="Stretch">
-                <Expander.Header>
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-                        <FontIcon Glyph="&#xE839;" Margin="0,0,12,0"/>
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="Connection" Style="{StaticResource BodyStrongTextBlockStyle}"/>
-                            <TextBlock Text="Port and connection settings" 
-                                       Style="{StaticResource CaptionTextBlockStyle}" 
-                                       Foreground="{ThemeResource TextFillColorSecondaryBrush}"/>
-                        </StackPanel>
-                    </Grid>
-                </Expander.Header>
-                <Expander.Content>
-                    <StackPanel Spacing="12" Margin="0,12,0,0">
-                        <!-- Listen Port -->
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="120"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Text="Listen Port" VerticalAlignment="Center"/>
-                            <NumberBox 
-                                x:Name="ListenPortBox"
-                                Grid.Column="1"
-                                Value="6881"
-                                Minimum="1024"
-                                Maximum="65535"
-                                SpinButtonPlacementMode="Compact"/>
-                        </Grid>
+                <!--  Tracker Subscription Section  -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Tracker Subscriptions" />
 
-                        <!-- Enable DHT -->
-                        <ToggleSwitch 
-                            x:Name="EnableDHTToggle"
-                            Header="Enable DHT"
-                            IsOn="True"/>
+                <essential:SettingsExpander Description="Subscribe to tracker lists from URLs (.txt format)" Header="Tracker Subscriptions">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE8F1;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard ContentAlignment="Left" Header="Add subscription">
+                            <StackPanel MinWidth="400" Spacing="8">
+                                <TextBox x:Name="SubscriptionNameTextBox" PlaceholderText="Subscription name (e.g., Public Trackers)" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBox x:Name="SubscriptionUrlTextBox" PlaceholderText="Subscription URL (e.g., https://example.com/trackers.txt)" />
+                                    <Button
+                                        Grid.Column="1"
+                                        Margin="8,0,0,0"
+                                        Click="AddSubscriptionButton_Click"
+                                        Content="Subscribe"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                                </Grid>
+                            </StackPanel>
+                        </essential:SettingsCard>
+                        <essential:SettingsCard ContentAlignment="Left" Header="Active subscriptions">
+                            <ListView
+                                x:Name="SubscriptionListView"
+                                MaxHeight="200"
+                                ItemsSource="{x:Bind SubscriptionList}"
+                                SelectionMode="None">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="x:String">
+                                        <Grid Padding="8,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                VerticalAlignment="Center"
+                                                Text="{x:Bind}"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <Button
+                                                Grid.Column="1"
+                                                Background="Transparent"
+                                                Click="RemoveSubscriptionButton_Click"
+                                                Tag="{x:Bind}">
+                                                <FontIcon FontSize="12" Glyph="&#xE74D;" />
+                                            </Button>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </essential:SettingsCard>
+                        <essential:SettingsCard ContentAlignment="Left" Header="Popular tracker lists">
+                            <StackPanel Margin="-12,0,0,0" Spacing="0">
+                                <HyperlinkButton Content="ngosang/trackerslist (Best)" NavigateUri="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt" />
+                                <HyperlinkButton Content="ngosang/trackerslist (All)" NavigateUri="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt" />
+                            </StackPanel>
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
 
-                        <!-- Enable PEX -->
-                        <ToggleSwitch 
-                            x:Name="EnablePEXToggle"
-                            Header="Enable Peer Exchange (PEX)"
-                            IsOn="True"/>
+                <!--  Connection Settings Section  -->
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Connection" />
 
-                        <!-- Enable LSD -->
-                        <ToggleSwitch 
-                            x:Name="EnableLSDToggle"
-                            Header="Enable Local Peer Discovery (LSD)"
-                            IsOn="True"/>
-                    </StackPanel>
-                </Expander.Content>
-            </Expander>
+                <essential:SettingsCard Description="Listening port for incoming connections" Header="Listen port">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE839;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <NumberBox
+                        x:Name="ListenPortBox"
+                        Maximum="65535"
+                        Minimum="1024"
+                        SpinButtonPlacementMode="Compact"
+                        Value="6881" />
+                </essential:SettingsCard>
 
-            <!-- Refresh Button -->
-            <Button 
-                Content="Refresh All Trackers"
-                Click="RefreshTrackersButton_Click"
-                HorizontalAlignment="Right"
-                Margin="0,16,0,0"/>
+                <essential:SettingsCard Description="Distributed Hash Table for decentralized peer discovery" Header="Enable DHT">
+                    <ToggleSwitch x:Name="EnableDHTToggle" IsOn="True" />
+                </essential:SettingsCard>
 
-        </StackPanel>
+                <essential:SettingsCard Description="Exchange peer lists with connected peers" Header="Enable Peer Exchange (PEX)">
+                    <ToggleSwitch x:Name="EnablePEXToggle" IsOn="True" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard Description="Discover peers on the local network" Header="Enable Local Peer Discovery (LSD)">
+                    <ToggleSwitch x:Name="EnableLSDToggle" IsOn="True" />
+                </essential:SettingsCard>
+
+            </StackPanel>
+        </Grid>
     </ScrollViewer>
 </Page>

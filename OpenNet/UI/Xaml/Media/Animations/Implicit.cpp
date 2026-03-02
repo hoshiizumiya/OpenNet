@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "Implicit.h"
 #if __has_include("UI/Xaml/Media/Animations/Implicit.g.cpp")
 #include "UI/Xaml/Media/Animations/Implicit.g.cpp"
@@ -49,9 +49,9 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 					return;
 				}
 
-				// Build implicit animation collection for show animations
+				// Build CompositionAnimationGroup for show animations
 				auto compositor = visual.Compositor();
-				auto collection = compositor.CreateImplicitAnimationCollection();
+				auto group = compositor.CreateAnimationGroup();
 
 				for (auto const& child : animationSet.Children())
 				{
@@ -65,28 +65,28 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 
 						auto duration = d.TimeSpan;
 
-						if (auto offsetAnim = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::IOffsetAnimation>())
+						if (auto offsetAnimDef = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::OffsetAnimation>())
 						{
 							auto animation = compositor.CreateVector3KeyFrameAnimation();
 							animation.Target(L"Offset");
 							animation.Duration(duration);
-							animation.InsertExpressionKeyFrame(0.0f, L"this.StartingValue");
-							animation.InsertExpressionKeyFrame(1.0f, L"this.FinalValue");
-							collection.Insert(L"Offset", animation);
+							animation.InsertKeyFrame(0.0f, offsetAnimDef.From());
+							animation.InsertKeyFrame(1.0f, offsetAnimDef.To());
+							group.Add(animation);
 						}
-						else if (auto opacityAnim = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::IOpacityAnimation>())
+						else if (auto opacityAnimDef = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::OpacityAnimation>())
 						{
 							auto animation = compositor.CreateScalarKeyFrameAnimation();
 							animation.Target(L"Opacity");
 							animation.Duration(duration);
-							animation.InsertExpressionKeyFrame(0.0f, L"this.StartingValue");
-							animation.InsertExpressionKeyFrame(1.0f, L"this.FinalValue");
-							collection.Insert(L"Opacity", animation);
+							animation.InsertKeyFrame(0.0f, static_cast<float>(opacityAnimDef.From()));
+							animation.InsertKeyFrame(1.0f, static_cast<float>(opacityAnimDef.To()));
+							group.Add(animation);
 						}
 					}
 				}
 
-				visual.ImplicitAnimations(collection);
+				Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitShowAnimation(uiElement, group);
 			} } });
 
 		return s_showAnimationsProperty;
@@ -118,13 +118,13 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 				if (!animationSet)
 				{
 					// 清除元素上之前设置的任何隐式*隐藏*动画
-					Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitHideAnimation(uiElement, nullptr);					return;
+					Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitHideAnimation(uiElement, nullptr);
 					return;
 				}
 
-				// Build implicit animation collection for hide animations
+				// Build CompositionAnimationGroup for hide animations
 				auto compositor = visual.Compositor();
-				auto collection = compositor.CreateImplicitAnimationCollection();
+				auto group = compositor.CreateAnimationGroup();
 
 				for (auto const& child : animationSet.Children())
 				{
@@ -138,28 +138,28 @@ namespace winrt::OpenNet::UI::Xaml::Media::Animations::implementation
 
 						auto duration = d.TimeSpan;
 
-						if (auto offsetAnim = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::IOffsetAnimation>())
+						if (auto offsetAnimDef = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::OffsetAnimation>())
 						{
 							auto animation = compositor.CreateVector3KeyFrameAnimation();
 							animation.Target(L"Offset");
 							animation.Duration(duration);
-							animation.InsertExpressionKeyFrame(0.0f, L"this.StartingValue");
-							animation.InsertExpressionKeyFrame(1.0f, L"this.FinalValue");
-							collection.Insert(L"Offset", animation);
+							animation.InsertKeyFrame(0.0f, offsetAnimDef.From());
+							animation.InsertKeyFrame(1.0f, offsetAnimDef.To());
+							group.Add(animation);
 						}
-						else if (auto opacityAnim = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::IOpacityAnimation>())
+						else if (auto opacityAnimDef = child.try_as<winrt::OpenNet::UI::Xaml::Media::Animations::OpacityAnimation>())
 						{
 							auto animation = compositor.CreateScalarKeyFrameAnimation();
 							animation.Target(L"Opacity");
 							animation.Duration(duration);
-							animation.InsertExpressionKeyFrame(0.0f, L"this.StartingValue");
-							animation.InsertExpressionKeyFrame(1.0f, L"this.FinalValue");
-							collection.Insert(L"Opacity", animation);
+							animation.InsertKeyFrame(0.0f, static_cast<float>(opacityAnimDef.From()));
+							animation.InsertKeyFrame(1.0f, static_cast<float>(opacityAnimDef.To()));
+							group.Add(animation);
 						}
 					}
 				}
 
-				visual.ImplicitAnimations(collection);
+				Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetImplicitHideAnimation(uiElement, group);
 			} } });
 
 		return s_hideAnimationsProperty;

@@ -1,0 +1,19 @@
+﻿import "ViewModels/RSSViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Dialog
+{
+	[default_interface]
+	runtimeclass RSSFeedSettingsDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+	{
+		RSSFeedSettingsDialog();
+
+		void SetFeed(OpenNet.ViewModels.RSSFeedViewModel feed);
+
+		String FeedTitle{ get; };
+		String FeedUrl{ get; };
+		String FeedSavePath{ get; };
+		Int32 UpdateIntervalMinutes{ get; };
+		Boolean AutoDownload{ get; };
+		String FilterPattern{ get; };
+	}
+}

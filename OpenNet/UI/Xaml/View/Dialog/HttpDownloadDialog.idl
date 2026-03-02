@@ -1,0 +1,17 @@
+namespace OpenNet.UI.Xaml.View.Dialog
+{
+	[default_interface]
+	runtimeclass HttpDownloadDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+	{
+		HttpDownloadDialog();
+
+		// The validated URL entered by the user
+		String Url{ get; };
+		// Optional save directory
+		String SaveDirectory{ get; };
+		// Optional custom filename
+		String FileName{ get; };
+		// Whether the URL is valid
+		Boolean IsUrlValid{ get; };
+	}
+}

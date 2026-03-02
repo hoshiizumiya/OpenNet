@@ -1,0 +1,14 @@
+namespace OpenNet.UI.Xaml.Control.HomePage.Header
+{
+	[default_interface]
+	runtimeclass AnimatedImage : Microsoft.UI.Xaml.Controls.UserControl
+	{
+		AnimatedImage();
+
+		Windows.Foundation.Uri ImageUrl;
+		static Microsoft.UI.Xaml.DependencyProperty ImageUrlProperty{ get; };
+
+		Double BlurAmount;
+		static Microsoft.UI.Xaml.DependencyProperty BlurAmountProperty{ get; };
+	}
+}

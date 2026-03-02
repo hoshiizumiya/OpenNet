@@ -187,13 +187,15 @@ namespace OpenNet::Core
             
             OutputDebugStringA("P2PManager: Shutting down...\n");
             
-            // 保存所有恢复数据
+            // Save all resume data then stop the core.
+            // Stop() internally waits for pending resume data alerts
+            // and saves session state before destroying the session.
             if (m_torrentCore)
             {
                 OutputDebugStringA("P2PManager: Saving all resume data...\n");
                 m_torrentCore->SaveAllResumeData();
                 
-                // 停止核心
+                // Stop core (waits for resume data alerts, saves session state)
                 OutputDebugStringA("P2PManager: Stopping torrent core...\n");
                 m_torrentCore->Stop();
             }

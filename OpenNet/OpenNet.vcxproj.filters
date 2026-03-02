@@ -37,9 +37,6 @@
     <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml">
       <Filter>Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="Controls\HomePage\Header\HeaderCarousel.xaml">
-      <Filter>Controls\HomePage\Header</Filter>
-    </Page>
     <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
       <Filter>Controls\SpeedGraph</Filter>
     </Page>
@@ -58,10 +55,22 @@
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskFilesPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
+      <Filter>UI\Xaml\View\Dialog</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </Page>
     <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml">
@@ -73,6 +82,18 @@
     <Page Include="UI\Shell\NotifyIconContextMenu.xaml" />
     <Page Include="Pages\RSSPage.xaml" />
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml" />
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml" />
+    <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -127,6 +148,18 @@
     <Midl Include="UI\Xaml\Media\Animations\Animations.idl">
       <Filter>UI\Xaml\Media\Animations</Filter>
     </Midl>
+    <Midl Include="UI\Xaml\Media\Animations\EffectAnimations.idl">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Enums.idl">
+      <Filter>UI\Xaml\Media</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Shadows\AttachedCardShadow.idl">
+      <Filter>UI\Xaml\Media\Shadows</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Visuals\Visuals.idl">
+      <Filter>UI\Xaml\Media\Visuals</Filter>
+    </Midl>
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <Filter>UI\Xaml\Control\Card</Filter>
     </Midl>
@@ -134,6 +167,26 @@
     <Midl Include="ViewModels\RSSViewModel.idl" />
     <Midl Include="Pages\RSSPage.idl" />
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />
+    <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl" />
+    <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl" />
+    <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.idl">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderTile.idl">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.idl">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Pipelines\PipelineBrush.idl">
+      <Filter>UI\Xaml\Media\Pipelines</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Effects\Effects.idl">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Brushes\Brushes.idl">
+      <Filter>UI\Xaml\Media\Brushes</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -189,6 +242,18 @@
     <ClCompile Include="Core\P2PManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Aria2\Aria2Models.cpp">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Aria2\JsonRpc2.cpp">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Aria2\Aria2Engine.cpp">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DownloadManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="Pages\SettingsPages\Folder.cpp">
       <Filter>Pages\SettingsPages</Filter>
     </ClCompile>
@@ -235,6 +300,30 @@
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp" />
+    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBuilder.cpp">
+      <Filter>UI\Xaml\Media\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBrush.cpp">
+      <Filter>UI\Xaml\Media\Pipelines</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Effects\PipelineEffect.cpp">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Effects\EffectTypes.cpp">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Brushes\BrushTypes.cpp">
+      <Filter>UI\Xaml\Media\Brushes</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Shadows\AttachedCardShadow.cpp">
+      <Filter>UI\Xaml\Media\Shadows</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Visuals\VisualTypes.cpp">
+      <Filter>UI\Xaml\Media\Visuals</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Animations\EffectAnimationTypes.cpp">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClCompile>
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
     <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp" />
     <ClCompile Include="Core\RSS\RSSParser.cpp" />
@@ -249,6 +338,23 @@
     <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp" />
     <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp" />
     <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp" />
+    <ClCompile Include="Core\HttpStateManager.cpp" />
+    <ClCompile Include="Core\TorrentSettings.cpp" />
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderTile.cpp">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\HoverLight.cpp">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\AmbLight.cpp">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.cpp">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -263,6 +369,21 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\P2PManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Aria2\Aria2Helpers.h">
+      <Filter>Core\Aria2</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Aria2\Aria2Models.h">
+      <Filter>Core\Aria2</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Aria2\JsonRpc2.h">
+      <Filter>Core\Aria2</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Aria2\Aria2Engine.h">
+      <Filter>Core\Aria2</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DownloadManager.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Models\NetworkInfo.h">
@@ -425,6 +546,62 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
     <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h" />
+    <ClInclude Include="Core\TorrentSettings.h" />
+    <ClInclude Include="Core\HttpStateManager.h" />
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.h">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderTile.h">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\HoverLight.h">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\AmbLight.h">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.h">
+      <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Effects\GaussianBlurEffect.h">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Effects\PipelineEffect.h">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Effects\EffectTypes.h">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBuilder.h">
+      <Filter>UI\Xaml\Media\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBrush.h">
+      <Filter>UI\Xaml\Media\Pipelines</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Visuals\PipelineVisualFactoryHelper.h">
+      <Filter>UI\Xaml\Media\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Visuals\VisualTypes.h">
+      <Filter>UI\Xaml\Media\Visuals</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Shadows\AttachedCardShadow.h">
+      <Filter>UI\Xaml\Media\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Animations\EffectAnimationTypes.h">
+      <Filter>UI\Xaml\Media\Animations</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Helpers\AsyncMutex.h">
+      <Filter>UI\Xaml\Media\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Helpers\CompositionExtensions.h">
+      <Filter>UI\Xaml\Media\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Helpers\SurfaceLoader.h">
+      <Filter>UI\Xaml\Media\Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Brushes\BrushTypes.h">
+      <Filter>UI\Xaml\Media\Brushes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -595,6 +772,12 @@
     <Image Include="Assets\AppIcons\win3264.ico">
       <Filter>Assets\AppIcons</Filter>
     </Image>
+    <Image Include="Assets\TileImages\FileTransfer.png" />
+    <Image Include="Assets\TileImages\NetworkDiscovery.png" />
+    <Image Include="Assets\TileImages\PeerChat.png" />
+    <Image Include="Assets\TileImages\VPNTunnel.png" />
+    <Image Include="Assets\TileImages\SharedStorage.png" />
+    <Image Include="Assets\TileImages\BandwidthMonitor.png" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -633,6 +816,9 @@
     <Filter Include="Core\torrentCore">
       <UniqueIdentifier>{b551d157-3814-44d1-8031-64907be98514}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Aria2">
+      <UniqueIdentifier>{a2e1f3c0-7d4b-4e5a-9c8d-1b2a3f4e5d6c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="mvvm_framework">
       <UniqueIdentifier>{fffe3c36-0f8e-4481-b97a-ccc76870e6b5}</UniqueIdentifier>
     </Filter>
@@ -648,20 +834,11 @@
     <Filter Include="Controls">
       <UniqueIdentifier>{f64d18af-00d4-4982-a2e3-9f2822bfcdfe}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Controls\HomePage">
-      <UniqueIdentifier>{3d39471c-12c4-47c2-8a1b-154e6d281042}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Controls\HomePage\Header">
-      <UniqueIdentifier>{2235ebba-aa7c-4f75-ac55-bc0b0ce626a1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Controls\SpeedGraph">
       <UniqueIdentifier>{52e4432b-554b-4c5f-a2b3-27854db84b74}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\DataGraph">
       <UniqueIdentifier>{ec481637-b160-491f-a326-b558a89c62fb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Controls\TorrentDetialsCheck">
-      <UniqueIdentifier>{9fecb35e-1684-4d2d-8a7f-9522273a948f}</UniqueIdentifier>
     </Filter>
     <Filter Include="UI">
       <UniqueIdentifier>{460f035a-2fc2-42a1-8f53-08b450198a07}</UniqueIdentifier>
@@ -710,6 +887,30 @@
     </Filter>
     <Filter Include="Core\Rss">
       <UniqueIdentifier>{10e84fea-0a8d-40c3-88ac-918f59810154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Control\HomePage">
+      <UniqueIdentifier>{d1a2b3c4-e5f6-7890-abcd-ef1234567890}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Control\HomePage\Header">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-7890-1234-567890abcdef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Effects">
+      <UniqueIdentifier>{f0e1d2c3-b4a5-6789-0123-456789abcdef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Pipelines">
+      <UniqueIdentifier>{a1b2c3d4-e5f6-7890-abcd-1234567890ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Visuals">
+      <UniqueIdentifier>{b2c3d4e5-f6a7-8901-bcde-2345678901bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Brushes">
+      <UniqueIdentifier>{c3d4e5f6-a7b8-9012-cdef-3456789012cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Shadows">
+      <UniqueIdentifier>{d4e5f6a7-b8c9-0123-defa-4567890123de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Media\Helpers">
+      <UniqueIdentifier>{e5f6a7b8-c9d0-1234-efab-5678901234ef}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,8 @@
 {
   "dependencies": [
     "libtorrent",
-    "zlib"
+    "nlohmann-json",
+    "zlib",
+    "sentry-native"
   ]
 }

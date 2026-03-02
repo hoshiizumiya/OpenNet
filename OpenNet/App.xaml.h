@@ -22,5 +22,6 @@ namespace winrt::OpenNet::implementation
 	private:
 		void OnClosing(winrt::Microsoft::UI::Xaml::Window const& sender,
 					   winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
+		static winrt::fire_and_forget InitializeRSSManagerAsync();
 	};
 }

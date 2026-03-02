@@ -1,13 +1,8 @@
-﻿import "ViewModels/MainViewModel.idl";
-
-namespace OpenNet.Pages
+﻿namespace OpenNet.Pages
 {
 	[default_interface]
 	runtimeclass HomePage : Microsoft.UI.Xaml.Controls.Page
 	{
 		HomePage();
-
-		// 给 x:Bind 用的属性
-		OpenNet.ViewModels.MainViewModel ViewModel{ get; };
 	}
 }

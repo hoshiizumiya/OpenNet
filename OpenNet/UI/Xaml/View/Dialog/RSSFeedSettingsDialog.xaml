@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="OpenNet.UI.Xaml.View.Dialog.RSSFeedSettingsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="ViewDialogRSSFeedSettingsDialog"
+    x:Uid="RSSFeedSettingsDialog"
+    Title="Feed Settings"
+    DefaultButton="Primary"
+    PrimaryButtonClick="OnPrimaryButtonClick"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+
+    <StackPanel MinWidth="400" Spacing="16">
+        <TextBox
+            x:Name="SettingsTitleTextBox"
+            x:Uid="RSSSettingsTitleTextBox"
+            Header="Name" />
+        <TextBox
+            x:Name="SettingsUrlTextBox"
+            x:Uid="RSSSettingsUrlTextBox"
+            Header="Feed URL" />
+        <TextBox
+            x:Name="SettingsSavePathTextBox"
+            x:Uid="RSSSettingsSavePathTextBox"
+            Header="Save Path" />
+        <NumberBox
+            x:Name="SettingsIntervalNumberBox"
+            x:Uid="RSSSettingsIntervalNumberBox"
+            Header="Update Interval (minutes)"
+            Maximum="1440"
+            Minimum="5"
+            SpinButtonPlacementMode="Inline" />
+        <ToggleSwitch
+            x:Name="SettingsAutoDownloadToggle"
+            x:Uid="RSSSettingsAutoDownloadToggle"
+            Header="Auto Download"
+            OffContent="Disabled"
+            OnContent="Enabled" />
+        <TextBox
+            x:Name="SettingsFilterTextBox"
+            x:Uid="RSSSettingsFilterTextBox"
+            Header="Filter Pattern (regex)"
+            PlaceholderText="e.g., 1080p|720p" />
+    </StackPanel>
+</ContentDialog>

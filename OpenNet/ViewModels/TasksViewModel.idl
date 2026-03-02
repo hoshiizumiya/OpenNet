@@ -17,6 +17,7 @@ namespace OpenNet.ViewModels
 
         // Commands for toolbar (placeholders for now)
         Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand NewFromHttpCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand PauseCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand DeleteCommand{ get; };
@@ -25,6 +26,9 @@ namespace OpenNet.ViewModels
 
         // Apply filter by tag: "AllTasks", "Downloading", "Completed", "Failed"
         void ApplyFilter(String tag);
+
+        // Text search filter
+        void SetSearchFilter(String text);
 
         // Event raised to request adding a task (string parameter can carry task name or data)
         event Windows.Foundation.EventHandler<String> AddTaskRequested;

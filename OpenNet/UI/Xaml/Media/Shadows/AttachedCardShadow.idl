@@ -1,0 +1,67 @@
+import "UI/Xaml/Media/Enums.idl";
+
+namespace OpenNet.UI.Xaml.Media.Shadows
+{
+    /// <summary>
+    /// A performant rectangular drop shadow which can be attached to any FrameworkElement.
+    /// It uses Win2D to create a clipped area of the outline of the element such that
+    /// transparent elements don't see the shadow below them.
+    /// </summary>
+    [default_interface]
+    runtimeclass AttachedCardShadow : Microsoft.UI.Xaml.DependencyObject
+    {
+        AttachedCardShadow();
+
+        /// <summary>
+        /// Gets or sets the shadow color.
+        /// </summary>
+        Windows.UI.Color Color;
+        static Microsoft.UI.Xaml.DependencyProperty ColorProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the shadow opacity (0 to 1).
+        /// </summary>
+        Double Opacity;
+        static Microsoft.UI.Xaml.DependencyProperty OpacityProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the blur radius for the shadow.
+        /// </summary>
+        Double BlurRadius;
+        static Microsoft.UI.Xaml.DependencyProperty BlurRadiusProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the shadow offset on the X axis.
+        /// </summary>
+        Double OffsetX;
+        static Microsoft.UI.Xaml.DependencyProperty OffsetXProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the shadow offset on the Y axis.
+        /// </summary>
+        Double OffsetY;
+        static Microsoft.UI.Xaml.DependencyProperty OffsetYProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the corner radius for the shadow mask.
+        /// </summary>
+        Double CornerRadius;
+        static Microsoft.UI.Xaml.DependencyProperty CornerRadiusProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the mode used to clip inner content from the shadow.
+        /// </summary>
+        OpenNet.UI.Xaml.Media.InnerContentClipMode InnerContentClipMode;
+        static Microsoft.UI.Xaml.DependencyProperty InnerContentClipModeProperty{ get; };
+
+        /// <summary>
+        /// Attaches the shadow to the given element.
+        /// </summary>
+        void AttachShadow(Microsoft.UI.Xaml.FrameworkElement element);
+
+        /// <summary>
+        /// Detaches the shadow from its current element.
+        /// </summary>
+        void DetachShadow();
+    }
+}

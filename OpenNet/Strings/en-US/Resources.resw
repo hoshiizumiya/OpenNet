@@ -59,7 +59,10 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root"
+    xmlns=""
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -492,5 +495,421 @@
   </data>
   <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
     <value>Priority</value>
+  </data>
+  <!-- ===== BitTorrent Settings Page ===== -->
+  <data name="BT_Title.Text" xml:space="preserve">
+    <value>BitTorrent Settings</value>
+  </data>
+  <data name="BT_Subtitle.Text" xml:space="preserve">
+    <value>Configure advanced BitTorrent protocol settings</value>
+  </data>
+  <data name="BT_Section_Connection.Text" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="BT_ListenInterfaces.Header" xml:space="preserve">
+    <value>Listen Interfaces</value>
+  </data>
+  <data name="BT_ListenInterfaces.Description" xml:space="preserve">
+    <value>Network interfaces and ports for incoming connections (e.g. 0.0.0.0:6881)</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Header" xml:space="preserve">
+    <value>Max Connections</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Description" xml:space="preserve">
+    <value>Maximum number of peer connections per torrent</value>
+  </data>
+  <data name="BT_Protocol.Header" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="BT_Protocol.Description" xml:space="preserve">
+    <value>Enable or disable specific transport protocols</value>
+  </data>
+  <data name="BT_IncomingTcp.Header" xml:space="preserve">
+    <value>Incoming TCP</value>
+  </data>
+  <data name="BT_OutgoingTcp.Header" xml:space="preserve">
+    <value>Outgoing TCP</value>
+  </data>
+  <data name="BT_IncomingUtp.Header" xml:space="preserve">
+    <value>Incoming uTP</value>
+  </data>
+  <data name="BT_OutgoingUtp.Header" xml:space="preserve">
+    <value>Outgoing uTP</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Header" xml:space="preserve">
+    <value>Multiple Connections Per IP</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Description" xml:space="preserve">
+    <value>Allow multiple connections from the same IP address</value>
+  </data>
+  <data name="BT_AnonymousMode.Header" xml:space="preserve">
+    <value>Anonymous Mode</value>
+  </data>
+  <data name="BT_AnonymousMode.Description" xml:space="preserve">
+    <value>Hide client identity from peers and trackers</value>
+  </data>
+  <data name="BT_Section_Discovery.Text" xml:space="preserve">
+    <value>Peer Discovery</value>
+  </data>
+  <data name="BT_EnableDht.Header" xml:space="preserve">
+    <value>DHT (Distributed Hash Table)</value>
+  </data>
+  <data name="BT_EnableDht.Description" xml:space="preserve">
+    <value>Enable decentralized peer discovery</value>
+  </data>
+  <data name="BT_EnableLsd.Header" xml:space="preserve">
+    <value>Local Service Discovery (LSD)</value>
+  </data>
+  <data name="BT_EnableUpnp.Header" xml:space="preserve">
+    <value>UPnP Port Mapping</value>
+  </data>
+  <data name="BT_EnableNatpmp.Header" xml:space="preserve">
+    <value>NAT-PMP Port Mapping</value>
+  </data>
+  <data name="BT_Section_Tracker.Text" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Header" xml:space="preserve">
+    <value>Announce to All Tiers</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Description" xml:space="preserve">
+    <value>Send announce to all tracker tiers simultaneously</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Header" xml:space="preserve">
+    <value>Announce to All Trackers</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Description" xml:space="preserve">
+    <value>Send announce to all trackers in each tier</value>
+  </data>
+  <data name="BT_Section_Limits.Text" xml:space="preserve">
+    <value>Queue Limits</value>
+  </data>
+  <data name="BT_ActiveDownloads.Header" xml:space="preserve">
+    <value>Active Downloads</value>
+  </data>
+  <data name="BT_ActiveDownloads.Description" xml:space="preserve">
+    <value>Maximum simultaneous downloading torrents</value>
+  </data>
+  <data name="BT_ActiveSeeds.Header" xml:space="preserve">
+    <value>Active Seeds</value>
+  </data>
+  <data name="BT_ActiveSeeds.Description" xml:space="preserve">
+    <value>Maximum simultaneous seeding torrents</value>
+  </data>
+  <data name="BT_ActiveLimit.Header" xml:space="preserve">
+    <value>Active Torrents</value>
+  </data>
+  <data name="BT_ActiveLimit.Description" xml:space="preserve">
+    <value>Maximum total active torrents (download + seed)</value>
+  </data>
+  <data name="BT_Section_SpeedLimits.Text" xml:space="preserve">
+    <value>Speed Limits</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Header" xml:space="preserve">
+    <value>Download Rate Limit</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Description" xml:space="preserve">
+    <value>Maximum download speed in KB/s (0 = unlimited)</value>
+  </data>
+  <data name="BT_UploadRateLimit.Header" xml:space="preserve">
+    <value>Upload Rate Limit</value>
+  </data>
+  <data name="BT_UploadRateLimit.Description" xml:space="preserve">
+    <value>Maximum upload speed in KB/s (0 = unlimited)</value>
+  </data>
+  <data name="BT_Section_Seeding.Text" xml:space="preserve">
+    <value>Seeding</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Header" xml:space="preserve">
+    <value>Seed Ratio Limit</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Description" xml:space="preserve">
+    <value>Stop seeding when ratio reached (0 = no limit)</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Header" xml:space="preserve">
+    <value>Seed Time Limit</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Description" xml:space="preserve">
+    <value>Stop seeding after specified minutes (0 = no limit)</value>
+  </data>
+  <data name="BT_Section_Peer.Text" xml:space="preserve">
+    <value>Peer</value>
+  </data>
+  <data name="BT_Timeouts.Header" xml:space="preserve">
+    <value>Timeouts</value>
+  </data>
+  <data name="BT_Timeouts.Description" xml:space="preserve">
+    <value>Configure peer connection timeouts</value>
+  </data>
+  <data name="BT_PeerTimeout.Header" xml:space="preserve">
+    <value>Peer Timeout (seconds)</value>
+  </data>
+  <data name="BT_HandshakeTimeout.Header" xml:space="preserve">
+    <value>Handshake Timeout (seconds)</value>
+  </data>
+  <data name="BT_CloseRedundant.Header" xml:space="preserve">
+    <value>Close Redundant Connections</value>
+  </data>
+  <data name="BT_CloseRedundant.Description" xml:space="preserve">
+    <value>Close connections that are no longer needed</value>
+  </data>
+  <data name="BT_Section_DiskIO.Text" xml:space="preserve">
+    <value>Disk I/O</value>
+  </data>
+  <data name="BT_AioThreads.Header" xml:space="preserve">
+    <value>Async I/O Threads</value>
+  </data>
+  <data name="BT_AioThreads.Description" xml:space="preserve">
+    <value>Number of threads for asynchronous disk operations</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Header" xml:space="preserve">
+    <value>Hash Checking Memory (MB)</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Description" xml:space="preserve">
+    <value>Maximum memory used for hash checking</value>
+  </data>
+  <data name="BT_Section_Identity.Text" xml:space="preserve">
+    <value>Identity</value>
+  </data>
+  <data name="BT_UserAgent.Header" xml:space="preserve">
+    <value>User Agent</value>
+  </data>
+  <data name="BT_UserAgent.Description" xml:space="preserve">
+    <value>Client identification string sent to trackers</value>
+  </data>
+  <data name="BT_Section_Encryption.Text" xml:space="preserve">
+    <value>Encryption</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Header" xml:space="preserve">
+    <value>Encryption Policy</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Description" xml:space="preserve">
+    <value>Peer connection encryption mode</value>
+  </data>
+  <data name="BT_Enc_Forced.Content" xml:space="preserve">
+    <value>Forced</value>
+  </data>
+  <data name="BT_Enc_Enabled.Content" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="BT_Enc_Disabled.Content" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="BT_PreferRc4.Header" xml:space="preserve">
+    <value>Prefer RC4 Encryption</value>
+  </data>
+  <data name="BT_PreferRc4.Description" xml:space="preserve">
+    <value>Use RC4 over plaintext when encryption is enabled</value>
+  </data>
+  <data name="BT_Section_Proxy.Text" xml:space="preserve">
+    <value>Proxy</value>
+  </data>
+  <data name="BT_ProxyType.Header" xml:space="preserve">
+    <value>Proxy Type</value>
+  </data>
+  <data name="BT_ProxyType.Description" xml:space="preserve">
+    <value>Select proxy protocol for BitTorrent traffic</value>
+  </data>
+  <data name="BT_Proxy_None.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="BT_Proxy_Socks4.Content" xml:space="preserve">
+    <value>SOCKS4</value>
+  </data>
+  <data name="BT_Proxy_Socks5.Content" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="BT_Proxy_Socks5Pw.Content" xml:space="preserve">
+    <value>SOCKS5 (with password)</value>
+  </data>
+  <data name="BT_Proxy_Http.Content" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="BT_Proxy_HttpPw.Content" xml:space="preserve">
+    <value>HTTP (with password)</value>
+  </data>
+  <data name="BT_ProxyDetails.Header" xml:space="preserve">
+    <value>Proxy Configuration</value>
+  </data>
+  <data name="BT_ProxyDetails.Description" xml:space="preserve">
+    <value>Configure proxy server details</value>
+  </data>
+  <data name="BT_ProxyHostname.Header" xml:space="preserve">
+    <value>Hostname</value>
+  </data>
+  <data name="BT_ProxyPort.Header" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="BT_ProxyUsername.Header" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="BT_ProxyPassword.Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="BT_ProxyPeerConn.Header" xml:space="preserve">
+    <value>Use Proxy for Peer Connections</value>
+  </data>
+  <data name="BT_ProxyTrackerConn.Header" xml:space="preserve">
+    <value>Use Proxy for Tracker Connections</value>
+  </data>
+  <!-- ===== Download Settings Page ===== -->
+  <data name="DL_Section_SaveLocation.Text" xml:space="preserve">
+    <value>Save Location</value>
+  </data>
+  <data name="DL_DefaultSavePath.Header" xml:space="preserve">
+    <value>Default Save Path</value>
+  </data>
+  <data name="DL_DefaultSavePath.Description" xml:space="preserve">
+    <value>Default download directory for new torrents</value>
+  </data>
+  <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>(Downloads folder)</value>
+  </data>
+  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="DL_PreallocateStorage.Header" xml:space="preserve">
+    <value>Pre-allocate Disk Space</value>
+  </data>
+  <data name="DL_PreallocateStorage.Description" xml:space="preserve">
+    <value>Reserve disk space before downloading begins</value>
+  </data>
+  <data name="DL_Section_Behaviour.Text" xml:space="preserve">
+    <value>Behaviour</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Header" xml:space="preserve">
+    <value>Auto-start Downloads</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
+    <value>Automatically start downloading after adding a torrent</value>
+  </data>
+  <data name="DL_MoveCompleted.Header" xml:space="preserve">
+    <value>Move Completed Downloads</value>
+  </data>
+  <data name="DL_MoveCompleted.Description" xml:space="preserve">
+    <value>Move completed downloads to a different directory</value>
+  </data>
+  <data name="DL_MoveCompletedPath.Header" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
+    <value>Completed download path</value>
+  </data>
+  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
+    <value>New HTTP Download</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.Header" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/file.zip</value>
+  </data>
+  <data name="HttpDownloadDialogPasteButtonText.Text" xml:space="preserve">
+    <value>Paste from Clipboard</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.Header" xml:space="preserve">
+    <value>Save to</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
+    <value>Default download directory</value>
+  </data>
+  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
+    <value>File name (optional)</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.PlaceholderText" xml:space="preserve">
+    <value>Leave empty to auto-detect</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>Invalid URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>Please enter a valid HTTP, HTTPS, or FTP URL.</value>
+  </data>
+  <data name="PeerHeader_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerHeader_Client.Text" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="PeerHeader_Progress.Text" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="PeerHeader_DLSpeed.Text" xml:space="preserve">
+    <value>DL Speed</value>
+  </data>
+  <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
+    <value>UL Speed</value>
+  </data>
+  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="PeersList_EmptyState.Text" xml:space="preserve">
+    <value>No peers connected</value>
+  </data>
+  <data name="Task_TrackersList.Text" xml:space="preserve">
+    <value>Trackers</value>
+  </data>
+  <data name="TrackerHeader_URL.Text" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="TrackerHeader_Tier.Text" xml:space="preserve">
+    <value>Tier</value>
+  </data>
+  <data name="TrackerHeader_Peers.Text" xml:space="preserve">
+    <value>Peers</value>
+  </data>
+  <data name="TrackerHeader_Status.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TrackerHeader_Message.Text" xml:space="preserve">
+    <value>Message</value>
+  </data>
+  <data name="TrackersList_EmptyState.Text" xml:space="preserve">
+    <value>No trackers</value>
+  </data>
+  <data name="Task_FilesList.Text" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="FileHeader_Path.Text" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="FileHeader_Size.Text" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="FileHeader_Progress.Text" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="FileHeader_Done.Text" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="FileHeader_Priority.Text" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="FilePriority_Skip.Content" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="FilePriority_Low.Content" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="FilePriority_Normal.Content" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="FilePriority_High.Content" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="FilesList_EmptyState.Text" xml:space="preserve">
+    <value>No file information available</value>
   </data>
 </root>

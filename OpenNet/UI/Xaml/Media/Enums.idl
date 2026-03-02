@@ -1,0 +1,85 @@
+namespace OpenNet.UI.Xaml.Media
+{
+    /// <summary>
+    /// Specifies the way in which an alpha channel affects color channels.
+    /// </summary>
+    enum AlphaMode
+    {
+        Premultiplied = 0,
+        Straight = 1,
+    };
+
+    /// <summary>
+    /// Indicates the cache mode to use when loading a Win2D image
+    /// </summary>
+    enum CacheMode
+    {
+        Default = 0,
+        Overwrite = 1,
+        Disabled = 2,
+    };
+
+    /// <summary>
+    /// Indicates the DPI mode to use to load an image
+    /// </summary>
+    enum DpiMode
+    {
+        UseSourceDpi = 0,
+        Default96Dpi = 1,
+        DisplayDpi = 2,
+        DisplayDpiWith96AsLowerBound = 3,
+    };
+
+    /// <summary>
+    /// Blend mode to use when compositing effects.
+    /// Maps to Win2D BlendEffectMode.
+    /// </summary>
+    enum ImageBlendMode
+    {
+        Multiply = 0,
+        Screen = 1,
+        Darken = 3,
+        Lighten = 4,
+        // Dissolve is not supported by Composition
+        ColorBurn = 6,
+        LinearBurn = 7,
+        DarkerColor = 8,
+        LighterColor = 9,
+        ColorDodge = 10,
+        LinearDodge = 11,
+        Overlay = 12,
+        SoftLight = 13,
+        HardLight = 14,
+        VividLight = 15,
+        LinearLight = 16,
+        PinLight = 17,
+        HardMix = 18,
+        Difference = 19,
+        Exclusion = 20,
+        Hue = 21,
+        Saturation = 22,
+        Color = 23,
+        Luminosity = 24,
+        Subtract = 25,
+        Division = 26,
+    };
+
+    /// <summary>
+    /// The method that each instance of AttachedCardShadow uses when clipping its inner content.
+    /// </summary>
+    enum InnerContentClipMode
+    {
+        None = 0,
+        CompositionMaskBrush = 1,
+        CompositionGeometricClip = 2,
+    };
+
+    /// <summary>
+    /// An enum used to modify the default placement of the input source in a blend operation
+    /// </summary>
+    enum Placement
+    {
+        Foreground = 0,
+        Background = 1,
+    };
+}

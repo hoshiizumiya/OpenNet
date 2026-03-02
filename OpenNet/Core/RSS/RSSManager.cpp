@@ -33,6 +33,11 @@ namespace OpenNet::Core::RSS
 
     winrt::Windows::Foundation::IAsyncAction RSSManager::InitializeAsync()
     {
+        if (m_initialized.exchange(true))
+        {
+            co_return;  // Already initialized
+        }
+
         try
         {
             auto localFolder = ApplicationData::Current().LocalFolder();
@@ -41,7 +46,7 @@ namespace OpenNet::Core::RSS
         }
         catch (...)
         {
-            // Handle initialization errors
+            m_initialized = false;  // Allow retry on failure
         }
     }
 
@@ -136,6 +141,22 @@ namespace OpenNet::Core::RSS
         {
             m_feeds.erase(it);
             SaveSubscriptions();
+
+            // Clean up the items JSON file for this feed (fire and forget)
+            auto cleanTask = [feedId = std::wstring(feedId)]() -> winrt::Windows::Foundation::IAsyncAction
+            {
+                try
+                {
+                    auto folder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
+                    auto rssFolder = co_await folder.GetFolderAsync(L"rss_data");
+                    std::wstring filename = L"rss_" + feedId + L".json";
+                    auto file = co_await rssFolder.GetFileAsync(filename);
+                    co_await file.DeleteAsync();
+                }
+                catch (...) {}
+            };
+            cleanTask();
+
             return true;
         }
         return false;
@@ -377,6 +398,8 @@ namespace OpenNet::Core::RSS
                     break;
                 }
             }
+            // Persist the updated items so isDownloaded survives restart
+            SaveFeedItems(it->second.id, it->second.items);
         }
     }
 
@@ -564,9 +587,9 @@ namespace OpenNet::Core::RSS
                     feed.enabled = obj.GetNamedBoolean(L"enabled", true);
 
                     // Load persisted items for this feed asynchronously
-                    std::vector<RSSItem> items;
+                    auto items = std::make_shared<std::vector<RSSItem>>();
                     co_await LoadFeedItemsAsync(feed.id, items);
-                    feed.items = std::move(items);
+                    feed.items = std::move(*items);
 
                     m_feeds[feed.id] = std::move(feed);
                 }
@@ -578,7 +601,7 @@ namespace OpenNet::Core::RSS
         }
     }
 
-    winrt::Windows::Foundation::IAsyncAction RSSManager::LoadFeedItemsAsync(const std::wstring& feedId, std::vector<RSSItem> items)
+    winrt::Windows::Foundation::IAsyncAction RSSManager::LoadFeedItemsAsync(const std::wstring& feedId, std::shared_ptr<std::vector<RSSItem>> items)
     {
         try
         {
@@ -620,11 +643,11 @@ namespace OpenNet::Core::RSS
                 JsonArray itemsArray;
                 if (JsonArray::TryParse(content, itemsArray))
                 {
-                    items.clear();
+                    items->clear();
                     for (uint32_t i = 0; i < itemsArray.Size(); ++i)
                     {
                         auto itemObj = itemsArray.GetAt(i).GetObject();
-                        
+
                         RSSItem item;
                         item.guid = itemObj.GetNamedString(L"guid", L"").c_str();
                         item.title = itemObj.GetNamedString(L"title", L"").c_str();
@@ -633,14 +656,14 @@ namespace OpenNet::Core::RSS
                         item.enclosureUrl = itemObj.GetNamedString(L"enclosureUrl", L"").c_str();
                         item.enclosureType = itemObj.GetNamedString(L"enclosureType", L"").c_str();
                         item.enclosureLength = static_cast<uint64_t>(itemObj.GetNamedNumber(L"enclosureLength", 0));
-                        
+
                         auto pubDateSeconds = static_cast<int64_t>(itemObj.GetNamedNumber(L"pubDate", 0));
                         item.pubDate = std::chrono::system_clock::time_point(std::chrono::seconds(pubDateSeconds));
-                        
+
                         item.category = itemObj.GetNamedString(L"category", L"").c_str();
                         item.isDownloaded = itemObj.GetNamedBoolean(L"isDownloaded", false);
-                        
-                        items.push_back(item);
+
+                        items->push_back(item);
                     }
                 }
             }

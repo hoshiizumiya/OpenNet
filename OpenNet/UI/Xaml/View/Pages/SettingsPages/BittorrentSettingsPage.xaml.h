@@ -1,9 +1,7 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.h"
-#include "AdvancedOptionItem.h"
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/OpenNet.UI.Xaml.Behaviors.h>
+#include "Core/TorrentSettings.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
@@ -11,32 +9,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
     {
         BittorrentSettingsPage();
 
-        // Properties
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> AdvancedOptions() const;
-
-        winrt::hstring SearchFilter() const { return m_searchFilter; }
-        void SearchFilter(winrt::hstring const& value);
-
-        // Commands
-        void ApplySettings();
-        void ResetToDefaults();
-
-        // Event Handlers
-        void SearchBox_TextChanged(winrt::Windows::Foundation::IInspectable const& sender, 
-            winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
-        void ApplyButton_Click(winrt::Windows::Foundation::IInspectable const& sender, 
-            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-        void ResetButton_Click(winrt::Windows::Foundation::IInspectable const& sender, 
-            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        // Unified change handler – auto-saves on every control change
+        void OnSettingChanged(winrt::Windows::Foundation::IInspectable const &sender,
+                              winrt::Windows::Foundation::IInspectable const &args);
 
     private:
-        void LoadOptions();
-        void FilterOptions();
+        winrt::fire_and_forget LoadSettings();
+        void PopulateFromSettings(::OpenNet::Core::TorrentSettings const &s);
+        ::OpenNet::Core::TorrentSettings CollectFromUI();
+        void SaveAndApply();
 
-        winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_options;
-        std::vector<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::AdvancedOptionItem> m_allOptions;
-        winrt::hstring m_searchFilter;
-        winrt::OpenNet::UI::Xaml::Behaviors::StickyHeaderBehavior m_stickyBehavior{ nullptr };
+        bool m_loading{false}; // suppress change events during initial load
     };
 }
 

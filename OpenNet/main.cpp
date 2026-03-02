@@ -1,9 +1,12 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
+//#include "Core/IO/FileOperation.h"
+#include <sentry.h>
 
 #include <winrt/Microsoft.Windows.ApplicationModel.WindowsAppRuntime.h>
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Microsoft.Windows.AppLifecycle.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 
 #include <WindowsAppSDK-VersionInfo.h>
 #include <mddbootstrap.h>
@@ -153,6 +156,15 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// 初始化 WinRT
 	winrt::init_apartment(winrt::apartment_type::single_threaded);
 
+	sentry_options_t* options = sentry_options_new();
+	sentry_options_set_dsn(options, "https://8030af3a7ff2e854f827e44c62f50880@o4510805000454144.ingest.de.sentry.io/4510939441397840");
+	// This is also the default-path. For further information and recommendations:
+	// https://docs.sentry.io/platforms/native/configuration/options/#database_path
+	sentry_options_set_database_path(options, winrt::to_string(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().TemporaryPath()).c_str());
+	sentry_options_set_release(options, "my-project-name@2.3.12");
+	sentry_options_set_debug(options, 1);
+	sentry_init(options);
+
 	// 决定是否需要重定向
 	if (DecideRedirection())
 	{
@@ -166,5 +178,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			winrt::make<winrt::OpenNet::implementation::App>();
 		});
 
+	// make sure everything flushes
+	sentry_close();
 	return 0;
 }

@@ -1,0 +1,168 @@
+import "UI/Xaml/Media/Pipelines/PipelineBrush.idl";
+import "UI/Xaml/Media/Enums.idl";
+
+namespace OpenNet.UI.Xaml.Media.Brushes
+{
+    /// <summary>
+    /// A brush that applies a Gaussian blur to the backdrop.
+    /// </summary>
+    [default_interface]
+    runtimeclass BackdropBlurBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        BackdropBlurBrush();
+
+        /// <summary>
+        /// Gets or sets the blur amount. Higher values are blurrier.
+        /// </summary>
+        Double Amount;
+        static Microsoft.UI.Xaml.DependencyProperty AmountProperty{ get; };
+    }
+
+    /// <summary>
+    /// A brush that applies a saturation filter to the backdrop.
+    /// </summary>
+    [default_interface]
+    runtimeclass BackdropSaturationBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        BackdropSaturationBrush();
+
+        /// <summary>
+        /// Gets or sets the saturation level. 0 = desaturated, 1 = full color.
+        /// </summary>
+        Double Saturation;
+        static Microsoft.UI.Xaml.DependencyProperty SaturationProperty{ get; };
+    }
+
+    /// <summary>
+    /// An acrylic-like brush built with PipelineBuilder (backdrop blur + tint + opacity).
+    /// </summary>
+    [default_interface]
+    runtimeclass PipelineAcrylicBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        PipelineAcrylicBrush();
+
+        Double BlurAmount;
+        static Microsoft.UI.Xaml.DependencyProperty BlurAmountProperty{ get; };
+
+        Windows.UI.Color TintColor;
+        static Microsoft.UI.Xaml.DependencyProperty TintColorProperty{ get; };
+
+        Double TintOpacity;
+        static Microsoft.UI.Xaml.DependencyProperty TintOpacityProperty{ get; };
+    }
+
+    /// <summary>
+    /// A brush that inverts the backdrop colors.
+    /// </summary>
+    [default_interface]
+    runtimeclass BackdropInvertBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        BackdropInvertBrush();
+    }
+
+    /// <summary>
+    /// A brush that applies a sepia filter to the backdrop.
+    /// </summary>
+    [default_interface]
+    runtimeclass BackdropSepiaBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        BackdropSepiaBrush();
+
+        /// <summary>
+        /// Gets or sets the sepia intensity (0 to 1).
+        /// </summary>
+        Double Intensity;
+        static Microsoft.UI.Xaml.DependencyProperty IntensityProperty{ get; };
+    }
+
+    /// <summary>
+    /// A brush that applies a gamma transfer effect to the backdrop.
+    /// </summary>
+    [default_interface]
+    runtimeclass BackdropGammaTransferBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        BackdropGammaTransferBrush();
+
+        /// <summary>Red channel exponent (default 1).</summary>
+        Double RedExponent;
+        static Microsoft.UI.Xaml.DependencyProperty RedExponentProperty{ get; };
+
+        /// <summary>Green channel exponent (default 1).</summary>
+        Double GreenExponent;
+        static Microsoft.UI.Xaml.DependencyProperty GreenExponentProperty{ get; };
+
+        /// <summary>Blue channel exponent (default 1).</summary>
+        Double BlueExponent;
+        static Microsoft.UI.Xaml.DependencyProperty BlueExponentProperty{ get; };
+    }
+
+    /// <summary>
+    /// A brush that blends an image with the backdrop using a specified blend mode.
+    /// </summary>
+    [default_interface]
+    runtimeclass ImageBlendBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        ImageBlendBrush();
+
+        /// <summary>
+        /// Gets or sets the image source to blend.
+        /// </summary>
+        Microsoft.UI.Xaml.Media.ImageSource Source;
+        static Microsoft.UI.Xaml.DependencyProperty SourceProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the stretch mode for the image.
+        /// </summary>
+        Microsoft.UI.Xaml.Media.Stretch Stretch;
+        static Microsoft.UI.Xaml.DependencyProperty StretchProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the blend mode.
+        /// </summary>
+        OpenNet.UI.Xaml.Media.ImageBlendMode Mode;
+        static Microsoft.UI.Xaml.DependencyProperty ModeProperty{ get; };
+    }
+
+    /// <summary>
+    /// A custom acrylic brush with full control over blur, tint color, tint opacity, and texture.
+    /// Supports dynamic property updates via composition setters.
+    /// </summary>
+    [default_interface]
+    runtimeclass AcrylicBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        AcrylicBrush();
+
+        Double BlurAmount;
+        static Microsoft.UI.Xaml.DependencyProperty BlurAmountProperty{ get; };
+
+        Windows.UI.Color TintColor;
+        static Microsoft.UI.Xaml.DependencyProperty TintColorProperty{ get; };
+
+        Double TintOpacity;
+        static Microsoft.UI.Xaml.DependencyProperty TintOpacityProperty{ get; };
+
+        Windows.Foundation.Uri TextureUri;
+        static Microsoft.UI.Xaml.DependencyProperty TextureUriProperty{ get; };
+    }
+
+    /// <summary>
+    /// A brush that displays a tiled image pattern.
+    /// </summary>
+    [default_interface]
+    runtimeclass TilesBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        TilesBrush();
+
+        /// <summary>
+        /// Gets or sets the Uri of the texture to tile.
+        /// </summary>
+        Windows.Foundation.Uri TextureUri;
+        static Microsoft.UI.Xaml.DependencyProperty TextureUriProperty{ get; };
+
+        /// <summary>
+        /// Gets or sets the DPI mode for loading the texture.
+        /// </summary>
+        OpenNet.UI.Xaml.Media.DpiMode DpiMode;
+        static Microsoft.UI.Xaml.DependencyProperty DpiModeProperty{ get; };
+    }
+}

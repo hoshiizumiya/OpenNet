@@ -118,6 +118,12 @@
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc11</LanguageStandard_C>
       <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</FunctionLevelLinking>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdcpp20</LanguageStandard>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdc11</LanguageStandard_C>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdcpp20</LanguageStandard>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">stdc11</LanguageStandard_C>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalDependencies)</AdditionalDependencies>
@@ -132,6 +138,12 @@
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc11</LanguageStandard_C>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</FunctionLevelLinking>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdcpp20</LanguageStandard>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdc11</LanguageStandard_C>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdcpp20</LanguageStandard>
+      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdc11</LanguageStandard_C>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -141,10 +153,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Controls\HomePage\Header\HeaderCarousel.xaml.h">
-      <DependentUpon>Controls\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
     <ClInclude Include="Controls\SpeedGraph\SpeedGraph.xaml.h">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -156,6 +164,7 @@
     <ClInclude Include="Core\RSS\RSSManager.h" />
     <ClInclude Include="Core\RSS\RSSParser.h" />
     <ClInclude Include="Core\RSS\RSSTypes.h" />
+    <ClInclude Include="Core\TorrentSettings.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h" />
     <ClInclude Include="Core\Torrent\TrackerManager.h" />
@@ -182,6 +191,58 @@
       <DependentUpon>UI\Xaml\Control\Card\TitleCard.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.h">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderTile.h">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderTile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\HoverLight.h">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderTile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\AmbLight.h">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderTile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.h">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Effects\GaussianBlurEffect.h" />
+    <ClInclude Include="UI\Xaml\Media\Effects\PipelineEffect.h">
+      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Effects\EffectTypes.h">
+      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBuilder.h" />
+    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBrush.h">
+      <DependentUpon>UI\Xaml\Media\Pipelines\PipelineBrush.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Visuals\PipelineVisualFactoryHelper.h" />
+    <ClInclude Include="UI\Xaml\Media\Visuals\VisualTypes.h">
+      <DependentUpon>UI\Xaml\Media\Visuals\Visuals.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Shadows\AttachedCardShadow.h">
+      <DependentUpon>UI\Xaml\Media\Shadows\AttachedCardShadow.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Animations\EffectAnimationTypes.h">
+      <DependentUpon>UI\Xaml\Media\Animations\EffectAnimations.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Media\Helpers\AsyncMutex.h" />
+    <ClInclude Include="UI\Xaml\Media\Helpers\CompositionExtensions.h" />
+    <ClInclude Include="UI\Xaml\Media\Helpers\SurfaceLoader.h" />
+    <ClInclude Include="UI\Xaml\Media\Brushes\BrushTypes.h">
+      <DependentUpon>UI\Xaml\Media\Brushes\Brushes.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\Media\Animations\Implicit.h">
       <DependentUpon>UI\Xaml\Media\Animations\Animations.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -202,9 +263,19 @@
       <DependentUpon>UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h" />
+    <ClInclude Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml.h">
       <DependentUpon>UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
@@ -212,8 +283,24 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskPeersListPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskTrackersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskFilesPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskFilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.h">
@@ -231,6 +318,12 @@
     <ClInclude Include="Core\FileTransferEngine.h" />
     <ClInclude Include="Core\NetworkDetector.h" />
     <ClInclude Include="Core\P2PManager.h" />
+    <ClInclude Include="Core\Aria2\Aria2Helpers.h" />
+    <ClInclude Include="Core\Aria2\Aria2Models.h" />
+    <ClInclude Include="Core\Aria2\JsonRpc2.h" />
+    <ClInclude Include="Core\Aria2\Aria2Engine.h" />
+    <ClInclude Include="Core\DownloadManager.h" />
+    <ClInclude Include="Core\HttpStateManager.h" />
     <ClInclude Include="Core\torrentCore\libtorrentHandle.h" />
     <ClInclude Include="Core\torrentCore\TorrentStateManager.h" />
     <ClInclude Include="Helpers\NavItemIconHelper.h">
@@ -371,9 +464,6 @@
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
-    <Page Include="Controls\HomePage\Header\HeaderCarousel.xaml">
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -381,13 +471,33 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml" />
+    <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml" />
     <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskFilesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
@@ -432,10 +542,6 @@
     <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Controls\HomePage\Header\HeaderCarousel.xaml.cpp">
-      <DependentUpon>Controls\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="Controls\SpeedGraph\SpeedGraph.xaml.cpp">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -467,6 +573,24 @@
       <DependentUpon>UI\Xaml\Control\Card\TitleCard.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderTile.cpp">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderTile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\HoverLight.cpp">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderTile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\AmbLight.cpp">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderTile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.cpp">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Animations\Implicit.cpp">
       <DependentUpon>UI\Xaml\Media\Animations\Animations.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -483,12 +607,51 @@
       <DependentUpon>UI\Xaml\Media\Animations\Animations.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBuilder.cpp" />
+    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBrush.cpp">
+      <DependentUpon>UI\Xaml\Media\Pipelines\PipelineBrush.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Effects\PipelineEffect.cpp">
+      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Effects\EffectTypes.cpp">
+      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Brushes\BrushTypes.cpp">
+      <DependentUpon>UI\Xaml\Media\Brushes\Brushes.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Shadows\AttachedCardShadow.cpp">
+      <DependentUpon>UI\Xaml\Media\Shadows\AttachedCardShadow.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Visuals\VisualTypes.cpp">
+      <DependentUpon>UI\Xaml\Media\Visuals\Visuals.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Animations\EffectAnimationTypes.cpp">
+      <DependentUpon>UI\Xaml\Media\Animations\EffectAnimations.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp">
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp" />
+    <ClCompile Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp" />
@@ -496,8 +659,24 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskPeersListPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskTrackersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskFilesPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskFilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.cpp">
@@ -511,7 +690,13 @@
     <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp" />
     <ClCompile Include="Core\DataGraph\SpeedGraphData.cpp" />
     <ClCompile Include="Core\P2PManager.cpp" />
+    <ClCompile Include="Core\Aria2\Aria2Models.cpp" />
+    <ClCompile Include="Core\Aria2\JsonRpc2.cpp" />
+    <ClCompile Include="Core\Aria2\Aria2Engine.cpp" />
+    <ClCompile Include="Core\DownloadManager.cpp" />
+    <ClCompile Include="Core\HttpStateManager.cpp" />
     <ClCompile Include="Core\torrentCore\libtorrentHandle.cpp" />
+    <ClCompile Include="Core\TorrentSettings.cpp" />
     <ClCompile Include="Core\torrentCore\TorrentStateManager.cpp" />
     <ClCompile Include="Core\NetworkDetector.cpp">
     </ClCompile>
@@ -636,10 +821,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Midl Include="Controls\HomePage\Header\HeaderCarousel.idl">
-      <DependentUpon>Controls\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
     <Midl Include="Controls\SpeedGraph\SpeedGraph.idl">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -663,13 +844,50 @@
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.idl">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderTile.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.idl">
+      <DependentUpon>UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\Media\Animations\Animations.idl" />
+    <Midl Include="UI\Xaml\Media\Animations\EffectAnimations.idl" />
+    <Midl Include="UI\Xaml\Media\Enums.idl" />
+    <Midl Include="UI\Xaml\Media\Shadows\AttachedCardShadow.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Visuals\Visuals.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Pipelines\PipelineBrush.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Effects\Effects.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Media\Brushes\Brushes.idl">
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.idl">
       <DependentUpon>UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl" />
+    <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.idl">
       <DependentUpon>UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\HttpDownloadDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />
@@ -677,8 +895,24 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskSummaryPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskPeersListPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskPeersListPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskTrackersPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskTrackersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskFilesPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskFilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.idl">
@@ -835,6 +1069,12 @@
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-200.png" />
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-400.png" />
     <Image Include="Assets\AppIcons\win3264.ico" />
+    <Image Include="Assets\TileImages\FileTransfer.png" />
+    <Image Include="Assets\TileImages\NetworkDiscovery.png" />
+    <Image Include="Assets\TileImages\PeerChat.png" />
+    <Image Include="Assets\TileImages\VPNTunnel.png" />
+    <Image Include="Assets\TileImages\SharedStorage.png" />
+    <Image Include="Assets\TileImages\BandwidthMonitor.png" />
   </ItemGroup>
   <!--
     Defining the "Msix" ProjectCapability here allows the Single-project MSIX Packaging

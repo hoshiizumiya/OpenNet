@@ -102,7 +102,7 @@ namespace OpenNet::Core::RSS
         void ProcessNewItems(RSSFeed& feed, const std::vector<RSSItem>& newItems);
         void SaveSubscriptions();
         void SaveFeedItems(const std::wstring& feedId, const std::vector<RSSItem>& items);
-        winrt::Windows::Foundation::IAsyncAction LoadFeedItemsAsync(const std::wstring& feedId, std::vector<RSSItem> items);
+        winrt::Windows::Foundation::IAsyncAction LoadFeedItemsAsync(const std::wstring& feedId, std::shared_ptr<std::vector<RSSItem>> items);
         winrt::Windows::Foundation::IAsyncAction LoadSubscriptionsAsync();
         std::wstring GenerateFeedId();
 
@@ -110,6 +110,7 @@ namespace OpenNet::Core::RSS
         mutable std::mutex m_feedsMutex;
         mutable std::mutex m_callbackMutex;
         std::atomic<bool> m_running{ false };
+        std::atomic<bool> m_initialized{ false };
         std::thread m_updateThread;
         std::wstring m_configPath;
 

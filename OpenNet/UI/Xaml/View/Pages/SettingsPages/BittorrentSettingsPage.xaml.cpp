@@ -4,159 +4,217 @@
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp"
 #endif
 
-#include "AdvancedOptionItem.h"
 #include "Core/P2PManager.h"
-#include <algorithm>
-#include "UI/Xaml/Behaviors/Headers/StickyHeaderBehavior.h"
+#include "Core/TorrentSettings.h"
+#include <libtorrent/settings_pack.hpp>
+#include <winrt/Microsoft.UI.Dispatching.h>
+#include <wil/cppwinrt_helpers.h>
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Windows::Foundation;
-using namespace winrt::Windows::Foundation::Collections;
+
+namespace lt = libtorrent;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
     BittorrentSettingsPage::BittorrentSettingsPage()
     {
         InitializeComponent();
-        m_options = single_threaded_observable_vector<IInspectable>();
-        LoadOptions();
 
-        Loaded([this](IInspectable const&, RoutedEventArgs const&)
+        Loaded([this](IInspectable const &, RoutedEventArgs const &)
+               { LoadSettings(); });
+    }
+
+    winrt::fire_and_forget BittorrentSettingsPage::LoadSettings()
+    {
+        auto strong = get_strong();
+        auto dispatcher = DispatcherQueue();
+
+        // Heavy I/O + libtorrent calls on background thread
+        co_await winrt::resume_background();
+
+        auto &mgr = ::OpenNet::Core::TorrentSettingsManager::Instance();
+        mgr.Load();
+        auto s = mgr.Get();
+
+        // If the session is running, prefer live values
+        auto *core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+        if (core && core->IsRunning())
         {
-            auto headerBorder = HeaderBorder();
-            if (headerBorder)
+            try
             {
-                m_stickyBehavior = winrt::make<winrt::OpenNet::UI::Xaml::Behaviors::implementation::StickyHeaderBehavior>();
-                m_stickyBehavior.Attach(headerBorder);
+                auto pack = core->GetSettings();
+                auto live = ::OpenNet::Core::BuildTorrentSettingsFromPack(pack);
+                live.defaultSavePath = s.defaultSavePath;
+                live.preallocateStorage = s.preallocateStorage;
+                live.autoStartDownloads = s.autoStartDownloads;
+                live.moveCompletedEnabled = s.moveCompletedEnabled;
+                live.moveCompletedPath = s.moveCompletedPath;
+                s = live;
             }
-        });
-    }
-
-    IObservableVector<IInspectable> BittorrentSettingsPage::AdvancedOptions() const
-    {
-        return m_options;
-    }
-
-    void BittorrentSettingsPage::SearchFilter(winrt::hstring const& value)
-    {
-        m_searchFilter = value;
-        FilterOptions();
-    }
-
-    void BittorrentSettingsPage::ApplySettings()
-    {
-        // Apply settings to libtorrent session
-        // This would be implemented when we have direct session access
-    }
-
-    void BittorrentSettingsPage::ResetToDefaults()
-    {
-        for (auto& option : m_allOptions)
-        {
-            option.Value(option.OriginalValue());
+            catch (...) { /* use persisted settings if live read fails */ }
         }
-        FilterOptions();
+
+        // Back to UI thread to populate controls
+        co_await wil::resume_foreground(dispatcher);
+
+        m_loading = true;
+        PopulateFromSettings(s);
+        m_loading = false;
     }
 
-    void BittorrentSettingsPage::LoadOptions()
+    void BittorrentSettingsPage::PopulateFromSettings(::OpenNet::Core::TorrentSettings const &s)
     {
-        m_allOptions.clear();
+        // Connection
+        ListenInterfacesTextBox().Text(winrt::to_hstring(s.listenInterfaces));
+        ConnectionsLimitNumberBox().Value(s.connectionsLimit);
+        EnableIncomingTcpToggle().IsOn(s.enableIncomingTcp);
+        EnableOutgoingTcpToggle().IsOn(s.enableOutgoingTcp);
+        EnableIncomingUtpToggle().IsOn(s.enableIncomingUtp);
+        EnableOutgoingUtpToggle().IsOn(s.enableOutgoingUtp);
+        AllowMultipleConnectionsPerIpToggle().IsOn(s.allowMultipleConnectionsPerIp);
+        AnonymousModeToggle().IsOn(s.anonymousMode);
 
-        // Add common libtorrent settings
-        // These are typical settings from libtorrent's settings_pack
+        // Discovery
+        EnableDhtToggle().IsOn(s.enableDht);
+        EnableLsdToggle().IsOn(s.enableLsd);
+        EnableUpnpToggle().IsOn(s.enableUpnp);
+        EnableNatpmpToggle().IsOn(s.enableNatpmp);
 
-        // Anti-leech settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.anti_leech_min_byte", L"10000", true));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.anti_leech_private_torrent", L"false", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.anti_leech_stable_sec", L"90", true));
+        // Tracker
+        AnnounceToAllTiersToggle().IsOn(s.announceToAllTiers);
+        AnnounceToAllTrackersToggle().IsOn(s.announceToAllTrackers);
 
-        // Cache settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.cache.ltseed_cache_min_size_mb", L"64", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.cache.piece_cache_min_size_mb", L"64", false));
+        // Limits
+        ActiveDownloadsNumberBox().Value(s.activeDownloads);
+        ActiveSeedsNumberBox().Value(s.activeSeeds);
+        ActiveLimitNumberBox().Value(s.activeLimit);
 
-        // Connection settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.connection.ltseed_protocol_selection", L"TCP only", true));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.enable_lsd", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.enable_sequential_download_mode_for_new_task", L"false", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.enable_torrent_query", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.enable_v1_upgrade_to_v2", L"true", true));
+        // Speed limits (stored as bytes/sec; display as KB/s)
+        DownloadRateLimitNumberBox().Value(s.downloadRateLimit / 1024);
+        UploadRateLimitNumberBox().Value(s.uploadRateLimit / 1024);
 
-        // Hash check settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.hash_check_for_ltseed", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.hash_check_if_file_changed", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.hash_check_on_finished", L"false", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.hash_check_thread_low_priority", L"true", false));
+        // Seeding
+        SeedRatioLimitNumberBox().Value(s.seedingRatioLimit);
+        SeedTimeLimitNumberBox().Value(s.seedingTimeLimit);
 
-        // Connection limits
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.max_connections_per_ltseed", L"10", true));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.max_connections_per_task", L"9999", true));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.max_torrent_size_mb", L"20", false));
+        // Peer
+        PeerTimeoutNumberBox().Value(s.peerTimeout);
+        HandshakeTimeoutNumberBox().Value(s.handshakeTimeout);
+        CloseRedundantConnectionsToggle().IsOn(s.closeRedundantConnections);
 
-        // Peer settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.multi_peers_same_ip", L"false", true));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.peer_dual_ip", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.peer_exchange", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.peer_hole_punch", L"true", false));
+        // Disk I/O
+        AioThreadsNumberBox().Value(s.aioThreads);
+        CheckingMemUsageNumberBox().Value(s.checkingMemUsage);
 
-        // DHT settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.dht.enabled", L"true", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.dht.max_peers_reply", L"100", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.dht.search_branching", L"5", false));
+        // Identity
+        UserAgentTextBox().Text(winrt::to_hstring(s.userAgent));
 
-        // Tracker settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.tracker.announce_to_all_tiers", L"false", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.tracker.announce_to_all_trackers", L"false", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.tracker.max_failcount", L"5", false));
+        // Encryption
+        EncryptionPolicyComboBox().SelectedIndex(static_cast<int>(s.encryptionPolicy));
+        PreferRc4Toggle().IsOn(s.preferRc4);
 
-        // Disk I/O settings
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.disk.max_queued_disk_bytes", L"1048576", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.disk.cache_size", L"1024", false));
-        m_allOptions.push_back(winrt::make<AdvancedOptionItem>(L"bittorrent.disk.low_prio_disk", L"true", false));
-
-        FilterOptions();
+        // Proxy
+        ProxyTypeComboBox().SelectedIndex(static_cast<int>(s.proxyType));
+        ProxyHostnameTextBox().Text(winrt::to_hstring(s.proxyHostname));
+        ProxyPortNumberBox().Value(s.proxyPort);
+        ProxyUsernameTextBox().Text(winrt::to_hstring(s.proxyUsername));
+        ProxyPasswordBox().Password(winrt::to_hstring(s.proxyPassword));
+        ProxyPeerConnectionsToggle().IsOn(s.proxyPeerConnections);
+        ProxyTrackerConnectionsToggle().IsOn(s.proxyTrackerConnections);
     }
 
-    void BittorrentSettingsPage::FilterOptions()
+    ::OpenNet::Core::TorrentSettings BittorrentSettingsPage::CollectFromUI()
     {
-        m_options.Clear();
+        // Start from current persisted settings to preserve fields not on this page
+        auto s = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
 
-        std::wstring filter = m_searchFilter.c_str();
-        std::transform(filter.begin(), filter.end(), filter.begin(), ::tolower);
+        // Connection
+        s.listenInterfaces = winrt::to_string(ListenInterfacesTextBox().Text());
+        s.connectionsLimit = static_cast<int>(ConnectionsLimitNumberBox().Value());
+        s.enableIncomingTcp = EnableIncomingTcpToggle().IsOn();
+        s.enableOutgoingTcp = EnableOutgoingTcpToggle().IsOn();
+        s.enableIncomingUtp = EnableIncomingUtpToggle().IsOn();
+        s.enableOutgoingUtp = EnableOutgoingUtpToggle().IsOn();
+        s.allowMultipleConnectionsPerIp = AllowMultipleConnectionsPerIpToggle().IsOn();
+        s.anonymousMode = AnonymousModeToggle().IsOn();
 
-        for (const auto& option : m_allOptions)
+        // Discovery
+        s.enableDht = EnableDhtToggle().IsOn();
+        s.enableLsd = EnableLsdToggle().IsOn();
+        s.enableUpnp = EnableUpnpToggle().IsOn();
+        s.enableNatpmp = EnableNatpmpToggle().IsOn();
+
+        // Tracker
+        s.announceToAllTiers = AnnounceToAllTiersToggle().IsOn();
+        s.announceToAllTrackers = AnnounceToAllTrackersToggle().IsOn();
+
+        // Limits
+        s.activeDownloads = static_cast<int>(ActiveDownloadsNumberBox().Value());
+        s.activeSeeds = static_cast<int>(ActiveSeedsNumberBox().Value());
+        s.activeLimit = static_cast<int>(ActiveLimitNumberBox().Value());
+
+        // Speed limits (UI in KB/s, store as bytes/sec)
+        s.downloadRateLimit = static_cast<int>(DownloadRateLimitNumberBox().Value()) * 1024;
+        s.uploadRateLimit = static_cast<int>(UploadRateLimitNumberBox().Value()) * 1024;
+
+        // Seeding
+        s.seedingRatioLimit = SeedRatioLimitNumberBox().Value();
+        s.seedingTimeLimit = static_cast<int>(SeedTimeLimitNumberBox().Value());
+
+        // Peer
+        s.peerTimeout = static_cast<int>(PeerTimeoutNumberBox().Value());
+        s.handshakeTimeout = static_cast<int>(HandshakeTimeoutNumberBox().Value());
+        s.closeRedundantConnections = CloseRedundantConnectionsToggle().IsOn();
+
+        // Disk I/O
+        s.aioThreads = static_cast<int>(AioThreadsNumberBox().Value());
+        s.checkingMemUsage = static_cast<int>(CheckingMemUsageNumberBox().Value());
+
+        // Identity
+        s.userAgent = winrt::to_string(UserAgentTextBox().Text());
+
+        // Encryption
+        s.encryptionPolicy = static_cast<::OpenNet::Core::EncryptionPolicy>(
+            EncryptionPolicyComboBox().SelectedIndex());
+        s.preferRc4 = PreferRc4Toggle().IsOn();
+
+        // Proxy
+        s.proxyType = static_cast<::OpenNet::Core::ProxyType>(
+            ProxyTypeComboBox().SelectedIndex());
+        s.proxyHostname = winrt::to_string(ProxyHostnameTextBox().Text());
+        s.proxyPort = static_cast<int>(ProxyPortNumberBox().Value());
+        s.proxyUsername = winrt::to_string(ProxyUsernameTextBox().Text());
+        s.proxyPassword = winrt::to_string(ProxyPasswordBox().Password());
+        s.proxyPeerConnections = ProxyPeerConnectionsToggle().IsOn();
+        s.proxyTrackerConnections = ProxyTrackerConnectionsToggle().IsOn();
+
+        return s;
+    }
+
+    void BittorrentSettingsPage::SaveAndApply()
+    {
+        auto s = CollectFromUI();
+
+        // Persist to JSON
+        ::OpenNet::Core::TorrentSettingsManager::Instance().Set(s);
+
+        // Apply to live session
+        auto *core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+        if (core && core->IsRunning())
         {
-            if (filter.empty())
-            {
-                m_options.Append(option);
-            }
-            else
-            {
-                std::wstring name = option.Name().c_str();
-                std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-
-                if (name.find(filter) != std::wstring::npos)
-                {
-                    m_options.Append(option);
-                }
-            }
+            lt::settings_pack pack;
+            ::OpenNet::Core::ApplyTorrentSettingsToSettingsPack(s, pack);
+            core->ApplySettings(pack);
         }
     }
 
-    void BittorrentSettingsPage::SearchBox_TextChanged(IInspectable const& sender, Controls::AutoSuggestBoxTextChangedEventArgs const&)
+    void BittorrentSettingsPage::OnSettingChanged(IInspectable const &, IInspectable const &)
     {
-        auto box = sender.as<Controls::AutoSuggestBox>();
-        SearchFilter(box.Text());
-    }
-
-    void BittorrentSettingsPage::ApplyButton_Click(IInspectable const&, RoutedEventArgs const&)
-    {
-        ApplySettings();
-    }
-
-    void BittorrentSettingsPage::ResetButton_Click(IInspectable const&, RoutedEventArgs const&)
-    {
-        ResetToDefaults();
+        if (m_loading)
+            return;
+        SaveAndApply();
     }
 }

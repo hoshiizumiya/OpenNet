@@ -19,6 +19,7 @@
 
 // 用于解析字符串为整数
 #include <sstream>
+#include <winrt/Windows.Storage.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -115,6 +116,28 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			});
 		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
 		SetDesktopBackground();
+
+		// Populate StartPage ComboBox — only active nav items
+		{
+			auto combo = StartPageCombobox();
+			combo.Items().Clear();
+
+			struct PageEntry { const wchar_t* display; const wchar_t* tag; };
+			PageEntry entries[] = {
+				{ L"Home",     L"home" },
+				{ L"Tasks",    L"tasks" },
+				{ L"RSS",      L"rss" },
+				{ L"Settings", L"settings" },
+			};
+
+			for (auto& e : entries)
+			{
+				auto item = ComboBoxItem();
+				item.Content(box_value(hstring(e.display)));
+				item.Tag(box_value(hstring(e.tag)));
+				combo.Items().Append(item);
+			}
+		}
 
 		// 启动时根据当前状态关闭“需要重启”提示
 		m_hasPendingLangChange = false;
@@ -272,7 +295,22 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 	void SettingsPage::StartPageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
 	{
-		// Start page selection handling (not implemented)
+		if (m_isStartPageLoading) return;
+
+		auto combo = StartPageCombobox();
+		if (combo.SelectedIndex() < 0) return;
+
+		auto sel = combo.SelectedItem().try_as<ComboBoxItem>();
+		if (!sel) return;
+
+		auto tag = unbox_value_or<hstring>(sel.Tag(), L"");
+
+		try
+		{
+			auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+			localSettings.Values().Insert(L"StartPage", box_value(tag));
+		}
+		catch (...) {}
 	}
 
 	void SettingsPage::themeMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*e*/)
@@ -423,6 +461,36 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			case ElementTheme::Dark:   combo.SelectedIndex(1); break;
 			default:                   combo.SelectedIndex(2); break; // Default/Auto
 			}
+		}
+
+		// Load saved start page and set ComboBox selection
+		{
+			m_isStartPageLoading = true;
+			winrt::hstring savedTag = L"home";
+			try
+			{
+				auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+				auto values = localSettings.Values();
+				if (values.HasKey(L"StartPage"))
+				{
+					savedTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
+				}
+			}
+			catch (...) {}
+
+			auto combo = StartPageCombobox();
+			for (int32_t i = 0; i < static_cast<int32_t>(combo.Items().Size()); ++i)
+			{
+				if (auto item = combo.Items().GetAt(i).try_as<ComboBoxItem>())
+				{
+					if (unbox_value_or<hstring>(item.Tag(), L"") == savedTag)
+					{
+						combo.SelectedIndex(i);
+						break;
+					}
+				}
+			}
+			m_isStartPageLoading = false;
 		}
 
 		m_loadAction = nullptr;

@@ -1,6 +1,13 @@
 ﻿import "ViewModels/ObservableObject.idl"; // Base class for property change notifications
 namespace OpenNet.ViewModels
 {
+    // Download source type
+    enum DownloadTaskType
+    {
+        BitTorrent = 0,
+        Http = 1,
+    };
+
     [default_interface]
     runtimeclass TaskViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
@@ -12,8 +19,18 @@ namespace OpenNet.ViewModels
         String Size;
         String Progress;
         String DownloadRate;
+        String UploadRate;
         String Remaining;
         String AddDate;
+
+        // Download task type (BitTorrent or Http)
+        DownloadTaskType TaskType;
+
+        // Task identifier — libtorrent taskId or HTTP recordId
+        String TaskId;
+
+        // Aria2 GID (only for HTTP tasks)
+        String Gid;
 
         // Download speed in KB/s (numeric value for SpeedGraph)
         UInt64 DownloadSpeedKB;
