@@ -382,9 +382,12 @@ namespace OpenNet::Core::Torrent
             if (rc == SQLITE_ROW)
             {
                 TaskMetadata metadata;
-                metadata.taskId = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-                metadata.magnetUri = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-                metadata.savePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+                auto col0 = sqlite3_column_text(stmt, 0);
+                auto col1 = sqlite3_column_text(stmt, 1);
+                auto col2 = sqlite3_column_text(stmt, 2);
+                metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
+                metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
+                metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
                 
                 auto namePtr = sqlite3_column_text(stmt, 3);
                 metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
@@ -439,9 +442,12 @@ namespace OpenNet::Core::Torrent
             while (sqlite3_step(stmt) == SQLITE_ROW)
             {
                 TaskMetadata metadata;
-                metadata.taskId = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-                metadata.magnetUri = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-                metadata.savePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+                auto col0 = sqlite3_column_text(stmt, 0);
+                auto col1 = sqlite3_column_text(stmt, 1);
+                auto col2 = sqlite3_column_text(stmt, 2);
+                metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
+                metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
+                metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
                 
                 auto namePtr = sqlite3_column_text(stmt, 3);
                 metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
@@ -578,9 +584,12 @@ namespace OpenNet::Core::Torrent
             while (sqlite3_step(stmt) == SQLITE_ROW)
             {
                 TaskMetadata metadata;
-                metadata.taskId = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-                metadata.magnetUri = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-                metadata.savePath = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
+                auto col0 = sqlite3_column_text(stmt, 0);
+                auto col1 = sqlite3_column_text(stmt, 1);
+                auto col2 = sqlite3_column_text(stmt, 2);
+                metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
+                metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
+                metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
                 
                 auto namePtr = sqlite3_column_text(stmt, 3);
                 metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";

@@ -197,11 +197,44 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const& sender,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		// Update selected size when individual file checkbox is clicked
+		// When an individual file/folder checkbox is clicked:
+		// 1. Sync the tree state → flat file list
+		// 2. Update parent folder checkboxes from children
+		// 3. Refresh selected size display
+		// 4. Update header select-all checkbox state
 		if (m_viewModel)
 		{
+			// Propagate folder selection state up from children
+			m_viewModel.UpdateFolderSelectionStates();
+
+			// Sync tree leaf node IsSelected to the flat file list
+			m_viewModel.SyncTreeToFlatList();
+
 			m_viewModel.RefreshSelectedSize();
 			UpdateSelectedSizeDisplay();
+
+			// Update the header select-all checkbox state
+			auto totalCount = m_viewModel.TotalFileCount();
+			auto selectedCount = m_viewModel.SelectedFileCount();
+
+			if (auto headerCb = SelectAllHeaderCheckBox())
+			{
+				if (selectedCount == 0)
+					headerCb.IsChecked(false);
+				else if (selectedCount == totalCount)
+					headerCb.IsChecked(true);
+				else
+					headerCb.IsChecked(winrt::Windows::Foundation::IReference<bool>{ nullptr }); // Indeterminate
+			}
+			if (auto filterCb = SelectAllFilterCheckBox())
+			{
+				if (selectedCount == 0)
+					filterCb.IsChecked(false);
+				else if (selectedCount == totalCount)
+					filterCb.IsChecked(true);
+				else
+					filterCb.IsChecked(winrt::Windows::Foundation::IReference<bool>{ nullptr }); // Indeterminate
+			}
 		}
 	}
 
@@ -292,6 +325,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 				file.IsSelected(!isKnownType);
 			}
+			// Sync flat list selection to tree nodes
+			m_viewModel.SyncFlatListToTree();
 			m_viewModel.RefreshSelectedSize();
 		}
 		else if (!extensionList.empty())
@@ -320,11 +355,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					// Select if matches selected category OR is "other" (unknown type)
 					file.IsSelected(matchesSelected || !isKnownType);
 				}
+				// Sync flat list selection to tree nodes
+				m_viewModel.SyncFlatListToTree();
 				m_viewModel.RefreshSelectedSize();
 			}
 			else
 			{
-				// Simple case: just selected categories
+				// Simple case: just selected categories (already syncs tree internally)
 				m_viewModel.SelectByExtension(winrt::hstring(extensionList));
 			}
 		}

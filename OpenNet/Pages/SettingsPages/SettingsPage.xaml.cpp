@@ -42,15 +42,28 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		s_current = this;
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 
-		// Capture initial language override at page creation
-		m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
+		try
+		{
+			m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
+
+			if (m_initialLanguageOverride.empty())
+			{
+				OutputDebugStringW(L"PrimaryLanguageOverride is empty\n");
+			}
+		}
+		catch (const winrt::hresult_error& e)
+		{
 #ifdef _DEBUG
-		OutputDebugString(ApplicationLanguages::PrimaryLanguageOverride().c_str());
+			std::wstring msg = L"WinRT Exception: ";
+			msg += e.message().c_str();
+			msg += L"\n";
+			OutputDebugStringW(msg.c_str());
+#endif
+		}
+#ifdef _DEBUG
+		OutputDebugStringW((m_initialLanguageOverride+L"\n").c_str());
 
 #endif // _DEBUG
-
-		// m_initialLanguageOverride = L"";
-		// 不要把初始值强制设为空，否则将导致重启后也被判定为“与初始不同”
 
 		// Build ComboBox items from ApplicationLanguages::Languages()
 		try
@@ -108,11 +121,9 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		}
 
 
-		Loaded({ this,
-			&SettingsPage::AnnotatedScrollBarPage_Loaded
-			});
-		Loaded({ this,
-			&SettingsPage::OnSettingsPageLoadedAsync
+		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
+			{
+				m_loadAction = OnSettingsPageLoadedAsync(sender, e);
 			});
 		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
 		SetDesktopBackground();
@@ -146,7 +157,18 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 			infoBar.IsOpen(false);
 		}
 	}
-
+	SettingsPage::~SettingsPage()
+	{
+		if (m_loadAction)
+		{
+			m_loadAction.Cancel();
+			m_loadAction = nullptr;
+		}
+		if (s_current == this)
+		{
+			s_current = nullptr;
+		}
+	}
 	void SettingsPage::Aboutp_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		// --- ISSUE AND FIX ---
@@ -194,11 +216,14 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		auto transitionInfo = SlideNavigationTransitionInfo{};
 		transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
 
-		MainSettingsPage::Current()->SettingsFrame().Navigate(
-			xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
-			nullptr,
-			transitionInfo
-		);
+		if (auto current = MainSettingsPage::Current())
+		{
+			current->SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::Pages::SettingsPages::AboutPage>(),
+				nullptr,
+				transitionInfo
+			);
+		}
 	}
 
 	void SettingsPage::SPSettings_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -367,16 +392,30 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 			if (fileExists && img)
 			{
-				// 构造 file:/// URI 并替换反斜杠为正斜杠
-				std::wstring uri = L"file:///" + wallpaperPath;
-				std::replace(uri.begin(), uri.end(), L'\\', L'/');
+				try
+				{
+					// 构造 file:/// URI 并替换反斜杠为正斜杠
+					std::wstring uri = L"file:///" + wallpaperPath;
+					std::replace(uri.begin(), uri.end(), L'\\', L'/');
 
-				// 创建 BitmapImage 并设置为 Image.Source
-				winrt::Windows::Foundation::Uri fileUri{ uri };
-				BitmapImage bitmap{ fileUri };
-				img.Source(bitmap);
+					// 创建 BitmapImage 并设置为 Image.Source
+					// 注意：必须先注册 ImageFailed 处理程序，再设置 UriSource，
+					// 否则异步解码失败会产生未观察的异常 → E_INVALIDARG 崩溃。
+					winrt::Windows::Foundation::Uri fileUri{ uri };
+					BitmapImage bitmap;
+					bitmap.ImageFailed([](winrt::Windows::Foundation::IInspectable const&,
+						winrt::Microsoft::UI::Xaml::ExceptionRoutedEventArgs const& args) {
+						OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
+					});
+					bitmap.UriSource(fileUri);
+					img.Source(bitmap);
 
-				OutputDebugStringW(L"壁纸已更改！\n");
+					OutputDebugStringW(L"壁纸已更改！\n");
+				}
+				catch (...)
+				{
+					OutputDebugStringW(L"SetDesktopBackground: BitmapImage creation failed\n");
+				}
 				return;
 			}
 		}
@@ -417,17 +456,37 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 	void SettingsPage::AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
-		SettingsScrollView().ScrollPresenter().VerticalScrollController() = annotatedScrollBar().ScrollController();
+		try
+		{
+			if (auto scrollView = SettingsScrollView())
+			{
+				if (auto presenter = scrollView.ScrollPresenter())
+				{
+					auto controller = annotatedScrollBar().ScrollController();
+					if (controller)
+					{
+						presenter.VerticalScrollController(controller);
+					}
+				}
+			}
+		}
+		catch (...) {}
 	}
 
 	void SettingsPage::AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
 		// 解除控制器绑定，防止卸载后引用悬空
-		//if (auto presenter = SettingsScrollView().ScrollPresenter())
-		//{
-		//	presenter.VerticalScrollController(nullptr);
-		//}
-
+		try
+		{
+			if (auto scrollView = SettingsScrollView())
+			{
+				if (auto presenter = scrollView.ScrollPresenter())
+				{
+					presenter.VerticalScrollController(nullptr);
+				}
+			}
+		}
+		catch (...) {}
 	}
 
 	void SettingsPage::AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e)
@@ -441,6 +500,8 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	}
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::OnSettingsPageLoadedAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
+		auto weak = get_weak();
+
 		// Switch to background thread for any heavy initialization
 		co_await winrt::resume_background();
 
@@ -449,49 +510,59 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		// Switch back to UI thread to update controls
 		co_await wil::resume_foreground(m_dispatcher);
 
-		// Load current theme from ThemeHelper
-		ElementTheme currentTheme = ::OpenNet::Helpers::ThemeHelper::RootTheme();
+		// Verify the page is still alive after co_await
+		auto strong = weak.get();
+		if (!strong) co_return;
 
-		// Set ComboBox selection based on saved theme
-		if (auto combo = themeMode())
+		try
 		{
-			switch (currentTheme)
-			{
-			case ElementTheme::Light:  combo.SelectedIndex(0); break;
-			case ElementTheme::Dark:   combo.SelectedIndex(1); break;
-			default:                   combo.SelectedIndex(2); break; // Default/Auto
-			}
-		}
+			// Load current theme from ThemeHelper
+			ElementTheme currentTheme = ::OpenNet::Helpers::ThemeHelper::RootTheme();
 
-		// Load saved start page and set ComboBox selection
-		{
-			m_isStartPageLoading = true;
-			winrt::hstring savedTag = L"home";
-			try
+			// Set ComboBox selection based on saved theme
+			if (auto combo = themeMode())
 			{
-				auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
-				auto values = localSettings.Values();
-				if (values.HasKey(L"StartPage"))
+				switch (currentTheme)
 				{
-					savedTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
+				case ElementTheme::Light:  combo.SelectedIndex(0); break;
+				case ElementTheme::Dark:   combo.SelectedIndex(1); break;
+				default:                   combo.SelectedIndex(2); break; // Default/Auto
 				}
 			}
-			catch (...) {}
 
-			auto combo = StartPageCombobox();
-			for (int32_t i = 0; i < static_cast<int32_t>(combo.Items().Size()); ++i)
+			// Load saved start page and set ComboBox selection
 			{
-				if (auto item = combo.Items().GetAt(i).try_as<ComboBoxItem>())
+				m_isStartPageLoading = true;
+				winrt::hstring savedTag = L"home";
+				try
 				{
-					if (unbox_value_or<hstring>(item.Tag(), L"") == savedTag)
+					auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+					auto values = localSettings.Values();
+					if (values.HasKey(L"StartPage"))
 					{
-						combo.SelectedIndex(i);
-						break;
+						savedTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
 					}
 				}
+				catch (...) {}
+
+				if (auto combo = StartPageCombobox())
+				{
+					for (int32_t i = 0; i < static_cast<int32_t>(combo.Items().Size()); ++i)
+					{
+						if (auto item = combo.Items().GetAt(i).try_as<ComboBoxItem>())
+						{
+							if (unbox_value_or<hstring>(item.Tag(), L"") == savedTag)
+							{
+								combo.SelectedIndex(i);
+								break;
+							}
+						}
+					}
+				}
+				m_isStartPageLoading = false;
 			}
-			m_isStartPageLoading = false;
 		}
+		catch (...) {}
 
 		m_loadAction = nullptr;
 		co_return;
@@ -508,6 +579,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	}
 	void SettingsPage::goGithubButton_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
-		GithubDefaultLaunch();
+		// Store the IAsyncAction to prevent unobserved async exception
+		m_githubAction = GithubDefaultLaunch();
 	}
 }

@@ -196,6 +196,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void ToggleSelection(int32_t fileIndex);
 		void RefreshSelectedSize();
 
+		// Sync tree node IsSelected states to the flat file list
+		void SyncTreeToFlatList();
+
+		// Sync flat file list IsSelected states to tree leaf nodes + update folders
+		void SyncFlatListToTree();
+
+		// Update folder checkbox states based on children (child→parent propagation)
+		void UpdateFolderSelectionStates();
+
 		// Get metadata for adding torrent
 		::OpenNet::Core::Torrent::TorrentMetadataInfo GetMetadataInfo() const { return m_rawMetadata; }
 

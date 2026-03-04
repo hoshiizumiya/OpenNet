@@ -8,6 +8,7 @@
 
 #include "pch.h"
 #include "Core/TorrentSettings.h"
+#include "Core/AppSettingsDatabase.h"
 
 #include <nlohmann/json.hpp>
 
@@ -213,20 +214,19 @@ namespace OpenNet::Core
 
         try
         {
-            // Determine file path: <LocalFolder>/torrent_settings.json
+            // Determine legacy JSON file path
             auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
             m_filePath = std::wstring(localFolder.Path().c_str()) + L"\\torrent_settings.json";
 
-            if (std::filesystem::exists(m_filePath))
+            // Try loading from SQLite first
+            if (!LoadFromSqlite())
             {
-                std::ifstream ifs(m_filePath);
-                if (ifs.good())
+                // Fallback: migrate from legacy JSON file
+                if (LoadFromLegacyJson())
                 {
-                    json j = json::parse(ifs, nullptr, /*allow_exceptions=*/false);
-                    if (!j.is_discarded())
-                    {
-                        m_settings = j.get<TorrentSettings>();
-                    }
+                    // Persist the migrated settings to SQLite
+                    SaveToSqlite();
+                    OutputDebugStringA("TorrentSettingsManager: migrated settings from JSON to SQLite\n");
                 }
             }
 
@@ -242,7 +242,6 @@ namespace OpenNet::Core
                 }
                 catch (...)
                 {
-                    // Fallback: use LocalFolder\Downloads
                     auto path = std::wstring(localFolder.Path().c_str()) + L"\\Downloads";
                     std::filesystem::create_directories(path);
                     m_settings.defaultSavePath = winrt::to_string(winrt::hstring(path));
@@ -260,25 +259,209 @@ namespace OpenNet::Core
     void TorrentSettingsManager::Save()
     {
         std::lock_guard lk(m_mutex);
+        SaveToSqlite();
+    }
 
+    // ---------------------------------------------------------------
+    //  Internal: save all settings fields to SQLite AppSettingsDatabase
+    // ---------------------------------------------------------------
+    void TorrentSettingsManager::SaveToSqlite() const
+    {
         try
         {
-            if (m_filePath.empty())
-            {
-                auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-                m_filePath = std::wstring(localFolder.Path().c_str()) + L"\\torrent_settings.json";
-            }
+            auto &db = AppSettingsDatabase::Instance();
+            auto const &s = m_settings;
 
-            json j = m_settings;
-            std::ofstream ofs(m_filePath);
-            if (ofs.good())
-            {
-                ofs << j.dump(2);
-            }
+            // Connection
+            db.SetString(AppSettingsDatabase::CAT_CONNECTION, "listenInterfaces", s.listenInterfaces);
+            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionsLimit", s.connectionsLimit);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingTcp", s.enableIncomingTcp);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingTcp", s.enableOutgoingTcp);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingUtp", s.enableIncomingUtp);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingUtp", s.enableOutgoingUtp);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "allowMultipleConnectionsPerIp", s.allowMultipleConnectionsPerIp);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "anonymousMode", s.anonymousMode);
+
+            // Discovery
+            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableDht", s.enableDht);
+            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd", s.enableLsd);
+            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp", s.enableUpnp);
+            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp", s.enableNatpmp);
+
+            // Tracker
+            db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers", s.announceToAllTiers);
+            db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers", s.announceToAllTrackers);
+
+            // Limits (Torrent category)
+            db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads", s.activeDownloads);
+            db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds", s.activeSeeds);
+            db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit", s.activeLimit);
+
+            // Speed limits
+            db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit", s.downloadRateLimit);
+            db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "uploadRateLimit", s.uploadRateLimit);
+
+            // Seeding
+            db.SetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit", s.seedingRatioLimit);
+            db.SetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit", s.seedingTimeLimit);
+
+            // Peer
+            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout", s.peerTimeout);
+            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout", s.handshakeTimeout);
+            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections", s.closeRedundantConnections);
+            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize", s.maxPeerListSize);
+
+            // Disk I/O
+            db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads", s.aioThreads);
+            db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage", s.checkingMemUsage);
+
+            // Encryption
+            db.SetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy", static_cast<int>(s.encryptionPolicy));
+            db.SetBool(AppSettingsDatabase::CAT_ENCRYPTION, "preferRc4", s.preferRc4);
+
+            // Proxy
+            db.SetInt(AppSettingsDatabase::CAT_PROXY, "proxyType", static_cast<int>(s.proxyType));
+            db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyHostname", s.proxyHostname);
+            db.SetInt(AppSettingsDatabase::CAT_PROXY, "proxyPort", s.proxyPort);
+            db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyUsername", s.proxyUsername);
+            db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword", s.proxyPassword);
+            db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections", s.proxyPeerConnections);
+            db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections", s.proxyTrackerConnections);
+
+            // Identity
+            db.SetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent", s.userAgent);
+            db.SetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint", s.peerFingerprint);
+
+            // Download defaults
+            db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath", s.defaultSavePath);
+            db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage", s.preallocateStorage);
+            db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads", s.autoStartDownloads);
+            db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled", s.moveCompletedEnabled);
+            db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
         }
         catch (std::exception const &ex)
         {
-            OutputDebugStringA(("TorrentSettingsManager::Save error: " + std::string(ex.what()) + "\n").c_str());
+            OutputDebugStringA(("TorrentSettingsManager::SaveToSqlite error: " + std::string(ex.what()) + "\n").c_str());
+        }
+    }
+
+    // ---------------------------------------------------------------
+    //  Internal: load settings from SQLite AppSettingsDatabase
+    // ---------------------------------------------------------------
+    bool TorrentSettingsManager::LoadFromSqlite()
+    {
+        try
+        {
+            auto &db = AppSettingsDatabase::Instance();
+
+            // Check if any torrent-related settings exist in the database
+            auto connSettings = db.GetCategory(AppSettingsDatabase::CAT_CONNECTION);
+            if (connSettings.empty())
+                return false; // No settings in DB → not yet migrated
+
+            auto &s = m_settings;
+
+            // Connection
+            s.listenInterfaces = db.GetString(AppSettingsDatabase::CAT_CONNECTION, "listenInterfaces").value_or(s.listenInterfaces);
+            s.connectionsLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionsLimit").value_or(s.connectionsLimit));
+            s.enableIncomingTcp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingTcp").value_or(s.enableIncomingTcp);
+            s.enableOutgoingTcp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingTcp").value_or(s.enableOutgoingTcp);
+            s.enableIncomingUtp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingUtp").value_or(s.enableIncomingUtp);
+            s.enableOutgoingUtp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingUtp").value_or(s.enableOutgoingUtp);
+            s.allowMultipleConnectionsPerIp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "allowMultipleConnectionsPerIp").value_or(s.allowMultipleConnectionsPerIp);
+            s.anonymousMode = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "anonymousMode").value_or(s.anonymousMode);
+
+            // Discovery
+            s.enableDht = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableDht").value_or(s.enableDht);
+            s.enableLsd = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd").value_or(s.enableLsd);
+            s.enableUpnp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp").value_or(s.enableUpnp);
+            s.enableNatpmp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp").value_or(s.enableNatpmp);
+
+            // Tracker
+            s.announceToAllTiers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers").value_or(s.announceToAllTiers);
+            s.announceToAllTrackers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers").value_or(s.announceToAllTrackers);
+
+            // Limits
+            s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
+            s.activeSeeds = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds").value_or(s.activeSeeds));
+            s.activeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit").value_or(s.activeLimit));
+
+            // Speed limits
+            s.downloadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit").value_or(s.downloadRateLimit));
+            s.uploadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "uploadRateLimit").value_or(s.uploadRateLimit));
+
+            // Seeding
+            s.seedingRatioLimit = db.GetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit").value_or(s.seedingRatioLimit);
+            s.seedingTimeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit").value_or(s.seedingTimeLimit));
+
+            // Peer
+            s.peerTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout").value_or(s.peerTimeout));
+            s.handshakeTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout").value_or(s.handshakeTimeout));
+            s.closeRedundantConnections = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections").value_or(s.closeRedundantConnections);
+            s.maxPeerListSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize").value_or(s.maxPeerListSize));
+
+            // Disk I/O
+            s.aioThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads").value_or(s.aioThreads));
+            s.checkingMemUsage = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage").value_or(s.checkingMemUsage));
+
+            // Encryption
+            s.encryptionPolicy = static_cast<EncryptionPolicy>(db.GetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy").value_or(static_cast<int>(s.encryptionPolicy)));
+            s.preferRc4 = db.GetBool(AppSettingsDatabase::CAT_ENCRYPTION, "preferRc4").value_or(s.preferRc4);
+
+            // Proxy
+            s.proxyType = static_cast<ProxyType>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "proxyType").value_or(static_cast<int>(s.proxyType)));
+            s.proxyHostname = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyHostname").value_or(s.proxyHostname);
+            s.proxyPort = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "proxyPort").value_or(s.proxyPort));
+            s.proxyUsername = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyUsername").value_or(s.proxyUsername);
+            s.proxyPassword = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword").value_or(s.proxyPassword);
+            s.proxyPeerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections").value_or(s.proxyPeerConnections);
+            s.proxyTrackerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections").value_or(s.proxyTrackerConnections);
+
+            // Identity
+            s.userAgent = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent").value_or(s.userAgent);
+            s.peerFingerprint = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint").value_or(s.peerFingerprint);
+
+            // Download defaults
+            s.defaultSavePath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath").value_or(s.defaultSavePath);
+            s.preallocateStorage = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage").value_or(s.preallocateStorage);
+            s.autoStartDownloads = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads").value_or(s.autoStartDownloads);
+            s.moveCompletedEnabled = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled").value_or(s.moveCompletedEnabled);
+            s.moveCompletedPath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath").value_or(s.moveCompletedPath);
+
+            return true;
+        }
+        catch (std::exception const &ex)
+        {
+            OutputDebugStringA(("TorrentSettingsManager::LoadFromSqlite error: " + std::string(ex.what()) + "\n").c_str());
+            return false;
+        }
+    }
+
+    // ---------------------------------------------------------------
+    //  Internal: load from legacy JSON file (for migration)
+    // ---------------------------------------------------------------
+    bool TorrentSettingsManager::LoadFromLegacyJson()
+    {
+        try
+        {
+            if (!std::filesystem::exists(m_filePath))
+                return false;
+
+            std::ifstream ifs(m_filePath);
+            if (!ifs.good())
+                return false;
+
+            json j = json::parse(ifs, nullptr, /*allow_exceptions=*/false);
+            if (j.is_discarded())
+                return false;
+
+            m_settings = j.get<TorrentSettings>();
+            return true;
+        }
+        catch (std::exception const &ex)
+        {
+            OutputDebugStringA(("TorrentSettingsManager::LoadFromLegacyJson error: " + std::string(ex.what()) + "\n").c_str());
+            return false;
         }
     }
 
@@ -369,14 +552,18 @@ namespace OpenNet::Core
         pack.set_str(lt::settings_pack::user_agent, s.userAgent);
         pack.set_str(lt::settings_pack::peer_fingerprint, s.peerFingerprint);
 
-        // Alert mask – always include these categories
+        // Peer
+        pack.set_int(lt::settings_pack::max_peerlist_size, s.maxPeerListSize);
+
+        // Alert mask – include DHT category so dht_stats_alert fires for node count
         pack.set_int(lt::settings_pack::alert_mask,
                      lt::alert_category::status |
                          lt::alert_category::error |
                          lt::alert_category::storage |
                          lt::alert_category::peer |
                          lt::alert_category::tracker |
-                         lt::alert_category::stats);
+                         lt::alert_category::stats |
+                         lt::alert_category::dht);
 
         // Seeding limits are per-torrent in libtorrent; share_ratio_limit / seed_time_limit
         // are applied via session settings:

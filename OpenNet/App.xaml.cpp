@@ -56,7 +56,7 @@ namespace winrt::OpenNet::implementation
         ::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
         // Create and show system tray icon
-        trayIcon = winrt::make<OpenNet::UI::Shell::implementation::NotifyIconContextMenu>();
+        OpenNet::UI::Shell::NotifyIconContextMenu trayIcon;
         trayIcon.Show();
 
         // Register window closing event - hide to tray instead of closing

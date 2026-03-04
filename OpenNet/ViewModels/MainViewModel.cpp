@@ -97,12 +97,18 @@ namespace winrt::OpenNet::ViewModels::implementation
                 // Gather BT speeds from P2PManager
                 std::uint64_t btDl = 0;
                 std::uint64_t btUl = 0;
+                int peersCount = 0;
+                int dhtNodes = 0;
+                int listenPort = 0;
                 auto *torrentCore = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
                 if (torrentCore && torrentCore->IsRunning())
                 {
                     auto stats = torrentCore->GetSessionStats();
                     btDl = static_cast<std::uint64_t>(stats.totalDownloadRate);
                     btUl = static_cast<std::uint64_t>(stats.totalUploadRate);
+                    peersCount = stats.numPeers;
+                    dhtNodes = stats.dhtNodes;
+                    listenPort = stats.listenPort;
                 }
 
                 std::uint64_t totalDl = httpDl + btDl;
@@ -111,16 +117,35 @@ namespace winrt::OpenNet::ViewModels::implementation
                 auto speedText = std::format(L"\u2191 {} \u2193 {}",
                                              FormatSpeed(totalUl), FormatSpeed(totalDl));
 
+                // Build port state string
+                std::wstring portText;
+                if (listenPort > 0)
+                    portText = std::format(L"Port: {} | DHT: {}", listenPort, dhtNodes);
+                else
+                    portText = L"\u68c0\u6d4b\u4e2d"; // "检测中"
+
                 auto dispatcher = m_dispatcher;
                 if (dispatcher)
                 {
                     auto hspeed = winrt::hstring{speedText};
-                    dispatcher.TryEnqueue([this, hspeed]()
+                    auto hport = winrt::hstring{portText};
+                    auto peers = peersCount;
+                    dispatcher.TryEnqueue([this, hspeed, hport, peers]()
                                           {
                         if (m_currentTransferSpeedText != hspeed)
                         {
                             m_currentTransferSpeedText = hspeed;
                             OnPropertyChanged(L"CurrentTransferSpeedText");
+                        }
+                        if (m_connectedPeersCount != peers)
+                        {
+                            m_connectedPeersCount = peers;
+                            OnPropertyChanged(L"ConnectedPeersCount");
+                        }
+                        if (m_portState != hport)
+                        {
+                            m_portState = hport;
+                            OnPropertyChanged(L"PortState");
                         } });
                 }
             }

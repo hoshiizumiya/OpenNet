@@ -59,10 +59,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 
-	void TaskSummaryPage::TaskSpeedGraph_SizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+	void TaskSummaryPage::TaskSpeedGraph_SizeChanged(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& /*e*/)
 	{
-		(void)sender;
-		(void)e;
 		// Update the speed graph when size changes
 		UpdateSpeedGraphForSelectedTask();
 	}

@@ -117,27 +117,51 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			UpdateLoadingState(true, L"Fetching torrent metadata...", 10);
 		});
 
-		// Fetch metadata using callback-based API (60 second timeout)
-		co_await m_metadataFetcher->FetchMetadataAsync(
-			torrentSource,
-			// On success callback
-			[this, dispatcherQueue](::OpenNet::Core::Torrent::TorrentMetadataInfo const& metadata)
+		try
 		{
-			dispatcherQueue.TryEnqueue([this, metadata]()
+			// Fetch metadata using callback-based API (60 second timeout)
+			co_await m_metadataFetcher->FetchMetadataAsync(
+				torrentSource,
+				// On success callback
+				[this, dispatcherQueue](::OpenNet::Core::Torrent::TorrentMetadataInfo const& metadata)
 			{
-				ShowMetadata(metadata);
-			});
-		},
-			// On error callback
-			[this, dispatcherQueue](std::string const& errorMsg)
+				dispatcherQueue.TryEnqueue([this, metadata]()
+				{
+					ShowMetadata(metadata);
+				});
+			},
+				// On error callback
+				[this, dispatcherQueue](std::string const& errorMsg)
+			{
+				dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(errorMsg)]()
+				{
+					ShowError(msg);
+				});
+			},
+				60  // timeout seconds
+			);
+		}
+		catch (winrt::hresult_error const& ex)
 		{
-			dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(errorMsg)]()
+			dispatcherQueue.TryEnqueue([this, msg = ex.message()]()
 			{
-				ShowError(msg);
+				ShowError(L"Metadata fetch error: " + msg);
 			});
-		},
-			60  // timeout seconds
-		);
+		}
+		catch (std::exception const& ex)
+		{
+			dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(ex.what())]()
+			{
+				ShowError(L"Metadata fetch error: " + msg);
+			});
+		}
+		catch (...)
+		{
+			dispatcherQueue.TryEnqueue([this]()
+			{
+				ShowError(L"Unknown error during metadata fetch");
+			});
+		}
 	}
 
 	void TorrentCheckModalWindow::UpdateLoadingState(bool isLoading, winrt::hstring const& status, int progress)

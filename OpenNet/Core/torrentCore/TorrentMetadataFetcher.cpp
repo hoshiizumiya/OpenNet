@@ -73,6 +73,14 @@ namespace OpenNet::Core::Torrent
             // Limit connections since we only need metadata
             pack.set_int(lt::settings_pack::connections_limit, 50);
 
+            // Add DHT bootstrap nodes — without these, the DHT table is empty
+            // and magnet links that rely on DHT can never find peers.
+            pack.set_str(lt::settings_pack::dht_bootstrap_nodes,
+                "router.bittorrent.com:6881,"
+                "router.utorrent.com:6881,"
+                "dht.transmissionbt.com:6881,"
+                "dht.libtorrent.org:25401");
+
             m_session = std::make_unique<lt::session>(pack);
             return true;
         }
@@ -93,6 +101,7 @@ namespace OpenNet::Core::Torrent
         m_isFetching.store(true);
         m_cancelled.store(false);
         m_metadataReceived.store(false);
+        m_metadataFailed.store(false);
         m_result = std::nullopt;
         m_errorMessage.clear();
 
@@ -148,7 +157,8 @@ namespace OpenNet::Core::Torrent
             atp.save_path = std::filesystem::path(tempDir).string();
 
             // Set flags for metadata-only mode
-            atp.flags |= lt::torrent_flags::upload_mode;  // Don't download actual data
+            // NOTE: Do NOT set upload_mode here — it prevents metadata download
+            // for magnet links via the ut_metadata extension protocol (BEP 9).
             atp.flags &= ~lt::torrent_flags::auto_managed;
             atp.flags &= ~lt::torrent_flags::paused;
 
@@ -164,11 +174,17 @@ namespace OpenNet::Core::Torrent
             auto startTime = std::chrono::steady_clock::now();
             auto timeout = std::chrono::seconds(timeoutSeconds);
 
-            while (!m_cancelled.load() && !m_metadataReceived.load())
+            while (!m_cancelled.load() && !m_metadataReceived.load() && !m_metadataFailed.load())
             {
                 auto elapsed = std::chrono::steady_clock::now() - startTime;
                 if (elapsed >= timeout)
                 {
+                    // Clean up before returning
+                    if (m_handle.is_valid())
+                    {
+                        m_session->remove_torrent(m_handle, lt::session::delete_files);
+                        m_handle = lt::torrent_handle{};
+                    }
                     m_isFetching.store(false);
                     if (onError) onError("Metadata download timeout");
                     co_return;
@@ -198,7 +214,11 @@ namespace OpenNet::Core::Torrent
                     // Update progress
                     if (m_progressCallback)
                     {
-                        int progressPercent = 10 + static_cast<int>((elapsed.count() * 80) / (timeout.count()));
+                        auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(elapsed).count();
+                        auto timeoutSec = std::chrono::duration_cast<std::chrono::seconds>(timeout).count();
+                        int progressPercent = (timeoutSec > 0)
+                            ? 10 + static_cast<int>((elapsedSec * 80) / timeoutSec)
+                            : 10;
                         progressPercent = std::min(progressPercent, 90);
 
                         std::string statusMsg = "Downloading metadata... (" + 
@@ -213,8 +233,25 @@ namespace OpenNet::Core::Torrent
 
             if (m_cancelled.load())
             {
+                if (m_handle.is_valid())
+                {
+                    m_session->remove_torrent(m_handle, lt::session::delete_files);
+                    m_handle = lt::torrent_handle{};
+                }
                 m_isFetching.store(false);
                 if (onError) onError("Operation cancelled");
+                co_return;
+            }
+
+            if (m_metadataFailed.load())
+            {
+                if (m_handle.is_valid())
+                {
+                    m_session->remove_torrent(m_handle, lt::session::delete_files);
+                    m_handle = lt::torrent_handle{};
+                }
+                m_isFetching.store(false);
+                if (onError) onError(m_errorMessage.empty() ? "Metadata download failed" : m_errorMessage);
                 co_return;
             }
 
@@ -266,6 +303,7 @@ namespace OpenNet::Core::Torrent
             {
                 OutputDebugStringA(("TorrentMetadataFetcher: Metadata failed: " + mfa->message() + "\n").c_str());
                 m_errorMessage = mfa->message();
+                m_metadataFailed.store(true);
             }
             else if (auto* tea = lt::alert_cast<lt::torrent_error_alert>(a))
             {

@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" DefaultTargets="Build"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.260209005\build\native\Microsoft.WindowsAppSDK.Runtime.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.260209005\build\native\Microsoft.WindowsAppSDK.Runtime.props')" />
@@ -158,11 +159,13 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Core\AppEnvironment.h" />
+    <ClInclude Include="Core\AppSettingsDatabase.h" />
     <ClInclude Include="Core\IO\FileOperation.h" />
     <ClInclude Include="Core\IO\FileSystem.h" />
     <ClInclude Include="Core\RSS\RSSLinkResolver.h" />
     <ClInclude Include="Core\RSS\RSSManager.h" />
     <ClInclude Include="Core\RSS\RSSParser.h" />
+    <ClInclude Include="Core\RSS\RSSDatabase.h" />
     <ClInclude Include="Core\RSS\RSSTypes.h" />
     <ClInclude Include="Core\TorrentSettings.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
@@ -547,10 +550,12 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Core\AppEnvironment.cpp" />
+    <ClCompile Include="Core\AppSettingsDatabase.cpp" />
     <ClCompile Include="Core\IO\FileOperation.cpp" />
     <ClCompile Include="Core\IO\FileSystem.cpp" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.cpp" />
     <ClCompile Include="Core\RSS\RSSManager.cpp" />
+    <ClCompile Include="Core\RSS\RSSDatabase.cpp" />
     <ClCompile Include="Core\RSS\RSSParser.cpp" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
     <ClCompile Include="Core\Torrent\TrackerManager.cpp" />

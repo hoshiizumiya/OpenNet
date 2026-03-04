@@ -3,26 +3,20 @@
     x:Class="OpenNet.Pages.HomePage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:controls="using:OpenNet.UI.Xaml.Control.HomePage.Header"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    NavigationCacheMode="Enabled"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="FeatureCardStyle"
-                TargetType="Grid">
-            <Setter Property="Padding"
-                    Value="16,12,16,16"/>
-            <Setter Property="CornerRadius"
-                    Value="8"/>
-            <Setter Property="Background"
-                    Value="{ThemeResource CardBackgroundFillColorDefaultBrush}"/>
-            <Setter Property="BorderBrush"
-                    Value="{ThemeResource CardStrokeColorDefaultBrush}"/>
-            <Setter Property="BorderThickness"
-                    Value="1"/>
+        <Style x:Key="FeatureCardStyle" TargetType="Grid">
+            <Setter Property="Padding" Value="16,12,16,16" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
         </Style>
     </Page.Resources>
 
@@ -30,7 +24,7 @@
         <ScrollViewer>
             <StackPanel>
                 <!--  Header Carousel with blurred backdrop  -->
-                <controls:HeaderCarousel/>
+                <controls:HeaderCarousel />
 
                 <!--  Features Section  -->
                 <Grid
@@ -38,15 +32,15 @@
                     ColumnSpacing="24"
                     RowSpacing="24">
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
-                        <ColumnDefinition Width="1*"/>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
                     <!--  Section title  -->
@@ -57,11 +51,11 @@
                         <TextBlock
                             HorizontalAlignment="Center"
                             Style="{StaticResource TitleTextBlockStyle}"
-                            Text="Features"/>
+                            Text="Features" />
                         <TextBlock
                             HorizontalAlignment="Center"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="Discover how OpenNet helps you build peer-to-peer connections"/>
+                            Text="Discover how OpenNet helps you build peer-to-peer connections" />
                     </StackPanel>
 
                     <!--  Secure Transfer Card  -->
@@ -71,29 +65,24 @@
                         MinHeight="176"
                         Style="{StaticResource FeatureCardStyle}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical"
-                                Spacing="8">
+                        <StackPanel Orientation="Vertical" Spacing="8">
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="Secure File Transfer"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed."
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton
-                            Grid.Row="1"
-                            Padding="0">
-                            <StackPanel Orientation="Horizontal"
-                                    Spacing="4">
-                                <TextBlock Text="Start transferring"/>
-                                <FontIcon FontSize="12"
-                                        Glyph="&#xE76C;"/>
+                        <HyperlinkButton Grid.Row="1" Padding="0">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Start transferring" />
+                                <FontIcon FontSize="12" Glyph="&#xE76C;" />
                             </StackPanel>
                         </HyperlinkButton>
                     </Grid>
@@ -105,29 +94,24 @@
                         MinHeight="176"
                         Style="{StaticResource FeatureCardStyle}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical"
-                                Spacing="8">
+                        <StackPanel Orientation="Vertical" Spacing="8">
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="Auto Discovery"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Automatically find available peers on your local network"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton
-                            Grid.Row="1"
-                            Padding="0">
-                            <StackPanel Orientation="Horizontal"
-                                    Spacing="4">
-                                <TextBlock Text="Scan network"/>
-                                <FontIcon FontSize="12"
-                                        Glyph="&#xE76C;"/>
+                        <HyperlinkButton Grid.Row="1" Padding="0">
+                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                <TextBlock Text="Scan network" />
+                                <FontIcon FontSize="12" Glyph="&#xE76C;" />
                             </StackPanel>
                         </HyperlinkButton>
                     </Grid>
@@ -138,20 +122,19 @@
                         MinHeight="160"
                         Style="{StaticResource FeatureCardStyle}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical"
-                                Spacing="8">
+                        <StackPanel Orientation="Vertical" Spacing="8">
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="Peer Chat"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Communicate with peers using encrypted messaging channels"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                         </StackPanel>
                     </Grid>
 
@@ -163,20 +146,19 @@
                         MinHeight="160"
                         Style="{StaticResource FeatureCardStyle}">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical"
-                                Spacing="8">
+                        <StackPanel Orientation="Vertical" Spacing="8">
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="VPN &amp; Tunneling"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Create secure encrypted tunnels between devices for private networking across the internet"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                         </StackPanel>
                     </Grid>
 
@@ -186,28 +168,23 @@
                         Grid.ColumnSpan="3"
                         Style="{StaticResource FeatureCardStyle}">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Vertical"
-                                Spacing="8">
+                        <StackPanel Orientation="Vertical" Spacing="8">
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Style="{StaticResource SubtitleTextBlockStyle}"
                                 Text="Open-source"
-                                TextWrapping="Wrap"/>
+                                TextWrapping="Wrap" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="OpenNet is open-source. Contributions, issues, and feature requests are welcome."
-                                TextWrapping="Wrap"/>
-                            <HyperlinkButton
-                                Padding="0"
-                                NavigateUri="https://github.com/hoshiizumiya/OpenNet">
-                                <StackPanel Orientation="Horizontal"
-                                        Spacing="4">
-                                    <TextBlock Text="OpenNet repository"/>
-                                    <FontIcon FontSize="12"
-                                            Glyph="&#xE76C;"/>
+                                TextWrapping="Wrap" />
+                            <HyperlinkButton Padding="0" NavigateUri="https://github.com/hoshiizumiya/OpenNet">
+                                <StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="OpenNet repository" />
+                                    <FontIcon FontSize="12" Glyph="&#xE76C;" />
                                 </StackPanel>
                             </HyperlinkButton>
                         </StackPanel>
@@ -218,12 +195,12 @@
                         <VisualStateGroup x:Name="LayoutVisualStates">
                             <VisualState x:Name="WideLayout">
                                 <VisualState.StateTriggers>
-                                    <AdaptiveTrigger MinWindowWidth="800"/>
+                                    <AdaptiveTrigger MinWindowWidth="800" />
                                 </VisualState.StateTriggers>
                             </VisualState>
                             <VisualState x:Name="NarrowLayout">
                                 <VisualState.StateTriggers>
-                                    <AdaptiveTrigger MinWindowWidth="0"/>
+                                    <AdaptiveTrigger MinWindowWidth="0" />
                                 </VisualState.StateTriggers>
                             </VisualState>
                         </VisualStateGroup>

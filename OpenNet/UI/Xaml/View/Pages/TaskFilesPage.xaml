@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskFilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,99 +9,104 @@
 
     <Grid Padding="8">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <!-- Column Headers -->
-        <Grid Grid.Row="0"
-              Padding="8,4"
-              Background="{ThemeResource SystemControlAcrylicWindowBrush}">
+        <!--  Column Headers  -->
+        <Grid
+            Grid.Row="0"
+            Padding="8,4"
+            Background="{ThemeResource SystemControlAcrylicWindowBrush}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="3*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="3*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock x:Uid="FileHeader_Path"
-                       Grid.Column="0"
-                       FontWeight="SemiBold"
-                       Text="File"/>
-            <TextBlock x:Uid="FileHeader_Size"
-                       Grid.Column="1"
-                       FontWeight="SemiBold"
-                       Text="Size"/>
-            <TextBlock x:Uid="FileHeader_Progress"
-                       Grid.Column="2"
-                       FontWeight="SemiBold"
-                       Text="Progress"/>
-            <TextBlock x:Uid="FileHeader_Done"
-                       Grid.Column="3"
-                       FontWeight="SemiBold"
-                       Text="Done"/>
-            <TextBlock x:Uid="FileHeader_Priority"
-                       Grid.Column="4"
-                       FontWeight="SemiBold"
-                       Text="Priority"/>
+            <TextBlock
+                x:Uid="FileHeader_Path"
+                Grid.Column="0"
+                FontWeight="SemiBold"
+                Text="File" />
+            <TextBlock
+                x:Uid="FileHeader_Size"
+                Grid.Column="1"
+                FontWeight="SemiBold"
+                Text="Size" />
+            <TextBlock
+                x:Uid="FileHeader_Progress"
+                Grid.Column="2"
+                FontWeight="SemiBold"
+                Text="Progress" />
+            <TextBlock
+                x:Uid="FileHeader_Done"
+                Grid.Column="3"
+                FontWeight="SemiBold"
+                Text="Done" />
+            <TextBlock
+                x:Uid="FileHeader_Priority"
+                Grid.Column="4"
+                FontWeight="SemiBold"
+                Text="Priority" />
         </Grid>
 
-        <!-- File list -->
-        <ListView x:Name="FilesListView"
-                  Grid.Row="1"
-                  SelectionMode="None">
+        <!--  File list  -->
+        <ListView
+            x:Name="FilesListView"
+            Grid.Row="1"
+            SelectionMode="None">
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid Padding="8,4">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Grid.Column="0"
-                                   Text="{Binding [Path]}"
-                                   TextTrimming="CharacterEllipsis"
-                                   ToolTipService.ToolTip="{Binding [Path]}"/>
-                        <TextBlock Grid.Column="1"
-                                Text="{Binding [Size]}"/>
-                        <ProgressBar Grid.Column="2"
-                                     Margin="4,0"
-                                     VerticalAlignment="Center"
-                                     Maximum="100"
-                                     Value="{Binding [ProgressValue]}"/>
-                        <TextBlock Grid.Column="3"
-                                Text="{Binding [Done]}"/>
-                        <ComboBox Grid.Column="4"
-                                  MinWidth="80"
-                                  HorizontalAlignment="Stretch"
-                                  SelectedIndex="{Binding [PriorityIndex], Mode=OneWay}"
-                                  SelectionChanged="FilePriority_SelectionChanged"
-                                  Tag="{Binding [FileIndex]}">
-                            <ComboBoxItem x:Uid="FilePriority_Skip"
-                                    Content="Skip"/>
-                            <ComboBoxItem x:Uid="FilePriority_Low"
-                                    Content="Low"/>
-                            <ComboBoxItem x:Uid="FilePriority_Normal"
-                                    Content="Normal"/>
-                            <ComboBoxItem x:Uid="FilePriority_High"
-                                    Content="High"/>
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding [Path]}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{Binding [Path]}" />
+                        <TextBlock Grid.Column="1" Text="{Binding [Size]}" />
+                        <ProgressBar
+                            Grid.Column="2"
+                            Margin="4,0"
+                            VerticalAlignment="Center"
+                            Maximum="100"
+                            Value="{Binding [ProgressValue]}" />
+                        <TextBlock Grid.Column="3" Text="{Binding [Done]}" />
+                        <ComboBox
+                            Grid.Column="4"
+                            MinWidth="80"
+                            HorizontalAlignment="Stretch"
+                            SelectedIndex="{Binding [PriorityIndex], Mode=OneWay}"
+                            SelectionChanged="FilePriority_SelectionChanged"
+                            Tag="{Binding [FileIndex]}">
+                            <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
+                            <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
+                            <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
+                            <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
                         </ComboBox>
                     </Grid>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <!-- Empty state -->
-        <TextBlock x:Name="EmptyStateText"
-                   x:Uid="FilesList_EmptyState"
-                   Grid.Row="1"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                   Text="No file information available"
-                   Visibility="Collapsed"/>
+        <!--  Empty state  -->
+        <TextBlock
+            x:Name="EmptyStateText"
+            x:Uid="FilesList_EmptyState"
+            Grid.Row="1"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Text="No file information available"
+            Visibility="Collapsed" />
     </Grid>
 </Page>

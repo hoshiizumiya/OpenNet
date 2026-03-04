@@ -69,6 +69,7 @@ namespace OpenNet::Core::Torrent
         std::atomic<bool> m_isFetching{ false };
         std::atomic<bool> m_cancelled{ false };
         std::atomic<bool> m_metadataReceived{ false };
+        std::atomic<bool> m_metadataFailed{ false };
 
         MetadataProgressCallback m_progressCallback;
         std::optional<TorrentMetadataInfo> m_result;

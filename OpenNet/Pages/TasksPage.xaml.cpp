@@ -28,6 +28,7 @@
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.xaml.h"
 #include "UI/Xaml/View/Dialog/HttpDownloadDialog.xaml.h"
+#include "UI/Xaml/View/Pages/TaskSummaryPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
@@ -46,7 +47,7 @@ namespace winrt::OpenNet::Pages::implementation
 		InitializeComponent();
 
 		// Keep page cached to preserve ViewModel when navigating away
-		this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Enabled);
+		//this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Enabled);
 
 		// Create and attach the view-model
 		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
@@ -313,6 +314,19 @@ namespace winrt::OpenNet::Pages::implementation
 		auto taskVm = selectedItem.try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
 
 		m_viewModel.SelectedTask(taskVm);
+
+		// Unsubscribe from previous task and subscribe to the new one
+		UnsubscribeFromSelectedTaskChanges();
+		if (taskVm)
+		{
+			SubscribeToSelectedTaskChanges(taskVm);
+
+			// Reset SpeedGraph for the newly selected task issue: 我们可能选中的不是Summary页，所以SpeedGraph可能不存在，这时候不需要调用Reset，等切换到Summary页时再刷新数据即可?
+			if (auto graph = UI::Xaml::View::Pages::TaskSummaryPage::TasksSpeedGraph())
+			{
+				graph.Reset();
+			}
+		}
 	}
 
 	void TasksPage::SubscribeToSelectedTaskChanges(winrt::OpenNet::ViewModels::TaskViewModel const &task)
@@ -340,8 +354,19 @@ namespace winrt::OpenNet::Pages::implementation
 		// Update speed graph when progress or speed changes
 		if (propertyName == L"ProgressPercent" || propertyName == L"DownloadSpeedKB")
 		{
-			// need investigate how to update SpeedGraph control
-			// UpdateSpeedGraphForSelectedTask();
+			if (m_currentSubscribedTask)
+			{
+				try
+				{
+					auto percent = m_currentSubscribedTask.ProgressPercent();
+					auto speedKB = m_currentSubscribedTask.DownloadSpeedKB();
+					if (auto graph = TaskSpeedGraph())
+					{
+						graph.SetSpeed(percent, static_cast<uint64_t>(speedKB));
+					}
+				}
+				catch (...) {}
+			}
 		}
 	}
 
@@ -502,15 +527,14 @@ namespace winrt::OpenNet::Pages::implementation
 		}
 	}
 
-	void TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
 	{
 		if (!m_currentSubscribedTask)
 		{
 			return;
 		}
 
-		// 调用异步方法 - 不要等待，让它后台运行
-		auto _ = ShowTaskPropertiesAsync();
+		co_await ShowTaskPropertiesAsync();
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::ShowTaskPropertiesAsync()

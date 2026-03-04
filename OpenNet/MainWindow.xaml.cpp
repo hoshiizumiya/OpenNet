@@ -80,8 +80,19 @@ namespace winrt::OpenNet::implementation
 			try { ::OpenNet::Core::P2PManager::Instance().Shutdown(); }
 			catch (...) { OutputDebugStringA("MainWindow: P2PManager shutdown error\n"); }
 
-			try { ::OpenNet::Core::DownloadManager::Instance().Shutdown(); }
-			catch (...) { OutputDebugStringA("MainWindow: DownloadManager shutdown error\n"); }
+			// DownloadManager::Shutdown() calls Aria2 SimplePost() which uses
+			// WinRT HttpClient .get() — that blocks on an async operation and
+			// must NOT run on the STA/UI thread.  Run it on a background thread.
+			try
+			{
+				std::thread bgShutdown([]()
+				{
+					try { ::OpenNet::Core::DownloadManager::Instance().Shutdown(); }
+					catch (...) { OutputDebugStringA("MainWindow: DownloadManager shutdown error (bg)\n"); }
+				});
+				bgShutdown.join();   // Wait for clean shutdown before process exits
+			}
+			catch (...) { OutputDebugStringA("MainWindow: DownloadManager background shutdown error\n"); }
 		});
 	}
 

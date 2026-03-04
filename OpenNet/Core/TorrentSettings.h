@@ -115,16 +115,16 @@ namespace OpenNet::Core
     };
 
     // ---------------------------------------------------------------
-    //  TorrentSettingsManager  – load / save to JSON file
+    //  TorrentSettingsManager  – load / save to SQLite + fallback from JSON
     // ---------------------------------------------------------------
     class TorrentSettingsManager
     {
     public:
         static TorrentSettingsManager &Instance();
 
-        // Load from disk (call once at startup)
+        // Load from SQLite (fallback: legacy JSON file)
         void Load();
-        // Save current settings to disk
+        // Save current settings to SQLite
         void Save();
 
         // Read-only access (take a copy if you hold it across await points)
@@ -132,18 +132,21 @@ namespace OpenNet::Core
         // Replace all settings and save
         void Set(TorrentSettings const &settings);
 
-        // Convenience: path of the JSON file
+        // Convenience: path of the legacy JSON file (for migration)
         std::wstring FilePath() const;
-
-        // Construct a libtorrent settings_pack from current settings
-        // (defined in .cpp; avoids leaking libtorrent headers here)
-        // void ApplyToSettingsPack(lt::settings_pack&) const; -- in cpp
 
     private:
         TorrentSettingsManager() = default;
         ~TorrentSettingsManager() = default;
         TorrentSettingsManager(TorrentSettingsManager const &) = delete;
         TorrentSettingsManager &operator=(TorrentSettingsManager const &) = delete;
+
+        // Internal: save to SQLite database
+        void SaveToSqlite() const;
+        // Internal: load from SQLite database
+        bool LoadFromSqlite();
+        // Internal: migrate from legacy JSON if SQLite is empty
+        bool LoadFromLegacyJson();
 
         mutable std::mutex m_mutex;
         TorrentSettings m_settings;

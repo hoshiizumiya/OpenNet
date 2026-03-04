@@ -9,15 +9,15 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    NavigationCacheMode="Enabled"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
             <!--  Merge external resource dictionaries  -->
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///Styles/SettingsStyles.xaml"/>
-                <ResourceDictionary Source="ms-appx:///Styles/CustomThemeBrushes.xaml"/>
+                <ResourceDictionary Source="ms-appx:///Styles/SettingsStyles.xaml" />
+                <ResourceDictionary Source="ms-appx:///Styles/CustomThemeBrushes.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
@@ -25,12 +25,12 @@
 
     <Grid Background="{ThemeResource LayerFillColorDefaultBrush}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="40"/>
-            <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="40" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="60" />
         </Grid.ColumnDefinitions>
 
         <!--  Overlay Frame for Sub-pages (like About)  -->
@@ -44,7 +44,7 @@
             Opacity="0">
             <Frame.ContentTransitions>
                 <TransitionCollection>
-                    <NavigationThemeTransition/>
+                    <NavigationThemeTransition />
                 </TransitionCollection>
             </Frame.ContentTransitions>
         </Frame>
@@ -55,8 +55,7 @@
             Grid.Row="0"
             Grid.Column="1"
             Loaded="AnnotatedScrollBarPage_Loaded">
-            <StackPanel Margin="0,24,0,24"
-                    Spacing="4">
+            <StackPanel Margin="0,24,0,24" Spacing="4">
 
                 <!--  Desktop Background Preview Card  -->
                 <Border
@@ -69,12 +68,12 @@
                         <TextBlock
                             FontSize="16"
                             FontWeight="SemiBold"
-                            Text="Personalize your device"/>
+                            Text="Personalize your device" />
                         <TextBlock
                             Margin="0,4,0,12"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="Make OpenNet your own with custom themes and backgrounds"
-                            TextWrapping="Wrap"/>
+                            TextWrapping="Wrap" />
 
                         <Border
                             x:Name="DesktopBackgroundBorder"
@@ -92,7 +91,7 @@
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
                                         Opacity="1"
-                                        Stretch="UniformToFill"/>
+                                        Stretch="UniformToFill" />
 
                                     <!--  Mini Window Preview  -->
                                     <Border
@@ -106,7 +105,7 @@
                                         <Grid>
                                             <Border Background="{ThemeResource CustomWindowMicaAltBrush}">
                                                 <Border.BackgroundTransition>
-                                                    <BrushTransition/>
+                                                    <BrushTransition />
                                                 </Border.BackgroundTransition>
                                             </Border>
 
@@ -124,7 +123,7 @@
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                     <Border
                                                         Width="30"
                                                         Height="1"
@@ -132,7 +131,7 @@
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                     <Border
                                                         Width="30"
                                                         Height="1"
@@ -140,7 +139,7 @@
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                     <Border
                                                         Width="20"
                                                         Height="1"
@@ -148,7 +147,7 @@
                                                         HorizontalAlignment="Right"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
 
                                                     <!--  Center content box  -->
                                                     <Border
@@ -156,7 +155,7 @@
                                                         Background="{ThemeResource CustomRxBoxSolidColorBrush}"
                                                         BorderBrush="{ThemeResource TextControlElevationBorderFocusedBrush}"
                                                         BorderThickness="1"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
 
                                                     <!--  Left side bars  -->
                                                     <Border
@@ -166,7 +165,7 @@
                                                         HorizontalAlignment="Left"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                     <Border
                                                         Width="25"
                                                         Height="1"
@@ -174,7 +173,7 @@
                                                         HorizontalAlignment="Left"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                     <Border
                                                         Width="25"
                                                         Height="1"
@@ -182,7 +181,7 @@
                                                         HorizontalAlignment="Left"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                     <Border
                                                         Width="15"
                                                         Height="1"
@@ -190,7 +189,7 @@
                                                         HorizontalAlignment="Left"
                                                         VerticalAlignment="Top"
                                                         Background="{ThemeResource TextFillColorPrimaryBrush}"
-                                                        CornerRadius="2"/>
+                                                        CornerRadius="2" />
                                                 </Grid>
                                             </Border>
 
@@ -202,7 +201,7 @@
                                                 HorizontalAlignment="Right"
                                                 VerticalAlignment="Bottom"
                                                 Background="{ThemeResource AccentTextFillColorTertiaryBrush}"
-                                                CornerRadius="2"/>
+                                                CornerRadius="2" />
                                         </Grid>
                                     </Border>
                                 </Grid>
@@ -217,22 +216,21 @@
                     x:Uid="Version"
                     Margin="0,24,0,4"
                     Style="{StaticResource SettingsGroupHeaderStyle}"
-                    Text="Version and update"/>
+                    Text="Version and update" />
 
                 <essential:SettingsExpander
                     x:Name="VersionCheck"
                     x:Uid="VersionCheck"
                     Description="Last check date:">
                     <essential:SettingsExpander.HeaderIcon>
-                        <FontIcon FontSize="16"
-                                Glyph="&#xE895;"/>
+                        <FontIcon FontSize="16" Glyph="&#xE895;" />
                     </essential:SettingsExpander.HeaderIcon>
                     <Button
                         x:Name="AppUpdateCheckButton"
                         x:Uid="AppUpdateCheckButton"
                         Click="AppUpdateCheckButton_Click"
                         Content="Check update"
-                        Style="{StaticResource AccentButtonStyle}"/>
+                        Style="{StaticResource AccentButtonStyle}" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard ContentAlignment="Left">
                             <CheckBox
@@ -241,7 +239,7 @@
                                 Checked="AutoCheckUpdateCheckbox_Checked"
                                 Content="Automatically check for updates"
                                 IsChecked="True"
-                                Unchecked="AutoCheckUpdateCheckbox_Unchecked"/>
+                                Unchecked="AutoCheckUpdateCheckbox_Unchecked" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -257,7 +255,7 @@
                         <Button
                             x:Uid="LastestTip"
                             Click="goGithubButton_Click"
-                            Content="View release notes"/>
+                            Content="View release notes" />
                     </controls:InfoBar.ActionButton>
                 </controls:InfoBar>
 
@@ -267,12 +265,11 @@
                     x:Uid="General"
                     Margin="0,24,0,4"
                     Style="{StaticResource SettingsGroupHeaderStyle}"
-                    Text="General"/>
+                    Text="General" />
 
-                <essential:SettingsCard Description="Select which app theme to display"
-                        Header="App theme">
+                <essential:SettingsCard Description="Select which app theme to display" Header="App theme">
                     <essential:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE790;"/>
+                        <FontIcon Glyph="&#xE790;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="themeMode"
@@ -282,15 +279,15 @@
                         <ComboBoxItem
                             x:Uid="ThemesLight"
                             Content="Light"
-                            Tag="Light"/>
+                            Tag="Light" />
                         <ComboBoxItem
                             x:Uid="ThemesDark"
                             Content="Dark"
-                            Tag="Dark"/>
+                            Tag="Dark" />
                         <ComboBoxItem
                             x:Uid="ThemesDefault"
                             Content="Use system setting"
-                            Tag="Default"/>
+                            Tag="Default" />
                     </ComboBox>
                 </essential:SettingsCard>
 
@@ -300,12 +297,12 @@
                     Description="Specifies the page that is displayed when software is launched"
                     Header="Default start page">
                     <essential:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE8A1;"/>
+                        <FontIcon Glyph="&#xE8A1;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="StartPageCombobox"
                         Width="150"
-                        SelectionChanged="StartPageCombobox_SelectionChanged"/>
+                        SelectionChanged="StartPageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsExpander
@@ -314,22 +311,21 @@
                     Description="Choose your accent color and personalize OpenNet"
                     Header="Colors">
                     <essential:SettingsExpander.HeaderIcon>
-                        <FontIcon Glyph="&#xE790;"/>
+                        <FontIcon Glyph="&#xE790;" />
                     </essential:SettingsExpander.HeaderIcon>
                     <ComboBox
                         x:Name="SoftBackgroundColorComboBox"
                         Width="150"
-                        PlaceholderText="Choose a color"/>
+                        PlaceholderText="Choose a color" />
                     <essential:SettingsExpander.Items>
-                        <essential:SettingsCard Description="Pick a custom color or select from preset colors"
-                                Header="Color picker">
+                        <essential:SettingsCard Description="Pick a custom color or select from preset colors" Header="Color picker">
                             <controls:ColorPicker
                                 x:Name="SoftBackgroundColorPicker"
                                 ColorSpectrumShape="Ring"
                                 IsAlphaEnabled="False"
                                 IsColorChannelTextInputVisible="True"
                                 IsColorSliderVisible="True"
-                                IsHexInputVisible="True"/>
+                                IsHexInputVisible="True" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -340,12 +336,12 @@
                     Description="Change the language used throughout OpenNet"
                     Header="Language">
                     <essential:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xF2B7;"/>
+                        <FontIcon Glyph="&#xF2B7;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="SoftLanguageCombobox"
                         Width="150"
-                        SelectionChanged="SoftLanguageCombobox_SelectionChanged"/>
+                        SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
 
                 <controls:InfoBar
@@ -359,17 +355,17 @@
                         <Button
                             Click="RestartToApplyLanguage_Click"
                             Content="Restart now"
-                            Style="{StaticResource AccentButtonStyle}"/>
+                            Style="{StaticResource AccentButtonStyle}" />
                     </controls:InfoBar.ActionButton>
                 </controls:InfoBar>
 
                 <!--  Bottom spacing  -->
-                <Border Height="40"/>
+                <Border Height="40" />
 
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition/>
-                        <RepositionThemeTransition IsStaggeringEnabled="False"/>
+                        <EntranceThemeTransition />
+                        <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>
 
@@ -383,6 +379,6 @@
             Grid.Column="2"
             Margin="12,0,40,0"
             HorizontalAlignment="Left"
-            DetailLabelRequested="AnnotatedScrollBar_DetailLabelRequested"/>
+            DetailLabelRequested="AnnotatedScrollBar_DetailLabelRequested" />
     </Grid>
 </Page>

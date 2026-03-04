@@ -15,6 +15,7 @@
 #include <algorithm>
 #include <cctype>
 #include <map>
+#include <unordered_map>
 #include <sstream>
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -393,6 +394,143 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_selectedSizeBytes = selectedBytes;
 		RaisePropertyChanged(L"SelectedSizeBytes");
 		SelectedSize(FormatSize(selectedBytes));
+	}
+
+	// ---------------------------------------------------------------
+	//  Tree ↔ Flat list sync helpers
+	// ---------------------------------------------------------------
+
+	// Recursively collect leaf-node selection states from the tree
+	static void CollectTreeLeafSelection(
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> const& nodes,
+		std::unordered_map<int32_t, bool>& indexToSelected)
+	{
+		for (uint32_t i = 0; i < nodes.Size(); ++i)
+		{
+			auto node = nodes.GetAt(i);
+			if (node.IsFolder())
+			{
+				CollectTreeLeafSelection(node.Children(), indexToSelected);
+			}
+			else
+			{
+				indexToSelected[node.FileIndex()] = node.IsSelected();
+			}
+		}
+	}
+
+	void TorrentMetadataViewModel::SyncTreeToFlatList()
+	{
+		// Build a map from tree leaf nodes: fileIndex → isSelected
+		std::unordered_map<int32_t, bool> treeSelection;
+		CollectTreeLeafSelection(m_fileTree, treeSelection);
+
+		// Update the flat file list to match the tree state
+		for (uint32_t i = 0; i < m_files.Size(); ++i)
+		{
+			auto file = m_files.GetAt(i);
+			auto it = treeSelection.find(file.FileIndex());
+			if (it != treeSelection.end() && file.IsSelected() != it->second)
+			{
+				file.IsSelected(it->second);
+			}
+		}
+	}
+
+	// Helper: walk tree and set leaf node IsSelected from a fileIndex→bool map
+	static void ApplySelectionToTreeLeaves(
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> const& nodes,
+		const std::unordered_map<int32_t, bool>& indexToSelected)
+	{
+		for (uint32_t i = 0; i < nodes.Size(); ++i)
+		{
+			auto node = nodes.GetAt(i);
+			if (node.IsFolder())
+			{
+				ApplySelectionToTreeLeaves(node.Children(), indexToSelected);
+			}
+			else
+			{
+				auto it = indexToSelected.find(node.FileIndex());
+				if (it != indexToSelected.end())
+				{
+					auto impl = node.as<TorrentFileNodeViewModel>();
+					if (impl->m_isSelected != it->second)
+					{
+						impl->m_isSelected = it->second;
+						impl->RaisePropertyChanged(L"IsSelected");
+					}
+				}
+			}
+		}
+	}
+
+	void TorrentMetadataViewModel::SyncFlatListToTree()
+	{
+		// Build a map from flat file list: fileIndex → isSelected
+		std::unordered_map<int32_t, bool> flatSelection;
+		for (uint32_t i = 0; i < m_files.Size(); ++i)
+		{
+			auto file = m_files.GetAt(i);
+			flatSelection[file.FileIndex()] = file.IsSelected();
+		}
+
+		// Apply to tree leaf nodes (directly set m_isSelected to avoid downward propagation)
+		ApplySelectionToTreeLeaves(m_fileTree, flatSelection);
+
+		// Update folder states from children
+		UpdateFolderSelectionStates();
+	}
+
+	// Recursively update folder checkbox state based on children's selection
+	// Returns: 0 = none selected, 1 = some selected, 2 = all selected
+	static int UpdateFolderStatesRecursive(
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> const& nodes)
+	{
+		for (uint32_t i = 0; i < nodes.Size(); ++i)
+		{
+			auto node = nodes.GetAt(i);
+			if (node.IsFolder() && node.HasChildren())
+			{
+				// First, recurse into children
+				int childState = 0; // 0=none, 1=mixed, 2=all
+				bool anySelected = false;
+				bool allSelected = true;
+
+				auto children = node.Children();
+				for (uint32_t j = 0; j < children.Size(); ++j)
+				{
+					auto child = children.GetAt(j);
+
+					if (child.IsFolder())
+					{
+						UpdateFolderStatesRecursive(
+							winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel>({child}));
+					}
+
+					if (child.IsSelected())
+						anySelected = true;
+					else
+						allSelected = false;
+				}
+
+				// Update the folder's IsSelected based on children
+				// Directly set via impl to avoid triggering downward propagation
+				auto impl = node.as<TorrentFileNodeViewModel>();
+				bool newState = anySelected; // folder is checked if any child is
+				if (impl->m_isSelected != newState)
+				{
+					impl->m_isSelected = newState;
+					impl->RaisePropertyChanged(L"IsSelected");
+				}
+			}
+		}
+		return 0;
+	}
+
+	void TorrentMetadataViewModel::UpdateFolderSelectionStates()
+	{
+		UpdateFolderStatesRecursive(m_fileTree);
 	}
 
 	winrt::hstring TorrentMetadataViewModel::FormatSize(int64_t bytes)

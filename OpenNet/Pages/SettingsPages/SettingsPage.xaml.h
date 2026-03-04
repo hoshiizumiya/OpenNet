@@ -8,6 +8,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	{
 	public:
 		SettingsPage();
+		~SettingsPage();
 		static SettingsPage* Current();
 
 		// Event handlers referenced from XAML
@@ -40,6 +41,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		static SettingsPage* s_current;
 
 		winrt::Windows::Foundation::IAsyncAction m_loadAction;
+		winrt::Windows::Foundation::IAsyncAction m_githubAction;
 		winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr }; // 在构造里捕获
 		winrt::Windows::Foundation::Uri m_githubReleaseLinkUri{ L"https://github.com/hoshiizumiya/OpenNet/releases"};
 

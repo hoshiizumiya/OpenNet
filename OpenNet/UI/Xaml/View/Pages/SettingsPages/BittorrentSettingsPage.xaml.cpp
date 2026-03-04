@@ -124,6 +124,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         ProxyPasswordBox().Password(winrt::to_hstring(s.proxyPassword));
         ProxyPeerConnectionsToggle().IsOn(s.proxyPeerConnections);
         ProxyTrackerConnectionsToggle().IsOn(s.proxyTrackerConnections);
+
+        // Advanced libtorrent
+        MaxPeerListSizeNumberBox().Value(s.maxPeerListSize);
+        PeerFingerprintTextBox().Text(winrt::to_hstring(s.peerFingerprint));
+
+        // Download Defaults
+        DefaultSavePathTextBox().Text(winrt::to_hstring(s.defaultSavePath));
+        PreallocateStorageToggle().IsOn(s.preallocateStorage);
+        AutoStartDownloadsToggle().IsOn(s.autoStartDownloads);
+        MoveCompletedToggle().IsOn(s.moveCompletedEnabled);
+        MoveCompletedPathTextBox().Text(winrt::to_hstring(s.moveCompletedPath));
     }
 
     ::OpenNet::Core::TorrentSettings BittorrentSettingsPage::CollectFromUI()
@@ -191,6 +202,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         s.proxyPeerConnections = ProxyPeerConnectionsToggle().IsOn();
         s.proxyTrackerConnections = ProxyTrackerConnectionsToggle().IsOn();
 
+        // Advanced libtorrent
+        s.maxPeerListSize = static_cast<int>(MaxPeerListSizeNumberBox().Value());
+        s.peerFingerprint = winrt::to_string(PeerFingerprintTextBox().Text());
+
+        // Download Defaults
+        s.defaultSavePath = winrt::to_string(DefaultSavePathTextBox().Text());
+        s.preallocateStorage = PreallocateStorageToggle().IsOn();
+        s.autoStartDownloads = AutoStartDownloadsToggle().IsOn();
+        s.moveCompletedEnabled = MoveCompletedToggle().IsOn();
+        s.moveCompletedPath = winrt::to_string(MoveCompletedPathTextBox().Text());
+
         return s;
     }
 
@@ -217,4 +239,5 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
             return;
         SaveAndApply();
     }
+
 }

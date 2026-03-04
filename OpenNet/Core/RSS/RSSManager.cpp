@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "RSSManager.h"
+#include "RSSDatabase.h"
 #include <winrt/Windows.Web.Http.h>
 #include <winrt/Windows.Web.Http.Headers.h>
 #include <winrt/Windows.Storage.h>
@@ -42,7 +43,39 @@ namespace OpenNet::Core::RSS
         {
             auto localFolder = ApplicationData::Current().LocalFolder();
             m_configPath = std::wstring(localFolder.Path().c_str()) + L"\\rss_subscriptions.json";
-            co_await LoadSubscriptionsAsync();
+
+            auto& db = RSSDatabase::Instance();
+
+            if (db.HasFeeds())
+            {
+                // Load from SQLite
+                auto feeds = db.LoadAllFeeds();
+                std::lock_guard<std::mutex> lock(m_feedsMutex);
+                for (auto& feed : feeds)
+                {
+                    m_feeds[feed.id] = std::move(feed);
+                }
+            }
+            else
+            {
+                // Try legacy JSON migration
+                co_await LoadSubscriptionsFromLegacyJsonAsync();
+
+                if (!m_feeds.empty())
+                {
+                    // Persist migrated data to SQLite
+                    std::lock_guard<std::mutex> lock(m_feedsMutex);
+                    for (auto const& [id, feed] : m_feeds)
+                    {
+                        db.UpsertFeed(feed);
+                        if (!feed.items.empty())
+                        {
+                            db.InsertItems(feed.id, feed.items);
+                        }
+                    }
+                    OutputDebugStringA("RSSManager: migrated feeds from JSON to SQLite\n");
+                }
+            }
         }
         catch (...)
         {
@@ -122,8 +155,10 @@ namespace OpenNet::Core::RSS
             feed.lastUpdated = std::chrono::system_clock::time_point{};  // Force immediate update
 
             feedId = feed.id;
-            m_feeds[feed.id] = std::move(feed);
-            SaveSubscriptions();
+            m_feeds[feed.id] = feed;
+
+            // Persist to SQLite
+            RSSDatabase::Instance().UpsertFeed(feed);
         }
 
         // Trigger immediate fetch (outside the lock to avoid deadlock)
@@ -140,22 +175,9 @@ namespace OpenNet::Core::RSS
         if (it != m_feeds.end())
         {
             m_feeds.erase(it);
-            SaveSubscriptions();
 
-            // Clean up the items JSON file for this feed (fire and forget)
-            auto cleanTask = [feedId = std::wstring(feedId)]() -> winrt::Windows::Foundation::IAsyncAction
-            {
-                try
-                {
-                    auto folder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-                    auto rssFolder = co_await folder.GetFolderAsync(L"rss_data");
-                    std::wstring filename = L"rss_" + feedId + L".json";
-                    auto file = co_await rssFolder.GetFileAsync(filename);
-                    co_await file.DeleteAsync();
-                }
-                catch (...) {}
-            };
-            cleanTask();
+            // Delete from SQLite (CASCADE removes items too)
+            RSSDatabase::Instance().DeleteFeed(feedId);
 
             return true;
         }
@@ -176,7 +198,9 @@ namespace OpenNet::Core::RSS
             it->second.autoDownload = subscription.autoDownload;
             it->second.filterPattern = subscription.filterPattern;
             it->second.enabled = subscription.enabled;
-            SaveSubscriptions();
+
+            // Persist to SQLite
+            RSSDatabase::Instance().UpsertFeed(it->second);
             return true;
         }
         return false;
@@ -267,9 +291,16 @@ namespace OpenNet::Core::RSS
                             }
                             existingFeed.description = parsedFeed->description;
 
-                            // Process new items
+                            // Process new items (persists to SQLite internally)
                             self->ProcessNewItems(existingFeed, parsedFeed->items);
                             existingFeed.lastUpdated = std::chrono::system_clock::now();
+
+                            // Persist updated feed metadata to SQLite
+                            auto epoch = std::chrono::duration_cast<std::chrono::seconds>(
+                                             existingFeed.lastUpdated.time_since_epoch())
+                                             .count();
+                            RSSDatabase::Instance().UpdateFeedMeta(
+                                feedId, existingFeed.title, existingFeed.description, epoch);
                         }
 
                         // Copy callback outside the feed lock
@@ -315,13 +346,18 @@ namespace OpenNet::Core::RSS
 
     void RSSManager::ProcessNewItems(RSSFeed& feed, const std::vector<RSSItem>& newItems)
     {
-        // If feed has no items yet, add all items from parsed feed
+        auto& db = RSSDatabase::Instance();
+
+        // Insert new items into SQLite (skips duplicates via UNIQUE constraint)
+        int insertedCount = db.InsertItems(feed.id, newItems);
+
+        // If first load (no items in memory), populate from DB
         if (feed.items.empty())
         {
-            feed.items = newItems;
+            feed.items = db.LoadItems(feed.id);
 
-            // Notify new item callback for each item
-            for (const auto& item : newItems)
+            // Notify callback for each item on first load
+            for (const auto& item : feed.items)
             {
                 std::lock_guard<std::mutex> lock(m_callbackMutex);
                 if (m_newItemCallback)
@@ -329,58 +365,50 @@ namespace OpenNet::Core::RSS
                     m_newItemCallback(feed.id, item);
                 }
             }
-            
-            // Save items to disk
-            SaveFeedItems(feed.id, feed.items);
             return;
         }
 
-        // Find items that don't exist in the current feed
-        std::unordered_set<std::wstring> existingGuids;
-        for (const auto& item : feed.items)
+        // Find truly new items (not in memory yet)
+        if (insertedCount > 0)
         {
-            std::wstring itemId = item.guid.empty() ? item.link : item.guid;
-            existingGuids.insert(itemId);
-        }
-
-        bool hasNewItems = false;
-        for (const auto& newItem : newItems)
-        {
-            std::wstring itemId = newItem.guid.empty() ? newItem.link : newItem.guid;
-            if (existingGuids.find(itemId) == existingGuids.end())
+            std::unordered_set<std::wstring> existingGuids;
+            for (const auto& item : feed.items)
             {
-                // This is a new item
-                feed.items.push_back(newItem);
-                hasNewItems = true;
+                std::wstring itemId = item.guid.empty() ? item.link : item.guid;
+                existingGuids.insert(itemId);
+            }
 
-                // Notify new item callback
+            for (const auto& newItem : newItems)
+            {
+                std::wstring itemId = newItem.guid.empty() ? newItem.link : newItem.guid;
+                if (existingGuids.find(itemId) == existingGuids.end())
                 {
-                    std::lock_guard<std::mutex> lock(m_callbackMutex);
-                    if (m_newItemCallback)
+                    feed.items.push_back(newItem);
+
+                    // Notify new item callback
                     {
-                        m_newItemCallback(feed.id, newItem);
+                        std::lock_guard<std::mutex> lock(m_callbackMutex);
+                        if (m_newItemCallback)
+                        {
+                            m_newItemCallback(feed.id, newItem);
+                        }
                     }
-                }
 
-                // Auto-download if enabled and matches filter
-                if (feed.autoDownload && RSSParser::MatchesFilter(newItem, feed.filterPattern))
-                {
-                    DownloadItem(feed.id, newItem);
+                    // Auto-download if enabled and matches filter
+                    if (feed.autoDownload && RSSParser::MatchesFilter(newItem, feed.filterPattern))
+                    {
+                        DownloadItem(feed.id, newItem);
+                    }
                 }
             }
         }
 
-        // Keep only the most recent 100 items per feed
+        // Prune old items (keep most recent 100) this need a setting in the future
         if (feed.items.size() > 100)
         {
             feed.items.erase(feed.items.begin(), feed.items.begin() + (feed.items.size() - 100));
         }
-        
-        // Save items to disk if any changes were made
-        if (hasNewItems)
-        {
-            SaveFeedItems(feed.id, feed.items);
-        }
+        db.PruneItems(feed.id, 100);
     }
 
     void RSSManager::MarkItemAsDownloaded(const std::wstring& feedId, const std::wstring& itemGuid)
@@ -398,9 +426,10 @@ namespace OpenNet::Core::RSS
                     break;
                 }
             }
-            // Persist the updated items so isDownloaded survives restart
-            SaveFeedItems(it->second.id, it->second.items);
         }
+
+        // Persist to SQLite
+        RSSDatabase::Instance().MarkItemDownloaded(feedId, itemGuid);
     }
 
     void RSSManager::DownloadItem(const std::wstring& feedId, const RSSItem& item)
@@ -442,123 +471,27 @@ namespace OpenNet::Core::RSS
         m_errorCallback = std::move(callback);
     }
 
-    void RSSManager::SaveFeedItems(const std::wstring& feedId, const std::vector<RSSItem>& items)
-    {
-        // Fire and forget async save operation
-        auto saveTask = [feedId = std::wstring(feedId), items = std::vector<RSSItem>(items)]() -> winrt::Windows::Foundation::IAsyncAction
-        {
-            try
-            {
-                auto folder = ApplicationData::Current().LocalFolder();
-                
-                // Create RSS folder if it doesn't exist
-                winrt::Windows::Storage::StorageFolder rssFolder = nullptr;
-                bool folderExists = false;
-                
-                try
-                {
-                    rssFolder = co_await folder.GetFolderAsync(L"rss_data");
-                    folderExists = true;
-                }
-                catch (hresult_error const&)
-                {
-                    folderExists = false;
-                }
-                
-                if (!folderExists)
-                {
-                    rssFolder = co_await folder.CreateFolderAsync(L"rss_data", CreationCollisionOption::OpenIfExists);
-                }
-
-                if (!rssFolder) co_return;
-
-                // Build filename from feed ID
-                std::wstring filename = L"rss_" + feedId + L".json";
-                
-                // Create JSON array of items
-                JsonArray itemsArray;
-                for (const auto& item : items)
-                {
-                    JsonObject itemObj;
-                    itemObj.SetNamedValue(L"guid", JsonValue::CreateStringValue(item.guid));
-                    itemObj.SetNamedValue(L"title", JsonValue::CreateStringValue(item.title));
-                    itemObj.SetNamedValue(L"link", JsonValue::CreateStringValue(item.link));
-                    itemObj.SetNamedValue(L"description", JsonValue::CreateStringValue(item.description));
-                    itemObj.SetNamedValue(L"enclosureUrl", JsonValue::CreateStringValue(item.enclosureUrl));
-                    itemObj.SetNamedValue(L"enclosureType", JsonValue::CreateStringValue(item.enclosureType));
-                    itemObj.SetNamedValue(L"enclosureLength", JsonValue::CreateNumberValue(static_cast<double>(item.enclosureLength)));
-                    itemObj.SetNamedValue(L"pubDate", JsonValue::CreateNumberValue(
-                        static_cast<double>(std::chrono::duration_cast<std::chrono::seconds>(
-                            item.pubDate.time_since_epoch()).count())));
-                    itemObj.SetNamedValue(L"category", JsonValue::CreateStringValue(item.category));
-                    itemObj.SetNamedValue(L"isDownloaded", JsonValue::CreateBooleanValue(item.isDownloaded));
-                    itemsArray.Append(itemObj);
-                }
-
-                // Write to file
-                auto file = co_await rssFolder.CreateFileAsync(filename, CreationCollisionOption::ReplaceExisting);
-                co_await FileIO::WriteTextAsync(file, itemsArray.Stringify());
-            }
-            catch (...) {}
-        }();
-    }
+    // ---------------------------------------------------------------
+    //  Legacy JSON persistence (kept only for one-time migration)
+    // ---------------------------------------------------------------
 
     void RSSManager::SaveSubscriptions()
     {
-        try
-        {
-            JsonArray jsonArray;
-            
-            for (const auto& [id, feed] : m_feeds)
-            {
-                JsonObject obj;
-                obj.SetNamedValue(L"id", JsonValue::CreateStringValue(feed.id));
-                obj.SetNamedValue(L"url", JsonValue::CreateStringValue(feed.url));
-                obj.SetNamedValue(L"title", JsonValue::CreateStringValue(feed.title));
-                obj.SetNamedValue(L"savePath", JsonValue::CreateStringValue(feed.savePath));
-                obj.SetNamedValue(L"updateInterval", JsonValue::CreateNumberValue(static_cast<double>(feed.updateInterval.count())));
-                obj.SetNamedValue(L"autoDownload", JsonValue::CreateBooleanValue(feed.autoDownload));
-                obj.SetNamedValue(L"filterPattern", JsonValue::CreateStringValue(feed.filterPattern));
-                obj.SetNamedValue(L"enabled", JsonValue::CreateBooleanValue(feed.enabled));
-                jsonArray.Append(obj);
-            }
-
-            // Write to file asynchronously
-            [](std::wstring path, hstring content) -> fire_and_forget
-            {
-                bool needsCreate = false;
-                try
-                {
-                    auto file = co_await StorageFile::GetFileFromPathAsync(path);
-                    co_await FileIO::WriteTextAsync(file, content);
-                }
-                catch (hresult_error const&)
-                {
-                    needsCreate = true;
-                }
-
-                if (needsCreate)
-                {
-                    try
-                    {
-                        auto folder = ApplicationData::Current().LocalFolder();
-                        auto file = co_await folder.CreateFileAsync(L"rss_subscriptions.json", CreationCollisionOption::ReplaceExisting);
-                        co_await FileIO::WriteTextAsync(file, content);
-                    }
-                    catch (...) {}
-                }
-            }(m_configPath, jsonArray.Stringify());
-        }
-        catch (...) {}
+        // No longer used – persistence is via SQLite now.
+        // Kept as stub in case anything still calls it.
     }
 
-    winrt::Windows::Foundation::IAsyncAction RSSManager::LoadSubscriptionsAsync()
+    void RSSManager::SaveFeedItems(const std::wstring& /*feedId*/, const std::vector<RSSItem>& /*items*/)
+    {
+        // No longer used – persistence is via SQLite now.
+    }
+
+    winrt::Windows::Foundation::IAsyncAction RSSManager::LoadSubscriptionsFromLegacyJsonAsync()
     {
         try
         {
             auto folder = ApplicationData::Current().LocalFolder();
 
-            // Use co_await for async operations
             auto item = co_await folder.TryGetItemAsync(L"rss_subscriptions.json");
             if (!item) co_return;
 
@@ -586,9 +519,9 @@ namespace OpenNet::Core::RSS
                     feed.filterPattern = obj.GetNamedString(L"filterPattern", L"").c_str();
                     feed.enabled = obj.GetNamedBoolean(L"enabled", true);
 
-                    // Load persisted items for this feed asynchronously
+                    // Load persisted items for this feed from legacy JSON
                     auto items = std::make_shared<std::vector<RSSItem>>();
-                    co_await LoadFeedItemsAsync(feed.id, items);
+                    co_await LoadFeedItemsFromLegacyJsonAsync(feed.id, items);
                     feed.items = std::move(*items);
 
                     m_feeds[feed.id] = std::move(feed);
@@ -597,46 +530,32 @@ namespace OpenNet::Core::RSS
         }
         catch (...) 
         {
-            // Silently ignore errors during load
+            // Silently ignore errors during legacy load
         }
     }
 
-    winrt::Windows::Foundation::IAsyncAction RSSManager::LoadFeedItemsAsync(const std::wstring& feedId, std::shared_ptr<std::vector<RSSItem>> items)
+    winrt::Windows::Foundation::IAsyncAction RSSManager::LoadFeedItemsFromLegacyJsonAsync(
+        const std::wstring& feedId, std::shared_ptr<std::vector<RSSItem>> items)
     {
         try
         {
             auto folder = ApplicationData::Current().LocalFolder();
             
-            // Use TryGetItemAsync to safely check if folder exists
             auto folderItem = co_await folder.TryGetItemAsync(L"rss_data");
-            if (!folderItem)
-            {
-                // Folder doesn't exist yet, items remain empty
-                co_return;
-            }
+            if (!folderItem) co_return;
 
             auto rssFolder = folderItem.try_as<StorageFolder>();
-            if (!rssFolder)
-            {
-                co_return;
-            }
+            if (!rssFolder) co_return;
 
             std::wstring filename = L"rss_" + feedId + L".json";
             
             try
             {
                 auto fileItem = co_await rssFolder.TryGetItemAsync(filename);
-                if (!fileItem)
-                {
-                    // File doesn't exist yet
-                    co_return;
-                }
+                if (!fileItem) co_return;
 
                 auto file = fileItem.try_as<StorageFile>();
-                if (!file)
-                {
-                    co_return;
-                }
+                if (!file) co_return;
 
                 auto content = co_await FileIO::ReadTextAsync(file);
 

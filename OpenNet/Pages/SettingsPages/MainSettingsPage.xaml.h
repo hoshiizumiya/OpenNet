@@ -11,11 +11,12 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		static MainSettingsPage* s_current;
 
 		// Navigate to page by tag
-		void NavigateByTag(winrt::hstring const& tag, 
-			winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionInfo const& transitionInfo);
+		void NavigateByTag(winrt::hstring const& tag,
+						   winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionInfo const& transitionInfo);
 
 	public:
 		MainSettingsPage();
+		~MainSettingsPage();
 		static MainSettingsPage* Current();
 
 		// Breadcrumb handler

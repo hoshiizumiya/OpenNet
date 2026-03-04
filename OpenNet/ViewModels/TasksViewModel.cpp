@@ -62,56 +62,164 @@ namespace winrt::OpenNet::ViewModels::implementation
 		})
 			.Build();
 
-		// StartCommand: 必须返回 IAsyncAction（原先 lambda 返回 void 导致赋值到 std::function<IAsyncAction(...)> 失败）
+		// StartCommand: Resume the selected task (or initialize the torrent core if not yet running)
 		m_startCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
-			.ExecuteAsync([](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			co_await winrt::resume_background();
-			auto& mgr = ::OpenNet::Core::P2PManager::Instance();
-			if (auto core = mgr.TorrentCore())
+			auto self = weak.get();
+			if (!self) co_return;
+
+			auto selectedTask = self->m_selectedTask;
+			if (selectedTask)
 			{
-				core->Start();
+				auto taskId = winrt::to_string(selectedTask.TaskId());
+				auto taskType = selectedTask.TaskType();
+
+				if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+				{
+					auto& mgr = ::OpenNet::Core::P2PManager::Instance();
+					co_await mgr.EnsureTorrentCoreInitializedAsync();
+					if (auto core = mgr.TorrentCore())
+					{
+						if (!taskId.empty())
+							core->ResumeTorrent(taskId);
+						else
+							core->Start();
+					}
+				}
+				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+				{
+					auto gid = winrt::to_string(selectedTask.Gid());
+					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+					if (!gid.empty())
+						dlMgr.ResumeHttpDownload(gid);
+				}
 			}
 			else
 			{
+				// No task selected - just ensure the core is initialized
+				auto& mgr = ::OpenNet::Core::P2PManager::Instance();
 				co_await mgr.EnsureTorrentCoreInitializedAsync();
 			}
 			co_return;
 		})
 			.Build();
 
-		// PauseCommand: 同样需要返回 IAsyncAction
+		// PauseCommand: Pause the selected task
 		m_pauseCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
-			.ExecuteAsync([](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			co_await winrt::resume_background();
-			if (auto core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+			auto self = weak.get();
+			if (!self) co_return;
+
+			auto selectedTask = self->m_selectedTask;
+			if (selectedTask)
 			{
-				core->Stop();
+				auto taskId = winrt::to_string(selectedTask.TaskId());
+				auto taskType = selectedTask.TaskType();
+
+				if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+				{
+					if (auto core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+					{
+						if (!taskId.empty())
+							core->PauseTorrent(taskId);
+					}
+				}
+				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+				{
+					auto gid = winrt::to_string(selectedTask.Gid());
+					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+					if (!gid.empty())
+						dlMgr.PauseHttpDownload(gid);
+				}
 			}
 			co_return;
 		})
 			.Build();
 
-		// DeleteCommand: 原代码错误使用 winrt::make<DelegateCommandBuilder>（Builder 不是 runtime class——存疑）
-		m_deleteCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
-			.Execute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
+		// DeleteCommand: Delete only the selected task (not all tasks)
+		// Uses AsyncCommandBuilder to avoid blocking the STA thread with Aria2 HTTP calls.
+		m_deleteCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
-			if (auto self = weak.get())
+			auto self = weak.get();
+			if (!self) co_return;
+
+			// Capture selection info on the UI thread before switching threads
+			auto selectedTask = self->m_selectedTask;
+			if (!selectedTask) co_return;
+
+			auto taskId = winrt::to_string(selectedTask.TaskId());
+			auto taskType = selectedTask.TaskType();
+			auto gid = winrt::to_string(selectedTask.Gid());
+
+			// Do backend removal on a background thread to avoid STA blocking
+			co_await winrt::resume_background();
+			try
 			{
-				auto dispatcher = self->m_dispatcher;
-				if (!dispatcher) return;
-				auto vec = self->m_tasks;
-				// 封送正确线程UI线程执行
-				dispatcher.TryEnqueue([weak, vec]()
+				if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 				{
-					if (vec)
+					auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+					if (core && !taskId.empty())
 					{
-						vec.Clear();
+						core->RemoveTorrent(taskId, false);
 					}
-					if (auto s = weak.get()) s->RebuildFiltered();
-				});
+					auto* stateMgr = ::OpenNet::Core::P2PManager::Instance().StateManager();
+					if (stateMgr && !taskId.empty())
+					{
+						stateMgr->DeleteTask(taskId);
+					}
+				}
+				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+				{
+					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+					if (!gid.empty())
+					{
+						// First cancel the active download (aria2.remove),
+						// then clean up the result (aria2.removeDownloadResult).
+						// Without Cancel, RemoveHttpDownload fails for active/paused
+						// downloads, and OnHttpProgress re-creates the task.
+						try { dlMgr.CancelHttpDownload(gid); } catch (...) {}
+						try { dlMgr.RemoveHttpDownload(gid); } catch (...) {}
+					}
+					auto& httpState = ::OpenNet::Core::HttpStateManager::Instance();
+					if (!taskId.empty())
+					{
+						httpState.DeleteRecord(taskId);
+					}
+				}
 			}
+			catch (const std::exception& ex)
+			{
+				OutputDebugStringW((L"DeleteCommand backend error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+			}
+			catch (...) {}
+
+			// Back to UI thread for observable collection mutation
+			auto dispatcher = self->m_dispatcher;
+			if (!dispatcher) co_return;
+			dispatcher.TryEnqueue([weak, selectedTask]()
+			{
+				auto self = weak.get();
+				if (!self) return;
+
+				auto& tasks = self->m_tasks;
+				for (uint32_t i = 0; i < tasks.Size(); ++i)
+				{
+					if (tasks.GetAt(i) == selectedTask)
+					{
+						tasks.RemoveAt(i);
+						break;
+					}
+				}
+
+				self->m_selectedTask = nullptr;
+				self->RebuildFiltered();
+			});
+			co_return;
 		})
 			.Build();
 
@@ -192,10 +300,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::Initialize()
 	{
-		(void)::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+		// Initialize HTTP download manager synchronously
 		::OpenNet::Core::DownloadManager::Instance().Initialize();
-		LoadSavedTasks();
-		RebuildFiltered();
+
+		// Fire-and-forget: await torrent core init on background, then load tasks
+		[](auto weak) -> winrt::Windows::Foundation::IAsyncAction
+		{
+			co_await winrt::resume_background();
+			co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+			if (auto self = weak.get())
+			{
+				self->LoadSavedTasks();
+			}
+		}(get_weak());
 	}
 
 	void TasksViewModel::Shutdown()
@@ -436,7 +553,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			if (auto self = weak.get())
 			{
+				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateItem(name);
+				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
 				if (item.TaskId().empty())
 				{
 					auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
@@ -457,8 +576,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.UpdateSpeedGraph(static_cast<double>(e.progressPercent), static_cast<uint64_t>(e.downloadRateKB));
 				if (item.Size().empty()) item.Size(L"-");
 				if (item.Remaining().empty()) item.Remaining(L"-");
-				// Don't RebuildFiltered on every progress tick – property changes
-				// are picked up by OneWay bindings automatically.
+				// Only RebuildFiltered when a brand-new item was created so it
+				// appears in the filtered list. Subsequent ticks skip this.
+				if (isNewItem) self->RebuildFiltered();
 			}
 		});
 	}
@@ -566,7 +686,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			if (auto self = weak.get())
 			{
+				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateHttpItem(gid, name);
+				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
 
 				// Update name if it changed (aria2 resolves filename later)
 				if (!name.empty() && item.Name() != name)
@@ -597,8 +719,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 				{
 					item.Remaining(L"-");
 				}
-				// Don't RebuildFiltered on every progress tick – property changes
-				// are picked up by OneWay bindings automatically.
+				// Only RebuildFiltered when a brand-new item was created so it
+				// appears in the filtered list. Subsequent ticks skip this.
+				if (isNewItem) self->RebuildFiltered();
 			}
 		});
 	}

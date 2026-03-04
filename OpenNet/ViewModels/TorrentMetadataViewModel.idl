@@ -89,5 +89,14 @@ namespace OpenNet.ViewModels
 
         // Update selected size after selection changes
         void RefreshSelectedSize();
+
+        // Sync tree node IsSelected states to the flat file list
+        void SyncTreeToFlatList();
+
+        // Sync flat file list IsSelected states to tree leaf nodes + update folders
+        void SyncFlatListToTree();
+
+        // Update folder checkbox states based on children (propagate child→parent)
+        void UpdateFolderSelectionStates();
     }
 }

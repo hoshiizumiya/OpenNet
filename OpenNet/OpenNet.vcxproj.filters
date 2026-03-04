@@ -79,10 +79,6 @@
     <Page Include="MainWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
-    <Page Include="UI\Shell\NotifyIconContextMenu.xaml" />
-    <Page Include="Pages\RSSPage.xaml" />
-    <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml" />
-    <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
     <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml" />
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml">
@@ -93,6 +89,18 @@
     </Page>
     <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
+    </Page>
+    <Page Include="UI\Shell\NotifyIconContextMenu.xaml">
+      <Filter>UI\Shell</Filter>
+    </Page>
+    <Page Include="Pages\RSSPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml">
+      <Filter>UI\Xaml\View\Dialog</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -166,8 +174,6 @@
     <Midl Include="ViewModels\TorrentMetadataViewModel.idl" />
     <Midl Include="ViewModels\RSSViewModel.idl" />
     <Midl Include="Pages\RSSPage.idl" />
-    <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />
-    <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl" />
     <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl" />
     <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.idl">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
@@ -186,6 +192,12 @@
     </Midl>
     <Midl Include="UI\Xaml\Media\Brushes\Brushes.idl">
       <Filter>UI\Xaml\Media\Brushes</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl">
+      <Filter>UI\Xaml\View\Dialog</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -238,9 +250,6 @@
     <ClCompile Include="ViewModels\TasksViewModel.cpp" />
     <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp">
       <Filter>mvvm_framework</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\P2PManager.cpp">
-      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\Aria2\Aria2Models.cpp">
       <Filter>Core\Aria2</Filter>
@@ -296,6 +305,9 @@
     <ClCompile Include="Core\AppEnvironment.cpp">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AppSettingsDatabase.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClCompile>
@@ -326,18 +338,15 @@
     </ClCompile>
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
     <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp" />
-    <ClCompile Include="Core\RSS\RSSParser.cpp" />
-    <ClCompile Include="Core\RSS\RSSManager.cpp" />
     <ClCompile Include="ViewModels\RSSViewModel.cpp" />
     <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
     <ClCompile Include="ViewModels\TrackersSettingsViewModel.cpp" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.cpp">
-      <Filter>Core\Rss</Filter>
+      <Filter>Core\RSS</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp" />
-    <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp" />
-    <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp" />
-    <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp" />
+    <ClCompile Include="Core\RSS\RSSDatabase.cpp">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
     <ClCompile Include="Core\HttpStateManager.cpp" />
     <ClCompile Include="Core\TorrentSettings.cpp" />
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
@@ -355,6 +364,27 @@
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.cpp">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp">
+      <Filter>UI\Behaviors\Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSParser.cpp">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\P2PManager.cpp">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSManager.cpp">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp">
+      <Filter>UI\Behaviors\Headers</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp">
+      <Filter>UI\Behaviors</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -366,9 +396,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\NetworkDetector.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\P2PManager.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\Aria2\Aria2Helpers.h">
@@ -529,23 +556,24 @@
     <ClInclude Include="Core\AppEnvironment.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\AppSettingsDatabase.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClInclude>
     <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h" />
     <ClInclude Include="ViewModels\TorrentMetadataViewModel.h" />
-    <ClInclude Include="Core\RSS\RSSTypes.h" />
-    <ClInclude Include="Core\RSS\RSSParser.h" />
-    <ClInclude Include="Core\RSS\RSSManager.h" />
     <ClInclude Include="ViewModels\RSSViewModel.h" />
     <ClInclude Include="Core\Torrent\TrackerManager.h" />
     <ClInclude Include="ViewModels\TrackersSettingsViewModel.h" />
     <ClInclude Include="Core\RSS\RSSLinkResolver.h">
-      <Filter>Core\Rss</Filter>
+      <Filter>Core\RSS</Filter>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
-    <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h" />
+    <ClInclude Include="Core\RSS\RSSDatabase.h">
+      <Filter>Core\RSS</Filter>
+    </ClInclude>
     <ClInclude Include="Core\TorrentSettings.h" />
     <ClInclude Include="Core\HttpStateManager.h" />
     <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.h">
@@ -601,6 +629,24 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\Media\Brushes\BrushTypes.h">
       <Filter>UI\Xaml\Media\Brushes</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\RSS\RSSTypes.h">
+      <Filter>Core\RSS</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\RSS\RSSParser.h">
+      <Filter>Core\RSS</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\RSS\RSSManager.h">
+      <Filter>Core\RSS</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\P2PManager.h">
+      <Filter>Core\RSS</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h">
+      <Filter>UI\Behaviors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -885,9 +931,6 @@
     <Filter Include="UI\Xaml\Media\Backdrop">
       <UniqueIdentifier>{b22455aa-a07c-4864-8f77-a6a620df33a7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Rss">
-      <UniqueIdentifier>{10e84fea-0a8d-40c3-88ac-918f59810154}</UniqueIdentifier>
-    </Filter>
     <Filter Include="UI\Xaml\Control\HomePage">
       <UniqueIdentifier>{d1a2b3c4-e5f6-7890-abcd-ef1234567890}</UniqueIdentifier>
     </Filter>
@@ -912,12 +955,23 @@
     <Filter Include="UI\Xaml\Media\Helpers">
       <UniqueIdentifier>{e5f6a7b8-c9d0-1234-efab-5678901234ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Behaviors">
+      <UniqueIdentifier>{4d2e1f47-697a-4208-a477-a2d624a47c4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Behaviors\Headers">
+      <UniqueIdentifier>{22552afb-1ef7-426d-9eae-f5a76f5fd9ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\RSS">
+      <UniqueIdentifier>{10e84fea-0a8d-40c3-88ac-918f59810154}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\View\Pages\SettingsPages">
+      <UniqueIdentifier>{8ccea5e1-6e8a-479e-93de-cad9dde2d816}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
-    <None Include="mvvm_framework\README.md" />
     <None Include="Resource.aps" />
     <None Include="Directory.Build.props" />
     <None Include="HybridCRT.props" />
@@ -929,6 +983,9 @@
     </None>
     <None Include="OpenNet_TemporaryKey.pfx" />
     <None Include="UI\Xaml\Behaviors\README.md" />
+    <None Include="mvvm_framework\README.md">
+      <Filter>UI\Behaviors</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

@@ -847,6 +847,10 @@ namespace OpenNet::Core::Torrent
             // DHT nodes — use the cached value from dht_stats_alert / session_stats_alert
             stats.dhtNodes = m_cachedDhtNodeCount.load();
 
+            // Listen port
+            try { stats.listenPort = static_cast<int>(m_session->listen_port()); }
+            catch (...) { stats.listenPort = 0; }
+
             // Session-level totals from session_stats_alert (more accurate than per-torrent sums)
             {
                 std::lock_guard lkStats(m_sessionStatsMutex);

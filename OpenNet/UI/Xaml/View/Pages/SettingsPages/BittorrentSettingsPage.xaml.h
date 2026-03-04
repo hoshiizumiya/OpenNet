@@ -2,6 +2,7 @@
 
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.h"
 #include "Core/TorrentSettings.h"
+#include <winrt/Microsoft.UI.Xaml.h>
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {

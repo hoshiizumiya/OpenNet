@@ -28,18 +28,24 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 		DataContext() = *this;
 		s_current = this;
 
-		// Navigate to SettingsPage (General) by default
-		SettingsFrame().Navigate(xaml_typename<winrt::OpenNet::Pages::SettingsPages::SettingsPage>());
-
 		// Set General as selected by default
 		SettingsNavView().SelectedItem(GeneralNavItem());
 
 		// Populate MainSettingsPageBar with a single Folder item
-		auto items = single_threaded_observable_vector<winrt::OpenNet::Pages::SettingsPages::Folder>();
+		// Use IObservableVector<IInspectable> so try_as<IVector<IInspectable>> works at retrieval sites
+		auto items = single_threaded_observable_vector<IInspectable>();
 		auto folder = winrt::OpenNet::Pages::SettingsPages::Folder();
 		folder.Name(L"Settings");
 		items.Append(folder);
 		MainSettingsPageBar().ItemsSource(items);
+	}
+
+	MainSettingsPage::~MainSettingsPage()
+	{
+		if (s_current == this)
+		{
+			s_current = nullptr;
+		}
 	}
 
 	MainSettingsPage* MainSettingsPage::Current()
@@ -56,7 +62,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 	{
 		// Trim items after clicked index
 		auto itemsObj = MainSettingsPageBar().ItemsSource();
-		auto vec = itemsObj.try_as<IVector<IInspectable>>();
+		auto vec = itemsObj.try_as<IObservableVector<IInspectable>>();
 		if (!vec)
 			return;
 
@@ -99,8 +105,7 @@ namespace winrt::OpenNet::Pages::SettingsPages::implementation
 
 			// Update breadcrumb
 			auto itemsObj = MainSettingsPageBar().ItemsSource();
-			auto breadcrumbItems = itemsObj.try_as<IObservableVector<IInspectable>>();
-			if (breadcrumbItems)
+			if (auto breadcrumbItems = itemsObj.try_as<IObservableVector<IInspectable>>())
 			{
 				// Keep only root "Settings" item
 				while (breadcrumbItems.Size() > 1)

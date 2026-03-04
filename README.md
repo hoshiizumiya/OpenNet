@@ -1,5 +1,5 @@
 ﻿# 🎉Welcome to the OpenNet project
-![logo](https://github.com/hoshiizumiya/OpenNet/blob/dev_master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png)
+![logo](https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png)
 
 [简体中文](README_zh-CN.md)
 
@@ -7,7 +7,7 @@
 
 Our current framework is WinUI3 with C++/WinRT. Using WinUI3 allows us to create modern Windows applications with a contemporary look and feel, while C++/WinRT provides improved user experience and performance.  
 Currently, we plan to run only on Windows. Cross-platform support may be considered in the future (for cross-platform native apps using the MAUI build system and cross-platform calls via P/Invoke).  
-The main open-source library we currently use is `libtorrent`.
+The main open-source library we currently use are `libtorrent` and `aria2`.
 
 ## How to build the debug project
 

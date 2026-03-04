@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TaskTrackersPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskTrackersPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskTrackersPage.g.cpp"
@@ -15,138 +15,138 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-    TaskTrackersPage::TaskTrackersPage()
-    {
-        InitializeComponent();
-    }
+	TaskTrackersPage::TaskTrackersPage()
+	{
+		InitializeComponent();
+	}
 
-    TaskTrackersPage::~TaskTrackersPage()
-    {
-        Unsubscribe();
-        if (m_refreshTimer)
-        {
-            m_refreshTimer.Stop();
-            m_refreshTimer.Tick(m_timerTickToken);
-            m_refreshTimer = nullptr;
-        }
-    }
+	TaskTrackersPage::~TaskTrackersPage()
+	{
+		Unsubscribe();
+		if (m_refreshTimer)
+		{
+			m_refreshTimer.Stop();
+			m_refreshTimer.Tick(m_timerTickToken);
+			m_refreshTimer = nullptr;
+		}
+	}
 
-    void TaskTrackersPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
-    {
-        Unsubscribe();
+	void TaskTrackersPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
+	{
+		Unsubscribe();
 
-        m_viewModel = e.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
-        if (!m_viewModel)
-            m_viewModel = this->DataContext().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
+		m_viewModel = e.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
+		if (!m_viewModel)
+			m_viewModel = this->DataContext().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 
-        if (m_viewModel)
-        {
-            this->DataContext(m_viewModel);
-            m_vmPropertyChangedToken = m_viewModel.PropertyChanged(
-                { this, &TaskTrackersPage::OnViewModelPropertyChanged });
-        }
+		if (m_viewModel)
+		{
+			this->DataContext(m_viewModel);
+			m_vmPropertyChangedToken = m_viewModel.PropertyChanged(
+				{ this, &TaskTrackersPage::OnViewModelPropertyChanged });
+		}
 
-        if (!m_refreshTimer)
-        {
-            m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-            m_refreshTimer.Interval(std::chrono::seconds(3));
-            m_timerTickToken = m_refreshTimer.Tick(
-                { this, &TaskTrackersPage::OnRefreshTimerTick });
-        }
-        m_refreshTimer.Start();
+		if (!m_refreshTimer)
+		{
+			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
+			m_refreshTimer.Interval(std::chrono::seconds(3));
+			m_timerTickToken = m_refreshTimer.Tick(
+				{ this, &TaskTrackersPage::OnRefreshTimerTick });
+		}
+		m_refreshTimer.Start();
 
-        RefreshTrackerList();
-    }
+		RefreshTrackerList();
+	}
 
-    void TaskTrackersPage::Unsubscribe()
-    {
-        if (m_viewModel && m_vmPropertyChangedToken.value)
-        {
-            m_viewModel.PropertyChanged(m_vmPropertyChangedToken);
-            m_vmPropertyChangedToken = {};
-        }
-        m_viewModel = nullptr;
-    }
+	void TaskTrackersPage::Unsubscribe()
+	{
+		if (m_viewModel && m_vmPropertyChangedToken.value)
+		{
+			m_viewModel.PropertyChanged(m_vmPropertyChangedToken);
+			m_vmPropertyChangedToken = {};
+		}
+		m_viewModel = nullptr;
+	}
 
-    void TaskTrackersPage::OnViewModelPropertyChanged(
-        winrt::Windows::Foundation::IInspectable const&,
-        winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
-    {
-        if (args.PropertyName() == L"SelectedTask")
-        {
-            RefreshTrackerList();
-        }
-    }
+	void TaskTrackersPage::OnViewModelPropertyChanged(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
+	{
+		if (args.PropertyName() == L"SelectedTask")
+		{
+			RefreshTrackerList();
+		}
+	}
 
-    void TaskTrackersPage::OnRefreshTimerTick(
-        winrt::Windows::Foundation::IInspectable const&,
-        winrt::Windows::Foundation::IInspectable const&)
-    {
-        RefreshTrackerList();
-    }
+	void TaskTrackersPage::OnRefreshTimerTick(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Windows::Foundation::IInspectable const&)
+	{
+		RefreshTrackerList();
+	}
 
-    void TaskTrackersPage::RefreshTrackerList()
-    {
-        auto listView = TrackersListView();
-        auto emptyText = EmptyStateText();
-        if (!listView) return;
+	void TaskTrackersPage::RefreshTrackerList()
+	{
+		auto listView = TrackersListView();
+		auto emptyText = EmptyStateText();
+		if (!listView) return;
 
-        if (!m_viewModel || !m_viewModel.SelectedTask())
-        {
-            listView.ItemsSource(nullptr);
-            if (emptyText) emptyText.Visibility(Visibility::Visible);
-            return;
-        }
+		if (!m_viewModel || !m_viewModel.SelectedTask())
+		{
+			listView.ItemsSource(nullptr);
+			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			return;
+		}
 
-        auto selectedTask = m_viewModel.SelectedTask();
-        auto taskType = selectedTask.TaskType();
+		auto selectedTask = m_viewModel.SelectedTask();
+		auto taskType = selectedTask.TaskType();
 
-        if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
-        {
-            listView.ItemsSource(nullptr);
-            if (emptyText) emptyText.Visibility(Visibility::Visible);
-            return;
-        }
+		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+		{
+			listView.ItemsSource(nullptr);
+			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			return;
+		}
 
-        auto taskId = winrt::to_string(selectedTask.TaskId());
-        if (taskId.empty())
-        {
-            listView.ItemsSource(nullptr);
-            if (emptyText) emptyText.Visibility(Visibility::Visible);
-            return;
-        }
+		auto taskId = winrt::to_string(selectedTask.TaskId());
+		if (taskId.empty())
+		{
+			listView.ItemsSource(nullptr);
+			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			return;
+		}
 
-        auto& p2p = ::OpenNet::Core::P2PManager::Instance();
-        if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
-        {
-            listView.ItemsSource(nullptr);
-            if (emptyText) emptyText.Visibility(Visibility::Visible);
-            return;
-        }
+		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
+		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
+		{
+			listView.ItemsSource(nullptr);
+			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			return;
+		}
 
-        auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
+		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
 
-        if (detail.trackers.empty())
-        {
-            listView.ItemsSource(nullptr);
-            if (emptyText) emptyText.Visibility(Visibility::Visible);
-            return;
-        }
+		if (detail.trackers.empty())
+		{
+			listView.ItemsSource(nullptr);
+			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			return;
+		}
 
-        auto items = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
+		auto items = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
 
-        for (auto const& tracker : detail.trackers)
-        {
-            auto map = winrt::Windows::Foundation::Collections::PropertySet();
-            map.Insert(L"URL", winrt::box_value(winrt::to_hstring(tracker.url)));
-            map.Insert(L"Tier", winrt::box_value(winrt::to_hstring(tracker.tier)));
-            map.Insert(L"Peers", winrt::box_value(winrt::to_hstring(tracker.numPeers)));
-            map.Insert(L"Status", winrt::box_value(winrt::to_hstring(tracker.status)));
-            map.Insert(L"Message", winrt::box_value(winrt::to_hstring(tracker.message)));
-            items.Append(map);
-        }
+		for (auto const& tracker : detail.trackers)
+		{
+			auto map = winrt::Windows::Foundation::Collections::PropertySet();
+			map.Insert(L"URL", winrt::box_value(winrt::to_hstring(tracker.url)));
+			map.Insert(L"Tier", winrt::box_value(winrt::to_hstring(tracker.tier)));
+			map.Insert(L"Peers", winrt::box_value(winrt::to_hstring(tracker.numPeers)));
+			map.Insert(L"Status", winrt::box_value(winrt::to_hstring(tracker.status)));
+			map.Insert(L"Message", winrt::box_value(winrt::to_hstring(tracker.message)));
+			items.Append(map);
+		}
 
-        listView.ItemsSource(items);
-        if (emptyText) emptyText.Visibility(Visibility::Collapsed);
-    }
+		listView.ItemsSource(items);
+		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
+	}
 }

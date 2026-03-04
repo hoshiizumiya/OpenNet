@@ -1,24 +1,17 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:OpenNet.UI.Xaml.Control.HomePage.Header">
 
-    <Style BasedOn="{StaticResource DefaultHeaderTileStyle}"
-            TargetType="local:HeaderTile"/>
+    <Style BasedOn="{StaticResource DefaultHeaderTileStyle}" TargetType="local:HeaderTile" />
 
-    <Style x:Key="DefaultHeaderTileStyle"
-            TargetType="local:HeaderTile">
-        <Setter Property="Width"
-                Value="360"/>
-        <Setter Property="Height"
-                Value="208"/>
-        <Setter Property="CornerRadius"
-                Value="8"/>
-        <Setter Property="UseSystemFocusVisuals"
-                Value="True"/>
-        <Setter Property="UseLayoutRounding"
-                Value="True"/>
+    <Style x:Key="DefaultHeaderTileStyle" TargetType="local:HeaderTile">
+        <Setter Property="Width" Value="360" />
+        <Setter Property="Height" Value="208" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HeaderTile">
@@ -27,11 +20,11 @@
                         AutomationProperties.Name="{TemplateBinding Header}"
                         CornerRadius="{TemplateBinding CornerRadius}">
                         <Grid.Lights>
-                            <local:HoverLight/>
-                            <local:AmbLight/>
+                            <local:HoverLight />
+                            <local:AmbLight />
                         </Grid.Lights>
                         <Grid.Shadow>
-                            <ThemeShadow/>
+                            <ThemeShadow />
                         </Grid.Shadow>
 
                         <Image
@@ -39,7 +32,7 @@
                             VerticalAlignment="Stretch"
                             AutomationProperties.AccessibilityView="Raw"
                             Source="{Binding ImageUrl, RelativeSource={RelativeSource TemplatedParent}}"
-                            Stretch="UniformToFill"/>
+                            Stretch="UniformToFill" />
 
                         <StackPanel
                             x:Name="TextPanel"
@@ -51,20 +44,19 @@
                             <TextBlock
                                 FontWeight="SemiBold"
                                 Foreground="{ThemeResource TextFillColorPrimaryBrush}"
-                                Text="{TemplateBinding Header}"/>
+                                Text="{TemplateBinding Header}" />
                             <TextBlock
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="{TemplateBinding Description}"
-                                TextTrimming="CharacterEllipsis"/>
+                                TextTrimming="CharacterEllipsis" />
                         </StackPanel>
 
                         <VisualStateManager.VisualStateGroups>
                             <VisualStateGroup x:Name="SelectedStates">
-                                <VisualState x:Name="NotSelected"/>
+                                <VisualState x:Name="NotSelected" />
                                 <VisualState x:Name="Selected">
                                     <VisualState.Setters>
-                                        <Setter Target="TextPanel.Visibility"
-                                                Value="Visible"/>
+                                        <Setter Target="TextPanel.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
                             </VisualStateGroup>

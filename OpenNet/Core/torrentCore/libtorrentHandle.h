@@ -100,6 +100,7 @@ namespace OpenNet::Core::Torrent
             int numTorrents{};
             int numPeers{};
             int dhtNodes{};
+            int listenPort{};                 // primary listen port (0 if not listening)
         };
         SessionStats GetSessionStats() const;
 
