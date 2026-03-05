@@ -560,6 +560,33 @@ namespace OpenNet::Core::Torrent
         }
     }
 
+    bool TorrentStateManager::UpdateTaskName(std::string const& taskId, std::string const& name)
+    {
+        std::lock_guard lk(m_dbMutex);
+        if (!m_db) return false;
+
+        try
+        {
+            const char* sql = "UPDATE tasks SET name = ? WHERE task_id = ?;";
+            sqlite3_stmt* stmt = nullptr;
+            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+            if (rc != SQLITE_OK) return false;
+
+            sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+
+            rc = sqlite3_step(stmt);
+            sqlite3_finalize(stmt);
+
+            return rc == SQLITE_DONE;
+        }
+        catch (std::exception const& ex)
+        {
+            OutputDebugStringA(("UpdateTaskName error: " + std::string(ex.what()) + "\n").c_str());
+            return false;
+        }
+    }
+
     bool TorrentStateManager::ExportToFile(std::wstring const& filePath)
     {
         // Don't hold lock while doing I/O - load data first, then write

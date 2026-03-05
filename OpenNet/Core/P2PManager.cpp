@@ -92,8 +92,9 @@ namespace OpenNet::Core
         auto tasks = m_stateManager->LoadAllTasks();
         for (auto const& task : tasks)
         {
-            // Only resume non-completed, non-failed tasks
-            if (task.status == 1 || task.status == 2) // Downloading or Paused
+            // Only resume tasks that were actively downloading.
+            // Paused tasks (status==2) should remain paused — do NOT auto-resume them.
+            if (task.status == 1) // Downloading only
             {
                 std::string resumedId = m_torrentCore->AddTorrentFromResumeData(task.taskId);
                 if (!resumedId.empty())

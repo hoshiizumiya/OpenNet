@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.IPFilterSettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+        <Style
+            x:Key="SettingsSectionHeaderTextBlockStyle"
+            BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+            TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Margin" Value="1,30,0,6" />
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Padding="24">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
+
+                <!--  Header  -->
+                <TextBlock x:Uid="IPF_Title" Style="{StaticResource TitleTextBlockStyle}" />
+                <TextBlock
+                    x:Uid="IPF_Subtitle"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Style="{StaticResource CaptionTextBlockStyle}" />
+
+                <!--  Enable / Disable  -->
+                <TextBlock x:Uid="IPF_Section_General" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="IPF_Enable">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8D7;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch x:Name="EnableFilterToggle" Toggled="OnEnableToggled" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard x:Uid="IPF_RuleCount">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE9D5;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <TextBlock
+                        x:Name="RuleCountText"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource BodyTextBlockStyle}"
+                        Text="0" />
+                </essential:SettingsCard>
+
+                <!--  Add Rules  -->
+                <TextBlock x:Uid="IPF_Section_AddRule" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsExpander x:Uid="IPF_ManualAdd">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE710;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <Button x:Uid="IPF_AddBtn" Click="OnAddRuleClick" />
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard x:Uid="IPF_ManualInput">
+                            <TextBox
+                                x:Name="ManualIpTextBox"
+                                MinWidth="360"
+                                MaxHeight="120"
+                                AcceptsReturn="True"
+                                PlaceholderText="1.2.3.4&#x0a;10.0.0.0/8&#x0a;192.168.1.0-192.168.1.255&#x0a;2400:1a00::/32"
+                                TextWrapping="Wrap" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
+                <essential:SettingsCard x:Uid="IPF_ImportFile">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8E5;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <Button x:Uid="IPF_ImportBtn" Click="OnImportClick" />
+                </essential:SettingsCard>
+
+                <!--  Manage Rules  -->
+                <TextBlock x:Uid="IPF_Section_Manage" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsCard x:Uid="IPF_ClearAll">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE74D;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <Button x:Uid="IPF_ClearBtn" Click="OnClearAllClick" />
+                </essential:SettingsCard>
+
+                <!--  Status InfoBar  -->
+                <InfoBar
+                    x:Name="StatusInfoBar"
+                    IsClosable="True"
+                    IsOpen="False"
+                    Severity="Success" />
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

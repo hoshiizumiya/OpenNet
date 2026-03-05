@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.h"
 #include <winrt/OpenNet.ViewModels.h>

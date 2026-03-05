@@ -77,6 +77,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::OpenNet::ViewModels::DownloadTaskType m_taskType{winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent};
         uint64_t m_downloadSpeedKB{0};
         double m_progressPercent{0.0};
+        int m_lastSavedPercent{ -1 };  // Track last saved 1% boundary for SpeedGraph persistence
         SpeedGraphData m_speedGraphData;
     };
 }

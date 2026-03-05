@@ -972,4 +972,127 @@
   <data name="FilesList_EmptyState.Text" xml:space="preserve">
     <value>暂无文件信息</value>
   </data>
+  <!-- ===== IP 过滤器设置页 ===== -->
+  <data name="IPF_Title.Text" xml:space="preserve">
+    <value>IP 过滤器</value>
+  </data>
+  <data name="IPF_Subtitle.Text" xml:space="preserve">
+    <value>阻止或允许来自特定 IP 地址和范围的连接</value>
+  </data>
+  <data name="IPF_Section_General.Text" xml:space="preserve">
+    <value>常规</value>
+  </data>
+  <data name="IPF_Enable.Header" xml:space="preserve">
+    <value>启用 IP 过滤器</value>
+  </data>
+  <data name="IPF_Enable.Description" xml:space="preserve">
+    <value>启用后将拒绝来自被阻止 IP 的连接</value>
+  </data>
+  <data name="IPF_RuleCount.Header" xml:space="preserve">
+    <value>规则总数</value>
+  </data>
+  <data name="IPF_RuleCount.Description" xml:space="preserve">
+    <value>当前已加载的 IP 过滤规则数量</value>
+  </data>
+  <data name="IPF_Section_AddRule.Text" xml:space="preserve">
+    <value>添加规则</value>
+  </data>
+  <data name="IPF_ManualAdd.Header" xml:space="preserve">
+    <value>手动输入</value>
+  </data>
+  <data name="IPF_ManualAdd.Description" xml:space="preserve">
+    <value>输入 IP 地址、CIDR 块或范围（每行一个）</value>
+  </data>
+  <data name="IPF_ManualInput.Header" xml:space="preserve">
+    <value>IP 地址</value>
+  </data>
+  <data name="IPF_AddBtn.Content" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="IPF_ImportFile.Header" xml:space="preserve">
+    <value>从文件导入</value>
+  </data>
+  <data name="IPF_ImportFile.Description" xml:space="preserve">
+    <value>从文本文件（.txt、.dat、.p2p）导入规则</value>
+  </data>
+  <data name="IPF_ImportBtn.Content" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+  <data name="IPF_Section_Manage.Text" xml:space="preserve">
+    <value>管理规则</value>
+  </data>
+  <data name="IPF_ClearAll.Header" xml:space="preserve">
+    <value>清除所有规则</value>
+  </data>
+  <data name="IPF_ClearAll.Description" xml:space="preserve">
+    <value>从数据库中移除所有 IP 过滤规则</value>
+  </data>
+  <data name="IPF_ClearBtn.Content" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <!-- 重命名任务 -->
+  <data name="RenameTaskMenuItem.Text" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <!-- 封禁 Peer -->
+  <data name="BanPeer1hItem.Text" xml:space="preserve">
+    <value>封禁 1 小时</value>
+  </data>
+  <data name="BanPeer24hItem.Text" xml:space="preserve">
+    <value>封禁 24 小时</value>
+  </data>
+  <data name="BanPeerPermanentItem.Text" xml:space="preserve">
+    <value>永久封禁</value>
+  </data>
+  <!-- Peer 列表表头 -->
+  <data name="PeerHeader_Location.Text" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="PeerHeader_PeerStatus.Text" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="PeerHeader_Protocol.Text" xml:space="preserve">
+    <value>协议</value>
+  </data>
+  <data name="PeerHeader_Initiator.Text" xml:space="preserve">
+    <value>发起方</value>
+  </data>
+  <data name="PeerHeader_Source.Text" xml:space="preserve">
+    <value>来源</value>
+  </data>
+  <!-- NAT 工具导航 -->
+  <data name="NavItem_NatTools.Content" xml:space="preserve">
+    <value>NAT 工具</value>
+  </data>
+  <!-- NAT 工具页面 -->
+  <data name="NatTools_NATDetection.Text" xml:space="preserve">
+    <value>NAT 类型检测</value>
+  </data>
+  <data name="NatTools_DetectButton.Content" xml:space="preserve">
+    <value>检测 NAT 类型</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.Text" xml:space="preserve">
+    <value>NAT 类型：</value>
+  </data>
+  <data name="NatTools_PublicIPLabel.Text" xml:space="preserve">
+    <value>公网 IP：</value>
+  </data>
+  <data name="NatTools_UPnPLabel.Text" xml:space="preserve">
+    <value>UPnP：</value>
+  </data>
+  <data name="NatTools_PortTest.Text" xml:space="preserve">
+    <value>端口可达性测试</value>
+  </data>
+  <data name="NatTools_PortNumberBox.PlaceholderText" xml:space="preserve">
+    <value>端口号</value>
+  </data>
+  <data name="NatTools_TestPortButton.Content" xml:space="preserve">
+    <value>测试端口</value>
+  </data>
+  <data name="NatTools_PortResultLabel.Text" xml:space="preserve">
+    <value>结果：</value>
+  </data>
+  <data name="NatTools_STUNServers.Text" xml:space="preserve">
+    <value>推荐 STUN 服务器</value>
+  </data>
 </root>

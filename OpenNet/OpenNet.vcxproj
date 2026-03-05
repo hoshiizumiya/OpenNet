@@ -1,6 +1,5 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" DefaultTargets="Build"
-  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260209005\build\native\Microsoft.WindowsAppSDK.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260204000\build\native\Microsoft.WindowsAppSDK.WinUI.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.260209005\build\native\Microsoft.WindowsAppSDK.Runtime.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.Runtime.1.8.260209005\build\native\Microsoft.WindowsAppSDK.Runtime.props')" />
@@ -159,7 +158,11 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Core\AppEnvironment.h" />
+    <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h" />
     <ClInclude Include="Core\AppSettingsDatabase.h" />
+    <ClInclude Include="Core\IPFilter\IPFilterManager.h" />
+    <ClInclude Include="Core\GeoIP\GeoIPManager.h" />
+    <ClInclude Include="Core\DataGraph\SpeedGraphDatabase.h" />
     <ClInclude Include="Core\IO\FileOperation.h" />
     <ClInclude Include="Core\IO\FileSystem.h" />
     <ClInclude Include="Core\RSS\RSSLinkResolver.h" />
@@ -173,6 +176,8 @@
     <ClInclude Include="Core\Torrent\TrackerManager.h" />
     <ClInclude Include="Core\Utils\Misc.h" />
     <ClInclude Include="Core\Utils\Message.h" />
+    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h" />
+    <ClInclude Include="ThirdParty\RepoInfo.h" />
     <ClInclude Include="UI\Shell\NotifyIconContextMenu.xaml.h">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -286,6 +291,10 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -367,48 +376,56 @@
     <ClInclude Include="mvvm_framework\view_model.h" />
     <ClInclude Include="mvvm_framework\view_model_base.h" />
     <ClInclude Include="mvvm_framework\view_sync_data_context.h" />
-    <ClInclude Include="Pages\ContactsPage.xaml.h">
-      <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\ContactsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\ContactsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\FilesPage.xaml.h">
-      <DependentUpon>Pages\FilesPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\FilesPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\FilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\HomePage.xaml.h">
-      <DependentUpon>Pages\HomePage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\HomePage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\HomePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\MainView.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <!--这里的内容依赖为同一个-->
-    <ClInclude Include="Pages\NetworkSettingsPage.xaml.h">
-      <DependentUpon>Pages\NetworkSettingsPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\NetworkSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\NetworkSettingsPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="Pages\ServersPage.xaml.h">
-      <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\ServersPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\Folder.h" />
-    <ClInclude Include="Pages\SettingsPages\MainSettingsPage.xaml.h">
-      <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\Folder.h" />
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\AboutPage.xaml.h">
-      <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h">
-      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\ThemesSettingsPage.xaml.h">
-      <DependentUpon>Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\TasksPage.xaml.h">
-      <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\TasksPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Pages\RSSPage.xaml.h">
-      <DependentUpon>Pages\RSSPage.xaml</DependentUpon>
+    <ClInclude Include="UI\Xaml\View\Pages\NatToolsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\NatToolsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\RSSPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\RSSPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="pch.h" />
@@ -460,10 +477,15 @@
       <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\DisplayItems.h">
+      <DependentUpon>ViewModels\DisplayItems.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\TransferViewModel.h">
       <DependentUpon>ViewModels\TransferViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Web\Request\Builder\GithubRequest.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -488,6 +510,9 @@
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -510,33 +535,39 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MainWindow.xaml" />
-    <Page Include="Pages\ContactsPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\ContactsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\FilesPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\FilesPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\HomePage.xaml">
+    <Page Include="UI\Xaml\View\Pages\HomePage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\NetworkSettingsPage.xaml" />
-    <Page Include="Pages\ServersPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\MainView.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\NetworkSettingsPage.xaml" />
+    <Page Include="UI\Xaml\View\Pages\ServersPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SettingsPages\AboutPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SettingsPages\SettingsPage.xaml" />
-    <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\TasksPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml" />
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\RSSPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\TasksPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\NatToolsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\RSSPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Styles\CustomThemeBrushes.xaml" />
@@ -550,7 +581,11 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Core\AppEnvironment.cpp" />
+    <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.cpp" />
     <ClCompile Include="Core\AppSettingsDatabase.cpp" />
+    <ClCompile Include="Core\IPFilter\IPFilterManager.cpp" />
+    <ClCompile Include="Core\GeoIP\GeoIPManager.cpp" />
+    <ClCompile Include="Core\DataGraph\SpeedGraphDatabase.cpp" />
     <ClCompile Include="Core\IO\FileOperation.cpp" />
     <ClCompile Include="Core\IO\FileSystem.cpp" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.cpp" />
@@ -561,6 +596,7 @@
     <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
     <ClCompile Include="Core\Utils\Misc.cpp" />
     <ClCompile Include="Core\Utils\Message.cpp" />
+    <ClCompile Include="ThirdParty\RepoInfo.cpp" />
     <ClCompile Include="UI\Shell\NotifyIconContextMenu.xaml.cpp">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -664,6 +700,10 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -721,44 +761,52 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp" />
-    <ClCompile Include="Pages\ContactsPage.xaml.cpp">
-      <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\ContactsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\ContactsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\FilesPage.xaml.cpp">
-      <DependentUpon>Pages\FilesPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\FilesPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\FilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\HomePage.xaml.cpp">
-      <DependentUpon>Pages\HomePage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\HomePage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\HomePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\ServersPage.xaml.cpp">
-      <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\MainView.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\Folder.cpp" />
-    <ClCompile Include="Pages\SettingsPages\MainSettingsPage.xaml.cpp">
-      <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\ServersPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\AboutPage.xaml.cpp">
-      <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\Folder.cpp" />
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\SettingsPage.xaml.cpp">
-      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
-    </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\ThemesSettingsPage.xaml.cpp">
-      <DependentUpon>Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\TasksPage.xaml.cpp">
-      <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\RSSPage.xaml.cpp">
-      <DependentUpon>Pages\RSSPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\TasksPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TasksPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\NatToolsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\NatToolsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\RSSPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\RSSPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp" />
@@ -768,8 +816,8 @@
       <DependentUpon>ViewModels\NetworkViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="Pages\NetworkSettingsPage.xaml.cpp">
-      <DependentUpon>Pages\NetworkSettingsPage.xaml</DependentUpon>
+    <ClCompile Include="UI\Xaml\View\Pages\NetworkSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\NetworkSettingsPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
@@ -820,10 +868,15 @@
       <DependentUpon>ViewModels\TaskViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\DisplayItems.cpp">
+      <DependentUpon>ViewModels\DisplayItems.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\TransferViewModel.cpp">
       <DependentUpon>ViewModels\TransferViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Web\Request\Builder\GithubRequest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="Controls\SpeedGraph\SpeedGraph.idl">
@@ -900,6 +953,10 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -941,48 +998,56 @@
     </Midl>
     <Midl Include="mvvm_framework\mvvm_framework_events.idl" />
     <Midl Include="mvvm_framework\mvvm_framework_inf.idl" />
-    <Midl Include="Pages\ContactsPage.idl">
-      <DependentUpon>Pages\ContactsPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\ContactsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\ContactsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\FilesPage.idl">
-      <DependentUpon>Pages\FilesPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\FilesPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\FilesPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\HomePage.idl">
-      <DependentUpon>Pages\HomePage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\HomePage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\HomePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\NetworkSettingsPage.idl">
-      <DependentUpon>Pages\NetworkSettingsPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\MainView.idl">
+      <DependentUpon>UI\Xaml\View\Pages\MainView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\ServersPage.idl">
-      <DependentUpon>Pages\ServersPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\NetworkSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\NetworkSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\SettingsPages\MainSettingsPage.idl">
-      <DependentUpon>Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\ServersPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\SettingsPages\SettingsPage.idl">
-      <DependentUpon>Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\SettingsPages\AboutPage.idl">
-      <DependentUpon>Pages\SettingsPages\AboutPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\SettingsPages\ThemesSettingsPage.idl">
-      <DependentUpon>Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\AboutPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\TasksPage.idl">
-      <DependentUpon>Pages\TasksPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="Pages\RSSPage.idl">
-      <DependentUpon>Pages\RSSPage.xaml</DependentUpon>
+    <Midl Include="UI\Xaml\View\Pages\TasksPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TasksPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\NatToolsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\NatToolsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\RSSPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\RSSPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
@@ -1007,6 +1072,9 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\TaskViewModel.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\DisplayItems.idl">
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\TorrentMetadataViewModel.idl" />
@@ -1090,6 +1158,7 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV" />
     <None Include="Assets\ModelIcons\GitHub.dark.svg">
       <DeploymentContent>true</DeploymentContent>
     </None>
@@ -1124,6 +1193,9 @@
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\IP2Location\LICENSE.TXT" />
   </ItemGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>

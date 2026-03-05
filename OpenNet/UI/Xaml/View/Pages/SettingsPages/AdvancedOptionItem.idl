@@ -1,4 +1,4 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
 {
     [default_interface]
     runtimeclass AdvancedOptionItem

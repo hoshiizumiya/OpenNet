@@ -1,0 +1,9 @@
+License Agreement
+=================
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0) license.
+
+It is free for personal use, provided that attribution is given by stating its use as follows:
+"[Your site name or product name] uses the IP2Location™ Country Multilingual Database for <a href="https://www.ip2location.com">IP geolocation</a>."
+
+IP2Location™ and IP2Proxy™ are registered trademarks of HEXASOFT. All other trademarks are the properties of their respective owners.

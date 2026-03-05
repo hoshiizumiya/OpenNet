@@ -115,8 +115,8 @@ namespace OpenNet::Core
         // Cached task GIDs for change detection
         std::set<std::string> m_knownGids;
 
-        // GID -> HttpStateManager record-id mapping
-        std::unordered_map<std::string, std::string> m_gidToRecordId;
+        // GID -> HttpStateManager record-id mapping (mutable: acts as a cache)
+        mutable std::unordered_map<std::string, std::string> m_gidToRecordId;
 
         // Callbacks
         HttpProgressCallback m_progressCb;

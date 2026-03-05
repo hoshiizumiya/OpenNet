@@ -1,0 +1,15 @@
+import "ViewModels/MainViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages
+{
+	[default_interface]
+	runtimeclass MainView : Microsoft.UI.Xaml.Controls.Page
+	{
+		MainView();
+		OpenNet.ViewModels.MainViewModel ViewModel { get; };
+		void Navigate(String tag);
+		Boolean CanGoBack { get; };
+		void GoBack();
+		event Windows.Foundation.EventHandler<Boolean> CanGoBackChanged;
+	}
+}

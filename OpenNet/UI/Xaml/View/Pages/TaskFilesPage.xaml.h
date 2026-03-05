@@ -11,6 +11,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         ~TaskFilesPage();
 
         void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
+        void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 
         // ComboBox selection changed for file priority
         void FilePriority_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender,

@@ -7,6 +7,9 @@
 #include "Core/DownloadManager.h"
 #include "Core/HttpStateManager.h"
 #include "Core/torrentCore/TorrentStateManager.h"
+#include "Core/DataGraph/SpeedGraphDatabase.h"
+#include "Core/AppSettingsDatabase.h"
+#include "Core/IPFilter/IPFilterManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 
 #include <ctime>
@@ -172,23 +175,49 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						stateMgr->DeleteTask(taskId);
 					}
+					// Clean up speed graph persistence
+					if (!taskId.empty())
+					{
+						::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(taskId);
+					}
 				}
 				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
 				{
+					// Mark GID as deleted BEFORE cancelling, so callbacks won't
+					// re-create the task via FindOrCreateHttpItem.
+					if (!gid.empty())
+					{
+						self->m_deletedGids.insert(gid);
+					}
+
 					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
 					if (!gid.empty())
 					{
 						// First cancel the active download (aria2.remove),
 						// then clean up the result (aria2.removeDownloadResult).
-						// Without Cancel, RemoveHttpDownload fails for active/paused
-						// downloads, and OnHttpProgress re-creates the task.
 						try { dlMgr.CancelHttpDownload(gid); } catch (...) {}
 						try { dlMgr.RemoveHttpDownload(gid); } catch (...) {}
 					}
+					// Delete the persisted HTTP download record.
+					// TaskId now holds the stable recordId (not GID).
 					auto& httpState = ::OpenNet::Core::HttpStateManager::Instance();
 					if (!taskId.empty())
 					{
 						httpState.DeleteRecord(taskId);
+					}
+					else if (!gid.empty())
+					{
+						// Fallback: look up recordId from GID mapping
+						auto recordId = dlMgr.GetRecordIdForGid(gid);
+						if (!recordId.empty())
+						{
+							httpState.DeleteRecord(recordId);
+						}
+					}
+					// Clean up speed graph persistence
+					if (!taskId.empty())
+					{
+						::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(taskId);
 					}
 				}
 			}
@@ -303,11 +332,24 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// Initialize HTTP download manager synchronously
 		::OpenNet::Core::DownloadManager::Instance().Initialize();
 
+		// Initialize application settings database (used by RSS, UI settings, etc.)
+		::OpenNet::Core::AppSettingsDatabase::Instance().Initialize();
+
+		// Initialize speed graph persistence database
+		::OpenNet::Core::SpeedGraphDatabase::Instance().Initialize();
+
+		// Initialize IP filter database
+		::OpenNet::Core::IPFilterManager::Instance().Initialize();
+
 		// Fire-and-forget: await torrent core init on background, then load tasks
 		[](auto weak) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			co_await winrt::resume_background();
 			co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+
+			// Apply stored IP filter rules to the now-running session
+			::OpenNet::Core::IPFilterManager::Instance().ApplyToSession();
+
 			if (auto self = weak.get())
 			{
 				self->LoadSavedTasks();
@@ -419,6 +461,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 					winrt::hstring gid = winrt::to_hstring(rec.lastGid.empty() ? rec.recordId : rec.lastGid);
 
 					auto vm = self->FindOrCreateHttpItem(gid, name);
+
+					// Ensure TaskId always points to the stable recordId
+					vm.TaskId(winrt::to_hstring(rec.recordId));
 
 					// Set add date
 					vm.AddDate(FormatTimestamp(rec.addedTimestamp));
@@ -571,6 +616,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 				}
 				item.Progress(to_hstring_percent(e.progressPercent));
 				item.DownloadRate(to_hstring_rate(e.downloadRateKB));
+				item.UploadRate(to_hstring_rate(e.uploadRateKB));
 				item.DownloadSpeedKB(static_cast<uint64_t>(e.downloadRateKB));
 				item.ProgressPercent(static_cast<double>(e.progressPercent));
 				item.UpdateSpeedGraph(static_cast<double>(e.progressPercent), static_cast<uint64_t>(e.downloadRateKB));
@@ -613,6 +659,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	winrt::OpenNet::ViewModels::TaskViewModel TasksViewModel::FindOrCreateHttpItem(winrt::hstring const& gid, winrt::hstring const& name)
 	{
+		// If this GID was explicitly deleted, do NOT re-create it.
+		auto gidStr = winrt::to_string(gid);
+		if (m_deletedGids.count(gidStr))
+		{
+			return nullptr;
+		}
+
 		// Lookup by GID first
 		for (auto const& item : m_tasks)
 		{
@@ -625,7 +678,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		auto vm = winrt::make<winrt::OpenNet::ViewModels::implementation::TaskViewModel>();
 		vm.Name(name.empty() ? gid : name);
 		vm.Gid(gid);
-		vm.TaskId(gid); // Use GID as task ID for HTTP downloads
+		// Use recordId (not GID) as TaskId for HTTP downloads.
+		// GIDs are Aria2 session-ephemeral and change across restarts.
+		auto recordId = ::OpenNet::Core::DownloadManager::Instance().GetRecordIdForGid(gidStr);
+		vm.TaskId(recordId.empty() ? gid : winrt::to_hstring(recordId));
 		vm.TaskType(winrt::OpenNet::ViewModels::DownloadTaskType::Http);
 		auto now = std::chrono::system_clock::now();
 		auto ts = std::chrono::duration_cast<std::chrono::seconds>(now.time_since_epoch()).count();
@@ -688,6 +744,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateHttpItem(gid, name);
+				if (!item) return; // GID was deleted
 				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
 
 				// Update name if it changed (aria2 resolves filename later)
@@ -738,6 +795,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (auto self = weak.get())
 			{
 				auto item = self->FindOrCreateHttpItem(hgid, hname);
+				if (!item) return; // GID was deleted
 				item.Progress(L"100%");
 				item.DownloadRate(L"0 KB/s");
 				item.UploadRate(L"0 KB/s");
@@ -759,6 +817,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (auto self = weak.get())
 			{
 				auto item = self->FindOrCreateHttpItem(hgid, L"");
+				if (!item) return; // GID was deleted
 				item.DownloadRate(L"Error");
 				self->RebuildFiltered();
 			}

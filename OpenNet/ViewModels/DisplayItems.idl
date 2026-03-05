@@ -1,0 +1,45 @@
+namespace OpenNet.ViewModels
+{
+    // Lightweight display items for task detail sub-pages (x:Bind DataTable rows).
+
+    [default_interface]
+    runtimeclass PeerDisplayItem
+    {
+        PeerDisplayItem();
+        String IP;
+        String Client;
+        String Progress;
+        String DLSpeed;
+        String ULSpeed;
+        String Downloaded;
+        String PeerStatus;
+        String Location;
+        String ConnectionTime;
+        String Protocol;
+        String Initiator;
+        String Source;
+    };
+
+    [default_interface]
+    runtimeclass TrackerDisplayItem
+    {
+        TrackerDisplayItem();
+        String URL;
+        String Tier;
+        String Peers;
+        String Status;
+        String Message;
+    };
+
+    [default_interface]
+    runtimeclass FileDisplayItem
+    {
+        FileDisplayItem();
+        String Path;
+        String Size;
+        Double ProgressValue;
+        String Done;
+        Int32 PriorityIndex;
+        Int32 FileIndex;
+    };
+}

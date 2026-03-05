@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TaskTrackersPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskTrackersPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskTrackersPage.g.cpp"
@@ -9,6 +9,7 @@
 #include <winrt/Windows.Foundation.Collections.h>
 
 #include "Core/P2PManager.h"
+#include "ViewModels/DisplayItems.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -56,6 +57,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_refreshTimer.Start();
 
 		RefreshTrackerList();
+	}
+
+	void TaskTrackersPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
+	{
+		if (m_refreshTimer)
+		{
+			m_refreshTimer.Stop();
+		}
+		Unsubscribe();
 	}
 
 	void TaskTrackersPage::Unsubscribe()
@@ -137,13 +147,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		for (auto const& tracker : detail.trackers)
 		{
-			auto map = winrt::Windows::Foundation::Collections::PropertySet();
-			map.Insert(L"URL", winrt::box_value(winrt::to_hstring(tracker.url)));
-			map.Insert(L"Tier", winrt::box_value(winrt::to_hstring(tracker.tier)));
-			map.Insert(L"Peers", winrt::box_value(winrt::to_hstring(tracker.numPeers)));
-			map.Insert(L"Status", winrt::box_value(winrt::to_hstring(tracker.status)));
-			map.Insert(L"Message", winrt::box_value(winrt::to_hstring(tracker.message)));
-			items.Append(map);
+			auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
+			item.URL(winrt::to_hstring(tracker.url));
+			item.Tier(winrt::to_hstring(tracker.tier));
+			item.Peers(winrt::to_hstring(tracker.numPeers));
+			item.Status(winrt::to_hstring(tracker.status));
+			item.Message(winrt::to_hstring(tracker.message));
+			items.Append(item);
 		}
 
 		listView.ItemsSource(items);

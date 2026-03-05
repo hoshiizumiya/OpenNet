@@ -1,0 +1,294 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.NatToolsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="NatToolsPageRoot"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+        <Style
+            x:Key="SettingsSectionHeaderTextBlockStyle"
+            BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+            TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Margin" Value="1,30,0,6" />
+            </Style.Setters>
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer>
+        <Grid Padding="24">
+            <StackPanel HorizontalAlignment="Stretch" Spacing="{StaticResource SettingsCardSpacing}">
+                <StackPanel.ChildrenTransitions>
+                    <EntranceThemeTransition FromVerticalOffset="50" />
+                    <RepositionThemeTransition IsStaggeringEnabled="False" />
+                </StackPanel.ChildrenTransitions>
+
+                <!--  NAT Detection Section  -->
+                <TextBlock
+                    x:Uid="NatTools_NATDetection"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="NAT Type Detection" />
+
+                <Button
+                    x:Name="DetectNatButton"
+                    x:Uid="NatTools_DetectButton"
+                    Click="DetectNat_Click"
+                    Content="Detect NAT Type" />
+
+                <ProgressRing
+                    x:Name="DetectingProgress"
+                    Width="24"
+                    Height="24"
+                    Margin="0,8"
+                    IsActive="False"
+                    Visibility="Collapsed" />
+
+                <StackPanel Margin="0,8,0,0" Spacing="4">
+                    <TextBlock>
+                        <Run x:Uid="NatTools_NATTypeLabel" Text="NAT Type: " />
+                        <Run
+                            x:Name="NatTypeText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run x:Uid="NatTools_PublicIPLabel" Text="Public IP: " />
+                        <Run
+                            x:Name="PublicIPText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run x:Uid="NatTools_UPnPLabel" Text="UPnP: " />
+                        <Run
+                            x:Name="UPnPText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="NAT-PMP: " />
+                        <Run
+                            x:Name="NatPmpText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Listen Port: " />
+                        <Run
+                            x:Name="ListenPortText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="DHT Nodes: " />
+                        <Run
+                            x:Name="DhtNodesText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                </StackPanel>
+
+                <!--  STUN Test Detail Table  -->
+                <TextBlock
+                    Margin="0,24,0,6"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="STUN Test Details" />
+
+                <Grid
+                    Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" MinWidth="180" />
+                        <ColumnDefinition Width="*" MinWidth="140" />
+                        <ColumnDefinition Width="*" MinWidth="140" />
+                        <ColumnDefinition Width="*" MinWidth="140" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!--  Header Row  -->
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="0"
+                        Margin="0,0,0,8"
+                        FontWeight="Bold"
+                        Text="Test" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="1"
+                        Margin="8,0,0,8"
+                        FontWeight="Bold"
+                        Text="Server 1 (Same Port)" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="2"
+                        Margin="8,0,0,8"
+                        FontWeight="Bold"
+                        Text="Server 1 (Diff Port)" />
+                    <TextBlock
+                        Grid.Row="0"
+                        Grid.Column="3"
+                        Margin="8,0,0,8"
+                        FontWeight="Bold"
+                        Text="Server 2 (Same Port)" />
+
+                    <!--  Row 1: STUN Binding  -->
+                    <TextBlock
+                        Grid.Row="1"
+                        Grid.Column="0"
+                        Margin="0,4"
+                        Text="STUN Binding" />
+                    <TextBlock
+                        x:Name="StunTest1_1"
+                        Grid.Row="1"
+                        Grid.Column="1"
+                        Margin="8,4"
+                        Text="-" />
+                    <TextBlock
+                        x:Name="StunTest1_2"
+                        Grid.Row="1"
+                        Grid.Column="2"
+                        Margin="8,4"
+                        Text="-" />
+                    <TextBlock
+                        x:Name="StunTest1_3"
+                        Grid.Row="1"
+                        Grid.Column="3"
+                        Margin="8,4"
+                        Text="-" />
+
+                    <!--  Row 2: Public IP  -->
+                    <TextBlock
+                        Grid.Row="2"
+                        Grid.Column="0"
+                        Margin="0,4"
+                        Text="Public IP:Port" />
+                    <TextBlock
+                        x:Name="StunIP1_1"
+                        Grid.Row="2"
+                        Grid.Column="1"
+                        Margin="8,4"
+                        Text="-" />
+                    <TextBlock
+                        x:Name="StunIP1_2"
+                        Grid.Row="2"
+                        Grid.Column="2"
+                        Margin="8,4"
+                        Text="-" />
+                    <TextBlock
+                        x:Name="StunIP1_3"
+                        Grid.Row="2"
+                        Grid.Column="3"
+                        Margin="8,4"
+                        Text="-" />
+
+                    <!--  Row 3: Latency  -->
+                    <TextBlock
+                        Grid.Row="3"
+                        Grid.Column="0"
+                        Margin="0,4"
+                        Text="Latency" />
+                    <TextBlock
+                        x:Name="StunLatency1_1"
+                        Grid.Row="3"
+                        Grid.Column="1"
+                        Margin="8,4"
+                        Text="-" />
+                    <TextBlock
+                        x:Name="StunLatency1_2"
+                        Grid.Row="3"
+                        Grid.Column="2"
+                        Margin="8,4"
+                        Text="-" />
+                    <TextBlock
+                        x:Name="StunLatency1_3"
+                        Grid.Row="3"
+                        Grid.Column="3"
+                        Margin="8,4"
+                        Text="-" />
+
+                    <!--  Row 4: Mapping Consistent  -->
+                    <TextBlock
+                        Grid.Row="4"
+                        Grid.Column="0"
+                        Margin="0,4"
+                        Text="Mapping Consistent" />
+                    <TextBlock
+                        x:Name="StunMapping"
+                        Grid.Row="4"
+                        Grid.Column="1"
+                        Grid.ColumnSpan="3"
+                        Margin="8,4"
+                        FontWeight="SemiBold"
+                        Text="-" />
+                </Grid>
+
+                <!--  Port Accessibility Test Section  -->
+                <TextBlock
+                    x:Uid="NatTools_PortTest"
+                    Margin="0,24,0,6"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="Port Accessibility Test" />
+
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <NumberBox
+                        x:Name="PortNumberBox"
+                        x:Uid="NatTools_PortNumberBox"
+                        Width="150"
+                        Maximum="65535"
+                        Minimum="1"
+                        PlaceholderText="Port"
+                        SpinButtonPlacementMode="Compact"
+                        Value="6881" />
+                    <Button
+                        x:Name="TestPortButton"
+                        x:Uid="NatTools_TestPortButton"
+                        Click="TestPort_Click"
+                        Content="Test Port" />
+                </StackPanel>
+
+                <ProgressRing
+                    x:Name="PortTestProgress"
+                    Width="24"
+                    Height="24"
+                    Margin="0,8"
+                    IsActive="False"
+                    Visibility="Collapsed" />
+
+                <TextBlock x:Name="PortTestResultText" Margin="0,4,0,0">
+                    <Run x:Uid="NatTools_PortResultLabel" Text="Result: " />
+                    <Run
+                        x:Name="PortResultText"
+                        FontWeight="SemiBold"
+                        Text="-" />
+                </TextBlock>
+
+                <!--  STUN Servers Section  -->
+                <TextBlock
+                    x:Uid="NatTools_STUNServers"
+                    Margin="0,24,0,6"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="Recommended STUN Servers" />
+
+                <ListView
+                    x:Name="StunServersList"
+                    MaxHeight="200"
+                    SelectionMode="None" />
+
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
+</Page>

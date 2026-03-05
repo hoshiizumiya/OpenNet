@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "RSSManager.h"
 #include "RSSDatabase.h"
+#include "Core/AppSettingsDatabase.h"
 #include <winrt/Windows.Web.Http.h>
 #include <winrt/Windows.Web.Http.Headers.h>
 #include <winrt/Windows.Storage.h>
@@ -403,12 +404,16 @@ namespace OpenNet::Core::RSS
             }
         }
 
-        // Prune old items (keep most recent 100) this need a setting in the future
-        if (feed.items.size() > 100)
+        // Prune old items – limit is configurable via AppSettingsDatabase (default 100)
+        auto& settingsDb = AppSettingsDatabase::Instance();
+        int maxItems = static_cast<int>(settingsDb.GetInt(AppSettingsDatabase::CAT_RSS, "max_items_per_feed", 100));
+        if (maxItems < 10) maxItems = 10; // sanity floor
+        auto limit = static_cast<size_t>(maxItems);
+        if (feed.items.size() > limit)
         {
-            feed.items.erase(feed.items.begin(), feed.items.begin() + (feed.items.size() - 100));
+            feed.items.erase(feed.items.begin(), feed.items.begin() + (feed.items.size() - limit));
         }
-        db.PruneItems(feed.id, 100);
+        db.PruneItems(feed.id, maxItems);
     }
 
     void RSSManager::MarkItemAsDownloaded(const std::wstring& feedId, const std::wstring& itemGuid)

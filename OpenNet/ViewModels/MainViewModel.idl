@@ -16,9 +16,12 @@
 
 		// 快速统计 / Quick Stats
 		Int32 ConnectedPeersCount { get; };
+		Int32 DhtNodeCount { get; };
 		Int32 ActiveTransfersCount { get; };
 		String TotalBytesTransferredText { get; };
 		String CurrentTransferSpeedText { get; };
+		String SpeedLevel { get; };
+		Int32 ListenPort { get; };
 
 		// 网络状态 / Network Status
 		String NetworkStatusText { get; };

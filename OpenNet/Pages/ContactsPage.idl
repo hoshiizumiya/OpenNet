@@ -1,8 +1,0 @@
-﻿namespace OpenNet.Pages
-{
-    [default_interface]
-    runtimeclass ContactsPage : Microsoft.UI.Xaml.Controls.Page
-    {
-        ContactsPage();
-    }
-}

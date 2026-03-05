@@ -1,14 +1,16 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskPeersListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="8">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -18,7 +20,26 @@
         <ListView
             x:Name="PeersListView"
             Grid.Row="1"
-            SelectionMode="None">
+            SelectionMode="Single">
+            <ListView.ContextFlyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem
+                        x:Name="BanPeer1hItem"
+                        x:Uid="BanPeer1hItem"
+                        Click="BanPeer1h_Click"
+                        Text="Ban IP for 1 hour" />
+                    <MenuFlyoutItem
+                        x:Name="BanPeer24hItem"
+                        x:Uid="BanPeer24hItem"
+                        Click="BanPeer24h_Click"
+                        Text="Ban IP for 24 hours" />
+                    <MenuFlyoutItem
+                        x:Name="BanPeerPermanentItem"
+                        x:Uid="BanPeerPermanentItem"
+                        Click="BanPeerPermanent_Click"
+                        Text="Ban IP permanently" />
+                </MenuFlyout>
+            </ListView.ContextFlyout>
             <!--  Column Headers  -->
             <ListView.Header>
                 <Border
@@ -26,61 +47,90 @@
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="2*">
                             <TextBlock
                                 x:Uid="PeerHeader_IP"
                                 FontWeight="SemiBold"
                                 Text="IP" />
                         </labs:DataColumn>
-                        <labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
                             <TextBlock
-                                x:Uid="PeerHeader_Client"
+                                x:Uid="PeerHeader_Location"
                                 FontWeight="SemiBold"
-                                Text="Client" />
-
+                                Text="Location" />
                         </labs:DataColumn>
-                        <labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="PeerHeader_Progress"
                                 FontWeight="SemiBold"
                                 Text="Progress" />
-
                         </labs:DataColumn>
-                        <labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="PeerHeader_DLSpeed"
                                 FontWeight="SemiBold"
                                 Text="DL Speed" />
-
                         </labs:DataColumn>
-                        <labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="PeerHeader_ULSpeed"
                                 FontWeight="SemiBold"
                                 Text="UL Speed" />
-
                         </labs:DataColumn>
-                        <labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="PeerHeader_Downloaded"
                                 FontWeight="SemiBold"
                                 Text="Downloaded" />
-
+                        </labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
+                            <TextBlock
+                                x:Uid="PeerHeader_Client"
+                                FontWeight="SemiBold"
+                                Text="Client" />
+                        </labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
+                            <TextBlock
+                                x:Uid="PeerHeader_PeerStatus"
+                                FontWeight="SemiBold"
+                                Text="Status" />
+                        </labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
+                            <TextBlock
+                                x:Uid="PeerHeader_Protocol"
+                                FontWeight="SemiBold"
+                                Text="Protocol" />
+                        </labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
+                            <TextBlock
+                                x:Uid="PeerHeader_Initiator"
+                                FontWeight="SemiBold"
+                                Text="Initiator" />
+                        </labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
+                            <TextBlock
+                                x:Uid="PeerHeader_Source"
+                                FontWeight="SemiBold"
+                                Text="Source" />
                         </labs:DataColumn>
                     </labs:DataTable>
 
                 </Border>
             </ListView.Header>
             <ListView.ItemTemplate>
-                <!--  任务：换成x:Bind，绑定到PeerInfo对象的属性，而不是使用索引器绑定到字典  -->
-                <DataTemplate>
+                <DataTemplate x:DataType="vm:PeerDisplayItem">
                     <labs:DataRow HorizontalAlignment="Left">
-                        <TextBlock Text="{Binding [IP]}" />
-                        <TextBlock Text="{Binding [Client]}" />
-                        <TextBlock Text="{Binding [Progress]}" />
-                        <TextBlock Text="{Binding [DLSpeed]}" />
-                        <TextBlock Text="{Binding [ULSpeed]}" />
-                        <TextBlock Text="{Binding [Downloaded]}" />
+                        <TextBlock Text="{x:Bind IP}" />
+                        <TextBlock Text="{x:Bind Location}" />
+                        <TextBlock Text="{x:Bind Progress}" />
+                        <TextBlock Text="{x:Bind DLSpeed}" />
+                        <TextBlock Text="{x:Bind ULSpeed}" />
+                        <TextBlock Text="{x:Bind Downloaded}" />
+                        <TextBlock Text="{x:Bind Client}" />
+                        <TextBlock Text="{x:Bind PeerStatus}" />
+                        <TextBlock Text="{x:Bind Protocol}" />
+                        <TextBlock Text="{x:Bind Initiator}" />
+                        <TextBlock Text="{x:Bind Source}" />
                     </labs:DataRow>
                 </DataTemplate>
             </ListView.ItemTemplate>

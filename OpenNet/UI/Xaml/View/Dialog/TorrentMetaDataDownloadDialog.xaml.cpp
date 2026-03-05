@@ -16,7 +16,7 @@
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 //#include "Helpers/WindowHelper.h"
 //#include "App.xaml.h"
-#include "Pages/TasksPage.xaml.h"
+#include "UI/Xaml/View/Pages/TasksPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

@@ -1,4 +1,4 @@
-﻿import "ViewModels/TorrentMetadataViewModel.idl";
+import "ViewModels/TorrentMetadataViewModel.idl";
 
 namespace OpenNet.UI.Xaml.View.Pages
 {

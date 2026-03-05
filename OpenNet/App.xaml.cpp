@@ -6,6 +6,7 @@
 #include "Helpers/ThemeHelper.h"
 #include "Core/P2PManager.h"
 #include "Core/RSS/RSSManager.h"
+#include "Core/GeoIP/GeoIPManager.h"
 
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Windows.Storage.h>
@@ -55,8 +56,8 @@ namespace winrt::OpenNet::implementation
         // Apply saved theme to the window
         ::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
-        // Create and show system tray icon
-        OpenNet::UI::Shell::NotifyIconContextMenu trayIcon;
+        // Create and show system tray icon (assign to static member, not a local)
+        trayIcon = OpenNet::UI::Shell::NotifyIconContextMenu();
         trayIcon.Show();
 
         // Register window closing event - hide to tray instead of closing
@@ -77,6 +78,13 @@ namespace winrt::OpenNet::implementation
         // Initialize RSS Manager early so feeds update in the background
         // regardless of whether the user navigates to the RSS page
         InitializeRSSManagerAsync();
+
+        // Initialize GeoIP database (non-blocking, small CSV load)
+        try
+        {
+            ::OpenNet::Core::GeoIPManager::Instance().Initialize();
+        }
+        catch (...) { OutputDebugStringA("App: GeoIP init failed\n"); }
 
         window.Activate();
 

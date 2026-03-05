@@ -1,0 +1,27 @@
+namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+{
+	[default_interface]
+	runtimeclass AboutPage : Microsoft.UI.Xaml.Controls.Page
+	{
+		AboutPage();
+
+		static String WASDKReleaseVersion{ get; };
+		static String WASDKRuntimeVersion{ get; };
+
+		static String FormatVersion(
+			UInt32 major,
+			UInt32 minor,
+			UInt32 patch,
+			UInt32 majorMinor,
+			String channel
+		);
+
+		Boolean IsLoadingRepoInfo{ get; };
+
+		Int32 Stars{ get; };
+		Int32 Forks{ get; };
+		Int32 Issues{ get; };
+		String UpdatedAt{ get; };
+		String CommitMessage{ get; };
+	}
+}

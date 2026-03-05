@@ -9,6 +9,7 @@
 #include <winrt/Windows.Foundation.Collections.h>
 
 #include "Core/P2PManager.h"
+#include "ViewModels/DisplayItems.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -101,6 +102,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         RefreshFileList();
     }
 
+    void TaskFilesPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
+    {
+        if (m_refreshTimer)
+        {
+            m_refreshTimer.Stop();
+        }
+        Unsubscribe();
+    }
+
     void TaskFilesPage::Unsubscribe()
     {
         if (m_viewModel && m_vmPropertyChangedToken.value)
@@ -182,18 +192,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
         for (auto const& file : detail.files)
         {
-            auto map = winrt::Windows::Foundation::Collections::PropertySet();
-            map.Insert(L"Path", winrt::box_value(winrt::to_hstring(file.path)));
-            map.Insert(L"Size", winrt::box_value(FormatFileSize(file.size)));
+            auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
+            item.Path(winrt::to_hstring(file.path));
+            item.Size(FormatFileSize(file.size));
 
             double progressPct = (file.size > 0)
                 ? (static_cast<double>(file.bytesCompleted) / file.size * 100.0)
                 : 0.0;
-            map.Insert(L"ProgressValue", winrt::box_value(progressPct));
-            map.Insert(L"Done", winrt::box_value(FormatFileSize(file.bytesCompleted)));
-            map.Insert(L"PriorityIndex", winrt::box_value(PriorityToComboIndex(file.priority)));
-            map.Insert(L"FileIndex", winrt::box_value(file.fileIndex));
-            items.Append(map);
+            item.ProgressValue(progressPct);
+            item.Done(FormatFileSize(file.bytesCompleted));
+            item.PriorityIndex(PriorityToComboIndex(file.priority));
+            item.FileIndex(file.fileIndex);
+            items.Append(item);
         }
 
         listView.ItemsSource(items);

@@ -6,6 +6,7 @@
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <winrt/Windows.Foundation.h>
 #include <memory>
+#include <unordered_set>
 
 #include "Core/torrentCore/libtorrentHandle.h"
 #include "Core/DownloadManager.h"
@@ -91,6 +92,10 @@ namespace winrt::OpenNet::ViewModels::implementation
         void RebuildFiltered();
 
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_addTaskRequested;
+
+        // GIDs that were explicitly deleted ─ prevents OnHttpProgress/Finished
+        // from re-creating the task after deletion.
+        std::unordered_set<std::string> m_deletedGids;
     };
 }
 

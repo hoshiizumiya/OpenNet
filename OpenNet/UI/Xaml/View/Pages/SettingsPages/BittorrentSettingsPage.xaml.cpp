@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "BittorrentSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp"
@@ -25,6 +25,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
         Loaded([this](IInspectable const &, RoutedEventArgs const &)
                { LoadSettings(); });
+
+        // Save settings when the page is unloaded (navigated away).
+        // This ensures TextBox changes that only use LostFocus are persisted
+        // even if the user navigates away without clicking elsewhere first.
+        Unloaded([this](IInspectable const &, RoutedEventArgs const &)
+        {
+            if (!m_loading)
+            {
+                SaveAndApply();
+            }
+        });
     }
 
     winrt::fire_and_forget BittorrentSettingsPage::LoadSettings()

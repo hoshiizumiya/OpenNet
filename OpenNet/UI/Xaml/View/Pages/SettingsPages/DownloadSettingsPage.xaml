@@ -16,78 +16,68 @@
             BasedOn="{StaticResource BodyStrongTextBlockStyle}"
             TargetType="TextBlock">
             <Style.Setters>
-                <Setter Property="Margin"
-                        Value="1,30,0,6"/>
+                <Setter Property="Margin" Value="1,30,0,6" />
             </Style.Setters>
         </Style>
     </Page.Resources>
 
-    <ScrollViewer>
-        <StackPanel
-            Margin="24,20,24,24"
-            Spacing="{StaticResource SettingsCardSpacing}">
+    <ScrollViewer VerticalAlignment="Top">
+        <StackPanel Margin="24,20,24,24" Spacing="{StaticResource SettingsCardSpacing}">
 
             <!--  Section: Default Save Path  -->
-            <TextBlock x:Uid="DL_Section_SaveLocation"
-                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+            <TextBlock x:Uid="DL_Section_SaveLocation" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 
             <essential:SettingsCard x:Uid="DL_DefaultSavePath">
                 <essential:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE8B7;"/>
+                    <FontIcon Glyph="&#xE8B7;" />
                 </essential:SettingsCard.HeaderIcon>
-                <StackPanel Orientation="Horizontal"
-                        Spacing="8">
+                <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBox
                         x:Name="DefaultSavePathTextBox"
                         x:Uid="DL_DefaultSavePathTextBox"
                         Width="360"
-                        LostFocus="OnSettingChanged"/>
+                        LostFocus="OnSettingChanged" />
                     <Button
                         x:Name="BrowseSavePathButton"
                         x:Uid="DL_BrowseSavePathButton"
-                        Click="BrowseSavePathButton_Click"/>
+                        Click="BrowseSavePathButton_Click" />
                 </StackPanel>
             </essential:SettingsCard>
 
             <essential:SettingsCard x:Uid="DL_PreallocateStorage">
                 <essential:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xEDA2;"/>
+                    <FontIcon Glyph="&#xEDA2;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="PreallocateStorageToggle"
-                        Toggled="OnSettingChanged"/>
+                <ToggleSwitch x:Name="PreallocateStorageToggle" Toggled="OnSettingChanged" />
             </essential:SettingsCard>
 
             <!--  Section: Behaviour  -->
-            <TextBlock x:Uid="DL_Section_Behaviour"
-                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"/>
+            <TextBlock x:Uid="DL_Section_Behaviour" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 
             <essential:SettingsCard x:Uid="DL_AutoStartDownloads">
                 <essential:SettingsCard.HeaderIcon>
-                    <FontIcon Glyph="&#xE768;"/>
+                    <FontIcon Glyph="&#xE768;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="AutoStartDownloadsToggle"
-                        Toggled="OnSettingChanged"/>
+                <ToggleSwitch x:Name="AutoStartDownloadsToggle" Toggled="OnSettingChanged" />
             </essential:SettingsCard>
 
             <essential:SettingsExpander x:Uid="DL_MoveCompleted">
                 <essential:SettingsExpander.HeaderIcon>
-                    <FontIcon Glyph="&#xE8DE;"/>
+                    <FontIcon Glyph="&#xE8DE;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch x:Name="MoveCompletedToggle"
-                        Toggled="OnSettingChanged"/>
+                <ToggleSwitch x:Name="MoveCompletedToggle" Toggled="OnSettingChanged" />
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="DL_MoveCompletedPath">
-                        <StackPanel Orientation="Horizontal"
-                                Spacing="8">
+                        <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBox
                                 x:Name="MoveCompletedPathTextBox"
                                 x:Uid="DL_MoveCompletedPathTextBox"
                                 Width="360"
-                                LostFocus="OnSettingChanged"/>
+                                LostFocus="OnSettingChanged" />
                             <Button
                                 x:Name="BrowseMovePathButton"
                                 x:Uid="DL_BrowseMovePathButton"
-                                Click="BrowseMovePathButton_Click"/>
+                                Click="BrowseMovePathButton_Click" />
                         </StackPanel>
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>

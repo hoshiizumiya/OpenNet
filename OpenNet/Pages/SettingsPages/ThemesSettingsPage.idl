@@ -1,9 +1,0 @@
-﻿namespace OpenNet.Pages.SettingsPages
-{
-    [default_interface]
-    runtimeclass ThemesSettingsPage : Microsoft.UI.Xaml.Controls.Page
-    {
-        ThemesSettingsPage();
-
-    }
-}

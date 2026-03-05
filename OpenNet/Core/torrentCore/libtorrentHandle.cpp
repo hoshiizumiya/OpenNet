@@ -15,6 +15,7 @@
 #include <libtorrent/read_resume_data.hpp>
 #include <libtorrent/peer_info.hpp>
 #include <libtorrent/session_stats.hpp>
+#include <libtorrent/ip_filter.hpp>
 
 #include <chrono>
 #include <thread>
@@ -817,6 +818,14 @@ namespace OpenNet::Core::Torrent
         }
     }
 
+    void LibtorrentHandle::SetIpFilter(lt::ip_filter const &filter)
+    {
+        if (m_session)
+        {
+            m_session->set_ip_filter(filter);
+        }
+    }
+
     // ---------------------------------------------------------------
     //  Session-level aggregate statistics
     // ---------------------------------------------------------------
@@ -932,6 +941,10 @@ namespace OpenNet::Core::Torrent
                 pi.totalDownloaded = p.total_download;
                 pi.totalUploaded = p.total_upload;
                 pi.progress = p.progress;
+                pi.flags = static_cast<uint32_t>(p.flags);
+                pi.connectionType = static_cast<int>(static_cast<std::uint8_t>(p.connection_type));
+                pi.source = static_cast<int>(static_cast<std::uint8_t>(p.source));
+                pi.isIncoming = (p.source & lt::peer_info::incoming) != lt::peer_source_flags_t{};
                 info.peers.push_back(std::move(pi));
             }
 

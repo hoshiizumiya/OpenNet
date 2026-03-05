@@ -9,12 +9,10 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <ResourceDictionary Source="ms-appx:///Themes/Generic.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/NavigationView.xaml" />
-                <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsCard_Resource.xaml" />
-                <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsExpander_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Card/TitleCard_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/HomePage/Header/HeaderTile_ResourceDictionary.xaml" />
-                <ResourceDictionary Source="ms-appx:///WinUI3Package/ModernStandardWindowContextMenu_Resource.xaml" />
 
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>

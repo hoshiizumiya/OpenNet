@@ -58,6 +58,7 @@ namespace OpenNet::Core::Torrent
         bool DeleteTask(std::string const& taskId);
         bool UpdateTaskStatus(std::string const& taskId, int status);
         bool UpdateTaskProgress(std::string const& taskId, int64_t downloadedSize);
+        bool UpdateTaskName(std::string const& taskId, std::string const& name);
 
         // Import/Export functionality
         bool ExportToFile(std::wstring const& filePath);

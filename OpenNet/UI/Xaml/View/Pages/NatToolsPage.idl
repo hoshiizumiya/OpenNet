@@ -1,0 +1,8 @@
+namespace OpenNet.UI.Xaml.View.Pages
+{
+    [default_interface]
+    runtimeclass NatToolsPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        NatToolsPage();
+    }
+}

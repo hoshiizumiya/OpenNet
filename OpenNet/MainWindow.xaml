@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="OpenNet.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -7,26 +7,27 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="using:OpenNet.UI.Xaml.View.Pages"
     x:Uid="MainWindowRoot"
     Title="OpenNet"
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt" />
+        <MicaBackdrop Kind="BaseAlt"/>
     </Window.SystemBackdrop>
 
-    <Grid x:Name="RootGrid" Loaded="Grid_Loaded">
+    <Grid x:Name="RootGrid"
+            Loaded="Grid_Loaded">
         <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind}" />
+            <essential:ModernStandardWindowContextMenu x:Name="Menu"
+                    Window="{x:Bind}"/>
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--  标题栏 / Title Bar  -->
-        <!--  Background="{ThemeResource SystemAccentColor}"  -->
         <TitleBar
             x:Name="AppTitleBar"
             x:Uid="AppTitleBar"
@@ -35,7 +36,7 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             BackRequested="AppTitleBar_BackRequested"
-            IsBackButtonVisible="{x:Bind NavFrame.CanGoBack, Mode=OneWay}"
+            IsBackButtonVisible="False"
             IsTabStop="False">
 
             <TitleBar.LeftHeader>
@@ -44,312 +45,32 @@
                     Width="16"
                     Margin="10,0,10,0"
                     AutomationProperties.AccessibilityView="Raw"
-                    Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
+                    Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png"/>
             </TitleBar.LeftHeader>
 
-            <!--<TitleBar.Content>
-                <AutoSuggestBox
-                    x:Name="SearchBox"
-                    x:Uid="SearchBox"
-                    MinWidth="364"
-                    HorizontalAlignment="Stretch"
-                    VerticalAlignment="Center"
-                    QueryIcon="Find"
-                    UpdateTextOnSelect="False" />
-            </TitleBar.Content>-->
-
             <TitleBar.RightHeader>
-                <StackPanel Orientation="Horizontal" Spacing="8">
+                <StackPanel Orientation="Horizontal"
+                        Spacing="8">
                     <TextBlock
                         x:Uid="StatusTextBlock"
                         VerticalAlignment="Center"
                         Foreground="White"
-                        Text="{x:Bind ViewModel.StatusText, Mode=OneWay}"
-                        Visibility="Visible" />
+                        Text="{x:Bind MainContentView.ViewModel.StatusText, Mode=OneWay}"
+                        Visibility="Visible"/>
                     <Button
                         x:Uid="AboutButton"
                         Width="40"
                         Height="40"
-                        Command="{x:Bind ViewModel.ShowAboutCommand}"
+                        Command="{x:Bind MainContentView.ViewModel.ShowAboutCommand}"
                         Content="ℹ️"
                         Style="{StaticResource AccentButtonStyle}"
-                        Visibility="Collapsed" />
-                    <!--  头像与账号区域  -->
-
+                        Visibility="Collapsed"/>
                 </StackPanel>
             </TitleBar.RightHeader>
-
-
-            <!--<StackPanel
-                    VerticalAlignment="Center"
-                    Orientation="Horizontal">
-                    <TextBlock
-                        Margin="0,0,8,0"
-                        FontSize="24"
-                        Text="🌟" />
-                    <TextBlock
-                        Margin="8,0,0,0"
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="White"
-                        Opacity="0.8"
-                        Text="{x:Bind ViewModel.AppVersion, Mode=OneWay}" />
-                </StackPanel>-->
         </TitleBar>
 
-        <!--  导航面板 / Navigation Panel  -->
-        <NavigationView
-            x:Name="NavView"
-            x:Uid="NavView"
-            Grid.Row="1"
-            HighContrastAdjustment="None"
-            IsBackButtonVisible="Collapsed"
-            IsPaneToggleButtonVisible="False"
-            IsSettingsVisible="False"
-            ItemInvoked="NavView_ItemInvoked"
-            Style="{StaticResource MainNavigationViewStyle}">
-            <NavigationView.MenuItems>
-                <!--  主页 / Home  -->
-                <NavigationViewItem
-                    x:Uid="NavItem_Home"
-                    Icon="Home"
-                    Tag="home" />
-
-                <!--<NavigationViewItem x:Uid="NavItem_Contacts" Tag="contacts">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE716;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
-
-                <NavigationViewItem x:Uid="NavItem_Tasks" Tag="tasks">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE7C4;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <NavigationViewItem
-                    x:Uid="NavItem_RSS"
-                    Content="RSS"
-                    Tag="rss">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE774;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-
-                <!--<NavigationViewItem x:Uid="NavItem_Files" Tag="files">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE8B7;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
-
-                <!--<NavigationViewItem x:Uid="NavItem_Network" Tag="net">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE968;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
-
-                <!--<NavigationViewItem x:Uid="NavItem_Servers" Tag="servers">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xEC26;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
-
-
-                <!--<Rectangle
-                        Height="1"
-                        Margin="8,16"
-                        Fill="{ThemeResource DividerStrokeColorDefaultBrush}" />-->
-
-                <!--  快速统计 / Quick Statistics  -->
-                <!--<TextBlock
-                        Margin="8,0"
-                        FontWeight="SemiBold"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="快速统计 / Quick Stats" />
-
-                <StackPanel Margin="8,8,8,0" Spacing="4">
-                    <TextBlock>
-                            <Run Text="连接节点 / Connected:" />
-                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay}" />
-                    </TextBlock>
-                    <TextBlock>
-                            <Run Text="活跃传输 / Active:" />
-                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.ActiveTransfersCount, Mode=OneWay}" />
-                    </TextBlock>
-                    <TextBlock>
-                            <Run Text="传输总量 / Total:" />
-                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.TotalBytesTransferredText, Mode=OneWay}" />
-                    </TextBlock>
-                    <TextBlock>
-                            <Run Text="当前速度 / Speed:" />
-                            <Run FontWeight="Bold" Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay}" />
-                    </TextBlock>
-                </StackPanel>-->
-            </NavigationView.MenuItems>
-
-            <!--  底部⚙️设置区  -->
-            <NavigationView.FooterMenuItems>
-                <NavigationViewItem
-                    Content="Contribute"
-                    SelectsOnInvoked="False"
-                    Tag="Contribute">
-                    <NavigationViewItem.Icon>
-                        <ImageIcon Opacity="0.6" Source="{ThemeResource GitHubIconImage}" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
-                <NavigationViewItem
-                    x:Uid="NavItem_Settings"
-                    Icon="Setting"
-                    Tag="settings" />
-            </NavigationView.FooterMenuItems>
-
-            <NavigationView.Content>
-                <Frame
-                    x:Name="NavFrame"
-                    Navigated="NavFrame_Navigated"
-                    Navigating="NavFrame_Navigating" />
-            </NavigationView.Content>
-
-        </NavigationView>
-
-        <!--  状态栏 / Status Bar  -->
-        <Grid
-            x:Uid="StatusBar"
-            Grid.Row="2"
-            Padding="12,6"
-            Background="{ThemeResource LayerFillColorDefaultBrush}"
-            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-            BorderThickness="0,1,0,0">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
-            <!--  Speed Display  -->
-            <StackPanel
-                Grid.Column="0"
-                Margin="0,0,16,0"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="8">
-                <FontIcon
-                    FontSize="14"
-                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                    Glyph="&#xE896;" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay, FallbackValue='↑ 0 B/s  ↓ 0 B/s'}" />
-            </StackPanel>
-
-            <!--  Connection Status  -->
-            <Border
-                Grid.Column="1"
-                Margin="0,0,16,0"
-                Padding="8,4"
-                Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                CornerRadius="4">
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <FontIcon
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemFillColorSuccessBrush}"
-                        Glyph="&#xEC3B;" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay, FallbackValue='0'}" />
-                    <TextBlock
-                        VerticalAlignment="Center"
-                        FontSize="12"
-                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                        Text="peers" />
-                </StackPanel>
-            </Border>
-
-            <!--  Error / Notification Area  -->
-            <StackPanel
-                Grid.Column="2"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="12">
-                <!--  Error Information  -->
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="6"
-                    Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}">
-                    <FontIcon
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                        Glyph="&#xEA39;" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                        Text="{x:Bind ViewModel.LastError, Mode=OneWay}"
-                        TextTrimming="CharacterEllipsis" />
-                    <Button
-                        Width="20"
-                        Height="20"
-                        Padding="0"
-                        Command="{x:Bind ViewModel.ClearErrorCommand}"
-                        Style="{StaticResource SubtleButtonStyle}">
-                        <FontIcon FontSize="10" Glyph="&#xE711;" />
-                    </Button>
-                </StackPanel>
-
-                <!--  Notification Information  -->
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="6"
-                    Visibility="{x:Bind ViewModel.HasNotification, Mode=OneWay}">
-                    <FontIcon
-                        FontSize="12"
-                        Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                        Glyph="&#xE946;" />
-                    <TextBlock
-                        FontSize="12"
-                        Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}"
-                        TextTrimming="CharacterEllipsis" />
-                </StackPanel>
-            </StackPanel>
-
-            <!--  Port State  -->
-            <StackPanel
-                Grid.Column="3"
-                Margin="16,0,0,0"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="6">
-                <FontIcon
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Glyph="&#xE839;" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="{x:Bind ViewModel.PortState, Mode=OneWay}" />
-            </StackPanel>
-
-            <!--  User Info  -->
-            <StackPanel
-                Grid.Column="4"
-                Margin="16,0,0,0"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="6">
-                <FontIcon
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Glyph="&#xE77B;" />
-                <TextBlock
-                    VerticalAlignment="Center"
-                    FontSize="12"
-                    FontWeight="SemiBold"
-                    Text="{x:Bind ViewModel.UserName, Mode=OneWay}" />
-            </StackPanel>
-        </Grid>
+        <!--  Main content: NavigationView + StatusBar  -->
+        <pages:MainView x:Name="MainContentView"
+                Grid.Row="1"/>
     </Grid>
 </Window>

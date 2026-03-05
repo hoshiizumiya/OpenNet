@@ -1,4 +1,4 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages
+namespace OpenNet.UI.Xaml.View.Pages
 {
     [default_interface]
     runtimeclass TaskSummaryPage : Microsoft.UI.Xaml.Controls.Page

@@ -62,6 +62,12 @@ namespace OpenNet::Core
         /// Get an integer setting
         std::optional<int64_t> GetInt(std::string const& category, std::string const& key) const;
 
+        /// Get an integer setting with default value
+        int64_t GetInt(std::string const& category, std::string const& key, int64_t defaultValue) const
+        {
+            return GetInt(category, key).value_or(defaultValue);
+        }
+
         /// Set a double setting
         void SetDouble(std::string const& category, std::string const& key, double value);
 
@@ -110,6 +116,7 @@ namespace OpenNet::Core
         static constexpr const char* CAT_UI            = "ui";
         static constexpr const char* CAT_APP           = "app";
         static constexpr const char* CAT_COLUMN_WIDTH  = "column_width";
+        static constexpr const char* CAT_RSS           = "rss";
 
     private:
         AppSettingsDatabase() = default;

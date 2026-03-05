@@ -1,5 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
@@ -7,35 +8,41 @@
     <Page Include="Themes\Generic.xaml">
       <Filter>Themes</Filter>
     </Page>
-    <Page Include="Pages\NetworkSettingsPage.xaml">
-      <Filter>Pages</Filter>
+    <Page Include="UI\Xaml\View\Pages\NetworkSettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
-    <Page Include="Pages\TasksPage.xaml">
-      <Filter>Pages</Filter>
+    <Page Include="UI\Xaml\View\Pages\TasksPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
-    <Page Include="Pages\ServersPage.xaml">
-      <Filter>Pages</Filter>
+    <Page Include="UI\Xaml\View\Pages\NatToolsPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
-    <Page Include="Pages\HomePage.xaml">
-      <Filter>Pages</Filter>
+    <Page Include="UI\Xaml\View\Pages\ServersPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
-    <Page Include="Pages\ContactsPage.xaml">
-      <Filter>Pages</Filter>
+    <Page Include="UI\Xaml\View\Pages\HomePage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\MainView.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\ContactsPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
     <Page Include="Styles\NavigationView.xaml">
       <Filter>Styles</Filter>
     </Page>
-    <Page Include="Pages\FilesPage.xaml">
-      <Filter>Pages</Filter>
+    <Page Include="UI\Xaml\View\Pages\FilesPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
-    <Page Include="Pages\SettingsPages\MainSettingsPage.xaml">
-      <Filter>Pages\SettingsPages</Filter>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="Pages\SettingsPages\AboutPage.xaml">
-      <Filter>Pages\SettingsPages</Filter>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\AboutPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="Pages\SettingsPages\ThemesSettingsPage.xaml">
-      <Filter>Pages\SettingsPages</Filter>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemesSettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
     <Page Include="Controls\SpeedGraph\SpeedGraph.xaml">
       <Filter>Controls\SpeedGraph</Filter>
@@ -46,8 +53,8 @@
     <Page Include="Styles\CustomThemeBrushes.xaml">
       <Filter>Themes</Filter>
     </Page>
-    <Page Include="Pages\SettingsPages\SettingsPage.xaml">
-      <Filter>Pages\SettingsPages</Filter>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
@@ -93,10 +100,13 @@
     <Page Include="UI\Shell\NotifyIconContextMenu.xaml">
       <Filter>UI\Shell</Filter>
     </Page>
-    <Page Include="Pages\RSSPage.xaml">
+    <Page Include="UI\Xaml\View\Pages\RSSPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml">
@@ -129,13 +139,19 @@
     <Midl Include="ViewModels\ObservableObject.idl">
       <Filter>ViewModels</Filter>
     </Midl>
-    <Midl Include="Pages\NetworkSettingsPage.idl">
-      <Filter>Pages</Filter>
+    <Midl Include="UI\Xaml\View\Pages\NetworkSettingsPage.idl">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\NatToolsPage.idl">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </Midl>
     <Midl Include="Helpers\NavItemIconHelper.idl">
       <Filter>Helpers</Filter>
     </Midl>
     <Midl Include="ViewModels\TaskViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\DisplayItems.idl">
       <Filter>ViewModels</Filter>
     </Midl>
     <Midl Include="mvvm_framework\mvvm_framework_events.idl">
@@ -150,8 +166,8 @@
     <Midl Include="Core\DataGraph\ReadableUnitConverterWinRT.idl">
       <Filter>Core\DataGraph</Filter>
     </Midl>
-    <Midl Include="Pages\SettingsPages\SettingsPage.idl">
-      <Filter>Pages\SettingsPages</Filter>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.idl">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Midl>
     <Midl Include="UI\Xaml\Media\Animations\Animations.idl">
       <Filter>UI\Xaml\Media\Animations</Filter>
@@ -173,7 +189,7 @@
     </Midl>
     <Midl Include="ViewModels\TorrentMetadataViewModel.idl" />
     <Midl Include="ViewModels\RSSViewModel.idl" />
-    <Midl Include="Pages\RSSPage.idl" />
+    <Midl Include="UI\Xaml\View\Pages\RSSPage.idl" />
     <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl" />
     <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.idl">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
@@ -247,6 +263,9 @@
     <ClCompile Include="ViewModels\TaskViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
+    <ClCompile Include="ViewModels\DisplayItems.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
     <ClCompile Include="ViewModels\TasksViewModel.cpp" />
     <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp">
       <Filter>mvvm_framework</Filter>
@@ -263,8 +282,8 @@
     <ClCompile Include="Core\DownloadManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Pages\SettingsPages\Folder.cpp">
-      <Filter>Pages\SettingsPages</Filter>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\Folder.cpp">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClCompile>
     <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp">
       <Filter>Core\DataGraph</Filter>
@@ -307,6 +326,9 @@
     </ClCompile>
     <ClCompile Include="Core\AppSettingsDatabase.cpp">
       <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DataGraph\SpeedGraphDatabase.cpp">
+      <Filter>Core\DataGraph</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp">
       <Filter>UI\Xaml\View\Dialog</Filter>
@@ -385,6 +407,15 @@
     <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp">
       <Filter>UI\Behaviors</Filter>
     </ClCompile>
+    <ClCompile Include="Core\IPFilter\IPFilterManager.cpp">
+      <Filter>Core\IPFilter</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GeoIP\GeoIPManager.cpp">
+      <Filter>Core\GeoIP</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.cpp" />
+    <ClCompile Include="ThirdParty\RepoInfo.cpp" />
+    <ClCompile Include="Web\Request\Builder\GithubRequest.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -460,6 +491,9 @@
     <ClInclude Include="ViewModels\TaskViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
+    <ClInclude Include="ViewModels\DisplayItems.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
     <ClInclude Include="ViewModels\TasksViewModel.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="mvvm_framework\async_command.h">
@@ -513,8 +547,8 @@
     <ClInclude Include="ViewModels\ObservableMixin.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="Pages\SettingsPages\Folder.h">
-      <Filter>Pages\SettingsPages</Filter>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\Folder.h">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClInclude>
     <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h">
       <Filter>Core\DataGraph</Filter>
@@ -558,6 +592,9 @@
     </ClInclude>
     <ClInclude Include="Core\AppSettingsDatabase.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\DataGraph\SpeedGraphDatabase.h">
+      <Filter>Core\DataGraph</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h">
       <Filter>UI\Xaml\View\Dialog</Filter>
@@ -648,6 +685,15 @@
     <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h">
       <Filter>UI\Behaviors</Filter>
     </ClInclude>
+    <ClInclude Include="Core\IPFilter\IPFilterManager.h">
+      <Filter>Core\IPFilter</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GeoIP\GeoIPManager.h">
+      <Filter>Core\GeoIP</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h" />
+    <ClInclude Include="ThirdParty\RepoInfo.h" />
+    <ClInclude Include="Web\Request\Builder\GithubRequest.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -871,10 +917,10 @@
     <Filter Include="Strings">
       <UniqueIdentifier>{898f0c0c-461f-4218-9b56-300158176aef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pages\SettingsPages">
+    <Filter Include="UI\Xaml\View\Pages\SettingsPages">
       <UniqueIdentifier>{69bf7159-e0d7-4f9b-82f8-4da7a509e3a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pages\ThemesSwitcher">
+    <Filter Include="UI\Xaml\View\Pages\ThemesSwitcher">
       <UniqueIdentifier>{b08cf51f-104f-4429-ac30-3550aa007be9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Controls">
@@ -967,6 +1013,12 @@
     <Filter Include="UI\Xaml\View\Pages\SettingsPages">
       <UniqueIdentifier>{8ccea5e1-6e8a-479e-93de-cad9dde2d816}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\IPFilter">
+      <UniqueIdentifier>{6c9a7fbe-fa87-4a9c-a114-3a0e4f67c4af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\GeoIP">
+      <UniqueIdentifier>{7d0b8ace-fb98-5b0d-b225-4b1f5e78d5b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -986,6 +1038,7 @@
     <None Include="mvvm_framework\README.md">
       <Filter>UI\Behaviors</Filter>
     </None>
+    <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
@@ -1007,5 +1060,8 @@
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.Dev.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Assets\IP2Location\LICENSE.TXT" />
   </ItemGroup>
 </Project>

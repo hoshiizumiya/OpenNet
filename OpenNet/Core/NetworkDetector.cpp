@@ -165,7 +165,7 @@ namespace OpenNet::Core
             if (tcp)
             {
                 StreamSocket socket;
-                co_await socket.ConnectAsync(HostName(L"www.google.com"), winrt::to_hstring(port));
+                co_await socket.ConnectAsync(HostName(L"www.baidu.com"), winrt::to_hstring(port));
                 co_return true;
             }
             else

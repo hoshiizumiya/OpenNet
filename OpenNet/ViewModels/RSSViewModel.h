@@ -96,6 +96,7 @@ namespace winrt::OpenNet::ViewModels::implementation
     struct RSSViewModel : RSSViewModelT<RSSViewModel>
     {
         RSSViewModel();
+        ~RSSViewModel();
 
         Windows::Foundation::Collections::IObservableVector<OpenNet::ViewModels::RSSFeedViewModel> Feeds() const { return m_feeds; }
         OpenNet::ViewModels::RSSFeedViewModel SelectedFeed() const { return m_selectedFeed; }

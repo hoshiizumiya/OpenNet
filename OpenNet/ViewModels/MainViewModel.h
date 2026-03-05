@@ -6,6 +6,7 @@
 #include <winrt/Microsoft.UI.Dispatching.h>
 #include <thread>
 #include <atomic>
+#include <chrono>
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -51,9 +52,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 
         // 快速统计 / Quick stats
         int32_t ConnectedPeersCount() const { return m_connectedPeersCount; }
+        int32_t DhtNodeCount() const { return m_dhtNodeCount; }
         int32_t ActiveTransfersCount() const { return m_activeTransfersCount; }
         winrt::hstring TotalBytesTransferredText() const { return m_totalBytesTransferredText; }
         winrt::hstring CurrentTransferSpeedText() const { return m_currentTransferSpeedText; }
+        winrt::hstring SpeedLevel() const { return m_speedLevel; }
+        int32_t ListenPort() const { return m_listenPort; }
 
         // 网络状态 / Network status
         winrt::hstring NetworkStatusText() const { return m_networkStatusText; }
@@ -112,9 +116,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 
         // 快速统计 / Quick stats
         int32_t m_connectedPeersCount{0};
+        int32_t m_dhtNodeCount{0};
         int32_t m_activeTransfersCount{0};
         winrt::hstring m_totalBytesTransferredText{L"0 B"};
         winrt::hstring m_currentTransferSpeedText{L"0 bps"};
+        winrt::hstring m_speedLevel{L"Low"};
+        int32_t m_listenPort{0};
 
         // 网络状态 / Network status
         winrt::hstring m_networkStatusText{L"未知 / Unknown"};
@@ -143,6 +150,11 @@ namespace winrt::OpenNet::ViewModels::implementation
         std::thread m_speedRefreshThread;
         std::atomic<bool> m_stopSpeedRefresh{false};
         void SpeedRefreshThreadEntry();
+
+        // Port check state
+        std::chrono::steady_clock::time_point m_lastPortCheckTime{};
+        int m_lastCheckedPort{0};
+        std::wstring m_cachedPortState{L"Unknown"};
     };
 }
 namespace winrt::OpenNet::ViewModels::factory_implementation

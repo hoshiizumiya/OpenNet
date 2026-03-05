@@ -39,6 +39,9 @@ namespace OpenNet::Core::RSS
         }
     }
 
+    // Forward declaration
+    static bool IsProbableTorrentDownloadUrl(const std::wstring& url);
+
     // Helper to extract all torrent links from an item node
     static std::vector<std::wstring> ExtractAllTorrentLinks(IXmlNode const& itemNode)
     {
@@ -64,7 +67,8 @@ namespace OpenNet::Core::RSS
                         typeStr.find(L"torrent") != std::wstring::npos ||
                         urlStr.find(L".torrent") != std::wstring::npos ||
                         urlStr.find(L"magnet:") == 0 ||
-                        urlStr.find(L"down") != std::wstring::npos)  // Many torrent sites use "down" in URL
+                        urlStr.find(L"down") != std::wstring::npos ||
+                        IsProbableTorrentDownloadUrl(urlStr))
                     {
                         if (!urlStr.empty())
                         {
@@ -83,7 +87,8 @@ namespace OpenNet::Core::RSS
             if (linkNode)
             {
                 std::wstring linkText = linkNode.InnerText().c_str();
-                if (linkText.find(L"magnet:") == 0 || linkText.find(L".torrent") != std::wstring::npos)
+                if (linkText.find(L"magnet:") == 0 || linkText.find(L".torrent") != std::wstring::npos
+                    || IsProbableTorrentDownloadUrl(linkText))
                 {
                     links.push_back(linkText);
                 }
@@ -119,7 +124,49 @@ namespace OpenNet::Core::RSS
         return links;
     }
 
-    // Select the best torrent link (prefer magnet, then .torrent)
+    // Helper: is the URL likely a torrent download link?
+    // Recognizes URLs like:
+    //   https://tracker.example.com/download.php?id=123&passkey=abc
+    //   https://example.com/dl/abc123def456.torrent
+    //   https://rss.example.com/torrents/download/HASH
+    // Patterns inspired by qBittorrent's RSS torrent-link heuristics.
+    static bool IsProbableTorrentDownloadUrl(const std::wstring& url)
+    {
+        // Already handled upstream: magnet: prefix and .torrent suffix
+        // Here we check for other common torrent-tracker download patterns.
+
+        // URL path/query patterns that suggest a torrent download endpoint
+        static const std::vector<std::wstring> downloadPatterns = {
+            L"download.php",
+            L"download?",
+            L"/download/",
+            L"/dl/",
+            L"action=download",
+            L"passkey=",
+            L"authkey=",
+            L"torrent_pass=",
+            L"tp=",
+            L"/rss/download/",
+        };
+
+        std::wstring lower = url;
+        std::transform(lower.begin(), lower.end(), lower.begin(), ::towlower);
+
+        for (const auto& pattern : downloadPatterns)
+        {
+            if (lower.find(pattern) != std::wstring::npos)
+                return true;
+        }
+
+        // Check for info-hash-like hex string (40 chars) in the URL
+        static const std::wregex hashPattern(L"[0-9a-fA-F]{40}");
+        if (std::regex_search(url, hashPattern))
+            return true;
+
+        return false;
+    }
+
+    // Select the best torrent link (prefer magnet, then .torrent, then download URL)
     static std::wstring SelectBestTorrentLink(const std::vector<std::wstring>& links)
     {
         if (links.empty()) return L"";
@@ -137,6 +184,15 @@ namespace OpenNet::Core::RSS
         for (const auto& link : links)
         {
             if (link.find(L".torrent") != std::wstring::npos)
+            {
+                return link;
+            }
+        }
+
+        // Then prefer probable torrent download URLs (passkey, hash, etc.)
+        for (const auto& link : links)
+        {
+            if (IsProbableTorrentDownloadUrl(link))
             {
                 return link;
             }
@@ -339,7 +395,7 @@ namespace OpenNet::Core::RSS
 
     std::wstring RSSParser::ExtractTorrentLink(const RSSItem& item)
     {
-        // Priority: enclosure URL > link (if it's a torrent/magnet)
+        // Priority: enclosure URL > link (if it's a torrent/magnet/download URL)
         if (!item.enclosureUrl.empty())
         {
             return item.enclosureUrl;
@@ -348,6 +404,12 @@ namespace OpenNet::Core::RSS
         // Check if link is a torrent file or magnet link
         if (item.link.find(L".torrent") != std::wstring::npos ||
             item.link.find(L"magnet:") == 0)
+        {
+            return item.link;
+        }
+
+        // Check if link looks like a torrent download URL (passkey, hash, etc.)
+        if (!item.link.empty() && IsProbableTorrentDownloadUrl(item.link))
         {
             return item.link;
         }

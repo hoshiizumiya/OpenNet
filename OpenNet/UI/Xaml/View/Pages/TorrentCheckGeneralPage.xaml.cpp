@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "TorrentCheckGeneralPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.cpp")
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.cpp"
@@ -123,7 +123,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		button.IsEnabled(true);
 	}
 
-	Windows::Foundation::IAsyncOperation<hstring> TorrentCheckGeneralPage::PickFolderAsync()
+	::winrt::Windows::Foundation::IAsyncOperation<hstring> TorrentCheckGeneralPage::PickFolderAsync()
 	{
 		if (auto appWindow = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetAppWindowForElement(*this))
 		{

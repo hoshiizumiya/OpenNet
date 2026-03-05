@@ -46,6 +46,19 @@ namespace OpenNet::Core
         // Initialize HTTP download record persistence
         HttpStateManager::Instance().Initialize();
 
+        // Rebuild GID→recordId mapping from persisted records so that
+        // GetRecordIdForGid() works correctly after an app restart.
+        {
+            auto records = HttpStateManager::Instance().LoadAllRecords();
+            for (auto const &rec : records)
+            {
+                if (!rec.lastGid.empty())
+                {
+                    m_gidToRecordId[rec.lastGid] = rec.recordId;
+                }
+            }
+        }
+
         // Start periodic refresh thread
         m_stopRefresh.store(false);
         m_refreshThread = std::thread([this]()
@@ -137,9 +150,23 @@ namespace OpenNet::Core
 
     std::string DownloadManager::GetRecordIdForGid(std::string const &gid) const
     {
-        std::lock_guard lock(m_mutex);
-        auto it = m_gidToRecordId.find(gid);
-        return (it != m_gidToRecordId.end()) ? it->second : std::string{};
+        // First try in-memory cache
+        {
+            std::lock_guard lock(m_mutex);
+            auto it = m_gidToRecordId.find(gid);
+            if (it != m_gidToRecordId.end())
+                return it->second;
+        }
+        // Fallback: look up in SQLite by lastGid column
+        auto rec = HttpStateManager::Instance().FindByGid(gid);
+        if (rec.has_value())
+        {
+            // Cache for future lookups
+            std::lock_guard lock(m_mutex);
+            m_gidToRecordId[gid] = rec->recordId;
+            return rec->recordId;
+        }
+        return {};
     }
 
     void DownloadManager::PauseHttpDownload(std::string const &gid)

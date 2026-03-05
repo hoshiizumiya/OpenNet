@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "pch.h"
 #include "DownloadSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.g.cpp"
@@ -24,6 +24,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
         Loaded([this](IInspectable const &, RoutedEventArgs const &)
                { LoadSettings(); });
+
+        // Save settings when page unloads so TextBox LostFocus changes aren't lost
+        Unloaded([this](IInspectable const &, RoutedEventArgs const &)
+        {
+            if (!m_loading)
+            {
+                SaveSettings();
+            }
+        });
     }
 
     void DownloadSettingsPage::LoadSettings()

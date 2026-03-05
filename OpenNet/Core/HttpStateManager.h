@@ -2,6 +2,7 @@
  * PROJECT:   OpenNet
  * FILE:      Core/HttpStateManager.h
  * PURPOSE:   Persistence for HTTP/HTTPS/FTP download records (Aria2-based)
+ *            Uses SQLite for reliable storage (replaces old JSON backend).
  *
  * LICENSE:   The MIT License
  */
@@ -13,6 +14,8 @@
 #include <optional>
 #include <string>
 #include <vector>
+
+struct sqlite3;
 
 namespace OpenNet::Core
 {
@@ -31,14 +34,17 @@ namespace OpenNet::Core
         std::string lastGid;            // Last known Aria2 GID (for session re-association)
     };
 
-    // Manages HTTP download record persistence via JSON
+    // Manages HTTP download record persistence via SQLite
     class HttpStateManager
     {
     public:
         static HttpStateManager& Instance();
 
-        // Initialize: determine storage path, load existing records
+        // Initialize: determine storage path, create/open database
         void Initialize();
+
+        // Close the database connection
+        void Close();
 
         // Record CRUD
         std::string AddRecord(std::string const& url, std::string const& savePath, std::string const& fileName);
@@ -53,23 +59,24 @@ namespace OpenNet::Core
         std::optional<HttpDownloadRecord> FindByRecordId(std::string const& recordId) const;
         std::vector<HttpDownloadRecord> LoadAllRecords() const;
 
-        // Flush changes to disk
+        // Flush changes to disk (no-op for SQLite WAL, kept for API compat)
         void Save();
 
     private:
         HttpStateManager() = default;
-        ~HttpStateManager() = default;
+        ~HttpStateManager();
 
         HttpStateManager(HttpStateManager const&) = delete;
         HttpStateManager& operator=(HttpStateManager const&) = delete;
 
-        void LoadNoLock();
-        void SaveNoLock();
+        void CreateTables();
+        void MigrateFromJsonIfNeeded();
         static std::string GenerateRecordId();
 
         mutable std::mutex m_mutex;
-        std::vector<HttpDownloadRecord> m_records;
-        std::wstring m_filePath;
+        sqlite3* m_db{ nullptr };
+        std::wstring m_dbPath;
+        std::wstring m_folderPath;
         bool m_initialized{ false };
     };
 }

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.h"
 #include "Core/TorrentSettings.h"

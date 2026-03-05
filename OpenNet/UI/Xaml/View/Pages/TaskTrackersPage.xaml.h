@@ -11,6 +11,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         ~TaskTrackersPage();
 
         void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
+        void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 
     private:
         winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };

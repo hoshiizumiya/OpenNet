@@ -1,8 +1,0 @@
-﻿namespace OpenNet.Pages
-{
-    [default_interface]
-    runtimeclass FilesPage : Microsoft.UI.Xaml.Controls.Page
-    {
-        FilesPage();
-    }
-}

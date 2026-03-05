@@ -88,6 +88,9 @@ namespace OpenNet::Core::Torrent
         libtorrent::settings_pack GetSettings() const;
         void ApplySettings(libtorrent::settings_pack const &pack);
 
+        // IP filter
+        void SetIpFilter(libtorrent::ip_filter const &filter);
+
         // -----------------------------------------------------------
         //  Session-level statistics (aggregated across all torrents)
         // -----------------------------------------------------------
@@ -117,6 +120,10 @@ namespace OpenNet::Core::Torrent
             int64_t totalDownloaded{};
             int64_t totalUploaded{};
             double progress{};
+            uint32_t flags{};         // libtorrent peer_info::flags (bitmask)
+            int connectionType{};     // 0=standard_bittorrent, 1=web_seed, 2=http_seed
+            int source{};             // libtorrent peer_info::source_flags bitmask
+            bool isIncoming{};        // true if peer initiated the connection
         };
 
         struct TorrentTrackerInfo

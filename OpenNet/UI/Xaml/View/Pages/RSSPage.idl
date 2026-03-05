@@ -1,0 +1,11 @@
+import "ViewModels/RSSViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages
+{
+    [default_interface]
+    runtimeclass RSSPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        RSSPage();
+        OpenNet.ViewModels.RSSViewModel ViewModel{ get; };
+    }
+}

@@ -201,21 +201,34 @@ namespace winrt::OpenNet::ViewModels::implementation
 
         auto& manager = RSSManager::Instance();
 
-        // Set up callbacks before initialization
-        manager.SetFeedUpdatedCallback([this](const std::wstring& feedId) {
-            OnFeedUpdated(feedId);
+        // Set up callbacks with weak_ref so background RSS fetches won't
+        // crash when the ViewModel (and its DispatcherQueue) is already gone.
+        manager.SetFeedUpdatedCallback([weak = get_weak()](const std::wstring& feedId) {
+            if (auto self = weak.get())
+                self->OnFeedUpdated(feedId);
         });
 
-        manager.SetNewItemCallback([this](const std::wstring& feedId, const RSSItem& item) {
-            OnNewItem(feedId, item);
+        manager.SetNewItemCallback([weak = get_weak()](const std::wstring& feedId, const RSSItem& item) {
+            if (auto self = weak.get())
+                self->OnNewItem(feedId, item);
         });
 
-        manager.SetErrorCallback([this](const std::wstring& feedId, const std::wstring& error) {
-            OnError(feedId, error);
+        manager.SetErrorCallback([weak = get_weak()](const std::wstring& feedId, const std::wstring& error) {
+            if (auto self = weak.get())
+                self->OnError(feedId, error);
         });
 
         // Initialize asynchronously using fire_and_forget pattern
         InitializeManagerAsync();
+    }
+
+    RSSViewModel::~RSSViewModel()
+    {
+        // Clear callbacks so background RSS threads won't call into destroyed UI.
+        auto& manager = RSSManager::Instance();
+        manager.SetFeedUpdatedCallback(nullptr);
+        manager.SetNewItemCallback(nullptr);
+        manager.SetErrorCallback(nullptr);
     }
 
     winrt::fire_and_forget RSSViewModel::InitializeManagerAsync()

@@ -1,0 +1,8 @@
+namespace OpenNet.UI.Xaml.View.Pages
+{
+    [default_interface]
+    runtimeclass ServersPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ServersPage();
+    }
+}

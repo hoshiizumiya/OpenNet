@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "ViewModels/TaskViewModel.h"
 #include "ViewModels/TaskViewModel.g.cpp"
+#include "Core/DataGraph/SpeedGraphDatabase.h"
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -22,6 +23,18 @@ namespace winrt::OpenNet::ViewModels::implementation
         {
             m_speedGraphData.SetSpeed(percent, speedKB * 1024);  // Convert KB to bytes for internal representation
             RaisePropertyChanged(L"SpeedGraphPoints");
+
+            // Persist at each 1% boundary
+            int intPercent = static_cast<int>(percent);
+            if (intPercent > m_lastSavedPercent && intPercent <= 100)
+            {
+                m_lastSavedPercent = intPercent;
+                auto taskId = winrt::to_string(m_taskId);
+                if (!taskId.empty())
+                {
+                    ::OpenNet::Core::SpeedGraphDatabase::Instance().SavePoint(taskId, intPercent, speedKB);
+                }
+            }
         }
         catch (...)
         {

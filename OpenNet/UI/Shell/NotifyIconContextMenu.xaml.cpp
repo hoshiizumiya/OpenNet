@@ -29,34 +29,11 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	{
 		InitializeComponent();
 
-		// Create the TaskbarIcon programmatically
 		m_trayIcon = winrt::WinUI3Package::TaskbarIcon();
 		m_trayIcon.Guid(IconGuid());
-
-		// Resolve icon path - TaskbarIcon requires actual file system path, not ms-appx:// URI
-		try
-		{
-			auto packagePath = Windows::ApplicationModel::Package::Current().InstalledLocation().Path();
-			auto iconPath = packagePath + L"\\Assets\\AppIcons\\Square44x44Logo.targetsize-32.png";
-			m_trayIcon.IconFile(iconPath);
-		}
-		catch (...)
-		{
-			// Fallback: try using executable directory for unpackaged scenario
-			wchar_t modulePath[MAX_PATH];
-			if (GetModuleFileNameW(nullptr, modulePath, MAX_PATH) > 0)
-			{
-				std::wstring path(modulePath);
-				auto lastSlash = path.rfind(L'\\');
-				if (lastSlash != std::wstring::npos)
-				{
-					path = path.substr(0, lastSlash) + L"\\Assets\\AppIcons\\Square44x44Logo.targetsize-32.png";
-					m_trayIcon.IconFile(path);
-				}
-			}
-		}
-
+		m_trayIcon.IconFile(Windows::ApplicationModel::Package::Current().InstalledLocation().Path() + L"\\Assets\\AppIcons\\StoreLogo.scale-150.png");
 		m_trayIcon.ToolTip(L"OpenNet");
+		m_trayIcon.LeftPressed([this]{ ShowMainWindow(); });
 
 		// Create context menu
 		MenuFlyout menuFlyout;
@@ -118,11 +95,11 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		Remove();
 
 		// Close the main window to trigger cleanup
-		auto window = winrt::OpenNet::implementation::App::window;
-		if (window)
-		{
-			window.Close();
-		}
+		//auto window = winrt::OpenNet::implementation::App::window;
+		//if (window)
+		//{
+		//	window.Close();
+		//}
 
 		// Exit the application
 		Microsoft::UI::Xaml::Application::Current().Exit();

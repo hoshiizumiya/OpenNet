@@ -912,4 +912,127 @@
   <data name="FilesList_EmptyState.Text" xml:space="preserve">
     <value>No file information available</value>
   </data>
+  <!-- ===== IP Filter Settings Page ===== -->
+  <data name="IPF_Title.Text" xml:space="preserve">
+    <value>IP Filter</value>
+  </data>
+  <data name="IPF_Subtitle.Text" xml:space="preserve">
+    <value>Block or allow connections from specific IP addresses and ranges</value>
+  </data>
+  <data name="IPF_Section_General.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="IPF_Enable.Header" xml:space="preserve">
+    <value>Enable IP Filter</value>
+  </data>
+  <data name="IPF_Enable.Description" xml:space="preserve">
+    <value>When enabled, connections from blocked IPs will be rejected</value>
+  </data>
+  <data name="IPF_RuleCount.Header" xml:space="preserve">
+    <value>Total Rules</value>
+  </data>
+  <data name="IPF_RuleCount.Description" xml:space="preserve">
+    <value>Number of IP filter rules currently loaded</value>
+  </data>
+  <data name="IPF_Section_AddRule.Text" xml:space="preserve">
+    <value>Add Rules</value>
+  </data>
+  <data name="IPF_ManualAdd.Header" xml:space="preserve">
+    <value>Manual Input</value>
+  </data>
+  <data name="IPF_ManualAdd.Description" xml:space="preserve">
+    <value>Enter IP addresses, CIDR blocks, or ranges (one per line)</value>
+  </data>
+  <data name="IPF_ManualInput.Header" xml:space="preserve">
+    <value>IP Addresses</value>
+  </data>
+  <data name="IPF_AddBtn.Content" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="IPF_ImportFile.Header" xml:space="preserve">
+    <value>Import from File</value>
+  </data>
+  <data name="IPF_ImportFile.Description" xml:space="preserve">
+    <value>Import rules from a text file (.txt, .dat, .p2p)</value>
+  </data>
+  <data name="IPF_ImportBtn.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="IPF_Section_Manage.Text" xml:space="preserve">
+    <value>Manage Rules</value>
+  </data>
+  <data name="IPF_ClearAll.Header" xml:space="preserve">
+    <value>Clear All Rules</value>
+  </data>
+  <data name="IPF_ClearAll.Description" xml:space="preserve">
+    <value>Remove all IP filter rules from the database</value>
+  </data>
+  <data name="IPF_ClearBtn.Content" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
+  <!-- Rename Task -->
+  <data name="RenameTaskMenuItem.Text" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <!-- Ban Peer -->
+  <data name="BanPeer1hItem.Text" xml:space="preserve">
+    <value>Ban for 1 hour</value>
+  </data>
+  <data name="BanPeer24hItem.Text" xml:space="preserve">
+    <value>Ban for 24 hours</value>
+  </data>
+  <data name="BanPeerPermanentItem.Text" xml:space="preserve">
+    <value>Ban permanently</value>
+  </data>
+  <!-- Peer List Headers -->
+  <data name="PeerHeader_Location.Text" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="PeerHeader_PeerStatus.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PeerHeader_Protocol.Text" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="PeerHeader_Initiator.Text" xml:space="preserve">
+    <value>Initiator</value>
+  </data>
+  <data name="PeerHeader_Source.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <!-- NAT Tools Navigation -->
+  <data name="NavItem_NatTools.Content" xml:space="preserve">
+    <value>NAT Tools</value>
+  </data>
+  <!-- NAT Tools Page -->
+  <data name="NatTools_NATDetection.Text" xml:space="preserve">
+    <value>NAT Type Detection</value>
+  </data>
+  <data name="NatTools_DetectButton.Content" xml:space="preserve">
+    <value>Detect NAT Type</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.Text" xml:space="preserve">
+    <value>NAT Type: </value>
+  </data>
+  <data name="NatTools_PublicIPLabel.Text" xml:space="preserve">
+    <value>Public IP: </value>
+  </data>
+  <data name="NatTools_UPnPLabel.Text" xml:space="preserve">
+    <value>UPnP: </value>
+  </data>
+  <data name="NatTools_PortTest.Text" xml:space="preserve">
+    <value>Port Accessibility Test</value>
+  </data>
+  <data name="NatTools_PortNumberBox.PlaceholderText" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="NatTools_TestPortButton.Content" xml:space="preserve">
+    <value>Test Port</value>
+  </data>
+  <data name="NatTools_PortResultLabel.Text" xml:space="preserve">
+    <value>Result: </value>
+  </data>
+  <data name="NatTools_STUNServers.Text" xml:space="preserve">
+    <value>Recommended STUN Servers</value>
+  </data>
 </root>
