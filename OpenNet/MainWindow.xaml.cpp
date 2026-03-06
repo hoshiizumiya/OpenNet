@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainWindow.xaml.h"
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
@@ -43,6 +43,14 @@ namespace winrt::OpenNet::implementation
 		{
 			PlacementRestoration::Save(*this);
 
+			// Stop ViewModel background thread before tearing down engines
+			try
+			{
+				if (auto vm = ViewModel())
+					vm.Shutdown();
+			}
+			catch (...) { OutputDebugStringA("MainWindow: ViewModel shutdown error\n"); }
+
 			// Gracefully shut down download engines
 			try { ::OpenNet::Core::P2PManager::Instance().Shutdown(); }
 			catch (...) { OutputDebugStringA("MainWindow: P2PManager shutdown error\n"); }
@@ -76,7 +84,7 @@ namespace winrt::OpenNet::implementation
 		window.ExtendsContentIntoTitleBar(true);
 		if (auto appWindow = window.AppWindow())
 		{
-			appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
+			appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
 			PlacementRestoration::Enable(*this);
 #ifdef _DEBUG
 			{

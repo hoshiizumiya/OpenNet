@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "MainView.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/MainView.g.cpp")
 #include "UI/Xaml/View/Pages/MainView.g.cpp"
@@ -20,7 +20,6 @@ using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
-using MainViewModelType = winrt::OpenNet::ViewModels::MainViewModel;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
@@ -28,7 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		InitializeComponent();
 
-		m_viewModel = MainViewModelType{};
+		m_viewModel = winrt::OpenNet::ViewModels::MainViewModel();
 		m_viewModel.Initialize();
 
 		// Navigate to saved start page (default: home)
@@ -52,7 +51,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	MainViewModelType MainView::ViewModel()
+	winrt::OpenNet::ViewModels::MainViewModel MainView::ViewModel()
 	{
 		return m_viewModel;
 	}

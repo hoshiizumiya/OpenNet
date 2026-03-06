@@ -9,7 +9,7 @@
 #include "Core/GeoIP/GeoIPManager.h"
 
 #include <winrt/Windows.ApplicationModel.Activation.h>
-#include <winrt/Windows.Storage.h>
+#include <sentry.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -63,6 +63,10 @@ namespace winrt::OpenNet::implementation
         // Register window closing event - hide to tray instead of closing
         window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
         {
+            // If we are in an intentional exit, allow the window to close
+            if (App::s_isExiting)
+                return;
+
             // Cancel the close and hide to tray instead
             args.Cancel(true);
 
@@ -205,6 +209,8 @@ namespace winrt::OpenNet::implementation
             // Stop RSS background updates
             ::OpenNet::Core::RSS::RSSManager::Instance().Stop();
 
+            // make sure everything flushes
+            sentry_close();
             OutputDebugStringA("App: Destructor completed\n");
         }
         catch (const std::exception& ex)
