@@ -29,20 +29,14 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	{
 		InitializeComponent();
 
-		m_trayIcon = winrt::WinUI3Package::TaskbarIcon();
-		m_trayIcon.Guid(IconGuid());
-		m_trayIcon.IconFile(Windows::ApplicationModel::Package::Current().InstalledLocation().Path() + L"\\Assets\\AppIcons\\StoreLogo.scale-150.png");
-		m_trayIcon.ToolTip(L"OpenNet");
-		m_trayIcon.LeftPressed([this]{ ShowMainWindow(); });
+		trayIcon().Guid(IconGuid());
 
-		// Create context menu
 		MenuFlyout menuFlyout;
 
 		MenuFlyoutItem showItem;
 		showItem.Text(L"Show");
 		showItem.Click([this](auto&&, auto&&) { ShowMainWindow(); });
 		menuFlyout.Items().Append(showItem);
-
 		menuFlyout.Items().Append(MenuFlyoutSeparator());
 
 		MenuFlyoutItem exitItem;
@@ -50,22 +44,22 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		exitItem.Click([this](auto&&, auto&&) { ExitApplication(); });
 		menuFlyout.Items().Append(exitItem);
 
-		m_trayIcon.RightClickMenu(menuFlyout);
+		trayIcon().RightClickMenu(menuFlyout);
 	}
 
 	void NotifyIconContextMenu::Show()
 	{
-		if (m_trayIcon)
+		if (trayIcon())
 		{
-			m_trayIcon.Show();
+			trayIcon().Show();
 		}
 	}
 
 	void NotifyIconContextMenu::Remove()
 	{
-		if (m_trayIcon)
+		if (trayIcon())
 		{
-			m_trayIcon.Remove();
+			trayIcon().Remove();
 		}
 	}
 
@@ -94,14 +88,11 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		// Remove the tray icon
 		Remove();
 
-		// Close the main window to trigger cleanup
-		//auto window = winrt::OpenNet::implementation::App::window;
-		//if (window)
-		//{
-		//	window.Close();
-		//}
+		// Allow the window to close (bypasses the hide-to-tray Closing handler)
+		winrt::OpenNet::implementation::App::s_isExiting = true;
 
-		// Exit the application
+		// Exit the application - now the Closing handler will not cancel the close,
+		// the window closes properly, App::~App() runs, and all services shut down.
 		Microsoft::UI::Xaml::Application::Current().Exit();
 	}
 }

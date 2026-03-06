@@ -18,9 +18,6 @@ namespace winrt::OpenNet::UI::Shell::implementation
         void Remove();
         void ShowMainWindow();
         void ExitApplication();
-
-    private:
-        winrt::WinUI3Package::TaskbarIcon m_trayIcon{ nullptr };
     };
 }
 

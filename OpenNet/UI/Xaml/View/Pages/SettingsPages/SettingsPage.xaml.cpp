@@ -43,35 +43,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		s_current = this;
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 
-		try
-		{
-			m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
-
-			if (m_initialLanguageOverride.empty())
-			{
-				OutputDebugStringW(L"PrimaryLanguageOverride is empty(NOT SET)\n");
-			}
-		}
-		catch (const winrt::hresult_error& e)
-		{
-#ifdef _DEBUG
-			std::wstring msg = L"WinRT Exception: ";
-			msg += e.message().c_str();
-			msg += L"\n";
-			OutputDebugStringW(msg.c_str());
-#endif
-		}
-#ifdef _DEBUG
-		OutputDebugStringW((m_initialLanguageOverride+L"\n").c_str());
-
-#endif // _DEBUG
-
 		// Defer all UI element initialization to Loaded event per C++/WinRT guidelines
 		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
-			{
-				m_loadAction = OnSettingsPageLoadedAsync(sender, e);
-			});
-			Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
+		{
+			m_loadAction = OnSettingsPageLoadedAsync(sender, e);
+		});
+		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
 
 	}
 	SettingsPage::~SettingsPage()
@@ -273,7 +250,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 						winrt::Windows::Foundation::Uri fileUri{ uri };
 						BitmapImage bitmap;
 						bitmap.ImageFailed([](winrt::Windows::Foundation::IInspectable const&,
-							winrt::Microsoft::UI::Xaml::ExceptionRoutedEventArgs const& args) {
+											  winrt::Microsoft::UI::Xaml::ExceptionRoutedEventArgs const& args)
+						{
 							OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
 						});
 						bitmap.UriSource(fileUri);
@@ -293,12 +271,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			WCHAR colorBuf[128]{};
 			DWORD bufSize = sizeof(colorBuf);
 			LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
-				L"Control Panel\\Colors",
-				L"Background",
-				RRF_RT_REG_SZ,
-				nullptr,
-				colorBuf,
-				&bufSize);
+										  L"Control Panel\\Colors",
+										  L"Background",
+										  RRF_RT_REG_SZ,
+										  nullptr,
+										  colorBuf,
+										  &bufSize);
 			if (status == ERROR_SUCCESS && border)
 			{
 				std::wstring s{ colorBuf };
@@ -377,6 +355,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto weak = get_weak();
 
 		co_await winrt::resume_background();
+
+		try
+		{
+			m_initialLanguageOverride = ApplicationLanguages::PrimaryLanguageOverride();
+
+			if (m_initialLanguageOverride.empty())
+			{
+				OutputDebugStringW(L"PrimaryLanguageOverride is empty(NOT SET)\n");
+			}
+		}
+		catch (const winrt::hresult_error& e)
+		{
+#ifdef _DEBUG
+			std::wstring msg = L"WinRT Exception: ";
+			msg += e.message().c_str();
+			msg += L"\n";
+			OutputDebugStringW(msg.c_str());
+#endif
+		}
+#ifdef _DEBUG
+		OutputDebugStringW((m_initialLanguageOverride + L"\n").c_str());
+
+#endif // _DEBUG
+
 		co_await wil::resume_foreground(m_dispatcher);
 
 		auto strong = weak.get();
@@ -457,9 +459,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			{
 				switch (currentTheme)
 				{
-				case ElementTheme::Light:  combo.SelectedIndex(0); break;
-				case ElementTheme::Dark:   combo.SelectedIndex(1); break;
-				default:                   combo.SelectedIndex(2); break;
+					case ElementTheme::Light:  combo.SelectedIndex(0); break;
+					case ElementTheme::Dark:   combo.SelectedIndex(1); break;
+					default:                   combo.SelectedIndex(2); break;
 				}
 			}
 

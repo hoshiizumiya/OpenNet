@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Window
     x:Class="OpenNet.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -13,18 +13,16 @@
     mc:Ignorable="d">
 
     <Window.SystemBackdrop>
-        <MicaBackdrop Kind="BaseAlt"/>
+        <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
-    <Grid x:Name="RootGrid"
-            Loaded="Grid_Loaded">
+    <Grid x:Name="RootGrid" Loaded="Grid_Loaded">
         <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="Menu"
-                    Window="{x:Bind}"/>
+            <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind}" />
         </Grid.Resources>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!--  标题栏 / Title Bar  -->
@@ -36,7 +34,6 @@
             HorizontalAlignment="Stretch"
             VerticalAlignment="Top"
             BackRequested="AppTitleBar_BackRequested"
-            IsBackButtonVisible="False"
             IsTabStop="False">
 
             <TitleBar.LeftHeader>
@@ -45,32 +42,11 @@
                     Width="16"
                     Margin="10,0,10,0"
                     AutomationProperties.AccessibilityView="Raw"
-                    Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png"/>
+                    Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
             </TitleBar.LeftHeader>
-
-            <TitleBar.RightHeader>
-                <StackPanel Orientation="Horizontal"
-                        Spacing="8">
-                    <TextBlock
-                        x:Uid="StatusTextBlock"
-                        VerticalAlignment="Center"
-                        Foreground="White"
-                        Text="{x:Bind MainContentView.ViewModel.StatusText, Mode=OneWay}"
-                        Visibility="Visible"/>
-                    <Button
-                        x:Uid="AboutButton"
-                        Width="40"
-                        Height="40"
-                        Command="{x:Bind MainContentView.ViewModel.ShowAboutCommand}"
-                        Content="ℹ️"
-                        Style="{StaticResource AccentButtonStyle}"
-                        Visibility="Collapsed"/>
-                </StackPanel>
-            </TitleBar.RightHeader>
         </TitleBar>
 
         <!--  Main content: NavigationView + StatusBar  -->
-        <pages:MainView x:Name="MainContentView"
-                Grid.Row="1"/>
+        <pages:MainView x:Name="MainContentView" Grid.Row="1" />
     </Grid>
 </Window>

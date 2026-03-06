@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.MainSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -12,7 +12,6 @@
 
     <NavigationView
         x:Name="SettingsNavView"
-        essential:NavigationViewHelper.AcrylicWorkaround="True"
         CompactPaneLength="70"
         IsBackButtonVisible="Collapsed"
         IsSettingsVisible="False"
@@ -31,7 +30,7 @@
                             Height="60"
                             Margin="0,0,10,0"
                             FontSize="40"
-                            Text="{x:Bind Name}"/>
+                            Text="{x:Bind Name}" />
                     </DataTemplate>
                 </BreadcrumbBar.ItemTemplate>
             </BreadcrumbBar>
@@ -48,14 +47,14 @@
                 </NavigationViewItem.InfoBadge>-->
             </NavigationViewItem>
 
-            <NavigationViewItemSeparator/>
+            <NavigationViewItemSeparator />
 
             <NavigationViewItem
                 x:Name="NetworkNavItem"
                 Content="Network"
                 Tag="network">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE968;"/>
+                    <FontIcon Glyph="&#xE968;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -65,25 +64,22 @@
                 IsExpanded="True"
                 Tag="bittorrent">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE896;"/>
+                    <FontIcon Glyph="&#xE896;" />
                 </NavigationViewItem.Icon>
                 <NavigationViewItem.MenuItems>
-                    <NavigationViewItem Content="Tracker"
-                            Tag="tracker">
+                    <NavigationViewItem Content="Tracker" Tag="tracker">
                         <NavigationViewItem.Icon>
-                            <FontIcon Glyph="&#xE774;"/>
+                            <FontIcon Glyph="&#xE774;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="IP Filter"
-                            Tag="ipfilter">
+                    <NavigationViewItem Content="IP Filter" Tag="ipfilter">
                         <NavigationViewItem.Icon>
-                            <FontIcon Glyph="&#xE8D7;"/>
+                            <FontIcon Glyph="&#xE8D7;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="Client Filter"
-                            Tag="clientfilter">
+                    <NavigationViewItem Content="Client Filter" Tag="clientfilter">
                         <NavigationViewItem.Icon>
-                            <FontIcon Glyph="&#xE71C;"/>
+                            <FontIcon Glyph="&#xE71C;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                 </NavigationViewItem.MenuItems>
@@ -94,7 +90,7 @@
                 Content="Serial Port"
                 Tag="serialport">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE8CB;"/>
+                    <FontIcon Glyph="&#xE8CB;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -103,7 +99,7 @@
                 Content="Download/Flash"
                 Tag="downloadflash">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xEC59;"/>
+                    <FontIcon Glyph="&#xEC59;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -112,7 +108,7 @@
                 Content="RSS"
                 Tag="rss">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE71A;"/>
+                    <FontIcon Glyph="&#xE71A;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -121,7 +117,7 @@
                 Content="Appearance"
                 Tag="appearance">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE771;"/>
+                    <FontIcon Glyph="&#xE771;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -130,27 +126,26 @@
                 Content="Advanced"
                 Tag="advanced">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE90F;"/>
+                    <FontIcon Glyph="&#xE90F;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
-            <NavigationViewItemSeparator/>
+            <NavigationViewItemSeparator />
 
             <NavigationViewItem
                 x:Name="AboutNavItem"
                 Content="About"
                 Tag="about">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE946;"/>
+                    <FontIcon Glyph="&#xE946;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
         </NavigationView.MenuItems>
 
-        <Frame x:Name="SettingsFrame"
-                x:FieldModifier="Public">
+        <Frame x:Name="SettingsFrame" x:FieldModifier="Public">
             <Frame.ContentTransitions>
                 <TransitionCollection>
-                    <NavigationThemeTransition/>
+                    <NavigationThemeTransition />
                 </TransitionCollection>
             </Frame.ContentTransitions>
         </Frame>

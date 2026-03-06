@@ -116,11 +116,15 @@ namespace OpenNet::Core::Torrent
         // Signal the alert loop to stop as soon as possible.
         m_stopRequested = true;
         // Wake the alert loop so it can observe the stop request promptly.
+        // post_torrent_updates() only posts an alert when active torrents exist,
+        // so we also call post_session_stats() which unconditionally posts a
+        // session_stats_alert, guaranteeing wait_for_alert() returns immediately.
         if (m_session)
         {
             try
             {
                 m_session->post_torrent_updates();
+                m_session->post_session_stats();
             }
             catch (...)
             {

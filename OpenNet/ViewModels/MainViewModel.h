@@ -7,6 +7,8 @@
 #include <thread>
 #include <atomic>
 #include <chrono>
+#include <mutex>
+#include <condition_variable>
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -19,19 +21,10 @@ namespace winrt::OpenNet::ViewModels::implementation
         // 基本方法 / Basic Methods
         // Summary: 初始化视图模型
         void Initialize();
+        // Summary: 停止后台线程，幂等
+        void Shutdown();
 
-        // 基本属性 / Basic Properties
-        // Summary: 当前状态文本
-        // Return: 状态字符串
-        winrt::hstring StatusText() { return m_statusText; }
-        void StatusText(winrt::hstring str)
-        {
-            if (m_statusText != str)
-            {
-                m_statusText = str;
-                OnPropertyChanged(L"StatusText");
-            }
-        }
+
         // Summary: 是否已连接
         bool IsConnected() { return m_isConnected; }
         void IsConnected(bool value)
@@ -43,8 +36,6 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }
 
-        // Summary: 应用版本号（展示用）
-        winrt::hstring AppVersion() const { return m_appVersion; }
         // Summary: 用户名文本（状态栏）
         winrt::hstring UserName() const { return m_userName; }
         // Summary: 端口状态
@@ -72,10 +63,6 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring LastNotification() const { return m_lastNotification; }
         bool HasNotification() const { return !m_lastNotification.empty(); }
 
-        // Summary: 更新状态文本
-        // Param status: 新的状态字符串
-        void UpdateStatus(winrt::hstring const &status);
-
         // Summary: 初始化核心组件（P2P引擎）
         Windows::Foundation::IAsyncAction InitializeTorrentCore();
 
@@ -84,7 +71,6 @@ namespace winrt::OpenNet::ViewModels::implementation
         void PropertyChanged(winrt::event_token const &token) noexcept { m_propertyChanged.remove(token); }
 
         // 命令（暂为占位，后续接入实际逻辑）/ Commands (placeholders)
-        winrt::Microsoft::UI::Xaml::Input::ICommand ShowAboutCommand() const { return m_showAboutCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand NavigateToPageCommand() const { return m_navigateToPageCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand StartNetworkDetectionCommand() const { return m_startNetworkDetectionCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand ConnectToPeerCommand() const { return m_connectToPeerCommand; }
@@ -100,10 +86,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         }
 
     private:
-        // 基本状态 / Basic state
-        winrt::hstring m_statusText;
         bool m_isConnected{};
-        winrt::hstring m_appVersion;
         winrt::hstring m_userName;
         winrt::hstring m_portState;
 
@@ -135,7 +118,6 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::hstring m_lastNotification;
 
         // 命令 / Commands
-        winrt::Microsoft::UI::Xaml::Input::ICommand m_showAboutCommand{nullptr};
         winrt::Microsoft::UI::Xaml::Input::ICommand m_navigateToPageCommand{nullptr};
         winrt::Microsoft::UI::Xaml::Input::ICommand m_startNetworkDetectionCommand{nullptr};
         winrt::Microsoft::UI::Xaml::Input::ICommand m_connectToPeerCommand{nullptr};
@@ -149,6 +131,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{nullptr};
         std::thread m_speedRefreshThread;
         std::atomic<bool> m_stopSpeedRefresh{false};
+        std::condition_variable m_speedCv;
+        std::mutex m_speedMutex;
         void SpeedRefreshThreadEntry();
 
         // Port check state

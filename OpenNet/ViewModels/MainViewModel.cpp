@@ -16,7 +16,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 {
     // Summary: 构造函数，初始化默认状态和集合
     MainViewModel::MainViewModel()
-        : m_statusText(L"初始化中 / Initializing"), m_isConnected(false), m_appVersion(L"v0.1.0"), m_userName(L"Guest"), m_portState(L"检测中")
+        : m_isConnected(false), m_userName(L"Guest"), m_portState(L"检测中")
     {
         m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
         m_recentActivities = single_threaded_observable_vector<hstring>();
@@ -25,7 +25,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 
     MainViewModel::~MainViewModel()
     {
-        m_stopSpeedRefresh.store(true);
+        Shutdown();
+    }
+
+    void MainViewModel::Shutdown()
+    {
+        {
+            std::lock_guard<std::mutex> lock(m_speedMutex);
+            m_stopSpeedRefresh.store(true);
+        }
+        m_speedCv.notify_all();
         if (m_speedRefreshThread.joinable())
             m_speedRefreshThread.join();
     }
@@ -33,8 +42,6 @@ namespace winrt::OpenNet::ViewModels::implementation
     // Summary: 初始化视图模型，设置就绪状态
     void MainViewModel::Initialize()
     {
-        StatusText(L"就绪 / Ready");
-
         InitializeTorrentCore();
 
         // Start periodic speed refresh thread
@@ -43,32 +50,19 @@ namespace winrt::OpenNet::ViewModels::implementation
                                            { SpeedRefreshThreadEntry(); });
     }
 
-    // Summary: 更新状态文本并记录到活动列表
-    // Param status: 要显示的新状态
-    void MainViewModel::UpdateStatus(winrt::hstring const &status)
-    {
-        StatusText(status);
-        if (m_recentActivities)
-        {
-            m_recentActivities.Append(status);
-        }
-    }
 
     IAsyncAction MainViewModel::InitializeTorrentCore()
     {
         // 使用单例管理 torrent 核心，异步后台初始化
         auto dispatcher = m_dispatcher;
-        UpdateStatus(L"初始化 P2P Core...");
         co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
         if (::OpenNet::Core::P2PManager::Instance().IsTorrentCoreInitialized())
         {
             co_await wil::resume_foreground(dispatcher);
-            UpdateStatus(L"P2P Core 已就绪");
         }
         else
         {
             co_await wil::resume_foreground(dispatcher);
-            UpdateStatus(L"P2P Core 初始化失败");
         }
     }
 
@@ -93,7 +87,8 @@ namespace winrt::OpenNet::ViewModels::implementation
             auto *core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
             if (core && core->IsRunning())
                 break;
-            std::this_thread::sleep_for(500ms);
+            std::unique_lock<std::mutex> lock(m_speedMutex);
+            m_speedCv.wait_for(lock, 500ms, [this] { return m_stopSpeedRefresh.load(); });
         }
 
         while (!m_stopSpeedRefresh.load())
@@ -212,7 +207,10 @@ namespace winrt::OpenNet::ViewModels::implementation
             {
             }
 
-            std::this_thread::sleep_for(1500ms);
+            {
+                std::unique_lock<std::mutex> lock(m_speedMutex);
+                m_speedCv.wait_for(lock, 1500ms, [this] { return m_stopSpeedRefresh.load(); });
+            }
         }
     }
 }

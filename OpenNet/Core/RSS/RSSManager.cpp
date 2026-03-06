@@ -96,7 +96,11 @@ namespace OpenNet::Core::RSS
 
     void RSSManager::Stop()
     {
-        m_running = false;
+        {
+            std::lock_guard<std::mutex> lock(m_stopMutex);
+            m_running = false;
+        }
+        m_stopCv.notify_all();
         if (m_updateThread.joinable())
         {
             m_updateThread.join();
@@ -130,10 +134,10 @@ namespace OpenNet::Core::RSS
                 FetchFeed(id);
             }
 
-            // Sleep for 1 minute between checks
-            for (int i = 0; i < 60 && m_running; ++i)
+            // Sleep for 1 minute between checks, wake immediately if stopped
             {
-                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::unique_lock<std::mutex> lock(m_stopMutex);
+                m_stopCv.wait_for(lock, std::chrono::minutes(1), [this] { return !m_running.load(); });
             }
         }
     }

@@ -16,13 +16,11 @@
  * 设计模式：
  * 使用 WinRT 附加属性模式，允许在 XAML 中直接设置额外的属性，
  * 而无需继承或修改原始控件类。
- * 关键实现约束：
+ * 编写提示：
  * - Attached DependencyProperty 必须“静态字段一次性注册”（RegisterAttached 只执行一次）。
  *   该模式与 WinUI/C# 的实现一致，可以避免 XAML 运行时/编译时对静态成员解析不一致而导致的
- *   启动期 fail-fast（看起来像“内部错误”）。
- * - 在 ControlTemplate 内访问 attached property，请使用：
- *   {Binding (helpers:NavItemIconHelper.SelectedIcon), RelativeSource={RelativeSource Mode=TemplatedParent}}
- *   而不是 TemplateBinding。
+ *   启动期快速失败 fail-fast（看起来像“内部错误”）。
+ * - reference: https://learn.microsoft.com/windows/apps/develop/platform/xaml/custom-dependency-properties
  */
 #include "pch.h"
 #include "NavItemIconHelper.h"

@@ -5,12 +5,9 @@
 	{
 		MainViewModel();
 
-		// 基本状态 / Basic State
-		String StatusText;
 		Boolean IsConnected;
 
 		// 展示信息 / Display Info
-		String AppVersion { get; };
 		String UserName { get; };
 		String PortState { get; };
 
@@ -37,7 +34,6 @@
 		Boolean HasNotification { get; };
 
 		// 命令 / Commands
-		Microsoft.UI.Xaml.Input.ICommand ShowAboutCommand { get; };
 		Microsoft.UI.Xaml.Input.ICommand NavigateToPageCommand { get; };
 		Microsoft.UI.Xaml.Input.ICommand StartNetworkDetectionCommand { get; };
 		Microsoft.UI.Xaml.Input.ICommand ConnectToPeerCommand { get; };
@@ -46,6 +42,6 @@
 
 		// 方法 / Methods
 		void Initialize();
-		void UpdateStatus(String status);
+		void Shutdown();
 	}
 }

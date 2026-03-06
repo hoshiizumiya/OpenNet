@@ -8,6 +8,7 @@
 #include <mutex>
 #include <atomic>
 #include <thread>
+#include <condition_variable>
 #include <unordered_map>
 
 namespace OpenNet::Core::RSS
@@ -116,6 +117,8 @@ namespace OpenNet::Core::RSS
         std::atomic<bool> m_running{ false };
         std::atomic<bool> m_initialized{ false };
         std::thread m_updateThread;
+        std::condition_variable m_stopCv;
+        std::mutex m_stopMutex;
         std::wstring m_configPath;
 
         FeedUpdatedCallback m_feedUpdatedCallback;
