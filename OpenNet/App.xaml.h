@@ -23,8 +23,11 @@ namespace winrt::OpenNet::implementation
 		static inline bool s_isExiting{ false };
 
 	private:
-		void OnClosing(winrt::Microsoft::UI::Xaml::Window const& sender,
-					   winrt::Microsoft::UI::Xaml::WindowEventArgs const& args);
+		static winrt::fire_and_forget HandleCloseStrategyAsync();
+		static void HideToTray();
+		static void ReallyClose();
 		static winrt::fire_and_forget InitializeRSSManagerAsync();
+
+		static inline bool s_isHandlingClose{ false };
 	};
 }

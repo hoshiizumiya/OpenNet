@@ -10,6 +10,7 @@ namespace winrt::OpenNet::Core::IO
         // Get AppData folder path (where SQLite database is stored)
         // Returns path to %APPDATA%\OpenNet
         static std::string GetAppDataPath();
+        static std::string AppDataPath;
 
         // Get application temporary folder
         static std::string GetTempPath();

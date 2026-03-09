@@ -9,6 +9,7 @@
 #pragma once
 
 #include <cstdint>
+#include <condition_variable>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -110,6 +111,8 @@ namespace OpenNet::Core
 
         std::thread m_refreshThread;
         std::atomic<bool> m_stopRefresh{false};
+        std::condition_variable m_stopCv;
+        std::mutex m_stopMutex;
         mutable std::mutex m_mutex;
 
         // Cached task GIDs for change detection

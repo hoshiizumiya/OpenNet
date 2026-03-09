@@ -12,6 +12,15 @@ jobs:
   alpha:
     runs-on: windows-2025-vs2026
 
+    strategy:
+      matrix:
+        configuration: [Release]
+        platform: [x64, ARM64]
+
+    permissions:
+      contents: write
+      packages: write
+
     steps:
       - uses: actions/checkout@v5
         with:
@@ -20,34 +29,72 @@ jobs:
       - uses: microsoft/setup-msbuild@v2
       - uses: nuget/setup-nuget@v2
 
-      - name: Restore Cert
+      - name: Set up vcpkg
+        working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
+        run: vcpkg integrate install
+
+      - name: Restore NuGet
+        run: nuget restore OpenNet.slnx
+        shell: pwsh
+
+      - name: cache nuget packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+
+      - name: Restore Certificate
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
           [IO.File]::WriteAllBytes("cert.pfx", $bytes)
         shell: pwsh
-
-      - run: nuget restore OpenNet.slnx
-        shell: pwsh
-
-      - name: Build Bundle
+        
+      - name: Build MSIX
         run: |
           msbuild OpenNet.slnx `
-            /p:Configuration=Release `
-            /p:Platform=x64 `
-            /p:AppxBundle=Always `
-            /p:AppxBundlePlatforms="x64|ARM64" `
-            /p:GenerateAppxPackageOnBuild=true `
-            /p:PackageCertificateKeyFile=cert.pfx `
-            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:Platform=${{ matrix.platform }} `
+            /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageSigningEnabled=true `
-            /p:VcpkgEnableManifest=true `
+            /p:PackageCertificateKeyFile=../cert.pfx `
+            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
             /m
         shell: pwsh
+        
+      - name: Generate Date
+        run: |
+          $date = Get-Date -Format yyyyMMdd
+          Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
+        shell: pwsh
+        
+      - name: Zip Package
+        run: |
+          Compress-Archive `
+            -Path "Packages/*${{ matrix.platform }}*" `
+            -DestinationPath "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip"
+        shell: pwsh
 
-      - uses: softprops/action-gh-release@v2
+      - name: 7z Package
+        run: |
+          if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
+            choco install 7zip -y
+          }
+
+          7z a -t7z -mx=9 `
+            "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z" `
+            "Packages\*${{ matrix.platform }}*"
+        shell: pwsh
+        
+      - name: Upload Canary Artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}
+          path: |
+            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip
+            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z
+            
+      - name: Create Pre-release
+        uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           prerelease: true
-          files: "**/*.msixbundle"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          files: OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip, OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z

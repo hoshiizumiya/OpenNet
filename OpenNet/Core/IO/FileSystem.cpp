@@ -1,6 +1,6 @@
 ﻿#include "pch.h"
 #include "FileSystem.h"
-#include "..\AppEnvironment.h"
+#include "../AppEnvironment.h"
 #include <winrt/Microsoft.Windows.Storage.h>
 #include <shlobj_core.h>
 #include <windows.h>

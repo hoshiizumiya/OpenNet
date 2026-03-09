@@ -41,10 +41,19 @@ jobs:
       - uses: microsoft/setup-msbuild@v2
       - uses: nuget/setup-nuget@v2
 
+      - name: Set up vcpkg
+        working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
+        run: vcpkg integrate install
+
       - name: Restore NuGet
         run: nuget restore OpenNet.slnx
         shell: pwsh
-        
+
+      - name: cache nuget packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.nuget/packages
+
       - name: Restore Certificate
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")

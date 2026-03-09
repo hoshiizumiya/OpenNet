@@ -14,8 +14,6 @@
 #include "Helpers/ThemeHelper.h"
 #include "Core/Utils/Misc.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
-//#include "Helpers/WindowHelper.h"
-//#include "App.xaml.h"
 #include "UI/Xaml/View/Pages/TasksPage.xaml.h"
 
 using namespace winrt;
