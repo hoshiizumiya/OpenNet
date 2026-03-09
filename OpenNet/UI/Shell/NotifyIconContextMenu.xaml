@@ -13,9 +13,16 @@
         <essential:TaskbarIcon
             x:Name="trayIcon"
             x:Uid="trayIcon"
+            Guid="{x:Bind local:NotifyIconContextMenu.IconGuid}"
             Icon="ms-appx:///Assets/AppIcons/win3264.ico"
             LeftDoublePressed="ShowMainWindow"
             LeftPressed="ShowMainWindow"
-            ToolTip="OpenNet" />
+            ToolTip="OpenNet">
+            <MenuFlyout>
+                <MenuFlyoutItem Click="{x:Bind ShowMainWindow}" Text="Show" />
+                <MenuFlyoutSeparator />
+                <MenuFlyoutItem Click="{x:Bind ExitApplication}" Text="Exit" />
+            </MenuFlyout>
+        </essential:TaskbarIcon>
     </Page.Resources>
 </Page>
