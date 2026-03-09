@@ -12,6 +12,7 @@
 
     <NavigationView
         x:Name="SettingsNavView"
+        essential:NavigationViewHelper.AcrylicWorkaround="True"
         CompactPaneLength="70"
         IsBackButtonVisible="Collapsed"
         IsSettingsVisible="False"

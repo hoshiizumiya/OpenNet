@@ -176,7 +176,6 @@
     <ClInclude Include="Core\Torrent\TrackerManager.h" />
     <ClInclude Include="Core\Utils\Misc.h" />
     <ClInclude Include="Core\Utils\Message.h" />
-    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h" />
     <ClInclude Include="ThirdParty\RepoInfo.h" />
     <ClInclude Include="UI\Shell\NotifyIconContextMenu.xaml.h">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
@@ -273,6 +272,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.h">
       <DependentUpon>UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\CloseToTrayDialog.h">
+      <DependentUpon>UI\Xaml\View\Dialog\CloseToTrayDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h" />
     <ClInclude Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml.h">
@@ -500,6 +503,9 @@
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml" />
     <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\CloseToTrayDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml" />
     <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
       <SubType>Designer</SubType>
@@ -682,6 +688,10 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\CloseToTrayDialog.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\CloseToTrayDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp" />
     <ClCompile Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml.cpp">
@@ -936,6 +946,10 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl" />
+    <Midl Include="UI\Xaml\View\Dialog\CloseToTrayDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\CloseToTrayDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl">
       <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>

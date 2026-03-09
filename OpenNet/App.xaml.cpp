@@ -2,13 +2,17 @@
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
 #include "UI/Shell/NotifyIconContextMenu.xaml.h"
+#include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
 #include "Helpers/WindowHelper.h"
 #include "Helpers/ThemeHelper.h"
 #include "Core/P2PManager.h"
+#include "Core/DownloadManager.h"
 #include "Core/RSS/RSSManager.h"
 #include "Core/GeoIP/GeoIPManager.h"
 
 #include <winrt/Windows.ApplicationModel.Activation.h>
+#include <winrt/Microsoft.Windows.Storage.h>
+#include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <sentry.h>
 
 using namespace winrt;
@@ -60,23 +64,26 @@ namespace winrt::OpenNet::implementation
         trayIcon = OpenNet::UI::Shell::NotifyIconContextMenu();
         trayIcon.Show();
 
-        // Register window closing event - hide to tray instead of closing
+        // Register window closing event - close strategy (hide to tray / ask / exit)
         window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
         {
             // If we are in an intentional exit, allow the window to close
             if (App::s_isExiting)
                 return;
 
-            // Cancel the close and hide to tray instead
+            // If no tray icon was created, allow direct close
+            if (!App::trayIcon)
+                return;
+
+            // Cancel the close; the async strategy decides what happens next
             args.Cancel(true);
 
-            // Hide the window
-            if (App::window)
-            {
-                App::window.AppWindow().Hide();
-            }
+            // Prevent re-entrance
+            if (App::s_isHandlingClose)
+                return;
+            App::s_isHandlingClose = true;
 
-            OutputDebugStringA("App: MainWindow hidden to tray\n");
+            HandleCloseStrategyAsync();
         });
 
         // Initialize RSS Manager early so feeds update in the background
@@ -203,11 +210,14 @@ namespace winrt::OpenNet::implementation
                 trayIcon = nullptr;
             }
 
+            // Stop RSS background updates
+            ::OpenNet::Core::RSS::RSSManager::Instance().Stop();
+
             // Shutdown P2PManager
             ::OpenNet::Core::P2PManager::Instance().Shutdown();
 
-            // Stop RSS background updates
-            ::OpenNet::Core::RSS::RSSManager::Instance().Stop();
+            // Shutdown DownloadManager (Aria2 + refresh thread)
+            ::OpenNet::Core::DownloadManager::Instance().Shutdown();
 
             // make sure everything flushes
             sentry_close();
@@ -221,6 +231,102 @@ namespace winrt::OpenNet::implementation
         {
             OutputDebugStringA("App: Unknown error in destructor\n");
         }
+    }
+
+    winrt::fire_and_forget App::HandleCloseStrategyAsync()
+    {
+        try
+        {
+            auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
+            auto values = localSettings.Values();
+
+            // Strategy A: user already chose, don't ask again
+            if (values.HasKey(L"Hide2TrayWhenCloseAsked"))
+            {
+                bool asked = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenCloseAsked"));
+                if (asked)
+                {
+                    bool hide = false;
+                    if (values.HasKey(L"Hide2TrayWhenClose"))
+                        hide = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenClose"));
+
+                    if (hide)
+                        HideToTray();
+                    else
+                        ReallyClose();
+
+                    s_isHandlingClose = false;
+                    co_return;
+                }
+            }
+
+            // Strategy B: first time — show dialog
+            if (!window)
+            {
+                ReallyClose();
+                s_isHandlingClose = false;
+                co_return;
+            }
+
+            auto content = window.Content();
+            if (!content)
+            {
+                ReallyClose();
+                s_isHandlingClose = false;
+                co_return;
+            }
+
+            auto xamlRoot = content.XamlRoot();
+            if (!xamlRoot)
+            {
+                ReallyClose();
+                s_isHandlingClose = false;
+                co_return;
+            }
+
+            auto dlg = winrt::OpenNet::UI::Xaml::View::Dialog::CloseToTrayDialog();
+            dlg.XamlRoot(xamlRoot);
+
+            auto result = co_await dlg.ShowAsync();
+
+            // Save preference if "remember" was checked
+            if (dlg.RememberChoice())
+            {
+                values.Insert(L"Hide2TrayWhenCloseAsked", box_value(true));
+                values.Insert(L"Hide2TrayWhenClose", box_value(result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary));
+            }
+
+            if (result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+            {
+                HideToTray();
+            }
+            else
+            {
+                ReallyClose();
+            }
+        }
+        catch (...)
+        {
+            OutputDebugStringA("App: HandleCloseStrategyAsync error, falling back to exit\n");
+            ReallyClose();
+        }
+
+        s_isHandlingClose = false;
+    }
+
+    void App::HideToTray()
+    {
+        if (window)
+        {
+            window.AppWindow().Hide();
+        }
+        OutputDebugStringA("App: MainWindow hidden to tray\n");
+    }
+
+    void App::ReallyClose()
+    {
+        s_isExiting = true;
+        Microsoft::UI::Xaml::Application::Current().Exit();
     }
 
     winrt::fire_and_forget App::InitializeRSSManagerAsync()

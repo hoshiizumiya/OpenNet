@@ -77,7 +77,11 @@ namespace OpenNet::Core
         }
 
         // Stop refresh thread
-        m_stopRefresh.store(true);
+        {
+            std::lock_guard stopLock(m_stopMutex);
+            m_stopRefresh.store(true);
+        }
+        m_stopCv.notify_all();
         if (m_refreshThread.joinable())
             m_refreshThread.join();
 
@@ -311,11 +315,10 @@ namespace OpenNet::Core
                 ProcessAria2Tasks();
             }
 
-            // Sleep remainder of interval
-            auto elapsed = clock::now() - start;
-            if (elapsed < kInterval)
+            // Sleep remainder of interval, wake immediately if stopped
             {
-                std::this_thread::sleep_for(kInterval - elapsed);
+                std::unique_lock<std::mutex> lock(m_stopMutex);
+                m_stopCv.wait_for(lock, kInterval, [this] { return m_stopRefresh.load(); });
             }
         }
     }

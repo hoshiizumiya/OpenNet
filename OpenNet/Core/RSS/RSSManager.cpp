@@ -131,6 +131,7 @@ namespace OpenNet::Core::RSS
             // Fetch outside the lock to avoid deadlock
             for (const auto& id : feedsToUpdate)
             {
+                if (!m_running.load()) break;
                 FetchFeed(id);
             }
 

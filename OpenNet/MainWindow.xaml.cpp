@@ -13,9 +13,6 @@
 #include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/WinUI3Package.h>
 
-#include "Core/P2PManager.h"
-#include "Core/DownloadManager.h"
-
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -43,29 +40,13 @@ namespace winrt::OpenNet::implementation
 		{
 			PlacementRestoration::Save(*this);
 
-			// Stop ViewModel background thread before tearing down engines
+			// Stop ViewModel background thread (speed refresh)
 			try
 			{
 				if (auto vm = ViewModel())
 					vm.Shutdown();
 			}
 			catch (...) { OutputDebugStringA("MainWindow: ViewModel shutdown error\n"); }
-
-			// Gracefully shut down download engines
-			try { ::OpenNet::Core::P2PManager::Instance().Shutdown(); }
-			catch (...) { OutputDebugStringA("MainWindow: P2PManager shutdown error\n"); }
-
-			// DownloadManager::Shutdown() blocks on async — run on background thread
-			try
-			{
-				std::thread bgShutdown([]()
-				{
-					try { ::OpenNet::Core::DownloadManager::Instance().Shutdown(); }
-					catch (...) { OutputDebugStringA("MainWindow: DownloadManager shutdown error (bg)\n"); }
-				});
-				bgShutdown.join();
-			}
-			catch (...) { OutputDebugStringA("MainWindow: DownloadManager background shutdown error\n"); }
 		});
 	}
 

@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Xaml.View.Dialog
+{
+    [default_interface]
+    runtimeclass CloseToTrayDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+    {
+        CloseToTrayDialog();
+        Boolean RememberChoice { get; };
+    }
+}

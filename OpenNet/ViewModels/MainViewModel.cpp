@@ -16,7 +16,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 {
     // Summary: 构造函数，初始化默认状态和集合
     MainViewModel::MainViewModel()
-        : m_isConnected(false), m_userName(L"Guest"), m_portState(L"检测中")
+        : m_isConnected(false), m_userName(L"Guest"), m_portState(L"Unknown")
     {
         m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
         m_recentActivities = single_threaded_observable_vector<hstring>();
@@ -125,7 +125,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
                 // Determine speed level for SwitchPresenter icon
                 double dlMBps = totalDl / (1024.0 * 1024.0);
-                std::wstring speedLevelText;
+				std::wstring speedLevelText;
                 if (dlMBps >= 10.0)
                     speedLevelText = L"High";
                 else if (dlMBps >= 1.0)
@@ -138,14 +138,35 @@ namespace winrt::OpenNet::ViewModels::implementation
                 bool needPortCheck = (listenPort > 0) &&
                     (listenPort != m_lastCheckedPort ||
                      std::chrono::duration_cast<std::chrono::seconds>(now - m_lastPortCheckTime).count() >= 60);
-                if (needPortCheck)
+                if (needPortCheck && !m_stopSpeedRefresh.load())
                 {
                     try
                     {
                         ::OpenNet::Core::NetworkDetector detector;
-                        bool isOpen = detector.TestPortAccessibilityAsync(
-                            static_cast<uint16_t>(listenPort), true).get();
-                        m_cachedPortState = isOpen ? L"Open" : L"Blocked";
+                        auto op = detector.TestPortAccessibilityAsync(
+                            static_cast<uint16_t>(listenPort), true);
+                        // Wait with periodic stop-flag checks instead of blocking indefinitely
+                        auto status = op.Status();
+                        while (status == winrt::Windows::Foundation::AsyncStatus::Started)
+                        {
+                            if (m_stopSpeedRefresh.load())
+                            {
+                                op.Cancel();
+                                break;
+                            }
+                            std::unique_lock<std::mutex> lock(m_speedMutex);
+                            m_speedCv.wait_for(lock, 200ms, [this] { return m_stopSpeedRefresh.load(); });
+                            status = op.Status();
+                        }
+                        if (status == winrt::Windows::Foundation::AsyncStatus::Completed)
+                        {
+                            bool isOpen = op.GetResults();
+                            m_cachedPortState = isOpen ? L"Open" : L"Blocked";
+                        }
+                        else
+                        {
+                            m_cachedPortState = L"Unknown";
+                        }
                     }
                     catch (...)
                     {

@@ -85,7 +85,6 @@
     <Page Include="MainWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
-    <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml" />
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
@@ -109,6 +108,12 @@
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml">
+      <Filter>UI\Xaml\View\Dialog</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml">
+      <Filter>UI\Xaml\View\Dialog</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Dialog\CloseToTrayDialog.xaml">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </Page>
   </ItemGroup>
@@ -186,8 +191,6 @@
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <Filter>UI\Xaml\Control\Card</Filter>
     </Midl>
-    <Midl Include="ViewModels\TorrentMetadataViewModel.idl" />
-    <Midl Include="ViewModels\RSSViewModel.idl" />
     <Midl Include="UI\Xaml\View\Pages\RSSPage.idl" />
     <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl" />
     <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.idl">
@@ -213,6 +216,12 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl">
       <Filter>UI\Xaml\View\Dialog</Filter>
+    </Midl>
+    <Midl Include="ViewModels\TorrentMetadataViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
+    <Midl Include="ViewModels\RSSViewModel.idl">
+      <Filter>ViewModels</Filter>
     </Midl>
   </ItemGroup>
   <ItemGroup>
@@ -358,7 +367,6 @@
       <Filter>UI\Xaml\Media\Animations</Filter>
     </ClCompile>
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
-    <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp" />
     <ClCompile Include="ViewModels\RSSViewModel.cpp" />
     <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
     <ClCompile Include="ViewModels\TrackersSettingsViewModel.cpp" />
@@ -412,9 +420,14 @@
     <ClCompile Include="Core\GeoIP\GeoIPManager.cpp">
       <Filter>Core\GeoIP</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.cpp" />
     <ClCompile Include="ThirdParty\RepoInfo.cpp" />
     <ClCompile Include="Web\Request\Builder\GithubRequest.cpp" />
+    <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.cpp">
+      <Filter>Core\ApplicationModel</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -600,7 +613,6 @@
     </ClInclude>
     <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
     <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h" />
-    <ClInclude Include="ViewModels\TorrentMetadataViewModel.h" />
     <ClInclude Include="ViewModels\RSSViewModel.h" />
     <ClInclude Include="Core\Torrent\TrackerManager.h" />
     <ClInclude Include="ViewModels\TrackersSettingsViewModel.h" />
@@ -690,10 +702,14 @@
     <ClInclude Include="Core\GeoIP\GeoIPManager.h">
       <Filter>Core\GeoIP</Filter>
     </ClInclude>
-    <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h" />
     <ClInclude Include="ThirdParty\RepoInfo.h" />
     <ClInclude Include="Web\Request\Builder\GithubRequest.h" />
-    <ClInclude Include="Pages\SettingsPages\SettingsPage.xaml.h" />
+    <ClInclude Include="ViewModels\TorrentMetadataViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h">
+      <Filter>Core\ApplicationModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -1018,6 +1034,9 @@
     </Filter>
     <Filter Include="Core\GeoIP">
       <UniqueIdentifier>{7d0b8ace-fb98-5b0d-b225-4b1f5e78d5b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\ApplicationModel">
+      <UniqueIdentifier>{da2c2363-e5ec-4dd9-8ddf-43fcef685f3e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
