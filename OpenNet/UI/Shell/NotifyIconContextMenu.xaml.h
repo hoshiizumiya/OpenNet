@@ -8,7 +8,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 {
     struct NotifyIconContextMenu : NotifyIconContextMenuT<NotifyIconContextMenu>
     {
-        NotifyIconContextMenu();
+        NotifyIconContextMenu() = default;
 
         // Static GUID for system tray icon
         static winrt::guid IconGuid();

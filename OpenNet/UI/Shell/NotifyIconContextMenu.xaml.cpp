@@ -25,28 +25,6 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		return { 0xf8a9b3c7, 0x2e4d, 0x4f1a, { 0x9b, 0x8e, 0x6c, 0x5d, 0x3a, 0x2b, 0x1e, 0x0f } };
 	}
 
-	NotifyIconContextMenu::NotifyIconContextMenu()
-	{
-		InitializeComponent();
-
-		trayIcon().Guid(IconGuid());
-
-		MenuFlyout menuFlyout;
-
-		MenuFlyoutItem showItem;
-		showItem.Text(L"Show");
-		showItem.Click([this](auto&&, auto&&) { ShowMainWindow(); });
-		menuFlyout.Items().Append(showItem);
-		menuFlyout.Items().Append(MenuFlyoutSeparator());
-
-		MenuFlyoutItem exitItem;
-		exitItem.Text(L"Exit");
-		exitItem.Click([this](auto&&, auto&&) { ExitApplication(); });
-		menuFlyout.Items().Append(exitItem);
-
-		trayIcon().RightClickMenu(menuFlyout);
-	}
-
 	void NotifyIconContextMenu::Show()
 	{
 		if (trayIcon())
