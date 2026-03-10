@@ -2,13 +2,14 @@
 #include "ThemeHelper.h"
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 #include <winrt/Microsoft.UI.h>
 #include <winrt/Microsoft.UI.Windowing.h>
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI;
 using namespace winrt::Microsoft::UI::Xaml;
-using namespace winrt::Windows::Storage;
+using namespace winrt::Microsoft::Windows::Storage;
 using namespace winrt::Windows::UI::ViewManagement;
 
 namespace OpenNet::Helpers
@@ -86,7 +87,7 @@ namespace OpenNet::Helpers
 	{
 		try
 		{
-			auto localSettings = ApplicationData::Current().LocalSettings();
+			auto localSettings = ApplicationData::GetDefault().LocalSettings();
 			auto values = localSettings.Values();
 			int32_t themeValue = static_cast<int32_t>(s_rootTheme);
 			values.Insert(THEME_SETTING_KEY, box_value(themeValue));
@@ -100,7 +101,7 @@ namespace OpenNet::Helpers
 	{
 		try
 		{
-			auto localSettings = ApplicationData::Current().LocalSettings();
+			auto localSettings = ApplicationData::GetDefault().LocalSettings();
 			auto values = localSettings.Values();
 
 			if (values.HasKey(THEME_SETTING_KEY))

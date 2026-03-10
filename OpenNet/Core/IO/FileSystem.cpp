@@ -4,7 +4,6 @@
 #include <winrt/Microsoft.Windows.Storage.h>
 #include <shlobj_core.h>
 #include <windows.h>
-#include <winrt/Windows.Storage.h>
 #include <shellapi.h>
 
 #pragma comment(lib, "shell32.lib")

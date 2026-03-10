@@ -10,7 +10,6 @@
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Storage.h>
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

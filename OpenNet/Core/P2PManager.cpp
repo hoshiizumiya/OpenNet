@@ -92,14 +92,22 @@ namespace OpenNet::Core
         auto tasks = m_stateManager->LoadAllTasks();
         for (auto const& task : tasks)
         {
-            // Only resume tasks that were actively downloading.
-            // Paused tasks (status==2) should remain paused — do NOT auto-resume them.
-            if (task.status == 1) // Downloading only
+            // Load all active tasks (downloading, paused, completed) into the session.
+            // Paused/completed torrents are restored in their correct state via resume data flags.
+            // Without loading them, "Resume" button won't work for paused tasks
+            // since they wouldn't exist in the libtorrent session.
+            if (task.status == 1 || task.status == 2 || task.status == 3)
             {
                 std::string resumedId = m_torrentCore->AddTorrentFromResumeData(task.taskId);
                 if (!resumedId.empty())
                 {
-                    OutputDebugStringA(("Resumed task: " + task.taskId + "\n").c_str());
+                    OutputDebugStringA(("Resumed task: " + task.taskId + " (status=" + std::to_string(task.status) + ")\n").c_str());
+                    
+                    // Ensure paused tasks stay paused even if resume data didn't preserve the flag
+                    if (task.status == 2)
+                    {
+                        m_torrentCore->PauseTorrent(task.taskId);
+                    }
                 }
             }
         }

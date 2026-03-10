@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TorrentCheckGeneralPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -11,7 +11,15 @@
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
-
+    <Page.Resources>
+        <Style x:Key="FeatureCardStyle" TargetType="Grid">
+            <Setter Property="Padding" Value="16,12,16,16" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+    </Page.Resources>
     <Grid
         Padding="16,0,16,16"
         VerticalAlignment="Stretch"
@@ -27,6 +35,7 @@
                 <!--  Save Location Section  -->
                 <Border
                     Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
@@ -35,11 +44,18 @@
                             x:Uid="AddMagnet_SaveLabel"
                             FontWeight="SemiBold"
                             Text="Save Location" />
-                        <Grid
-                            ColumnDefinitions="Auto,*,Auto"
-                            ColumnSpacing="8"
-                            RowDefinitions="Auto,Auto,Auto"
-                            RowSpacing="8">
+                        <Grid ColumnSpacing="8" RowSpacing="8">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock
                                 x:Uid="TorrentCheckGeneralPage_SavePathLabel"
                                 Margin="0,0,4,0"
@@ -50,8 +66,8 @@
                                 x:Name="TorrentCheckGeneralPageSavePath"
                                 x:Uid="TorrentCheckGeneralPageSavePath"
                                 Grid.Column="1"
-                                TextChanged="TorrentCheckGeneralPageSavePath_TextChanged"
-                                PlaceholderText="Choose download location">
+                                PlaceholderText="Choose download location"
+                                TextChanged="TorrentCheckGeneralPageSavePath_TextChanged">
                                 <AutoSuggestBox.QueryIcon>
                                     <FontIcon HorizontalAlignment="Center" Glyph="&#xE70D;" />
                                 </AutoSuggestBox.QueryIcon>
@@ -106,11 +122,17 @@
                             Text="Torrent Content" />
 
                         <!--  Torrent Info Summary  -->
-                        <Grid
-                            ColumnDefinitions="Auto,*"
-                            ColumnSpacing="8"
-                            RowDefinitions="Auto,Auto,Auto"
-                            RowSpacing="4">
+                        <Grid ColumnSpacing="8" RowSpacing="4">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+
                             <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentNameLabel" Text="Name:" />
                             <TextBlock
                                 x:Name="TorrentNameText"
@@ -158,8 +180,8 @@
                                 <Grid Grid.Column="1" MinWidth="200">
                                     <ProgressBar
                                         x:Name="DiskSpaceProgressBar"
-                                        VerticalAlignment="Center"
                                         HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Center"
                                         IsIndeterminate="False"
                                         Maximum="100"
                                         ShowError="False"
@@ -227,14 +249,13 @@
                             CornerRadius="2">
                             <controls:HeaderedTreeView
                                 x:Name="TorrentFileTreeView"
-                                MaxHeight="300"
                                 ItemsSource="{x:Bind ViewModel.FileTree}"
                                 SelectionMode="None">
                                 <controls:HeaderedTreeView.Header>
                                     <Border Padding="8" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                                         <labs:DataTable ColumnSpacing="8">
                                             <!--  Select checkbox column - Fixed width  -->
-                                            <labs:DataColumn DesiredWidth="32" MinWidth="32">
+                                            <labs:DataColumn MinWidth="32" DesiredWidth="32">
                                                 <CheckBox
                                                     x:Name="SelectAllHeaderCheckBox"
                                                     Checked="SelectAllCheckBox_Checked"
@@ -249,14 +270,14 @@
                                                     Text="File Name" />
                                             </labs:DataColumn>
                                             <!--  Size column - Fixed width  -->
-                                            <labs:DataColumn DesiredWidth="100" HorizontalContentAlignment="Right">
+                                            <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="100">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
                                                     FontWeight="SemiBold"
                                                     Text="Size" />
                                             </labs:DataColumn>
                                             <!--  Priority column - Fixed width  -->
-                                            <labs:DataColumn DesiredWidth="80" HorizontalContentAlignment="Right">
+                                            <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="80">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Priority"
                                                     FontWeight="SemiBold"
@@ -266,43 +287,42 @@
                                     </Border>
                                 </controls:HeaderedTreeView.Header>
                                 <controls:HeaderedTreeView.ItemTemplate>
-                                        <DataTemplate x:DataType="vm:TorrentFileNodeViewModel">
-                                            <muxc:TreeViewItem
-                                                IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
-                                                ItemsSource="{x:Bind Children}">
-                                                <Grid ColumnDefinitions="32,*,100,80" ColumnSpacing="8">
-                                                    <!--  Checkbox for selection  -->
-                                                    <CheckBox
-                                                        Click="FileCheckBox_Click"
-                                                        IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
-                                                    <!--  File name with icon  -->
-                                                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
-                                                        <FontIcon
-                                                            VerticalAlignment="Center"
-                                                            FontSize="16"
-                                                            Glyph="{x:Bind local:TorrentCheckGeneralPage.GetNodeIcon(IsFolder)}" />
-                                                        <TextBlock
-                                                            VerticalAlignment="Center"
-                                                            Text="{x:Bind Name}"
-                                                            TextTrimming="CharacterEllipsis"
-                                                            ToolTipService.ToolTip="{x:Bind FullPath}" />
-                                                    </StackPanel>
-                                                    <!--  Size  -->
-                                                    <TextBlock
-                                                        Grid.Column="2"
-                                                        HorizontalAlignment="Right"
+                                    <DataTemplate x:DataType="vm:TorrentFileNodeViewModel">
+                                        <muxc:TreeViewItem IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}" ItemsSource="{x:Bind Children}">
+                                            <Grid ColumnDefinitions="32,*,100,80" ColumnSpacing="8">
+                                                <!--  Checkbox for selection  -->
+                                                <CheckBox Click="FileCheckBox_Click" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                                                <!--  File name with icon  -->
+                                                <StackPanel
+                                                    Grid.Column="1"
+                                                    Orientation="Horizontal"
+                                                    Spacing="8">
+                                                    <FontIcon
                                                         VerticalAlignment="Center"
-                                                        Text="{x:Bind SizeText}" />
-                                                    <!--  Priority  -->
+                                                        FontSize="16"
+                                                        Glyph="{x:Bind local:TorrentCheckGeneralPage.GetNodeIcon(IsFolder)}" />
                                                     <TextBlock
-                                                        Grid.Column="3"
-                                                        HorizontalAlignment="Right"
                                                         VerticalAlignment="Center"
-                                                        Text="{x:Bind PriorityText}" />
-                                                </Grid>
-                                            </muxc:TreeViewItem>
-                                        </DataTemplate>
-                                    </controls:HeaderedTreeView.ItemTemplate>
+                                                        Text="{x:Bind Name}"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        ToolTipService.ToolTip="{x:Bind FullPath}" />
+                                                </StackPanel>
+                                                <!--  Size  -->
+                                                <TextBlock
+                                                    Grid.Column="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind SizeText}" />
+                                                <!--  Priority  -->
+                                                <TextBlock
+                                                    Grid.Column="3"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Center"
+                                                    Text="{x:Bind PriorityText}" />
+                                            </Grid>
+                                        </muxc:TreeViewItem>
+                                    </DataTemplate>
+                                </controls:HeaderedTreeView.ItemTemplate>
                             </controls:HeaderedTreeView>
                         </Border>
                     </StackPanel>

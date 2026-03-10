@@ -23,9 +23,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void themeMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void SetDesktopBackground();
 
-		void AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e);
+		// void AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		// void AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		// void AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e);
 
 		winrt::Windows::Foundation::IAsyncAction OnSettingsPageLoadedAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 

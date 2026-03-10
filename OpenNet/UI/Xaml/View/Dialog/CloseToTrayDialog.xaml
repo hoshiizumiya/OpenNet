@@ -6,20 +6,21 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="关闭窗口"
-    CloseButtonText="退出"
-    PrimaryButtonText="隐藏到托盘"
+    x:Uid="ViewDialogCloseToTrayDialog"
+    Title="window close action"
+    CloseButtonText="Exit application"
+    PrimaryButtonText="Close to tray"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
     <StackPanel Padding="12" Spacing="12">
         <TextBlock
-            x:Uid="TbCloseToTrayQuestion"
-            Text="当关闭主窗口时请选择操作："
+            x:Uid="ViewDialogCloseToTrayQuestion"
+            Text="When closing the main window, please choose an action:"
             TextWrapping="Wrap" />
         <CheckBox
             x:Name="ChkRemember"
-            x:Uid="ChkRememberText"
-            Content="记住我的选择，不再询问" />
+            x:Uid="ViewDialogCloseToTrayRememberCheckBox"
+            Content="Remember my choice, do not ask again" />
     </StackPanel>
 </ContentDialog>

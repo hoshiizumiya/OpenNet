@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/DataGraph/SpeedGraphDatabase.cpp
  * PURPOSE:   SQLite persistence for speed graph data points.
@@ -10,7 +10,7 @@
 #include "Core/DataGraph/SpeedGraphDatabase.h"
 #include "ThirdParty/Sqlite/sqlite3.h"
 
-#include <winrt/Windows.Storage.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 
 namespace OpenNet::Core
 {
@@ -32,7 +32,7 @@ namespace OpenNet::Core
 
         try
         {
-            auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
+            auto localFolder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
             std::wstring dbPath = std::wstring(localFolder.Path().c_str()) + L"\\speed_graph.db";
 
             int rc = sqlite3_open16(dbPath.c_str(), &m_db);

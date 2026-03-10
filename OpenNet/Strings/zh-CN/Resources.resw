@@ -59,10 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root"
-    xmlns=""
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -435,7 +432,6 @@
   <data name="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip" xml:space="preserve">
     <value>从剪贴板复制</value>
   </data>
-  <!-- RSS Page -->
   <data name="RSSPageTitle.Text" xml:space="preserve">
     <value>RSS 订阅</value>
   </data>
@@ -556,7 +552,6 @@
   <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
     <value>优先级</value>
   </data>
-  <!-- ===== BitTorrent 设置页 ===== -->
   <data name="BT_Title.Text" xml:space="preserve">
     <value>BitTorrent 设置</value>
   </data>
@@ -812,7 +807,6 @@
   <data name="BT_ProxyTrackerConn.Header" xml:space="preserve">
     <value>代理 Tracker 连接</value>
   </data>
-  <!-- ===== 下载设置页 ===== -->
   <data name="DL_Section_SaveLocation.Text" xml:space="preserve">
     <value>保存位置</value>
   </data>
@@ -972,7 +966,6 @@
   <data name="FilesList_EmptyState.Text" xml:space="preserve">
     <value>暂无文件信息</value>
   </data>
-  <!-- ===== IP 过滤器设置页 ===== -->
   <data name="IPF_Title.Text" xml:space="preserve">
     <value>IP 过滤器</value>
   </data>
@@ -1030,11 +1023,9 @@
   <data name="IPF_ClearBtn.Content" xml:space="preserve">
     <value>全部清除</value>
   </data>
-  <!-- 重命名任务 -->
   <data name="RenameTaskMenuItem.Text" xml:space="preserve">
     <value>重命名</value>
   </data>
-  <!-- 封禁 Peer -->
   <data name="BanPeer1hItem.Text" xml:space="preserve">
     <value>封禁 1 小时</value>
   </data>
@@ -1044,7 +1035,6 @@
   <data name="BanPeerPermanentItem.Text" xml:space="preserve">
     <value>永久封禁</value>
   </data>
-  <!-- Peer 列表表头 -->
   <data name="PeerHeader_Location.Text" xml:space="preserve">
     <value>位置</value>
   </data>
@@ -1060,11 +1050,9 @@
   <data name="PeerHeader_Source.Text" xml:space="preserve">
     <value>来源</value>
   </data>
-  <!-- NAT 工具导航 -->
   <data name="NavItem_NatTools.Content" xml:space="preserve">
     <value>NAT 工具</value>
   </data>
-  <!-- NAT 工具页面 -->
   <data name="NatTools_NATDetection.Text" xml:space="preserve">
     <value>NAT 类型检测</value>
   </data>
@@ -1094,5 +1082,23 @@
   </data>
   <data name="NatTools_STUNServers.Text" xml:space="preserve">
     <value>推荐 STUN 服务器</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.Title" xml:space="preserve">
+    <value>关闭窗口操作</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.CloseButtonText" xml:space="preserve">
+    <value>直接退出程序</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.PrimaryButtonText" xml:space="preserve">
+    <value>隐藏到托盘</value>
+  </data>
+  <data name="ViewDialogCloseToTrayQuestion.Text" xml:space="preserve">
+    <value>当关闭主窗口时请选择操作：</value>
+  </data>
+  <data name="ViewDialogCloseToTrayRememberCheckBox.Content" xml:space="preserve">
+    <value>住我的选择，不再询问</value>
+  </data>
+  <data name="TorrentCheckModalWindowTitleBar.Title" xml:space="preserve">
+    <value>创建一个新的种子任务</value>
   </data>
 </root>

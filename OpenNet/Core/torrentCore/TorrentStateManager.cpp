@@ -298,6 +298,7 @@ namespace OpenNet::Core::Torrent
                     {
                         return params;
                     }
+                    OutputDebugStringA(("LoadTaskResumeData: read_resume_data failed for " + taskId + ": " + ec.message() + "\n").c_str());
                 }
             }
 

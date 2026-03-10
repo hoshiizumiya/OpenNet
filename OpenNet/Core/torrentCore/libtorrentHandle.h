@@ -6,6 +6,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <optional>
 #include <unordered_map>
 
 // 直接包含 libtorrent 头，避免与 inline namespace 冲突
@@ -190,6 +191,7 @@ namespace OpenNet::Core::Torrent
         void RequestResumeDataForTorrent(libtorrent::torrent_handle const &handle);
 
         std::unique_ptr<libtorrent::session> m_session;
+        std::optional<libtorrent::session_proxy> m_sessionProxy;
         std::atomic<bool> m_running{false};
         std::thread m_thread;
 

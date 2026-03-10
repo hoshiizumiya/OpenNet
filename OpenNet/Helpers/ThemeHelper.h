@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Windows.Storage.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 
 namespace OpenNet::Helpers

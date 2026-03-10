@@ -27,7 +27,25 @@ namespace OpenNet::Core
 
     DownloadManager::~DownloadManager()
     {
-        Shutdown();
+        // Destructor runs during atexit on the main (STA) thread.
+        // Only stop the refresh thread and force-kill aria2 process.
+        // Never do RPC calls (.get()) here — that triggers STA assertion.
+        // Graceful shutdown (RPC + wait) is done by ShutdownEngines() on a
+        // background thread before we get here.
+        try
+        {
+            {
+                std::lock_guard stopLock(m_stopMutex);
+                m_stopRefresh.store(true);
+            }
+            m_stopCv.notify_all();
+            if (m_refreshThread.joinable())
+                m_refreshThread.join();
+
+            if (m_aria2)
+                m_aria2->ForceTerminate();
+        }
+        catch (...) {}
     }
 
     // ------------------------------------------------------------------
@@ -85,19 +103,18 @@ namespace OpenNet::Core
         if (m_refreshThread.joinable())
             m_refreshThread.join();
 
-        // Terminate aria2 process
+        // Graceful aria2 shutdown following NanaGet pattern:
+        // RPC Shutdown → wait up to 30s for process exit → ForceTerminate.
+        // This runs on a background thread (ShutdownEngines) so .get() is safe.
         if (m_aria2)
         {
             try
             {
-                // LocalAria2Instance inherits from Aria2Instance
-                m_aria2->Shutdown();
+                m_aria2->Terminate();
             }
             catch (...)
             {
             }
-
-            // Destructor of LocalAria2Instance handles process termination
         }
 
         m_aria2.reset();

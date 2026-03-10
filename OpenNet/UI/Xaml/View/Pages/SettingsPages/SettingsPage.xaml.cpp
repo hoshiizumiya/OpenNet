@@ -19,7 +19,7 @@
 
 // 用于解析字符串为整数
 #include <sstream>
-#include <winrt/Windows.Storage.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 #include <Shlwapi.h>   // UrlCreateFromPathW
 
 using namespace winrt;
@@ -48,7 +48,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			m_loadAction = OnSettingsPageLoadedAsync(sender, e);
 		});
-		Unloaded({ this, &SettingsPage::AnnotatedScrollBarPage_Unloaded });
 
 	}
 	SettingsPage::~SettingsPage()
@@ -165,7 +164,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		try
 		{
-			auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+			auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
 			localSettings.Values().Insert(L"StartPage", box_value(tag));
 		}
 		catch (...) {}
@@ -306,50 +305,50 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	}
 
 
-	void SettingsPage::AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
-	{
-		try
-		{
-			if (auto scrollView = SettingsScrollView())
-			{
-				if (auto presenter = scrollView.ScrollPresenter())
-				{
-					auto controller = annotatedScrollBar().ScrollController();
-					if (controller)
-					{
-						presenter.VerticalScrollController(controller);
-					}
-				}
-			}
-		}
-		catch (...) {}
-	}
+	//void SettingsPage::AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	//{
+	//	try
+	//	{
+	//		if (auto scrollView = SettingsScrollView())
+	//		{
+	//			if (auto presenter = scrollView.ScrollPresenter())
+	//			{
+	//				auto controller = annotatedScrollBar().ScrollController();
+	//				if (controller)
+	//				{
+	//					presenter.VerticalScrollController(controller);
+	//				}
+	//			}
+	//		}
+	//	}
+	//	catch (...) {}
+	//}
 
-	void SettingsPage::AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
-	{
-		// 解除控制器绑定，防止卸载后引用悬空
-		try
-		{
-			if (auto scrollView = SettingsScrollView())
-			{
-				if (auto presenter = scrollView.ScrollPresenter())
-				{
-					presenter.VerticalScrollController(nullptr);
-				}
-			}
-		}
-		catch (...) {}
-	}
+	//void SettingsPage::AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	//{
+	//	// 解除控制器绑定，防止卸载后引用悬空
+	//	try
+	//	{
+	//		if (auto scrollView = SettingsScrollView())
+	//		{
+	//			if (auto presenter = scrollView.ScrollPresenter())
+	//			{
+	//				presenter.VerticalScrollController(nullptr);
+	//			}
+	//		}
+	//	}
+	//	catch (...) {}
+	//}
 
-	void SettingsPage::AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e)
-	{
-		// Provide a string as the tooltip content when hovering the mouse over the AnnotatedScrollBar's vertical rail. The string simply
-		// represents the color of the last item in the row computed from AnnotatedScrollBarDetailLabelRequestedEventArgs.ScrollOffset.
-		// e.Content() = GetOffsetLabel(e.ScrollOffset());
-		// 简单示例：展示偏移值；如需匹配示例，可按数据源计算标签文本
-		// e.Content(box_value(hstring(L"Label")));
-		e.Content(box_value(hstring(L"Offset: ") + to_hstring(e.ScrollOffset())));
-	}
+	//void SettingsPage::AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e)
+	//{
+	//	// Provide a string as the tooltip content when hovering the mouse over the AnnotatedScrollBar's vertical rail. The string simply
+	//	// represents the color of the last item in the row computed from AnnotatedScrollBarDetailLabelRequestedEventArgs.ScrollOffset.
+	//	// e.Content() = GetOffsetLabel(e.ScrollOffset());
+	//	// 简单示例：展示偏移值；如需匹配示例，可按数据源计算标签文本
+	//	// e.Content(box_value(hstring(L"Label")));
+	//	e.Content(box_value(hstring(L"Offset: ") + to_hstring(e.ScrollOffset())));
+	//}
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::OnSettingsPageLoadedAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		auto weak = get_weak();
@@ -471,7 +470,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				winrt::hstring savedTag = L"home";
 				try
 				{
-					auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+					auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
 					auto values = localSettings.Values();
 					if (values.HasKey(L"StartPage"))
 					{

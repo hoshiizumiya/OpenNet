@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/TorrentSettings.cpp
  * PURPOSE:   Persistent settings for libtorrent – JSON serialization + settings_pack builder
@@ -15,7 +15,7 @@
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/session.hpp> // for proxy_type_t
 
-#include <winrt/Windows.Storage.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 #include <winrt/Windows.Foundation.h>
 
 #include <filesystem>
@@ -29,441 +29,262 @@ namespace lt = libtorrent;
 // -------------------------------------------------------------------
 namespace OpenNet::Core
 {
+	// -------------------------------------------------------------------
+	//  TorrentSettingsManager
+	// -------------------------------------------------------------------
 
-    static void to_json(json &j, TorrentSettings const &s)
-    {
-        j = json{
-            // Connection
-            {"listenInterfaces", s.listenInterfaces},
-            {"connectionsLimit", s.connectionsLimit},
-            {"enableIncomingTcp", s.enableIncomingTcp},
-            {"enableOutgoingTcp", s.enableOutgoingTcp},
-            {"enableIncomingUtp", s.enableIncomingUtp},
-            {"enableOutgoingUtp", s.enableOutgoingUtp},
-            {"allowMultipleConnectionsPerIp", s.allowMultipleConnectionsPerIp},
-            {"anonymousMode", s.anonymousMode},
-            // Discovery
-            {"enableDht", s.enableDht},
-            {"enableLsd", s.enableLsd},
-            {"enableUpnp", s.enableUpnp},
-            {"enableNatpmp", s.enableNatpmp},
-            // Tracker
-            {"announceToAllTiers", s.announceToAllTiers},
-            {"announceToAllTrackers", s.announceToAllTrackers},
-            // Limits
-            {"activeDownloads", s.activeDownloads},
-            {"activeSeeds", s.activeSeeds},
-            {"activeLimit", s.activeLimit},
-            // Speed
-            {"downloadRateLimit", s.downloadRateLimit},
-            {"uploadRateLimit", s.uploadRateLimit},
-            // Seeding
-            {"seedingRatioLimit", s.seedingRatioLimit},
-            {"seedingTimeLimit", s.seedingTimeLimit},
-            // Peer
-            {"peerTimeout", s.peerTimeout},
-            {"handshakeTimeout", s.handshakeTimeout},
-            {"closeRedundantConnections", s.closeRedundantConnections},
-            {"maxPeerListSize", s.maxPeerListSize},
-            // Disk
-            {"aioThreads", s.aioThreads},
-            {"checkingMemUsage", s.checkingMemUsage},
-            // Encryption
-            {"encryptionPolicy", static_cast<int>(s.encryptionPolicy)},
-            {"preferRc4", s.preferRc4},
-            // Proxy
-            {"proxyType", static_cast<int>(s.proxyType)},
-            {"proxyHostname", s.proxyHostname},
-            {"proxyPort", s.proxyPort},
-            {"proxyUsername", s.proxyUsername},
-            {"proxyPassword", s.proxyPassword},
-            {"proxyPeerConnections", s.proxyPeerConnections},
-            {"proxyTrackerConnections", s.proxyTrackerConnections},
-            // Identity
-            {"userAgent", s.userAgent},
-            {"peerFingerprint", s.peerFingerprint},
-            // Download defaults
-            {"defaultSavePath", s.defaultSavePath},
-            {"preallocateStorage", s.preallocateStorage},
-            {"autoStartDownloads", s.autoStartDownloads},
-            {"moveCompletedEnabled", s.moveCompletedEnabled},
-            {"moveCompletedPath", s.moveCompletedPath},
-        };
-    }
+	TorrentSettingsManager& TorrentSettingsManager::Instance()
+	{
+		static TorrentSettingsManager s_instance;
+		return s_instance;
+	}
 
-    static void from_json(json const &j, TorrentSettings &s)
-    {
-        auto get = [&](auto const &key, auto &target)
-        {
-            if (j.contains(key))
-            {
-                try
-                {
-                    j.at(key).get_to(target);
-                }
-                catch (...)
-                {
-                }
-            }
-        };
+	std::wstring TorrentSettingsManager::FilePath() const
+	{
+		return m_filePath;
+	}
 
-        get("listenInterfaces", s.listenInterfaces);
-        get("connectionsLimit", s.connectionsLimit);
-        get("enableIncomingTcp", s.enableIncomingTcp);
-        get("enableOutgoingTcp", s.enableOutgoingTcp);
-        get("enableIncomingUtp", s.enableIncomingUtp);
-        get("enableOutgoingUtp", s.enableOutgoingUtp);
-        get("allowMultipleConnectionsPerIp", s.allowMultipleConnectionsPerIp);
-        get("anonymousMode", s.anonymousMode);
-        get("enableDht", s.enableDht);
-        get("enableLsd", s.enableLsd);
-        get("enableUpnp", s.enableUpnp);
-        get("enableNatpmp", s.enableNatpmp);
-        get("announceToAllTiers", s.announceToAllTiers);
-        get("announceToAllTrackers", s.announceToAllTrackers);
-        get("activeDownloads", s.activeDownloads);
-        get("activeSeeds", s.activeSeeds);
-        get("activeLimit", s.activeLimit);
-        get("downloadRateLimit", s.downloadRateLimit);
-        get("uploadRateLimit", s.uploadRateLimit);
-        get("seedingRatioLimit", s.seedingRatioLimit);
-        get("seedingTimeLimit", s.seedingTimeLimit);
-        get("peerTimeout", s.peerTimeout);
-        get("handshakeTimeout", s.handshakeTimeout);
-        get("closeRedundantConnections", s.closeRedundantConnections);
-        get("maxPeerListSize", s.maxPeerListSize);
-        get("aioThreads", s.aioThreads);
-        get("checkingMemUsage", s.checkingMemUsage);
-        get("userAgent", s.userAgent);
-        get("peerFingerprint", s.peerFingerprint);
-        get("defaultSavePath", s.defaultSavePath);
-        get("preallocateStorage", s.preallocateStorage);
-        get("autoStartDownloads", s.autoStartDownloads);
-        get("moveCompletedEnabled", s.moveCompletedEnabled);
-        get("moveCompletedPath", s.moveCompletedPath);
+	TorrentSettings TorrentSettingsManager::Get() const
+	{
+		std::lock_guard lk(m_mutex);
+		return m_settings;
+	}
 
-        // enums stored as int
-        if (j.contains("encryptionPolicy"))
-        {
-            int v = 1;
-            try
-            {
-                j.at("encryptionPolicy").get_to(v);
-            }
-            catch (...)
-            {
-            }
-            s.encryptionPolicy = static_cast<EncryptionPolicy>(v);
-        }
-        if (j.contains("proxyType"))
-        {
-            int v = 0;
-            try
-            {
-                j.at("proxyType").get_to(v);
-            }
-            catch (...)
-            {
-            }
-            s.proxyType = static_cast<ProxyType>(v);
-        }
-        get("preferRc4", s.preferRc4);
-        get("proxyHostname", s.proxyHostname);
-        get("proxyPort", s.proxyPort);
-        get("proxyUsername", s.proxyUsername);
-        get("proxyPassword", s.proxyPassword);
-        get("proxyPeerConnections", s.proxyPeerConnections);
-        get("proxyTrackerConnections", s.proxyTrackerConnections);
-    }
+	void TorrentSettingsManager::Set(TorrentSettings const& settings)
+	{
+		{
+			std::lock_guard lk(m_mutex);
+			m_settings = settings;
+		}
+		Save();
+	}
 
-    // -------------------------------------------------------------------
-    //  TorrentSettingsManager
-    // -------------------------------------------------------------------
+	void TorrentSettingsManager::Load()
+	{
+		std::lock_guard lk(m_mutex);
+		if (m_loaded)
+			return;
 
-    TorrentSettingsManager &TorrentSettingsManager::Instance()
-    {
-        static TorrentSettingsManager s_instance;
-        return s_instance;
-    }
+		try
+		{
+			// Determine legacy JSON file path
+			auto localFolder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
+			m_filePath = std::wstring(localFolder.Path().c_str()) + L"\\torrent_settings.json";
 
-    std::wstring TorrentSettingsManager::FilePath() const
-    {
-        return m_filePath;
-    }
+			// Try loading from SQLite first
+			if (!LoadFromSqlite())
+			{
+				// Persist the migrated settings to SQLite
+				SaveToSqlite();
+				OutputDebugStringA("TorrentSettingsManager: migrated settings from JSON to SQLite\n");
+			}
 
-    TorrentSettings TorrentSettingsManager::Get() const
-    {
-        std::lock_guard lk(m_mutex);
-        return m_settings;
-    }
+			// Resolve default save path if empty
+			if (m_settings.defaultSavePath.empty())
+			{
+				try
+				{
+					auto downloads = winrt::Windows::Storage::KnownFolders::GetFolderAsync(
+						winrt::Windows::Storage::KnownFolderId::DownloadsFolder)
+						.get();
+					m_settings.defaultSavePath = winrt::to_string(downloads.Path());
+				}
+				catch (...)
+				{
+					auto path = std::wstring(localFolder.Path().c_str()) + L"\\Downloads";
+					std::filesystem::create_directories(path);
+					m_settings.defaultSavePath = winrt::to_string(winrt::hstring(path));
+				}
+			}
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("TorrentSettingsManager::Load error: " + std::string(ex.what()) + "\n").c_str());
+		}
 
-    void TorrentSettingsManager::Set(TorrentSettings const &settings)
-    {
-        {
-            std::lock_guard lk(m_mutex);
-            m_settings = settings;
-        }
-        Save();
-    }
+		m_loaded = true;
+	}
 
-    void TorrentSettingsManager::Load()
-    {
-        std::lock_guard lk(m_mutex);
-        if (m_loaded)
-            return;
+	void TorrentSettingsManager::Save()
+	{
+		std::lock_guard lk(m_mutex);
+		SaveToSqlite();
+	}
 
-        try
-        {
-            // Determine legacy JSON file path
-            auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-            m_filePath = std::wstring(localFolder.Path().c_str()) + L"\\torrent_settings.json";
+	// ---------------------------------------------------------------
+	//  Internal: save all settings fields to SQLite AppSettingsDatabase
+	// ---------------------------------------------------------------
+	void TorrentSettingsManager::SaveToSqlite() const
+	{
+		try
+		{
+			auto& db = AppSettingsDatabase::Instance();
+			auto const& s = m_settings;
 
-            // Try loading from SQLite first
-            if (!LoadFromSqlite())
-            {
-                // Fallback: migrate from legacy JSON file
-                if (LoadFromLegacyJson())
-                {
-                    // Persist the migrated settings to SQLite
-                    SaveToSqlite();
-                    OutputDebugStringA("TorrentSettingsManager: migrated settings from JSON to SQLite\n");
-                }
-            }
+			// Connection
+			db.SetString(AppSettingsDatabase::CAT_CONNECTION, "listenInterfaces", s.listenInterfaces);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionsLimit", s.connectionsLimit);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingTcp", s.enableIncomingTcp);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingTcp", s.enableOutgoingTcp);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingUtp", s.enableIncomingUtp);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingUtp", s.enableOutgoingUtp);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "allowMultipleConnectionsPerIp", s.allowMultipleConnectionsPerIp);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "anonymousMode", s.anonymousMode);
 
-            // Resolve default save path if empty
-            if (m_settings.defaultSavePath.empty())
-            {
-                try
-                {
-                    auto downloads = winrt::Windows::Storage::KnownFolders::GetFolderAsync(
-                                         winrt::Windows::Storage::KnownFolderId::DownloadsFolder)
-                                         .get();
-                    m_settings.defaultSavePath = winrt::to_string(downloads.Path());
-                }
-                catch (...)
-                {
-                    auto path = std::wstring(localFolder.Path().c_str()) + L"\\Downloads";
-                    std::filesystem::create_directories(path);
-                    m_settings.defaultSavePath = winrt::to_string(winrt::hstring(path));
-                }
-            }
-        }
-        catch (std::exception const &ex)
-        {
-            OutputDebugStringA(("TorrentSettingsManager::Load error: " + std::string(ex.what()) + "\n").c_str());
-        }
+			// Discovery
+			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableDht", s.enableDht);
+			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd", s.enableLsd);
+			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp", s.enableUpnp);
+			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp", s.enableNatpmp);
 
-        m_loaded = true;
-    }
+			// Tracker
+			db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers", s.announceToAllTiers);
+			db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers", s.announceToAllTrackers);
 
-    void TorrentSettingsManager::Save()
-    {
-        std::lock_guard lk(m_mutex);
-        SaveToSqlite();
-    }
+			// Limits (Torrent category)
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads", s.activeDownloads);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds", s.activeSeeds);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit", s.activeLimit);
 
-    // ---------------------------------------------------------------
-    //  Internal: save all settings fields to SQLite AppSettingsDatabase
-    // ---------------------------------------------------------------
-    void TorrentSettingsManager::SaveToSqlite() const
-    {
-        try
-        {
-            auto &db = AppSettingsDatabase::Instance();
-            auto const &s = m_settings;
+			// Speed limits
+			db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit", s.downloadRateLimit);
+			db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "uploadRateLimit", s.uploadRateLimit);
 
-            // Connection
-            db.SetString(AppSettingsDatabase::CAT_CONNECTION, "listenInterfaces", s.listenInterfaces);
-            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionsLimit", s.connectionsLimit);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingTcp", s.enableIncomingTcp);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingTcp", s.enableOutgoingTcp);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingUtp", s.enableIncomingUtp);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingUtp", s.enableOutgoingUtp);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "allowMultipleConnectionsPerIp", s.allowMultipleConnectionsPerIp);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "anonymousMode", s.anonymousMode);
+			// Seeding
+			db.SetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit", s.seedingRatioLimit);
+			db.SetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit", s.seedingTimeLimit);
 
-            // Discovery
-            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableDht", s.enableDht);
-            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd", s.enableLsd);
-            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp", s.enableUpnp);
-            db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp", s.enableNatpmp);
+			// Peer
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout", s.peerTimeout);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout", s.handshakeTimeout);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections", s.closeRedundantConnections);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize", s.maxPeerListSize);
 
-            // Tracker
-            db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers", s.announceToAllTiers);
-            db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers", s.announceToAllTrackers);
+			// Disk I/O
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads", s.aioThreads);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage", s.checkingMemUsage);
 
-            // Limits (Torrent category)
-            db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads", s.activeDownloads);
-            db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds", s.activeSeeds);
-            db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit", s.activeLimit);
+			// Encryption
+			db.SetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy", static_cast<int>(s.encryptionPolicy));
+			db.SetBool(AppSettingsDatabase::CAT_ENCRYPTION, "preferRc4", s.preferRc4);
 
-            // Speed limits
-            db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit", s.downloadRateLimit);
-            db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "uploadRateLimit", s.uploadRateLimit);
+			// Proxy
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "proxyType", static_cast<int>(s.proxyType));
+			db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyHostname", s.proxyHostname);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "proxyPort", s.proxyPort);
+			db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyUsername", s.proxyUsername);
+			db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword", s.proxyPassword);
+			db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections", s.proxyPeerConnections);
+			db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections", s.proxyTrackerConnections);
 
-            // Seeding
-            db.SetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit", s.seedingRatioLimit);
-            db.SetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit", s.seedingTimeLimit);
+			// Identity
+			db.SetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent", s.userAgent);
+			db.SetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint", s.peerFingerprint);
 
-            // Peer
-            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout", s.peerTimeout);
-            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout", s.handshakeTimeout);
-            db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections", s.closeRedundantConnections);
-            db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize", s.maxPeerListSize);
+			// Download defaults
+			db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath", s.defaultSavePath);
+			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage", s.preallocateStorage);
+			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads", s.autoStartDownloads);
+			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled", s.moveCompletedEnabled);
+			db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("TorrentSettingsManager::SaveToSqlite error: " + std::string(ex.what()) + "\n").c_str());
+		}
+	}
 
-            // Disk I/O
-            db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads", s.aioThreads);
-            db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage", s.checkingMemUsage);
+	// ---------------------------------------------------------------
+	//  Internal: load settings from SQLite AppSettingsDatabase
+	// ---------------------------------------------------------------
+	bool TorrentSettingsManager::LoadFromSqlite()
+	{
+		try
+		{
+			auto& db = AppSettingsDatabase::Instance();
 
-            // Encryption
-            db.SetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy", static_cast<int>(s.encryptionPolicy));
-            db.SetBool(AppSettingsDatabase::CAT_ENCRYPTION, "preferRc4", s.preferRc4);
+			// Check if any torrent-related settings exist in the database
+			auto connSettings = db.GetCategory(AppSettingsDatabase::CAT_CONNECTION);
+			if (connSettings.empty())
+				return false; // No settings in DB → not yet migrated
 
-            // Proxy
-            db.SetInt(AppSettingsDatabase::CAT_PROXY, "proxyType", static_cast<int>(s.proxyType));
-            db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyHostname", s.proxyHostname);
-            db.SetInt(AppSettingsDatabase::CAT_PROXY, "proxyPort", s.proxyPort);
-            db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyUsername", s.proxyUsername);
-            db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword", s.proxyPassword);
-            db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections", s.proxyPeerConnections);
-            db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections", s.proxyTrackerConnections);
+			auto& s = m_settings;
 
-            // Identity
-            db.SetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent", s.userAgent);
-            db.SetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint", s.peerFingerprint);
+			// Connection
+			s.listenInterfaces = db.GetString(AppSettingsDatabase::CAT_CONNECTION, "listenInterfaces").value_or(s.listenInterfaces);
+			s.connectionsLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionsLimit").value_or(s.connectionsLimit));
+			s.enableIncomingTcp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingTcp").value_or(s.enableIncomingTcp);
+			s.enableOutgoingTcp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingTcp").value_or(s.enableOutgoingTcp);
+			s.enableIncomingUtp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingUtp").value_or(s.enableIncomingUtp);
+			s.enableOutgoingUtp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingUtp").value_or(s.enableOutgoingUtp);
+			s.allowMultipleConnectionsPerIp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "allowMultipleConnectionsPerIp").value_or(s.allowMultipleConnectionsPerIp);
+			s.anonymousMode = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "anonymousMode").value_or(s.anonymousMode);
 
-            // Download defaults
-            db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath", s.defaultSavePath);
-            db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage", s.preallocateStorage);
-            db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads", s.autoStartDownloads);
-            db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled", s.moveCompletedEnabled);
-            db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
-        }
-        catch (std::exception const &ex)
-        {
-            OutputDebugStringA(("TorrentSettingsManager::SaveToSqlite error: " + std::string(ex.what()) + "\n").c_str());
-        }
-    }
+			// Discovery
+			s.enableDht = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableDht").value_or(s.enableDht);
+			s.enableLsd = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd").value_or(s.enableLsd);
+			s.enableUpnp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp").value_or(s.enableUpnp);
+			s.enableNatpmp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp").value_or(s.enableNatpmp);
 
-    // ---------------------------------------------------------------
-    //  Internal: load settings from SQLite AppSettingsDatabase
-    // ---------------------------------------------------------------
-    bool TorrentSettingsManager::LoadFromSqlite()
-    {
-        try
-        {
-            auto &db = AppSettingsDatabase::Instance();
+			// Tracker
+			s.announceToAllTiers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers").value_or(s.announceToAllTiers);
+			s.announceToAllTrackers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers").value_or(s.announceToAllTrackers);
 
-            // Check if any torrent-related settings exist in the database
-            auto connSettings = db.GetCategory(AppSettingsDatabase::CAT_CONNECTION);
-            if (connSettings.empty())
-                return false; // No settings in DB → not yet migrated
+			// Limits
+			s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
+			s.activeSeeds = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds").value_or(s.activeSeeds));
+			s.activeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit").value_or(s.activeLimit));
 
-            auto &s = m_settings;
+			// Speed limits
+			s.downloadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit").value_or(s.downloadRateLimit));
+			s.uploadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "uploadRateLimit").value_or(s.uploadRateLimit));
 
-            // Connection
-            s.listenInterfaces = db.GetString(AppSettingsDatabase::CAT_CONNECTION, "listenInterfaces").value_or(s.listenInterfaces);
-            s.connectionsLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionsLimit").value_or(s.connectionsLimit));
-            s.enableIncomingTcp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingTcp").value_or(s.enableIncomingTcp);
-            s.enableOutgoingTcp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingTcp").value_or(s.enableOutgoingTcp);
-            s.enableIncomingUtp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableIncomingUtp").value_or(s.enableIncomingUtp);
-            s.enableOutgoingUtp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "enableOutgoingUtp").value_or(s.enableOutgoingUtp);
-            s.allowMultipleConnectionsPerIp = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "allowMultipleConnectionsPerIp").value_or(s.allowMultipleConnectionsPerIp);
-            s.anonymousMode = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "anonymousMode").value_or(s.anonymousMode);
+			// Seeding
+			s.seedingRatioLimit = db.GetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit").value_or(s.seedingRatioLimit);
+			s.seedingTimeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit").value_or(s.seedingTimeLimit));
 
-            // Discovery
-            s.enableDht = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableDht").value_or(s.enableDht);
-            s.enableLsd = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd").value_or(s.enableLsd);
-            s.enableUpnp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp").value_or(s.enableUpnp);
-            s.enableNatpmp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp").value_or(s.enableNatpmp);
+			// Peer
+			s.peerTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout").value_or(s.peerTimeout));
+			s.handshakeTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout").value_or(s.handshakeTimeout));
+			s.closeRedundantConnections = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections").value_or(s.closeRedundantConnections);
+			s.maxPeerListSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize").value_or(s.maxPeerListSize));
 
-            // Tracker
-            s.announceToAllTiers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers").value_or(s.announceToAllTiers);
-            s.announceToAllTrackers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers").value_or(s.announceToAllTrackers);
+			// Disk I/O
+			s.aioThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads").value_or(s.aioThreads));
+			s.checkingMemUsage = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage").value_or(s.checkingMemUsage));
 
-            // Limits
-            s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
-            s.activeSeeds = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds").value_or(s.activeSeeds));
-            s.activeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit").value_or(s.activeLimit));
+			// Encryption
+			s.encryptionPolicy = static_cast<EncryptionPolicy>(db.GetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy").value_or(static_cast<int>(s.encryptionPolicy)));
+			s.preferRc4 = db.GetBool(AppSettingsDatabase::CAT_ENCRYPTION, "preferRc4").value_or(s.preferRc4);
 
-            // Speed limits
-            s.downloadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit").value_or(s.downloadRateLimit));
-            s.uploadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "uploadRateLimit").value_or(s.uploadRateLimit));
+			// Proxy
+			s.proxyType = static_cast<ProxyType>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "proxyType").value_or(static_cast<int>(s.proxyType)));
+			s.proxyHostname = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyHostname").value_or(s.proxyHostname);
+			s.proxyPort = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "proxyPort").value_or(s.proxyPort));
+			s.proxyUsername = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyUsername").value_or(s.proxyUsername);
+			s.proxyPassword = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword").value_or(s.proxyPassword);
+			s.proxyPeerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections").value_or(s.proxyPeerConnections);
+			s.proxyTrackerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections").value_or(s.proxyTrackerConnections);
 
-            // Seeding
-            s.seedingRatioLimit = db.GetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit").value_or(s.seedingRatioLimit);
-            s.seedingTimeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit").value_or(s.seedingTimeLimit));
+			// Identity
+			s.userAgent = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent").value_or(s.userAgent);
+			s.peerFingerprint = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint").value_or(s.peerFingerprint);
 
-            // Peer
-            s.peerTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout").value_or(s.peerTimeout));
-            s.handshakeTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout").value_or(s.handshakeTimeout));
-            s.closeRedundantConnections = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections").value_or(s.closeRedundantConnections);
-            s.maxPeerListSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize").value_or(s.maxPeerListSize));
+			// Download defaults
+			s.defaultSavePath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath").value_or(s.defaultSavePath);
+			s.preallocateStorage = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage").value_or(s.preallocateStorage);
+			s.autoStartDownloads = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads").value_or(s.autoStartDownloads);
+			s.moveCompletedEnabled = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled").value_or(s.moveCompletedEnabled);
+			s.moveCompletedPath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath").value_or(s.moveCompletedPath);
 
-            // Disk I/O
-            s.aioThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads").value_or(s.aioThreads));
-            s.checkingMemUsage = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage").value_or(s.checkingMemUsage));
-
-            // Encryption
-            s.encryptionPolicy = static_cast<EncryptionPolicy>(db.GetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy").value_or(static_cast<int>(s.encryptionPolicy)));
-            s.preferRc4 = db.GetBool(AppSettingsDatabase::CAT_ENCRYPTION, "preferRc4").value_or(s.preferRc4);
-
-            // Proxy
-            s.proxyType = static_cast<ProxyType>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "proxyType").value_or(static_cast<int>(s.proxyType)));
-            s.proxyHostname = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyHostname").value_or(s.proxyHostname);
-            s.proxyPort = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "proxyPort").value_or(s.proxyPort));
-            s.proxyUsername = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyUsername").value_or(s.proxyUsername);
-            s.proxyPassword = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword").value_or(s.proxyPassword);
-            s.proxyPeerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections").value_or(s.proxyPeerConnections);
-            s.proxyTrackerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections").value_or(s.proxyTrackerConnections);
-
-            // Identity
-            s.userAgent = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent").value_or(s.userAgent);
-            s.peerFingerprint = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint").value_or(s.peerFingerprint);
-
-            // Download defaults
-            s.defaultSavePath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath").value_or(s.defaultSavePath);
-            s.preallocateStorage = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage").value_or(s.preallocateStorage);
-            s.autoStartDownloads = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads").value_or(s.autoStartDownloads);
-            s.moveCompletedEnabled = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled").value_or(s.moveCompletedEnabled);
-            s.moveCompletedPath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath").value_or(s.moveCompletedPath);
-
-            return true;
-        }
-        catch (std::exception const &ex)
-        {
-            OutputDebugStringA(("TorrentSettingsManager::LoadFromSqlite error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
-
-    // ---------------------------------------------------------------
-    //  Internal: load from legacy JSON file (for migration)
-    // ---------------------------------------------------------------
-    bool TorrentSettingsManager::LoadFromLegacyJson()
-    {
-        try
-        {
-            if (!std::filesystem::exists(m_filePath))
-                return false;
-
-            std::ifstream ifs(m_filePath);
-            if (!ifs.good())
-                return false;
-
-            json j = json::parse(ifs, nullptr, /*allow_exceptions=*/false);
-            if (j.is_discarded())
-                return false;
-
-            m_settings = j.get<TorrentSettings>();
-            return true;
-        }
-        catch (std::exception const &ex)
-        {
-            OutputDebugStringA(("TorrentSettingsManager::LoadFromLegacyJson error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			return true;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("TorrentSettingsManager::LoadFromSqlite error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
 } // namespace OpenNet::Core
 
@@ -474,176 +295,176 @@ namespace OpenNet::Core
 namespace OpenNet::Core
 {
 
-    void ApplyTorrentSettingsToSettingsPack(
-        TorrentSettings const &s,
-        lt::settings_pack &pack)
-    {
-        // Connection
-        pack.set_str(lt::settings_pack::listen_interfaces, s.listenInterfaces);
-        pack.set_int(lt::settings_pack::connections_limit, s.connectionsLimit);
-        pack.set_bool(lt::settings_pack::enable_incoming_tcp, s.enableIncomingTcp);
-        pack.set_bool(lt::settings_pack::enable_outgoing_tcp, s.enableOutgoingTcp);
-        pack.set_bool(lt::settings_pack::enable_incoming_utp, s.enableIncomingUtp);
-        pack.set_bool(lt::settings_pack::enable_outgoing_utp, s.enableOutgoingUtp);
-        pack.set_bool(lt::settings_pack::allow_multiple_connections_per_ip, s.allowMultipleConnectionsPerIp);
-        pack.set_bool(lt::settings_pack::anonymous_mode, s.anonymousMode);
+	void ApplyTorrentSettingsToSettingsPack(
+		TorrentSettings const& s,
+		lt::settings_pack& pack)
+	{
+		// Connection
+		pack.set_str(lt::settings_pack::listen_interfaces, s.listenInterfaces);
+		pack.set_int(lt::settings_pack::connections_limit, s.connectionsLimit);
+		pack.set_bool(lt::settings_pack::enable_incoming_tcp, s.enableIncomingTcp);
+		pack.set_bool(lt::settings_pack::enable_outgoing_tcp, s.enableOutgoingTcp);
+		pack.set_bool(lt::settings_pack::enable_incoming_utp, s.enableIncomingUtp);
+		pack.set_bool(lt::settings_pack::enable_outgoing_utp, s.enableOutgoingUtp);
+		pack.set_bool(lt::settings_pack::allow_multiple_connections_per_ip, s.allowMultipleConnectionsPerIp);
+		pack.set_bool(lt::settings_pack::anonymous_mode, s.anonymousMode);
 
-        // Discovery
-        pack.set_bool(lt::settings_pack::enable_dht, s.enableDht);
-        pack.set_bool(lt::settings_pack::enable_lsd, s.enableLsd);
-        pack.set_bool(lt::settings_pack::enable_upnp, s.enableUpnp);
-        pack.set_bool(lt::settings_pack::enable_natpmp, s.enableNatpmp);
+		// Discovery
+		pack.set_bool(lt::settings_pack::enable_dht, s.enableDht);
+		pack.set_bool(lt::settings_pack::enable_lsd, s.enableLsd);
+		pack.set_bool(lt::settings_pack::enable_upnp, s.enableUpnp);
+		pack.set_bool(lt::settings_pack::enable_natpmp, s.enableNatpmp);
 
-        // Tracker
-        pack.set_bool(lt::settings_pack::announce_to_all_tiers, s.announceToAllTiers);
-        pack.set_bool(lt::settings_pack::announce_to_all_trackers, s.announceToAllTrackers);
+		// Tracker
+		pack.set_bool(lt::settings_pack::announce_to_all_tiers, s.announceToAllTiers);
+		pack.set_bool(lt::settings_pack::announce_to_all_trackers, s.announceToAllTrackers);
 
-        // Limits
-        pack.set_int(lt::settings_pack::active_downloads, s.activeDownloads);
-        pack.set_int(lt::settings_pack::active_seeds, s.activeSeeds);
-        pack.set_int(lt::settings_pack::active_limit, s.activeLimit);
+		// Limits
+		pack.set_int(lt::settings_pack::active_downloads, s.activeDownloads);
+		pack.set_int(lt::settings_pack::active_seeds, s.activeSeeds);
+		pack.set_int(lt::settings_pack::active_limit, s.activeLimit);
 
-        // Speed limits
-        pack.set_int(lt::settings_pack::download_rate_limit, s.downloadRateLimit);
-        pack.set_int(lt::settings_pack::upload_rate_limit, s.uploadRateLimit);
+		// Speed limits
+		pack.set_int(lt::settings_pack::download_rate_limit, s.downloadRateLimit);
+		pack.set_int(lt::settings_pack::upload_rate_limit, s.uploadRateLimit);
 
-        // Peer
-        pack.set_int(lt::settings_pack::peer_timeout, s.peerTimeout);
-        pack.set_int(lt::settings_pack::handshake_timeout, s.handshakeTimeout);
-        pack.set_bool(lt::settings_pack::close_redundant_connections, s.closeRedundantConnections);
-        pack.set_int(lt::settings_pack::max_peerlist_size, s.maxPeerListSize);
+		// Peer
+		pack.set_int(lt::settings_pack::peer_timeout, s.peerTimeout);
+		pack.set_int(lt::settings_pack::handshake_timeout, s.handshakeTimeout);
+		pack.set_bool(lt::settings_pack::close_redundant_connections, s.closeRedundantConnections);
+		pack.set_int(lt::settings_pack::max_peerlist_size, s.maxPeerListSize);
 
-        // Disk I/O
-        pack.set_int(lt::settings_pack::aio_threads, s.aioThreads);
-        pack.set_int(lt::settings_pack::checking_mem_usage, s.checkingMemUsage);
+		// Disk I/O
+		pack.set_int(lt::settings_pack::aio_threads, s.aioThreads);
+		pack.set_int(lt::settings_pack::checking_mem_usage, s.checkingMemUsage);
 
-        // Encryption (pe_settings mapped to settings_pack ints)
-        // In libtorrent 2.x: out_enc_policy, in_enc_policy, allowed_enc_level
-        int encPolicy = 1; // enabled
-        switch (s.encryptionPolicy)
-        {
-        case EncryptionPolicy::Forced:
-            encPolicy = 0;
-            break; // pe_forced
-        case EncryptionPolicy::Enabled:
-            encPolicy = 1;
-            break; // pe_enabled
-        case EncryptionPolicy::Disabled:
-            encPolicy = 2;
-            break; // pe_disabled
-        }
-        pack.set_int(lt::settings_pack::out_enc_policy, encPolicy);
-        pack.set_int(lt::settings_pack::in_enc_policy, encPolicy);
+		// Encryption (pe_settings mapped to settings_pack ints)
+		// In libtorrent 2.x: out_enc_policy, in_enc_policy, allowed_enc_level
+		int encPolicy = 1; // enabled
+		switch (s.encryptionPolicy)
+		{
+			case EncryptionPolicy::Forced:
+				encPolicy = 0;
+				break; // pe_forced
+			case EncryptionPolicy::Enabled:
+				encPolicy = 1;
+				break; // pe_enabled
+			case EncryptionPolicy::Disabled:
+				encPolicy = 2;
+				break; // pe_disabled
+		}
+		pack.set_int(lt::settings_pack::out_enc_policy, encPolicy);
+		pack.set_int(lt::settings_pack::in_enc_policy, encPolicy);
 
-        int encLevel = s.preferRc4 ? 1 /*pe_rc4*/ : 3 /*pe_both*/;
-        pack.set_int(lt::settings_pack::allowed_enc_level, encLevel);
-        pack.set_bool(lt::settings_pack::prefer_rc4, s.preferRc4);
+		int encLevel = s.preferRc4 ? 1 /*pe_rc4*/ : 3 /*pe_both*/;
+		pack.set_int(lt::settings_pack::allowed_enc_level, encLevel);
+		pack.set_bool(lt::settings_pack::prefer_rc4, s.preferRc4);
 
-        // Proxy
-        pack.set_int(lt::settings_pack::proxy_type, static_cast<int>(s.proxyType));
-        pack.set_str(lt::settings_pack::proxy_hostname, s.proxyHostname);
-        pack.set_int(lt::settings_pack::proxy_port, s.proxyPort);
-        pack.set_str(lt::settings_pack::proxy_username, s.proxyUsername);
-        pack.set_str(lt::settings_pack::proxy_password, s.proxyPassword);
-        pack.set_bool(lt::settings_pack::proxy_peer_connections, s.proxyPeerConnections);
-        pack.set_bool(lt::settings_pack::proxy_tracker_connections, s.proxyTrackerConnections);
+		// Proxy
+		pack.set_int(lt::settings_pack::proxy_type, static_cast<int>(s.proxyType));
+		pack.set_str(lt::settings_pack::proxy_hostname, s.proxyHostname);
+		pack.set_int(lt::settings_pack::proxy_port, s.proxyPort);
+		pack.set_str(lt::settings_pack::proxy_username, s.proxyUsername);
+		pack.set_str(lt::settings_pack::proxy_password, s.proxyPassword);
+		pack.set_bool(lt::settings_pack::proxy_peer_connections, s.proxyPeerConnections);
+		pack.set_bool(lt::settings_pack::proxy_tracker_connections, s.proxyTrackerConnections);
 
-        // Identity
-        pack.set_str(lt::settings_pack::user_agent, s.userAgent);
-        pack.set_str(lt::settings_pack::peer_fingerprint, s.peerFingerprint);
+		// Identity
+		pack.set_str(lt::settings_pack::user_agent, s.userAgent);
+		pack.set_str(lt::settings_pack::peer_fingerprint, s.peerFingerprint);
 
-        // Peer
-        pack.set_int(lt::settings_pack::max_peerlist_size, s.maxPeerListSize);
+		// Peer
+		pack.set_int(lt::settings_pack::max_peerlist_size, s.maxPeerListSize);
 
-        // Alert mask – include DHT category so dht_stats_alert fires for node count
-        pack.set_int(lt::settings_pack::alert_mask,
-                     lt::alert_category::status |
-                         lt::alert_category::error |
-                         lt::alert_category::storage |
-                         lt::alert_category::peer |
-                         lt::alert_category::tracker |
-                         lt::alert_category::stats |
-                         lt::alert_category::dht);
+		// Alert mask – include DHT category so dht_stats_alert fires for node count
+		pack.set_int(lt::settings_pack::alert_mask,
+					 lt::alert_category::status |
+					 lt::alert_category::error |
+					 lt::alert_category::storage |
+					 lt::alert_category::peer |
+					 lt::alert_category::tracker |
+					 lt::alert_category::stats |
+					 lt::alert_category::dht);
 
-        // Seeding limits are per-torrent in libtorrent; share_ratio_limit / seed_time_limit
-        // are applied via session settings:
-        pack.set_int(lt::settings_pack::share_ratio_limit,
-                     s.seedingRatioLimit > 0 ? static_cast<int>(s.seedingRatioLimit * 100) : 0);
-        pack.set_int(lt::settings_pack::seed_time_limit,
-                     s.seedingTimeLimit > 0 ? s.seedingTimeLimit * 60 : 0); // minutes => seconds
-    }
+		// Seeding limits are per-torrent in libtorrent; share_ratio_limit / seed_time_limit
+		// are applied via session settings:
+		pack.set_int(lt::settings_pack::share_ratio_limit,
+					 s.seedingRatioLimit > 0 ? static_cast<int>(s.seedingRatioLimit * 100) : 0);
+		pack.set_int(lt::settings_pack::seed_time_limit,
+					 s.seedingTimeLimit > 0 ? s.seedingTimeLimit * 60 : 0); // minutes => seconds
+	}
 
-    TorrentSettings BuildTorrentSettingsFromPack(lt::settings_pack const &pack)
-    {
-        TorrentSettings s;
+	TorrentSettings BuildTorrentSettingsFromPack(lt::settings_pack const& pack)
+	{
+		TorrentSettings s;
 
-        s.listenInterfaces = pack.get_str(lt::settings_pack::listen_interfaces);
-        s.connectionsLimit = pack.get_int(lt::settings_pack::connections_limit);
-        s.enableIncomingTcp = pack.get_bool(lt::settings_pack::enable_incoming_tcp);
-        s.enableOutgoingTcp = pack.get_bool(lt::settings_pack::enable_outgoing_tcp);
-        s.enableIncomingUtp = pack.get_bool(lt::settings_pack::enable_incoming_utp);
-        s.enableOutgoingUtp = pack.get_bool(lt::settings_pack::enable_outgoing_utp);
-        s.allowMultipleConnectionsPerIp = pack.get_bool(lt::settings_pack::allow_multiple_connections_per_ip);
-        s.anonymousMode = pack.get_bool(lt::settings_pack::anonymous_mode);
+		s.listenInterfaces = pack.get_str(lt::settings_pack::listen_interfaces);
+		s.connectionsLimit = pack.get_int(lt::settings_pack::connections_limit);
+		s.enableIncomingTcp = pack.get_bool(lt::settings_pack::enable_incoming_tcp);
+		s.enableOutgoingTcp = pack.get_bool(lt::settings_pack::enable_outgoing_tcp);
+		s.enableIncomingUtp = pack.get_bool(lt::settings_pack::enable_incoming_utp);
+		s.enableOutgoingUtp = pack.get_bool(lt::settings_pack::enable_outgoing_utp);
+		s.allowMultipleConnectionsPerIp = pack.get_bool(lt::settings_pack::allow_multiple_connections_per_ip);
+		s.anonymousMode = pack.get_bool(lt::settings_pack::anonymous_mode);
 
-        s.enableDht = pack.get_bool(lt::settings_pack::enable_dht);
-        s.enableLsd = pack.get_bool(lt::settings_pack::enable_lsd);
-        s.enableUpnp = pack.get_bool(lt::settings_pack::enable_upnp);
-        s.enableNatpmp = pack.get_bool(lt::settings_pack::enable_natpmp);
+		s.enableDht = pack.get_bool(lt::settings_pack::enable_dht);
+		s.enableLsd = pack.get_bool(lt::settings_pack::enable_lsd);
+		s.enableUpnp = pack.get_bool(lt::settings_pack::enable_upnp);
+		s.enableNatpmp = pack.get_bool(lt::settings_pack::enable_natpmp);
 
-        s.announceToAllTiers = pack.get_bool(lt::settings_pack::announce_to_all_tiers);
-        s.announceToAllTrackers = pack.get_bool(lt::settings_pack::announce_to_all_trackers);
+		s.announceToAllTiers = pack.get_bool(lt::settings_pack::announce_to_all_tiers);
+		s.announceToAllTrackers = pack.get_bool(lt::settings_pack::announce_to_all_trackers);
 
-        s.activeDownloads = pack.get_int(lt::settings_pack::active_downloads);
-        s.activeSeeds = pack.get_int(lt::settings_pack::active_seeds);
-        s.activeLimit = pack.get_int(lt::settings_pack::active_limit);
+		s.activeDownloads = pack.get_int(lt::settings_pack::active_downloads);
+		s.activeSeeds = pack.get_int(lt::settings_pack::active_seeds);
+		s.activeLimit = pack.get_int(lt::settings_pack::active_limit);
 
-        s.downloadRateLimit = pack.get_int(lt::settings_pack::download_rate_limit);
-        s.uploadRateLimit = pack.get_int(lt::settings_pack::upload_rate_limit);
+		s.downloadRateLimit = pack.get_int(lt::settings_pack::download_rate_limit);
+		s.uploadRateLimit = pack.get_int(lt::settings_pack::upload_rate_limit);
 
-        s.peerTimeout = pack.get_int(lt::settings_pack::peer_timeout);
-        s.handshakeTimeout = pack.get_int(lt::settings_pack::handshake_timeout);
-        s.closeRedundantConnections = pack.get_bool(lt::settings_pack::close_redundant_connections);
-        s.maxPeerListSize = pack.get_int(lt::settings_pack::max_peerlist_size);
+		s.peerTimeout = pack.get_int(lt::settings_pack::peer_timeout);
+		s.handshakeTimeout = pack.get_int(lt::settings_pack::handshake_timeout);
+		s.closeRedundantConnections = pack.get_bool(lt::settings_pack::close_redundant_connections);
+		s.maxPeerListSize = pack.get_int(lt::settings_pack::max_peerlist_size);
 
-        s.aioThreads = pack.get_int(lt::settings_pack::aio_threads);
-        s.checkingMemUsage = pack.get_int(lt::settings_pack::checking_mem_usage);
+		s.aioThreads = pack.get_int(lt::settings_pack::aio_threads);
+		s.checkingMemUsage = pack.get_int(lt::settings_pack::checking_mem_usage);
 
-        s.userAgent = pack.get_str(lt::settings_pack::user_agent);
-        s.peerFingerprint = pack.get_str(lt::settings_pack::peer_fingerprint);
+		s.userAgent = pack.get_str(lt::settings_pack::user_agent);
+		s.peerFingerprint = pack.get_str(lt::settings_pack::peer_fingerprint);
 
-        // Encryption
-        int encPol = pack.get_int(lt::settings_pack::out_enc_policy);
-        switch (encPol)
-        {
-        case 0:
-            s.encryptionPolicy = EncryptionPolicy::Forced;
-            break;
-        case 2:
-            s.encryptionPolicy = EncryptionPolicy::Disabled;
-            break;
-        default:
-            s.encryptionPolicy = EncryptionPolicy::Enabled;
-            break;
-        }
-        s.preferRc4 = pack.get_bool(lt::settings_pack::prefer_rc4);
+		// Encryption
+		int encPol = pack.get_int(lt::settings_pack::out_enc_policy);
+		switch (encPol)
+		{
+			case 0:
+				s.encryptionPolicy = EncryptionPolicy::Forced;
+				break;
+			case 2:
+				s.encryptionPolicy = EncryptionPolicy::Disabled;
+				break;
+			default:
+				s.encryptionPolicy = EncryptionPolicy::Enabled;
+				break;
+		}
+		s.preferRc4 = pack.get_bool(lt::settings_pack::prefer_rc4);
 
-        // Proxy
-        s.proxyType = static_cast<ProxyType>(pack.get_int(lt::settings_pack::proxy_type));
-        s.proxyHostname = pack.get_str(lt::settings_pack::proxy_hostname);
-        s.proxyPort = pack.get_int(lt::settings_pack::proxy_port);
-        s.proxyUsername = pack.get_str(lt::settings_pack::proxy_username);
-        s.proxyPassword = pack.get_str(lt::settings_pack::proxy_password);
-        s.proxyPeerConnections = pack.get_bool(lt::settings_pack::proxy_peer_connections);
-        s.proxyTrackerConnections = pack.get_bool(lt::settings_pack::proxy_tracker_connections);
+		// Proxy
+		s.proxyType = static_cast<ProxyType>(pack.get_int(lt::settings_pack::proxy_type));
+		s.proxyHostname = pack.get_str(lt::settings_pack::proxy_hostname);
+		s.proxyPort = pack.get_int(lt::settings_pack::proxy_port);
+		s.proxyUsername = pack.get_str(lt::settings_pack::proxy_username);
+		s.proxyPassword = pack.get_str(lt::settings_pack::proxy_password);
+		s.proxyPeerConnections = pack.get_bool(lt::settings_pack::proxy_peer_connections);
+		s.proxyTrackerConnections = pack.get_bool(lt::settings_pack::proxy_tracker_connections);
 
-        // Seeding
-        int ratioRaw = pack.get_int(lt::settings_pack::share_ratio_limit);
-        s.seedingRatioLimit = ratioRaw > 0 ? ratioRaw / 100.0 : 0.0;
-        int seedTimeSec = pack.get_int(lt::settings_pack::seed_time_limit);
-        s.seedingTimeLimit = seedTimeSec > 0 ? seedTimeSec / 60 : 0;
+		// Seeding
+		int ratioRaw = pack.get_int(lt::settings_pack::share_ratio_limit);
+		s.seedingRatioLimit = ratioRaw > 0 ? ratioRaw / 100.0 : 0.0;
+		int seedTimeSec = pack.get_int(lt::settings_pack::seed_time_limit);
+		s.seedingTimeLimit = seedTimeSec > 0 ? seedTimeSec / 60 : 0;
 
-        return s;
-    }
+		return s;
+	}
 
 } // namespace OpenNet::Core
