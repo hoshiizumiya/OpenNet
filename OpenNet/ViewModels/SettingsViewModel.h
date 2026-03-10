@@ -226,7 +226,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		std::wstring MaxFileSizeText() const
 		{
-			return FormatBytes(m_maxFileSize);
+			return ::Core::Utils::Misc::friendlyUnitCompact(m_maxFileSize).c_str();
 		}
 
 		uint32_t ChunkSize() const
@@ -243,7 +243,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		std::wstring ChunkSizeText() const
 		{
-			return FormatBytes(m_chunkSize);
+			return ::Core::Utils::Misc::friendlyUnitCompact(m_chunkSize).c_str();
 		}
 
 		uint64_t BandwidthLimit() const
@@ -492,7 +492,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void UpdateCommands();
 		void InitializeDefaultValues();
 		void OnSettingChanged();
-		std::wstring FormatBytes(uint64_t bytes) const;
 		std::wstring FormatSpeed(double bytesPerSecond) const;
 
 		// 设置序列化 / Settings Serialization

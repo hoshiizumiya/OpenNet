@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskTrackersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,10 +9,10 @@
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="8">
+    <Grid Padding="0,8,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!--  Tracker list  -->
@@ -30,31 +30,31 @@
                             <TextBlock
                                 x:Uid="TrackerHeader_URL"
                                 FontWeight="SemiBold"
-                                Text="URL"/>
+                                Text="URL" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Tier"
                                 FontWeight="SemiBold"
-                                Text="Tier"/>
+                                Text="Tier" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Peers"
                                 FontWeight="SemiBold"
-                                Text="Peers"/>
+                                Text="Peers" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Status"
                                 FontWeight="SemiBold"
-                                Text="Status"/>
+                                Text="Status" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="2*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Message"
                                 FontWeight="SemiBold"
-                                Text="Message"/>
+                                Text="Message" />
                         </labs:DataColumn>
                     </labs:DataTable>
                 </Border>
@@ -62,13 +62,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackerDisplayItem">
                     <labs:DataRow HorizontalAlignment="Left">
-                        <TextBlock Text="{x:Bind URL}"
-                                TextTrimming="CharacterEllipsis"/>
-                        <TextBlock Text="{x:Bind Tier}"/>
-                        <TextBlock Text="{x:Bind Peers}"/>
-                        <TextBlock Text="{x:Bind Status}"/>
-                        <TextBlock Text="{x:Bind Message}"
-                                TextTrimming="CharacterEllipsis"/>
+                        <TextBlock Text="{x:Bind URL}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Tier}" />
+                        <TextBlock Text="{x:Bind Peers}" />
+                        <TextBlock Text="{x:Bind Status}" />
+                        <TextBlock Text="{x:Bind Message}" TextTrimming="CharacterEllipsis" />
                     </labs:DataRow>
                 </DataTemplate>
             </ListView.ItemTemplate>
@@ -83,6 +81,6 @@
             VerticalAlignment="Center"
             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
             Text="No trackers"
-            Visibility="Collapsed"/>
+            Visibility="Collapsed" />
     </Grid>
 </Page>

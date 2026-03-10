@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
-        platform: [x64, ARM64]
+        platform: [x64]
 
     permissions:
       contents: write
@@ -53,6 +53,13 @@ jobs:
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
           [IO.File]::WriteAllBytes("cert.pfx", $bytes)
+        working-directory: ${{ github.workspace }}
+        shell: pwsh
+
+      - name: Show Certificate location
+        run: |
+          Get-Location | ls
+        working-directory: ${{ github.workspace }}
         shell: pwsh
         
       - name: Build MSIX
@@ -60,9 +67,10 @@ jobs:
           msbuild OpenNet.slnx `
             /p:Configuration=${{ matrix.configuration }} `
             /p:Platform=${{ matrix.platform }} `
+            /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile=../cert.pfx `
+            /p:PackageCertificateKeyFile=$env:GITHUB_WORKSPACE\cert.pfx `
             /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
             /m
         shell: pwsh

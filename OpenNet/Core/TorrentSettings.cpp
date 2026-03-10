@@ -74,9 +74,7 @@ namespace OpenNet::Core
 			// Try loading from SQLite first
 			if (!LoadFromSqlite())
 			{
-				// Persist the migrated settings to SQLite
 				SaveToSqlite();
-				OutputDebugStringA("TorrentSettingsManager: migrated settings from JSON to SQLite\n");
 			}
 
 			// Resolve default save path if empty

@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/AppSettingsDatabase.cpp
  * PURPOSE:   Unified SQLite-based application settings storage implementation.
@@ -10,7 +10,7 @@
 #include "Core/AppSettingsDatabase.h"
 #include "ThirdParty/Sqlite/sqlite3.h"
 
-#include <winrt/Windows.Storage.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 #include <filesystem>
 #include <sstream>
 
@@ -34,8 +34,7 @@ namespace OpenNet::Core
 
         try
         {
-            auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-            m_dbPath = std::wstring(localFolder.Path().c_str()) + L"\\app_settings.db";
+            m_dbPath = std::wstring(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalPath().c_str()) + L"\\app_settings.db";
 
             int rc = sqlite3_open16(m_dbPath.c_str(), &m_db);
             if (rc != SQLITE_OK)

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskFilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,10 +9,10 @@
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
-    <Grid Padding="8">
+    <Grid Padding="0,8,0,0">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <!--  File list  -->
@@ -30,31 +30,31 @@
                             <TextBlock
                                 x:Uid="FileHeader_Path"
                                 FontWeight="SemiBold"
-                                Text="File"/>
+                                Text="File" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Size"
                                 FontWeight="SemiBold"
-                                Text="Size"/>
+                                Text="Size" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Progress"
                                 FontWeight="SemiBold"
-                                Text="Progress"/>
+                                Text="Progress" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Done"
                                 FontWeight="SemiBold"
-                                Text="Done"/>
+                                Text="Done" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Priority"
                                 FontWeight="SemiBold"
-                                Text="Priority"/>
+                                Text="Priority" />
                         </labs:DataColumn>
                     </labs:DataTable>
                 </Border>
@@ -65,28 +65,24 @@
                         <TextBlock
                             Text="{x:Bind Path}"
                             TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind Path}"/>
-                        <TextBlock Text="{x:Bind Size}"/>
+                            ToolTipService.ToolTip="{x:Bind Path}" />
+                        <TextBlock Text="{x:Bind Size}" />
                         <ProgressBar
                             Margin="4,0"
                             VerticalAlignment="Center"
                             Maximum="100"
-                            Value="{x:Bind ProgressValue}"/>
-                        <TextBlock Text="{x:Bind Done}"/>
+                            Value="{x:Bind ProgressValue}" />
+                        <TextBlock Text="{x:Bind Done}" />
                         <ComboBox
                             MinWidth="80"
                             HorizontalAlignment="Stretch"
                             SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
                             SelectionChanged="FilePriority_SelectionChanged"
                             Tag="{x:Bind FileIndex}">
-                            <ComboBoxItem x:Uid="FilePriority_Skip"
-                                    Content="Skip"/>
-                            <ComboBoxItem x:Uid="FilePriority_Low"
-                                    Content="Low"/>
-                            <ComboBoxItem x:Uid="FilePriority_Normal"
-                                    Content="Normal"/>
-                            <ComboBoxItem x:Uid="FilePriority_High"
-                                    Content="High"/>
+                            <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
+                            <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
+                            <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
+                            <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
                         </ComboBox>
                     </labs:DataRow>
                 </DataTemplate>
@@ -102,6 +98,6 @@
             VerticalAlignment="Center"
             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
             Text="No file information available"
-            Visibility="Collapsed"/>
+            Visibility="Collapsed" />
     </Grid>
 </Page>

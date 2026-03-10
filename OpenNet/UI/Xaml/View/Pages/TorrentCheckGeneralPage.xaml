@@ -252,9 +252,9 @@
                                 ItemsSource="{x:Bind ViewModel.FileTree}"
                                 SelectionMode="None">
                                 <controls:HeaderedTreeView.Header>
-                                    <Border Padding="8" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                    <Border Padding="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                                         <labs:DataTable ColumnSpacing="8">
-                                            <!--  Select checkbox column - Fixed width  -->
+                                            <!--  Select checkbox column  -->
                                             <labs:DataColumn MinWidth="32" DesiredWidth="32">
                                                 <CheckBox
                                                     x:Name="SelectAllHeaderCheckBox"
@@ -269,14 +269,14 @@
                                                     FontWeight="SemiBold"
                                                     Text="File Name" />
                                             </labs:DataColumn>
-                                            <!--  Size column - Fixed width  -->
-                                            <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="100">
+                                            <!--  Size column  -->
+                                            <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="200">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
                                                     FontWeight="SemiBold"
                                                     Text="Size" />
                                             </labs:DataColumn>
-                                            <!--  Priority column - Fixed width  -->
+                                            <!--  Priority column  -->
                                             <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="80">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Priority"
@@ -289,7 +289,13 @@
                                 <controls:HeaderedTreeView.ItemTemplate>
                                     <DataTemplate x:DataType="vm:TorrentFileNodeViewModel">
                                         <muxc:TreeViewItem IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}" ItemsSource="{x:Bind Children}">
-                                            <Grid ColumnDefinitions="32,*,100,80" ColumnSpacing="8">
+                                            <Grid ColumnSpacing="8">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="32" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="100" />
+                                                    <ColumnDefinition Width="80" />
+                                                </Grid.ColumnDefinitions>
                                                 <!--  Checkbox for selection  -->
                                                 <CheckBox Click="FileCheckBox_Click" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                                                 <!--  File name with icon  -->
@@ -334,8 +340,11 @@
         <Grid
             Grid.Row="1"
             VerticalAlignment="Bottom"
-            ColumnDefinitions="*"
             ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
             <StackPanel
                 HorizontalAlignment="Left"
                 Orientation="Horizontal"

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TasksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,7 +8,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
-    xmlns:local="using:OpenNet.Pages"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
@@ -262,7 +262,7 @@
                             <!--  We set HorizontalAlignment to Left here as we're not stretching our content with a star column  -->
                             <labs:DataRow HorizontalAlignment="Left">
                                 <TextBlock
-                                    Margin="8,0,8,0"
+                                    Margin="12,0,8,0"
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind Name, Mode=OneWay}"
                                     TextWrapping="Wrap" />
@@ -290,15 +290,6 @@
                     <muxc:SelectorBarItem x:Name="TrackersList" x:Uid="Task_TrackersList" />
                     <muxc:SelectorBarItem x:Name="FilesList" x:Uid="Task_FilesList" />
                 </muxc:SelectorBar>
-
-                <!--  SpeedGraph 嵌入在标签栏右侧  -->
-                <!--<speedgraph:SpeedGraph
-                        x:Name="TaskSpeedGraph"
-                        Grid.Column="1"
-                        Height="40"
-                        Margin="8,0,0,0"
-                        HorizontalAlignment="Stretch"
-                        VerticalAlignment="Center" />-->
 
                 <Frame
                     x:Name="ContentFrame"
