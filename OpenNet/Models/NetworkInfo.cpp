@@ -145,20 +145,4 @@ namespace winrt::OpenNet::Models::implementation
         if (!SupportsProtocol(protocol)) supportedProtocols.push_back(protocol);
     }
 
-    hstring NetworkInfo::FormatBytes(uint64_t bytes)
-    {
-        const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-        int unitIndex = 0;
-        double size = static_cast<double>(bytes);
-        while (size >= 1024.0 && unitIndex < 4)
-        {
-            size /= 1024.0; ++unitIndex;
-        }
-        wchar_t buffer[64]{};
-        if (unitIndex == 0)
-            swprintf_s(buffer, L"%.0f %s", size, units[unitIndex]);
-        else
-            swprintf_s(buffer, L"%.2f %s", size, units[unitIndex]);
-        return hstring{ buffer };
-    }
 }

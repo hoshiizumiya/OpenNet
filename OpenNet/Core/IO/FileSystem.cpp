@@ -14,23 +14,19 @@ using namespace winrt::Microsoft::Windows::Storage;
 
 namespace winrt::OpenNet::Core::IO
 {
+	std::string FileSystem::AppDataPath;
+	std::string FileSystem::AppTempPath;
+
 	std::string FileSystem::GetAppDataPath()
 	{
+		if (!AppDataPath.empty())
+		{
+			return AppDataPath;
+		}
 		try
 		{
-			// 使用 Windows App SDK GetDefault() - 支持打包和不打包应用
-			// 注意：GetDefault() 需要包标识或AppContainer环境
-			auto localPath = ApplicationData::GetDefault().LocalPath();
-
-			// Convert to std::string
-			std::string appDataPath = winrt::to_string(localPath);
-
-			// Ensure OpenNet subfolder exists 这个不应该用这个子文件夹的吧？？先注释了
-			//std::string openNetPath = appDataPath + "\\OpenNet";
-			//CreateDirectory(openNetPath);
-
-			//return openNetPath;
-			return appDataPath;
+			AppDataPath = winrt::to_string(ApplicationData::GetDefault().LocalPath());
+			return AppDataPath;
 		}
 		catch (...)
 		{
@@ -51,6 +47,7 @@ namespace winrt::OpenNet::Core::IO
 				{
 					std::string result(size - 1, 0);
 					WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, &result[0], size, nullptr, nullptr);
+					AppDataPath = result;
 					return result;
 				}
 			}
@@ -61,27 +58,40 @@ namespace winrt::OpenNet::Core::IO
 
 	std::string FileSystem::GetTempPath()
 	{
-		wchar_t tempPath[MAX_PATH];
-		DWORD result = ::GetTempPathW(MAX_PATH, tempPath);
-		if (result == 0 || result > MAX_PATH)
+		if (!AppTempPath.empty())
 		{
-			return {};
+			return AppTempPath;
 		}
-
-		std::wstring tempDir(tempPath);
-		// Append OpenNet subfolder
-		tempDir += L"OpenNet";
-
-		// Create directory if it doesn't exist
-		::CreateDirectoryW(tempDir.c_str(), nullptr);
-
-		// Convert to UTF-8
-		int size = WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, nullptr, 0, nullptr, nullptr);
-		if (size > 0)
+		try
 		{
-			std::string result_str(size - 1, 0);
-			WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, &result_str[0], size, nullptr, nullptr);
-			return result_str;
+			AppTempPath = winrt::to_string(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalCachePath());
+			return AppTempPath;
+		}
+		catch (...)
+		{
+			wchar_t tempPath[MAX_PATH];
+			DWORD result = ::GetTempPathW(MAX_PATH, tempPath);
+			if (result == 0 || result > MAX_PATH)
+			{
+				return {};
+			}
+
+			std::wstring tempDir(tempPath);
+			// Append OpenNet subfolder
+			tempDir += L"OpenNet";
+
+			// Create directory if it doesn't exist
+			::CreateDirectoryW(tempDir.c_str(), nullptr);
+
+			// Convert to UTF-8
+			int size = WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, nullptr, 0, nullptr, nullptr);
+			if (size > 0)
+			{
+				std::string result_str(size - 1, 0);
+				WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, &result_str[0], size, nullptr, nullptr);
+				AppTempPath = result_str;
+				return result_str;
+			}
 		}
 
 		return {};

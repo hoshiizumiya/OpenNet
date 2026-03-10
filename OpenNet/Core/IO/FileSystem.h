@@ -14,6 +14,7 @@ namespace winrt::OpenNet::Core::IO
 
         // Get application temporary folder
         static std::string GetTempPath();
+        static std::string AppTempPath;
 
         // Get downloads folder
         static std::string GetDownloadsPath();

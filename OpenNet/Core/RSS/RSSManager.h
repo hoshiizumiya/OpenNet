@@ -101,14 +101,6 @@ namespace OpenNet::Core::RSS
         void FetchFeed(const std::wstring& feedId);
         winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> FetchFeedContentAsync(const std::wstring& url);
         void ProcessNewItems(RSSFeed& feed, const std::vector<RSSItem>& newItems);
-
-        // Legacy JSON persistence (kept for one-time migration)
-        void SaveSubscriptions();
-        void SaveFeedItems(const std::wstring& feedId, const std::vector<RSSItem>& items);
-        winrt::Windows::Foundation::IAsyncAction LoadSubscriptionsFromLegacyJsonAsync();
-        winrt::Windows::Foundation::IAsyncAction LoadFeedItemsFromLegacyJsonAsync(
-            const std::wstring& feedId, std::shared_ptr<std::vector<RSSItem>> items);
-
         std::wstring GenerateFeedId();
 
         std::unordered_map<std::wstring, RSSFeed> m_feeds;
@@ -119,7 +111,6 @@ namespace OpenNet::Core::RSS
         std::thread m_updateThread;
         std::condition_variable m_stopCv;
         std::mutex m_stopMutex;
-        std::wstring m_configPath;
 
         FeedUpdatedCallback m_feedUpdatedCallback;
         NewItemCallback m_newItemCallback;

@@ -60,9 +60,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// Helper to update selection recursively
 		void UpdateSelectionRecursive(bool selected);
 
-		// Helper to format file size
-		static winrt::hstring FormatFileSize(int64_t bytes);
-
 		// Allow access to m_isSelected for tree operations
 		bool m_isSelected{ true };
 
@@ -115,7 +112,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring PriorityText() const;
 
 	private:
-		static winrt::hstring FormatFileSize(int64_t bytes);
 		static winrt::hstring ExtractFileName(std::string const& path);
 
 		winrt::hstring m_fileName;
@@ -209,7 +205,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		::OpenNet::Core::Torrent::TorrentMetadataInfo GetMetadataInfo() const { return m_rawMetadata; }
 
 	private:
-		static winrt::hstring FormatSize(int64_t bytes);
 		static winrt::hstring FormatTimestamp(int64_t timestamp);
 		void BuildFileTree();
 

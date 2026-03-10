@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "pch.h"
+#include "Core/Utils/Misc.h"
 #include "Models/NetModel.g.h" // Provides projected enums ConnectionProtocol/IPProtocolPriority
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Foundation.Collections.h>
@@ -156,7 +157,6 @@ namespace winrt::OpenNet::Models::implementation
         winrt::hstring GetBestIPAddress() const;
         bool SupportsProtocol(winrt::OpenNet::Models::ConnectionProtocol protocol) const;
         void AddSupportedProtocol(winrt::OpenNet::Models::ConnectionProtocol protocol);
-        static winrt::hstring FormatBytes(uint64_t bytes);
     };
 
     // 网络统计信息 / Network Statistics
@@ -190,7 +190,7 @@ namespace winrt::OpenNet::Models::implementation
         }
         static winrt::hstring FormatBytes(uint64_t bytes)
         {
-            return NetworkInfo::FormatBytes(bytes);
+            return ::Core::Utils::Misc::friendlyUnitCompact(bytes);
         }
     };
 }

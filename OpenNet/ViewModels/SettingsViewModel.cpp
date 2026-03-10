@@ -218,21 +218,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_hasUnsavedChanges = true;
 	}
 
-	// Summary: 格式化字节数
-	std::wstring SettingsViewModel::FormatBytes(uint64_t bytes) const
-	{
-		const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-		int unit = 0;
-		double size = static_cast<double>(bytes);
-		while (size >= 1024.0 && unit < 4)
-		{
-			size /= 1024.0; ++unit;
-		}
-		wchar_t buf[64]{};
-		swprintf(buf, 64, unit == 0 ? L"%llu %s" : L"%.2f %s", unit == 0 ? bytes : size, units[unit]);
-		return buf;
-	}
-
 	// Summary: 格式化速度（字节/秒 -> 文本）
 	std::wstring SettingsViewModel::FormatSpeed(double bytesPerSecond) const
 	{

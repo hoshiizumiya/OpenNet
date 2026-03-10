@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TorrentCheckGeneralPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.cpp")
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.cpp"
@@ -8,6 +8,7 @@
 #include <winrt/Microsoft.UI.Xaml.Navigation.h>
 #include <shlobj.h>
 #include <wil/resource.h>
+#include "Core/Utils/Misc.h"
 #include "Helpers/WindowHelper.h"
 #include <algorithm>
 #include <cctype>
@@ -385,23 +386,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	std::wstring FormatBytes(ULONGLONG bytes)
-	{
-		const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-		double size = static_cast<double>(bytes);
-		int unit = 0;
-
-		while (size >= 1024.0 && unit < 4)
-		{
-			size /= 1024.0;
-			unit++;
-		}
-
-		std::wostringstream stream;
-		stream << std::fixed << std::setprecision(2) << size << L" " << units[unit];
-		return stream.str();
-	}
-
 	void TorrentCheckGeneralPage::UpdateDiskSpaceDisplay(const hstring& savePath)
 	{
 		try
@@ -452,23 +436,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				// Get required bytes from ViewModel
 				int64_t requiredBytes = m_viewModel ? m_viewModel.SelectedSizeBytes() : 0;
 
-				// Format the sizes
-				std::wstring requiredStr = FormatBytes(static_cast<ULONGLONG>(requiredBytes));
-				std::wstring freeStr = FormatBytes(totalFreeBytes.QuadPart);
-				std::wstring totalStr = FormatBytes(totalBytes.QuadPart);
-
 				// Update text displays
 				if (auto diskSpaceText = DiskSpaceText())
 				{
-					diskSpaceText.Text(winrt::hstring(requiredStr));
+					diskSpaceText.Text(::Core::Utils::Misc::friendlyUnitCompact(static_cast<ULONGLONG>(requiredBytes)));
 				}
 				if (auto freeSpaceText = FreeSpaceText())
 				{
-					freeSpaceText.Text(winrt::hstring(freeStr));
+					freeSpaceText.Text(::Core::Utils::Misc::friendlyUnitCompact(totalFreeBytes.QuadPart));
 				}
 				if (auto totalSpaceText = TotalSpaceText())
 				{
-					totalSpaceText.Text(winrt::hstring(totalStr));
+					totalSpaceText.Text(::Core::Utils::Misc::friendlyUnitCompact(totalBytes.QuadPart));
 				}
 
 				// Update progress bar - show used space as percentage of total

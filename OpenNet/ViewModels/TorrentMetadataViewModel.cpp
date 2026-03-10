@@ -10,6 +10,8 @@
 #include "ViewModels/TorrentMetadataViewModel.g.cpp"
 #endif
 
+#include "Core/Utils/Misc.h"
+
 #include <chrono>
 #include <ctime>
 #include <algorithm>
@@ -88,27 +90,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 	}
 
-	winrt::hstring TorrentFileNodeViewModel::FormatFileSize(int64_t bytes)
-	{
-		const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-		int unitIndex = 0;
-		double size = static_cast<double>(bytes);
-
-		while (size >= 1024.0 && unitIndex < 4)
-		{
-			size /= 1024.0;
-			unitIndex++;
-		}
-
-		wchar_t buffer[64];
-		if (unitIndex == 0)
-			swprintf_s(buffer, L"%.0f %s", size, units[unitIndex]);
-		else
-			swprintf_s(buffer, L"%.2f %s", size, units[unitIndex]);
-
-		return winrt::hstring(buffer);
-	}
-
 	// ========== TorrentFileInfoViewModel ==========
 
 	TorrentFileInfoViewModel::TorrentFileInfoViewModel()
@@ -120,7 +101,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_filePath = winrt::to_hstring(fileInfo.path);
 		m_fileName = ExtractFileName(fileInfo.path);
 		m_fileSizeBytes = fileInfo.size;
-		m_fileSize = FormatFileSize(fileInfo.size);
+		m_fileSize = ::Core::Utils::Misc::friendlyUnitCompact(fileInfo.size);
 		m_isSelected = fileInfo.selected;
 		m_priority = fileInfo.priority;
 		m_fileIndex = fileInfo.fileIndex;
@@ -151,27 +132,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 	}
 
-	winrt::hstring TorrentFileInfoViewModel::FormatFileSize(int64_t bytes)
-	{
-		const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-		int unitIndex = 0;
-		double size = static_cast<double>(bytes);
-
-		while (size >= 1024.0 && unitIndex < 4)
-		{
-			size /= 1024.0;
-			unitIndex++;
-		}
-
-		wchar_t buffer[64];
-		if (unitIndex == 0)
-			swprintf_s(buffer, L"%.0f %s", size, units[unitIndex]);
-		else
-			swprintf_s(buffer, L"%.2f %s", size, units[unitIndex]);
-
-		return winrt::hstring(buffer);
-	}
-
 	winrt::hstring TorrentFileInfoViewModel::ExtractFileName(std::string const& path)
 	{
 		auto pos = path.find_last_of("/\\");
@@ -195,7 +155,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		m_torrentName = winrt::to_hstring(metadata.name);
 		m_infoHash = winrt::to_hstring(metadata.infoHash);
-		m_totalSize = FormatSize(metadata.totalSize);
+		m_totalSize = ::Core::Utils::Misc::friendlyUnitCompact(metadata.totalSize);
 		m_totalSizeBytes = metadata.totalSize;
 		m_comment = winrt::to_hstring(metadata.comment);
 		m_creator = winrt::to_hstring(metadata.creator);
@@ -393,7 +353,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		m_selectedSizeBytes = selectedBytes;
 		RaisePropertyChanged(L"SelectedSizeBytes");
-		SelectedSize(FormatSize(selectedBytes));
+		SelectedSize(::Core::Utils::Misc::friendlyUnitCompact(selectedBytes));
 	}
 
 	// ---------------------------------------------------------------
@@ -532,28 +492,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		UpdateFolderStatesRecursive(m_fileTree);
 	}
-
-	winrt::hstring TorrentMetadataViewModel::FormatSize(int64_t bytes)
-	{
-		const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-		int unitIndex = 0;
-		double size = static_cast<double>(bytes);
-
-		while (size >= 1024.0 && unitIndex < 4)
-		{
-			size /= 1024.0;
-			unitIndex++;
-		}
-
-		wchar_t buffer[64];
-		if (unitIndex == 0)
-			swprintf_s(buffer, L"%.0f %s", size, units[unitIndex]);
-		else
-			swprintf_s(buffer, L"%.2f %s", size, units[unitIndex]);
-
-		return winrt::hstring(buffer);
-	}
-
+	
 	winrt::hstring TorrentMetadataViewModel::FormatTimestamp(int64_t timestamp)
 	{
 		if (timestamp == 0)
@@ -627,7 +566,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 					);
 					fileNode.FileIndex(fileInfo.fileIndex);
 					fileNode.SizeBytes(fileInfo.size);
-					fileNode.SizeText(TorrentFileNodeViewModel::FormatFileSize(fileInfo.size));
+					fileNode.SizeText(::Core::Utils::Misc::friendlyUnitCompact(fileInfo.size));
 					fileNode.Priority(fileInfo.priority);
 					fileNode.IsSelected(fileInfo.selected);
 
@@ -690,7 +629,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 			auto impl = node.as<TorrentFileNodeViewModel>();
 			impl->SizeBytes(totalSize);
-			impl->SizeText(TorrentFileNodeViewModel::FormatFileSize(totalSize));
+			impl->SizeText(::Core::Utils::Misc::friendlyUnitCompact(totalSize));
 
 			return totalSize;
 		};

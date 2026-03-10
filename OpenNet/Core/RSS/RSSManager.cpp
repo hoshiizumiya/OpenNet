@@ -44,9 +44,6 @@ namespace OpenNet::Core::RSS
 
 		try
 		{
-			auto localFolder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
-			m_configPath = std::wstring(localFolder.Path().c_str()) + L"\\rss_subscriptions.json";
-
 			auto& db = RSSDatabase::Instance();
 
 			if (db.HasFeeds())
@@ -61,12 +58,8 @@ namespace OpenNet::Core::RSS
 			}
 			else
 			{
-				// Try legacy JSON migration
-				co_await LoadSubscriptionsFromLegacyJsonAsync();
-
 				if (!m_feeds.empty())
 				{
-					// Persist migrated data to SQLite
 					std::lock_guard<std::mutex> lock(m_feedsMutex);
 					for (auto const& [id, feed] : m_feeds)
 					{
@@ -76,7 +69,6 @@ namespace OpenNet::Core::RSS
 							db.InsertItems(feed.id, feed.items);
 						}
 					}
-					OutputDebugStringA("RSSManager: migrated feeds from JSON to SQLite\n");
 				}
 			}
 		}
@@ -481,129 +473,6 @@ namespace OpenNet::Core::RSS
 	{
 		std::lock_guard<std::mutex> lock(m_callbackMutex);
 		m_errorCallback = std::move(callback);
-	}
-
-	// ---------------------------------------------------------------
-	//  Legacy JSON persistence (kept only for one-time migration)
-	// ---------------------------------------------------------------
-
-	void RSSManager::SaveSubscriptions()
-	{
-		// No longer used – persistence is via SQLite now.
-		// Kept as stub in case anything still calls it.
-	}
-
-	void RSSManager::SaveFeedItems(const std::wstring& /*feedId*/, const std::vector<RSSItem>& /*items*/)
-	{
-		// No longer used – persistence is via SQLite now.
-	}
-
-	winrt::Windows::Foundation::IAsyncAction RSSManager::LoadSubscriptionsFromLegacyJsonAsync()
-	{
-		try
-		{
-			auto folder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
-
-			auto item = co_await folder.TryGetItemAsync(L"rss_subscriptions.json");
-			if (!item) co_return;
-
-			auto file = item.as<StorageFile>();
-			if (!file) co_return;
-
-			auto content = co_await FileIO::ReadTextAsync(file);
-
-			JsonArray jsonArray;
-			if (JsonArray::TryParse(content, jsonArray))
-			{
-				std::lock_guard<std::mutex> lock(m_feedsMutex);
-
-				for (uint32_t i = 0; i < jsonArray.Size(); ++i)
-				{
-					auto obj = jsonArray.GetAt(i).GetObject();
-
-					RSSFeed feed;
-					feed.id = obj.GetNamedString(L"id").c_str();
-					feed.url = obj.GetNamedString(L"url").c_str();
-					feed.title = obj.GetNamedString(L"title", L"").c_str();
-					feed.savePath = obj.GetNamedString(L"savePath", L"").c_str();
-					feed.updateInterval = std::chrono::minutes(static_cast<int>(obj.GetNamedNumber(L"updateInterval", 30)));
-					feed.autoDownload = obj.GetNamedBoolean(L"autoDownload", false);
-					feed.filterPattern = obj.GetNamedString(L"filterPattern", L"").c_str();
-					feed.enabled = obj.GetNamedBoolean(L"enabled", true);
-
-					// Load persisted items for this feed from legacy JSON
-					auto items = std::make_shared<std::vector<RSSItem>>();
-					co_await LoadFeedItemsFromLegacyJsonAsync(feed.id, items);
-					feed.items = std::move(*items);
-
-					m_feeds[feed.id] = std::move(feed);
-				}
-			}
-		}
-		catch (...)
-		{
-			// Silently ignore errors during legacy load
-		}
-	}
-
-	winrt::Windows::Foundation::IAsyncAction RSSManager::LoadFeedItemsFromLegacyJsonAsync(
-		const std::wstring& feedId, std::shared_ptr<std::vector<RSSItem>> items)
-	{
-		try
-		{
-			auto folder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
-
-			auto folderItem = co_await folder.TryGetItemAsync(L"rss_data");
-			if (!folderItem) co_return;
-
-			auto rssFolder = folderItem.try_as<StorageFolder>();
-			if (!rssFolder) co_return;
-
-			std::wstring filename = L"rss_" + feedId + L".json";
-
-			try
-			{
-				auto fileItem = co_await rssFolder.TryGetItemAsync(filename);
-				if (!fileItem) co_return;
-
-				auto file = fileItem.try_as<StorageFile>();
-				if (!file) co_return;
-
-				auto content = co_await FileIO::ReadTextAsync(file);
-
-				JsonArray itemsArray;
-				if (JsonArray::TryParse(content, itemsArray))
-				{
-					items->clear();
-					for (uint32_t i = 0; i < itemsArray.Size(); ++i)
-					{
-						auto itemObj = itemsArray.GetAt(i).GetObject();
-
-						RSSItem item;
-						item.guid = itemObj.GetNamedString(L"guid", L"").c_str();
-						item.title = itemObj.GetNamedString(L"title", L"").c_str();
-						item.link = itemObj.GetNamedString(L"link", L"").c_str();
-						item.description = itemObj.GetNamedString(L"description", L"").c_str();
-						item.enclosureUrl = itemObj.GetNamedString(L"enclosureUrl", L"").c_str();
-						item.enclosureType = itemObj.GetNamedString(L"enclosureType", L"").c_str();
-						item.enclosureLength = static_cast<uint64_t>(itemObj.GetNamedNumber(L"enclosureLength", 0));
-
-						auto pubDateSeconds = static_cast<int64_t>(itemObj.GetNamedNumber(L"pubDate", 0));
-						item.pubDate = std::chrono::system_clock::time_point(std::chrono::seconds(pubDateSeconds));
-
-						item.category = itemObj.GetNamedString(L"category", L"").c_str();
-						item.isDownloaded = itemObj.GetNamedBoolean(L"isDownloaded", false);
-
-						items->push_back(item);
-					}
-				}
-			}
-			catch (hresult_error const&)
-			{
-				// File read error, items remain empty
-			}
-		}
-		catch (...) {}
 	}
 
 	std::wstring RSSManager::GenerateFeedId()
