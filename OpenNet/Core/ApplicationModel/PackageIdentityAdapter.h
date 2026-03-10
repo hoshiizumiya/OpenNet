@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include <winrt/Windows.ApplicationModel.h>  
-#include <winrt/Windows.Storage.h>  
 #include <winrt/Windows.Foundation.h>  
 #include <windows.h>  
 #include <string>  

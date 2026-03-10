@@ -120,11 +120,15 @@ namespace OpenNet::Core::Aria2
         void Restart();
         bool Available() const;
 
+        /// Graceful shutdown: RPC Shutdown → wait up to 30s → ForceTerminate.
+        void Terminate();
+
+        /// Immediate process kill. Safe to call from any thread (no RPC/.get()).
+        void ForceTerminate();
+
     private:
         std::uint16_t PickUnusedTcpPort();
         void Startup();
-        void ForceTerminate();
-        void Terminate();
 
     private:
         bool m_Available = false;

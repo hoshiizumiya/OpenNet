@@ -12,7 +12,14 @@
         <MicaBackdrop Kind="BaseAlt" />
     </Window.SystemBackdrop>
 
-    <Grid Loaded="TorrentCreateGrid_Loaded" RowDefinitions="Auto, Auto, *, Auto">
+    <Grid Loaded="TorrentCreateGrid_Loaded">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
         <!--  Title Bar  -->
         <TitleBar
             x:Name="TorrentCheckModalWindowTitleBar"

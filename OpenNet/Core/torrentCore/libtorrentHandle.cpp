@@ -180,21 +180,25 @@ namespace OpenNet::Core::Torrent
             }
         }
 
-        // Clear session
+        // Clear session using abort() + session_proxy for non-blocking shutdown.
+        // session::abort() starts an asynchronous shutdown (notifying trackers etc.)
+        // and returns a session_proxy. Destroying the session after abort() is
+        // immediate. The proxy destructor will synchronize the background threads.
         if (m_session)
         {
             try
             {
-                OutputDebugStringA("LibtorrentHandle: Clearing session\n");
+                OutputDebugStringA("LibtorrentHandle: Aborting session (non-blocking)\n");
+                m_sessionProxy = m_session->abort();
                 m_session.reset();
             }
             catch (const std::exception &ex)
             {
-                OutputDebugStringW((L"LibtorrentHandle: Error clearing session: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+                OutputDebugStringW((L"LibtorrentHandle: Error aborting session: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
             }
             catch (...)
             {
-                OutputDebugStringA("LibtorrentHandle: Unknown error clearing session\n");
+                OutputDebugStringA("LibtorrentHandle: Unknown error aborting session\n");
             }
         }
 

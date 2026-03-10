@@ -59,10 +59,7 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root"
-    xmlns=""
-    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-    xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
@@ -375,7 +372,9 @@
   <data name="ViewDialogTorrentMetaDataDownloadDialog.Title" xml:space="preserve">
     <value>Add Magnet</value>
   </data>
-  <!-- RSS Page -->
+  <data name="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip" xml:space="preserve">
+    <value>Paste Text from the Clipboard</value>
+  </data>
   <data name="RSSPageTitle.Text" xml:space="preserve">
     <value>RSS Subscriptions</value>
   </data>
@@ -496,7 +495,6 @@
   <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
     <value>Priority</value>
   </data>
-  <!-- ===== BitTorrent Settings Page ===== -->
   <data name="BT_Title.Text" xml:space="preserve">
     <value>BitTorrent Settings</value>
   </data>
@@ -752,7 +750,6 @@
   <data name="BT_ProxyTrackerConn.Header" xml:space="preserve">
     <value>Use Proxy for Tracker Connections</value>
   </data>
-  <!-- ===== Download Settings Page ===== -->
   <data name="DL_Section_SaveLocation.Text" xml:space="preserve">
     <value>Save Location</value>
   </data>
@@ -912,7 +909,6 @@
   <data name="FilesList_EmptyState.Text" xml:space="preserve">
     <value>No file information available</value>
   </data>
-  <!-- ===== IP Filter Settings Page ===== -->
   <data name="IPF_Title.Text" xml:space="preserve">
     <value>IP Filter</value>
   </data>
@@ -970,11 +966,9 @@
   <data name="IPF_ClearBtn.Content" xml:space="preserve">
     <value>Clear All</value>
   </data>
-  <!-- Rename Task -->
   <data name="RenameTaskMenuItem.Text" xml:space="preserve">
     <value>Rename</value>
   </data>
-  <!-- Ban Peer -->
   <data name="BanPeer1hItem.Text" xml:space="preserve">
     <value>Ban for 1 hour</value>
   </data>
@@ -984,7 +978,6 @@
   <data name="BanPeerPermanentItem.Text" xml:space="preserve">
     <value>Ban permanently</value>
   </data>
-  <!-- Peer List Headers -->
   <data name="PeerHeader_Location.Text" xml:space="preserve">
     <value>Location</value>
   </data>
@@ -1000,11 +993,9 @@
   <data name="PeerHeader_Source.Text" xml:space="preserve">
     <value>Source</value>
   </data>
-  <!-- NAT Tools Navigation -->
   <data name="NavItem_NatTools.Content" xml:space="preserve">
     <value>NAT Tools</value>
   </data>
-  <!-- NAT Tools Page -->
   <data name="NatTools_NATDetection.Text" xml:space="preserve">
     <value>NAT Type Detection</value>
   </data>
@@ -1034,5 +1025,23 @@
   </data>
   <data name="NatTools_STUNServers.Text" xml:space="preserve">
     <value>Recommended STUN Servers</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.Title" xml:space="preserve">
+    <value>window close action</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.CloseButtonText" xml:space="preserve">
+    <value>Exit application</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Close to tray</value>
+  </data>
+  <data name="ViewDialogCloseToTrayQuestion.Text" xml:space="preserve">
+    <value>When closing the main window, please choose an action:</value>
+  </data>
+  <data name="ViewDialogCloseToTrayRememberCheckBox.Content" xml:space="preserve">
+    <value>Remember my choice, do not ask again</value>
+  </data>
+  <data name="TorrentCheckModalWindowTitleBar.Title" xml:space="preserve">
+    <value>Create a new bittorrent task</value>
   </data>
 </root>

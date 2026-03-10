@@ -13,7 +13,6 @@
 #include <winrt/Windows.ApplicationModel.Resources.h>
 #include <winrt/Windows.UI.Xaml.Navigation.h>
 #include <winrt/Microsoft.Windows.Storage.Pickers.h>
-#include <winrt/Windows.Storage.h>
 #include <format>
 #include <limits>
 

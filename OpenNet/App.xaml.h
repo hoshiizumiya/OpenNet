@@ -25,9 +25,11 @@ namespace winrt::OpenNet::implementation
 	private:
 		static winrt::fire_and_forget HandleCloseStrategyAsync();
 		static void HideToTray();
-		static void ReallyClose();
+		static winrt::fire_and_forget ReallyClose();
+		static void ShutdownEngines();
 		static winrt::fire_and_forget InitializeRSSManagerAsync();
 
 		static inline bool s_isHandlingClose{ false };
+		static inline bool s_enginesShutdown{ false };
 	};
 }

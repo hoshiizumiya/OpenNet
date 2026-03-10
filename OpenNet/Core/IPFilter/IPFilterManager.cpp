@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/IPFilter/IPFilterManager.cpp
  * PURPOSE:   IP filter management implementation.
@@ -15,7 +15,7 @@
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/address.hpp>
 
-#include <winrt/Windows.Storage.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 
 #include <sstream>
 #include <algorithm>
@@ -50,7 +50,7 @@ namespace OpenNet::Core
 
         try
         {
-            auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
+            auto localFolder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
             auto dbPath = std::wstring(localFolder.Path().c_str()) + L"\\ipfilter.db";
 
             int rc = sqlite3_open16(dbPath.c_str(), &m_db);

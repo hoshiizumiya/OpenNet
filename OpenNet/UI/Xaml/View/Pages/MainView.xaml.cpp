@@ -14,7 +14,7 @@
 #include "UI/Xaml/View/Pages/NatToolsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 
-#include <winrt/Windows.Storage.h>
+#include <winrt/Microsoft.Windows.Storage.h>
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -35,7 +35,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			winrt::hstring startTag = L"home";
 			try
 			{
-				auto localSettings = winrt::Windows::Storage::ApplicationData::Current().LocalSettings();
+				auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
 				auto values = localSettings.Values();
 				if (values.HasKey(L"StartPage"))
 				{

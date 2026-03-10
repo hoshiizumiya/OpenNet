@@ -75,14 +75,48 @@ namespace winrt::OpenNet::implementation
             if (!App::trayIcon)
                 return;
 
-            // Cancel the close; the async strategy decides what happens next
-            args.Cancel(true);
-
-            // Prevent re-entrance
+            // Prevent re-entrance: if already showing close dialog, just keep it cancelled
             if (App::s_isHandlingClose)
+            {
+                args.Cancel(true);
                 return;
-            App::s_isHandlingClose = true;
+            }
 
+            // Check LocalSettings for a saved preference
+            try
+            {
+                auto values = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings().Values();
+                if (values.HasKey(L"Hide2TrayWhenCloseAsked"))
+                {
+                    bool asked = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenCloseAsked"));
+                    if (asked)
+                    {
+                        bool hide = false;
+                        if (values.HasKey(L"Hide2TrayWhenClose"))
+                            hide = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenClose"));
+
+                        if (hide)
+                        {
+                            // Synchronous: just hide and cancel
+                            args.Cancel(true);
+                            HideToTray();
+                            return;
+                        }
+                        else
+                        {
+                            // User chose to exit — cancel close and go async
+                            args.Cancel(true);
+                            ReallyClose();
+                            return;
+                        }
+                    }
+                }
+            }
+            catch (...) {}
+
+            // First time: need to show dialog — cancel close and go async
+            args.Cancel(true);
+            App::s_isHandlingClose = true;
             HandleCloseStrategyAsync();
         });
 
@@ -198,38 +232,31 @@ namespace winrt::OpenNet::implementation
 
     App::~App()
     {
-        // 在应用销毁时清理资源
         try
         {
             OutputDebugStringA("App: Destructor called, cleaning up...\n");
 
-            // Remove tray icon
+            // Remove tray icon (UI operation, OK on UI thread)
             if (trayIcon)
             {
                 trayIcon.Remove();
                 trayIcon = nullptr;
             }
 
-            // Stop RSS background updates
-            ::OpenNet::Core::RSS::RSSManager::Instance().Stop();
+            // Engines should already be shut down by ShutdownEngines().
+            // Defensive: if somehow not, do a quick stop of RSS (lightweight).
+            if (!s_enginesShutdown)
+            {
+                OutputDebugStringA("App: Warning - engines not yet shut down, doing emergency shutdown\n");
+                ShutdownEngines();
+            }
 
-            // Shutdown P2PManager
-            ::OpenNet::Core::P2PManager::Instance().Shutdown();
-
-            // Shutdown DownloadManager (Aria2 + refresh thread)
-            ::OpenNet::Core::DownloadManager::Instance().Shutdown();
-
-            // make sure everything flushes
             sentry_close();
             OutputDebugStringA("App: Destructor completed\n");
         }
-        catch (const std::exception& ex)
-        {
-            OutputDebugStringW((L"App: Cleanup error in destructor: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
-        }
         catch (...)
         {
-            OutputDebugStringA("App: Unknown error in destructor\n");
+            OutputDebugStringA("App: Error in destructor\n");
         }
     }
 
@@ -237,30 +264,7 @@ namespace winrt::OpenNet::implementation
     {
         try
         {
-            auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
-            auto values = localSettings.Values();
-
-            // Strategy A: user already chose, don't ask again
-            if (values.HasKey(L"Hide2TrayWhenCloseAsked"))
-            {
-                bool asked = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenCloseAsked"));
-                if (asked)
-                {
-                    bool hide = false;
-                    if (values.HasKey(L"Hide2TrayWhenClose"))
-                        hide = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenClose"));
-
-                    if (hide)
-                        HideToTray();
-                    else
-                        ReallyClose();
-
-                    s_isHandlingClose = false;
-                    co_return;
-                }
-            }
-
-            // Strategy B: first time — show dialog
+            // Show dialog to ask user what to do
             if (!window)
             {
                 ReallyClose();
@@ -292,8 +296,13 @@ namespace winrt::OpenNet::implementation
             // Save preference if "remember" was checked
             if (dlg.RememberChoice())
             {
-                values.Insert(L"Hide2TrayWhenCloseAsked", box_value(true));
-                values.Insert(L"Hide2TrayWhenClose", box_value(result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary));
+                try
+                {
+                    auto values = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings().Values();
+                    values.Insert(L"Hide2TrayWhenCloseAsked", box_value(true));
+                    values.Insert(L"Hide2TrayWhenClose", box_value(result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary));
+                }
+                catch (...) { OutputDebugStringA("App: Failed to save close preference\n"); }
             }
 
             if (result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
@@ -323,10 +332,44 @@ namespace winrt::OpenNet::implementation
         OutputDebugStringA("App: MainWindow hidden to tray\n");
     }
 
-    void App::ReallyClose()
+    winrt::fire_and_forget App::ReallyClose()
     {
         s_isExiting = true;
-        Microsoft::UI::Xaml::Application::Current().Exit();
+
+        // Capture dispatcher before leaving the UI thread
+        auto dispatcher = window.DispatcherQueue();
+
+        // Shut down all engines on a background thread to avoid STA assertions
+        co_await winrt::resume_background();
+        ShutdownEngines();
+
+        // Return to UI thread to call Exit()
+        dispatcher.TryEnqueue([]() {
+            Microsoft::UI::Xaml::Application::Current().Exit();
+        });
+    }
+
+    void App::ShutdownEngines()
+    {
+        if (s_enginesShutdown)
+            return;
+        s_enginesShutdown = true;
+
+        OutputDebugStringA("App: Shutting down engines...\n");
+
+        // Stop RSS background updates (lightweight, just signals thread + joins)
+        try { ::OpenNet::Core::RSS::RSSManager::Instance().Stop(); }
+        catch (...) { OutputDebugStringA("App: RSS shutdown error\n"); }
+
+        // Shutdown P2PManager (torrent session uses abort() + proxy, non-blocking)
+        try { ::OpenNet::Core::P2PManager::Instance().Shutdown(); }
+        catch (...) { OutputDebugStringA("App: P2PManager shutdown error\n"); }
+
+        // Shutdown DownloadManager (Aria2 RPC + process termination)
+        try { ::OpenNet::Core::DownloadManager::Instance().Shutdown(); }
+        catch (...) { OutputDebugStringA("App: DownloadManager shutdown error\n"); }
+
+        OutputDebugStringA("App: Engine shutdown completed\n");
     }
 
     winrt::fire_and_forget App::InitializeRSSManagerAsync()
