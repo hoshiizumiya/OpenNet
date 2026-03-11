@@ -107,13 +107,6 @@ jobs:
           $date = Get-Date -Format yyyyMMdd
           Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
         shell: pwsh
-        
-      - name: Zip Package
-        run: |
-          Compress-Archive `
-            -Path "Packages/*${{ matrix.platform }}*" `
-            -DestinationPath "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip"
-        shell: pwsh
 
       - name: 7z Package
         run: |
@@ -123,7 +116,7 @@ jobs:
 
           7z a -t7z -mx=9 `
             "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z" `
-            "Packages\*${{ matrix.platform }}*"
+            "AppPackages\*${{ matrix.platform }}*"
         shell: pwsh
         
       - name: Upload Canary Artifact
@@ -131,5 +124,4 @@ jobs:
         with:
           name: OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}
           path: |
-            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip
             OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z

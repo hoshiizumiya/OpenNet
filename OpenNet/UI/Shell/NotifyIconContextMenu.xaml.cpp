@@ -68,6 +68,13 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		// Allow the window to close (bypasses the hide-to-tray Closing handler)
 		winrt::OpenNet::implementation::App::s_isExiting = true;
 
+		// For test now
+	    auto window = winrt::OpenNet::implementation::App::window;
+		if (window)
+		{
+			window.Close();
+		}
+
 		// Exit the application - now the Closing handler will not cancel the close,
 		// the window closes properly, App::~App() runs, and all services shut down.
 		Microsoft::UI::Xaml::Application::Current().Exit();
