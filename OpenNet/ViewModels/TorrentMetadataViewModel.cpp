@@ -90,6 +90,57 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 	}
 
+	winrt::hstring TorrentFileNodeViewModel::NodeGlyph() const
+	{
+		if (m_isFolder)
+		{
+			return L"\U0001F4C1";
+		}
+
+		std::wstring fileName{ m_name.c_str() };
+		std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::towlower);
+
+		auto hasAnyExt = [&fileName](std::wstring_view list)
+		{
+			std::wstring extList{ list };
+			std::wstring::size_type start = 0;
+			std::wstring::size_type end = 0;
+
+			while ((end = extList.find(L',', start)) != std::wstring::npos || start < extList.length())
+			{
+				if (end == std::wstring::npos)
+					end = extList.length();
+
+				std::wstring ext = extList.substr(start, end - start);
+				while (!ext.empty() && ext.front() == L' ') ext.erase(0, 1);
+				while (!ext.empty() && ext.back() == L' ') ext.pop_back();
+				std::transform(ext.begin(), ext.end(), ext.begin(), ::towlower);
+
+				if (!ext.empty() && fileName.length() >= ext.length() &&
+					fileName.compare(fileName.length() - ext.length(), ext.length(), ext) == 0)
+				{
+					return true;
+				}
+
+				start = end + 1;
+				if (start >= extList.length())
+					break;
+			}
+
+			return false;
+		};
+
+		if (hasAnyExt(L".mp4,.mkv,.avi,.mov,.wmv")) return L"\uE714";
+		if (hasAnyExt(L".mp3,.flac,.wav,.aac,.ogg")) return L"\uE189";
+		if (hasAnyExt(L".jpg,.jpeg,.png,.gif,.bmp,.webp")) return L"\uEB9F";
+		return L"\uE8A5";
+	}
+
+	winrt::hstring TorrentFileNodeViewModel::NodeFontFamily() const
+	{
+		return m_isFolder ? L"Segoe UI Emoji" : L"Segoe Fluent Icons";
+	}
+
 	// ========== TorrentFileInfoViewModel ==========
 
 	TorrentFileInfoViewModel::TorrentFileInfoViewModel()
@@ -493,6 +544,31 @@ namespace winrt::OpenNet::ViewModels::implementation
 		UpdateFolderStatesRecursive(m_fileTree);
 	}
 	
+	::OpenNet::Core::Torrent::TorrentMetadataInfo TorrentMetadataViewModel::GetMetadataInfo() const
+	{
+		auto metadata = m_rawMetadata;
+
+		std::unordered_map<int, std::pair<bool, int>> fileStateByIndex;
+		fileStateByIndex.reserve(m_files.Size());
+		for (uint32_t i = 0; i < m_files.Size(); ++i)
+		{
+			auto fileVm = m_files.GetAt(i);
+			fileStateByIndex[fileVm.FileIndex()] = { fileVm.IsSelected(), fileVm.Priority() };
+		}
+
+		for (auto& file : metadata.files)
+		{
+			auto it = fileStateByIndex.find(file.fileIndex);
+			if (it != fileStateByIndex.end())
+			{
+				file.selected = it->second.first;
+				file.priority = file.selected ? std::clamp(it->second.second, 1, 7) : 0;
+			}
+		}
+
+		return metadata;
+	}
+
 	winrt::hstring TorrentMetadataViewModel::FormatTimestamp(int64_t timestamp)
 	{
 		if (timestamp == 0)

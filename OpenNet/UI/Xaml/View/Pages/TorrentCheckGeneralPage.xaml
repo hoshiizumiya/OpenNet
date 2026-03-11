@@ -12,7 +12,7 @@
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
     <Page.Resources>
-        <Style x:Key="FeatureCardStyle" TargetType="Grid">
+        <Style x:Key="FeatureCardStyle" TargetType="Border">
             <Setter Property="Padding" Value="16,12,16,16" />
             <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
@@ -112,6 +112,7 @@
                 <!--  Torrent Content Section  -->
                 <Border
                     Padding="12"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
                     BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
@@ -168,10 +169,16 @@
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1"
                             CornerRadius="4">
-                            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                            <Grid ColumnSpacing="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
                                 <!--  HardDrive Icon  -->
                                 <FontIcon
                                     Grid.Column="0"
+                                    HorizontalAlignment="Left"
                                     VerticalAlignment="Center"
                                     FontSize="20"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -188,10 +195,10 @@
                                         ShowPaused="False"
                                         Value="0" />
                                 </Grid>
-                                <!--  Space info (fixed width to prevent layout shift)  -->
+                                <!--  Space info  -->
                                 <StackPanel
                                     Grid.Column="2"
-                                    MinWidth="320"
+                                    HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
                                     Orientation="Horizontal"
                                     Spacing="16">
@@ -255,7 +262,7 @@
                                     <Border Padding="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
                                         <labs:DataTable ColumnSpacing="8">
                                             <!--  Select checkbox column  -->
-                                            <labs:DataColumn MinWidth="32" DesiredWidth="32">
+                                            <labs:DataColumn MinWidth="32" DesiredWidth="Auto">
                                                 <CheckBox
                                                     x:Name="SelectAllHeaderCheckBox"
                                                     Checked="SelectAllCheckBox_Checked"
@@ -263,21 +270,28 @@
                                                     Unchecked="SelectAllCheckBox_Unchecked" />
                                             </labs:DataColumn>
                                             <!--  File Name column - Star width (fills remaining space)  -->
-                                            <labs:DataColumn DesiredWidth="*">
+                                            <labs:DataColumn CanResize="True" DesiredWidth="*">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_FileName"
                                                     FontWeight="SemiBold"
                                                     Text="File Name" />
                                             </labs:DataColumn>
                                             <!--  Size column  -->
-                                            <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="200">
+                                            <labs:DataColumn
+                                                HorizontalContentAlignment="Right"
+                                                CanResize="True"
+                                                DesiredWidth="Auto">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
+                                                    HorizontalAlignment="Center"
                                                     FontWeight="SemiBold"
                                                     Text="Size" />
                                             </labs:DataColumn>
                                             <!--  Priority column  -->
-                                            <labs:DataColumn HorizontalContentAlignment="Right" DesiredWidth="80">
+                                            <labs:DataColumn
+                                                HorizontalContentAlignment="Right"
+                                                CanResize="True"
+                                                DesiredWidth="Auto">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Priority"
                                                     FontWeight="SemiBold"
@@ -288,25 +302,22 @@
                                 </controls:HeaderedTreeView.Header>
                                 <controls:HeaderedTreeView.ItemTemplate>
                                     <DataTemplate x:DataType="vm:TorrentFileNodeViewModel">
-                                        <muxc:TreeViewItem IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}" ItemsSource="{x:Bind Children}">
-                                            <Grid ColumnSpacing="8">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="32" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="100" />
-                                                    <ColumnDefinition Width="80" />
-                                                </Grid.ColumnDefinitions>
+                                        <muxc:TreeViewItem
+                                            AllowDrop="False"
+                                            CanDrag="False"
+                                            IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                                            ItemsSource="{x:Bind Children}">
+                                            <labs:DataRow CanDrag="False">
                                                 <!--  Checkbox for selection  -->
                                                 <CheckBox Click="FileCheckBox_Click" IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
                                                 <!--  File name with icon  -->
-                                                <StackPanel
-                                                    Grid.Column="1"
-                                                    Orientation="Horizontal"
-                                                    Spacing="8">
+                                                <StackPanel Orientation="Horizontal" Spacing="8">
                                                     <FontIcon
+                                                        x:Name="TorrentMDFileTypePreviewFontIcon"
                                                         VerticalAlignment="Center"
+                                                        FontFamily="{x:Bind NodeFontFamily}"
                                                         FontSize="16"
-                                                        Glyph="{x:Bind local:TorrentCheckGeneralPage.GetNodeIcon(IsFolder)}" />
+                                                        Glyph="{x:Bind NodeGlyph}" />
                                                     <TextBlock
                                                         VerticalAlignment="Center"
                                                         Text="{x:Bind Name}"
@@ -315,20 +326,24 @@
                                                 </StackPanel>
                                                 <!--  Size  -->
                                                 <TextBlock
-                                                    Grid.Column="2"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind SizeText}" />
                                                 <!--  Priority  -->
                                                 <TextBlock
-                                                    Grid.Column="3"
                                                     HorizontalAlignment="Right"
                                                     VerticalAlignment="Center"
                                                     Text="{x:Bind PriorityText}" />
-                                            </Grid>
+
+                                            </labs:DataRow>
                                         </muxc:TreeViewItem>
                                     </DataTemplate>
                                 </controls:HeaderedTreeView.ItemTemplate>
+                                <!--<controls:HeaderedTreeView.ItemContainerStyle>
+                                    <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Left" />
+                                    </Style>
+                                </controls:HeaderedTreeView.ItemContainerStyle>-->
                             </controls:HeaderedTreeView>
                         </Border>
                     </StackPanel>

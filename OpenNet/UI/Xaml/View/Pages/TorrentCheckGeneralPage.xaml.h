@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.h"
 #include <winrt/OpenNet.ViewModels.h>
@@ -8,15 +8,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	struct TorrentCheckGeneralPage : TorrentCheckGeneralPageT<TorrentCheckGeneralPage>
 	{
 		TorrentCheckGeneralPage();
-
-		// ViewModel property
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel ViewModel() const { return m_viewModel; }
 
-		// Static helper for XAML binding to get folder/file icon
-		static winrt::hstring GetNodeIcon(bool isFolder)
-		{
-			return isFolder ? L"\uE8B7" : L"\uE8A5"; // Folder or Document icon
-		}
+		// Static helpers for XAML binding to get file/folder icon and font family
+		static winrt::hstring GetNodeIcon(bool isFolder);
+		static winrt::hstring GetNodeIcon(bool isFolder, winrt::hstring const& fileName);
+		static winrt::Microsoft::UI::Xaml::Media::FontFamily GetNodeFontFamily(bool isFolder);
+		static winrt::Microsoft::UI::Xaml::Media::FontFamily GetNodeFontFamily(bool isFolder, winrt::hstring const& fileName);
 
 		// Navigation
 		void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);

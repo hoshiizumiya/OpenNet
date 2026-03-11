@@ -19,6 +19,7 @@
 #include "Core/Utils/Misc.h"
 #include "Core/torrentCore/TorrentMetadataFetcher.h"
 #include "ViewModels/TorrentMetadataViewModel.h"
+#include <algorithm>
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -290,18 +291,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			std::string torrentSource = winrt::to_string(m_torrentLink);
 			std::string savePath = winrt::to_string(m_metadataViewModel.SavePath());
 
+			auto files = m_metadataViewModel.Files();
+			std::vector<int> filePriorities;
+			filePriorities.reserve(files.Size());
+			for (uint32_t i = 0; i < files.Size(); ++i)
+			{
+				auto file = files.GetAt(i);
+				int priority = static_cast<int>(file.Priority());
+				if (priority < 1) priority = 1;
+				if (priority > 7) priority = 7;
+				filePriorities.push_back(file.IsSelected() ? priority : 0);
+			}
+
 			bool success = false;
 
 			// Determine if it's a magnet link or a torrent file
 			if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsMagnetLink(torrentSource))
 			{
 				// It's a magnet link
-				success = co_await p2pManager.AddMagnetAsync(torrentSource, savePath);
+				success = co_await p2pManager.AddMagnetAsync(torrentSource, savePath, filePriorities);
 			}
 			else if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsTorrentFile(torrentSource))
 			{
 				// It's a torrent file
-				success = co_await p2pManager.AddTorrentFileAsync(torrentSource, savePath);
+				success = co_await p2pManager.AddTorrentFileAsync(torrentSource, savePath, filePriorities);
 			}
 			else
 			{

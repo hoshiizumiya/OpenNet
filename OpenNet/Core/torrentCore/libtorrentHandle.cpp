@@ -205,7 +205,7 @@ namespace OpenNet::Core::Torrent
         OutputDebugStringA("LibtorrentHandle: Stop completed\n");
     }
 
-    bool LibtorrentHandle::AddMagnet(std::string const &magnetUri, std::string const &savePath)
+    bool LibtorrentHandle::AddMagnet(std::string const &magnetUri, std::string const &savePath, std::vector<int> const &filePriorities)
     {
         if (!Initialize())
             return false;
@@ -215,6 +215,16 @@ namespace OpenNet::Core::Torrent
             atp.save_path = savePath; // 目标目录
             // Remove seed_mode flag for downloads
             atp.flags &= ~lt::torrent_flags::seed_mode;
+
+            if (!filePriorities.empty())
+            {
+                atp.file_priorities.reserve(filePriorities.size());
+                for (int p : filePriorities)
+                {
+                    atp.file_priorities.push_back(static_cast<lt::download_priority_t>(
+                        static_cast<std::uint8_t>(std::clamp(p, 0, 7))));
+                }
+            }
 
             // Generate task ID and save metadata
             std::string taskId = TorrentStateManager::GenerateTaskId();
@@ -253,7 +263,7 @@ namespace OpenNet::Core::Torrent
         }
     }
 
-    bool LibtorrentHandle::AddTorrentFile(std::string const &torrentFilePath, std::string const &savePath)
+    bool LibtorrentHandle::AddTorrentFile(std::string const &torrentFilePath, std::string const &savePath, std::vector<int> const &filePriorities)
     {
         if (!Initialize())
             return false;
@@ -267,6 +277,16 @@ namespace OpenNet::Core::Torrent
             atp.save_path = savePath;
             // Remove seed_mode flag for downloads
             atp.flags &= ~lt::torrent_flags::seed_mode;
+
+            if (!filePriorities.empty())
+            {
+                atp.file_priorities.reserve(filePriorities.size());
+                for (int p : filePriorities)
+                {
+                    atp.file_priorities.push_back(static_cast<lt::download_priority_t>(
+                        static_cast<std::uint8_t>(std::clamp(p, 0, 7))));
+                }
+            }
 
             // Generate task ID and save metadata
             std::string taskId = TorrentStateManager::GenerateTaskId();

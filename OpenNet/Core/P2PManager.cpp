@@ -66,20 +66,20 @@ namespace OpenNet::Core
         co_await LoadAndResumeSavedTasksAsync();
     }
 
-    IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath)
+    IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities)
     {
         co_await EnsureTorrentCoreInitializedAsync();
         std::scoped_lock lk(m_torrentMutex);
         if (!m_torrentCore) co_return false;
-        co_return m_torrentCore->AddMagnet(magnetUri, savePath);
+        co_return m_torrentCore->AddMagnet(magnetUri, savePath, filePriorities);
     }
 
-    IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath)
+    IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities)
     {
         co_await EnsureTorrentCoreInitializedAsync();
         std::scoped_lock lk(m_torrentMutex);
         if (!m_torrentCore) co_return false;
-        co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath);
+        co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities);
     }
 
     IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()

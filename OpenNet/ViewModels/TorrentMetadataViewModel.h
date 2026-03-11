@@ -23,7 +23,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// Properties
 		winrt::hstring Name() const { return m_name; }
-		void Name(winrt::hstring const& v) { SetProperty(m_name, v, L"Name"); }
+		void Name(winrt::hstring const& v)
+		{
+			if (SetProperty(m_name, v, L"Name"))
+			{
+				RaisePropertyChanged(L"NodeGlyph");
+				RaisePropertyChanged(L"NodeFontFamily");
+			}
+		}
 
 		winrt::hstring FullPath() const { return m_fullPath; }
 		void FullPath(winrt::hstring const& v) { SetProperty(m_fullPath, v, L"FullPath"); }
@@ -38,7 +45,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void IsSelected(bool v);
 
 		bool IsFolder() const { return m_isFolder; }
-		void IsFolder(bool v) { SetProperty(m_isFolder, v, L"IsFolder"); }
+		void IsFolder(bool v)
+		{
+			if (SetProperty(m_isFolder, v, L"IsFolder"))
+			{
+				RaisePropertyChanged(L"NodeGlyph");
+				RaisePropertyChanged(L"NodeFontFamily");
+			}
+		}
 
 		bool IsExpanded() const { return m_isExpanded; }
 		void IsExpanded(bool v) { SetProperty(m_isExpanded, v, L"IsExpanded"); }
@@ -62,6 +76,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// Allow access to m_isSelected for tree operations
 		bool m_isSelected{ true };
+
+		winrt::hstring NodeGlyph() const;
+		winrt::hstring NodeFontFamily() const;
 
 	private:
 		winrt::hstring m_name;
@@ -202,7 +219,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void UpdateFolderSelectionStates();
 
 		// Get metadata for adding torrent
-		::OpenNet::Core::Torrent::TorrentMetadataInfo GetMetadataInfo() const { return m_rawMetadata; }
+		::OpenNet::Core::Torrent::TorrentMetadataInfo GetMetadataInfo() const;
 
 	private:
 		static winrt::hstring FormatTimestamp(int64_t timestamp);

@@ -21,9 +21,87 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
+	namespace
+	{
+		bool MatchesExtensionListInsensitive(std::wstring const& fileName, std::wstring_view extList)
+		{
+			if (fileName.empty()) return false;
+
+			std::wstring lowerName = fileName;
+			std::transform(lowerName.begin(), lowerName.end(), lowerName.begin(), ::towlower);
+
+			std::wstring list{ extList };
+			std::wstring::size_type start = 0;
+			std::wstring::size_type end = 0;
+
+			while ((end = list.find(L',', start)) != std::wstring::npos || start < list.length())
+			{
+				if (end == std::wstring::npos)
+					end = list.length();
+
+				std::wstring ext = list.substr(start, end - start);
+				while (!ext.empty() && ext.front() == L' ') ext.erase(0, 1);
+				while (!ext.empty() && ext.back() == L' ') ext.pop_back();
+				std::transform(ext.begin(), ext.end(), ext.begin(), ::towlower);
+
+				if (!ext.empty() && lowerName.length() >= ext.length() &&
+					lowerName.compare(lowerName.length() - ext.length(), ext.length(), ext) == 0)
+				{
+					return true;
+				}
+
+				start = end + 1;
+				if (start >= list.length())
+					break;
+			}
+
+			return false;
+		}
+	}
+
 	TorrentCheckGeneralPage::TorrentCheckGeneralPage()
 	{
 		InitializeComponent();
+	}
+
+	winrt::hstring TorrentCheckGeneralPage::GetNodeIcon(bool isFolder)
+	{
+		return GetNodeIcon(isFolder, L"");
+	}
+
+	winrt::hstring TorrentCheckGeneralPage::GetNodeIcon(bool isFolder, winrt::hstring const& fileName)
+	{
+		if (isFolder)
+		{
+			return L"\U0001F4C1";
+		}
+
+		std::wstring name{ fileName.c_str() };
+		if (MatchesExtensionListInsensitive(name, VideoExtensions))
+		{
+			return L"\uE714";
+		}
+		if (MatchesExtensionListInsensitive(name, AudioExtensions))
+		{
+			return L"\uE189";
+		}
+		if (MatchesExtensionListInsensitive(name, PictureExtensions))
+		{
+			return L"\uEB9F";
+		}
+
+		return L"\uE8A5";
+	}
+
+	winrt::Microsoft::UI::Xaml::Media::FontFamily TorrentCheckGeneralPage::GetNodeFontFamily(bool isFolder)
+	{
+		return GetNodeFontFamily(isFolder, L"");
+	}
+
+	winrt::Microsoft::UI::Xaml::Media::FontFamily TorrentCheckGeneralPage::GetNodeFontFamily(bool isFolder, winrt::hstring const& fileName)
+	{
+		(void)fileName;
+		return winrt::Microsoft::UI::Xaml::Media::FontFamily(isFolder ? L"Segoe UI Emoji" : L"Segoe Fluent Icons");
 	}
 
 	void TorrentCheckGeneralPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)

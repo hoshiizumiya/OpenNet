@@ -41,9 +41,9 @@
                     x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General"
                     IsSelected="True"
                     Text="General" />
-                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced" Text="Advanced" />
+                <!--<SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced" Text="Advanced" />
                 <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher" Text="Publisher" />
-                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder" Text="Download Order" />
+                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder" Text="Download Order" />-->
             </SelectorBar.Items>
         </SelectorBar>
 
