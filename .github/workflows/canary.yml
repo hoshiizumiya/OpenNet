@@ -52,29 +52,56 @@ jobs:
       - name: Restore Certificate
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
+          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
           [IO.File]::WriteAllBytes("cert.pfx", $bytes)
+          Write-Host "Certificate restored to:"
+          Write-Host $certPath
         working-directory: ${{ github.workspace }}
         shell: pwsh
 
-      - name: Show Certificate location
-        run: |
-          Get-Location | ls
-        working-directory: ${{ github.workspace }}
+      - name: Import Certificate
+        id: import_cert
         shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
+     
+          $password = ConvertTo-SecureString `
+            "${{ secrets.PFX_PASSWORD }}" `
+            -AsPlainText `
+            -Force
+     
+          $cert = Import-PfxCertificate `
+            -FilePath $certPath `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -Password $password
+     
+          Write-Host "Certificate imported."
+     
+          $thumb = $cert.Thumbprint
+          Write-Host "Thumbprint: $thumb"
+     
+          echo "thumbprint=$thumb" >> $env:GITHUB_OUTPUT
+        
+      - name: Show Installed Certificates
+        shell: pwsh
+        run: |
+          Get-ChildItem Cert:\CurrentUser\My |
+            Select Subject, Thumbprint
         
       - name: Build MSIX
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
         run: |
-          msbuild OpenNet.slnx `
+          msbuild OpenNet\OpenNet.vcxproj `
             /p:Configuration=${{ matrix.configuration }} `
             /p:Platform=${{ matrix.platform }} `
             /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile=$env:GITHUB_WORKSPACE\cert.pfx `
-            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
+            /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /m
-        shell: pwsh
-        
+
       - name: Generate Date
         run: |
           $date = Get-Date -Format yyyyMMdd

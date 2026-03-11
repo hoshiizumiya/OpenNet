@@ -19,6 +19,8 @@ namespace OpenNet.ViewModels
         Int32 FileIndex;           // File index (-1 for folders)
         Int32 Priority;            // Download priority (0-7, for files)
         String PriorityText{ get; };
+        String NodeGlyph{ get; };
+        String NodeFontFamily{ get; };
 
         // Children (for folders)
         Windows.Foundation.Collections.IObservableVector<TorrentFileNodeViewModel> Children{ get; };

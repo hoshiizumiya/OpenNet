@@ -3,6 +3,7 @@
 #include "ViewModels/RSSItemViewModel.g.cpp"
 #include "ViewModels/RSSFeedViewModel.g.cpp"
 #include "ViewModels/RSSViewModel.g.cpp"
+#include "Core/Utils/Misc.h"
 #include "Core/RSS/RSSManager.h"
 #include "Core/RSS/RSSParser.h"
 #include <winrt/Windows.Storage.h>
@@ -13,24 +14,6 @@
 namespace winrt::OpenNet::ViewModels::implementation
 {
     using namespace ::OpenNet::Core::RSS;
-
-    // Helper to format file size
-    static hstring FormatFileSize(uint64_t bytes)
-    {
-        const wchar_t* units[] = { L"B", L"KB", L"MB", L"GB", L"TB" };
-        int unitIndex = 0;
-        double size = static_cast<double>(bytes);
-
-        while (size >= 1024 && unitIndex < 4)
-        {
-            size /= 1024;
-            unitIndex++;
-        }
-
-        std::wstringstream ss;
-        ss << std::fixed << std::setprecision(1) << size << L" " << units[unitIndex];
-        return hstring(ss.str());
-    }
 
     // Helper to format date
     static hstring FormatDate(std::chrono::system_clock::time_point tp)
@@ -52,7 +35,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         , m_torrentLink(RSSParser::ExtractTorrentLink(item))
         , m_pubDate(FormatDate(item.pubDate))
         , m_category(item.category)
-        , m_fileSize(FormatFileSize(item.enclosureLength))
+        , m_fileSize(::Core::Utils::Misc::friendlyUnitCompact(item.enclosureLength))
         , m_isDownloaded(item.isDownloaded)
         , m_feedId(feedId)
         , m_itemGuid(item.guid)
