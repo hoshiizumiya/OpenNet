@@ -17,8 +17,10 @@ on:
       - '**.yml'
 
 env:
-  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-
+  USERNAME: hoshiizumiya
+  FEED_URL: https://nuget.pkg.github.com/hoshiizumiya/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,readwrite"
+  
 jobs:
 
   build:
@@ -44,6 +46,21 @@ jobs:
       - name: Set up vcpkg
         working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
         run: vcpkg integrate install
+      
+      - name: Add NuGet sources
+        shell: pwsh
+        run: |
+          $nuget = & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" fetch nuget
+      
+          & $nuget sources add `
+            -Source "${{ env.FEED_URL }}" `
+            -StorePasswordInClearText `
+            -Name GitHubPackages `
+            -UserName "${{ env.USERNAME }}" `
+            -Password "${{ secrets.GITHUB_TOKEN }}"
+      
+          & $nuget setapikey "${{ secrets.GITHUB_TOKEN }}" `
+            -Source "${{ env.FEED_URL }}"
 
       - name: Restore NuGet
         run: nuget restore OpenNet.slnx
@@ -98,6 +115,7 @@ jobs:
             /p:Platform=${{ matrix.platform }} `
             /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
+            /p:AppxPackageDir=AppPackages\ `
             /p:AppxPackageSigningEnabled=true `
             /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /m
@@ -108,6 +126,11 @@ jobs:
           Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
         shell: pwsh
 
+      - name: Show build output
+        shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Path OpenNet | Where-Object {$_.Name -like "*.msix"}
+
       - name: 7z Package
         run: |
           if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
@@ -116,7 +139,7 @@ jobs:
 
           7z a -t7z -mx=9 `
             "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z" `
-            "AppPackages\*${{ matrix.platform }}*"
+            "AppPackages\\"
         shell: pwsh
         
       - name: Upload Canary Artifact

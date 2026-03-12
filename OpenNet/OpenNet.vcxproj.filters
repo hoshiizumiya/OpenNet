@@ -85,7 +85,6 @@
     <Page Include="MainWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
-    <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </Page>
@@ -115,6 +114,9 @@
     </Page>
     <Page Include="UI\Xaml\View\Dialog\CloseToTrayDialog.xaml">
       <Filter>UI\Xaml\View\Dialog</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
   </ItemGroup>
   <ItemGroup>
@@ -341,7 +343,6 @@
     <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp" />
     <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBuilder.cpp">
       <Filter>UI\Xaml\Media\Pipelines</Filter>
     </ClCompile>
@@ -366,18 +367,13 @@
     <ClCompile Include="UI\Xaml\Media\Animations\EffectAnimationTypes.cpp">
       <Filter>UI\Xaml\Media\Animations</Filter>
     </ClCompile>
-    <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
     <ClCompile Include="ViewModels\RSSViewModel.cpp" />
-    <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
-    <ClCompile Include="ViewModels\TrackersSettingsViewModel.cpp" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.cpp">
       <Filter>Core\RSS</Filter>
     </ClCompile>
     <ClCompile Include="Core\RSS\RSSDatabase.cpp">
       <Filter>Core\RSS</Filter>
     </ClCompile>
-    <ClCompile Include="Core\HttpStateManager.cpp" />
-    <ClCompile Include="Core\TorrentSettings.cpp" />
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </ClCompile>
@@ -420,13 +416,35 @@
     <ClCompile Include="Core\GeoIP\GeoIPManager.cpp">
       <Filter>Core\GeoIP</Filter>
     </ClCompile>
-    <ClCompile Include="ThirdParty\RepoInfo.cpp" />
-    <ClCompile Include="Web\Request\Builder\GithubRequest.cpp" />
     <ClCompile Include="ViewModels\TorrentMetadataViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.cpp">
       <Filter>Core\ApplicationModel</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\TrackersSettingsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ThirdParty\RepoInfo.cpp">
+      <Filter>ThirdPatry</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\TorrentSettings.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp">
+      <Filter>Core\torrentCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Torrent\TrackerManager.cpp">
+      <Filter>Core\Torrent</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp">
+      <Filter>UI\Xaml\Media\Backdrop</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\HttpStateManager.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Web\Request\Builder\GithubRequest.cpp">
+      <Filter>Web\Request\Builder</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -611,19 +629,13 @@
     <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClInclude>
-    <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h" />
-    <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h" />
     <ClInclude Include="ViewModels\RSSViewModel.h" />
-    <ClInclude Include="Core\Torrent\TrackerManager.h" />
-    <ClInclude Include="ViewModels\TrackersSettingsViewModel.h" />
     <ClInclude Include="Core\RSS\RSSLinkResolver.h">
       <Filter>Core\RSS</Filter>
     </ClInclude>
     <ClInclude Include="Core\RSS\RSSDatabase.h">
       <Filter>Core\RSS</Filter>
     </ClInclude>
-    <ClInclude Include="Core\TorrentSettings.h" />
-    <ClInclude Include="Core\HttpStateManager.h" />
     <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.h">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </ClInclude>
@@ -702,13 +714,38 @@
     <ClInclude Include="Core\GeoIP\GeoIPManager.h">
       <Filter>Core\GeoIP</Filter>
     </ClInclude>
-    <ClInclude Include="ThirdParty\RepoInfo.h" />
-    <ClInclude Include="Web\Request\Builder\GithubRequest.h" />
     <ClInclude Include="ViewModels\TorrentMetadataViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h">
       <Filter>Core\ApplicationModel</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\TrackersSettingsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ThirdParty\RepoInfo.h">
+      <Filter>ThirdPatry</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\TorrentSettings.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h">
+      <Filter>Core\torrentCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h">
+      <Filter>Core\torrentCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\Torrent\TrackerManager.h">
+      <Filter>Core\Torrent</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\HttpStateManager.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Web\Request\Builder\GithubRequest.h">
+      <Filter>Web\Request\Builder</Filter>
+    </ClInclude>
+    <ClInclude Include="Helpers\ColumnWidthHelper.h">
+      <Filter>Helpers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -909,9 +946,6 @@
     <Filter Include="Themes">
       <UniqueIdentifier>{854975a4-ced1-42ff-8d93-dd91a7854850}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Pages">
-      <UniqueIdentifier>{775be7c6-6dd1-4ce1-bd2a-644ed61cd0bd}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ThirdPatry\sqlite">
       <UniqueIdentifier>{44edee1c-33f7-44a2-9bb4-b859145622ac}</UniqueIdentifier>
     </Filter>
@@ -1038,6 +1072,24 @@
     <Filter Include="Core\ApplicationModel">
       <UniqueIdentifier>{da2c2363-e5ec-4dd9-8ddf-43fcef685f3e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\IP2Location">
+      <UniqueIdentifier>{05d806e9-c721-48e1-b00a-0abc938dee2f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\TileImages">
+      <UniqueIdentifier>{a84ac9f8-d66e-4499-99eb-78b7ca5463af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\Torrent">
+      <UniqueIdentifier>{ef3d3d9c-5a19-481a-b463-34f6c56f3bef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Web">
+      <UniqueIdentifier>{91f7783c-b1db-4245-a2f1-88706bef4380}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Web\Request">
+      <UniqueIdentifier>{431f0bd8-158a-40cd-8465-2546806e1de8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Web\Request\Builder">
+      <UniqueIdentifier>{c0943f56-3dd7-43f2-a1d3-a2ecbab11afb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1057,7 +1109,9 @@
     <None Include="mvvm_framework\README.md">
       <Filter>UI\Behaviors</Filter>
     </None>
-    <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV" />
+    <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV">
+      <Filter>Assets\IP2Location</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

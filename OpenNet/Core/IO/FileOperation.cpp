@@ -9,8 +9,8 @@ namespace fs = std::filesystem;
 namespace winrt::OpenNet::Core::IO
 {
 	bool FileOperation::MoveDirectory(
-		const std::string& sourcePath,
-		const std::string& destinationPath,
+		const std::wstring& sourcePath,
+		const std::wstring& destinationPath,
 		std::function<void(size_t, size_t)> progressCallback)
 	{
 		try
@@ -24,7 +24,7 @@ namespace winrt::OpenNet::Core::IO
 			auto destParent = fs::path(destinationPath).parent_path();
 			if (!destParent.empty())
 			{
-				FileSystem::CreateDirectory(destParent.string());
+				FileSystem::CreateDirectory(destParent.wstring());
 			}
 
 			// Convert to wide strings
@@ -50,8 +50,8 @@ namespace winrt::OpenNet::Core::IO
 	}
 
 	bool FileOperation::CopyDirectory(
-		const std::string& sourcePath,
-		const std::string& destinationPath,
+		const std::wstring& sourcePath,
+		const std::wstring& destinationPath,
 		std::function<void(size_t, size_t)> progressCallback)
 	{
 		try
@@ -65,7 +65,7 @@ namespace winrt::OpenNet::Core::IO
 			auto destParent = fs::path(destinationPath).parent_path();
 			if (!destParent.empty())
 			{
-				FileSystem::CreateDirectory(destParent.string());
+				FileSystem::CreateDirectory(destParent.wstring());
 			}
 
 			// Copy recursively
@@ -90,7 +90,7 @@ namespace winrt::OpenNet::Core::IO
 					auto destFile = fs::path(destinationPath) / relativePath;
 
 					// Create directory if needed
-					FileSystem::CreateDirectory(destFile.parent_path().string());
+					FileSystem::CreateDirectory(destFile.parent_path().wstring());
 
 					// Copy file
 					fs::copy_file(entry.path(), destFile, fs::copy_options::overwrite_existing);
@@ -111,7 +111,7 @@ namespace winrt::OpenNet::Core::IO
 		}
 	}
 
-	bool FileOperation::DeleteDirectory(const std::string& path)
+	bool FileOperation::DeleteDirectory(const std::wstring& path)
 	{
 		try
 		{
@@ -130,7 +130,7 @@ namespace winrt::OpenNet::Core::IO
 		}
 	}
 
-	uint64_t FileOperation::GetDirectorySize(const std::string& path)
+	uint64_t FileOperation::GetDirectorySize(const std::wstring& path)
 	{
 		try
 		{
@@ -156,7 +156,7 @@ namespace winrt::OpenNet::Core::IO
 		}
 	}
 
-	uint64_t FileOperation::GetAvailableSpace(const std::string& path)
+	uint64_t FileOperation::GetAvailableSpace(const std::wstring& path)
 	{
 		try
 		{

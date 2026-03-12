@@ -56,6 +56,10 @@ namespace OpenNet::Core
         // 防火墙检测（简化）/ Firewall detection (simplified)
         winrt::Windows::Foundation::IAsyncOperation<bool> CheckFirewallStatusAsync();
 
+        // 网络类型检测 / Network type detection
+        NetworkType GetNetworkType() const;
+        static winrt::hstring NetworkTypeToString(NetworkType type);
+
         // 推荐服务器 / Recommended servers
         winrt::Windows::Foundation::Collections::IVector<winrt::hstring> GetRecommendedSTUNServers() const;
 

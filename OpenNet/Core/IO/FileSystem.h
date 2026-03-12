@@ -7,25 +7,22 @@ namespace winrt::OpenNet::Core::IO
     class FileSystem
     {
     public:
-        // Get AppData folder path (where SQLite database is stored)
-        // Returns path to %APPDATA%\OpenNet
-        static std::string GetAppDataPath();
-        static std::string AppDataPath;
-
-        // Get application temporary folder
-        static std::string GetTempPath();
-        static std::string AppTempPath;
-
-        // Get downloads folder
-        static std::string GetDownloadsPath();
+        // Wide-string variants for callers that need std::wstring
+        static std::wstring_view GetAppDataPathW();
+        static std::wstring_view GetAppTempPathW();
+        static std::wstring_view GetDownloadsPathW();
 
         // Create directory if not exists
-        static bool CreateDirectory(const std::string& path);
+        static bool CreateDirectory(const std::wstring& path);
 
         // Check if directory exists
-        static bool DirectoryExists(const std::string& path);
+        static bool DirectoryExists(const std::wstring& path);
 
         // Check if file exists
-        static bool FileExists(const std::string& path);
+        static bool FileExists(const std::wstring& path);
+
+    private:
+        static std::wstring_view AppDataPathW;
+        static std::wstring_view AppTempPathW;
     };
 }

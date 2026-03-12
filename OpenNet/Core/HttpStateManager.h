@@ -1,10 +1,10 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/HttpStateManager.h
  * PURPOSE:   Persistence for HTTP/HTTPS/FTP download records (Aria2-based)
  *            Uses SQLite for reliable storage (replaces old JSON backend).
  *
- * LICENSE:   The MIT License
+ * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
 
 #pragma once
@@ -57,6 +57,7 @@ namespace OpenNet::Core
         // Lookup
         std::optional<HttpDownloadRecord> FindByGid(std::string const& gid) const;
         std::optional<HttpDownloadRecord> FindByRecordId(std::string const& recordId) const;
+        std::optional<HttpDownloadRecord> FindActiveByUrl(std::string const& url) const;
         std::vector<HttpDownloadRecord> LoadAllRecords() const;
 
         // Flush changes to disk (no-op for SQLite WAL, kept for API compat)

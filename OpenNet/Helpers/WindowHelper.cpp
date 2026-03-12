@@ -144,28 +144,6 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		presenter.try_as<OverlappedPresenter>().PreferredMinimumHeight(static_cast<int32_t>(width * scale));
 		presenter.try_as<OverlappedPresenter>().PreferredMinimumWidth(static_cast<int32_t>(height * scale));
 	}
-	/*
-	void WindowHelper::AddNotifyIcon()
-	{
-
-		hstring appname = ResourceGetString(const_cast<wchar_t*>(L"NotifyIconName"));
-		guid gNotifyIcon("21a2acbc-3a44-43c8-860a-f8e7151b2623");
-		NOTIFYICONDATAW nid = {};
-		nid.cbSize = sizeof(NOTIFYICONDATAW);
-		nid.hWnd = GetWindowHandle();
-		nid.uID = 0;
-		nid.guidItem = gNotifyIcon;
-		nid.hBalloonIcon = 0;
-		nid.uFlags = NIF_MESSAGE | NIF_ICON | NIF_SHOWTIP | NIF_TIP | NIF_GUID | NIF_STATE;
-		nid.uCallbackMessage = NotifyIconCallbackMessage;
-		nid.hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
-		wcscpy_s(nid.szTip, appname.c_str());
-		if (Shell_NotifyIconW(NIM_ADD, &nid))
-		{
-			Shell_NotifyIconW(NIM_SETVERSION, &nid);
-		}
-	}
-	*/
 
 	guid PlacementRestoration::GenerateTypeGuid(hstring const& typeName)
 	{

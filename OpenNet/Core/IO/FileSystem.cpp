@@ -14,132 +14,15 @@ using namespace winrt::Microsoft::Windows::Storage;
 
 namespace winrt::OpenNet::Core::IO
 {
-	std::string FileSystem::AppDataPath;
-	std::string FileSystem::AppTempPath;
+	std::wstring_view FileSystem::AppDataPathW;
+	std::wstring_view FileSystem::AppTempPathW;
 
-	std::string FileSystem::GetAppDataPath()
-	{
-		if (!AppDataPath.empty())
-		{
-			return AppDataPath;
-		}
-		try
-		{
-			AppDataPath = winrt::to_string(ApplicationData::GetDefault().LocalPath());
-			return AppDataPath;
-		}
-		catch (...)
-		{
-			// Fallback to Windows API if WinRT fails or no package identity
-			wchar_t path[MAX_PATH];
-			if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_LOCAL_APPDATA, nullptr, 0, path)))
-			{
-				std::wstring wpath(path);
-				// Append OpenNet folder
-				wpath += L"\\OpenNet";
-
-				// Create if not exists
-				::CreateDirectoryW(wpath.c_str(), nullptr);
-
-				// Convert to UTF-8
-				int size = WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, nullptr, 0, nullptr, nullptr);
-				if (size > 0)
-				{
-					std::string result(size - 1, 0);
-					WideCharToMultiByte(CP_UTF8, 0, wpath.c_str(), -1, &result[0], size, nullptr, nullptr);
-					AppDataPath = result;
-					return result;
-				}
-			}
-
-			return {};
-		}
-	}
-
-	std::string FileSystem::GetTempPath()
-	{
-		if (!AppTempPath.empty())
-		{
-			return AppTempPath;
-		}
-		try
-		{
-			AppTempPath = winrt::to_string(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalCachePath());
-			return AppTempPath;
-		}
-		catch (...)
-		{
-			wchar_t tempPath[MAX_PATH];
-			DWORD result = ::GetTempPathW(MAX_PATH, tempPath);
-			if (result == 0 || result > MAX_PATH)
-			{
-				return {};
-			}
-
-			std::wstring tempDir(tempPath);
-			// Append OpenNet subfolder
-			tempDir += L"OpenNet";
-
-			// Create directory if it doesn't exist
-			::CreateDirectoryW(tempDir.c_str(), nullptr);
-
-			// Convert to UTF-8
-			int size = WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, nullptr, 0, nullptr, nullptr);
-			if (size > 0)
-			{
-				std::string result_str(size - 1, 0);
-				WideCharToMultiByte(CP_UTF8, 0, tempDir.c_str(), -1, &result_str[0], size, nullptr, nullptr);
-				AppTempPath = result_str;
-				return result_str;
-			}
-		}
-
-		return {};
-	}
-
-	std::string FileSystem::GetDownloadsPath()
+	// Never use it
+	bool FileSystem::CreateDirectory(const std::wstring& path)
 	{
 		try
 		{
-			wchar_t* downloadsPath = nullptr;
-			// Use FOLDERID_Downloads instead of CSIDL_DOWNLOADS
-			if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Downloads, 0, nullptr, &downloadsPath)))
-			{
-				// Convert to UTF-8
-				int size = WideCharToMultiByte(CP_UTF8, 0, downloadsPath, -1, nullptr, 0, nullptr, nullptr);
-				if (size > 0)
-				{
-					std::string result(size - 1, 0);
-					WideCharToMultiByte(CP_UTF8, 0, downloadsPath, -1, &result[0], size, nullptr, nullptr);
-					CoTaskMemFree(downloadsPath);
-					return result;
-				}
-				CoTaskMemFree(downloadsPath);
-			}
-
-			return {};
-		}
-		catch (...)
-		{
-			return {};
-		}
-	}
-
-	bool FileSystem::CreateDirectory(const std::string& path)
-	{
-		try
-		{
-			// Convert UTF-8 to wide string
-			int size = MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, nullptr, 0);
-			if (size <= 0)
-			{
-				return false;
-			}
-
-			std::wstring wpath(size - 1, 0);
-			MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, &wpath[0], size);
-
-			BOOL result = ::CreateDirectoryW(wpath.c_str(), nullptr);
+			BOOL result = ::CreateDirectoryW(path.c_str(), nullptr);
 			if (result)
 			{
 				return true;
@@ -155,21 +38,11 @@ namespace winrt::OpenNet::Core::IO
 		}
 	}
 
-	bool FileSystem::DirectoryExists(const std::string& path)
+	bool FileSystem::DirectoryExists(const std::wstring& path)
 	{
 		try
 		{
-			// Convert UTF-8 to wide string
-			int size = MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, nullptr, 0);
-			if (size <= 0)
-			{
-				return false;
-			}
-
-			std::wstring wpath(size - 1, 0);
-			MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, &wpath[0], size);
-
-			DWORD attributes = GetFileAttributesW(wpath.c_str());
+			DWORD attributes = GetFileAttributesW(path.c_str());
 			return (attributes != INVALID_FILE_ATTRIBUTES) && (attributes & FILE_ATTRIBUTE_DIRECTORY);
 		}
 		catch (...)
@@ -178,26 +51,55 @@ namespace winrt::OpenNet::Core::IO
 		}
 	}
 
-	bool FileSystem::FileExists(const std::string& path)
+	bool FileSystem::FileExists(const std::wstring& path)
 	{
 		try
 		{
-			// Convert UTF-8 to wide string
-			int size = MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, nullptr, 0);
-			if (size <= 0)
-			{
-				return false;
-			}
-
-			std::wstring wpath(size - 1, 0);
-			MultiByteToWideChar(CP_UTF8, 0, path.c_str(), -1, &wpath[0], size);
-
-			DWORD attributes = GetFileAttributesW(wpath.c_str());
+			DWORD attributes = GetFileAttributesW(path.c_str());
 			return (attributes != INVALID_FILE_ATTRIBUTES) && !(attributes & FILE_ATTRIBUTE_DIRECTORY);
 		}
 		catch (...)
 		{
 			return false;
 		}
+	}
+
+	std::wstring_view FileSystem::GetAppDataPathW()
+	{
+		if (AppDataPathW.empty())
+		{
+			try
+			{
+				AppDataPathW = ApplicationData::GetDefault().LocalPath();
+			}
+			catch (...)
+			{
+				return {};
+			}
+		}
+
+		return AppDataPathW;
+	}
+
+	std::wstring_view FileSystem::GetAppTempPathW()
+	{
+		if (!AppTempPathW.empty())
+		{
+			return AppTempPathW;
+		}
+		try
+		{
+			AppTempPathW = ApplicationData::GetDefault().LocalCachePath();
+			return AppTempPathW;
+		}
+		catch (...)
+		{
+			return {};
+		}
+	}
+
+	std::wstring_view FileSystem::GetDownloadsPathW()
+	{
+		return winrt::Windows::Storage::KnownFolders::GetFolderAsync(winrt::Windows::Storage::KnownFolderId::DownloadsFolder).get().Path().c_str();
 	}
 }

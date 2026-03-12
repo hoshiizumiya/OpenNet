@@ -6,10 +6,11 @@
 
 #include <winrt/Microsoft.Windows.Storage.Pickers.h>
 #include <winrt/Microsoft.UI.Xaml.Navigation.h>
-#include <shlobj.h>
 #include <wil/resource.h>
+#include "Core/IO/FileSystem.h"
 #include "Core/Utils/Misc.h"
 #include "Helpers/WindowHelper.h"
+#include "Helpers/ColumnWidthHelper.h"
 #include <algorithm>
 #include <cctype>
 #include <windows.h>
@@ -18,6 +19,8 @@
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
+using namespace ::OpenNet::Helpers;
+using namespace winrt::OpenNet::Core::IO;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
@@ -62,6 +65,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	TorrentCheckGeneralPage::TorrentCheckGeneralPage()
 	{
 		InitializeComponent();
+		Loaded([this](auto, auto)
+		{
+			RestoreColumn(ColCheckSize(), "TorrentCheck.Size");
+			RestoreColumn(ColCheckPriority(), "TorrentCheck.Priority");
+		});
+		Unloaded([this](auto, auto)
+		{
+			SaveColumnWidth("TorrentCheck.Size", ColCheckSize().ActualWidth());
+			SaveColumnWidth("TorrentCheck.Priority", ColCheckPriority().ActualWidth());
+		});
 	}
 
 	winrt::hstring TorrentCheckGeneralPage::GetNodeIcon(bool isFolder)
@@ -131,16 +144,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					if (m_viewModel.SavePath().empty())
 					{
 						// Set default save path
-						wil::unique_cotaskmem_string downloadsPath;
-						if (SUCCEEDED(SHGetKnownFolderPath(FOLDERID_Downloads, 0, nullptr, &downloadsPath)))
+						std::wstring downloadsPath = FileSystem::GetDownloadsPathW();
+						if (downloadsPath.empty())
 						{
-							std::wstring defaultPath(downloadsPath.get());
-
-							savePathBox.Text(winrt::hstring(defaultPath));
-							m_viewModel.SavePath(winrt::hstring(defaultPath));
+							savePathBox.Text(winrt::hstring(downloadsPath));
+							m_viewModel.SavePath(winrt::hstring(downloadsPath));
 
 							// Update disk space display
-							UpdateDiskSpaceDisplay(winrt::hstring(defaultPath));
+							UpdateDiskSpaceDisplay(winrt::hstring(downloadsPath));
 						}
 					}
 					else
@@ -397,7 +408,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				std::wstring fileName{ file.FileName() };
 				std::transform(fileName.begin(), fileName.end(), fileName.begin(), ::towlower);
 
-				bool isKnownType = 
+				bool isKnownType =
 					MatchesExtensionList(fileName, VideoExtensions) ||
 					MatchesExtensionList(fileName, AudioExtensions) ||
 					MatchesExtensionList(fileName, PictureExtensions);
@@ -426,7 +437,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					if (selectAudio) matchesSelected = matchesSelected || MatchesExtensionList(fileName, AudioExtensions);
 					if (selectPicture) matchesSelected = matchesSelected || MatchesExtensionList(fileName, PictureExtensions);
 
-					bool isKnownType = 
+					bool isKnownType =
 						MatchesExtensionList(fileName, VideoExtensions) ||
 						MatchesExtensionList(fileName, AudioExtensions) ||
 						MatchesExtensionList(fileName, PictureExtensions);

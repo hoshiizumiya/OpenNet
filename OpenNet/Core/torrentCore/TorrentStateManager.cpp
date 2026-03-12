@@ -10,9 +10,9 @@
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/entry.hpp>
 
-#include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Foundation.h>
 
+#include "Core/IO/FileSystem.h"
 #include "ThirdParty/Sqlite/sqlite3.h"
 
 #include <fstream>
@@ -41,9 +41,8 @@ namespace OpenNet::Core::Torrent
         {
             if (basePath.empty())
             {
-                // Use WinUI3 recommended LocalFolder
-                auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-                m_storagePath = localFolder.Path().c_str();
+                // Use unified FileSystem path
+                m_storagePath = winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
             }
             else
             {

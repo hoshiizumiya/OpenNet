@@ -1,17 +1,17 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/HttpStateManager.cpp
  * PURPOSE:   Persistence for HTTP/HTTPS/FTP download records (Aria2-based)
  *            SQLite backend for reliable, crash-safe storage.
  *
- * LICENSE:   The MIT License
+ * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
 
 #include "pch.h"
 #include "Core/HttpStateManager.h"
 
 #include "ThirdParty/Sqlite/sqlite3.h"
-#include <winrt/Windows.Storage.h>
+#include "Core/IO/FileSystem.h"
 
 #include <chrono>
 #include <filesystem>
@@ -48,8 +48,7 @@ namespace OpenNet::Core
 
         try
         {
-            auto localFolder = winrt::Windows::Storage::ApplicationData::Current().LocalFolder();
-            m_folderPath = std::wstring(localFolder.Path().c_str());
+            m_folderPath = winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
         }
         catch (...)
         {
@@ -183,10 +182,16 @@ namespace OpenNet::Core
             sqlite3_finalize(stmt);
             sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr);
 
-            // Rename old file so migration doesn't run again
-            std::wstring backupPath = jsonPath + L".migrated";
-            try { std::filesystem::rename(jsonPath, backupPath); }
-            catch (...) {}
+            // Remove old JSON file so migration doesn't run again.
+            // Use remove instead of rename for reliability.
+            try { std::filesystem::remove(jsonPath); }
+            catch (...)
+            {
+                // If deletion fails, try renaming as fallback.
+                std::wstring backupPath = jsonPath + L".migrated";
+                try { std::filesystem::rename(jsonPath, backupPath); }
+                catch (...) {}
+            }
 
             OutputDebugStringA("HttpStateManager: Migrated records from JSON to SQLite\n");
         }
@@ -199,8 +204,54 @@ namespace OpenNet::Core
     // ------------------------------------------------------------------
     //  Record CRUD
     // ------------------------------------------------------------------
+    std::optional<HttpDownloadRecord> HttpStateManager::FindActiveByUrl(std::string const& url) const
+    {
+        std::lock_guard lock(m_mutex);
+        if (!m_db) return std::nullopt;
+
+        // status: 0=pending, 1=downloading, 2=paused → active
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid "
+                          "FROM http_downloads WHERE url = ? AND status < 3 LIMIT 1;";
+        sqlite3_stmt* stmt = nullptr;
+        sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+        sqlite3_bind_text(stmt, 1, url.c_str(), -1, SQLITE_TRANSIENT);
+
+        std::optional<HttpDownloadRecord> result;
+        if (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            HttpDownloadRecord rec;
+            auto safeText = [&](int col) -> const char* {
+                auto ptr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, col));
+                return ptr ? ptr : "";
+            };
+            rec.recordId       = safeText(0);
+            rec.url            = safeText(1);
+            rec.savePath       = safeText(2);
+            rec.fileName       = safeText(3);
+            rec.name           = safeText(4);
+            rec.addedTimestamp  = sqlite3_column_int64(stmt, 5);
+            rec.totalSize      = sqlite3_column_int64(stmt, 6);
+            rec.completedSize  = sqlite3_column_int64(stmt, 7);
+            rec.status         = sqlite3_column_int(stmt, 8);
+            rec.lastGid        = safeText(9);
+            result = std::move(rec);
+        }
+
+        sqlite3_finalize(stmt);
+        return result;
+    }
+
     std::string HttpStateManager::AddRecord(std::string const& url, std::string const& savePath, std::string const& fileName)
     {
+        // Check for existing active record with the same URL to prevent duplicates.
+        // Note: FindActiveByUrl also takes m_mutex, so call it before locking.
+        auto existing = FindActiveByUrl(url);
+        if (existing.has_value())
+        {
+            OutputDebugStringA(("HttpStateManager: Duplicate URL detected, returning existing recordId: " + existing->recordId + "\n").c_str());
+            return existing->recordId;
+        }
+
         std::lock_guard lock(m_mutex);
         if (!m_db) return {};
 

@@ -176,6 +176,7 @@
     <ClInclude Include="Core\Torrent\TrackerManager.h" />
     <ClInclude Include="Core\Utils\Misc.h" />
     <ClInclude Include="Core\Utils\Message.h" />
+    <ClInclude Include="Helpers\ColumnWidthHelper.h" />
     <ClInclude Include="ThirdParty\RepoInfo.h" />
     <ClInclude Include="UI\Shell\NotifyIconContextMenu.xaml.h">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>

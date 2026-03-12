@@ -67,6 +67,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// File operation helpers
 		winrt::Windows::Foundation::IAsyncAction PerformMoveTaskAsync();
 		winrt::Windows::Foundation::IAsyncAction ShowTaskPropertiesAsync();
+
+		// Column width persistence
+		void RestoreColumnWidths();
+		void SaveColumnWidths();
 	};
 }
 

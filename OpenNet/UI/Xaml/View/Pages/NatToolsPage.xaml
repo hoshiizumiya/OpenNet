@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.NatToolsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -57,9 +57,23 @@
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run x:Uid="NatTools_PublicIPLabel" Text="Public IP: " />
+                        <Run x:Uid="NatTools_PublicIPLabel" Text="Public IPv4: " />
                         <Run
                             x:Name="PublicIPText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Public IPv6: " />
+                        <Run
+                            x:Name="PublicIPv6Text"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Network Type: " />
+                        <Run
+                            x:Name="NetworkTypeText"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
@@ -88,6 +102,20 @@
                         <Run Text="DHT Nodes: " />
                         <Run
                             x:Name="DhtNodesText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Active Torrents: " />
+                        <Run
+                            x:Name="ActiveTorrentsText"
+                            FontWeight="SemiBold"
+                            Text="-" />
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Connected Peers: " />
+                        <Run
+                            x:Name="ConnectedPeersText"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
@@ -275,6 +303,13 @@
                         FontWeight="SemiBold"
                         Text="-" />
                 </TextBlock>
+
+                <TextBlock
+                    x:Name="PortMappedText"
+                    Margin="0,2,0,0"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text=""
+                    TextWrapping="Wrap" />
 
                 <!--  STUN Servers Section  -->
                 <TextBlock

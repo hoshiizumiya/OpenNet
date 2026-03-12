@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TaskTrackersPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskTrackersPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskTrackersPage.g.cpp"
@@ -10,15 +10,31 @@
 
 #include "Core/P2PManager.h"
 #include "ViewModels/DisplayItems.h"
+#include "Helpers/ColumnWidthHelper.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
+using namespace ::OpenNet::Helpers;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	TaskTrackersPage::TaskTrackersPage()
 	{
 		InitializeComponent();
+		Loaded([this](auto, auto)
+		{
+			RestoreColumn(ColTrackerTier(), "Trackers.Tier");
+			RestoreColumn(ColTrackerPeers(), "Trackers.Peers");
+			RestoreColumn(ColTrackerStatus(), "Trackers.Status");
+			RestoreColumn(ColTrackerMessage(), "Trackers.Message");
+		});
+		Unloaded([this](auto, auto)
+		{
+			SaveColumnWidth("Trackers.Tier", ColTrackerTier().ActualWidth());
+			SaveColumnWidth("Trackers.Peers", ColTrackerPeers().ActualWidth());
+			SaveColumnWidth("Trackers.Status", ColTrackerStatus().ActualWidth());
+			SaveColumnWidth("Trackers.Message", ColTrackerMessage().ActualWidth());
+		});
 	}
 
 	TaskTrackersPage::~TaskTrackersPage()

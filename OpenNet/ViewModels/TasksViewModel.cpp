@@ -722,7 +722,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		return winrt::hstring{ buf };
 	}
 
-	void TasksViewModel::OnHttpProgress(::OpenNet::Core::HttpTaskProgress const& progress)
+	void TasksViewModel::OnHttpProgress(::OpenNet::Core::HttpTaskProgress const& progress) const
 	{
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
@@ -783,7 +783,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		});
 	}
 
-	void TasksViewModel::OnHttpFinished(std::string const& gid, std::string const& name)
+	void TasksViewModel::OnHttpFinished(std::string const& gid, std::string const& name) const
 	{
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
@@ -805,7 +805,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		});
 	}
 
-	void TasksViewModel::OnHttpError(std::string const& gid, std::string const& message)
+	void TasksViewModel::OnHttpError(std::string const& gid, std::string const& message) const
 	{
 		(void)message;
 		auto dispatcher = m_dispatcher;

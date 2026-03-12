@@ -9,13 +9,13 @@
 #include "pch.h"
 #include "Core/TorrentSettings.h"
 #include "Core/AppSettingsDatabase.h"
+#include "Core/IO/FileSystem.h"
 
 #include <nlohmann/json.hpp>
 
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/session.hpp> // for proxy_type_t
 
-#include <winrt/Microsoft.Windows.Storage.h>
 #include <winrt/Windows.Foundation.h>
 
 #include <filesystem>
@@ -67,10 +67,6 @@ namespace OpenNet::Core
 
 		try
 		{
-			// Determine legacy JSON file path
-			auto localFolder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
-			m_filePath = std::wstring(localFolder.Path().c_str()) + L"\\torrent_settings.json";
-
 			// Try loading from SQLite first
 			if (!LoadFromSqlite())
 			{
@@ -80,18 +76,17 @@ namespace OpenNet::Core
 			// Resolve default save path if empty
 			if (m_settings.defaultSavePath.empty())
 			{
-				try
+				auto downloads = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+				if (!downloads.empty())
 				{
-					auto downloads = winrt::Windows::Storage::KnownFolders::GetFolderAsync(
-						winrt::Windows::Storage::KnownFolderId::DownloadsFolder)
-						.get();
-					m_settings.defaultSavePath = winrt::to_string(downloads.Path());
+					m_settings.defaultSavePath = downloads;
 				}
-				catch (...)
+				else
 				{
-					auto path = std::wstring(localFolder.Path().c_str()) + L"\\Downloads";
-					std::filesystem::create_directories(path);
-					m_settings.defaultSavePath = winrt::to_string(winrt::hstring(path));
+					// NO Downloads folder? Fallback to AppData\Downloads					
+					auto fallback = std::wstring(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) + L"\\Downloads";
+					std::filesystem::create_directories(fallback);
+					m_settings.defaultSavePath = fallback;
 				}
 			}
 		}
@@ -180,11 +175,11 @@ namespace OpenNet::Core
 			db.SetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint", s.peerFingerprint);
 
 			// Download defaults
-			db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath", s.defaultSavePath);
+			db.SetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath", s.defaultSavePath);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage", s.preallocateStorage);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads", s.autoStartDownloads);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled", s.moveCompletedEnabled);
-			db.SetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
+			db.SetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
 		}
 		catch (std::exception const& ex)
 		{
@@ -269,11 +264,11 @@ namespace OpenNet::Core
 			s.peerFingerprint = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "peerFingerprint").value_or(s.peerFingerprint);
 
 			// Download defaults
-			s.defaultSavePath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath").value_or(s.defaultSavePath);
+			s.defaultSavePath = db.GetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath").value_or(s.defaultSavePath);
 			s.preallocateStorage = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage").value_or(s.preallocateStorage);
 			s.autoStartDownloads = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads").value_or(s.autoStartDownloads);
 			s.moveCompletedEnabled = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled").value_or(s.moveCompletedEnabled);
-			s.moveCompletedPath = db.GetString(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath").value_or(s.moveCompletedPath);
+			s.moveCompletedPath = db.GetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath").value_or(s.moveCompletedPath);
 
 			return true;
 		}

@@ -15,7 +15,7 @@
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/address.hpp>
 
-#include <winrt/Microsoft.Windows.Storage.h>
+#include "Core/IO/FileSystem.h"
 
 #include <sstream>
 #include <algorithm>
@@ -49,10 +49,8 @@ namespace OpenNet::Core
 		if (m_initialized) return true;
 
 		try
-		{
-			auto localFolder = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalFolder();
-			auto dbPath = std::wstring(localFolder.Path().c_str()) + L"\\ipfilter.db";
-
+		{			 
+			auto dbPath = std::wstring(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) + L"\\ipfilter.db";
 			int rc = sqlite3_open16(dbPath.c_str(), &m_db);
 			if (rc != SQLITE_OK)
 			{
