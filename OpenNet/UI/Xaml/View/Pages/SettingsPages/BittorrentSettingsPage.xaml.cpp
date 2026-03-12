@@ -141,11 +141,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         PeerFingerprintTextBox().Text(winrt::to_hstring(s.peerFingerprint));
 
         // Download Defaults
-        DefaultSavePathTextBox().Text(winrt::to_hstring(s.defaultSavePath));
+        DefaultSavePathTextBox().Text(s.defaultSavePath);
         PreallocateStorageToggle().IsOn(s.preallocateStorage);
         AutoStartDownloadsToggle().IsOn(s.autoStartDownloads);
         MoveCompletedToggle().IsOn(s.moveCompletedEnabled);
-        MoveCompletedPathTextBox().Text(winrt::to_hstring(s.moveCompletedPath));
+        MoveCompletedPathTextBox().Text(s.moveCompletedPath);
     }
 
     ::OpenNet::Core::TorrentSettings BittorrentSettingsPage::CollectFromUI()
@@ -218,11 +218,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         s.peerFingerprint = winrt::to_string(PeerFingerprintTextBox().Text());
 
         // Download Defaults
-        s.defaultSavePath = winrt::to_string(DefaultSavePathTextBox().Text());
+        s.defaultSavePath = DefaultSavePathTextBox().Text();
         s.preallocateStorage = PreallocateStorageToggle().IsOn();
         s.autoStartDownloads = AutoStartDownloadsToggle().IsOn();
         s.moveCompletedEnabled = MoveCompletedToggle().IsOn();
-        s.moveCompletedPath = winrt::to_string(MoveCompletedPathTextBox().Text());
+        s.moveCompletedPath = MoveCompletedPathTextBox().Text();
 
         return s;
     }
