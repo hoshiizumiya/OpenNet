@@ -48,7 +48,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Helper to apply filters
 		void ApplyFilters();
 		void UpdateSelectedSizeDisplay();
-		void UpdateDiskSpaceDisplay(const hstring& savePath);
+		template<typename T>
+		void UpdateDiskSpaceDisplay(const T& savePath);
 
 		// Known extensions for filtering
 		static constexpr std::wstring_view VideoExtensions = L".mp4,.mkv,.avi,.mov,.wmv";

@@ -236,10 +236,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TorrentMetadataViewModel>(metadata);
 
 		// Set default save path
-		auto defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+		const std::wstring_view& defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
 		if (!defaultPath.empty())
 		{
-			m_metadataViewModel.SavePath(winrt::hstring(defaultPath));
+			m_metadataViewModel.SavePath(defaultPath);
 		}
 
 		// Update UI

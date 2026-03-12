@@ -195,8 +195,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						// First cancel the active download (aria2.remove),
 						// then clean up the result (aria2.removeDownloadResult).
-						try { dlMgr.CancelHttpDownload(gid); } catch (...) {}
-						try { dlMgr.RemoveHttpDownload(gid); } catch (...) {}
+						try { dlMgr.CancelHttpDownload(gid); }
+						catch (...) {}
+						try { dlMgr.RemoveHttpDownload(gid); }
+						catch (...) {}
 					}
 					// Delete the persisted HTTP download record.
 					// TaskId now holds the stable recordId (not GID).
@@ -722,7 +724,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		return winrt::hstring{ buf };
 	}
 
-	void TasksViewModel::OnHttpProgress(::OpenNet::Core::HttpTaskProgress const& progress) const
+	// Do Not Make it const: cannot convert 'this' pointer from 'const TasksViewModel'. The conversion loses qualifiers means const TasksViewModel* → TasksViewModel*, get_weak() returns weak_ptr<const TasksViewModel> in that case, which cannot call non-const member functions.
+	void TasksViewModel::OnHttpProgress(::OpenNet::Core::HttpTaskProgress const& progress)
 	{
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
@@ -783,7 +786,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		});
 	}
 
-	void TasksViewModel::OnHttpFinished(std::string const& gid, std::string const& name) const
+	void TasksViewModel::OnHttpFinished(std::string const& gid, std::string const& name)
 	{
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
@@ -805,7 +808,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		});
 	}
 
-	void TasksViewModel::OnHttpError(std::string const& gid, std::string const& message) const
+	void TasksViewModel::OnHttpError(std::string const& gid, std::string const& message)
 	{
 		(void)message;
 		auto dispatcher = m_dispatcher;

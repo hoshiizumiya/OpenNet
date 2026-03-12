@@ -144,14 +144,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					if (m_viewModel.SavePath().empty())
 					{
 						// Set default save path
-						std::wstring downloadsPath = FileSystem::GetDownloadsPathW();
+						const std::wstring_view& downloadsPath = FileSystem::GetDownloadsPathW();
 						if (downloadsPath.empty())
 						{
-							savePathBox.Text(winrt::hstring(downloadsPath));
-							m_viewModel.SavePath(winrt::hstring(downloadsPath));
+							savePathBox.Text(downloadsPath);
+							m_viewModel.SavePath(downloadsPath);
 
 							// Update disk space display
-							UpdateDiskSpaceDisplay(winrt::hstring(downloadsPath));
+							UpdateDiskSpaceDisplay(downloadsPath);
 						}
 					}
 					else
@@ -475,7 +475,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TorrentCheckGeneralPage::UpdateDiskSpaceDisplay(const hstring& savePath)
+	template<typename T>
+	void TorrentCheckGeneralPage::UpdateDiskSpaceDisplay(const T& savePath)
 	{
 		try
 		{

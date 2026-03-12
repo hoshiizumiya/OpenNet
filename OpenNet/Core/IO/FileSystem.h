@@ -24,5 +24,6 @@ namespace winrt::OpenNet::Core::IO
     private:
         static std::wstring_view AppDataPathW;
         static std::wstring_view AppTempPathW;
+        static std::wstring_view AppDownloadPathW;
     };
 }
