@@ -216,6 +216,13 @@ namespace OpenNet::Core::Torrent
             // Remove seed_mode flag for downloads
             atp.flags &= ~lt::torrent_flags::seed_mode;
 
+            // Apply storage preallocation setting
+            auto torrentSettings = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
+            if (torrentSettings.preallocateStorage)
+            {
+                atp.storage_mode = lt::storage_mode_allocate;
+            }
+
             if (!filePriorities.empty())
             {
                 atp.file_priorities.reserve(filePriorities.size());
@@ -277,6 +284,13 @@ namespace OpenNet::Core::Torrent
             atp.save_path = savePath;
             // Remove seed_mode flag for downloads
             atp.flags &= ~lt::torrent_flags::seed_mode;
+
+            // Apply storage preallocation setting
+            auto torrentSettings = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
+            if (torrentSettings.preallocateStorage)
+            {
+                atp.storage_mode = lt::storage_mode_allocate;
+            }
 
             if (!filePriorities.empty())
             {

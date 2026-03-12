@@ -7,6 +7,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
     struct NatToolsPage : NatToolsPageT<NatToolsPage>
     {
         NatToolsPage();
+        ~NatToolsPage();
 
         winrt::Windows::Foundation::IAsyncAction DetectNat_Click(
             winrt::Windows::Foundation::IInspectable const& sender,
@@ -18,6 +19,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
     private:
         ::OpenNet::Core::NetworkDetector m_detector;
+
+        // Auto-refresh timer for libtorrent session stats
+        winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
+        winrt::event_token m_timerToken{};
 
         // Perform individual STUN binding test and return mapped IP:port and latency
         struct StunTestResult

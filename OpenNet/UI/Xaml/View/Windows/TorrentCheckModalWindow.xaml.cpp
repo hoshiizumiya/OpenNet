@@ -10,7 +10,7 @@
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
 #include <windowsx.h>
 #include <winuser.h>
-#include <shlobj.h>
+#include "Core/IO/FileSystem.h"
 #include "Helpers/WindowHelper.h"
 #include "Helpers/ThemeHelper.h"
 #include "App.xaml.h"
@@ -236,10 +236,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TorrentMetadataViewModel>(metadata);
 
 		// Set default save path
-		wchar_t downloadsPath[MAX_PATH];
-		if (SUCCEEDED(SHGetFolderPathW(nullptr, CSIDL_PERSONAL, nullptr, 0, downloadsPath)))
+		auto defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+		if (!defaultPath.empty())
 		{
-			std::wstring defaultPath = std::wstring(downloadsPath) + L"\\Downloads";
 			m_metadataViewModel.SavePath(winrt::hstring(defaultPath));
 		}
 

@@ -32,6 +32,7 @@
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
+#include "Helpers/ColumnWidthHelper.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -54,6 +55,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Subscribe to AddTaskRequested event (currently not used, but kept for compatibility)
 		m_addTaskToken = m_viewModel.AddTaskRequested({this, &TasksPage::OnAddTaskRequested});
+
+		// Restore saved column widths
+		Loaded([this](IInspectable const&, RoutedEventArgs const&) { RestoreColumnWidths(); });
+		Unloaded([this](IInspectable const&, RoutedEventArgs const&) { SaveColumnWidths(); });
 
 		// Set up bottom panel to show Summary by default
 		if (auto frame = ContentFrame())
@@ -520,11 +525,56 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		try
 		{
-			// TODO: 获取任务的下载路径
-			// std::string taskPath = m_currentSubscribedTask.GetDownloadPath();
+			auto selectedTask = m_viewModel.SelectedTask();
+			std::wstring taskPath;
 
-			// 临时使用AppData路径作为示例
-			std::string taskPath = ::winrt::OpenNet::Core::IO::FileSystem::GetAppDataPath();
+			// 根据任务类型获取下载路径
+			auto taskType = selectedTask.TaskType();
+			auto taskId = winrt::to_string(selectedTask.TaskId());
+
+			if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+			{
+				// BT任务：从 P2PManager 的 StateManager 获取元数据
+				auto& p2pMgr = ::OpenNet::Core::P2PManager::Instance();
+				auto stateMgr = p2pMgr.StateManager();
+				if (stateMgr)
+				{
+					auto metadata = stateMgr->LoadTaskMetadata(taskId);
+					if (metadata && !metadata->savePath.empty())
+					{
+						// 将 std::string 转换为 std::wstring
+						int size = MultiByteToWideChar(CP_UTF8, 0, metadata->savePath.c_str(), -1, nullptr, 0);
+						if (size > 0)
+						{
+							taskPath.resize(size - 1);
+							MultiByteToWideChar(CP_UTF8, 0, metadata->savePath.c_str(), -1, &taskPath[0], size);
+						}
+					}
+				}
+			}
+			else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+			{
+				// HTTP任务：从 HttpStateManager 获取记录
+				auto& httpMgr = ::OpenNet::Core::HttpStateManager::Instance();
+				auto record = httpMgr.FindByRecordId(taskId);
+				if (record && !record->savePath.empty())
+				{
+					// 将 std::string 转换为 std::wstring
+					int size = MultiByteToWideChar(CP_UTF8, 0, record->savePath.c_str(), -1, nullptr, 0);
+					if (size > 0)
+					{
+						taskPath.resize(size - 1);
+						MultiByteToWideChar(CP_UTF8, 0, record->savePath.c_str(), -1, &taskPath[0], size);
+					}
+				}
+			}
+
+			// 如果未能获取路径，使用 AppData 作为后备
+			if (taskPath.empty())
+			{
+				OutputDebugStringW(L"Failed to get task path, using AppData as fallback\n");
+				taskPath = ::winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
+			}
 
 			// 验证路径存在
 			if (!::winrt::OpenNet::Core::IO::FileSystem::DirectoryExists(taskPath))
@@ -534,8 +584,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 
 			// 打开文件浏览器
-			std::wstring wpath(taskPath.begin(), taskPath.end());
-			HINSTANCE result = ShellExecuteW(nullptr, L"open", L"explorer.exe", wpath.c_str(), nullptr, SW_SHOW);
+			HINSTANCE result = ShellExecuteW(nullptr, L"open", L"explorer.exe", taskPath.c_str(), nullptr, SW_SHOW);
 
 			if ((intptr_t)result <= 32)
 			{
@@ -543,7 +592,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 			else
 			{
-				OutputDebugStringW((L"Opened location: " + wpath + L"\n").c_str());
+				OutputDebugStringW((L"Opened location: " + taskPath + L"\n").c_str());
 			}
 		}
 		catch (const std::exception &ex)
@@ -605,5 +654,27 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		co_return;
+	}
+
+	void TasksPage::RestoreColumnWidths()
+	{
+		using namespace ::OpenNet::Helpers;
+		RestoreColumn(ColSize(), "Tasks.Size");
+		RestoreColumn(ColProgress(), "Tasks.Progress");
+		RestoreColumn(ColDLRate(), "Tasks.DLRate");
+		RestoreColumn(ColULRate(), "Tasks.ULRate");
+		RestoreColumn(ColRemaining(), "Tasks.Remaining");
+		RestoreColumn(ColAddDate(), "Tasks.AddDate");
+	}
+
+	void TasksPage::SaveColumnWidths()
+	{
+		using namespace ::OpenNet::Helpers;
+		SaveColumnWidth("Tasks.Size", ColSize().ActualWidth());
+		SaveColumnWidth("Tasks.Progress", ColProgress().ActualWidth());
+		SaveColumnWidth("Tasks.DLRate", ColDLRate().ActualWidth());
+		SaveColumnWidth("Tasks.ULRate", ColULRate().ActualWidth());
+		SaveColumnWidth("Tasks.Remaining", ColRemaining().ActualWidth());
+		SaveColumnWidth("Tasks.AddDate", ColAddDate().ActualWidth());
 	}
 }

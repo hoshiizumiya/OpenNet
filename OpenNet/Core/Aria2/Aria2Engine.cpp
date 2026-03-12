@@ -15,8 +15,8 @@
 #include "Core/Aria2/JsonRpc2.h"
 
 #include <Windows.h>
-#include <ShlObj.h>
 #include <objbase.h>
+#include "Core/IO/FileSystem.h"
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -26,7 +26,6 @@
 #undef GetObject
 
 #include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Microsoft.Windows.Storage.h>
 #include <winrt/Windows.Storage.Streams.h>
 #include <winrt/Windows.Web.Http.h>
 
@@ -55,17 +54,12 @@ std::filesystem::path OpenNet::Core::Aria2::GetSettingsFolderPath()
 {
 	static std::filesystem::path cached = ([]() -> std::filesystem::path
 	{
-		LPWSTR rawPath = nullptr;
-		winrt::check_hresult(::SHGetKnownFolderPath(
-			FOLDERID_LocalAppData,
-			KF_FLAG_FORCE_APP_DATA_REDIRECTION,
-			nullptr, &rawPath));
-		std::filesystem::path fp(rawPath);
+		auto base = winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
+		std::filesystem::path fp(base);
 		if (!IsPackagedMode())
 		{
-			fp /= L"OpenNet\\Aria2";
+			fp /= L"Aria2";
 		}
-		::CoTaskMemFree(rawPath);
 		std::filesystem::create_directories(fp);
 		return fp;
 	}());
@@ -76,11 +70,8 @@ std::filesystem::path OpenNet::Core::Aria2::GetDownloadsFolderPath()
 {
 	static std::filesystem::path cached = ([]() -> std::filesystem::path
 	{
-		LPWSTR rawPath = nullptr;
-		winrt::check_hresult(::SHGetKnownFolderPath(
-			FOLDERID_Downloads, KF_FLAG_DEFAULT, nullptr, &rawPath));
-		std::filesystem::path fp(rawPath);
-		::CoTaskMemFree(rawPath);
+		auto dlPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+		std::filesystem::path fp(dlPath);
 		std::filesystem::create_directories(fp);
 		return fp;
 	}());

@@ -168,6 +168,7 @@
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColSize"
+                                    CanResize="True"
                                     DesiredWidth="*"
                                     Tag="Size">
                                     <TextBlock
@@ -177,6 +178,7 @@
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColProgress"
+                                    CanResize="True"
                                     DesiredWidth="*"
                                     Tag="Progress">
                                     <TextBlock
@@ -186,6 +188,7 @@
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColDLRate"
+                                    CanResize="True"
                                     DesiredWidth="*"
                                     Tag="DLRate">
                                     <TextBlock
@@ -195,6 +198,7 @@
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColULRate"
+                                    CanResize="True"
                                     DesiredWidth="*"
                                     Tag="ULRate">
                                     <TextBlock
@@ -204,6 +208,7 @@
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColRemaining"
+                                    CanResize="True"
                                     DesiredWidth="2*"
                                     Tag="Remaining">
                                     <TextBlock
@@ -213,6 +218,7 @@
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColAddDate"
+                                    CanResize="True"
                                     DesiredWidth="2*"
                                     Tag="AddDate">
                                     <TextBlock

@@ -33,54 +33,54 @@
 #include <cstdint>
 #include <winrt/base.h>
 
-/*  Miscellaneous utility functions */
+ /*  Miscellaneous utility functions */
 namespace Core::Utils::Misc
 {
-    // use binary prefix standards from IEC 60027-2
-    // see http://en.wikipedia.org/wiki/Kilobyte
-    enum class SizeUnit
-    {
-        Byte,       // 1024^0,
-        KibiByte,   // 1024^1,
-        MebiByte,   // 1024^2,
-        GibiByte,   // 1024^3,
-        TebiByte,   // 1024^4,
-        PebiByte,   // 1024^5,
-        ExbiByte    // 1024^6,
-        // int64 is used for sizes and thus the next units can not be handled
-        // ZebiByte,   // 1024^7,
-        // YobiByte,   // 1024^8
-    };
+	// use binary prefix standards from IEC 60027-2
+	// see http://en.wikipedia.org/wiki/Kilobyte
+	enum class SizeUnit
+	{
+		Byte,       // 1024^0,
+		KibiByte,   // 1024^1,
+		MebiByte,   // 1024^2,
+		GibiByte,   // 1024^3,
+		TebiByte,   // 1024^4,
+		PebiByte,   // 1024^5,
+		ExbiByte    // 1024^6,
+		// int64 is used for sizes and thus the next units can not be handled
+		// ZebiByte,   // 1024^7,
+		// YobiByte,   // 1024^8
+	};
 
-    enum class TimeResolution
-    {
-        Seconds,
-        Minutes
-    };
+	enum class TimeResolution
+	{
+		Seconds,
+		Minutes
+	};
 
-    winrt::hstring parseHtmlLinks(const winrt::hstring& rawText);
+	winrt::hstring parseHtmlLinks(const winrt::hstring& rawText);
 
-    winrt::hstring osName();
-    winrt::hstring boostVersionString();
-    winrt::hstring libtorrentVersionString();
-    winrt::hstring opensslVersionString();
-    winrt::hstring zlibVersionString();
+	winrt::hstring osName();
+	winrt::hstring boostVersionString();
+	winrt::hstring libtorrentVersionString();
+	winrt::hstring opensslVersionString();
+	winrt::hstring zlibVersionString();
 
-    winrt::hstring unitString(SizeUnit unit, bool isSpeed = false);
+	winrt::hstring unitString(SizeUnit unit, bool isSpeed = false);
 
-    // return the best user friendly storage unit (B, KiB, MiB, GiB, TiB)
-    // value must be given in bytes
-    winrt::hstring friendlyUnit(int64_t bytes, bool isSpeed = false, int precision = -1);
-    winrt::hstring friendlyUnitCompact(int64_t bytes);
-    int friendlyUnitPrecision(SizeUnit unit);
-    int64_t sizeInBytes(double size, SizeUnit unit);
+	// return the best user friendly storage unit (B, KiB, MiB, GiB, TiB)
+	// value must be given in bytes
+	winrt::hstring friendlyUnit(int64_t bytes, bool isSpeed = false, int precision = -1);
+	winrt::hstring friendlyUnitCompact(int64_t bytes);
+	int friendlyUnitPrecision(SizeUnit unit);
+	int64_t sizeInBytes(double size, SizeUnit unit);
 
-    bool isPreviewable(const std::wstring& filePath);
-    bool isTorrentLink(const winrt::hstring& str);
+	bool isPreviewable(const std::wstring& filePath);
+	bool isTorrentLink(const winrt::hstring& str);
 
-    // Take a number of seconds and return a user-friendly
-    // time duration like "1d 2h 10m".
-    winrt::hstring userFriendlyDuration(int64_t seconds, int64_t maxCap = -1, TimeResolution resolution = TimeResolution::Minutes);
+	// Take a number of seconds and return a user-friendly
+	// time duration like "1d 2h 10m".
+	winrt::hstring userFriendlyDuration(int64_t seconds, int64_t maxCap = -1, TimeResolution resolution = TimeResolution::Minutes);
 
-    winrt::hstring languageToLocalizedString(std::wstring_view localeStr);
+	winrt::hstring languageToLocalizedString(std::wstring_view localeStr);
 }

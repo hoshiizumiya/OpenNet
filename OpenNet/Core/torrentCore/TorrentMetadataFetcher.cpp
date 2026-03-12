@@ -13,6 +13,8 @@
 #include <fstream>
 #include <filesystem>
 #include <chrono>
+
+#include "Core/IO/FileSystem.h"
 #include <sstream>
 #include <iomanip>
 
@@ -149,12 +151,10 @@ namespace OpenNet::Core::Torrent
             lt::add_torrent_params atp = lt::parse_magnet_uri(torrentSource);
 
             // Use temp directory for metadata
-            wchar_t tempPath[MAX_PATH];
-            GetTempPathW(MAX_PATH, tempPath);
-            std::wstring tempDir = std::wstring(tempPath) + L"OpenNet\\MetadataTemp";
+            std::filesystem::path tempDir = std::filesystem::path(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) / "MetadataTemp";
             std::filesystem::create_directories(tempDir);
 
-            atp.save_path = std::filesystem::path(tempDir).string();
+            atp.save_path = tempDir.string();
 
             // Set flags for metadata-only mode
             // NOTE: Do NOT set upload_mode here — it prevents metadata download

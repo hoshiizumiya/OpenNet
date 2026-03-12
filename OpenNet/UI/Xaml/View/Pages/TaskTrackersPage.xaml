@@ -26,31 +26,43 @@
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn DesiredWidth="3*">
+                        <labs:DataColumn x:Name="ColTrackerURL" DesiredWidth="3*">
                             <TextBlock
                                 x:Uid="TrackerHeader_URL"
                                 FontWeight="SemiBold"
                                 Text="URL" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColTrackerTier"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Tier"
                                 FontWeight="SemiBold"
                                 Text="Tier" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColTrackerPeers"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Peers"
                                 FontWeight="SemiBold"
                                 Text="Peers" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColTrackerStatus"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Status"
                                 FontWeight="SemiBold"
                                 Text="Status" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="2*">
+                        <labs:DataColumn
+                            x:Name="ColTrackerMessage"
+                            CanResize="True"
+                            DesiredWidth="2*">
                             <TextBlock
                                 x:Uid="TrackerHeader_Message"
                                 FontWeight="SemiBold"

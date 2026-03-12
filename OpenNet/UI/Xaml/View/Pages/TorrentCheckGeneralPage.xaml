@@ -270,7 +270,10 @@
                                                     Unchecked="SelectAllCheckBox_Unchecked" />
                                             </labs:DataColumn>
                                             <!--  File Name column - Star width (fills remaining space)  -->
-                                            <labs:DataColumn CanResize="True" DesiredWidth="*">
+                                            <labs:DataColumn
+                                                x:Name="ColCheckFileName"
+                                                CanResize="True"
+                                                DesiredWidth="*">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_FileName"
                                                     FontWeight="SemiBold"
@@ -278,6 +281,7 @@
                                             </labs:DataColumn>
                                             <!--  Size column  -->
                                             <labs:DataColumn
+                                                x:Name="ColCheckSize"
                                                 HorizontalContentAlignment="Right"
                                                 CanResize="True"
                                                 DesiredWidth="Auto">
@@ -289,6 +293,7 @@
                                             </labs:DataColumn>
                                             <!--  Priority column  -->
                                             <labs:DataColumn
+                                                x:Name="ColCheckPriority"
                                                 HorizontalContentAlignment="Right"
                                                 CanResize="True"
                                                 DesiredWidth="Auto">

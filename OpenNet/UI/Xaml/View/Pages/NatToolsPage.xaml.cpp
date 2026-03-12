@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "NatToolsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/NatToolsPage.g.cpp")
 #include "UI/Xaml/View/Pages/NatToolsPage.g.cpp"
@@ -34,6 +34,27 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
         // Show libtorrent status on load
         UpdateLibtorrentStatus();
+
+        // Set up auto-refresh timer (5 seconds)
+        m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
+        m_refreshTimer.Interval(std::chrono::seconds(5));
+        m_timerToken = m_refreshTimer.Tick([weak = get_weak()](auto&&, auto&&)
+        {
+            if (auto strong = weak.get())
+            {
+                strong->UpdateLibtorrentStatus();
+            }
+        });
+        m_refreshTimer.Start();
+    }
+
+    NatToolsPage::~NatToolsPage()
+    {
+        if (m_refreshTimer)
+        {
+            m_refreshTimer.Stop();
+            m_refreshTimer.Tick(m_timerToken);
+        }
     }
 
     void NatToolsPage::UpdateLibtorrentStatus()
@@ -44,11 +65,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             auto stats = core->GetSessionStats();
             ListenPortText().Text(winrt::to_hstring(stats.listenPort));
             DhtNodesText().Text(winrt::to_hstring(stats.dhtNodes));
+            ActiveTorrentsText().Text(winrt::to_hstring(stats.numTorrents));
+            ConnectedPeersText().Text(winrt::to_hstring(stats.numPeers));
         }
         else
         {
             ListenPortText().Text(L"N/A (core not running)");
             DhtNodesText().Text(L"N/A");
+            ActiveTorrentsText().Text(L"N/A");
+            ConnectedPeersText().Text(L"N/A");
         }
 
         // UPnP/NAT-PMP enabled status from settings
@@ -57,6 +82,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         auto s = mgr.Get();
         UPnPText().Text(s.enableUpnp ? L"Enabled" : L"Disabled");
         NatPmpText().Text(s.enableNatpmp ? L"Enabled" : L"Disabled");
+
+        // Network type
+        auto netType = m_detector.GetNetworkType();
+        NetworkTypeText().Text(::OpenNet::Core::NetworkDetector::NetworkTypeToString(netType));
     }
 
     // Perform a single STUN binding request and parse the response to extract mapped address
@@ -202,6 +231,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         DetectingProgress().Visibility(Visibility::Visible);
         NatTypeText().Text(L"Detecting...");
         PublicIPText().Text(L"...");
+        PublicIPv6Text().Text(L"...");
 
         // Reset table
         StunTest1_1().Text(L"Testing...");
@@ -306,6 +336,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             co_await wil::resume_foreground(dispatcher);
             PublicIPText().Text(publicIP.empty() ? L"N/A" : publicIP);
 
+            // IPv6 public IP
+            try
+            {
+                co_await winrt::resume_background();
+                auto publicIPv6 = co_await m_detector.GetPublicIPAddressAsync(true);
+                co_await wil::resume_foreground(dispatcher);
+                PublicIPv6Text().Text(publicIPv6.empty() ? L"N/A" : publicIPv6);
+            }
+            catch (...)
+            {
+                [dispatcher, this]() -> winrt::fire_and_forget
+                {
+                    co_await wil::resume_foreground(dispatcher);
+                    PublicIPv6Text().Text(L"N/A");
+                }();
+            }
+
             // Update libtorrent status
             UpdateLibtorrentStatus();
         }
@@ -319,6 +366,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             co_await wil::resume_foreground(dispatcher);
             NatTypeText().Text(L"Error");
             PublicIPText().Text(L"Error");
+            PublicIPv6Text().Text(L"Error");
         }
 
         DetectNatButton().IsEnabled(true);
@@ -346,6 +394,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         PortTestProgress().IsActive(true);
         PortTestProgress().Visibility(Visibility::Visible);
         PortResultText().Text(L"Testing...");
+        PortMappedText().Text(L"");
 
         bool portError = false;
         try
@@ -355,11 +404,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
             if (result)
             {
-                PortResultText().Text(L"Port " + winrt::to_hstring(port) + L" is OPEN");
+                PortResultText().Text(L"Port " + winrt::to_hstring(port) + L" is OPEN (mapped port matches)");
+                PortMappedText().Text(L"STUN reports your external port matches the local port. Peers should be able to connect to you directly.");
             }
             else
             {
-                PortResultText().Text(L"Port " + winrt::to_hstring(port) + L" is CLOSED/BLOCKED");
+                PortResultText().Text(L"Port " + winrt::to_hstring(port) + L" appears CLOSED or remapped");
+                PortMappedText().Text(L"STUN mapped port differs from local port, or no response received. Your NAT may be rewriting the port. Consider enabling UPnP or setting up port forwarding.");
             }
         }
         catch (...)
@@ -371,6 +422,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         {
             co_await wil::resume_foreground(dispatcher);
             PortResultText().Text(L"Error testing port");
+            PortMappedText().Text(L"Could not complete the STUN-based port test. Check your network connection.");
         }
 
         TestPortButton().IsEnabled(true);

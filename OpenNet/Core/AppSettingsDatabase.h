@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/AppSettingsDatabase.h
  * PURPOSE:   Unified SQLite-based application settings storage.
@@ -100,6 +100,16 @@ namespace OpenNet::Core
         std::unordered_map<std::string, std::string> GetAll() const;
 
         // ---------------------------------------------------------------
+        //  Wide-string convenience methods (UTF-16)
+        // ---------------------------------------------------------------
+
+        /// Set a wide-string setting
+        void SetStringW(std::string const& category, std::string const& key, std::wstring_view const& value);
+
+        /// Get a wide-string setting
+        std::optional<std::wstring_view> GetStringW(std::string const& category, std::string const& key) const;
+
+        // ---------------------------------------------------------------
         //  Category constants for well-known setting groups
         // ---------------------------------------------------------------
         static constexpr const char* CAT_TORRENT      = "torrent";
@@ -125,11 +135,11 @@ namespace OpenNet::Core
         AppSettingsDatabase& operator=(AppSettingsDatabase const&) = delete;
 
         void CreateTables();
+        bool EnsureInitialized();
 
-        mutable std::mutex m_mutex;
+        mutable std::recursive_mutex m_mutex;
         sqlite3* m_db{ nullptr };
         bool m_initialized{ false };
-        std::wstring m_dbPath;
     };
 
 } // namespace OpenNet::Core

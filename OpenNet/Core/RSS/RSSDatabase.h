@@ -1,9 +1,9 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/RSS/RSSDatabase.h
  * PURPOSE:   SQLite-based persistence for RSS feeds and items
  *
- * LICENSE:   The MIT License
+ * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
 
 #pragma once

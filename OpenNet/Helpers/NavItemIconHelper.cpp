@@ -28,11 +28,8 @@
 #include "Helpers/NavItemIconHelper.g.cpp"
 #endif
 
-
- // 必要的 WinRT 头文件
 #include <winrt/Windows.UI.Xaml.Interop.h>
 
-// 使用 WinRT 命名空间
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 using namespace Windows::Foundation;

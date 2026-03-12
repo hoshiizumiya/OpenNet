@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "TaskPeersListPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"
@@ -15,6 +15,7 @@
 #include "Core/IPFilter/IPFilterManager.h"
 #include "Core/GeoIP/GeoIPManager.h"
 #include "ViewModels/DisplayItems.h"
+#include "Helpers/ColumnWidthHelper.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -25,6 +26,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
     {
         InitializeComponent();
         this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Required);
+
+        Loaded([this](auto, auto) {
+            using namespace ::OpenNet::Helpers;
+            RestoreColumn(ColPeerLocation(), "Peers.Location");
+            RestoreColumn(ColPeerProgress(), "Peers.Progress");
+            RestoreColumn(ColPeerDLSpeed(), "Peers.DLSpeed");
+            RestoreColumn(ColPeerULSpeed(), "Peers.ULSpeed");
+            RestoreColumn(ColPeerDownloaded(), "Peers.Downloaded");
+            RestoreColumn(ColPeerClient(), "Peers.Client");
+            RestoreColumn(ColPeerStatus(), "Peers.Status");
+            RestoreColumn(ColPeerProtocol(), "Peers.Protocol");
+            RestoreColumn(ColPeerInitiator(), "Peers.Initiator");
+            RestoreColumn(ColPeerSource(), "Peers.Source");
+        });
+        Unloaded([this](auto, auto) {
+            using namespace ::OpenNet::Helpers;
+            SaveColumnWidth("Peers.Location", ColPeerLocation().ActualWidth());
+            SaveColumnWidth("Peers.Progress", ColPeerProgress().ActualWidth());
+            SaveColumnWidth("Peers.DLSpeed", ColPeerDLSpeed().ActualWidth());
+            SaveColumnWidth("Peers.ULSpeed", ColPeerULSpeed().ActualWidth());
+            SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded().ActualWidth());
+            SaveColumnWidth("Peers.Client", ColPeerClient().ActualWidth());
+            SaveColumnWidth("Peers.Status", ColPeerStatus().ActualWidth());
+            SaveColumnWidth("Peers.Protocol", ColPeerProtocol().ActualWidth());
+            SaveColumnWidth("Peers.Initiator", ColPeerInitiator().ActualWidth());
+            SaveColumnWidth("Peers.Source", ColPeerSource().ActualWidth());
+        });
     }
 
     TaskPeersListPage::~TaskPeersListPage()

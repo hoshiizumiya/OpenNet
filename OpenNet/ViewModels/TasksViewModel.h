@@ -83,9 +83,9 @@ namespace winrt::OpenNet::ViewModels::implementation
         void OnProgress(const struct ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent &e);
         void OnFinished(std::string const &name);
         void OnError(std::string const &msg);
-        void OnHttpProgress(::OpenNet::Core::HttpTaskProgress const &progress);
-        void OnHttpFinished(std::string const &gid, std::string const &name);
-        void OnHttpError(std::string const &gid, std::string const &message);
+        void OnHttpProgress(::OpenNet::Core::HttpTaskProgress const &progress) const;
+        void OnHttpFinished(std::string const &gid, std::string const &name) const;
+        void OnHttpError(std::string const &gid, std::string const &message) const;
         void LoadSavedTasks();
 
         // Rebuild filtered view from full list according to current filter

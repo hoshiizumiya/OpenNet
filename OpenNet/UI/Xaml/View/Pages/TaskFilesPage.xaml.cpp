@@ -11,6 +11,7 @@
 #include "Core/Utils/Misc.h"
 #include "Core/P2PManager.h"
 #include "ViewModels/DisplayItems.h"
+#include "Helpers/ColumnWidthHelper.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -42,6 +43,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	TaskFilesPage::TaskFilesPage()
 	{
 		InitializeComponent();
+		Loaded([this](auto, auto) {
+			using namespace ::OpenNet::Helpers;
+			RestoreColumn(ColFileSize(), "Files.Size");
+			RestoreColumn(ColFileProgress(), "Files.Progress");
+			RestoreColumn(ColFileDone(), "Files.Done");
+			RestoreColumn(ColFilePriority(), "Files.Priority");
+		});
+		Unloaded([this](auto, auto) {
+			using namespace ::OpenNet::Helpers;
+			SaveColumnWidth("Files.Size", ColFileSize().ActualWidth());
+			SaveColumnWidth("Files.Progress", ColFileProgress().ActualWidth());
+			SaveColumnWidth("Files.Done", ColFileDone().ActualWidth());
+			SaveColumnWidth("Files.Priority", ColFilePriority().ActualWidth());
+		});
 	}
 
 	TaskFilesPage::~TaskFilesPage()

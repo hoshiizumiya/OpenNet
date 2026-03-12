@@ -26,31 +26,43 @@
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn DesiredWidth="3*">
+                        <labs:DataColumn x:Name="ColFileName" DesiredWidth="3*">
                             <TextBlock
                                 x:Uid="FileHeader_Path"
                                 FontWeight="SemiBold"
                                 Text="File" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColFileSize"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Size"
                                 FontWeight="SemiBold"
                                 Text="Size" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColFileProgress"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Progress"
                                 FontWeight="SemiBold"
                                 Text="Progress" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColFileDone"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Done"
                                 FontWeight="SemiBold"
                                 Text="Done" />
                         </labs:DataColumn>
-                        <labs:DataColumn DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColFilePriority"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <TextBlock
                                 x:Uid="FileHeader_Priority"
                                 FontWeight="SemiBold"

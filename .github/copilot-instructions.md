@@ -103,7 +103,7 @@ IAsyncAction Example()
     // 后台线程
     auto result = DoHeavyWork();
 
-    co_await winrt::resume_foreground(dispatcher);
+    co_await wil::resume_foreground(dispatcher);
 
     // UI thread
     UpdateUI(result);
