@@ -16,6 +16,7 @@ namespace winrt::OpenNet::Core::IO
 {
 	std::wstring_view FileSystem::AppDataPathW;
 	std::wstring_view FileSystem::AppTempPathW;
+	std::wstring_view FileSystem::AppDownloadPathW;
 
 	// Never use it
 	bool FileSystem::CreateDirectory(const std::wstring& path)
@@ -100,6 +101,18 @@ namespace winrt::OpenNet::Core::IO
 
 	std::wstring_view FileSystem::GetDownloadsPathW()
 	{
-		return winrt::Windows::Storage::KnownFolders::GetFolderAsync(winrt::Windows::Storage::KnownFolderId::DownloadsFolder).get().Path().c_str();
+		if (!AppDownloadPathW.empty())
+		{
+			return AppDownloadPathW;
+		}
+		try
+		{
+			AppDownloadPathW = winrt::Windows::Storage::KnownFolders::GetFolderAsync(winrt::Windows::Storage::KnownFolderId::DownloadsFolder).get().Path().c_str();
+			return AppDownloadPathW;
+		}
+		catch (...)
+		{
+			return {};
+		}
 	}
 }
