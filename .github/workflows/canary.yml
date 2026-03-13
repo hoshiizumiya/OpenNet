@@ -130,7 +130,10 @@ jobs:
         shell: pwsh
         run: |
           Get-ChildItem -Recurse -Path OpenNet | Where-Object {$_.Name -like "*.msix"}
-
+          
+      - name: Copy SideloadReadme
+        run: copy SideloadReadme.md OpenNet\AppPackages\SideloadReadme.md
+      
       - name: 7z Package
         run: |
           if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
