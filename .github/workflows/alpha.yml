@@ -6,16 +6,19 @@ on:
       - 'alpha-*'
 
 env:
-  VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
-
+  USERNAME: hoshiizumiya
+  FEED_URL: https://nuget.pkg.github.com/hoshiizumiya/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,readwrite"
+  
 jobs:
-  alpha:
+
+  build:
     runs-on: windows-2025-vs2026
 
     strategy:
       matrix:
         configuration: [Release]
-        platform: [x64, ARM64]
+        platform: [x64]
 
     permissions:
       contents: write
@@ -32,6 +35,21 @@ jobs:
       - name: Set up vcpkg
         working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
         run: vcpkg integrate install
+      
+      - name: Add NuGet sources
+        shell: pwsh
+        run: |
+          $nuget = & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" fetch nuget
+      
+          & $nuget sources add `
+            -Source "${{ env.FEED_URL }}" `
+            -StorePasswordInClearText `
+            -Name GitHubPackages `
+            -UserName "${{ env.USERNAME }}" `
+            -Password "${{ secrets.GITHUB_TOKEN }}"
+      
+          & $nuget setapikey "${{ secrets.GITHUB_TOKEN }}" `
+            -Source "${{ env.FEED_URL }}"
 
       - name: Restore NuGet
         run: nuget restore OpenNet.slnx
@@ -40,33 +58,67 @@ jobs:
       - name: Restore Certificate
         run: |
           $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
+          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
           [IO.File]::WriteAllBytes("cert.pfx", $bytes)
+          Write-Host "Certificate restored to:"
+          Write-Host $certPath
+        working-directory: ${{ github.workspace }}
         shell: pwsh
+
+      - name: Import Certificate
+        id: import_cert
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
+     
+          $password = ConvertTo-SecureString `
+            "${{ secrets.PFX_PASSWORD }}" `
+            -AsPlainText `
+            -Force
+     
+          $cert = Import-PfxCertificate `
+            -FilePath $certPath `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -Password $password
+     
+          Write-Host "Certificate imported."
+     
+          $thumb = $cert.Thumbprint
+          Write-Host "Thumbprint: $thumb"
+     
+          echo "thumbprint=$thumb" >> $env:GITHUB_OUTPUT
+        
+      - name: Show Installed Certificates
+        shell: pwsh
+        run: |
+          Get-ChildItem Cert:\CurrentUser\My |
+            Select Subject, Thumbprint
         
       - name: Build MSIX
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
         run: |
-          msbuild OpenNet.slnx `
+          msbuild OpenNet\OpenNet.vcxproj `
             /p:Configuration=${{ matrix.configuration }} `
             /p:Platform=${{ matrix.platform }} `
+            /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
+            /p:AppxPackageDir=AppPackages\ `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile=../cert.pfx `
-            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
+            /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /m
-        shell: pwsh
-        
+
       - name: Generate Date
         run: |
           $date = Get-Date -Format yyyyMMdd
           Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
         shell: pwsh
-        
-      - name: Zip Package
-        run: |
-          Compress-Archive `
-            -Path "Packages/*${{ matrix.platform }}*" `
-            -DestinationPath "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip"
+
+      - name: Show build output
         shell: pwsh
+        run: |
+          Get-ChildItem -Recurse -Path OpenNet | Where-Object {$_.Name -like "*.msix"}
 
       - name: 7z Package
         run: |
@@ -75,21 +127,20 @@ jobs:
           }
 
           7z a -t7z -mx=9 `
-            "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z" `
-            "Packages\*${{ matrix.platform }}*"
+            "OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}.7z" `
+            "OpenNet\AppPackages\*"
         shell: pwsh
         
-      - name: Upload Canary Artifact
+      - name: Upload Alpha Artifact
         uses: actions/upload-artifact@v6
         with:
-          name: OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}
+          name: OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}
           path: |
-            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip
-            OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z
+            OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}.7z
             
       - name: Create Pre-release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.ref_name }}
           prerelease: true
-          files: OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.zip, OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z
+          files: OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}.7z
