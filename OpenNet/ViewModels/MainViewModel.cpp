@@ -14,224 +14,226 @@ using namespace std::chrono_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
-    // Summary: 构造函数，初始化默认状态和集合
-    MainViewModel::MainViewModel()
-        : m_isConnected(false), m_userName(L"Guest"), m_portState(L"Unknown")
-    {
-        m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
-        m_recentActivities = single_threaded_observable_vector<hstring>();
-        m_recentActivities.Append(L"应用已启动 / App started");
-    }
+	// Summary: 构造函数，初始化默认状态和集合
+	MainViewModel::MainViewModel()
+		: m_isConnected(false), m_userName(L"Guest"), m_portState(L"Unknown")
+	{
+		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+		m_recentActivities = single_threaded_observable_vector<hstring>();
+		m_recentActivities.Append(L"应用已启动 / App started");
+	}
 
-    MainViewModel::~MainViewModel()
-    {
-        Shutdown();
-    }
+	MainViewModel::~MainViewModel()
+	{
+		Shutdown();
+	}
 
-    void MainViewModel::Shutdown()
-    {
-        {
-            std::lock_guard<std::mutex> lock(m_speedMutex);
-            m_stopSpeedRefresh.store(true);
-        }
-        m_speedCv.notify_all();
-        if (m_speedRefreshThread.joinable())
-            m_speedRefreshThread.join();
-    }
+	void MainViewModel::Shutdown()
+	{
+		{
+			std::lock_guard<std::mutex> lock(m_speedMutex);
+			m_stopSpeedRefresh.store(true);
+		}
+		m_speedCv.notify_all();
+		if (m_speedRefreshThread.joinable())
+			m_speedRefreshThread.join();
+	}
 
-    // Summary: 初始化视图模型，设置就绪状态
-    void MainViewModel::Initialize()
-    {
-        InitializeTorrentCore();
+	// Summary: 初始化视图模型，设置就绪状态
+	void MainViewModel::Initialize()
+	{
+		InitializeTorrentCore();
 
-        // Start periodic speed refresh thread
-        m_stopSpeedRefresh.store(false);
-        m_speedRefreshThread = std::thread([this]()
-                                           { SpeedRefreshThreadEntry(); });
-    }
+		// Start periodic speed refresh thread
+		m_stopSpeedRefresh.store(false);
+		m_speedRefreshThread = std::thread([this]()
+		{
+			SpeedRefreshThreadEntry();
+		});
+	}
 
 
-    IAsyncAction MainViewModel::InitializeTorrentCore()
-    {
-        // 使用单例管理 torrent 核心，异步后台初始化
-        auto dispatcher = m_dispatcher;
-        co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
-        if (::OpenNet::Core::P2PManager::Instance().IsTorrentCoreInitialized())
-        {
-            co_await wil::resume_foreground(dispatcher);
-        }
-        else
-        {
-            co_await wil::resume_foreground(dispatcher);
-        }
-    }
+	IAsyncAction MainViewModel::InitializeTorrentCore()
+	{
+		// 使用单例管理 torrent 核心，异步后台初始化
+		auto dispatcher = m_dispatcher;
+		co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+		if (::OpenNet::Core::P2PManager::Instance().IsTorrentCoreInitialized())
+		{
+			co_await wil::resume_foreground(dispatcher);
+		}
+		else
+		{
+			co_await wil::resume_foreground(dispatcher);
+		}
+	}
 
-    // Format bytes/sec to a human-readable string
-    static std::wstring FormatSpeed(std::uint64_t bytesPerSec)
-    {
-        double kbs = bytesPerSec / 1024.0;
-        if (kbs > 1024.0)
-            return std::format(L"{:.1f} MB/s", kbs / 1024.0);
-        else if (kbs > 1.0)
-            return std::format(L"{:.0f} KB/s", kbs);
-        else
-            return std::format(L"{} B/s", bytesPerSec);
-    }
+	// Format bytes/sec to a human-readable string
+	static std::wstring FormatSpeed(std::uint64_t bytesPerSec)
+	{
+		double kbs = bytesPerSec / 1024.0;
+		if (kbs > 1024.0)
+			return std::format(L"{:.1f} MB/s", kbs / 1024.0);
+		else if (kbs > 1.0)
+			return std::format(L"{:.0f} KB/s", kbs);
+		else
+			return std::format(L"{} B/s", bytesPerSec);
+	}
 
-    void MainViewModel::SpeedRefreshThreadEntry()
-    {
-        // Wait for TorrentCore to finish initializing (up to 30s)
-        // before polling session stats, otherwise listenPort/dhtNodes will be 0.
-        for (int i = 0; i < 60 && !m_stopSpeedRefresh.load(); ++i)
-        {
-            auto *core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-            if (core && core->IsRunning())
-                break;
-            std::unique_lock<std::mutex> lock(m_speedMutex);
-            m_speedCv.wait_for(lock, 500ms, [this] { return m_stopSpeedRefresh.load(); });
-        }
+	void MainViewModel::SpeedRefreshThreadEntry()
+	{
+		// Wait for TorrentCore to finish initializing (up to 30s)
+		// before polling session stats, otherwise listenPort/dhtNodes will be 0.
+		for (int i = 0; i < 60 && !m_stopSpeedRefresh.load(); ++i)
+		{
+			auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+			if (core && core->IsRunning())
+				break;
+			std::unique_lock<std::mutex> lock(m_speedMutex);
+			m_speedCv.wait_for(lock, 500ms, [this] { return m_stopSpeedRefresh.load(); });
+		}
 
-        while (!m_stopSpeedRefresh.load())
-        {
-            try
-            {
-                // Gather HTTP speeds from Aria2
-                auto &dlMgr = ::OpenNet::Core::DownloadManager::Instance();
-                std::uint64_t httpDl = dlMgr.TotalHttpDownloadSpeed();
-                std::uint64_t httpUl = dlMgr.TotalHttpUploadSpeed();
+		while (!m_stopSpeedRefresh.load())
+		{
+			try
+			{
+				// Gather HTTP speeds from Aria2
+				auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+				std::uint64_t httpDl = dlMgr.TotalHttpDownloadSpeed();
+				std::uint64_t httpUl = dlMgr.TotalHttpUploadSpeed();
 
-                // Gather BT speeds from P2PManager
-                std::uint64_t btDl = 0;
-                std::uint64_t btUl = 0;
-                int peersCount = 0;
-                int dhtNodes = 0;
-                int listenPort = 0;
-                auto *torrentCore = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-                if (torrentCore && torrentCore->IsRunning())
-                {
-                    auto stats = torrentCore->GetSessionStats();
-                    btDl = static_cast<std::uint64_t>(stats.totalDownloadRate);
-                    btUl = static_cast<std::uint64_t>(stats.totalUploadRate);
-                    peersCount = stats.numPeers;
-                    dhtNodes = stats.dhtNodes;
-                    listenPort = stats.listenPort;
-                }
+				// Gather BT speeds from P2PManager
+				std::uint64_t btDl = 0;
+				std::uint64_t btUl = 0;
+				int peersCount = 0;
+				int dhtNodes = 0;
+				int listenPort = 0;
+				auto* torrentCore = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+				if (torrentCore && torrentCore->IsRunning())
+				{
+					auto stats = torrentCore->GetSessionStats();
+					btDl = static_cast<std::uint64_t>(stats.totalDownloadRate);
+					btUl = static_cast<std::uint64_t>(stats.totalUploadRate);
+					peersCount = stats.numPeers;
+					dhtNodes = stats.dhtNodes;
+					listenPort = stats.listenPort;
+				}
 
-                std::uint64_t totalDl = httpDl + btDl;
-                std::uint64_t totalUl = httpUl + btUl;
+				std::uint64_t totalDl = httpDl + btDl;
+				std::uint64_t totalUl = httpUl + btUl;
 
-                auto speedText = std::format(L"\u2191 {} \u2193 {}",
-                                             FormatSpeed(totalUl), FormatSpeed(totalDl));
+				auto speedText = std::format(L"\u2193 {} \u2191 {}",
+											 FormatSpeed(totalDl), FormatSpeed(totalUl));
 
-                // Determine speed level for SwitchPresenter icon
-                double dlMBps = totalDl / (1024.0 * 1024.0);
+				// Determine speed level for SwitchPresenter icon
+				double dlMBps = totalDl / (1024.0 * 1024.0);
 				std::wstring speedLevelText;
-                if (dlMBps >= 10.0)
-                    speedLevelText = L"High";
-                else if (dlMBps >= 1.0)
-                    speedLevelText = L"Medium";
-                else
-                    speedLevelText = L"Low";
+				if (dlMBps >= 10.0)
+					speedLevelText = L"High";
+				else if (dlMBps >= 1.0)
+					speedLevelText = L"Medium";
+				else
+					speedLevelText = L"Low";
 
-                // Build port state string via actual port accessibility check (every 60s or on port change)
-                auto now = std::chrono::steady_clock::now();
-                bool needPortCheck = (listenPort > 0) &&
-                    (listenPort != m_lastCheckedPort ||
-                     std::chrono::duration_cast<std::chrono::seconds>(now - m_lastPortCheckTime).count() >= 60);
-                if (needPortCheck && !m_stopSpeedRefresh.load())
-                {
-                    try
-                    {
-                        ::OpenNet::Core::NetworkDetector detector;
-                        auto op = detector.TestPortAccessibilityAsync(
-                            static_cast<uint16_t>(listenPort), true);
-                        // Wait with periodic stop-flag checks instead of blocking indefinitely
-                        auto status = op.Status();
-                        while (status == winrt::Windows::Foundation::AsyncStatus::Started)
-                        {
-                            if (m_stopSpeedRefresh.load())
-                            {
-                                op.Cancel();
-                                break;
-                            }
-                            std::unique_lock<std::mutex> lock(m_speedMutex);
-                            m_speedCv.wait_for(lock, 200ms, [this] { return m_stopSpeedRefresh.load(); });
-                            status = op.Status();
-                        }
-                        if (status == winrt::Windows::Foundation::AsyncStatus::Completed)
-                        {
-                            bool isOpen = op.GetResults();
-                            m_cachedPortState = isOpen ? L"Open" : L"Blocked";
-                        }
-                        else
-                        {
-                            m_cachedPortState = L"Unknown";
-                        }
-                    }
-                    catch (...)
-                    {
-                        m_cachedPortState = L"Unknown";
-                    }
-                    m_lastCheckedPort = listenPort;
-                    m_lastPortCheckTime = now;
-                }
-                std::wstring portStateText;
-                if (listenPort > 0)
-                    portStateText = m_cachedPortState;
-                else
-                    portStateText = L"Unknown";
+				// Build port state string via actual port accessibility check (every 60s or on port change)
+				auto now = std::chrono::steady_clock::now();
+				bool needPortCheck = (listenPort > 0) &&
+					(listenPort != m_lastCheckedPort ||
+					 std::chrono::duration_cast<std::chrono::seconds>(now - m_lastPortCheckTime).count() >= 60);
+				if (needPortCheck && !m_stopSpeedRefresh.load())
+				{
+					try
+					{
+						::OpenNet::Core::NetworkDetector detector;
+						auto op = detector.TestPortAccessibilityAsync(
+							static_cast<uint16_t>(listenPort), true);
+						// Wait with periodic stop-flag checks instead of blocking indefinitely
+						auto status = op.Status();
+						while (status == winrt::Windows::Foundation::AsyncStatus::Started)
+						{
+							if (m_stopSpeedRefresh.load())
+							{
+								op.Cancel();
+								break;
+							}
+							std::unique_lock<std::mutex> lock(m_speedMutex);
+							m_speedCv.wait_for(lock, 200ms, [this] { return m_stopSpeedRefresh.load(); });
+							status = op.Status();
+						}
+						if (status == winrt::Windows::Foundation::AsyncStatus::Completed)
+						{
+							bool isOpen = op.GetResults();
+							m_cachedPortState = isOpen ? L"Open" : L"Blocked";
+						}
+						else
+						{
+							m_cachedPortState = L"Unknown";
+						}
+					}
+					catch (...)
+					{
+						m_cachedPortState = L"Unknown";
+					}
+					m_lastCheckedPort = listenPort;
+					m_lastPortCheckTime = now;
+				}
+				std::wstring portStateText;
+				if (listenPort > 0)
+					portStateText = m_cachedPortState;
+				else
+					portStateText = L"Unknown";
 
-                auto dispatcher = m_dispatcher;
-                if (dispatcher)
-                {
-                    auto hspeed = winrt::hstring{speedText};
-                    auto hport = winrt::hstring{portStateText};
-                    auto hspeedLevel = winrt::hstring{speedLevelText};
-                    auto peers = peersCount;
-                    auto dht = dhtNodes;
-                    auto port = listenPort;
-                    dispatcher.TryEnqueue([this, hspeed, hport, hspeedLevel, peers, dht, port]()
-                                          {
-                        if (m_currentTransferSpeedText != hspeed)
-                        {
-                            m_currentTransferSpeedText = hspeed;
-                            OnPropertyChanged(L"CurrentTransferSpeedText");
-                        }
-                        if (m_connectedPeersCount != peers)
-                        {
-                            m_connectedPeersCount = peers;
-                            OnPropertyChanged(L"ConnectedPeersCount");
-                        }
-                        if (m_dhtNodeCount != dht)
-                        {
-                            m_dhtNodeCount = dht;
-                            OnPropertyChanged(L"DhtNodeCount");
-                        }
-                        if (m_speedLevel != hspeedLevel)
-                        {
-                            m_speedLevel = hspeedLevel;
-                            OnPropertyChanged(L"SpeedLevel");
-                        }
-                        if (m_listenPort != port)
-                        {
-                            m_listenPort = port;
-                            OnPropertyChanged(L"ListenPort");
-                        }
-                        if (m_portState != hport)
-                        {
-                            m_portState = hport;
-                            OnPropertyChanged(L"PortState");
-                        } });
-                }
-            }
-            catch (...)
-            {
-            }
+				if (m_dispatcher)
+				{
+					auto hspeed = winrt::hstring{ speedText };
+					auto hport = winrt::hstring{ portStateText };
+					auto hspeedLevel = winrt::hstring{ speedLevelText };
+					auto peers = peersCount;
+					auto dht = dhtNodes;
+					auto port = listenPort;
+					m_dispatcher.TryEnqueue([this, hspeed, hport, hspeedLevel, peers, dht, port]()
+					{
+						if (m_currentTransferSpeedText != hspeed)
+						{
+							m_currentTransferSpeedText = hspeed;
+							OnPropertyChanged(L"CurrentTransferSpeedText");
+						}
+						if (m_connectedPeersCount != peers)
+						{
+							m_connectedPeersCount = peers;
+							OnPropertyChanged(L"ConnectedPeersCount");
+						}
+						if (m_dhtNodeCount != dht)
+						{
+							m_dhtNodeCount = dht;
+							OnPropertyChanged(L"DhtNodeCount");
+						}
+						if (m_speedLevel != hspeedLevel)
+						{
+							m_speedLevel = hspeedLevel;
+							OnPropertyChanged(L"SpeedLevel");
+						}
+						if (m_listenPort != port)
+						{
+							m_listenPort = port;
+							OnPropertyChanged(L"ListenPort");
+						}
+						if (m_portState != hport)
+						{
+							m_portState = hport;
+							OnPropertyChanged(L"PortState");
+						}
+					});
+				}
+			}
+			catch (...)
+			{
+			}
 
-            {
-                std::unique_lock<std::mutex> lock(m_speedMutex);
-                m_speedCv.wait_for(lock, 1500ms, [this] { return m_stopSpeedRefresh.load(); });
-            }
-        }
-    }
+			{
+				std::unique_lock<std::mutex> lock(m_speedMutex);
+				m_speedCv.wait_for(lock, 1500ms, [this] { return m_stopSpeedRefresh.load(); });
+			}
+		}
+	}
 }

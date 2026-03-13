@@ -19,7 +19,6 @@
 #include "Core/IO/FileSystem.h"
 
 #include <WinSock2.h>
-#include <WS2tcpip.h>
 #include <iphlpapi.h>
 #pragma comment(lib, "ws2_32.lib")
 
@@ -54,8 +53,7 @@ std::filesystem::path OpenNet::Core::Aria2::GetSettingsFolderPath()
 {
 	static std::filesystem::path cached = ([]() -> std::filesystem::path
 	{
-		auto base = winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
-		std::filesystem::path fp(base);
+		std::filesystem::path fp(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW());
 		if (!IsPackagedMode())
 		{
 			fp /= L"Aria2";
@@ -70,8 +68,7 @@ std::filesystem::path OpenNet::Core::Aria2::GetDownloadsFolderPath()
 {
 	static std::filesystem::path cached = ([]() -> std::filesystem::path
 	{
-		auto dlPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
-		std::filesystem::path fp(dlPath);
+		std::filesystem::path fp(winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW());
 		std::filesystem::create_directories(fp);
 		return fp;
 	}());
@@ -83,30 +80,6 @@ winrt::hstring OpenNet::Core::Aria2::CreateGuidString()
 	GUID guid;
 	winrt::check_hresult(::CoCreateGuid(&guid));
 	return winrt::to_hstring(guid);
-}
-
-winrt::hstring OpenNet::Core::Aria2::ConvertByteSizeToString(std::uint64_t ByteSize)
-{
-	const wchar_t* units[] = { L"Byte", L"Bytes", L"KiB", L"MiB", L"GiB", L"TiB", L"PiB", L"EiB" };
-	constexpr std::size_t unitCount = sizeof(units) / sizeof(*units);
-
-	std::size_t unitIdx = 0;
-	double result = static_cast<double>(ByteSize);
-
-	if (ByteSize > 1)
-	{
-		for (unitIdx = 1; unitIdx < unitCount; ++unitIdx)
-		{
-			if (1024.0 > result)
-				break;
-			result /= 1024.0;
-		}
-		result = static_cast<std::uint64_t>(result * 100) / 100.0;
-	}
-
-	return winrt::hstring(FormatWideString(
-		(unitIdx > 1) ? L"%.2f %s" : L"%.0f %s",
-		result, units[unitIdx]));
 }
 
 winrt::hstring OpenNet::Core::Aria2::ConvertSecondsToTimeString(std::uint64_t Seconds)

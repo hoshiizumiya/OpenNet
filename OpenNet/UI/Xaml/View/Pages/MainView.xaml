@@ -142,7 +142,7 @@
                 <TextBlock
                     VerticalAlignment="Center"
                     FontSize="12"
-                    Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay, FallbackValue='↑ 0 B/s  ↓ 0 B/s'}" />
+                    Text="{x:Bind ViewModel.CurrentTransferSpeedText, Mode=OneWay, FallbackValue='↓ 0 B/s  ↑ 0 B/s'}" />
             </StackPanel>
 
             <!--  Connection Status  -->

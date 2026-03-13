@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/Aria2/Aria2Engine.h
  * PURPOSE:   Aria2 engine management (RPC client + local process)
@@ -34,7 +34,6 @@ namespace OpenNet::Core::Aria2
     std::filesystem::path GetDownloadsFolderPath();
 
     winrt::hstring CreateGuidString();
-    winrt::hstring ConvertByteSizeToString(std::uint64_t ByteSize);
     winrt::hstring ConvertSecondsToTimeString(std::uint64_t Seconds);
 
     bool FindSubString(
