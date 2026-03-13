@@ -1,146 +1,137 @@
 ﻿name: Alpha
 
 on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag, default alpha-<short_sha>
+        required: false
+        type: string
+      source_sha:
+        description: Commit SHA to match Canary build, default current SHA
+        required: false
+        type: string
   push:
     tags:
-      - 'alpha-*'
+      - "alpha/*"
 
-env:
-  USERNAME: hoshiizumiya
-  FEED_URL: https://nuget.pkg.github.com/hoshiizumiya/index.json
-  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,readwrite"
-  
+permissions:
+  actions: read
+  contents: write
+
+concurrency:
+  group: alpha-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-
-  build:
-    runs-on: windows-2025-vs2026
-
-    strategy:
-      matrix:
-        configuration: [Release]
-        platform: [x64]
-
-    permissions:
-      contents: write
-      packages: write
+  resolve_canary:
+    runs-on: ubuntu-latest
+    outputs:
+      run_id: ${{ steps.pick.outputs.run_id }}
+      artifact_name: ${{ steps.pick.outputs.artifact_name }}
+      release_tag: ${{ steps.meta.outputs.release_tag }}
+      release_name: ${{ steps.meta.outputs.release_name }}
+      source_sha: ${{ steps.meta.outputs.source_sha }}
 
     steps:
-      - uses: actions/checkout@v5
+      - name: Resolve metadata
+        id: meta
+        shell: bash
+        run: |
+          if [ -n "${{ github.event.inputs.source_sha }}" ]; then
+            source_sha="${{ github.event.inputs.source_sha }}"
+          else
+            source_sha="${GITHUB_SHA}"
+          fi
+
+          if [ -n "${{ github.event.inputs.tag }}" ]; then
+            tag="${{ github.event.inputs.tag }}"
+          elif [ "${{ github.ref_type }}" = "tag" ]; then
+            tag="${{ github.ref_name }}"
+          else
+            tag="alpha-${source_sha:0:7}"
+          fi
+
+          echo "source_sha=$source_sha" >> "$GITHUB_OUTPUT"
+          echo "release_tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "release_name=Alpha $tag" >> "$GITHUB_OUTPUT"
+
+      - name: Find successful Canary run by SHA
+        id: pick
+        uses: actions/github-script@v8
         with:
-          submodules: recursive
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const sourceSha = "${{ steps.meta.outputs.source_sha }}";
 
-      - uses: microsoft/setup-msbuild@v2
-      - uses: nuget/setup-nuget@v2
+            const runs = await github.paginate(github.rest.actions.listWorkflowRuns, {
+              owner,
+              repo,
+              workflow_id: "canary.yml",
+              per_page: 100,
+              event: "push",
+              branch: "develop"
+            });
 
-      - name: Set up vcpkg
-        working-directory: ${{env.VCPKG_INSTALLATION_ROOT}}
-        run: vcpkg integrate install
-      
-      - name: Add NuGet sources
-        shell: pwsh
-        run: |
-          $nuget = & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" fetch nuget
-      
-          & $nuget sources add `
-            -Source "${{ env.FEED_URL }}" `
-            -StorePasswordInClearText `
-            -Name GitHubPackages `
-            -UserName "${{ env.USERNAME }}" `
-            -Password "${{ secrets.GITHUB_TOKEN }}"
-      
-          & $nuget setapikey "${{ secrets.GITHUB_TOKEN }}" `
-            -Source "${{ env.FEED_URL }}"
+            const matched = runs.find(r => r.head_sha === sourceSha && r.conclusion === "success");
+            if (!matched) {
+              core.setFailed(`No successful Canary run found for SHA ${sourceSha}`);
+              return;
+            }
 
-      - name: Restore NuGet
-        run: nuget restore OpenNet.slnx
-        shell: pwsh
+            const artifacts = await github.paginate(github.rest.actions.listWorkflowRunArtifacts, {
+              owner,
+              repo,
+              run_id: matched.id,
+              per_page: 100
+            });
 
-      - name: Restore Certificate
-        run: |
-          $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
-          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
-          [IO.File]::WriteAllBytes("cert.pfx", $bytes)
-          Write-Host "Certificate restored to:"
-          Write-Host $certPath
-        working-directory: ${{ github.workspace }}
-        shell: pwsh
+            const artifact = artifacts.find(a => a.name.startsWith("OpenNet.Canary_") && !a.expired);
+            if (!artifact) {
+              core.setFailed(`No available OpenNet.Canary_* artifact in run ${matched.id}`);
+              return;
+            }
 
-      - name: Import Certificate
-        id: import_cert
-        shell: pwsh
-        working-directory: ${{ github.workspace }}
-        run: |
-          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
-     
-          $password = ConvertTo-SecureString `
-            "${{ secrets.PFX_PASSWORD }}" `
-            -AsPlainText `
-            -Force
-     
-          $cert = Import-PfxCertificate `
-            -FilePath $certPath `
-            -CertStoreLocation "Cert:\CurrentUser\My" `
-            -Password $password
-     
-          Write-Host "Certificate imported."
-     
-          $thumb = $cert.Thumbprint
-          Write-Host "Thumbprint: $thumb"
-     
-          echo "thumbprint=$thumb" >> $env:GITHUB_OUTPUT
-        
-      - name: Show Installed Certificates
-        shell: pwsh
-        run: |
-          Get-ChildItem Cert:\CurrentUser\My |
-            Select Subject, Thumbprint
-        
-      - name: Build MSIX
-        shell: pwsh
-        working-directory: ${{ github.workspace }}
-        run: |
-          msbuild OpenNet\OpenNet.vcxproj `
-            /p:Configuration=${{ matrix.configuration }} `
-            /p:Platform=${{ matrix.platform }} `
-            /p:GenerateAppxPackageOnBuild=true `
-            /p:UapAppxPackageBuildMode=SideloadOnly `
-            /p:AppxPackageDir=AppPackages\ `
-            /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
-            /m
+            core.setOutput("run_id", String(matched.id));
+            core.setOutput("artifact_name", artifact.name);
 
-      - name: Generate Date
-        run: |
-          $date = Get-Date -Format yyyyMMdd
-          Add-Content -Path $Env:GITHUB_ENV -Value "DATE=$date"
-        shell: pwsh
-
-      - name: Show build output
-        shell: pwsh
-        run: |
-          Get-ChildItem -Recurse -Path OpenNet | Where-Object {$_.Name -like "*.msix"}
-
-      - name: 7z Package
-        run: |
-          if (-not (Get-Command 7z -ErrorAction SilentlyContinue)) {
-            choco install 7zip -y
-          }
-
-          7z a -t7z -mx=9 `
-            "OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}.7z" `
-            "OpenNet\AppPackages\*"
-        shell: pwsh
-        
-      - name: Upload Alpha Artifact
-        uses: actions/upload-artifact@v6
+  prerelease:
+    needs: resolve_canary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Canary artifact
+        uses: dawidd6/action-download-artifact@v9
         with:
-          name: OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}
-          path: |
-            OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}.7z
-            
-      - name: Create Pre-release
-        uses: softprops/action-gh-release@v2
+          workflow: canary.yml
+          run_id: ${{ needs.resolve_canary.outputs.run_id }}
+          name: ${{ needs.resolve_canary.outputs.artifact_name }}
+          path: out
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish or update Alpha prerelease
+        uses: ncipollo/release-action@v1
         with:
-          tag_name: ${{ github.ref_name }}
+          tag: ${{ needs.resolve_canary.outputs.release_tag }}
+          name: ${{ needs.resolve_canary.outputs.release_name }}
           prerelease: true
-          files: OpenNet.Alpha_${{ env.DATE }}_${{ matrix.platform }}.7z
+          allowUpdates: true
+          updateOnlyUnreleased: true
+          replacesArtifacts: true
+          artifacts: out/*.7z
+          generateReleaseNotes: true
+          body: |
+            Auto-published from Canary artifact.
+            Source SHA: ${{ needs.resolve_canary.outputs.source_sha }}
+            Canary Run ID: ${{ needs.resolve_canary.outputs.run_id }}
+
+      - name: Add summary
+        shell: bash
+        run: |
+          {
+            echo "## Alpha publish summary"
+            echo "- Source SHA: ${{ needs.resolve_canary.outputs.source_sha }}"
+            echo "- Canary Run ID: ${{ needs.resolve_canary.outputs.run_id }}"
+            echo "- Artifact: ${{ needs.resolve_canary.outputs.artifact_name }}"
+            echo "- Release tag: ${{ needs.resolve_canary.outputs.release_tag }}"
+          } >> "$GITHUB_STEP_SUMMARY"

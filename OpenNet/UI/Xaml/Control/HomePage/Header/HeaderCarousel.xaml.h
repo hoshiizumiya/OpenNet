@@ -55,6 +55,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
         winrt::event_token m_deselectionTimerToken{};
         winrt::event_token m_scrollDelayTimerToken{};
         winrt::event_token m_selectDelayTimerToken{};
+
+        bool m_isLoaded{ false };
+        bool m_eventsSubscribed{ false };
+        bool m_isNavigatingFromTileClick{ false };
     };
 }
 

@@ -34,6 +34,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::UserControl_Loaded(IInspectable const&, RoutedEventArgs const&)
 	{
+		if (m_isLoaded)
+		{
+			return;
+		}
+
+		m_isLoaded = true;
+		m_isNavigatingFromTileClick = false;
 		ResetAndShuffle();
 		SelectNextTile();
 		SubscribeToEvents();
@@ -41,26 +48,49 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::UserControl_Unloaded(IInspectable const&, RoutedEventArgs const&)
 	{
+		m_isLoaded = false;
+		m_isNavigatingFromTileClick = false;
+		m_selectedTile = nullptr;
 		UnsubscribeToEvents();
 	}
 
 	void HeaderCarousel::SubscribeToEvents()
 	{
+		if (m_eventsSubscribed)
+		{
+			return;
+		}
+		m_eventsSubscribed = true;
+
 		m_selectionTimerToken = m_selectionTimer.Tick({ this, &HeaderCarousel::SelectionTimer_Tick });
 		m_deselectionTimerToken = m_deselectionTimer.Tick({ this, &HeaderCarousel::DeselectionTimer_Tick });
 		m_selectionTimer.Start();
 
 		// Subscribe stored delay timers
-		m_scrollDelayTimerToken = m_scrollDelayTimer.Tick([this](auto&&, auto&&)
+		m_scrollDelayTimerToken = m_scrollDelayTimer.Tick([weak = get_weak()](auto&&, auto&&)
 		{
-			m_scrollDelayTimer.Stop();
-			SetTileVisuals();
-			m_deselectionTimer.Start();
+			if (auto self = weak.get())
+			{
+				self->m_scrollDelayTimer.Stop();
+				if (!self->m_isLoaded)
+				{
+					return;
+				}
+				self->SetTileVisuals();
+				self->m_deselectionTimer.Start();
+			}
 		});
-		m_selectDelayTimerToken = m_selectDelayTimer.Tick([this](auto&&, auto&&)
+		m_selectDelayTimerToken = m_selectDelayTimer.Tick([weak = get_weak()](auto&&, auto&&)
 		{
-			m_selectDelayTimer.Stop();
-			SetTileVisuals();
+			if (auto self = weak.get())
+			{
+				self->m_selectDelayTimer.Stop();
+				if (!self->m_isLoaded)
+				{
+					return;
+				}
+				self->SetTileVisuals();
+			}
 		});
 
 		auto children = TilePanel().Children();
@@ -84,6 +114,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::UnsubscribeToEvents()
 	{
+		if (!m_eventsSubscribed)
+		{
+			return;
+		}
+		m_eventsSubscribed = false;
+
 		m_selectionTimer.Tick(m_selectionTimerToken);
 		m_deselectionTimer.Tick(m_deselectionTimerToken);
 		m_selectionTimer.Stop();
@@ -112,8 +148,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::Tile_Click(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		if (!m_isLoaded)
+		{
+			return;
+		}
+
 		if (auto tile = sender.try_as<winrt::OpenNet::UI::Xaml::Control::HomePage::Header::HeaderTile>())
 		{
+			m_isNavigatingFromTileClick = true;
 			auto featureId = tile.FeatureID();
 
 			// Map FeatureID → navigation tag
@@ -139,11 +181,20 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::SelectionTimer_Tick(IInspectable const&, IInspectable const&)
 	{
+		if (!m_isLoaded)
+		{
+			return;
+		}
 		SelectNextTile();
 	}
 
 	void HeaderCarousel::SelectNextTile()
 	{
+		if (!m_isLoaded)
+		{
+			return;
+		}
+
 		auto children = TilePanel().Children();
 		auto index = GetNextUniqueRandom();
 		if (index < 0 || static_cast<uint32_t>(index) >= children.Size()) return;
@@ -166,6 +217,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::DeselectionTimer_Tick(IInspectable const&, IInspectable const&)
 	{
+		if (!m_isLoaded)
+		{
+			m_deselectionTimer.Stop();
+			return;
+		}
+
 		if (m_selectedTile)
 		{
 			m_selectedTile.IsSelected(false);
@@ -196,6 +253,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	int HeaderCarousel::GetNextUniqueRandom()
 	{
+		if (m_numbers.empty())
+		{
+			return -1;
+		}
+
 		if (m_currentIndex >= static_cast<int>(m_numbers.size()))
 		{
 			ResetAndShuffle();
@@ -205,7 +267,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::SetTileVisuals()
 	{
-		if (!m_selectedTile) return;
+		if (!m_isLoaded || !m_selectedTile) return;
 
 		m_selectedTile.IsSelected(true);
 
@@ -248,6 +310,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::Tile_PointerExited(IInspectable const& sender, Input::PointerRoutedEventArgs const&)
 	{
+		if (!m_isLoaded || m_isNavigatingFromTileClick)
+		{
+			return;
+		}
+
 		if (auto tile = sender.try_as<winrt::OpenNet::UI::Xaml::Control::HomePage::Header::HeaderTile>())
 		{
 			tile.IsSelected(false);
@@ -257,6 +324,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::Tile_PointerEntered(IInspectable const& sender, Input::PointerRoutedEventArgs const&)
 	{
+		if (!m_isLoaded)
+		{
+			return;
+		}
+
 		if (auto tile = sender.try_as<winrt::OpenNet::UI::Xaml::Control::HomePage::Header::HeaderTile>())
 		{
 			m_selectedTile = tile;
@@ -266,6 +338,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::SelectTile()
 	{
+		if (!m_isLoaded)
+		{
+			return;
+		}
+
 		m_selectionTimer.Stop();
 		m_deselectionTimer.Stop();
 
@@ -286,6 +363,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::Tile_GotFocus(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		if (!m_isLoaded)
+		{
+			return;
+		}
+
 		if (auto tile = sender.try_as<winrt::OpenNet::UI::Xaml::Control::HomePage::Header::HeaderTile>())
 		{
 			m_selectedTile = tile;
@@ -295,6 +377,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 
 	void HeaderCarousel::Tile_LostFocus(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		if (!m_isLoaded || m_isNavigatingFromTileClick)
+		{
+			return;
+		}
+
 		if (auto tile = sender.try_as<winrt::OpenNet::UI::Xaml::Control::HomePage::Header::HeaderTile>())
 		{
 			tile.IsSelected(false);
