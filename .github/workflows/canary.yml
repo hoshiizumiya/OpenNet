@@ -139,7 +139,7 @@ jobs:
 
           7z a -t7z -mx=9 `
             "OpenNet.Canary_${{ env.DATE }}_${{ matrix.platform }}.7z" `
-            "AppPackages\\"
+            "OpenNet\AppPackages\*"
         shell: pwsh
         
       - name: Upload Canary Artifact
