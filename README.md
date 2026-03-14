@@ -1,5 +1,10 @@
 ﻿# 🎉Welcome to the OpenNet project
-![logo](https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png)
+<p align="center">
+
+</p>
+﻿<p align="center">
+  <img src="https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png" alt="OpenNet Banner" width="600"/>
+</p>
 
 [简体中文](README_zh-CN.md)
 
@@ -19,6 +24,7 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 * Windows 11 SDK (10.0.26100.0 or later)
 * MSVC v145(or open solution and follow vs install prompts)
 * `vcpkg` package manager (the VS-integrated version is acceptable)
+* You may need to have [vcpkg](https://vcpkg.io/) installed and integrate setup for msbuild. See [this documentation for guide](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-powershell).
 
 2. Build the project
 
@@ -31,7 +37,16 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 
 ## Features
 
-* Support for downloading via BitTorrent using `.torrent` files and magnet links.
+* Support for downloading via BitTorrent using `.torrent` files/magnet links and http/https download.
+* RSS subscription and automatic downloading.
+* Nat tools to check network status.
+
+## Preview
+**NOT THE FINAL PRODUCT**
+
+![TasksDownloadSpeedGraph](docs/assets/TasksDownloadSpeedGraph.png)
+![TasksFiles](docs/assets/TasksFiles.png)
+![TasksPagePeers](docs/assets/TasksPagePeers.png)
 
 ## Roadmap
 
@@ -41,6 +56,9 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 * Support for NAT detection.
 * Support for remote control.
 * Support for user login and multi-user management.
+
+## Learn about the project
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hoshiizumiya/OpenNet)
 
 ## Contribute
 

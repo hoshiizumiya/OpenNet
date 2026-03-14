@@ -12,7 +12,6 @@
 #include <ThirdParty/Sqlite/sqlite3.h>
 #include "Core/IO/FileSystem.h"
 #include <filesystem>
-#include <codecvt>
 
 namespace OpenNet::Core::RSS
 {
@@ -31,7 +30,7 @@ namespace OpenNet::Core::RSS
 		CreateTables();
 	}
 
-	RSSDatabase::~RSSDatabase()
+	RSSDatabase::~RSSDatabase() noexcept
 	{
 		if (m_db)
 		{
@@ -121,7 +120,7 @@ namespace OpenNet::Core::RSS
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 
-		char const* sql =
+		constexpr char const* sql =
 			"INSERT OR REPLACE INTO rss_feeds "
 			"(id, url, title, description, save_path, update_interval_min, auto_download, filter_pattern, enabled, last_updated) "
 			"VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
@@ -130,24 +129,18 @@ namespace OpenNet::Core::RSS
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return;
 
-		auto idU = WideToUtf8(feed.id);
-		auto urlU = WideToUtf8(feed.url);
-		auto titleU = WideToUtf8(feed.title);
-		auto descU = WideToUtf8(feed.description);
-		auto saveU = WideToUtf8(feed.savePath);
-		auto filterU = WideToUtf8(feed.filterPattern);
 		auto lastUpdated = std::chrono::duration_cast<std::chrono::seconds>(
 			feed.lastUpdated.time_since_epoch())
 			.count();
 
-		sqlite3_bind_text(stmt, 1, idU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 2, urlU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 3, titleU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 4, descU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 5, saveU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, feed.id.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 2, feed.url.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 3, feed.title.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 4, feed.description.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 5, feed.savePath.c_str(), -1, SQLITE_TRANSIENT);
 		sqlite3_bind_int(stmt, 6, static_cast<int>(feed.updateInterval.count()));
 		sqlite3_bind_int(stmt, 7, feed.autoDownload ? 1 : 0);
-		sqlite3_bind_text(stmt, 8, filterU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 8, feed.filterPattern.c_str(), -1, SQLITE_TRANSIENT);
 		sqlite3_bind_int(stmt, 9, feed.enabled ? 1 : 0);
 		sqlite3_bind_int64(stmt, 10, lastUpdated);
 
@@ -161,13 +154,12 @@ namespace OpenNet::Core::RSS
 		if (!m_db) return;
 
 		// Foreign key ON DELETE CASCADE will remove items automatically
-		char const* sql = "DELETE FROM rss_feeds WHERE id = ?;";
+		constexpr char const* sql = "DELETE FROM rss_feeds WHERE id = ?;";
 		sqlite3_stmt* stmt = nullptr;
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return;
 
-		auto idU = WideToUtf8(feedId);
-		sqlite3_bind_text(stmt, 1, idU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, feedId.c_str(), -1, SQLITE_TRANSIENT);
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
 	}
@@ -178,7 +170,7 @@ namespace OpenNet::Core::RSS
 		std::vector<RSSFeed> result;
 		if (!m_db) return result;
 
-		char const* sql = "SELECT id, url, title, description, save_path, "
+		constexpr char const* sql = "SELECT id, url, title, description, save_path, "
 			"update_interval_min, auto_download, filter_pattern, enabled, last_updated "
 			"FROM rss_feeds;";
 
@@ -188,15 +180,21 @@ namespace OpenNet::Core::RSS
 
 		while (sqlite3_step(stmt) == SQLITE_ROW)
 		{
+			auto getText16 = [&](int col) -> std::wstring
+			{
+				auto p = reinterpret_cast<wchar_t const*>(sqlite3_column_text16(stmt, col));
+				return p ? std::wstring(p) : std::wstring{};
+			};
+
 			RSSFeed feed;
-			feed.id = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 0)));
-			feed.url = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 1)));
-			feed.title = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 2)));
-			feed.description = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 3)));
-			feed.savePath = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 4)));
+			feed.id = getText16(0);
+			feed.url = getText16(1);
+			feed.title = getText16(2);
+			feed.description = getText16(3);
+			feed.savePath = getText16(4);
 			feed.updateInterval = std::chrono::minutes(sqlite3_column_int(stmt, 5));
 			feed.autoDownload = sqlite3_column_int(stmt, 6) != 0;
-			feed.filterPattern = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 7)));
+			feed.filterPattern = getText16(7);
 			feed.enabled = sqlite3_column_int(stmt, 8) != 0;
 			feed.lastUpdated = std::chrono::system_clock::time_point(
 				std::chrono::seconds(sqlite3_column_int64(stmt, 9)));
@@ -219,7 +217,7 @@ namespace OpenNet::Core::RSS
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return std::nullopt;
 
-		char const* sql = "SELECT id, url, title, description, save_path, "
+		constexpr char const* sql = "SELECT id, url, title, description, save_path, "
 			"update_interval_min, auto_download, filter_pattern, enabled, last_updated "
 			"FROM rss_feeds WHERE id = ?;";
 
@@ -227,8 +225,7 @@ namespace OpenNet::Core::RSS
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return std::nullopt;
 
-		auto idU = WideToUtf8(feedId);
-		sqlite3_bind_text(stmt, 1, idU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, feedId.c_str(), -1, SQLITE_TRANSIENT);
 
 		if (sqlite3_step(stmt) != SQLITE_ROW)
 		{
@@ -236,15 +233,21 @@ namespace OpenNet::Core::RSS
 			return std::nullopt;
 		}
 
+		auto getText16 = [&](int col) -> std::wstring
+		{
+			auto p = reinterpret_cast<wchar_t const*>(sqlite3_column_text16(stmt, col));
+			return p ? std::wstring(p) : std::wstring{};
+		};
+
 		RSSFeed feed;
-		feed.id = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 0)));
-		feed.url = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 1)));
-		feed.title = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 2)));
-		feed.description = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 3)));
-		feed.savePath = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 4)));
+		feed.id = getText16(0);
+		feed.url = getText16(1);
+		feed.title = getText16(2);
+		feed.description = getText16(3);
+		feed.savePath = getText16(4);
 		feed.updateInterval = std::chrono::minutes(sqlite3_column_int(stmt, 5));
 		feed.autoDownload = sqlite3_column_int(stmt, 6) != 0;
-		feed.filterPattern = Utf8ToWide(reinterpret_cast<char const*>(sqlite3_column_text(stmt, 7)));
+		feed.filterPattern = getText16(7);
 		feed.enabled = sqlite3_column_int(stmt, 8) != 0;
 		feed.lastUpdated = std::chrono::system_clock::time_point(
 			std::chrono::seconds(sqlite3_column_int64(stmt, 9)));
@@ -263,21 +266,17 @@ namespace OpenNet::Core::RSS
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 
-		char const* sql =
+		constexpr char const* sql =
 			"UPDATE rss_feeds SET title = ?, description = ?, last_updated = ? WHERE id = ?;";
 
 		sqlite3_stmt* stmt = nullptr;
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return;
 
-		auto titleU = WideToUtf8(title);
-		auto descU = WideToUtf8(description);
-		auto idU = WideToUtf8(feedId);
-
-		sqlite3_bind_text(stmt, 1, titleU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 2, descU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, title.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 2, description.c_str(), -1, SQLITE_TRANSIENT);
 		sqlite3_bind_int64(stmt, 3, lastUpdatedEpoch);
-		sqlite3_bind_text(stmt, 4, idU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 4, feedId.c_str(), -1, SQLITE_TRANSIENT);
 
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
@@ -295,7 +294,7 @@ namespace OpenNet::Core::RSS
 
 		sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
-		char const* sql =
+		constexpr char const* sql =
 			"INSERT OR IGNORE INTO rss_items "
 			"(feed_id, guid, title, link, description, enclosure_url, enclosure_type, "
 			"enclosure_length, pub_date, category, is_downloaded) "
@@ -308,34 +307,26 @@ namespace OpenNet::Core::RSS
 			return 0;
 		}
 
-		auto feedIdU = WideToUtf8(feedId);
-
 		for (auto const& item : items)
 		{
 			sqlite3_reset(stmt);
 			sqlite3_clear_bindings(stmt);
 
-			auto guidU = WideToUtf8(item.guid.empty() ? item.link : item.guid);
-			auto titleU = WideToUtf8(item.title);
-			auto linkU = WideToUtf8(item.link);
-			auto descU = WideToUtf8(item.description);
-			auto encUrlU = WideToUtf8(item.enclosureUrl);
-			auto encTypeU = WideToUtf8(item.enclosureType);
-			auto catU = WideToUtf8(item.category);
+			std::wstring guid = item.guid.empty() ? item.link : item.guid;
 			auto pubDateEpoch = std::chrono::duration_cast<std::chrono::seconds>(
 				item.pubDate.time_since_epoch())
 				.count();
 
-			sqlite3_bind_text(stmt, 1, feedIdU.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 2, guidU.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 3, titleU.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 4, linkU.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 5, descU.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 6, encUrlU.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 7, encTypeU.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 1, feedId.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 2, guid.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 3, item.title.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 4, item.link.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 5, item.description.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 6, item.enclosureUrl.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 7, item.enclosureType.c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_int64(stmt, 8, static_cast<int64_t>(item.enclosureLength));
 			sqlite3_bind_int64(stmt, 9, pubDateEpoch);
-			sqlite3_bind_text(stmt, 10, catU.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text16(stmt, 10, item.category.c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_int(stmt, 11, item.isDownloaded ? 1 : 0);
 
 			if (sqlite3_step(stmt) == SQLITE_DONE)
@@ -362,17 +353,15 @@ namespace OpenNet::Core::RSS
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 
-		char const* sql =
+		constexpr char const* sql =
 			"UPDATE rss_items SET is_downloaded = 1 WHERE feed_id = ? AND guid = ?;";
 
 		sqlite3_stmt* stmt = nullptr;
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return;
 
-		auto feedU = WideToUtf8(feedId);
-		auto guidU = WideToUtf8(guid);
-		sqlite3_bind_text(stmt, 1, feedU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 2, guidU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, feedId.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 2, guid.c_str(), -1, SQLITE_TRANSIENT);
 
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
@@ -384,7 +373,7 @@ namespace OpenNet::Core::RSS
 		if (!m_db) return;
 
 		// Delete items that are NOT in the top N by pub_date
-		char const* sql =
+		constexpr char const* sql =
 			"DELETE FROM rss_items WHERE feed_id = ? AND id NOT IN "
 			"(SELECT id FROM rss_items WHERE feed_id = ? ORDER BY pub_date DESC LIMIT ?);";
 
@@ -392,9 +381,8 @@ namespace OpenNet::Core::RSS
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return;
 
-		auto feedU = WideToUtf8(feedId);
-		sqlite3_bind_text(stmt, 1, feedU.c_str(), -1, SQLITE_TRANSIENT);
-		sqlite3_bind_text(stmt, 2, feedU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, feedId.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 2, feedId.c_str(), -1, SQLITE_TRANSIENT);
 		sqlite3_bind_int(stmt, 3, maxItems);
 
 		sqlite3_step(stmt);
@@ -431,7 +419,7 @@ namespace OpenNet::Core::RSS
 		std::vector<RSSItem> items;
 		if (!m_db) return items;
 
-		char const* sql =
+		constexpr char const* sql =
 			"SELECT guid, title, link, description, enclosure_url, enclosure_type, "
 			"enclosure_length, pub_date, category, is_downloaded "
 			"FROM rss_items WHERE feed_id = ? ORDER BY pub_date DESC;";
@@ -440,16 +428,15 @@ namespace OpenNet::Core::RSS
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
 			return items;
 
-		auto feedU = WideToUtf8(feedId);
-		sqlite3_bind_text(stmt, 1, feedU.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text16(stmt, 1, feedId.c_str(), -1, SQLITE_TRANSIENT);
 
 		while (sqlite3_step(stmt) == SQLITE_ROW)
 		{
 			RSSItem item;
 			auto getText = [&](int col) -> std::wstring
 			{
-				auto p = reinterpret_cast<char const*>(sqlite3_column_text(stmt, col));
-				return p ? Utf8ToWide(p) : std::wstring{};
+				auto p = reinterpret_cast<wchar_t const*>(sqlite3_column_text16(stmt, col));
+				return p ? std::wstring(p) : std::wstring{};
 			};
 
 			item.guid = getText(0);
@@ -468,31 +455,6 @@ namespace OpenNet::Core::RSS
 		}
 		sqlite3_finalize(stmt);
 		return items;
-	}
-
-	// ---------------------------------------------------------------
-	//  String conversion helpers
-	// ---------------------------------------------------------------
-	std::string RSSDatabase::WideToUtf8(std::wstring const& w)
-	{
-		if (w.empty()) return {};
-		int len = WideCharToMultiByte(CP_UTF8, 0, w.data(), static_cast<int>(w.size()),
-									  nullptr, 0, nullptr, nullptr);
-		std::string result(len, '\0');
-		WideCharToMultiByte(CP_UTF8, 0, w.data(), static_cast<int>(w.size()),
-							result.data(), len, nullptr, nullptr);
-		return result;
-	}
-
-	std::wstring RSSDatabase::Utf8ToWide(std::string const& s)
-	{
-		if (s.empty()) return {};
-		int len = MultiByteToWideChar(CP_UTF8, 0, s.data(), static_cast<int>(s.size()),
-									  nullptr, 0);
-		std::wstring result(len, L'\0');
-		MultiByteToWideChar(CP_UTF8, 0, s.data(), static_cast<int>(s.size()),
-							result.data(), len);
-		return result;
 	}
 
 } // namespace OpenNet::Core::RSS

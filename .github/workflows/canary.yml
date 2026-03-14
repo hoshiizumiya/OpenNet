@@ -98,14 +98,57 @@ jobs:
         shell: pwsh
         run: nuget restore OpenNet.slnx
 
-      - name: Restore Certificate file
+      - name: Restore Certificate
+        run: |
+          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
+          $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
+          [IO.File]::WriteAllBytes($certPath, $bytes)
+
+          if (-not (Test-Path $certPath)) {
+            throw "Certificate file not found: $certPath"
+          }
+
+          Write-Host "Certificate restored to:"
+          Write-Host $certPath
+        working-directory: ${{ github.workspace }}
+        shell: pwsh
+
+      - name: Import Certificate
+        id: import_cert
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          $certPath = "$env:GITHUB_WORKSPACE\cert.pfx"
+
+          $password = ConvertTo-SecureString `
+            "${{ secrets.PFX_PASSWORD }}" `
+            -AsPlainText `
+            -Force
+
+          $cert = Import-PfxCertificate `
+            -FilePath $certPath `
+            -CertStoreLocation "Cert:\CurrentUser\My" `
+            -Password $password
+
+          if (-not $cert) {
+            throw "Import-PfxCertificate failed."
+          }
+
+          $thumb = $cert.Thumbprint
+          Write-Host "Certificate imported."
+          Write-Host "Thumbprint: $thumb"
+
+          echo "thumbprint=$thumb" >> $env:GITHUB_OUTPUT
+
+      - name: Show Installed Certificates
         shell: pwsh
         run: |
-          $bytes = [Convert]::FromBase64String("${{ secrets.PFX_CERT_BASE64 }}")
-          [IO.File]::WriteAllBytes("$env:GITHUB_WORKSPACE\cert.pfx", $bytes)
+          Get-ChildItem Cert:\CurrentUser\My |
+            Select Subject, Thumbprint
 
       - name: Build MSIX
         shell: pwsh
+        working-directory: ${{ github.workspace }}
         run: |
           msbuild OpenNet\OpenNet.vcxproj `
             /p:Configuration=${{ matrix.configuration }} `
@@ -114,9 +157,23 @@ jobs:
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageDir=AppPackages\ `
             /p:AppxPackageSigningEnabled=true `
-            /p:PackageCertificateKeyFile="$env:GITHUB_WORKSPACE\cert.pfx" `
-            /p:PackageCertificatePassword="${{ secrets.PFX_PASSWORD }}" `
+            /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
+            /p:PackageCertificateKeyFile= `
+            /p:PackageCertificatePassword= `
             /m
+
+      - name: Cleanup certificate
+        if: always()
+        shell: pwsh
+        run: |
+          $thumb = "${{ steps.import_cert.outputs.thumbprint }}"
+          if ($thumb) {
+            Get-ChildItem Cert:\CurrentUser\My |
+              Where-Object Thumbprint -eq $thumb |
+              Remove-Item -Force -ErrorAction SilentlyContinue
+          }
+
+          Remove-Item "$env:GITHUB_WORKSPACE\cert.pfx" -Force -ErrorAction SilentlyContinue
 
       - name: Generate package metadata
         id: meta
@@ -151,13 +208,7 @@ jobs:
           path: out\*.7z
           if-no-files-found: error
           retention-days: 14
-
-      - name: Cleanup certificate
-        if: always()
-        shell: pwsh
-        run: |
-          Remove-Item "$env:GITHUB_WORKSPACE\cert.pfx" -Force -ErrorAction SilentlyContinue
-
+          
   prerelease:
     needs: build
     runs-on: ubuntu-latest

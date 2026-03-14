@@ -77,17 +77,13 @@ namespace OpenNet::Core::RSS
 
     private:
         RSSDatabase();
-        ~RSSDatabase();
+        ~RSSDatabase() noexcept;
 
         void Open();
         void CreateTables();
 
         /// Internal: load items without acquiring mutex (caller must hold lock)
         std::vector<RSSItem> LoadItemsInternal(std::wstring const& feedId);
-
-        // Helpers
-        static std::string WideToUtf8(std::wstring const& w);
-        static std::wstring Utf8ToWide(std::string const& s);
 
         sqlite3* m_db{ nullptr };
         mutable std::mutex m_mutex;
