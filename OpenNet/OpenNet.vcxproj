@@ -160,6 +160,11 @@
     <ClInclude Include="Core\AppEnvironment.h" />
     <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h" />
     <ClInclude Include="Core\AppSettingsDatabase.h" />
+    <ClInclude Include="Core\GeoIP\GeoIPDatabase.h" />
+    <ClInclude Include="Core\IO\Http\FirewallRuleManager.h" />
+    <ClInclude Include="Core\IO\Http\LoopbackSupport.h" />
+    <ClInclude Include="Core\IO\Http\Loopback\LoopbackSupportCheck.h" />
+    <ClInclude Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.h" />
     <ClInclude Include="Core\IPFilter\IPFilterManager.h" />
     <ClInclude Include="Core\GeoIP\GeoIPManager.h" />
     <ClInclude Include="Core\DataGraph\SpeedGraphDatabase.h" />
@@ -590,6 +595,11 @@
     <ClCompile Include="Core\AppEnvironment.cpp" />
     <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.cpp" />
     <ClCompile Include="Core\AppSettingsDatabase.cpp" />
+    <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp" />
+    <ClCompile Include="Core\IO\Http\LoopbackSupport.cpp" />
+    <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp" />
+    <ClCompile Include="Core\IO\Http\Loopback\LoopbackSupportCheck.cpp" />
+    <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.cpp" />
     <ClCompile Include="Core\IPFilter\IPFilterManager.cpp" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.cpp" />
     <ClCompile Include="Core\DataGraph\SpeedGraphDatabase.cpp" />
@@ -1173,11 +1183,25 @@
     <ProjectCapability Include="Msix" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV" />
+    <None Include="Assets\IP2Location\dbip-country-lite.mmdb">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\IP2Location\sprite.svg">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="Assets\ModelIcons\GitHub.dark.svg">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="Assets\ModelIcons\GitHub.light.svg">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Rules\dhtnodes.dat">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Rules\dhtnodes6.dat">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="Directory.Build.props" />
@@ -1211,6 +1235,8 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
+    <Text Include="Assets\Rules\ipfilter.txt" />
+    <Text Include="Assets\Rules\ipfilter2.txt" />
   </ItemGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>

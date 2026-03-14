@@ -446,6 +446,21 @@
     <ClCompile Include="Web\Request\Builder\GithubRequest.cpp">
       <Filter>Web\Request\Builder</Filter>
     </ClCompile>
+    <ClCompile Include="Core\IO\Http\Loopback\LoopbackSupportCheck.cpp">
+      <Filter>Core\IO\Http</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\LoopbackSupport.cpp">
+      <Filter>Core\IO\Http</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.cpp">
+      <Filter>Core\IO\Http</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp">
+      <Filter>Core\IO\Http</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp">
+      <Filter>Core\GeoIP</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -746,6 +761,21 @@
     </ClInclude>
     <ClInclude Include="Helpers\ColumnWidthHelper.h">
       <Filter>Helpers</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IO\Http\Loopback\LoopbackSupportCheck.h">
+      <Filter>Core\IO\Http</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IO\Http\LoopbackSupport.h">
+      <Filter>Core\IO\Http</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.h">
+      <Filter>Core\IO\Http</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\IO\Http\FirewallRuleManager.h">
+      <Filter>Core\IO\Http</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\GeoIP\GeoIPDatabase.h">
+      <Filter>Core\GeoIP</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1090,6 +1120,12 @@
     <Filter Include="Web\Request\Builder">
       <UniqueIdentifier>{c0943f56-3dd7-43f2-a1d3-a2ecbab11afb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\Rules">
+      <UniqueIdentifier>{f0614e92-d092-450c-a756-f9b007de0dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\IO\Http">
+      <UniqueIdentifier>{8fb266bd-6ab3-4045-93ff-85be7f3fa69d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1111,6 +1147,18 @@
     </None>
     <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV">
       <Filter>Assets\IP2Location</Filter>
+    </None>
+    <None Include="Assets\IP2Location\sprite.svg">
+      <Filter>Assets\IP2Location</Filter>
+    </None>
+    <None Include="Assets\IP2Location\dbip-country-lite.mmdb">
+      <Filter>Assets\IP2Location</Filter>
+    </None>
+    <None Include="Assets\Rules\dhtnodes.dat">
+      <Filter>Assets\Rules</Filter>
+    </None>
+    <None Include="Assets\Rules\dhtnodes6.dat">
+      <Filter>Assets\Rules</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -1136,5 +1184,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
+    <Text Include="Assets\Rules\ipfilter.txt">
+      <Filter>Assets\Rules</Filter>
+    </Text>
+    <Text Include="Assets\Rules\ipfilter2.txt">
+      <Filter>Assets\Rules</Filter>
+    </Text>
   </ItemGroup>
 </Project>
