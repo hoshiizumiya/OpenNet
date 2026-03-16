@@ -1,9 +1,8 @@
-﻿# 🎉Welcome to the OpenNet project
-<p align="center">
-
+﻿<p align="center">
+🎉Welcome to the OpenNet project
 </p>
 ﻿<p align="center">
-  <img src="https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png" alt="OpenNet Banner" width="600"/>
+  <img src="https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png" alt="OpenNet Banner" heigth="200"/>
 </p>
 
 [简体中文](README_zh-CN.md)

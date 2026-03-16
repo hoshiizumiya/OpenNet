@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "Implicit.h"
 #if __has_include("UI/Xaml/Media/Animations/Implicit.g.cpp")
 #include "UI/Xaml/Media/Animations/Implicit.g.cpp"

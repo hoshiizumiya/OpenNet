@@ -22,8 +22,8 @@ namespace winrt::OpenNet::Core::IO
         static bool FileExists(const std::wstring& path);
 
     private:
-        static std::wstring_view AppDataPathW;
-        static std::wstring_view AppTempPathW;
-        static std::wstring_view AppDownloadPathW;
+        static std::wstring AppDataPathW;
+        static std::wstring AppTempPathW;
+        static std::wstring AppDownloadPathW;
     };
 }

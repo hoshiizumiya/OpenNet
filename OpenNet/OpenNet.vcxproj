@@ -144,6 +144,9 @@
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">stdc11</LanguageStandard_C>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)ThirdParty\Sqlite;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</WholeProgramOptimization>
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</WholeProgramOptimization>
+      <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</WholeProgramOptimization>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -270,10 +273,6 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\Media\Animations\OpacityAnimation.h">
       <DependentUpon>UI\Xaml\Media\Animations\Animations.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.h">
-      <DependentUpon>UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.h">
@@ -694,9 +693,6 @@
       <DependentUpon>UI\Xaml\Media\Animations\EffectAnimations.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp">
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml</DependentUpon>
     </ClCompile>
@@ -950,10 +946,6 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\Media\Brushes\Brushes.idl">
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.idl">
-      <DependentUpon>UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl" />

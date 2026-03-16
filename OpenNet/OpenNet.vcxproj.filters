@@ -437,9 +437,6 @@
     <ClCompile Include="Core\Torrent\TrackerManager.cpp">
       <Filter>Core\Torrent</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Backdrop\InputActiveDesktopAcrylicBackdrop.cpp">
-      <Filter>UI\Xaml\Media\Backdrop</Filter>
-    </ClCompile>
     <ClCompile Include="Core\HttpStateManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>

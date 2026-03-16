@@ -14,9 +14,9 @@ using namespace winrt::Microsoft::Windows::Storage;
 
 namespace winrt::OpenNet::Core::IO
 {
-	std::wstring_view FileSystem::AppDataPathW;
-	std::wstring_view FileSystem::AppTempPathW;
-	std::wstring_view FileSystem::AppDownloadPathW;
+	std::wstring FileSystem::AppDataPathW;
+	std::wstring FileSystem::AppTempPathW;
+	std::wstring FileSystem::AppDownloadPathW;
 
 	// Never use it
 	bool FileSystem::CreateDirectory(const std::wstring& path)

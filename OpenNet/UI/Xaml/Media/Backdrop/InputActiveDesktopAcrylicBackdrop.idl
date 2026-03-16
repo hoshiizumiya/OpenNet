@@ -1,9 +1,0 @@
-﻿namespace OpenNet.UI.Xaml.Media.Backdrop
-{
-    [default_interface]
-    runtimeclass InputActiveDesktopAcrylicBackdrop : Microsoft.UI.Xaml.Media.SystemBackdrop
-    {
-        InputActiveDesktopAcrylicBackdrop();
-
-    }
-}
