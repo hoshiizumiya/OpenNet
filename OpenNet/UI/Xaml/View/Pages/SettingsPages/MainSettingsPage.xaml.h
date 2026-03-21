@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.h"
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
@@ -14,6 +14,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void NavigateByTag(winrt::hstring const& tag,
 						   winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionInfo const& transitionInfo);
 
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_settingsBarItems = winrt::single_threaded_observable_vector(std::vector<winrt::hstring>{L"Settings"});
 	public:
 		MainSettingsPage();
 		~MainSettingsPage();
@@ -25,8 +26,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Navigation handler
 		void SettingsNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 
-		// Helper to update breadcrumb items
-		void UpdateSettingsBarItems(winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::Folder> const& items);
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> SettingsBarItems();
 	};
 }
 

@@ -24,14 +24,15 @@
                 x:Name="MainSettingsPageBar"
                 Margin="-36,-12,0,0"
                 x:FieldModifier="Public"
-                ItemClicked="SettingsBar_ItemClicked">
+                ItemClicked="SettingsBar_ItemClicked"
+                ItemsSource="{x:Bind SettingsBarItems}">
                 <BreadcrumbBar.ItemTemplate>
-                    <DataTemplate x:DataType="local:Folder">
+                    <DataTemplate x:DataType="x:String">
                         <TextBlock
                             Height="60"
                             Margin="0,0,10,0"
                             FontSize="40"
-                            Text="{x:Bind Name}" />
+                            Text="{x:Bind}" />
                     </DataTemplate>
                 </BreadcrumbBar.ItemTemplate>
             </BreadcrumbBar>
