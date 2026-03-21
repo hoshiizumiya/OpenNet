@@ -5,7 +5,6 @@
 #endif
 
 #include <winrt/Windows.System.h>
-#include "Folder.h"
 #include "MainSettingsPage.xaml.h"
 #include "../../MainWindow.xaml.h"
 #include "../../Helpers/WindowHelper.h"

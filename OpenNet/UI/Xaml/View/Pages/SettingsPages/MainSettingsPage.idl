@@ -1,23 +1,10 @@
-namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
 {
-	runtimeclass Folder : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-	{
-		Folder();
-
-		String Name;
-		// 读/写属性，编译器会生成 getter/setter 或者（显式 getter/setter，注意不要再同时写 String Name）。在 C++/WinRT 中，属性 String Name; 会映射为 hstring Name(); 和 void Name(hstring const& value)
-        //String Name();
-        //void Name(String value);
-
-	}
-
 	[default_interface]
 	runtimeclass MainSettingsPage : Microsoft.UI.Xaml.Controls.Page
 	{
 		MainSettingsPage();
 
-		// Use Object (Windows.Foundation.Object) as the element type in IDL; IInspectable cannot be used here
-        // 		void UpdateSettingsBarItems(Windows.Foundation.Collections.IObservableVector<Object> items);
-		void UpdateSettingsBarItems(Windows.Foundation.Collections.IObservableVector<OpenNet.UI.Xaml.View.Pages.SettingsPages.Folder> items);
+		Windows.Foundation.Collections.IObservableVector<String> SettingsBarItems{ get; };
 	}
 }

@@ -38,6 +38,7 @@
     <CppWinRTUsePrefixes>false</CppWinRTUsePrefixes>
     <CppWinRTLibs>true</CppWinRTLibs>
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
+    <WindowsAppSdkAutoInitialize>false</WindowsAppSdkAutoInitialize>
     <!-- Self contained framework enables us to run in environments without deploying SDKs -->
     <!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
     <!-- <WindowsAppSdkUndockedRegFreeWinRTInitialize>true</WindowsAppSdkUndockedRegFreeWinRTInitialize> -->
@@ -408,7 +409,6 @@
       <DependentUpon>UI\Xaml\View\Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\Folder.h" />
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -798,7 +798,6 @@
       <DependentUpon>UI\Xaml\View\Pages\ServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\Folder.cpp" />
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\MainSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1246,7 +1245,6 @@
     <AppxBundle>Never</AppxBundle>
     <AppInstallerUri>\\NoneForNow</AppInstallerUri>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
-    <PackageCertificateThumbprint>CE115C373D9AECE61EF767DBAE3AFFD598BE570D</PackageCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
@@ -1263,7 +1261,6 @@
     <Import Project="..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" />
     <Import Project="..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" />
     <Import Project="..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" />
     <Import Project="..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets" Condition="Exists('..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets')" />
     <Import Project="..\packages\Microsoft.Web.WebView2.1.0.3856.49\build\native\Microsoft.Web.WebView2.targets" Condition="Exists('..\packages\Microsoft.Web.WebView2.1.0.3856.49\build\native\Microsoft.Web.WebView2.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.MSIX.1.7.260316102\build\Microsoft.Windows.SDK.BuildTools.MSIX.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.MSIX.1.7.260316102\build\Microsoft.Windows.SDK.BuildTools.MSIX.targets')" />
@@ -1274,6 +1271,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260224000\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260224000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1297,7 +1295,6 @@
     <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Helpers.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Controls.Native.0.3.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.Labs.WinUI.Native.0.3.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.5.0\build\native\WinUIEssential.WinUI3.targets'))" />
     <Error Condition="!Exists('..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Mile.Aria2.1.0.1050\build\native\Mile.Aria2.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Web.WebView2.1.0.3856.49\build\native\Microsoft.Web.WebView2.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Web.WebView2.1.0.3856.49\build\native\Microsoft.Web.WebView2.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.MSIX.1.7.260316102\build\Microsoft.Windows.SDK.BuildTools.MSIX.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.MSIX.1.7.260316102\build\Microsoft.Windows.SDK.BuildTools.MSIX.props'))" />
@@ -1315,5 +1312,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

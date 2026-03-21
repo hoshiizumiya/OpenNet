@@ -4,7 +4,6 @@
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.cpp"
 #endif
 
-#include "Folder.h"
 #include "SettingsPage.xaml.h"
 #include "AboutPage.xaml.h"
 #include "ThemesSettingsPage.xaml.h"
@@ -28,23 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		InitializeComponent();
 		s_current = this;
 
-		// Defer UI element initialization to Loaded event per C++/WinRT guidelines
-		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
-			{
-				try
-				{
-					DataContext() = *this;
-					SettingsNavView().SelectedItem(GeneralNavItem());
-
-					// Populate MainSettingsPageBar with a single Folder item
-					auto items = single_threaded_observable_vector<IInspectable>();
-					auto folder = winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::Folder();
-					folder.Name(L"Settings");
-					items.Append(folder);
-					MainSettingsPageBar().ItemsSource(items);
-				}
-				catch (...) {}
-			});
+		SettingsNavView().SelectedItem(GeneralNavItem());
 	}
 
 	MainSettingsPage::~MainSettingsPage()
@@ -58,11 +41,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	MainSettingsPage* MainSettingsPage::Current()
 	{
 		return s_current;
-	}
-
-	void MainSettingsPage::UpdateSettingsBarItems(winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::Folder> const& items)
-	{
-		MainSettingsPageBar().ItemsSource(items);
 	}
 
 	void MainSettingsPage::SettingsBar_ItemClicked(BreadcrumbBar const& /*sender*/, BreadcrumbBarItemClickedEventArgs const& args)
@@ -100,28 +78,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			auto transitionInfo = SlideNavigationTransitionInfo{};
 			transitionInfo.Effect(SlideNavigationTransitionEffect::FromBottom);
 
-			// Update breadcrumb
-			auto itemsObj = MainSettingsPageBar().ItemsSource();
-			if (auto breadcrumbItems = itemsObj.try_as<IObservableVector<IInspectable>>())
+			// Keep only root "Settings" item
+			while (m_settingsBarItems.Size() > 1)
 			{
-				// Keep only root "Settings" item
-				while (breadcrumbItems.Size() > 1)
-				{
-					breadcrumbItems.RemoveAtEnd();
-				}
+				m_settingsBarItems.RemoveAtEnd();
+			}
 
-				// Add new category if not general
-				if (tag != L"general")
-				{
-					auto categoryFolder = winrt::make<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation::Folder>();
-					categoryFolder.Name(unbox_value_or<hstring>(selectedItem.Content(), L""));
-					breadcrumbItems.Append(categoryFolder);
-				}
+			// Add new category if not general
+			if (tag != L"general")
+			{
+				m_settingsBarItems.Append(winrt::unbox_value_or(selectedItem.Content(), L""));
 			}
 
 			// Navigate based on tag
 			NavigateByTag(tag, transitionInfo);
 		}
+	}
+
+	winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> MainSettingsPage::SettingsBarItems()
+	{
+		return m_settingsBarItems;
 	}
 
 	void MainSettingsPage::NavigateByTag(hstring const& tag, SlideNavigationTransitionInfo const& transitionInfo)
