@@ -255,8 +255,12 @@
                     <essential:Case Value="Blocked">
                         <FontIcon
                             FontFamily="Segoe UI Emoji"
-                            FontSize="14"
-                            Glyph="&#x1F7E1;" />
+                            FontSize="20"
+                            Glyph="&#x1F7E1;">
+                            <ToolTipService.ToolTip>
+                                <ToolTip x:Uid="" Content="Port is blocked. Please check your router or firewall settings." essential:ToolTipHelper.AcrylicWorkaround="True" />
+                            </ToolTipService.ToolTip>                           
+                        </FontIcon>
                     </essential:Case>
                 </essential:SwitchPresenter>
                 <TextBlock

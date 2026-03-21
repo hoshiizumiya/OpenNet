@@ -47,7 +47,7 @@
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn x:Name="ColPeerIP" DesiredWidth="2*">
+                        <labs:DataColumn x:Name="ColPeerIP"  CanResize="True" DesiredWidth="2*">
                             <TextBlock
                                 x:Uid="PeerHeader_IP"
                                 FontWeight="SemiBold"

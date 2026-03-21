@@ -218,7 +218,7 @@ namespace OpenNet::Core
 			DatagramSocket socket;
 
 			// Bind to the specific local port
-			co_await socket.BindServiceNameAsync(winrt::to_hstring(port));
+			// co_await socket.BindServiceNameAsync(winrt::to_hstring(port)); TODO: USE server with system TCP handshke to check 
 
 			// Send STUN Binding Request to discover mapped address
 			auto stunServer = L"stun.l.google.com";

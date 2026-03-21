@@ -18,7 +18,7 @@
             LeftDoublePressed="ShowMainWindow"
             LeftPressed="ShowMainWindow"
             ToolTip="OpenNet">
-            <Flyout>
+            <Flyout essential:FlyoutHelper.AcrylicWorkaround="True">
                 <Flyout.FlyoutPresenterStyle>
                     <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
                         <Setter Property="Background" Value="Transparent" />
@@ -218,7 +218,10 @@
                             HorizontalAlignment="Right"
                             Orientation="Horizontal"
                             Spacing="2">
-                            <AppBarButton AllowFocusOnInteraction="True" Label="">
+                            <AppBarButton
+                                x:Uid="CoreWindowingNotifyIconViewLabel"
+                                AllowFocusOnInteraction="True"
+                                Label="Home">
                                 <AppBarButton.Icon>
                                     <FontIcon
                                         Width="20"
@@ -226,6 +229,7 @@
                                         Glyph="&#xE80F;" />
                                 </AppBarButton.Icon>
                             </AppBarButton>
+                            <!--
                             <AppBarButton AllowFocusOnInteraction="True" Label="">
                                 <AppBarButton.Icon>
                                     <FontIcon
@@ -234,7 +238,11 @@
                                         Glyph="&#xE7FC;" />
                                 </AppBarButton.Icon>
                             </AppBarButton>
-                            <AppBarButton AllowFocusOnInteraction="True" Label="">
+                            -->
+                            <AppBarButton
+                                x:Uid="CoreWindowingNotifyIconExitLabel"
+                                AllowFocusOnInteraction="True"
+                                Label="Exit">
                                 <AppBarButton.Icon>
                                     <FontIcon
                                         Width="20"

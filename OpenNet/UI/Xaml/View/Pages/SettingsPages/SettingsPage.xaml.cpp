@@ -202,10 +202,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	void SettingsPage::SetDesktopBackground()
+	winrt::Windows::Foundation::IAsyncAction SettingsPage::SetDesktopBackground()
 	{
 		try
 		{
+			co_await winrt::resume_background();
 			// 尝试读取系统壁纸路径；如果存在则设置为 BitmapImage，否则尝试读取纯色背景并设置 Border 背景色。
 			auto img = DesktopBackgroundImage();
 			auto border = DesktopBackgroundBorder();
@@ -254,6 +255,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 							OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
 						});
 						bitmap.UriSource(fileUri);
+						wil::resume_foreground(m_dispatcher);
 						img.Source(bitmap);
 
 						OutputDebugStringW(L"壁纸已更改！\n");
@@ -262,7 +264,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 					{
 						OutputDebugStringW(L"SetDesktopBackground: BitmapImage creation failed\n");
 					}
-					return;
+					co_return;
 				}
 			}
 
@@ -294,7 +296,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 					border.Background(brush);
 
 					OutputDebugStringW(L"纯色背景已设置！\n");
-					return;
+					co_return;
 				}
 			}
 		}
@@ -304,51 +306,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-
-	//void SettingsPage::AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
-	//{
-	//	try
-	//	{
-	//		if (auto scrollView = SettingsScrollView())
-	//		{
-	//			if (auto presenter = scrollView.ScrollPresenter())
-	//			{
-	//				auto controller = annotatedScrollBar().ScrollController();
-	//				if (controller)
-	//				{
-	//					presenter.VerticalScrollController(controller);
-	//				}
-	//			}
-	//		}
-	//	}
-	//	catch (...) {}
-	//}
-
-	//void SettingsPage::AnnotatedScrollBarPage_Unloaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
-	//{
-	//	// 解除控制器绑定，防止卸载后引用悬空
-	//	try
-	//	{
-	//		if (auto scrollView = SettingsScrollView())
-	//		{
-	//			if (auto presenter = scrollView.ScrollPresenter())
-	//			{
-	//				presenter.VerticalScrollController(nullptr);
-	//			}
-	//		}
-	//	}
-	//	catch (...) {}
-	//}
-
-	//void SettingsPage::AnnotatedScrollBar_DetailLabelRequested(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::AnnotatedScrollBarDetailLabelRequestedEventArgs const& e)
-	//{
-	//	// Provide a string as the tooltip content when hovering the mouse over the AnnotatedScrollBar's vertical rail. The string simply
-	//	// represents the color of the last item in the row computed from AnnotatedScrollBarDetailLabelRequestedEventArgs.ScrollOffset.
-	//	// e.Content() = GetOffsetLabel(e.ScrollOffset());
-	//	// 简单示例：展示偏移值；如需匹配示例，可按数据源计算标签文本
-	//	// e.Content(box_value(hstring(L"Label")));
-	//	e.Content(box_value(hstring(L"Offset: ") + to_hstring(e.ScrollOffset())));
-	//}
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::OnSettingsPageLoadedAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		auto weak = get_weak();
@@ -501,16 +458,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		m_loadAction = nullptr;
 		co_return;
 	}
+
 	void SettingsPage::AppUpdateCheckButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 
 	}
+
 	void SettingsPage::AutoCheckUpdateCheckbox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 	}
+
 	void SettingsPage::AutoCheckUpdateCheckbox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 	}
+
 	void SettingsPage::goGithubButton_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
 		// Store the IAsyncAction to prevent unobserved async exception

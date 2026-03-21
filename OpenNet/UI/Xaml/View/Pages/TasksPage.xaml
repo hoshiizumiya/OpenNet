@@ -162,6 +162,7 @@
                             <labs:DataTable ColumnSpacing="16">
                                 <labs:DataColumn
                                     x:Name="ColName"
+                                    CanResize="True"
                                     DesiredWidth="3*"
                                     Tag="Name">
                                     <TextBlock x:Uid="Header_TaskName" FontWeight="SemiBold" />
