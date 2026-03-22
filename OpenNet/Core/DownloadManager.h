@@ -65,7 +65,7 @@ namespace OpenNet::Core
 		static DownloadManager& Instance();
 
 		// Lifecycle
-		void Initialize();
+		winrt::Windows::Foundation::IAsyncAction InitializeAsync();
 		void Shutdown();
 		bool IsAria2Available() const;
 

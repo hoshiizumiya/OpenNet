@@ -331,8 +331,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::Initialize()
 	{
-		// Initialize HTTP download manager synchronously
-		::OpenNet::Core::DownloadManager::Instance().Initialize();
+		// Initialize HTTP download manager asynchronously on background thread
+		auto initAsync = ::OpenNet::Core::DownloadManager::Instance().InitializeAsync();
+
+		// Fire and forget - the async operation runs on background thread
+		initAsync.Completed([](auto const&, auto)
+		{
+			// Initialization complete, no action needed
+		});
 
 		// Initialize application settings database (used by RSS, UI settings, etc.)
 		::OpenNet::Core::AppSettingsDatabase::Instance().Initialize();

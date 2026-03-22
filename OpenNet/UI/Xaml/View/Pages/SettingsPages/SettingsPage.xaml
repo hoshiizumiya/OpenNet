@@ -250,7 +250,8 @@
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="themeMode"
-                        Width="150"
+                        Width="Auto"
+                        MinWidth="160"
                         AutomationProperties.AutomationId="themeModeComboBox"
                         SelectionChanged="themeMode_SelectionChanged">
                         <ComboBoxItem
@@ -278,7 +279,8 @@
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="StartPageCombobox"
-                        Width="150"
+                        Width="Auto"
+                        MinWidth="160"
                         SelectionChanged="StartPageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
 
@@ -292,7 +294,8 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <ComboBox
                         x:Name="SoftBackgroundColorComboBox"
-                        Width="150"
+                        Width="Auto"
+                        MinWidth="160"
                         PlaceholderText="Choose a color" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard Description="Pick a custom color or select from preset colors" Header="Color picker">
@@ -317,7 +320,8 @@
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="SoftLanguageCombobox"
-                        Width="150"
+                        Width="Auto"
+                        MinWidth="160"
                         SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
 

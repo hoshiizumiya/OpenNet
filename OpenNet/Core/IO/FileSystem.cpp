@@ -99,6 +99,7 @@ namespace winrt::OpenNet::Core::IO
 		}
 	}
 
+	// .get() may not available in the UI thread, so make sure it's not in the UI thread at the first call
 	std::wstring_view FileSystem::GetDownloadsPathW()
 	{
 		if (!AppDownloadPathW.empty())

@@ -24,7 +24,6 @@ on:
   pull_request:
       branches-ignore:
       - l10n_develop
-      - master
       - release
       - dependabot/**
       paths-ignore:
@@ -59,7 +58,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
-        platform: [x64, ARM64]
+        platform: [x64]
 
     steps:
       - name: Checkout

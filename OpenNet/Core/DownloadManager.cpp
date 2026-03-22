@@ -51,11 +51,13 @@ namespace OpenNet::Core
 	// ------------------------------------------------------------------
 	//  Lifecycle
 	// ------------------------------------------------------------------
-	void DownloadManager::Initialize()
+	winrt::Windows::Foundation::IAsyncAction DownloadManager::InitializeAsync()
 	{
+		co_await winrt::resume_background();
+
 		std::lock_guard lock(m_mutex);
 		if (m_initialized)
-			return;
+			co_return;
 
 		// Create and start the local Aria2 instance
 		// LocalAria2Instance::constructor calls Startup() internally

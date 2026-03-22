@@ -44,9 +44,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		// Defer all UI element initialization to Loaded event per C++/WinRT guidelines
 		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
-		{
-			m_loadAction = OnSettingsPageLoadedAsync(sender, e);
-		});
+			   {
+				   m_loadAction = OnSettingsPageLoadedAsync(sender, e);
+			   });
 
 	}
 	SettingsPage::~SettingsPage()
@@ -166,7 +166,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
 			localSettings.Values().Insert(L"StartPage", box_value(tag));
 		}
-		catch (...) {}
+		catch (...)
+		{
+		}
 	}
 
 	void SettingsPage::themeMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*e*/)
@@ -203,71 +205,57 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::SetDesktopBackground()
 	{
+		// 在 UI 线程获取控件引用（调用者已确保在 UI 线程）
+		auto img = DesktopBackgroundImage();
+		auto border = DesktopBackgroundBorder();
+
+		// 切换到后台线程执行所有 Windows API 调用和阻塞操作
+		co_await winrt::resume_background();
+
 		try
 		{
-			co_await winrt::resume_background();
-			// 尝试读取系统壁纸路径；如果存在则设置为 BitmapImage，否则尝试读取纯色背景并设置 Border 背景色。
-			auto img = DesktopBackgroundImage();
-			auto border = DesktopBackgroundBorder();
-
-			// 获取系统壁纸路径
+			// ========== 后台线程执行：获取壁纸路径 ==========
 			WCHAR wallpaperPathBuf[MAX_PATH]{};
+			std::wstring wallpaperPath;
+			bool hasWallpaper = false;
+
 			if (SystemParametersInfoW(SPI_GETDESKWALLPAPER, MAX_PATH, wallpaperPathBuf, 0))
 			{
-				std::wstring wallpaperPath{ wallpaperPathBuf };
+				wallpaperPath = wallpaperPathBuf;
 
 				// 判断文件是否存在
-				bool fileExists = false;
 				if (!wallpaperPath.empty())
 				{
 					auto attrs = GetFileAttributesW(wallpaperPath.c_str());
-					fileExists = (attrs != INVALID_FILE_ATTRIBUTES && !(attrs & FILE_ATTRIBUTE_DIRECTORY));
-				}
-
-				if (fileExists && img)
-				{
-					try
+					if (attrs != INVALID_FILE_ATTRIBUTES && !(attrs & FILE_ATTRIBUTE_DIRECTORY))
 					{
-						// Construct file:/// URI, replacing backslashes with forward slashes.
-						// URL-encode spaces and special characters using Win32 UrlCreateFromPathW.
-						constexpr DWORD kMaxUrlLen = 2083;
-						WCHAR encodedUrl[kMaxUrlLen]{};
-						DWORD urlLen = kMaxUrlLen;
-						HRESULT hr = UrlCreateFromPathW(wallpaperPath.c_str(), encodedUrl, &urlLen, 0);
-						std::wstring uri;
-						if (SUCCEEDED(hr))
-						{
-							uri = encodedUrl;
-						}
-						else
-						{
-							// Fallback: manual construction (may fail on special chars)
-							uri = L"file:///" + wallpaperPath;
-							std::replace(uri.begin(), uri.end(), L'\\', L'/');
-						}
-
-						winrt::Windows::Foundation::Uri fileUri{ uri };
-						BitmapImage bitmap;
-						bitmap.ImageFailed([](winrt::Windows::Foundation::IInspectable const&,
-											  winrt::Microsoft::UI::Xaml::ExceptionRoutedEventArgs const& args)
-						{
-							OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
-						});
-						bitmap.UriSource(fileUri);
-						wil::resume_foreground(m_dispatcher);
-						img.Source(bitmap);
-
-						OutputDebugStringW(L"壁纸已更改！\n");
+						hasWallpaper = true;
 					}
-					catch (...)
-					{
-						OutputDebugStringW(L"SetDesktopBackground: BitmapImage creation failed\n");
-					}
-					co_return;
 				}
 			}
 
-			// 如果没有可用壁纸，则尝试读取纯色背景（注册表：Control Panel\\Colors\\Background，格式 "R G B"）
+			// 如果有壁纸，构造 URI（URL 编码）
+			std::wstring imageUri;
+			if (hasWallpaper)
+			{
+				constexpr DWORD kMaxUrlLen = 2083;
+				WCHAR encodedUrl[kMaxUrlLen]{};
+				DWORD urlLen = kMaxUrlLen;
+				HRESULT hr = UrlCreateFromPathW(wallpaperPath.c_str(), encodedUrl, &urlLen, 0);
+				if (SUCCEEDED(hr))
+				{
+					imageUri = encodedUrl;
+				}
+				else
+				{
+					// Fallback: manual construction
+					imageUri = L"file:///" + wallpaperPath;
+					std::replace(imageUri.begin(), imageUri.end(), L'\\', L'/');
+				}
+			}
+
+			// ========== 后台线程执行：读取纯色背景（备选方案） ==========
+			std::wstring colorString;
 			WCHAR colorBuf[128]{};
 			DWORD bufSize = sizeof(colorBuf);
 			LSTATUS status = RegGetValueW(HKEY_CURRENT_USER,
@@ -277,12 +265,41 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 										  nullptr,
 										  colorBuf,
 										  &bufSize);
-			if (status == ERROR_SUCCESS && border)
+			if (status == ERROR_SUCCESS)
 			{
-				std::wstring s{ colorBuf };
-				// 解析 "R G B"
+				colorString = colorBuf;
+			}
+
+			// ========== 回到 UI 线程更新控件 ==========
+			co_await wil::resume_foreground(m_dispatcher);
+
+			// 优先设置壁纸（如果获取成功）
+			if (hasWallpaper && img)
+			{
+				try
+				{
+					BitmapImage bitmap;
+					bitmap.ImageFailed([](winrt::Windows::Foundation::IInspectable const&,
+										  winrt::Microsoft::UI::Xaml::ExceptionRoutedEventArgs const& args)
+									   {
+										   OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
+									   });
+					bitmap.UriSource(winrt::Windows::Foundation::Uri{ imageUri });
+					img.Source(bitmap);
+					OutputDebugStringW(L"壁纸已更改！\n");
+					co_return;
+				}
+				catch (...)
+				{
+					OutputDebugStringW(L"SetDesktopBackground: BitmapImage creation failed\n");
+				}
+			}
+
+			// 如果没有壁纸或加载失败，尝试设置纯色背景
+			if (!colorString.empty() && border)
+			{
 				int r = 0, g = 0, b = 0;
-				std::wistringstream iss(s);
+				std::wistringstream iss(colorString);
 				if ((iss >> r >> g >> b))
 				{
 					::winrt::Windows::UI::Color color{};
@@ -293,9 +310,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 					auto brush = SolidColorBrush(color);
 					border.Background(brush);
-
 					OutputDebugStringW(L"纯色背景已设置！\n");
-					co_return;
 				}
 			}
 		}
@@ -303,12 +318,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			OutputDebugStringW(L"SetDesktopBackground: Unexpected exception\n");
 		}
+
+		co_return;
 	}
 
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::OnSettingsPageLoadedAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		auto weak = get_weak();
 
+		// ========== 后台线程：执行所有非 UI 操作 ==========
 		co_await winrt::resume_background();
 
 		try
@@ -331,9 +349,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 #ifdef _DEBUG
 		OutputDebugStringW((m_initialLanguageOverride + L"\n").c_str());
+#endif
 
-#endif // _DEBUG
-
+		// ========== 回到 UI 线程：执行所有 UI 初始化 ==========
 		co_await wil::resume_foreground(m_dispatcher);
 
 		auto strong = weak.get();
@@ -381,7 +399,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			{
 				combo.Items().Clear();
 
-				struct PageEntry { const wchar_t* display; const wchar_t* tag; };
+				struct PageEntry
+				{
+					const wchar_t* display; const wchar_t* tag;
+				};
 				PageEntry entries[] = {
 					{ L"Home",     L"home" },
 					{ L"Tasks",    L"tasks" },
@@ -398,8 +419,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				}
 			}
 
-			// Initialize background and info bar
-			SetDesktopBackground();
+			co_await SetDesktopBackground();
+
 			m_hasPendingLangChange = false;
 			if (auto infoBar = RestartLanguageInfoBar())
 			{
@@ -433,7 +454,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 						savedTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
 					}
 				}
-				catch (...) {}
+				catch (...)
+				{
+				}
 
 				if (auto combo = StartPageCombobox())
 				{
@@ -452,7 +475,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				m_isStartPageLoading = false;
 			}
 		}
-		catch (...) {}
+		catch (...)
+		{
+		}
 
 		m_loadAction = nullptr;
 		co_return;
