@@ -10,6 +10,7 @@
 #include "../../Helpers/WindowHelper.h"
 #include "../../Helpers/ThemeHelper.h"
 #include "winrt/Microsoft.Windows.AppLifecycle.h"
+#include "winrt/Microsoft.Windows.Globalization.h"
 // 解析 BitmapImage 的构造函数实现
 #include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 #include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
@@ -363,7 +364,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			{
 				comboLang.Items().Clear();
 
-				auto supported = ApplicationLanguages::Languages();
+				// App clearfies languages
+				auto supported = winrt::Microsoft::Windows::Globalization::ApplicationLanguages::ManifestLanguages();
 				int32_t index = 0;
 				int32_t selectedIndex = 0;
 

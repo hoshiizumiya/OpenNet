@@ -1044,4 +1044,7 @@
   <data name="TorrentCheckModalWindowTitleBar.Title" xml:space="preserve">
     <value>Create a new bittorrent task</value>
   </data>
+  <data name="ViewComboBoxSystemLang" xml:space="preserve">
+    <value>Use the system primary language</value>
+  </data>
 </root>

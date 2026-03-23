@@ -1101,4 +1101,7 @@
   <data name="TorrentCheckModalWindowTitleBar.Title" xml:space="preserve">
     <value>创建一个新的种子任务</value>
   </data>
+  <data name="ViewComboBoxSystemLang" xml:space="preserve">
+    <value>使用系统首选语言</value>
+  </data>
 </root>
