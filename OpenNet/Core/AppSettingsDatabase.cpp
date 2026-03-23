@@ -160,8 +160,14 @@ namespace OpenNet::Core
 	{
 		auto str = GetString(category, key);
 		if (!str) return std::nullopt;
-		try { return std::stoll(*str); }
-		catch (...) { return std::nullopt; }
+		try
+		{
+			return std::stoll(*str);
+		}
+		catch (...)
+		{
+			return std::nullopt;
+		}
 	}
 
 	void AppSettingsDatabase::SetDouble(std::string const& category,
@@ -179,8 +185,14 @@ namespace OpenNet::Core
 	{
 		auto str = GetString(category, key);
 		if (!str) return std::nullopt;
-		try { return std::stod(*str); }
-		catch (...) { return std::nullopt; }
+		try
+		{
+			return std::stod(*str);
+		}
+		catch (...)
+		{
+			return std::nullopt;
+		}
 	}
 
 	void AppSettingsDatabase::SetBool(std::string const& category,
@@ -331,7 +343,7 @@ namespace OpenNet::Core
 		}
 	}
 
-	std::optional<std::wstring_view> AppSettingsDatabase::GetStringW(std::string const& category,
+	std::optional<std::wstring> AppSettingsDatabase::GetStringW(std::string const& category,
 																	 std::string const& key) const
 	{
 		std::lock_guard lk(m_mutex);
@@ -339,7 +351,7 @@ namespace OpenNet::Core
 
 		const char* sql = "SELECT value FROM settings WHERE category = ? AND key = ?;";
 		sqlite3_stmt* stmt = nullptr;
-		std::optional<std::wstring_view> result;
+		std::optional<std::wstring> result;
 
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) == SQLITE_OK)
 		{
@@ -349,7 +361,10 @@ namespace OpenNet::Core
 			if (sqlite3_step(stmt) == SQLITE_ROW)
 			{
 				auto text = reinterpret_cast<const wchar_t*>(sqlite3_column_text16(stmt, 0));
-				if (text) result = std::wstring_view(text);
+				if (text)
+				{
+					result = std::wstring(text);
+				}
 			}
 			sqlite3_finalize(stmt);
 		}

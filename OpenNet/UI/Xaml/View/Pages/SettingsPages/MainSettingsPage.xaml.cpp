@@ -24,10 +24,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	MainSettingsPage::MainSettingsPage()
 	{
-		InitializeComponent();
 		s_current = this;
-
-		SettingsNavView().SelectedItem(GeneralNavItem());
 	}
 
 	MainSettingsPage::~MainSettingsPage()
@@ -41,6 +38,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	MainSettingsPage* MainSettingsPage::Current()
 	{
 		return s_current;
+	}
+
+	void MainSettingsPage::MainSettingsPage_Loaded(IInspectable const&, RoutedEventArgs const&)
+	{
+		SettingsNavView().SelectedItem(GeneralNavItem());
 	}
 
 	void MainSettingsPage::SettingsBar_ItemClicked(BreadcrumbBar const& /*sender*/, BreadcrumbBarItemClickedEventArgs const& args)

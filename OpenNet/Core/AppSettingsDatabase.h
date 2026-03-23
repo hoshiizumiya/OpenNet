@@ -107,7 +107,7 @@ namespace OpenNet::Core
         void SetStringW(std::string const& category, std::string const& key, std::wstring_view const& value);
 
         /// Get a wide-string setting
-        std::optional<std::wstring_view> GetStringW(std::string const& category, std::string const& key) const;
+        std::optional<std::wstring> GetStringW(std::string const& category, std::string const& key) const;
 
         // ---------------------------------------------------------------
         //  Category constants for well-known setting groups

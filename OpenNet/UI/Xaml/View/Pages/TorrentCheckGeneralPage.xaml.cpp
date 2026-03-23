@@ -144,7 +144,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					if (m_viewModel.SavePath().empty())
 					{
 						// Set default save path
-						const std::wstring_view& downloadsPath = FileSystem::GetDownloadsPathW();
+						const std::wstring_view& downloadsPath = FileSystem::GetDownloadsPathW().GetResults();
 						if (downloadsPath.empty())
 						{
 							savePathBox.Text(downloadsPath);

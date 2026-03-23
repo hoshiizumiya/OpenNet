@@ -16,7 +16,7 @@ namespace winrt::OpenNet::Core::IO
 {
 	std::wstring FileSystem::AppDataPathW;
 	std::wstring FileSystem::AppTempPathW;
-	std::wstring FileSystem::AppDownloadPathW;
+	winrt::hstring FileSystem::AppDownloadPathW;
 
 	// Never use it
 	bool FileSystem::CreateDirectory(const std::wstring& path)
@@ -100,20 +100,22 @@ namespace winrt::OpenNet::Core::IO
 	}
 
 	// .get() may not available in the UI thread, so make sure it's not in the UI thread at the first call
-	std::wstring_view FileSystem::GetDownloadsPathW()
+	winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> FileSystem::GetDownloadsPathW()
 	{
 		if (!AppDownloadPathW.empty())
 		{
-			return AppDownloadPathW;
+			co_return AppDownloadPathW;
 		}
 		try
-		{
-			AppDownloadPathW = winrt::Windows::Storage::KnownFolders::GetFolderAsync(winrt::Windows::Storage::KnownFolderId::DownloadsFolder).get().Path().c_str();
-			return AppDownloadPathW;
+		{ 
+			Windows::Storage::StorageFolder DownF = co_await winrt::Windows::Storage::KnownFolders::GetFolderAsync(winrt::Windows::Storage::KnownFolderId::DownloadsFolder);
+				
+			AppDownloadPathW = DownF.Path().c_str();
+			co_return AppDownloadPathW;
 		}
 		catch (...)
 		{
-			return {};
+			co_return {};
 		}
 	}
 }

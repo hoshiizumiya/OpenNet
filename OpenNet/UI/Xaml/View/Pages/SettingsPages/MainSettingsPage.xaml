@@ -8,6 +8,7 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     NavigationCacheMode="Disabled"
+    Loaded="MainSettingsPage_Loaded"
     mc:Ignorable="d">
 
     <NavigationView

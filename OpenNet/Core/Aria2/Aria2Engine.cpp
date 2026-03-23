@@ -68,7 +68,7 @@ std::filesystem::path OpenNet::Core::Aria2::GetDownloadsFolderPath()
 {
 	static std::filesystem::path cached = ([]() -> std::filesystem::path
 	{
-		std::filesystem::path fp(winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW());
+		std::filesystem::path fp(winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults().c_str());
 		std::filesystem::create_directories(fp);
 		return fp;
 	}());

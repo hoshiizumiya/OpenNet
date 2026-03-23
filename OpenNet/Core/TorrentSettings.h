@@ -107,11 +107,11 @@ namespace OpenNet::Core
 		std::string peerFingerprint{ "-ON0100-" }; // OpenNet client ID
 
 		// ----- Download Defaults -----
-		std::wstring_view defaultSavePath; // empty = user's Downloads folder
+		std::wstring defaultSavePath; // empty = user's Downloads folder
 		bool preallocateStorage{ false };
 		bool autoStartDownloads{ true };
 		bool moveCompletedEnabled{ false };
-		std::wstring_view moveCompletedPath;
+		std::wstring moveCompletedPath;
 	};
 
 	// ---------------------------------------------------------------

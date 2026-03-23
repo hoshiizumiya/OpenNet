@@ -30,7 +30,6 @@
         </Grid.ColumnDefinitions>
 
         <!--  Main Settings ScrollView  -->
-        <!--  Loaded="AnnotatedScrollBarPage_Loaded"  -->
         <ScrollView x:Name="SettingsScrollView">
             <StackPanel Margin="24" Spacing="4">
 

@@ -38,7 +38,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	SettingsPage::SettingsPage()
 	{
-		InitializeComponent();
 		s_current = this;
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 

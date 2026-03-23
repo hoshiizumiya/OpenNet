@@ -10,7 +10,7 @@ namespace winrt::OpenNet::Core::IO
         // Wide-string variants for callers that need std::wstring
         static std::wstring_view GetAppDataPathW();
         static std::wstring_view GetAppTempPathW();
-        static std::wstring_view GetDownloadsPathW();
+        static winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> GetDownloadsPathW();
 
         // Create directory if not exists
         static bool CreateDirectory(const std::wstring& path);
@@ -24,6 +24,6 @@ namespace winrt::OpenNet::Core::IO
     private:
         static std::wstring AppDataPathW;
         static std::wstring AppTempPathW;
-        static std::wstring AppDownloadPathW;
+        static winrt::hstring AppDownloadPathW;
     };
 }

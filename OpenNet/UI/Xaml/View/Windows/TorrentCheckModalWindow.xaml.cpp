@@ -78,7 +78,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 
 		// Fire and forget - the async operation manages its own lifetime
-		ParseTorrentMetadataAsync().Completed([](auto const&, auto const&) {});
+		ParseTorrentMetadataAsync().Completed([](auto const&, auto const&)
+											  {});
 	}
 
 	IAsyncAction TorrentCheckModalWindow::ParseTorrentMetadataAsync()
@@ -88,9 +89,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		// Update UI to loading state
 		dispatcherQueue.TryEnqueue([this]()
-		{
-			UpdateLoadingState(true, L"Initializing...", 5);
-		});
+								   {
+									   UpdateLoadingState(true, L"Initializing...", 5);
+								   });
 
 		std::string torrentSource = winrt::to_string(m_torrentLink);
 
@@ -98,25 +99,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (!::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsValidTorrentSource(torrentSource))
 		{
 			dispatcherQueue.TryEnqueue([this]()
-			{
-				ShowError(L"Invalid torrent link or file path");
-			});
+									   {
+										   ShowError(L"Invalid torrent link or file path");
+									   });
 			co_return;
 		}
 
 		// Set progress callback
 		m_metadataFetcher->SetProgressCallback([this, dispatcherQueue](const std::string& status, int progress)
-		{
-			dispatcherQueue.TryEnqueue([this, status = winrt::to_hstring(status), progress]()
-			{
-				UpdateLoadingState(true, status, progress);
-			});
-		});
+											   {
+												   dispatcherQueue.TryEnqueue([this, status = winrt::to_hstring(status), progress]()
+																			  {
+																				  UpdateLoadingState(true, status, progress);
+																			  });
+											   });
 
 		dispatcherQueue.TryEnqueue([this]()
-		{
-			UpdateLoadingState(true, L"Fetching torrent metadata...", 10);
-		});
+								   {
+									   UpdateLoadingState(true, L"Fetching torrent metadata...", 10);
+								   });
 
 		try
 		{
@@ -125,43 +126,43 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				torrentSource,
 				// On success callback
 				[this, dispatcherQueue](::OpenNet::Core::Torrent::TorrentMetadataInfo const& metadata)
-			{
-				dispatcherQueue.TryEnqueue([this, metadata]()
 				{
-					ShowMetadata(metadata);
-				});
-			},
+					dispatcherQueue.TryEnqueue([this, metadata]()
+											   {
+												   ShowMetadata(metadata);
+											   });
+				},
 				// On error callback
 				[this, dispatcherQueue](std::string const& errorMsg)
-			{
-				dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(errorMsg)]()
 				{
-					ShowError(msg);
-				});
-			},
+					dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(errorMsg)]()
+											   {
+												   ShowError(msg);
+											   });
+				},
 				60  // timeout seconds
 			);
 		}
 		catch (winrt::hresult_error const& ex)
 		{
 			dispatcherQueue.TryEnqueue([this, msg = ex.message()]()
-			{
-				ShowError(L"Metadata fetch error: " + msg);
-			});
+									   {
+										   ShowError(L"Metadata fetch error: " + msg);
+									   });
 		}
 		catch (std::exception const& ex)
 		{
 			dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(ex.what())]()
-			{
-				ShowError(L"Metadata fetch error: " + msg);
-			});
+									   {
+										   ShowError(L"Metadata fetch error: " + msg);
+									   });
 		}
 		catch (...)
 		{
 			dispatcherQueue.TryEnqueue([this]()
-			{
-				ShowError(L"Unknown error during metadata fetch");
-			});
+									   {
+										   ShowError(L"Unknown error during metadata fetch");
+									   });
 		}
 	}
 
@@ -236,7 +237,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TorrentMetadataViewModel>(metadata);
 
 		// Set default save path
-		const std::wstring_view& defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+		const std::wstring_view& defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
 		if (!defaultPath.empty())
 		{
 			m_metadataViewModel.SavePath(defaultPath);
@@ -318,9 +319,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			else
 			{
 				DispatcherQueue().TryEnqueue([this]()
-				{
-					ShowError(L"Invalid torrent source: not a magnet link or torrent file");
-				});
+											 {
+												 ShowError(L"Invalid torrent source: not a magnet link or torrent file");
+											 });
 				co_return;
 			}
 
@@ -332,17 +333,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			else
 			{
 				DispatcherQueue().TryEnqueue([this]()
-				{
-					ShowError(L"Failed to start download");
-				});
+											 {
+												 ShowError(L"Failed to start download");
+											 });
 			}
 		}
 		catch (std::exception const& ex)
 		{
 			DispatcherQueue().TryEnqueue([this, msg = winrt::to_hstring(ex.what())]()
-			{
-				ShowError(L"Error starting download: " + msg);
-			});
+										 {
+											 ShowError(L"Error starting download: " + msg);
+										 });
 		}
 	}
 
@@ -350,7 +351,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		StartDownloadAsync().Completed([](auto const&, auto const&) {});
+		StartDownloadAsync().Completed([](auto const&, auto const&)
+									   {});
 	}
 
 	void TorrentCheckModalWindow::CancelButton_Click(

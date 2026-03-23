@@ -76,7 +76,7 @@ namespace OpenNet::Core
 			// Resolve default save path if empty
 			if (m_settings.defaultSavePath.empty())
 			{
-				auto downloads = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+				auto downloads = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
 				if (!downloads.empty())
 				{
 					m_settings.defaultSavePath = downloads;

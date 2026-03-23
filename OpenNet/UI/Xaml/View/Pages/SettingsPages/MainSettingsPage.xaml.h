@@ -20,6 +20,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		~MainSettingsPage();
 		static MainSettingsPage* Current();
 
+		void MainSettingsPage_Loaded(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		// Breadcrumb handler
 		void SettingsBar_ItemClicked(Microsoft::UI::Xaml::Controls::BreadcrumbBar const&, Microsoft::UI::Xaml::Controls::BreadcrumbBarItemClickedEventArgs const& args);
 

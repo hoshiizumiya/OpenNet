@@ -154,6 +154,7 @@ jobs:
             /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageDir=AppPackages\ `
+            /p:AppxPackageVersion=1.0.${{ needs.build.outputs.date }}.${{ github.run_number }} `
             /p:AppxPackageSigningEnabled=true `
             /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /p:PackageCertificateKeyFile= `
@@ -210,10 +211,9 @@ jobs:
   prerelease:
     needs: build
     runs-on: ubuntu-latest
-    if: >
-      github.ref == 'refs/heads/develop' &&
-      (github.event_name == 'push' ||
-      (github.event_name == 'workflow_dispatch' && inputs.publish_prerelease == true))
+    if: |
+      github.ref == 'refs/heads/master' &&
+      github.event_name == 'push'
 
     steps:
       - name: Download build artifact
@@ -234,6 +234,9 @@ jobs:
           generateReleaseNotes: true
           body: |
             Auto-updated canary package.
+            Date: ${{ needs.build.outputs.date }}
             Branch: ${{ github.ref_name }}
             Commit: ${{ github.sha }}
-            Date: ${{ needs.build.outputs.date }}
+
+            Trigger: ${{ github.event_name }}
+            Actor: ${{ github.actor }}
