@@ -5,10 +5,11 @@
 #endif
 
 #include <winrt/Windows.System.h>
+#include "Core/Utils/Message.h"
 #include "MainSettingsPage.xaml.h"
-#include "../../MainWindow.xaml.h"
-#include "../../Helpers/WindowHelper.h"
-#include "../../Helpers/ThemeHelper.h"
+#include "MainWindow.xaml.h"
+#include "Helpers/WindowHelper.h"
+#include "Helpers/ThemeHelper.h"
 #include "winrt/Microsoft.Windows.AppLifecycle.h"
 #include "winrt/Microsoft.Windows.Globalization.h"
 // 解析 BitmapImage 的构造函数实现
@@ -370,7 +371,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				int32_t selectedIndex = 0;
 
 				auto autoItem = ComboBoxItem();
-				autoItem.Content(box_value(hstring(L"Auto")));
+				
+				autoItem.Content(box_value(ResourceGetString(L"ViewComboBoxSystemLang")));
 				autoItem.Tag(box_value(hstring(L"")));
 				comboLang.Items().Append(autoItem);
 				index = 1;

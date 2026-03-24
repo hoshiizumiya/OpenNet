@@ -506,10 +506,11 @@ namespace OpenNet::Core
 		// 启动网络状态监控 / Start network state monitoring
 		try
 		{
-			NetworkInformation::NetworkStatusChanged([this](auto&&)
+           // Register network status changed handler and store token so we can unregister later
+			m_networkStatusChangedToken = NetworkInformation::NetworkStatusChanged([this](auto&&)
 			{
 				// 网络状态发生变化时触发事件 / Trigger event when network state changes
-				m_networkStateChanged(nullptr, nullptr);
+				this->m_networkStateChanged(nullptr, nullptr);
 			});
 		}
 		catch (...)
@@ -523,5 +524,14 @@ namespace OpenNet::Core
 		// 停止网络状态监控 / Stop network state monitoring
 		// WinRT NetworkInformation 不提供直接的取消注册方法
 		// WinRT NetworkInformation doesn't provide direct unregister method
+       try
+		{
+			if (m_networkStatusChangedToken.value != 0)
+			{
+				NetworkInformation::NetworkStatusChanged(m_networkStatusChangedToken);
+				m_networkStatusChangedToken = {};
+			}
+		}
+		catch (...) {}
 	}
 }

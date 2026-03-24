@@ -4,6 +4,7 @@
 - First general instruction
 - Second general instruction
 - When updating documentation, explicitly ensure the user can see the actual edits in the target markdown file (avoid claiming changes without applying them).
+- Prefer concise, impersonal explanations; users may correct event-flow analysis and expect precise distinction between direct event calls and indirect reentrancy in WinUI navigation code.
 
 ## Code Style
 - Use specific formatting rules
@@ -16,9 +17,7 @@
 ## CppWinRT tips
 - C++/WinRT 协程线程切换指南，适用于 C++/WinRT 与 UI 框架（WinUI 3、UWP）
   - 1. 基本原则 
-Windows UI 框架遵循：UI 控件只能在 UI 线程访问，耗时操作必须在后台线程执行，协程代码通常遵循如下流程：
-```
-UI thread
+Windows UI 框架遵循：UI 控件只能在 UI 线程访问，耗时操作必须在后台线程执行，协程代码通常遵循如下流程：UI thread
     ↓
 resume_background()
     ↓
@@ -26,9 +25,7 @@ resume_background()
     ↓
 resume_foreground(dispatcher)
     ↓
-更新 UI
-```
-2. 推荐线程切换 API：切换到后台线程 `co_await winrt::resume_background();`. 用途：CPU 密集型计算/IO 操作/网络请求/文件处理
+更新 UI2. 推荐线程切换 API：切换到后台线程 `co_await winrt::resume_background();`. 用途：CPU 密集型计算/IO 操作/网络请求/文件处理
 
 调度到 Windows threadpool不阻塞 UI 线程
 

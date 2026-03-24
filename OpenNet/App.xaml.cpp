@@ -9,16 +9,148 @@
 #include "Core/DownloadManager.h"
 #include "Core/RSS/RSSManager.h"
 #include "Core/GeoIP/GeoIPManager.h"
+#include "Core/AppSettingsDatabase.h"
 
 #include <winrt/Windows.ApplicationModel.Activation.h>
 #include <winrt/Microsoft.Windows.Storage.h>
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
+#include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
+#include <winrt/Microsoft.UI.Xaml.Media.h>
+#include <winrt/WinUI3Package.h>
 #include <sentry.h>
+#include <Shlwapi.h>
+#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 using namespace Microsoft::UI::Windowing;
 using namespace winrt::Microsoft::Windows::AppLifecycle;
+using namespace winrt::Microsoft::UI::Composition::SystemBackdrops;
+using namespace winrt::Microsoft::UI::Xaml::Media;
+using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
+
+namespace
+{
+	void ApplyBackdropFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)
+	{
+		if (!window) return;
+
+		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 2);
+		auto const micaType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "mica_type", 1)), 0, 1);
+		auto const acrylicType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "acrylic_type", 0)), 0, 2);
+
+		switch (backgroundType)
+		{
+		case 1:
+		{
+			if (!MicaController::IsSupported())
+			{
+				window.SystemBackdrop(nullptr);
+				return;
+			}
+
+			auto mica = MicaBackdrop{};
+			mica.Kind(micaType == 1 ? MicaKind::BaseAlt : MicaKind::Base);
+			window.SystemBackdrop(mica);
+			return;
+		}
+		case 2:
+		{
+			if (!DesktopAcrylicController::IsSupported())
+			{
+				window.SystemBackdrop(nullptr);
+				return;
+			}
+
+			auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
+			switch (acrylicType)
+			{
+			case 1:
+				acrylic.Kind(DesktopAcrylicKind::Base);
+				break;
+			case 2:
+				acrylic.Kind(DesktopAcrylicKind::Thin);
+				break;
+			case 0:
+			default:
+				acrylic.Kind(DesktopAcrylicKind::Default);
+				break;
+			}
+			window.SystemBackdrop(acrylic);
+			return;
+		}
+		case 0:
+		default:
+			window.SystemBackdrop(nullptr);
+			return;
+		}
+	}
+
+	winrt::Microsoft::UI::Xaml::Media::Stretch StretchFromIndex(int index)
+	{
+		switch (index)
+		{
+		case 1: return winrt::Microsoft::UI::Xaml::Media::Stretch::Fill;
+		case 2: return winrt::Microsoft::UI::Xaml::Media::Stretch::Uniform;
+		case 3: return winrt::Microsoft::UI::Xaml::Media::Stretch::UniformToFill;
+		case 0:
+		default:
+			return winrt::Microsoft::UI::Xaml::Media::Stretch::None;
+		}
+	}
+
+	void ApplyImageBackgroundFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)
+	{
+		if (!window) return;
+
+		auto panel = window.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::Panel>();
+		if (!panel) return;
+
+		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		auto imagePath = db.GetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image").value_or(L"");
+		if (imagePath.empty())
+		{
+			panel.Background(nullptr);
+			return;
+		}
+
+		constexpr DWORD kMaxUrlLen = 2083;
+		WCHAR encodedUrl[kMaxUrlLen]{};
+		DWORD urlLen = kMaxUrlLen;
+		std::wstring imageUri;
+		if (SUCCEEDED(UrlCreateFromPathW(imagePath.c_str(), encodedUrl, &urlLen, 0)))
+		{
+			imageUri = encodedUrl;
+		}
+		else
+		{
+			imageUri = L"file:///" + imagePath;
+			std::replace(imageUri.begin(), imageUri.end(), L'\\', L'/');
+		}
+
+		auto stretchIndex = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_stretch", 3)), 0, 3);
+		auto opacity = std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_opacity").value_or(20.0), 0.0, 100.0) / 100.0;
+
+		try
+		{
+			auto bitmap = BitmapImage{};
+			bitmap.UriSource(winrt::Windows::Foundation::Uri{ imageUri });
+			auto brush = ImageBrush{};
+			brush.ImageSource(bitmap);
+			brush.Stretch(StretchFromIndex(stretchIndex));
+			brush.Opacity(opacity);
+			panel.Background(brush);
+		}
+		catch (...) {}
+	}
+
+	void ApplyWindowAppearanceFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)
+	{
+		ApplyBackdropFromSettings(window);
+		ApplyImageBackgroundFromSettings(window);
+	}
+}
 
 namespace winrt::OpenNet::implementation
 {
@@ -55,6 +187,7 @@ namespace winrt::OpenNet::implementation
 	{
 		// Create main window
 		window = make<MainWindow>();
+		ApplyWindowAppearanceFromSettings(window);
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 
 		// Apply saved theme to the window
@@ -112,7 +245,9 @@ namespace winrt::OpenNet::implementation
 					}
 				}
 			}
-			catch (...) {}
+			catch (...)
+			{
+			}
 
 			// First time: need to show dialog — cancel close and go async
 			args.Cancel(true);
@@ -120,18 +255,12 @@ namespace winrt::OpenNet::implementation
 			HandleCloseStrategyAsync();
 		});
 
-		// Initialize RSS Manager early so feeds update in the background
-		// regardless of whether the user navigates to the RSS page
-		InitializeRSSManagerAsync();
-
-		// Initialize GeoIP database (non-blocking, small CSV load)
-		try
-		{
-			::OpenNet::Core::GeoIPManager::Instance().Initialize();
-		}
-		catch (...) { OutputDebugStringA("App: GeoIP init failed\n"); }
 
 		window.Activate();
+
+		InitializeRSSManagerAsync();
+		::OpenNet::Core::GeoIPManager::Instance().Initialize();
+
 
 #if _DEBUG
 		// Language Hot-Reload support
@@ -150,6 +279,9 @@ namespace winrt::OpenNet::implementation
 		// Handle initial activation arguments
 		auto activationArgs = AppInstance::GetCurrent().GetActivatedEventArgs();
 		HandleActivation(activationArgs);
+
+		// Apply persisted backdrop from settings
+		ApplyBackdropFromSettings(window);
 	}
 
 	// To do: Custom activation, Windows integration
@@ -161,6 +293,7 @@ namespace winrt::OpenNet::implementation
 			// 如果窗口不存在，创建新窗口
 			// 这种情况发生在重新激活时窗口已关闭的情况
 			window = make<MainWindow>();
+			ApplyWindowAppearanceFromSettings(window);
 			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 
 			// Apply theme to new window
@@ -302,7 +435,10 @@ namespace winrt::OpenNet::implementation
 					values.Insert(L"Hide2TrayWhenCloseAsked", box_value(true));
 					values.Insert(L"Hide2TrayWhenClose", box_value(result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary));
 				}
-				catch (...) { OutputDebugStringA("App: Failed to save close preference\n"); }
+				catch (...)
+				{
+					OutputDebugStringA("App: Failed to save close preference\n");
+				}
 			}
 
 			if (result == winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
@@ -359,16 +495,34 @@ namespace winrt::OpenNet::implementation
 		OutputDebugStringA("App: Shutting down engines...\n");
 
 		// Stop RSS background updates (lightweight, just signals thread + joins)
-		try { ::OpenNet::Core::RSS::RSSManager::Instance().Stop(); }
-		catch (...) { OutputDebugStringA("App: RSS shutdown error\n"); }
+		try
+		{
+			::OpenNet::Core::RSS::RSSManager::Instance().Stop();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: RSS shutdown error\n");
+		}
 
 		// Shutdown P2PManager (torrent session uses abort() + proxy, non-blocking)
-		try { ::OpenNet::Core::P2PManager::Instance().Shutdown(); }
-		catch (...) { OutputDebugStringA("App: P2PManager shutdown error\n"); }
+		try
+		{
+			::OpenNet::Core::P2PManager::Instance().Shutdown();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: P2PManager shutdown error\n");
+		}
 
 		// Shutdown DownloadManager (Aria2 RPC + process termination)
-		try { ::OpenNet::Core::DownloadManager::Instance().Shutdown(); }
-		catch (...) { OutputDebugStringA("App: DownloadManager shutdown error\n"); }
+		try
+		{
+			::OpenNet::Core::DownloadManager::Instance().Shutdown();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: DownloadManager shutdown error\n");
+		}
 
 		OutputDebugStringA("App: Engine shutdown completed\n");
 	}

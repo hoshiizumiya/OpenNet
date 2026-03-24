@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.ThemesSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -8,22 +8,152 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
+    <ScrollView>
+        <StackPanel MinWidth="300" Margin="24">
+            <essential:SettingsCard
+                x:Name="SoftPersonalization"
+                x:Uid="SoftPersonalization"
+                Margin="0,3,0,3"
+                Description="A SettingsCard can be made clickable and you can leverage the Command property or Click event."
+                Header=""
+                IsClickEnabled="True">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon FontSize="12" Glyph="&#xE771;" />
+                </essential:SettingsCard.HeaderIcon>
 
-    <Grid Margin="24">
+            </essential:SettingsCard>
 
-        <essential:SettingsCard
-            x:Name="SoftPersonalization"
-            x:Uid="SoftPersonalization"
-            Margin="0,3,0,3"
-            Description="A SettingsCard can be made clickable and you can leverage the Command property or Click event."
-            Header=""
-            IsClickEnabled="True">
-            <essential:SettingsCard.HeaderIcon>
-                <FontIcon FontSize="12"
-                        Glyph="&#xE771;"/>
-            </essential:SettingsCard.HeaderIcon>
+            <TextBlock
+                Padding="10"
+                HorizontalAlignment="Left"
+                FontSize="14"
+                FontWeight="Bold"
+                Text="Appearance" />
 
-        </essential:SettingsCard>
+            <!--  Background  -->
+            <essential:SettingsExpander
+                Margin="0,0,0,10"
+                Description="应用的背景类型"
+                Header="背景"
+                IsExpanded="True">
+                <essential:SettingsExpander.HeaderIcon>
+                    <FontIcon
+                        FontFamily="Segoe Fluent Icons"
+                        FontSize="16"
+                        Glyph="&#xef1f;" />
+                </essential:SettingsExpander.HeaderIcon>
+                <ComboBox
+                    x:Name="BackgroundComboBox"
+                    MinWidth="130"
+                    essential:ComboBoxHelper.AcrylicWorkaround="True"
+                    SelectionChanged="BackgroundComboBox_SelectionChanged">
+                    <ComboBoxItem Content="Static" />
+                    <ComboBoxItem Content="Mica" />
+                    <ComboBoxItem Content="Acrylic" />
+                </ComboBox>
+                <essential:SettingsExpander.Items>
+                    <essential:SettingsCard
+                        x:Name="AcrylicTypeCard"
+                        Description="背景的亚克力效果模式"
+                        Header="亚克力类型"
+                        IsActionIconVisible="False"
+                        IsClickEnabled="True">
+                        <!--  亚克力类型  -->
+                        <ComboBox
+                            x:Name="AcrylicTypeComboBox"
+                            MinWidth="150"
+                            essential:ComboBoxHelper.AcrylicWorkaround="True"
+                            SelectionChanged="AcrylicTypeComboBox_SelectionChanged">
+                            <ComboBoxItem Content="Default" />
+                            <ComboBoxItem Content="Base" />
+                            <ComboBoxItem Content="Thin" />
+                        </ComboBox>
+                    </essential:SettingsCard>
+                    <!--  Mica类型  -->
+                    <essential:SettingsCard
+                        x:Name="MicaTypeCard"
+                        Description="背景的 Mica 效果模式"
+                        Header="Mica 类型"
+                        IsActionIconVisible="False"
+                        IsClickEnabled="True">
+                        <ComboBox
+                            x:Name="MicaTypeComboBox"
+                            MinWidth="150"
+                            essential:ComboBoxHelper.AcrylicWorkaround="True"
+                            SelectionChanged="MicaTypeComboBox_SelectionChanged">
+                            <ComboBoxItem Content="Base" />
+                            <ComboBoxItem Content="BaseAlt" />
+                        </ComboBox>
+                    </essential:SettingsCard>
+                </essential:SettingsExpander.Items>
+            </essential:SettingsExpander>
 
-    </Grid>
+            <!--  图片背景  -->
+            <essential:SettingsExpander
+                Margin="0,0,0,10"
+                Description="在背景层添加自定义图片"
+                Header="图片背景">
+                <essential:SettingsExpander.HeaderIcon>
+                    <FontIcon
+                        FontFamily="Segoe Fluent Icons"
+                        FontSize="16"
+                        Glyph="&#xee71;" />
+                </essential:SettingsExpander.HeaderIcon>
+                <TextBlock x:Name="ImagePathText" Foreground="LightGray" />
+                <essential:SettingsExpander.Items>
+                    <essential:SettingsCard
+                        ActionIcon="&#xE8A7;"
+                        Click="SetImageButton_Click"
+                        Description="从电脑中导入一张图片作为背景"
+                        Header="导入背景"
+                        IsActionIconVisible="True"
+                        IsClickEnabled="True" />
+                    <essential:SettingsCard
+                        Click="ClearImageButton_Click"
+                        Description="清除已经设置的图片背景"
+                        Header="清除背景"
+                        IsActionIconVisible="True"
+                        IsClickEnabled="True" />
+                    <essential:SettingsCard
+                        Description="背景中图片大小的设置方式"
+                        Header="图片拉伸模式"
+                        IsActionIconVisible="False"
+                        IsClickEnabled="False">
+                        <ComboBox
+                            x:Name="ImageStretchComboBox"
+                            x:Uid="ImageStretchComboBox"
+                            Width="Auto"
+                            MinWidth="150"
+                            essential:ComboBoxHelper.AcrylicWorkaround="True"
+                            SelectionChanged="ImageStretchComboBox_SelectionChanged">
+                            <ComboBoxItem Content="None" />
+                            <ComboBoxItem Content="Fill" />
+                            <ComboBoxItem Content="Uniform" />
+                            <ComboBoxItem Content="UniformToFill" />
+                        </ComboBox>
+                    </essential:SettingsCard>
+                    <essential:SettingsCard
+                        Description="图片在背景中的透明度，会覆盖窗口色"
+                        Header="透明度"
+                        IsActionIconVisible="False"
+                        IsClickEnabled="False">
+                        <StackPanel Orientation="Horizontal">
+                            <Slider
+                                x:Name="ImageOpacitySlider"
+                                Width="300"
+                                Margin="0,0,10,0"
+                                essential:SliderHelper.AcrylicWorkaround="True"
+                                Maximum="100"
+                                Minimum="0"
+                                ValueChanged="ImageOpacitySlider_ValueChanged"
+                                Value="20" />
+                        </StackPanel>
+                    </essential:SettingsCard>
+                </essential:SettingsExpander.Items>
+            </essential:SettingsExpander>
+
+
+        </StackPanel>
+
+    </ScrollView>
 </Page>

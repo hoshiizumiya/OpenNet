@@ -62,9 +62,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Navigate back to appropriate page based on breadcrumb depth
 		if (args.Index() == 0)
 		{
-			// Navigate back to General Settings (root)
-			auto transitionInfo = SlideNavigationTransitionInfo{};
-			transitionInfo.Effect(SlideNavigationTransitionEffect::FromLeft);
 			SettingsNavView().SelectedItem(GeneralNavItem());
 		}
 	}
@@ -146,7 +143,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				nullptr,
 				transitionInfo);
 		}
-		else if (tag == L"downloadflash")
+		else if (tag == L"download")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::DownloadSettingsPage>(),

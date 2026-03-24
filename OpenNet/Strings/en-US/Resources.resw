@@ -1047,4 +1047,7 @@
   <data name="ViewComboBoxSystemLang" xml:space="preserve">
     <value>Use the system primary language</value>
   </data>
+  <data name="Appearance.Content" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
 </root>

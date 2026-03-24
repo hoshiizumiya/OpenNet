@@ -222,15 +222,6 @@
   <data name="Task_PeersList.Text" xml:space="preserve">
     <value>用户</value>
   </data>
-  <data name="Lang_Auto" xml:space="preserve">
-    <value>自动 / Auto</value>
-  </data>
-  <data name="Lang_Chinese" xml:space="preserve">
-    <value>中文 / Chinese</value>
-  </data>
-  <data name="Lang_English" xml:space="preserve">
-    <value>英文 / English</value>
-  </data>
   <data name="Protocol_IPv4First" xml:space="preserve">
     <value>IPv4优先 / IPv4 First</value>
   </data>
@@ -1103,5 +1094,8 @@
   </data>
   <data name="ViewComboBoxSystemLang" xml:space="preserve">
     <value>使用系统首选语言</value>
+  </data>
+  <data name="Appearance.Content" xml:space="preserve">
+    <value>外观</value>
   </data>
 </root>

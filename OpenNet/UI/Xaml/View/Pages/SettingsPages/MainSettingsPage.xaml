@@ -53,23 +53,22 @@
             <NavigationViewItemSeparator />
 
             <NavigationViewItem
-                x:Name="NetworkNavItem"
-                Content="Network"
-                Tag="network">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE968;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-
-            <NavigationViewItem
                 x:Name="BitTorrentNavItem"
                 Content="BitTorrent"
                 IsExpanded="True"
                 Tag="bittorrent">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE896;" />
+                    <FontIcon Glyph="&#xE703;" />
                 </NavigationViewItem.Icon>
                 <NavigationViewItem.MenuItems>
+                    <NavigationViewItem
+                        x:Name="NetworkNavItem"
+                        Content="Network"
+                        Tag="network">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="&#xE968;" />
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
                     <NavigationViewItem Content="Tracker" Tag="tracker">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE774;" />
@@ -98,11 +97,11 @@
             </NavigationViewItem>
 
             <NavigationViewItem
-                x:Name="DownloadFlashNavItem"
-                Content="Download/Flash"
-                Tag="downloadflash">
+                x:Name="DownloadBehaviorNavItem"
+                Content="DownloadBehavior"
+                Tag="download">
                 <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xEC59;" />
+                    <FontIcon Glyph="&#xE896;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -117,6 +116,7 @@
 
             <NavigationViewItem
                 x:Name="AppearanceNavItem"
+                x:Uid="Appearance"
                 Content="Appearance"
                 Tag="appearance">
                 <NavigationViewItem.Icon>

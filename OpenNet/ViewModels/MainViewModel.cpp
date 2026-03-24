@@ -144,8 +144,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 				{
 					try
 					{
-						::OpenNet::Core::NetworkDetector detector;
-						auto op = detector.TestPortAccessibilityAsync(
+                      auto op = m_networkDetector.TestPortAccessibilityAsync(
 							static_cast<uint16_t>(listenPort), true);
 						// Wait with periodic stop-flag checks instead of blocking indefinitely
 						auto status = op.Status();

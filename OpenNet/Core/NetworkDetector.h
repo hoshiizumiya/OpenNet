@@ -82,6 +82,8 @@ namespace OpenNet::Core
 
         // 事件 / Events
         winrt::event<winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable>> m_networkStateChanged;
+        // Token for the NetworkInformation::NetworkStatusChanged registration so we can unregister
+        winrt::event_token m_networkStatusChangedToken{};
 
         // 常量 / Constants
         static constexpr uint32_t DETECTION_TIMEOUT_MS = 30000;    // 检测超时 / Detection timeout

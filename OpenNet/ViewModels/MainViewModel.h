@@ -4,6 +4,7 @@
 #include <winrt/Microsoft.UI.Xaml.Input.h>
 #include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
+#include "Core/NetworkDetector.h"
 #include <thread>
 #include <atomic>
 #include <chrono>
@@ -134,6 +135,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		std::condition_variable m_speedCv;
 		std::mutex m_speedMutex;
 		void SpeedRefreshThreadEntry();
+		::OpenNet::Core::NetworkDetector m_networkDetector;
 
 		// Port check state
 		std::chrono::steady_clock::time_point m_lastPortCheckTime{};
