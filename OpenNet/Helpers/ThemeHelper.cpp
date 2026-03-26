@@ -1,9 +1,14 @@
 ﻿#include "pch.h"
+
+#include "Core/AppSettingsDatabase.h"
+
 #include "ThemeHelper.h"
+#include "WindowHelper.h"
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.UI.ViewManagement.h>
 #include <winrt/Microsoft.Windows.Storage.h>
 #include <winrt/Microsoft.UI.h>
+#include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
 #include <winrt/Microsoft.UI.Windowing.h>
 
 using namespace winrt;
@@ -136,6 +141,17 @@ namespace OpenNet::Helpers
 		else return ElementTheme::Default;
 	}
 
+	constexpr auto kBackdropFallbackColorKey = "backdrop_fallback_color";
+	constexpr auto kBackdropTintColorKey = "backdrop_tint_color";
+	constexpr auto kBackdropLuminosityOpacityKey = "backdrop_luminosity_opacity";
+	constexpr auto kBackdropTintOpacityKey = "backdrop_tint_opacity";
+	constexpr auto kBackdropEnableWhenInactiveKey = "backdrop_enable_when_inactive";
+	constexpr auto kBackdropUseFallbackKey = "backdrop_use_fallback";
+
+	void ThemeHelper::ApplyBackdropFromSettings()
+	{
+	}
+
 	ElementTheme ThemeHelper::GetSystemTheme()
 	{
 		try
@@ -197,5 +213,6 @@ namespace OpenNet::Helpers
 		{
 		}
 	}
+
 }
 

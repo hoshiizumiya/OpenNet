@@ -380,7 +380,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				for (auto const& langTag : supported)
 				{
 					winrt::Windows::Globalization::Language lang{ langTag };
-					auto display = lang.DisplayName();
+					auto display = lang.NativeName()+L" (" + lang.DisplayName()+L")";
 					auto item = ComboBoxItem();
 					item.Content(box_value(display));
 					item.Tag(box_value(langTag));

@@ -5,12 +5,19 @@
 #include <shlobj_core.h>
 #include <windows.h>
 #include <shellapi.h>
+#include <mutex>
 
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "ole32.lib")
 
 using namespace winrt;
 using namespace winrt::Microsoft::Windows::Storage;
+
+namespace
+{
+	std::once_flag g_AppDataOnce;
+	std::once_flag g_AppTempOnce;
+}
 
 namespace winrt::OpenNet::Core::IO
 {
@@ -67,7 +74,7 @@ namespace winrt::OpenNet::Core::IO
 
 	std::wstring_view FileSystem::GetAppDataPathW()
 	{
-		if (AppDataPathW.empty())
+		std::call_once(g_AppDataOnce, []()
 		{
 			try
 			{
@@ -75,28 +82,28 @@ namespace winrt::OpenNet::Core::IO
 			}
 			catch (...)
 			{
-				return {};
+				AppDataPathW.clear();
 			}
-		}
+		});
 
 		return AppDataPathW;
 	}
 
 	std::wstring_view FileSystem::GetAppTempPathW()
 	{
-		if (!AppTempPathW.empty())
+		std::call_once(g_AppTempOnce, []()
 		{
-			return AppTempPathW;
-		}
-		try
-		{
-			AppTempPathW = ApplicationData::GetDefault().LocalCachePath();
-			return AppTempPathW;
-		}
-		catch (...)
-		{
-			return {};
-		}
+			try
+			{
+				AppTempPathW = ApplicationData::GetDefault().LocalCachePath();
+			}
+			catch (...)
+			{
+				AppTempPathW.clear();
+			}
+		});
+
+		return AppTempPathW;
 	}
 
 	// .get() may not available in the UI thread, so make sure it's not in the UI thread at the first call
@@ -107,15 +114,15 @@ namespace winrt::OpenNet::Core::IO
 			co_return AppDownloadPathW;
 		}
 		try
-		{ 
+		{
 			Windows::Storage::StorageFolder DownF = co_await winrt::Windows::Storage::KnownFolders::GetFolderAsync(winrt::Windows::Storage::KnownFolderId::DownloadsFolder);
-				
+
 			AppDownloadPathW = DownF.Path().c_str();
 			co_return AppDownloadPathW;
 		}
 		catch (...)
 		{
-			co_return {};
+			co_return{};
 		}
 	}
 }

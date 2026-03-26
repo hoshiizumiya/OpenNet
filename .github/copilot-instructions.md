@@ -5,6 +5,7 @@
 - Second general instruction
 - When updating documentation, explicitly ensure the user can see the actual edits in the target markdown file (avoid claiming changes without applying them).
 - Prefer concise, impersonal explanations; users may correct event-flow analysis and expect precise distinction between direct event calls and indirect reentrancy in WinUI navigation code.
+- Prefer explicit type of variables instead of auto, especially when the type is not obvious from the right-hand side of the assignment, use auto in necessary cases.
 
 ## Code Style
 - Use specific formatting rules

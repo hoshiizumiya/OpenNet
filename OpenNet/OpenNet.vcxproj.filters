@@ -118,6 +118,8 @@
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml" />
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -291,9 +293,6 @@
     </ClCompile>
     <ClCompile Include="Core\DownloadManager.cpp">
       <Filter>Core</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\Folder.cpp">
-      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClCompile>
     <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp">
       <Filter>Core\DataGraph</Filter>
@@ -588,9 +587,6 @@
     </ClInclude>
     <ClInclude Include="ViewModels\ObservableMixin.h">
       <Filter>ViewModels</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\Folder.h">
-      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClInclude>
     <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h">
       <Filter>Core\DataGraph</Filter>

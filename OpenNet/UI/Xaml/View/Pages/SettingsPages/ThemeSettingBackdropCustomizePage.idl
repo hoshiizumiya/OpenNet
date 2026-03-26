@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+{
+    [default_interface]
+    runtimeclass ThemeSettingBackdropCustomizePage : Microsoft.UI.Xaml.Controls.Page
+    {
+        ThemeSettingBackdropCustomizePage();
+
+    }
+}

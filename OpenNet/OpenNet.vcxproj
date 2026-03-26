@@ -300,12 +300,20 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.h">
@@ -521,10 +529,16 @@
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
@@ -717,12 +731,20 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.cpp">
@@ -969,12 +991,20 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskSummaryPage.idl">
@@ -1271,7 +1301,7 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260224000\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260224000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1312,6 +1342,6 @@
     <Error Condition="!Exists('..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.6.0\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.6.1\build\native\WinUIEssential.WinUI3.targets'))" />
   </Target>
 </Project>

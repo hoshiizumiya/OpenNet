@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "UI/Xaml/Control/HomePage/Header/AnimatedImage.g.h"
 
@@ -28,8 +28,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 		winrt::Microsoft::UI::Composition::ContainerVisual m_container{ nullptr };
 		winrt::Microsoft::UI::Composition::SpriteVisual m_currentSprite{ nullptr };
 		winrt::Microsoft::UI::Composition::CompositionEffectFactory m_blurFactory{ nullptr };
+		winrt::Microsoft::UI::Composition::CompositionScopedBatch m_pendingFadeBatch{ nullptr };
 
 		winrt::Microsoft::UI::Xaml::Media::LoadedImageSurface m_currentSurface{ nullptr };
+     winrt::event_token m_pendingFadeCompletedToken{};
 		winrt::event_token m_loadedToken{};
 		winrt::event_token m_unloadedToken{};
 		winrt::event_token m_sizeChangedToken{};

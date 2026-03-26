@@ -7,6 +7,8 @@
 #include "SettingsPage.xaml.h"
 #include "AboutPage.xaml.h"
 #include "ThemesSettingsPage.xaml.h"
+#include "ThemeSettingBackdropCustomizePage.xaml.h"
+#include "FontCustomizePage.xaml.h"
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.xaml.h"
@@ -63,6 +65,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (args.Index() == 0)
 		{
 			SettingsNavView().SelectedItem(GeneralNavItem());
+		}
+		else if (args.Index() == 1)
+		{
+			SettingsNavView().SelectedItem(AppearanceNavItem());
+		}
+		else if (args.Index() == 2 && m_settingsBarItems.Size() > 2)
+		{
+			auto const pageTitle = m_settingsBarItems.GetAt(2);
+			auto transitionInfo = SlideNavigationTransitionInfo{};
+			transitionInfo.Effect(SlideNavigationTransitionEffect::FromLeft);
+			SettingsNavView().SelectedItem(AppearanceNavItem());
+
+			if (pageTitle == L"Colors Style")
+			{
+				SettingsFrame().Navigate(
+					xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ThemeSettingBackdropCustomizePage>(),
+					nullptr,
+					transitionInfo);
+				return;
+			}
+
+			if (pageTitle == L"Font Setting")
+			{
+				SettingsFrame().Navigate(
+					xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::FontCustomizePage>(),
+					nullptr,
+					transitionInfo);
+			}
 		}
 	}
 

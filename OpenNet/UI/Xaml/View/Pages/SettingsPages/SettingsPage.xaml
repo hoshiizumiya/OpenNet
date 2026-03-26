@@ -250,22 +250,28 @@
                     <ComboBox
                         x:Name="themeMode"
                         Width="Auto"
-                        MinWidth="160"
+                        MinWidth="240"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
                         AutomationProperties.AutomationId="themeModeComboBox"
                         SelectionChanged="themeMode_SelectionChanged">
-                        <ComboBoxItem
-                            x:Uid="ThemesLight"
-                            Content="Light"
-                            Tag="Light" />
-                        <ComboBoxItem
-                            x:Uid="ThemesDark"
-                            Content="Dark"
-                            Tag="Dark" />
-                        <ComboBoxItem
-                            x:Uid="ThemesDefault"
-                            Content="Use system setting"
-                            Tag="Default" />
+                        <ComboBoxItem Tag="Light">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE706;" />
+                                <TextBlock x:Uid="ThemesLight" />
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem Tag="Dark">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE708;" />
+                                <TextBlock x:Uid="ThemesDark" />
+                            </StackPanel>
+                        </ComboBoxItem>
+                        <ComboBoxItem Tag="Default">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE770;" />
+                                <TextBlock x:Uid="ThemesDefault" />
+                            </StackPanel>
+                        </ComboBoxItem>
                     </ComboBox>
                 </essential:SettingsCard>
 
@@ -280,37 +286,10 @@
                     <ComboBox
                         x:Name="StartPageCombobox"
                         Width="Auto"
-                        MinWidth="160"
+                        MinWidth="240"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
                         SelectionChanged="StartPageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
-
-                <essential:SettingsExpander
-                    x:Name="SoftBackground"
-                    x:Uid="SoftBackgroundColors"
-                    Description="Choose your accent color and personalize OpenNet"
-                    Header="Colors">
-                    <essential:SettingsExpander.HeaderIcon>
-                        <FontIcon Glyph="&#xE790;" />
-                    </essential:SettingsExpander.HeaderIcon>
-                    <ComboBox
-                        x:Name="SoftBackgroundColorComboBox"
-                        Width="Auto"
-                        MinWidth="160"
-                        essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        PlaceholderText="Choose a color" />
-                    <essential:SettingsExpander.Items>
-                        <essential:SettingsCard Description="Pick a custom color or select from preset colors" Header="Color picker">
-                            <controls:ColorPicker
-                                x:Name="SoftBackgroundColorPicker"
-                                ColorSpectrumShape="Ring"
-                                IsAlphaEnabled="False"
-                                IsColorChannelTextInputVisible="True"
-                                IsColorSliderVisible="True"
-                                IsHexInputVisible="True" />
-                        </essential:SettingsCard>
-                    </essential:SettingsExpander.Items>
-                </essential:SettingsExpander>
 
                 <essential:SettingsCard
                     x:Name="SoftLanguage"
@@ -323,7 +302,7 @@
                     <ComboBox
                         x:Name="SoftLanguageCombobox"
                         Width="Auto"
-                        MinWidth="160"
+                        MinWidth="240"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
                         SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
@@ -348,7 +327,7 @@
 
                 <StackPanel.ChildrenTransitions>
                     <TransitionCollection>
-                        <EntranceThemeTransition />
+                        <EntranceThemeTransition FromVerticalOffset="50" />
                         <RepositionThemeTransition IsStaggeringEnabled="False" />
                     </TransitionCollection>
                 </StackPanel.ChildrenTransitions>

@@ -31,7 +31,6 @@ namespace OpenNet::Core::Aria2
 
     std::filesystem::path GetApplicationFolderPath();
     std::filesystem::path GetSettingsFolderPath();
-    std::filesystem::path GetDownloadsFolderPath();
 
     winrt::hstring CreateGuidString();
     winrt::hstring ConvertSecondsToTimeString(std::uint64_t Seconds);

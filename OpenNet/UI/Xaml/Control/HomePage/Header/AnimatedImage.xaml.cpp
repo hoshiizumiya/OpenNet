@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "AnimatedImage.xaml.h"
 #if __has_include("UI/Xaml/Control/HomePage/Header/AnimatedImage.g.cpp")
 #include "UI/Xaml/Control/HomePage/Header/AnimatedImage.g.cpp"
@@ -36,6 +36,15 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 	{
 		m_compositionReady = false;
 
+		if (m_pendingFadeBatch)
+		{
+			try { m_pendingFadeBatch.Completed(m_pendingFadeCompletedToken); } catch (...) {}
+			m_pendingFadeBatch = nullptr;
+			m_pendingFadeCompletedToken = {};
+		}
+
+		try { ElementCompositionPreview::SetElementChildVisual(RootGrid(), nullptr); } catch (...) {}
+
 		// Remove all children to release sprites and break batch.Completed references
 		if (m_container)
 		{
@@ -61,6 +70,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 	{
 		auto visual = ElementCompositionPreview::GetElementVisual(RootGrid());
 		m_compositor = visual.Compositor();
+
+		if (m_pendingFadeBatch)
+		{
+			try { m_pendingFadeBatch.Completed(m_pendingFadeCompletedToken); } catch (...) {}
+			m_pendingFadeBatch = nullptr;
+			m_pendingFadeCompletedToken = {};
+		}
 
 		// Reset state in case this is a re-load (Loaded fired again)
 		if (m_container)
@@ -149,20 +165,55 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 				oldSprite.StartAnimation(L"Opacity", fadeOut);
 				batch.End();
 
-				// Capture container by copy to safely remove oldSprite after fade-out
-				auto container = m_container;
-				batch.Completed([container, oldSprite](auto&&, auto&&)
+				if (m_pendingFadeBatch)
 				{
-					if (container)
+					try { m_pendingFadeBatch.Completed(m_pendingFadeCompletedToken); } catch (...) {}
+					m_pendingFadeBatch = nullptr;
+					m_pendingFadeCompletedToken = {};
+				}
+
+				m_pendingFadeBatch = batch;
+				auto weakThis = get_weak();
+				m_pendingFadeCompletedToken = batch.Completed([weakThis, oldSprite](auto&&, auto&&)
+				{
+                  if (auto self = weakThis.get())
 					{
-						try { container.Children().Remove(oldSprite); } catch (...) {}
+                      if (!self->m_compositionReady || !self->m_container)
+						{
+							return;
+						}
+
+						try
+						{
+							auto parent = oldSprite.Parent();
+							if (parent && parent == self->m_container)
+							{
+								self->m_container.Children().Remove(oldSprite);
+							}
+						}
+						catch (...)
+						{
+						}
+
+						self->m_pendingFadeBatch = nullptr;
+						self->m_pendingFadeCompletedToken = {};
 					}
 				});
 			}
 			catch (...)
 			{
 				// If animation fails (disposed objects), just remove the old sprite directly
-				try { m_container.Children().Remove(oldSprite); } catch (...) {}
+                try
+				{
+					auto parent = oldSprite.Parent();
+					if (parent && m_container && parent == m_container)
+					{
+						m_container.Children().Remove(oldSprite);
+					}
+				}
+				catch (...)
+				{
+				}
 			}
 		}
 

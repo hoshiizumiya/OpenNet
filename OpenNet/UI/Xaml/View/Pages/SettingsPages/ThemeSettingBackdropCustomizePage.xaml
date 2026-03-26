@@ -1,0 +1,67 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.ThemeSettingBackdropCustomizePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:controls="using:OpenNet.UI.Xaml.Control.Card"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xwc="using:XamlToolkit.WinUI.Controls"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+
+    <ScrollView>
+        <StackPanel
+            Margin="24"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            Orientation="Vertical"
+            Spacing="16">
+            <StackPanel.Resources>
+                <Style BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
+                    <Setter Property="StepFrequency" Value="0.01" />
+                    <Setter Property="Minimum" Value="0" />
+                    <Setter Property="Maximum" Value="1" />
+                </Style>
+            </StackPanel.Resources>
+            <xwc:WrapPanel
+                HorizontalSpacing="16"
+                Orientation="Horizontal"
+                VerticalSpacing="16">
+                <controls:TitleCard x:Uid="ViewThemeSettingFallbackColorCard" Title="Window lost focus fallback color">
+                    <controls:TitleCard.Content>
+                        <xwc:ColorPicker x:Name="FallbackColorPicker" ColorChanged="BackdropValueChanged" />
+                    </controls:TitleCard.Content>
+                </controls:TitleCard>
+                <controls:TitleCard x:Uid="ViewThemeSettingTintColorCard" Title="Tint color:">
+                    <controls:TitleCard.Content>
+                        <xwc:ColorPicker x:Name="TintColorPicker" ColorChanged="BackdropValueChanged" />
+                    </controls:TitleCard.Content>
+                </controls:TitleCard>
+
+            </xwc:WrapPanel>
+
+            <Slider
+                x:Name="LuminosityOpacitySlider"
+                x:Uid="ViewThemeSettingLuminosityOpacitySlider"
+                essential:SliderHelper.AcrylicWorkaround="True"
+                Header="LuminosityOpacity"
+                ValueChanged="BackdropValueChanged" />
+
+            <Slider
+                x:Name="TintOpacitySlider"
+                x:Uid="ViewThemeSettingTintOpacitySlider"
+                essential:SliderHelper.AcrylicWorkaround="True"
+                Header="TintOpacity"
+                ValueChanged="BackdropValueChanged" />
+
+            <ToggleSwitch
+                x:Name="EnableSwitch"
+                x:Uid="ViewThemeSettingEnableAcrylicSwitch"
+                Header="Enable acrylic when window is inactive"
+                Toggled="BackdropValueChanged" />
+        </StackPanel>
+    </ScrollView>
+</Page>

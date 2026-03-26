@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+{
+    [default_interface]
+    runtimeclass FontCustomizePage : Microsoft.UI.Xaml.Controls.Page
+    {
+        FontCustomizePage();
+
+    }
+}

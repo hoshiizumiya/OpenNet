@@ -58,6 +58,11 @@ namespace OpenNet::Helpers
 		/// </summary>
 		static winrt::Microsoft::UI::Xaml::ElementTheme StringToTheme(winrt::hstring const& themeString);
 
+		/// <summary>
+		/// Applies a backdrop effect based on the current setting.
+		/// </summary>
+		static void ApplyBackdropFromSettings();
+
 	private:
 		static winrt::Microsoft::UI::Xaml::ElementTheme s_rootTheme;
 		static winrt::event_token s_actualThemeChangedToken;

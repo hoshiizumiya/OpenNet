@@ -312,13 +312,13 @@
   <data name="SoftPersonalization.Description" xml:space="preserve">
     <value>个性化程序的界面展示样式</value>
   </data>
-  <data name="ThemesLight.Content" xml:space="preserve">
+  <data name="ThemesLight.Text" xml:space="preserve">
     <value>浅色</value>
   </data>
-  <data name="ThemesDark.Content" xml:space="preserve">
+  <data name="ThemesDark.Text" xml:space="preserve">
     <value>深色</value>
   </data>
-  <data name="ThemesDefault.Content" xml:space="preserve">
+  <data name="ThemesDefault.Text" xml:space="preserve">
     <value>和 Windows 设置一致</value>
   </data>
   <data name="AddMagnetDialog_Title" xml:space="preserve">

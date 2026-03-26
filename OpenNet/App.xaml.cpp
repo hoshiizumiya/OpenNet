@@ -31,59 +31,127 @@ using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 
 namespace
 {
+	constexpr auto kBackdropFallbackColorKey = "backdrop_fallback_color";
+	constexpr auto kBackdropTintColorKey = "backdrop_tint_color";
+	constexpr auto kBackdropLuminosityOpacityKey = "backdrop_luminosity_opacity";
+	constexpr auto kBackdropTintOpacityKey = "backdrop_tint_opacity";
+	constexpr auto kBackdropEnableWhenInactiveKey = "backdrop_enable_when_inactive";
+	constexpr auto kBackdropUseFallbackKey = "backdrop_use_fallback";
+
+	winrt::Windows::UI::Color ColorFromArgb(int64_t argb)
+	{
+		auto const value = static_cast<uint32_t>(argb);
+		return winrt::Windows::UI::Color{
+			static_cast<uint8_t>((value >> 24) & 0xFF),
+			static_cast<uint8_t>((value >> 16) & 0xFF),
+			static_cast<uint8_t>((value >> 8) & 0xFF),
+			static_cast<uint8_t>(value & 0xFF)
+		};
+	}
+
 	void ApplyBackdropFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)
 	{
 		if (!window) return;
 
 		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 2);
+		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 4);
 		auto const micaType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "mica_type", 1)), 0, 1);
 		auto const acrylicType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "acrylic_type", 0)), 0, 2);
+		auto const useFallback = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropUseFallbackKey).value_or(true);
+
+		auto const fallbackColor = ColorFromArgb(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropFallbackColorKey).value_or(0xFF202020));
+		auto const tintColor = ColorFromArgb(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintColorKey).value_or(0xFF202020));
+		auto const luminosityOpacity = static_cast<float>(std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropLuminosityOpacityKey).value_or(0.8), 0.0, 1.0));
+		auto const tintOpacity = static_cast<float>(std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintOpacityKey).value_or(0.8), 0.0, 1.0));
+		auto const enableWhenInactive = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropEnableWhenInactiveKey).value_or(true);
 
 		switch (backgroundType)
 		{
-		case 1:
-		{
-			if (!MicaController::IsSupported())
+			case 1:  // Native Mica
 			{
+				if (MicaController::IsSupported())
+				{
+					auto mica = MicaBackdrop{};
+					mica.Kind(micaType == 1 ? MicaKind::BaseAlt : MicaKind::Base);
+					window.SystemBackdrop(mica);
+					return;
+				}
+
+				if (useFallback) // TenMica
+				{
+					window.SystemBackdrop(winrt::WinUI3Package::MicaBackdropWithFallback{});
+					return;
+				}
+
 				window.SystemBackdrop(nullptr);
 				return;
 			}
-
-			auto mica = MicaBackdrop{};
-			mica.Kind(micaType == 1 ? MicaKind::BaseAlt : MicaKind::Base);
-			window.SystemBackdrop(mica);
-			return;
-		}
-		case 2:
-		{
-			if (!DesktopAcrylicController::IsSupported())
+			case 2:  // Custom Mica (no fallback logic)
 			{
-				window.SystemBackdrop(nullptr);
+				auto mica = winrt::WinUI3Package::CustomMicaBackdrop{};
+				mica.Kind(micaType == 1 ? MicaKind::BaseAlt : MicaKind::Base);
+				mica.FallbackColor(fallbackColor);
+				mica.TintColor(tintColor);
+				mica.LuminosityOpacity(luminosityOpacity);
+				mica.TintOpacity(tintOpacity);
+				mica.EnableWhenInactive(enableWhenInactive);
+				window.SystemBackdrop(mica);
 				return;
 			}
-
-			auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
-			switch (acrylicType)
+			case 3:  // Native Acrylic
 			{
-			case 1:
-				acrylic.Kind(DesktopAcrylicKind::Base);
-				break;
-			case 2:
-				acrylic.Kind(DesktopAcrylicKind::Thin);
-				break;
-			case 0:
+				if (!DesktopAcrylicController::IsSupported())
+				{
+					window.SystemBackdrop(nullptr);
+					return;
+				}
+
+				auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
+				switch (acrylicType)
+				{
+					case 1:
+						acrylic.Kind(DesktopAcrylicKind::Base);
+						break;
+					case 2:
+						acrylic.Kind(DesktopAcrylicKind::Thin);
+						break;
+					case 0:
+					default:
+						acrylic.Kind(DesktopAcrylicKind::Default);
+						break;
+				}
+				acrylic.EnableWhenInactive(enableWhenInactive);
+				window.SystemBackdrop(acrylic);
+				return;
+			}
+			case 4:  // Custom Acrylic (no fallback logic)
+			{
+				auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
+				switch (acrylicType)
+				{
+					case 1:
+						acrylic.Kind(DesktopAcrylicKind::Base);
+						break;
+					case 2:
+						acrylic.Kind(DesktopAcrylicKind::Thin);
+						break;
+					case 0:
+					default:
+						acrylic.Kind(DesktopAcrylicKind::Default);
+						break;
+				}
+				acrylic.FallbackColor(fallbackColor);
+				acrylic.TintColor(tintColor);
+				acrylic.LuminosityOpacity(luminosityOpacity);
+				acrylic.TintOpacity(tintOpacity);
+				acrylic.EnableWhenInactive(enableWhenInactive);
+				window.SystemBackdrop(acrylic);
+				return;
+			}
+			case 0:  // None style
 			default:
-				acrylic.Kind(DesktopAcrylicKind::Default);
-				break;
-			}
-			window.SystemBackdrop(acrylic);
-			return;
-		}
-		case 0:
-		default:
-			window.SystemBackdrop(nullptr);
-			return;
+				window.SystemBackdrop(nullptr);
+				return;
 		}
 	}
 
@@ -91,12 +159,12 @@ namespace
 	{
 		switch (index)
 		{
-		case 1: return winrt::Microsoft::UI::Xaml::Media::Stretch::Fill;
-		case 2: return winrt::Microsoft::UI::Xaml::Media::Stretch::Uniform;
-		case 3: return winrt::Microsoft::UI::Xaml::Media::Stretch::UniformToFill;
-		case 0:
-		default:
-			return winrt::Microsoft::UI::Xaml::Media::Stretch::None;
+			case 1: return winrt::Microsoft::UI::Xaml::Media::Stretch::Fill;
+			case 2: return winrt::Microsoft::UI::Xaml::Media::Stretch::Uniform;
+			case 3: return winrt::Microsoft::UI::Xaml::Media::Stretch::UniformToFill;
+			case 0:
+			default:
+				return winrt::Microsoft::UI::Xaml::Media::Stretch::None;
 		}
 	}
 
@@ -142,7 +210,9 @@ namespace
 			brush.Opacity(opacity);
 			panel.Background(brush);
 		}
-		catch (...) {}
+		catch (...)
+		{
+		}
 	}
 
 	void ApplyWindowAppearanceFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)

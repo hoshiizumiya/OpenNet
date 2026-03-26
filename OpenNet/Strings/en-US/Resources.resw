@@ -264,13 +264,13 @@
   <data name="SoftPersonalization.Description" xml:space="preserve">
     <value>Personalize program UI display style</value>
   </data>
-  <data name="ThemesLight.Content" xml:space="preserve">
+  <data name="ThemesLight.Text" xml:space="preserve">
     <value>Light</value>
   </data>
-  <data name="ThemesDark.Content" xml:space="preserve">
+  <data name="ThemesDark.Text" xml:space="preserve">
     <value>Dark</value>
   </data>
-  <data name="ThemesDefault.Content" xml:space="preserve">
+  <data name="ThemesDefault.Text" xml:space="preserve">
     <value>Use system setting</value>
   </data>
   <data name="AddMagnetDialog_Title" xml:space="preserve">

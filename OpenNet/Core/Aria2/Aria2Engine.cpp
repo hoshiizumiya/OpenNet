@@ -64,17 +64,6 @@ std::filesystem::path OpenNet::Core::Aria2::GetSettingsFolderPath()
 	return cached;
 }
 
-std::filesystem::path OpenNet::Core::Aria2::GetDownloadsFolderPath()
-{
-	static std::filesystem::path cached = ([]() -> std::filesystem::path
-	{
-		std::filesystem::path fp(winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults().c_str());
-		std::filesystem::create_directories(fp);
-		return fp;
-	}());
-	return cached;
-}
-
 winrt::hstring OpenNet::Core::Aria2::CreateGuidString()
 {
 	GUID guid;
@@ -580,7 +569,7 @@ void OpenNet::Core::Aria2::LocalAria2Instance::Startup()
 	settings.emplace_back(L"enable-rpc", L"true");
 	settings.emplace_back(L"rpc-listen-port", winrt::to_hstring(serverPort).c_str());
 	settings.emplace_back(L"rpc-secret", serverToken.c_str());
-	settings.emplace_back(L"dir", GetDownloadsFolderPath().wstring());
+	settings.emplace_back(L"dir", winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults().c_str());
 	settings.emplace_back(L"continue", L"true");
 	settings.emplace_back(L"auto-save-interval", L"1");
 	if (std::filesystem::exists(sessionFile))

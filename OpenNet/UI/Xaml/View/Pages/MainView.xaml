@@ -76,14 +76,14 @@
 
             <!--  底部  -->
             <NavigationView.FooterMenuItems>
-                <NavigationViewItem
+                <!--<NavigationViewItem
                     Content="Contribute"
                     SelectsOnInvoked="False"
                     Tag="Contribute">
                     <NavigationViewItem.Icon>
                         <ImageIcon Opacity="0.6" Source="{ThemeResource GitHubIconImage}" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem>-->
                 <NavigationViewItem
                     x:Name="NavItem_Settings"
                     x:Uid="NavItem_Settings"
@@ -258,8 +258,8 @@
                             FontSize="20"
                             Glyph="&#x1F7E1;">
                             <ToolTipService.ToolTip>
-                                <ToolTip Content="Port is blocked. Please check your router or firewall settings." essential:ToolTipHelper.AcrylicWorkaround="True" />
-                            </ToolTipService.ToolTip>                           
+                                <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Port is blocked. Please check your router or firewall settings." />
+                            </ToolTipService.ToolTip>
                         </FontIcon>
                     </essential:Case>
                 </essential:SwitchPresenter>

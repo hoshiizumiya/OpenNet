@@ -72,14 +72,14 @@ namespace OpenNet::Core
 	void AppSettingsDatabase::CreateTables()
 	{
 		const char* sql = R"(
-            CREATE TABLE IF NOT EXISTS settings (
-                category TEXT NOT NULL,
-                key      TEXT NOT NULL,
-                value    TEXT,
-                PRIMARY KEY (category, key)
-            );
-            CREATE INDEX IF NOT EXISTS idx_settings_category ON settings(category);
-        )";
+			CREATE TABLE IF NOT EXISTS settings (
+				category TEXT NOT NULL,
+				key      TEXT NOT NULL,
+				value    TEXT,
+				PRIMARY KEY (category, key)
+			);
+			CREATE INDEX IF NOT EXISTS idx_settings_category ON settings(category);
+		)";
 
 		char* errMsg = nullptr;
 		int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);
@@ -344,7 +344,7 @@ namespace OpenNet::Core
 	}
 
 	std::optional<std::wstring> AppSettingsDatabase::GetStringW(std::string const& category,
-																	 std::string const& key) const
+																std::string const& key) const
 	{
 		std::lock_guard lk(m_mutex);
 		if (!m_db && !const_cast<AppSettingsDatabase*>(this)->EnsureInitialized()) return std::nullopt;
