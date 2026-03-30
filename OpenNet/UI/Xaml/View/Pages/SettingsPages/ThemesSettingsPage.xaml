@@ -71,6 +71,7 @@
                         x:Uid="ViewThemesSettingsPageAcrylicTypeCard"
                         Description="背景的亚克力效果模式"
                         Header="亚克力类型"
+                        HeaderIcon="{essential:FontIcon Glyph=&#xF5EF;}"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
                         <ComboBox
@@ -89,6 +90,7 @@
                         x:Uid="ViewThemesSettingsPageMicaTypeCard"
                         Description="背景的 Mica 效果模式"
                         Header="Mica 类型"
+                        HeaderIcon="{essential:FontIcon Glyph=&#xF5EF;}"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
                         <ComboBox

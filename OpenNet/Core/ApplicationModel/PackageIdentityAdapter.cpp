@@ -124,10 +124,10 @@ namespace OpenNet::Core::ApplicationModel
 		return directory;
 	}
 
-	std::wstring PackageIdentityAdapter::GetFamilyName()
+	winrt::hstring PackageIdentityAdapter::GetFamilyName()
 	{
 		static std::once_flag flag;
-		static std::wstring familyName;
+		static winrt::hstring familyName;
 
 		std::call_once(flag, []()
 		{
@@ -136,7 +136,7 @@ namespace OpenNet::Core::ApplicationModel
 				try
 				{
 					auto package = winrt::Windows::ApplicationModel::Package::Current();
-					familyName = std::wstring(package.Id().FamilyName());
+					familyName = package.Id().FamilyName();
 				}
 				catch (...)
 				{

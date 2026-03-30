@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentDialog
     x:Class="OpenNet.UI.Xaml.View.Dialog.HttpDownloadDialog"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -9,10 +9,10 @@
     x:Name="ViewDialogHttpDownloadDialog"
     x:Uid="ViewDialogHttpDownloadDialog"
     Title="New HTTP Download"
+    CloseButtonText="Cancel"
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     PrimaryButtonText="Download"
-    CloseButtonText="Cancel"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
@@ -22,7 +22,7 @@
         Padding="16"
         Spacing="12">
 
-        <!-- URL Input -->
+        <!--  URL Input  -->
         <TextBox
             x:Name="UrlBox"
             x:Uid="HttpDownloadDialogUrlBox"
@@ -32,28 +32,26 @@
             PlaceholderText="https://example.com/file.zip"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
             TextChanged="UrlBox_TextChanged"
-            TextWrapping="Wrap"/>
+            TextWrapping="Wrap" />
 
-        <!-- Paste from clipboard -->
+        <!--  Paste from clipboard  -->
         <Button
             x:Name="PasteUrlButton"
             x:Uid="HttpDownloadDialogPasteButton"
             Click="PasteUrlButton_Click">
             <Button.Content>
-                <StackPanel Orientation="Horizontal"
-                            Spacing="6">
-                    <FontIcon FontSize="14"
-                              Glyph="&#xE16F;"/>
-                    <TextBlock x:Uid="HttpDownloadDialogPasteButtonText"/>
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                    <FontIcon FontSize="14" Glyph="&#xE16F;" />
+                    <TextBlock x:Uid="HttpDownloadDialogPasteButtonText" />
                 </StackPanel>
             </Button.Content>
         </Button>
 
-        <!-- Save Directory -->
+        <!--  Save Directory  -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
             <TextBox
                 x:Name="SaveDirBox"
@@ -61,7 +59,7 @@
                 Grid.Column="0"
                 Header="Save to"
                 IsReadOnly="True"
-                PlaceholderText="Default download directory"/>
+                PlaceholderText="Default download directory" />
             <Button
                 x:Name="BrowseDirButton"
                 x:Uid="HttpDownloadDialogBrowseButton"
@@ -69,17 +67,17 @@
                 Margin="8,0,0,0"
                 VerticalAlignment="Bottom"
                 Click="BrowseDirButton_Click"
-                Content="Browse..."/>
+                Content="Browse..." />
         </Grid>
 
-        <!-- Custom Filename -->
+        <!--  Custom Filename  -->
         <TextBox
             x:Name="FileNameBox"
             x:Uid="HttpDownloadDialogFileNameBox"
             Header="File name (optional)"
-            PlaceholderText="Leave empty to auto-detect"/>
+            PlaceholderText="Leave empty to auto-detect" />
 
-        <!-- Validation Error -->
+        <!--  Validation Error  -->
         <InfoBar
             x:Name="UrlErrorInfoBar"
             x:Uid="HttpDownloadDialogUrlErrorInfoBar"
@@ -87,6 +85,6 @@
             IsClosable="False"
             IsOpen="False"
             Message="Please enter a valid HTTP, HTTPS, or FTP URL."
-            Severity="Error"/>
+            Severity="Error" />
     </StackPanel>
 </ContentDialog>

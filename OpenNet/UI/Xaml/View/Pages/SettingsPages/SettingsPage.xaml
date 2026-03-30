@@ -23,7 +23,7 @@
         </ResourceDictionary>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource LayerFillColorDefaultBrush}">
+    <Grid Padding="24" Background="{ThemeResource LayerFillColorDefaultBrush}">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
             <ColumnDefinition Width="60" />
@@ -31,8 +31,7 @@
 
         <!--  Main Settings ScrollView  -->
         <ScrollView x:Name="SettingsScrollView">
-            <StackPanel Margin="24" Spacing="4">
-
+            <StackPanel HorizontalAlignment="Stretch" Spacing="4">
                 <!--  Desktop Background Preview Card  -->
                 <Border
                     Padding="20"
@@ -245,7 +244,7 @@
 
                 <essential:SettingsCard Description="Select which app theme to display" Header="App theme">
                     <essential:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE790;" />
+                        <FontIcon Glyph="&#xE793;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
                         x:Name="themeMode"
@@ -320,6 +319,10 @@
                             Content="Restart now"
                             Style="{StaticResource AccentButtonStyle}" />
                     </controls:InfoBar.ActionButton>
+                    <controls:InfoBar.Transitions>
+                        <EntranceThemeTransition FromVerticalOffset="50" />
+                        <RepositionThemeTransition IsStaggeringEnabled="False" />
+                    </controls:InfoBar.Transitions>
                 </controls:InfoBar>
 
                 <!--  Bottom spacing  -->

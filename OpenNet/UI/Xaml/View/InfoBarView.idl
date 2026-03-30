@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Xaml.View
+{
+	[default_interface]
+	runtimeclass InfoBarView : Microsoft.UI.Xaml.Controls.UserControl
+	{
+		InfoBarView();
+
+	}
+}

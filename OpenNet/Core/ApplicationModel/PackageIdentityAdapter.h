@@ -17,9 +17,9 @@ namespace OpenNet::Core::ApplicationModel
 		int Minor;
 		int Build;
 
-		std::wstring ToString() const
+		std::string ToString() const
 		{
-			return std::to_wstring(Major) + L"." + std::to_wstring(Minor) + L"." + std::to_wstring(Build);
+			return std::to_string(Major) + "." + std::to_string(Minor) + "." + std::to_string(Build);
 		}
 	};
 
@@ -29,7 +29,7 @@ namespace OpenNet::Core::ApplicationModel
 		static bool HasPackageIdentity();
 		static Version GetAppVersion();
 		static std::wstring GetAppDirectory();
-		static std::wstring GetFamilyName();
+		static winrt::hstring GetFamilyName();
 		static std::wstring GetPublisherId();
 
 	private:

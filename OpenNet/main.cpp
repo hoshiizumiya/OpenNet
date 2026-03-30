@@ -1,6 +1,7 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
 //#include "Core/IO/FileOperation.h"
+#include "Core/ApplicationModel/PackageIdentityAdapter.h"
 #include <sentry.h>
 
 #include <winrt/Microsoft.Windows.ApplicationModel.WindowsAppRuntime.h>
@@ -29,20 +30,20 @@ void RedirectActivationTo(AppActivationArguments const& args, AppInstance const&
 	// 在另一个线程中执行异步重定向
 	// 这样可以避免阻塞 STA 线程
 	std::thread redirectThread([keyInstance, args, redirectEventHandle]()
+	{
+		try
 		{
-			try
-			{
-				// 执行重定向
-				keyInstance.RedirectActivationToAsync(args).get();
-			}
-			catch (...)
-			{
-				// 如果重定向失败，记录错误但不崩溃
-				OutputDebugStringW(L"RedirectActivationToAsync failed\n");
-			}
-			// 通知等待线程重定向已完成
-			SetEvent(redirectEventHandle);
-		});
+			// 执行重定向
+			keyInstance.RedirectActivationToAsync(args).get();
+		}
+		catch (...)
+		{
+			// 如果重定向失败，记录错误但不崩溃
+			OutputDebugStringW(L"RedirectActivationToAsync failed\n");
+		}
+		// 通知等待线程重定向已完成
+		SetEvent(redirectEventHandle);
+	});
 
 	// 使用 COM 兼容的等待方式等待重定向完成
 	// CoWaitForMultipleHandles 允许在 STA 线程上等待而不阻塞消息泵
@@ -70,18 +71,18 @@ void RedirectActivationTo(AppActivationArguments const& args, AppInstance const&
 		} enumData = { processId, nullptr };
 
 		EnumWindows([](HWND hwnd, LPARAM lParam) -> BOOL
-			{
-				auto* data = reinterpret_cast<EnumData*>(lParam);
-				DWORD windowProcessId = 0;
-				GetWindowThreadProcessId(hwnd, &windowProcessId);
+		{
+			auto* data = reinterpret_cast<EnumData*>(lParam);
+			DWORD windowProcessId = 0;
+			GetWindowThreadProcessId(hwnd, &windowProcessId);
 
-				if (windowProcessId == data->targetProcessId && IsWindowVisible(hwnd))
-				{
-					data->foundHwnd = hwnd;
-					return FALSE; // 停止枚举
-				}
-				return TRUE; // 继续枚举
-			}, reinterpret_cast<LPARAM>(&enumData));
+			if (windowProcessId == data->targetProcessId && IsWindowVisible(hwnd))
+			{
+				data->foundHwnd = hwnd;
+				return FALSE; // 停止枚举
+			}
+			return TRUE; // 继续枚举
+		}, reinterpret_cast<LPARAM>(&enumData));
 
 		if (enumData.foundHwnd)
 		{
@@ -123,17 +124,17 @@ bool DecideRedirection()
 		// 当其他实例重定向激活到这里时会触发此事件
 		keyInstance.Activated(
 			[](auto&& sender, AppActivationArguments const& args)
+		{
+			// 在 UI 线程中处理激活
+			auto dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+			if (dispatcher)
 			{
-				// 在 UI 线程中处理激活
-				auto dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
-				if (dispatcher)
+				dispatcher.TryEnqueue([args]()
 				{
-					dispatcher.TryEnqueue([args]()
-						{
-							winrt::OpenNet::implementation::App::HandleActivation(args);
-						});
-				}
+					winrt::OpenNet::implementation::App::HandleActivation(args);
+				});
 			}
+		}
 		);
 	}
 	else
@@ -156,14 +157,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// 初始化 WinRT
 	winrt::init_apartment(winrt::apartment_type::single_threaded);
 
-	sentry_options_t* options = sentry_options_new();
-	sentry_options_set_dsn(options, "https://8030af3a7ff2e854f827e44c62f50880@o4510805000454144.ingest.de.sentry.io/4510939441397840");
-	// This is also the default-path. For further information and recommendations:
-	// https://docs.sentry.io/platforms/native/configuration/options/#database_path
-	sentry_options_set_database_path(options, winrt::to_string(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().TemporaryPath()).c_str());
-	sentry_options_set_release(options, "my-project-name@2.3.12");
-	sentry_options_set_debug(options, 1);
-	sentry_init(options);
+	std::thread sentryInitThread([]()
+	{
+		sentry_options_t* options = sentry_options_new();
+		sentry_options_set_dsn(options, "https://8030af3a7ff2e854f827e44c62f50880@o4510805000454144.ingest.de.sentry.io/4510939441397840");
+		// This is also the default-path. For further information and recommendations:
+		// https://docs.sentry.io/platforms/native/configuration/options/#database_path
+		sentry_options_set_database_path(options, winrt::to_string(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().TemporaryPath()).c_str());
+		sentry_options_set_release(options, (winrt::to_string(::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetFamilyName()) + "@" + ::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetAppVersion().ToString()).c_str());
+		sentry_options_set_debug(options, 1);
+		sentry_init(options);
+	});
 
 	// 决定是否需要重定向
 	if (DecideRedirection())
@@ -174,9 +178,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 
 	// 这是主实例，启动 WinUI 3 应用
 	winrt::Microsoft::UI::Xaml::Application::Start([](auto&&)
-		{
-			winrt::make<winrt::OpenNet::implementation::App>();
-		});
+	{
+		winrt::make<winrt::OpenNet::implementation::App>();
+	});
 
 	return 0;
 }

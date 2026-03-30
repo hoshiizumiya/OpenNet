@@ -295,6 +295,10 @@
       <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\InfoBarView.xaml.h">
+      <DependentUpon>UI\Xaml\View\InfoBarView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
@@ -334,6 +338,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\ExceptionWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\ExceptionWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.h">
@@ -526,6 +534,9 @@
     <Page Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\InfoBarView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -554,6 +565,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
@@ -726,6 +740,10 @@
       <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\InfoBarView.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\InfoBarView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp" />
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
@@ -765,6 +783,10 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\ExceptionWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\ExceptionWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.cpp">
@@ -986,6 +1008,10 @@
       <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\InfoBarView.idl">
+      <DependentUpon>UI\Xaml\View\InfoBarView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
@@ -1025,6 +1051,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\ExceptionWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\ExceptionWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.idl">

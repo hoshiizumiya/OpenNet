@@ -120,6 +120,8 @@
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml" />
     <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml" />
+    <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml" />
+    <Page Include="UI\Xaml\View\InfoBarView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />

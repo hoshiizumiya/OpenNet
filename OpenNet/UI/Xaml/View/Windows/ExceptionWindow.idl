@@ -1,0 +1,13 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+	[default_interface]
+	runtimeclass ExceptionWindow : Microsoft.UI.Xaml.Window
+	{
+		ExceptionWindow();
+
+		String TraceId{ get; };
+		String Exception{ get; };
+		String Comment{ get; set; };
+
+	}
+}
