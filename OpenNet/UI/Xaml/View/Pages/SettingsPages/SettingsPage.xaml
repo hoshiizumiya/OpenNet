@@ -319,10 +319,12 @@
                             Content="Restart now"
                             Style="{StaticResource AccentButtonStyle}" />
                     </controls:InfoBar.ActionButton>
-                    <controls:InfoBar.Transitions>
-                        <EntranceThemeTransition FromVerticalOffset="50" />
-                        <RepositionThemeTransition IsStaggeringEnabled="False" />
-                    </controls:InfoBar.Transitions>
+                    <InfoBar.Transitions>
+                        <TransitionCollection>
+                            <EntranceThemeTransition FromVerticalOffset="50" />
+                            <RepositionThemeTransition IsStaggeringEnabled="False" />
+                        </TransitionCollection>
+                    </InfoBar.Transitions>
                 </controls:InfoBar>
 
                 <!--  Bottom spacing  -->

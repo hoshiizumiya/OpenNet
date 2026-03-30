@@ -115,7 +115,12 @@ namespace OpenNet::Core::Aria2
         LocalAria2Instance();
         ~LocalAria2Instance();
 
-        void Restart();
+        /// Async startup sequence: locate aria2c, prepare process, and start.
+        winrt::Windows::Foundation::IAsyncAction StartupAsync();
+
+        /// Restart: graceful terminate + async startup
+        winrt::Windows::Foundation::IAsyncAction RestartAsync();
+
         bool Available() const;
 
         /// Graceful shutdown: RPC Shutdown → wait up to 30s → ForceTerminate.
@@ -126,7 +131,6 @@ namespace OpenNet::Core::Aria2
 
     private:
         std::uint16_t PickUnusedTcpPort();
-        void Startup();
 
     private:
         bool m_Available = false;

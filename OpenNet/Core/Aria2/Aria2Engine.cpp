@@ -455,8 +455,6 @@ OpenNet::Core::Aria2::LocalAria2Instance::LocalAria2Instance()
 		JobObjectExtendedLimitInformation,
 		&extInfo,
 		sizeof(extInfo)));
-
-	Startup();
 }
 
 OpenNet::Core::Aria2::LocalAria2Instance::~LocalAria2Instance()
@@ -474,10 +472,10 @@ OpenNet::Core::Aria2::LocalAria2Instance::~LocalAria2Instance()
 	}
 }
 
-void OpenNet::Core::Aria2::LocalAria2Instance::Restart()
+winrt::Windows::Foundation::IAsyncAction OpenNet::Core::Aria2::LocalAria2Instance::RestartAsync()
 {
 	Terminate();
-	Startup();
+	co_await StartupAsync();
 }
 
 bool OpenNet::Core::Aria2::LocalAria2Instance::Available() const
@@ -513,7 +511,7 @@ std::uint16_t OpenNet::Core::Aria2::LocalAria2Instance::PickUnusedTcpPort()
 	return result;
 }
 
-void OpenNet::Core::Aria2::LocalAria2Instance::Startup()
+winrt::Windows::Foundation::IAsyncAction OpenNet::Core::Aria2::LocalAria2Instance::StartupAsync()
 {
 	if (m_Available)
 		throw winrt::hresult_illegal_method_call();
@@ -521,7 +519,7 @@ void OpenNet::Core::Aria2::LocalAria2Instance::Startup()
 	std::uint16_t serverPort = PickUnusedTcpPort();
 	winrt::hstring serverToken = CreateGuidString();
 
-	auto exitGuard = MakeScopeExit([&]()
+	auto exitGuard = MakeScopeExit([this]()
 	{
 		if (!m_Available) ForceTerminate();
 	});
@@ -555,7 +553,7 @@ void OpenNet::Core::Aria2::LocalAria2Instance::Startup()
 	if (aria2Exe.empty() || !std::filesystem::exists(aria2Exe))
 	{
 		OutputDebugStringW(L"[Aria2Engine] aria2c.exe not found. HTTP downloads will not be available.\n");
-		return; // gracefully degrade – let m_Available stay false
+		co_return; // gracefully degrade – let m_Available stay false
 	}
 
 	std::filesystem::path logFile = GetSettingsFolderPath() / L"aria2c.log";
@@ -563,13 +561,16 @@ void OpenNet::Core::Aria2::LocalAria2Instance::Startup()
 	std::filesystem::path dhtFile = GetSettingsFolderPath() / L"dht.dat";
 	std::filesystem::path dht6File = GetSettingsFolderPath() / L"dht6.dat";
 
+	// Async await GetDownloadsPathW instead of blocking .GetResults()
+	winrt::hstring downloadsPath = co_await winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW();
+
 	std::vector<std::pair<std::wstring, std::wstring>> settings;
 	settings.emplace_back(L"log", logFile.wstring());
 	settings.emplace_back(L"log-level", L"notice");
 	settings.emplace_back(L"enable-rpc", L"true");
 	settings.emplace_back(L"rpc-listen-port", winrt::to_hstring(serverPort).c_str());
 	settings.emplace_back(L"rpc-secret", serverToken.c_str());
-	settings.emplace_back(L"dir", winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults().c_str());
+	settings.emplace_back(L"dir", downloadsPath.c_str());
 	settings.emplace_back(L"continue", L"true");
 	settings.emplace_back(L"auto-save-interval", L"1");
 	if (std::filesystem::exists(sessionFile))

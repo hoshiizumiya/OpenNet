@@ -3,11 +3,12 @@
 	[default_interface]
 	runtimeclass ExceptionWindow : Microsoft.UI.Xaml.Window
 	{
-		ExceptionWindow();
+		ExceptionWindow(Guid sentryId, String exception);
 
 		String TraceId{ get; };
 		String Exception{ get; };
 		String Comment{ get; set; };
 
+		static void Show(Guid sentryId, String exception);
 	}
 }

@@ -15,7 +15,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
 	AddRSSFeedDialog::AddRSSFeedDialog()
 	{
-		InitializeComponent();
 		RequestedTheme(::OpenNet::Helpers::ThemeHelper::RootTheme());
 	}
 

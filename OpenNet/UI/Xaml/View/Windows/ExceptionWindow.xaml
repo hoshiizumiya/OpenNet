@@ -14,7 +14,7 @@
             <RowDefinition />
         </Grid.RowDefinitions>
         <TitleBar
-            x:Name="DraggableGrid"
+            x:Name="ExceptionWindowTitleBar"
             x:Uid="ViewWindowExceptionTitle"
             Title="We encountered some problems"
             Grid.Row="0"

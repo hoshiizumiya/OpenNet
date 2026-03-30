@@ -1,8 +1,10 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "HttpDownloadDialog.xaml.h"
 #if __has_include("UI/Xaml/View/Dialog/HttpDownloadDialog.g.cpp")
 #include "UI/Xaml/View/Dialog/HttpDownloadDialog.g.cpp"
 #endif
+
+#include "Helpers/ThemeHelper.h"
 
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Microsoft.UI.Content.h>
@@ -20,7 +22,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
     HttpDownloadDialog::HttpDownloadDialog()
     {
-        InitializeComponent();
+        RequestedTheme(::OpenNet::Helpers::ThemeHelper::ThemeHelper::RootTheme());
     }
 
     // ------------------------------------------------------------------

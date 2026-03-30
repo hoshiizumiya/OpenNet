@@ -59,9 +59,11 @@ namespace OpenNet::Core
 		if (m_initialized)
 			co_return;
 
-		// Create and start the local Aria2 instance
-		// LocalAria2Instance::constructor calls Startup() internally
+		// Create the local Aria2 instance
 		m_aria2 = std::make_unique<Aria2::LocalAria2Instance>();
+
+		// Async startup: locate aria2c, prepare process, and start
+		co_await m_aria2->StartupAsync();
 
 		// Initialize HTTP download record persistence
 		HttpStateManager::Instance().Initialize();

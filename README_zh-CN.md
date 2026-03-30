@@ -40,6 +40,10 @@
 * 支持远程控制。
 * 支持用户登录和多用户管理。
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/image?repos=hoshiizumiya/OpenNet&type=date&legend=top-left)](https://www.star-history.com/?repos=hoshiizumiya%2FOpenNet&type=date&legend=top-left)
+
 ## 贡献
 
 MVVM 框架：@https://github.com/AlexAdasCca

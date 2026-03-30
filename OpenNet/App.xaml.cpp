@@ -79,7 +79,9 @@ namespace
 
 				if (useFallback) // TenMica
 				{
-					window.SystemBackdrop(winrt::WinUI3Package::MicaBackdropWithFallback{});
+					auto fallback = winrt::WinUI3Package::MicaBackdropWithFallback{};
+					fallback.Fallback(winrt::WinUI3Package::TenMicaBackdrop());
+					window.SystemBackdrop(fallback);
 					return;
 				}
 

@@ -59,6 +59,10 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 ## Learn about the project
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hoshiizumiya/OpenNet)
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/image?repos=hoshiizumiya/OpenNet&type=date&legend=top-left)](https://www.star-history.com/?repos=hoshiizumiya%2FOpenNet&type=date&legend=top-left)
+
 ## Contribute
 
 MVVM framework: @https://github.com/AlexAdasCca
