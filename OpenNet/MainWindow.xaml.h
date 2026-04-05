@@ -10,6 +10,7 @@ namespace winrt::OpenNet::implementation
 	{
 		MainWindow();
 
+		void InvertAppThemeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		// ViewModel (delegated to MainContentView)
 		winrt::OpenNet::ViewModels::MainViewModel ViewModel();
 
@@ -24,9 +25,11 @@ namespace winrt::OpenNet::implementation
 
 		winrt::Windows::Foundation::IAsyncAction LoadBackground();
 
+		Microsoft::UI::Xaml::Visibility IsDebug();
 	private:
 		void InitWindowStyle(winrt::Microsoft::UI::Xaml::Window const& window);
 		void RootGridXamlRoot_Changed(winrt::Microsoft::UI::Xaml::XamlRoot sender, winrt::Microsoft::UI::Xaml::XamlRootChangedEventArgs args);
+		winrt::event_token m_canGoBackChangedToken{};
 	};
 }
 

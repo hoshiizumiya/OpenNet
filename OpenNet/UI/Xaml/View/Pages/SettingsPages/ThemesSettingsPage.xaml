@@ -99,7 +99,7 @@
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
                             SelectionChanged="MicaTypeComboBox_SelectionChanged">
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageMicaTypeBase" Content="Base" />
-                            <ComboBoxItem x:Uid="ViewThemesSettingsPageMicaTypeBaseAlt" Content="BaseAlt" />
+                            <ComboBoxItem x:Uid="ViewThemesSettingsPageMicaTypeBaseAlt" Content="Alt" />
                         </ComboBox>
                     </essential:SettingsCard>
                     <!--  TenMica (Fallback)  -->

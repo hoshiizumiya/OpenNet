@@ -5,6 +5,7 @@
 #endif
 
 #include "App.xaml.h"
+#include "Core/AppRuntime.h"
 #include "Helpers/WindowHelper.h"
 #include <winrt/WinUI3Package.h>
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
@@ -22,6 +23,16 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	winrt::guid NotifyIconContextMenu::IconGuid()
 	{
 		return { 0xf8a9b3c7, 0x2e4d, 0x4f1a, { 0x9b, 0x8e, 0x6c, 0x5d, 0x3a, 0x2b, 0x1e, 0x0f } };
+	}
+
+	winrt::hstring NotifyIconContextMenu::Title()
+	{
+		return ::OpenNet::Core::AppRuntime::GetDisplayName();
+	}
+
+	void NotifyIconContextMenu::CloseNotifyIconContextMenuWindowButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+
 	}
 
 	void NotifyIconContextMenu::Show()
@@ -67,9 +78,8 @@ namespace winrt::OpenNet::UI::Shell::implementation
 
 		// Allow the window to close (bypasses the hide-to-tray Closing handler)
 		winrt::OpenNet::implementation::App::s_isExiting = true;
-
 		// For test now
-	    auto window = winrt::OpenNet::implementation::App::window;
+		auto window = winrt::OpenNet::implementation::App::window;
 		if (window)
 		{
 			window.Close();
@@ -77,6 +87,19 @@ namespace winrt::OpenNet::UI::Shell::implementation
 
 		// Exit the application - now the Closing handler will not cancel the close,
 		// the window closes properly, App::~App() runs, and all services shut down.
+	}
+
+	void NotifyIconContextMenu::HomeAppBarButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		ShowMainWindow();
+	}
+
+	void NotifyIconContextMenu::ExitAppBarButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		//auto app = winrt::OpenNet::App();
+		//app.Exit();
 		Microsoft::UI::Xaml::Application::Current().Exit();
+		//ExitProcess(0);
+
 	}
 }

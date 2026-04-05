@@ -58,7 +58,7 @@ jobs:
     strategy:
       matrix:
         configuration: [Release]
-        platform: [x64]
+        platform: [x64, ARM64]
 
     steps:
       - name: Checkout

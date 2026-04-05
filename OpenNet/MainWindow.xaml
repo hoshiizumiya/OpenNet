@@ -40,6 +40,32 @@
                     AutomationProperties.AccessibilityView="Raw"
                     Source="ms-appx:///Assets/AppIcons/Square44x44Logo.altform-lightunplated_targetsize-256.png" />
             </TitleBar.LeftHeader>
+            <TitleBar.RightHeader>
+                <StackPanel
+                    Margin="0,0,6,0"
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <StackPanel.Resources>
+                        <Style
+                            x:Key="SettingButtonStyle"
+                            BasedOn="{StaticResource DefaultButtonStyle}"
+                            TargetType="Button">
+                            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                            <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+                            <Setter Property="HorizontalAlignment" Value="Stretch" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="MinWidth" Value="120" />
+                            <Setter Property="Padding" Value="16,6,16,6" />
+                        </Style>
+                    </StackPanel.Resources>
+                    <Button
+                        Padding="6"
+                        Click="InvertAppThemeButton_Click"
+                        Content="[Dev] Invert Theme"
+                        Style="{ThemeResource SettingButtonStyle}"
+                        Visibility="{x:Bind IsDebug, Mode=OneTime}" />
+                </StackPanel>
+            </TitleBar.RightHeader>
         </TitleBar>
 
         <!--  Main content: NavigationView + StatusBar  -->

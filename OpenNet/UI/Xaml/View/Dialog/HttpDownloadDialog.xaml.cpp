@@ -77,27 +77,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		UrlErrorInfoBar().IsOpen(!m_isUrlValid && !text.empty());
 	}
 
-	void HttpDownloadDialog::DialogRoot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	fire_and_forget HttpDownloadDialog::DialogRoot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		// preview clipboard content whether it's a valid URL
 		try
 		{
-			auto weak = get_weak();
-			winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged([weak](auto&&, auto&&) -> winrt::fire_and_forget
+			auto weak = this->get_weak();
+			m_event_revoker = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged(winrt::auto_revoke, [weak](auto&&, auto&&) -> winrt::fire_and_forget
 			{
 				auto self = weak.get();
-				self->ClipboardPreview().Text(co_await Core::Utils::Misc::getCurrentClipboardText());
-				self->ClipboardPreview().Visibility(Visibility::Visible);
+				auto strong = self ? self->get_strong() : nullptr;
+				if (strong == nullptr)
+				{
+					co_return;
+				}
+				strong->ClipboardPreview().Text(co_await Core::Utils::Misc::getCurrentClipboardText());
+				strong->ClipboardPreview().Visibility(Visibility::Visible);
 			});
 
 			auto clipboardContent = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
 			if (clipboardContent.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
 			{
-				auto text = clipboardContent.GetTextAsync().get();
+				auto text = co_await clipboardContent.GetTextAsync();
+				ClipboardPreview().Text(text);
+				ClipboardPreview().Visibility(Visibility::Visible);
 				if (ValidateUrl(text))
 				{
-					ClipboardPreview().Text(text);
-					ClipboardPreview().Visibility(Visibility::Visible);
+					UrlBox().Text(text);
 				}
 			}
 		}

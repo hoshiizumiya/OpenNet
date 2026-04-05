@@ -3,11 +3,12 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:anim="using:XamlToolkit.WinUI.Animations"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xtwa="using:XamlToolkit.WinUI.Animations"
     mc:Ignorable="d">
 
     <Grid>
@@ -37,7 +38,7 @@
                     <NavigationViewItem.Icon>
                         <FontIcon
                             x:Name="HomeIcon"
-                            anim:Implicit.Animations="{StaticResource IconOpacityAnim}"
+                            xtwa:Implicit.Animations="{StaticResource IconOpacityAnim}"
                             Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
@@ -50,7 +51,7 @@
                     <NavigationViewItem.Icon>
                         <FontIcon
                             x:Name="TasksIcon"
-                            anim:Implicit.Animations="{StaticResource IconOpacityAnim}"
+                            xtwa:Implicit.Animations="{StaticResource IconOpacityAnim}"
                             Glyph="&#xE7C4;" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
@@ -88,12 +89,25 @@
                     x:Name="NavItem_Settings"
                     x:Uid="NavItem_Settings"
                     Tag="settings">
-                    <NavigationViewItem.Icon>
-                        <FontIcon
+                    <!--<NavigationViewItem.Content>
+                    -->
+                    <!--<FontIcon
                             x:Name="SettingsIcon"
-                            anim:Implicit.Animations="{StaticResource IconOpacityAnim}"
-                            Glyph="&#xE713;" />
+                            Glyph="&#xE713;" />-->
+                    <NavigationViewItem.Icon>
+                        <AnimatedIcon
+                            x:Name="AnimatedIcon"
+                            PointerEntered="SettingButton_PointerEntered"
+                            PointerExited="SettingButton_PointerExited">
+                            <AnimatedIcon.Source>
+                                <animatedvisuals:AnimatedSettingsVisualSource />
+                            </AnimatedIcon.Source>
+                            <AnimatedIcon.FallbackIconSource>
+                                <FontIconSource Glyph="&#xE713;" />
+                            </AnimatedIcon.FallbackIconSource>
+                        </AnimatedIcon>
                     </NavigationViewItem.Icon>
+
                 </NavigationViewItem>
             </NavigationView.FooterMenuItems>
 

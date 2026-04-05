@@ -13,6 +13,7 @@ namespace winrt::OpenNet::implementation
 		~App();
 
 		void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
+		void Exit();
 
 		static void HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);
 

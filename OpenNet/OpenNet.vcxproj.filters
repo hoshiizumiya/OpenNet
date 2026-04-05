@@ -304,19 +304,9 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\Card\TitleCard.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="UI\Xaml\Media\Animations\Implicit.cpp">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Animations\ImplicitAnimationSet.cpp">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Animations\OffsetAnimation.cpp">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </ClCompile>
     <ClCompile Include="Core\Utils\Misc.cpp">
       <Filter>Core\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Animations\OpacityAnimation.cpp" />
     <ClCompile Include="Core\Utils\Message.cpp">
       <Filter>Core\Utils</Filter>
     </ClCompile>
@@ -358,9 +348,6 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Visuals\VisualTypes.cpp">
       <Filter>UI\Xaml\Media\Visuals</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Animations\EffectAnimationTypes.cpp">
-      <Filter>UI\Xaml\Media\Animations</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\RSSViewModel.cpp" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.cpp">
@@ -453,6 +440,8 @@
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp">
       <Filter>Core\GeoIP</Filter>
     </ClCompile>
+    <ClCompile Include="Core\AppRuntime.cpp" />
+    <ClCompile Include="Web\WebView2\WebView2Version.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -599,19 +588,9 @@
     <ClInclude Include="Helpers\ThemeHelper.h">
       <Filter>Helpers</Filter>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Animations\ImplicitAnimationSet.h">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Animations\Implicit.h">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Animations\OffsetAnimation.h">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </ClInclude>
     <ClInclude Include="Core\Utils\Misc.h">
       <Filter>Core\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Animations\OpacityAnimation.h" />
     <ClInclude Include="Core\Utils\Message.h">
       <Filter>Core\Utils</Filter>
     </ClInclude>
@@ -678,9 +657,6 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\Media\Shadows\AttachedCardShadow.h">
       <Filter>UI\Xaml\Media\Shadows</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Animations\EffectAnimationTypes.h">
-      <Filter>UI\Xaml\Media\Animations</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Media\Helpers\AsyncMutex.h">
       <Filter>UI\Xaml\Media\Helpers</Filter>
@@ -766,6 +742,8 @@
     <ClInclude Include="Core\GeoIP\GeoIPDatabase.h">
       <Filter>Core\GeoIP</Filter>
     </ClInclude>
+    <ClInclude Include="Core\AppRuntime.h" />
+    <ClInclude Include="Web\WebView2\WebView2Version.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">

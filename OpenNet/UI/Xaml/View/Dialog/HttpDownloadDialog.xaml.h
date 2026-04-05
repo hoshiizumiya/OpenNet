@@ -17,7 +17,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		bool IsUrlValid() const;
 
 		// XAML event handlers
-		void DialogRoot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		fire_and_forget DialogRoot_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void OnPrimaryButtonClick(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args);
 		winrt::Windows::Foundation::IAsyncAction PasteUrlButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction BrowseDirButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -30,6 +30,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		winrt::hstring m_saveDir;
 		winrt::hstring m_fileName;
 		bool m_isUrlValid{ false };
+		winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker m_event_revoker;
 	};
 }
 

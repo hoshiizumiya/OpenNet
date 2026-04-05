@@ -27,6 +27,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		InitializeComponent();
 
+		winrt::weak_ref<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView> weakThis = get_weak();
+		Loaded([weakThis](winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+		{
+			auto self = weakThis.get();
+			if (!self)
+			{
+				return;
+			}
+			self->m_isUnloaded = false;
+		});
+		Unloaded([weakThis](winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+		{
+			auto self = weakThis.get();
+			if (!self)
+			{
+				return;
+			}
+			self->m_isUnloaded = true;
+		});
+
 		m_viewModel = winrt::OpenNet::ViewModels::MainViewModel();
 		m_viewModel.Initialize();
 
@@ -42,7 +62,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					startTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
 				}
 			}
-			catch (...) {}
+			catch (...)
+			{
+			}
 
 			if (startTag == L"tasks") openTasksPage();
 			else if (startTag == L"rss") openRSSPage();
@@ -58,14 +80,29 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	bool MainView::CanGoBack()
 	{
-		return NavFrame().CanGoBack();
+		if (m_isUnloaded) return false;
+		try
+		{
+			return NavFrame().CanGoBack();
+		}
+		catch (...)
+		{
+			return false;
+		}
 	}
 
 	void MainView::GoBack()
 	{
-		if (NavFrame().CanGoBack())
+		if (m_isUnloaded) return;
+		try
 		{
-			NavFrame().GoBack();
+			if (NavFrame().CanGoBack())
+			{
+				NavFrame().GoBack();
+			}
+		}
+		catch (...)
+		{
 		}
 	}
 
@@ -83,30 +120,39 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::UpdateNavigationSelection(hstring const& tag)
 	{
+		if (m_isUnloaded) return;
 		if (tag.empty()) return;
-		auto nav = NavView();
-		for (auto const& obj : nav.MenuItems())
+		try
 		{
-			if (auto nvi = obj.try_as<NavigationViewItem>())
+			NavigationView nav = NavView();
+			for (IInspectable const& obj : nav.MenuItems())
 			{
-				if (unbox_value_or<hstring>(nvi.Tag(), L"") == tag)
+				NavigationViewItem nvi = obj.try_as<NavigationViewItem>();
+				if (nvi)
 				{
-					if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
-					return;
+					if (unbox_value_or<hstring>(nvi.Tag(), L"") == tag)
+					{
+						if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
+						return;
+					}
+				}
+			}
+			for (IInspectable const& obj : nav.FooterMenuItems())
+			{
+				NavigationViewItem nvi = obj.try_as<NavigationViewItem>();
+				if (nvi)
+				{
+					hstring itemTag = unbox_value_or<hstring>(nvi.Tag(), L"");
+					if (itemTag == tag || (tag == L"settings" && itemTag == L"Settings"))
+					{
+						if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
+						return;
+					}
 				}
 			}
 		}
-		for (auto const& obj : nav.FooterMenuItems())
+		catch (...)
 		{
-			if (auto nvi = obj.try_as<NavigationViewItem>())
-			{
-				auto itemTag = unbox_value_or<hstring>(nvi.Tag(), L"");
-				if (itemTag == tag || (tag == L"settings" && itemTag == L"Settings"))
-				{
-					if (nav.SelectedItem() != nvi) nav.SelectedItem(nvi);
-					return;
-				}
-			}
 		}
 	}
 
@@ -114,64 +160,91 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::openHomePage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>())
-		{ UpdateNavigationSelection(L"home"); return; }
+		{
+			UpdateNavigationSelection(L"home"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>());
 		UpdateNavigationSelection(L"home");
 	}
 	void MainView::openContactsPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::ContactsPage>())
-		{ UpdateNavigationSelection(L"contacts"); return; }
+		{
+			UpdateNavigationSelection(L"contacts"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::ContactsPage>());
 		UpdateNavigationSelection(L"contacts");
 	}
 	void MainView::openTasksPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>())
-		{ UpdateNavigationSelection(L"tasks"); return; }
+		{
+			UpdateNavigationSelection(L"tasks"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>());
 		UpdateNavigationSelection(L"tasks");
 	}
 	void MainView::openFilesPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::FilesPage>())
-		{ UpdateNavigationSelection(L"files"); return; }
+		{
+			UpdateNavigationSelection(L"files"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::FilesPage>());
 		UpdateNavigationSelection(L"files");
 	}
 	void MainView::openNetworkSettingsPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>())
-		{ UpdateNavigationSelection(L"net"); return; }
+		{
+			UpdateNavigationSelection(L"net"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>());
 		UpdateNavigationSelection(L"net");
 	}
 	void MainView::openServersPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::ServersPage>())
-		{ UpdateNavigationSelection(L"servers"); return; }
+		{
+			UpdateNavigationSelection(L"servers"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::ServersPage>());
 		UpdateNavigationSelection(L"servers");
 	}
 	void MainView::openRSSPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::RSSPage>())
-		{ UpdateNavigationSelection(L"rss"); return; }
+		{
+			UpdateNavigationSelection(L"rss"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::RSSPage>());
 		UpdateNavigationSelection(L"rss");
 	}
 	void MainView::openNatToolsPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NatToolsPage>())
-		{ UpdateNavigationSelection(L"nattools"); return; }
+		{
+			UpdateNavigationSelection(L"nattools"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NatToolsPage>());
 		UpdateNavigationSelection(L"nattools");
 	}
 	void MainView::openSettingsPage()
 	{
+		if (m_isUnloaded) return;
 		if (NavFrame().SourcePageType() == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage>())
-		{ UpdateNavigationSelection(L"Settings"); return; }
+		{
+			UpdateNavigationSelection(L"Settings"); return;
+		}
 		NavFrame().Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage>());
 		UpdateNavigationSelection(L"Settings");
 	}
@@ -190,65 +263,93 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::NavView_SelectionChanged(NavigationView const& /*sender*/, NavigationViewSelectionChangedEventArgs const& args)
 	{
-		this->DispatcherQueue().TryEnqueue([this, args]() {
-			try
-			{
-				auto selectedItem = args.SelectedItem().try_as<NavigationViewItem>();
-				hstring tag = L"";
-				if (selectedItem) tag = unbox_value_or<hstring>(selectedItem.Tag(), L"");
+		if (m_isUnloaded) return;
 
-				// Update HomeIcon
-				if (auto icon = NavView().FindName(L"HomeIcon").try_as<FontIcon>())
-				{
-					icon.Glyph(tag == L"home" ? L"\uEA8A" : L"\uE80F");
-				}
-				// Update TasksIcon
-				if (auto icon = NavView().FindName(L"TasksIcon").try_as<FontIcon>())
-				{
-					icon.Glyph(tag == L"tasks" ? L"\uEB91" : L"\uE7C4");
-				}
-				// Update SettingsIcon
-				if (auto sicon = NavView().FindName(L"SettingsIcon").try_as<FontIcon>())
-				{
-					sicon.Glyph(tag == L"settings" ? L"\uF8B0" : L"\uE713");
-				}
+		try
+		{
+			winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem selectedItem = args.SelectedItem().try_as<NavigationViewItem>();
+			hstring tag = L"";
+			if (selectedItem) tag = unbox_value_or<hstring>(selectedItem.Tag(), L"");
+
+			if (winrt::Microsoft::UI::Xaml::Controls::FontIcon icon = NavView().FindName(L"HomeIcon").try_as<FontIcon>())
+			{
+				icon.Glyph(tag == L"home" ? L"\uEA8A" : L"\uE80F");
 			}
-			catch (...) {}
-		});
+			if (winrt::Microsoft::UI::Xaml::Controls::FontIcon icon = NavView().FindName(L"TasksIcon").try_as<FontIcon>())
+			{
+				icon.Glyph(tag == L"tasks" ? L"\uEB91" : L"\uE7C4");
+			}
+			if (winrt::Microsoft::UI::Xaml::Controls::FontIcon sicon = NavView().FindName(L"SettingsIcon").try_as<FontIcon>())
+			{
+				sicon.Glyph(tag == L"settings" ? L"\uF8B0" : L"\uE713");
+			}
+		}
+		catch (...)
+		{
+		}
 	}
 
 	void MainView::Navigate(hstring const& tag)
 	{
-		auto weak = get_weak();
-		this->DispatcherQueue().TryEnqueue([weak, tag]()
+		if (m_isUnloaded) return;
+
+		if (DispatcherQueue().HasThreadAccess())
 		{
-			if (auto self = weak.get())
+			auto frame = NavFrame();
+			auto content = frame.Content();
+
+			if (tag == L"home")
 			{
-				auto frame = self->NavFrame();
-				auto content = frame.Content();
-
-				if (tag == L"home")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>()) return; self->openHomePage(); return; }
-				if (tag == L"contacts")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::ContactsPage>()) return; self->openContactsPage(); return; }
-				if (tag == L"tasks")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>()) return; self->openTasksPage(); return; }
-				if (tag == L"files")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::FilesPage>()) return; self->openFilesPage(); return; }
-				if (tag == L"net")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>()) return; self->openNetworkSettingsPage(); return; }
-				if (tag == L"servers")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::ServersPage>()) return; self->openServersPage(); return; }
-				if (tag == L"rss")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::RSSPage>()) return; self->openRSSPage(); return; }
-				if (tag == L"nattools")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::NatToolsPage>()) return; self->openNatToolsPage(); return; }
-				if (tag == L"settings")
-				{ if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage>()) return; self->openSettingsPage(); return; }
-
-				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>()) return;
-				self->openHomePage();
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>()) return; openHomePage(); return;
 			}
+			if (tag == L"contacts")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::ContactsPage>()) return; openContactsPage(); return;
+			}
+			if (tag == L"tasks")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>()) return; openTasksPage(); return;
+			}
+			if (tag == L"files")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::FilesPage>()) return; openFilesPage(); return;
+			}
+			if (tag == L"net")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>()) return; openNetworkSettingsPage(); return;
+			}
+			if (tag == L"servers")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::ServersPage>()) return; openServersPage(); return;
+			}
+			if (tag == L"rss")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::RSSPage>()) return; openRSSPage(); return;
+			}
+			if (tag == L"nattools")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::NatToolsPage>()) return; openNatToolsPage(); return;
+			}
+			if (tag == L"settings")
+			{
+				if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage>()) return; openSettingsPage(); return;
+			}
+
+			if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>()) return;
+			openHomePage();
+			return;
+		}
+
+		winrt::weak_ref<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView> weak = get_weak();
+		DispatcherQueue().TryEnqueue([weak, tag]()
+		{
+			auto self = weak.get();
+			if (!self)
+			{
+				return;
+			}
+			if (self->m_isUnloaded) return;
+			self->Navigate(tag);
 		});
 	}
 
@@ -258,6 +359,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::NavFrame_Navigated(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
 	{
+		if (m_isUnloaded) return;
+
 		auto name = e.SourcePageType().Name;
 		hstring tag;
 		if (name == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>().Name) tag = L"home";
@@ -270,7 +373,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		else if (name == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage>().Name) tag = L"Settings";
 		if (!tag.empty()) UpdateNavigationSelection(tag);
 
-		// Notify parent (MainWindow) about back-button state change
 		m_canGoBackChanged(*this, NavFrame().CanGoBack());
+	}
+
+	void MainView::SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)
+	{
+		if (m_isUnloaded) return;
+		AnimatedIcon::SetState(this->AnimatedIcon(), L"PointerOver");
+	}
+
+	void MainView::SettingButton_PointerExited(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)
+	{
+		if (m_isUnloaded) return;
+		AnimatedIcon::SetState(this->AnimatedIcon(), L"Normal");
 	}
 }

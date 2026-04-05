@@ -45,7 +45,9 @@ namespace OpenNet::Core
 			if (m_aria2)
 				m_aria2->ForceTerminate();
 		}
-		catch (...) {}
+		catch (...)
+		{
+		}
 	}
 
 	// ------------------------------------------------------------------
@@ -55,40 +57,58 @@ namespace OpenNet::Core
 	{
 		co_await winrt::resume_background();
 
-		std::lock_guard lock(m_mutex);
-		if (m_initialized)
-			co_return;
-
-		// Create the local Aria2 instance
-		m_aria2 = std::make_unique<Aria2::LocalAria2Instance>();
-
-		// Async startup: locate aria2c, prepare process, and start
-		co_await m_aria2->StartupAsync();
-
-		// Initialize HTTP download record persistence
-		HttpStateManager::Instance().Initialize();
-
-		// Rebuild GID→recordId mapping from persisted records so that
-		// GetRecordIdForGid() works correctly after an app restart.
 		{
-			auto records = HttpStateManager::Instance().LoadAllRecords();
-			for (auto const& rec : records)
-			{
-				if (!rec.lastGid.empty())
-				{
-					m_gidToRecordId[rec.lastGid] = rec.recordId;
-				}
-			}
+			std::lock_guard<std::mutex> lock(m_mutex);
+			if (m_initialized || m_initializing)
+				co_return;
+			m_initializing = true;
 		}
 
-		// Start periodic refresh thread
-		m_stopRefresh.store(false);
-		m_refreshThread = std::thread([this]()
-		{
-			RefreshThreadEntry();
-		});
+		std::unique_ptr<Aria2::LocalAria2Instance> aria2 = std::make_unique<Aria2::LocalAria2Instance>();
 
-		m_initialized = true;
+		try
+		{
+			// Async startup: locate aria2c, prepare process, and start
+			co_await aria2->StartupAsync();
+
+			// Initialize HTTP download record persistence
+			HttpStateManager::Instance().Initialize();
+
+			// Rebuild GID→recordId mapping from persisted records so that
+			// GetRecordIdForGid() works correctly after an app restart.
+			auto records = HttpStateManager::Instance().LoadAllRecords();
+
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+				m_aria2 = std::move(aria2);
+
+				for (auto const& rec : records)
+				{
+					if (!rec.lastGid.empty())
+					{
+						m_gidToRecordId[rec.lastGid] = rec.recordId;
+					}
+				}
+
+				// Start periodic refresh thread
+				m_stopRefresh.store(false);
+				m_refreshThread = std::thread([this]()
+				{
+					RefreshThreadEntry();
+				});
+
+				m_initialized = true;
+				m_initializing = false;
+			}
+		}
+		catch (...)
+		{
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+				m_initializing = false;
+			}
+			throw;
+		}
 	}
 
 	void DownloadManager::Shutdown()
@@ -341,7 +361,10 @@ namespace OpenNet::Core
 			// Sleep remainder of interval, wake immediately if stopped
 			{
 				std::unique_lock<std::mutex> lock(m_stopMutex);
-				m_stopCv.wait_for(lock, kInterval, [this] { return m_stopRefresh.load(); });
+				m_stopCv.wait_for(lock, kInterval, [this]
+				{
+					return m_stopRefresh.load();
+				});
 			}
 		}
 	}

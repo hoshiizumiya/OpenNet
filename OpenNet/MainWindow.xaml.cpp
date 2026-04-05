@@ -37,23 +37,48 @@ namespace winrt::OpenNet::implementation
 		AppWindow().SetIcon(L"Assets/AppIcons/win3264.ico");
 
 		// Listen for back-button state changes from MainView
-		MainContentView().CanGoBackChanged([this](IInspectable const&, bool canGoBack)
+		m_canGoBackChangedToken = MainContentView().CanGoBackChanged([this](IInspectable const&, bool canGoBack)
 		{
-			AppTitleBar().IsBackButtonVisible(canGoBack);
+			try
+			{
+				AppTitleBar().IsBackButtonVisible(canGoBack);
+			}
+			catch (...)
+			{
+			}
 		});
 
 		Closed([this](auto&&, auto&&)
 		{
+			try
+			{
+				MainContentView().CanGoBackChanged(m_canGoBackChangedToken);
+			}
+			catch (...)
+			{
+			}
+
 			PlacementRestoration::Save(*this);
 
 			// Stop ViewModel background thread (speed refresh)
 			try
 			{
-				if (auto vm = ViewModel())
+				winrt::OpenNet::ViewModels::MainViewModel vm = ViewModel();
+				if (vm)
+				{
 					vm.Shutdown();
+				}
 			}
-			catch (...) { OutputDebugStringA("MainWindow: ViewModel shutdown error\n"); }
+			catch (...)
+			{
+				OutputDebugStringA("MainWindow: ViewModel shutdown error\n");
+			}
 		});
+	}
+
+	void MainWindow::InvertAppThemeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		RootGrid().RequestedTheme(RootGrid().RequestedTheme() == ElementTheme::Dark ? ElementTheme::Light : ElementTheme::Dark);
 	}
 
 	winrt::OpenNet::ViewModels::MainViewModel MainWindow::ViewModel()
@@ -132,23 +157,33 @@ namespace winrt::OpenNet::implementation
 		brush.ImageSource(bitmap);
 		switch (stretchIndex)
 		{
-		case 1:
-			brush.Stretch(Stretch::Fill);
-			break;
-		case 2:
-			brush.Stretch(Stretch::Uniform);
-			break;
-		case 3:
-			brush.Stretch(Stretch::UniformToFill);
-			break;
-		case 0:
-		default:
-			brush.Stretch(Stretch::None);
-			break;
+			case 1:
+				brush.Stretch(Stretch::Fill);
+				break;
+			case 2:
+				brush.Stretch(Stretch::Uniform);
+				break;
+			case 3:
+				brush.Stretch(Stretch::UniformToFill);
+				break;
+			case 0:
+			default:
+				brush.Stretch(Stretch::None);
+				break;
 		}
 		brush.Opacity(opacity);
 		RootGrid().Background(brush);
 		co_return;
+	}
+
+	Microsoft::UI::Xaml::Visibility MainWindow::IsDebug()
+	{
+#ifdef _DEBUG
+		{
+			return Microsoft::UI::Xaml::Visibility::Visible;
+		}
+#endif
+		return Microsoft::UI::Xaml::Visibility::Collapsed;
 	}
 
 	void MainWindow::RootGridXamlRoot_Changed(XamlRoot /*sender*/, XamlRootChangedEventArgs /*args*/)

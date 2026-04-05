@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "ViewModels/MainViewModel.h"
 #include "UI/Xaml/View/Pages/MainView.g.h"
@@ -39,6 +39,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		                         winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&);
 		void NavFrame_Navigated(winrt::Windows::Foundation::IInspectable const&,
 		                        winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
+		void SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+		void SettingButton_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&,
 		                              winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const&);
 
@@ -47,6 +49,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		winrt::OpenNet::ViewModels::MainViewModel m_viewModel{ nullptr };
 		winrt::event<winrt::Windows::Foundation::EventHandler<bool>> m_canGoBackChanged;
+		bool m_isUnloaded{ false };
 	};
 }
 

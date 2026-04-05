@@ -356,6 +356,12 @@ namespace winrt::OpenNet::implementation
 		ApplyBackdropFromSettings(window);
 	}
 
+	void App::Exit()
+	{
+		s_isExiting = true;
+		Microsoft::UI::Xaml::Application::Current().Exit();
+	}
+
 	// To do: Custom activation, Windows integration
 	void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
 	{

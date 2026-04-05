@@ -6,6 +6,7 @@ namespace OpenNet
 	runtimeclass MainWindow : Microsoft.UI.Xaml.Window
 	{
 		MainWindow();
+		Microsoft.UI.Xaml.Visibility IsDebug { get; };
 		OpenNet.ViewModels.MainViewModel ViewModel { get; };
 		void Navigate(String tag);
 	}

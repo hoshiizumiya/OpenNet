@@ -157,6 +157,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Core\AppRuntime.h" />
     <ClInclude Include="Controls\SpeedGraph\SpeedGraph.xaml.h">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -489,6 +490,7 @@
       <DependentUpon>ViewModels\TransferViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Web\WebView2\WebView2Version.h" />
     <ClInclude Include="Web\Request\Builder\GithubRequest.h" />
   </ItemGroup>
   <ItemGroup>
@@ -595,6 +597,7 @@
     <Page Include="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Core\AppRuntime.cpp" />
     <ClCompile Include="Controls\SpeedGraph\SpeedGraph.xaml.cpp">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -896,6 +899,7 @@
       <DependentUpon>ViewModels\TransferViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Web\WebView2\WebView2Version.cpp" />
     <ClCompile Include="Web\Request\Builder\GithubRequest.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -108,6 +108,7 @@ namespace OpenNet::Core
 	private:
 		std::unique_ptr<Aria2::LocalAria2Instance> m_aria2;
 		bool m_initialized = false;
+		bool m_initializing = false;
 
 		std::thread m_refreshThread;
 		std::atomic<bool> m_stopRefresh{ false };
