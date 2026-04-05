@@ -59,6 +59,7 @@ namespace Core::Utils::Misc
 	};
 
 	winrt::hstring parseHtmlLinks(const winrt::hstring& rawText);
+	winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> getCurrentClipboardText();
 
 	winrt::hstring osName();
 	winrt::hstring boostVersionString();

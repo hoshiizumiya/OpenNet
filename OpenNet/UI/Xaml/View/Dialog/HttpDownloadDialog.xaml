@@ -20,6 +20,7 @@
         x:Name="DialogRoot"
         MinWidth="480"
         Padding="16"
+        Loaded="DialogRoot_Loaded"
         Spacing="12">
 
         <!--  URL Input  -->
@@ -35,17 +36,28 @@
             TextWrapping="Wrap" />
 
         <!--  Paste from clipboard  -->
-        <Button
-            x:Name="PasteUrlButton"
-            x:Uid="HttpDownloadDialogPasteButton"
-            Click="PasteUrlButton_Click">
-            <Button.Content>
-                <StackPanel Orientation="Horizontal" Spacing="6">
-                    <FontIcon FontSize="14" Glyph="&#xE16F;" />
-                    <TextBlock x:Uid="HttpDownloadDialogPasteButtonText" />
-                </StackPanel>
-            </Button.Content>
-        </Button>
+        <StackPanel Orientation="Horizontal" Spacing="12">
+            <Button
+                x:Name="PasteUrlButton"
+                x:Uid="HttpDownloadDialogPasteButton"
+                Click="PasteUrlButton_Click">
+                <Button.Content>
+                    <StackPanel Orientation="Horizontal" Spacing="6">
+                        <FontIcon
+                            FontFamily="Segoe Fluent Icons"
+                            FontSize="14"
+                            Glyph="&#xE16F;" />
+                        <TextBlock x:Uid="HttpDownloadDialogPasteButtonText" />
+                    </StackPanel>
+                </Button.Content>
+            </Button>
+            <TextBlock
+                x:Name="ClipboardPreview"
+                x:Uid="DialogClipboardPreview"
+                VerticalAlignment="Center"
+                Foreground="{ThemeResource SystemControlDisabledBaseLowBrush}"
+                TextTrimming="CharacterEllipsis" />
+        </StackPanel>
 
         <!--  Save Directory  -->
         <Grid>

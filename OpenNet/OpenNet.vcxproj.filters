@@ -179,12 +179,6 @@
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.idl">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Midl>
-    <Midl Include="UI\Xaml\Media\Animations\Animations.idl">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Animations\EffectAnimations.idl">
-      <Filter>UI\Xaml\Media\Animations</Filter>
-    </Midl>
     <Midl Include="UI\Xaml\Media\Enums.idl">
       <Filter>UI\Xaml\Media</Filter>
     </Midl>

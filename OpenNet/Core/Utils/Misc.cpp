@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "Misc.h"
+#include <winrt/Windows.ApplicationModel.DataTransfer.h>
 #include <winrt/Windows.Globalization.h>
 #include <winrt/Windows.System.UserProfile.h>
 
@@ -422,6 +423,13 @@ winrt::hstring Core::Utils::Misc::parseHtmlLinks(const winrt::hstring& rawText)
 	// Wrap in paragraph tag
 	result = L"<p style=\"white-space: pre-wrap;\">" + replaced + L"</p>";
 	return winrt::hstring{ result };
+}
+
+winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> Core::Utils::Misc::getCurrentClipboardText()
+{
+	auto clipboardContent = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
+	auto text = co_await clipboardContent.GetTextAsync();
+	co_return text;
 }
 
 winrt::hstring Core::Utils::Misc::osName()

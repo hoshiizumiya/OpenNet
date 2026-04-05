@@ -1,7 +1,7 @@
 ﻿<ResourceDictionary
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:anim="using:OpenNet.UI.Xaml.Media.Animations"
+    xmlns:anim="using:XamlToolkit.WinUI.Animations"
     xmlns:helpers="using:OpenNet.Helpers"
     xmlns:local="using:OpenNet">
 
