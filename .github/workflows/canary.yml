@@ -144,6 +144,21 @@ jobs:
           Get-ChildItem Cert:\CurrentUser\My |
             Select Subject, Thumbprint
 
+      - name: Generate package metadata
+        id: meta
+        shell: pwsh
+        run: |
+          $dateYear = Get-Date -Format yyyy
+          $dateMonth = (Get-Date).Month
+          $dateDay = (Get-Date).Day
+          $date = Get-Date -Format yyyyMMdd
+          $shortSha = "${{ github.sha }}".Substring(0, 7)
+          $name = "OpenNet.Canary_${date}_${{ matrix.platform }}_${shortSha}"
+          $version = "$dateYear.$dateMonth.$dateDay.${shortSha}"
+          "date=$date" >> $env:GITHUB_OUTPUT
+          "package_name=$name" >> $env:GITHUB_OUTPUT
+          "version=$version" >> $env:GITHUB_OUTPUT
+
       - name: Build MSIX
         shell: pwsh
         working-directory: ${{ github.workspace }}
@@ -154,7 +169,7 @@ jobs:
             /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageDir=AppPackages\ `
-            /p:AppxPackageVersion=1.0.${{ needs.build.outputs.date }}.${{ github.run_number }} `
+            /p:AppxPackageVersion=${{ steps.meta.outputs.version }} `
             /p:AppxPackageSigningEnabled=true `
             /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /p:PackageCertificateKeyFile= `
@@ -173,16 +188,6 @@ jobs:
           }
 
           Remove-Item "$env:GITHUB_WORKSPACE\cert.pfx" -Force -ErrorAction SilentlyContinue
-
-      - name: Generate package metadata
-        id: meta
-        shell: pwsh
-        run: |
-          $date = Get-Date -Format yyyyMMdd
-          $shortSha = "${{ github.sha }}".Substring(0, 7)
-          $name = "OpenNet.Canary_${date}_${{ matrix.platform }}_${shortSha}"
-          "date=$date" >> $env:GITHUB_OUTPUT
-          "package_name=$name" >> $env:GITHUB_OUTPUT
 
       - name: Copy SideloadReadme
         shell: pwsh
