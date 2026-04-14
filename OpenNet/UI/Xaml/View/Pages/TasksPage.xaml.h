@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // Ensure custom control types are declared before including the generated XAML header.
 // The generated header (`Pages/TasksPage.g.h`) uses `winrt::OpenNet::Controls::SpeedGraph::SpeedGraph`
@@ -18,6 +18,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TasksPage();
 		~TasksPage();
+
+		void DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
 		// Expose strongly-typed ViewModel for x:Bind
 		winrt::OpenNet::ViewModels::TasksViewModel ViewModel() const

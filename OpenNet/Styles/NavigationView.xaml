@@ -4,7 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animations="using:XamlToolkit.WinUI.Animations"
     xmlns:helpers="using:OpenNet.Helpers"
-    xmlns:local="using:OpenNet">
+    xmlns:local="using:OpenNet"
+    xmlns:ui="using:XamlToolkit.WinUI">
     <ResourceDictionary.ThemeDictionaries>
         <ResourceDictionary x:Key="Default">
             <StaticResource x:Key="RailNavigationIconForegroundBrush" ResourceKey="ControlAAFillColorDefaultBrush" />
@@ -655,6 +656,7 @@
                             Margin="12,8"
                             HorizontalAlignment="Right"
                             VerticalAlignment="Top"
+                            ui:VisualExtensions.NormalizedCenterPoint="0.5,0.5"
                             Fill="{ThemeResource InfoBadgeBackground}"
                             Stroke="{TemplateBinding Background}"
                             StrokeThickness="1"

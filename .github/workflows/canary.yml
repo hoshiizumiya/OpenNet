@@ -221,10 +221,9 @@ jobs:
       github.event_name == 'push'
 
     steps:
-      - name: Download build artifact
+      - name: Download build artifacts
         uses: actions/download-artifact@v6
         with:
-          name: ${{ needs.build.outputs.package_name }}
           path: out
 
       - name: Publish or update prerelease
@@ -235,7 +234,7 @@ jobs:
           prerelease: true
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: out/*.7z
+          artifacts: out/**/*.7z
           generateReleaseNotes: true
           body: |
             Auto-updated canary package.

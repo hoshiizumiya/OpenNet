@@ -3,8 +3,10 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskPeersListPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:OpenNet.ViewModels"
@@ -46,98 +48,71 @@
                     Padding="8,4,0,4"
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:StickyHeaderBehavior />
+                    </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn x:Name="ColPeerIP"  CanResize="True" DesiredWidth="2*">
+                        <labs:DataColumn x:Name="ColPeerIP" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_IP"
                                 FontWeight="SemiBold"
                                 Text="IP" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerLocation"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerLocation" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Location"
                                 FontWeight="SemiBold"
                                 Text="Location" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerProgress"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerProgress" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Progress"
                                 FontWeight="SemiBold"
                                 Text="Progress" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerDLSpeed"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerDLSpeed" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_DLSpeed"
                                 FontWeight="SemiBold"
                                 Text="DL Speed" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerULSpeed"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerULSpeed" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_ULSpeed"
                                 FontWeight="SemiBold"
                                 Text="UL Speed" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerDownloaded"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerDownloaded" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Downloaded"
                                 FontWeight="SemiBold"
                                 Text="Downloaded" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerClient"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerClient" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Client"
                                 FontWeight="SemiBold"
                                 Text="Client" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerStatus"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerStatus" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_PeerStatus"
                                 FontWeight="SemiBold"
                                 Text="Status" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerProtocol"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerProtocol" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Protocol"
                                 FontWeight="SemiBold"
                                 Text="Protocol" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerInitiator"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerInitiator" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Initiator"
                                 FontWeight="SemiBold"
                                 Text="Initiator" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColPeerSource"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColPeerSource" CanResize="True">
                             <TextBlock
                                 x:Uid="PeerHeader_Source"
                                 FontWeight="SemiBold"

@@ -34,7 +34,7 @@ namespace OpenNet::Helpers
 		double w = GetColumnWidth(key);
 		if (w > 0)
 		{
-			col.DesiredWidth(winrt::Microsoft::UI::Xaml::GridLengthHelper::FromPixels(w));
+			col.Width(w);
 		}
 	}
 }

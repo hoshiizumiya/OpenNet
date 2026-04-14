@@ -187,24 +187,12 @@
     <ClInclude Include="Core\Utils\Misc.h" />
     <ClInclude Include="Core\Utils\Message.h" />
     <ClInclude Include="Helpers\ColumnWidthHelper.h" />
+    <ClInclude Include="Helpers\ControlLengthHelper.h" />
     <ClInclude Include="ThirdParty\RepoInfo.h" />
     <ClInclude Include="UI\Shell\NotifyIconContextMenu.xaml.h">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\Behaviors\BehaviorBase.h">
-      <DependentUpon>UI\Xaml\Behaviors\BehaviorBase.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.h">
-      <DependentUpon>UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.h">
-      <DependentUpon>UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h" />
     <ClInclude Include="UI\Xaml\Control\Card\TitleCard.h">
       <DependentUpon>UI\Xaml\Control\Card\TitleCard.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -628,15 +616,6 @@
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp">
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp">
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp">
-      <SubType>Code</SubType>
-    </ClCompile>
     <ClCompile Include="UI\Xaml\Control\Card\TitleCard.cpp">
       <DependentUpon>UI\Xaml\Control\Card\TitleCard.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -913,18 +892,6 @@
     </Midl>
     <Midl Include="UI\Shell\NotifyIconContextMenu.idl">
       <DependentUpon>UI\Shell\NotifyIconContextMenu.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Behaviors\BehaviorBase.idl">
-      <DependentUpon>UI\Xaml\Behaviors\BehaviorBase.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.idl">
-      <DependentUpon>UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp</DependentUpon>
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.idl">
-      <DependentUpon>UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
@@ -1227,7 +1194,6 @@
     <None Include="OpenNet_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Resource.aps" />
-    <None Include="UI\Xaml\Behaviors\README.md" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
   </ItemGroup>
@@ -1291,14 +1257,16 @@
     <Import Project="..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260224000\build\native\Microsoft.WindowsAppSDK.WinUI.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.WinUI.1.8.260224000\build\native\Microsoft.WindowsAppSDK.WinUI.targets')" />
     <Import Project="..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets" Condition="Exists('..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets')" />
     <Import Project="..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets')" />
-    <Import Project="..\packages\WinUIEssential.WinUI3.1.6.3\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.6.3\build\native\WinUIEssential.WinUI3.targets')" />
-    <Import Project="..\packages\XamlToolkit.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Native.targets')" />
-    <Import Project="..\packages\XamlToolkit.WinUI.Animations.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Animations.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets')" />
-    <Import Project="..\packages\XamlToolkit.WinUI.Helpers.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" />
     <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1721\build\Microsoft.Windows.SDK.BuildTools.targets" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1721\build\Microsoft.Windows.SDK.BuildTools.targets')" />
-    <Import Project="..\packages\XamlToolkit.WinUI.Converters.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Converters.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets')" />
-    <Import Project="..\packages\XamlToolkit.WinUI.Controls.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" />
-    <Import Project="..\packages\XamlToolkit.Labs.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" />
+    <Import Project="..\packages\WinUIEssential.WinUI3.1.6.4\build\native\WinUIEssential.WinUI3.targets" Condition="Exists('..\packages\WinUIEssential.WinUI3.1.6.4\build\native\WinUIEssential.WinUI3.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Converters.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Converters.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Animations.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Animations.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Helpers.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Controls.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.Labs.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Interactivity.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Interactivity.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Interactivity.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Interactivity.Native.targets')" />
+    <Import Project="..\packages\XamlToolkit.WinUI.Behaviors.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Behaviors.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Behaviors.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Behaviors.Native.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1332,14 +1300,16 @@
     <Error Condition="!Exists('..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Graphics.Win2D.1.4.0\build\native\Microsoft.Graphics.Win2D.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.WindowsAppSDK.1.8.260317003\build\native\Microsoft.WindowsAppSDK.targets'))" />
-    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.6.3\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.6.3\build\native\WinUIEssential.WinUI3.targets'))" />
-    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Animations.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Animations.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Helpers.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1721\build\Microsoft.Windows.SDK.BuildTools.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1721\build\Microsoft.Windows.SDK.BuildTools.props'))" />
     <Error Condition="!Exists('..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1721\build\Microsoft.Windows.SDK.BuildTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Windows.SDK.BuildTools.10.0.28000.1721\build\Microsoft.Windows.SDK.BuildTools.targets'))" />
-    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Converters.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Converters.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Controls.Native.0.4.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.Labs.WinUI.Native.0.4.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\WinUIEssential.WinUI3.1.6.4\build\native\WinUIEssential.WinUI3.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\WinUIEssential.WinUI3.1.6.4\build\native\WinUIEssential.WinUI3.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Converters.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Converters.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Converters.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Animations.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Animations.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Animations.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Helpers.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Controls.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.Labs.WinUI.Native.0.5.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Interactivity.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Interactivity.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Interactivity.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Interactivity.Native.targets'))" />
+    <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Behaviors.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Behaviors.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Behaviors.Native.0.5.0-alpha\build\native\XamlToolkit.WinUI.Behaviors.Native.targets'))" />
   </Target>
 </Project>

@@ -3,10 +3,11 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.TasksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:behaviors="using:OpenNet.UI.Xaml.Behaviors"
+    xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:controls="using:XamlToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -156,21 +157,19 @@
                             Padding="8,4,0,4"
                             Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                             CornerRadius="4">
-                            <!--<interactivity:Interaction.Behaviors>
-                                    <behaviors:StickyHeaderBehavior />
-                                </interactivity:Interaction.Behaviors>-->
-                            <labs:DataTable ColumnSpacing="16">
+                            <interactivity:Interaction.Behaviors>
+                                <behaviors:StickyHeaderBehavior />
+                            </interactivity:Interaction.Behaviors>
+                            <labs:DataTable ColumnSpacing="16" Loaded="DataTable_Loaded">
                                 <labs:DataColumn
                                     x:Name="ColName"
                                     CanResize="True"
-                                    DesiredWidth="3*"
                                     Tag="Name">
                                     <TextBlock x:Uid="Header_TaskName" FontWeight="SemiBold" />
                                 </labs:DataColumn>
                                 <labs:DataColumn
                                     x:Name="ColSize"
                                     CanResize="True"
-                                    DesiredWidth="*"
                                     Tag="Size">
                                     <TextBlock
                                         x:Uid="Header_Size"
@@ -180,7 +179,6 @@
                                 <labs:DataColumn
                                     x:Name="ColProgress"
                                     CanResize="True"
-                                    DesiredWidth="*"
                                     Tag="Progress">
                                     <TextBlock
                                         x:Uid="Header_Progress"
@@ -190,7 +188,6 @@
                                 <labs:DataColumn
                                     x:Name="ColDLRate"
                                     CanResize="True"
-                                    DesiredWidth="*"
                                     Tag="DLRate">
                                     <TextBlock
                                         x:Uid="Header_DLRate"
@@ -200,7 +197,6 @@
                                 <labs:DataColumn
                                     x:Name="ColULRate"
                                     CanResize="True"
-                                    DesiredWidth="*"
                                     Tag="ULRate">
                                     <TextBlock
                                         x:Uid="Header_ULRate"
@@ -210,7 +206,6 @@
                                 <labs:DataColumn
                                     x:Name="ColRemaining"
                                     CanResize="True"
-                                    DesiredWidth="2*"
                                     Tag="Remaining">
                                     <TextBlock
                                         x:Uid="Header_Remaining"
@@ -220,7 +215,6 @@
                                 <labs:DataColumn
                                     x:Name="ColAddDate"
                                     CanResize="True"
-                                    DesiredWidth="2*"
                                     Tag="AddDate">
                                     <TextBlock
                                         x:Uid="Header_AddDate"
@@ -310,6 +304,7 @@
                     Height="12"
                     HorizontalAlignment="Stretch"
                     VerticalAlignment="Top"
+                    PointerReleased="GridSplitter_PointerReleased"
                     ResizeBehavior="BasedOnAlignment"
                     ResizeDirection="Rows">
                     <controls:GridSplitter.RenderTransform>

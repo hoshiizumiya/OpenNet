@@ -112,21 +112,22 @@ namespace OpenNet::Core
         // ---------------------------------------------------------------
         //  Category constants for well-known setting groups
         // ---------------------------------------------------------------
-        static constexpr const char* CAT_TORRENT      = "torrent";
-        static constexpr const char* CAT_CONNECTION    = "connection";
-        static constexpr const char* CAT_DOWNLOAD      = "download";
-        static constexpr const char* CAT_PROXY         = "proxy";
-        static constexpr const char* CAT_ENCRYPTION    = "encryption";
-        static constexpr const char* CAT_SEEDING       = "seeding";
-        static constexpr const char* CAT_DISCOVERY     = "discovery";
-        static constexpr const char* CAT_TRACKER       = "tracker";
-        static constexpr const char* CAT_SPEED_LIMIT   = "speed_limit";
-        static constexpr const char* CAT_DISK_IO       = "disk_io";
-        static constexpr const char* CAT_IDENTITY      = "identity";
-        static constexpr const char* CAT_UI            = "ui";
-        static constexpr const char* CAT_APP           = "app";
-        static constexpr const char* CAT_COLUMN_WIDTH  = "column_width";
-        static constexpr const char* CAT_RSS           = "rss";
+        static constexpr const char* CAT_TORRENT         = "torrent";
+        static constexpr const char* CAT_CONNECTION      = "connection";
+        static constexpr const char* CAT_DOWNLOAD        = "download";
+        static constexpr const char* CAT_PROXY           = "proxy";
+        static constexpr const char* CAT_ENCRYPTION      = "encryption";
+        static constexpr const char* CAT_SEEDING         = "seeding";
+        static constexpr const char* CAT_DISCOVERY       = "discovery";
+        static constexpr const char* CAT_TRACKER         = "tracker";
+        static constexpr const char* CAT_SPEED_LIMIT     = "speed_limit";
+        static constexpr const char* CAT_DISK_IO         = "disk_io";
+        static constexpr const char* CAT_IDENTITY        = "identity";
+        static constexpr const char* CAT_UI              = "ui";
+        static constexpr const char* CAT_APP             = "app";        
+        static constexpr const char* CAT_COLUMN_WIDTH    = "column_width";
+        static constexpr const char* CAT_CONTROL_HEIGHT  = "control_height";
+        static constexpr const char* CAT_RSS             = "rss";
 
     private:
         AppSettingsDatabase() = default;

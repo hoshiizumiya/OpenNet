@@ -3,7 +3,9 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskTrackersPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:OpenNet.ViewModels"
@@ -25,44 +27,35 @@
                     Padding="8,4,0,4"
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:StickyHeaderBehavior />
+                    </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn  CanResize="True" x:Name="ColTrackerURL" DesiredWidth="3*">
+                        <labs:DataColumn x:Name="ColTrackerURL" CanResize="True">
                             <TextBlock
                                 x:Uid="TrackerHeader_URL"
                                 FontWeight="SemiBold"
                                 Text="URL" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColTrackerTier"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColTrackerTier" CanResize="True">
                             <TextBlock
                                 x:Uid="TrackerHeader_Tier"
                                 FontWeight="SemiBold"
                                 Text="Tier" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColTrackerPeers"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColTrackerPeers" CanResize="True">
                             <TextBlock
                                 x:Uid="TrackerHeader_Peers"
                                 FontWeight="SemiBold"
                                 Text="Peers" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColTrackerStatus"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColTrackerStatus" CanResize="True">
                             <TextBlock
                                 x:Uid="TrackerHeader_Status"
                                 FontWeight="SemiBold"
                                 Text="Status" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColTrackerMessage"
-                            CanResize="True"
-                            DesiredWidth="2*">
+                        <labs:DataColumn x:Name="ColTrackerMessage" CanResize="True">
                             <TextBlock
                                 x:Uid="TrackerHeader_Message"
                                 FontWeight="SemiBold"

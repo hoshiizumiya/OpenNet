@@ -32,6 +32,7 @@
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
+#include "Helpers/ControlLengthHelper.h"
 #include "Helpers/ColumnWidthHelper.h"
 
 using namespace winrt;
@@ -54,11 +55,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
 
 		// Subscribe to AddTaskRequested event (currently not used, but kept for compatibility)
-		m_addTaskToken = m_viewModel.AddTaskRequested({this, &TasksPage::OnAddTaskRequested});
+		m_addTaskToken = m_viewModel.AddTaskRequested({ this, &TasksPage::OnAddTaskRequested });
 
-		// Restore saved column widths
-		Loaded([this](IInspectable const&, RoutedEventArgs const&) { RestoreColumnWidths(); });
-		Unloaded([this](IInspectable const&, RoutedEventArgs const&) { SaveColumnWidths(); });
+		Loaded([this](IInspectable const&, RoutedEventArgs const&)
+		{
+			::OpenNet::Helpers::RestoreControlHeight(TasksList(), "TasksPage_ContentFrame_Height");
+		});
+		Unloaded([this](IInspectable const&, RoutedEventArgs const&)
+		{
+			SaveColumnWidths();
+		});
 
 		// Set up bottom panel to show Summary by default
 		if (auto frame = ContentFrame())
@@ -75,15 +81,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	// Restore saved column widths
+	void TasksPage::DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		RestoreColumnWidths();
+	}
+
+	void TasksPage::GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+	{
+		::OpenNet::Helpers::SaveControlHeight("TasksPage_ContentFrame_Height", TasksList().ActualHeight());
+	}
+
 	// Handler invoked when the ViewModel requests adding a new task
 	// Currently not used, kept for backward compatibility
-	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const &, winrt::hstring const &)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
 	{
 		co_return;
 	}
 
 	// Show dialog for user to enter or paste a magnet link
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const &sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const &e)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		try
 		{
@@ -107,13 +124,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 						}
 					}
 				}
-				catch (const std::exception &ex)
+				catch (const std::exception& ex)
 				{
 					OutputDebugStringW((L"ShowAddMagnetLinkDialog: GetMagnetLink error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 				}
 			}
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			OutputDebugStringW((L"ShowAddMagnetLinkDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -124,7 +141,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	// Show file picker for user to select a .torrent file
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const &sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const &e)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		if (sender == MenuFlyoutItem())
 		{
@@ -168,7 +185,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				if (result == ContentDialogResult::Primary)
 				{
 					multiFileCheckDialog.Hide();
-					for (auto const &file : files)
+					for (auto const& file : files)
 					{
 						ProcessAndShowTorrentMetadataWindow(file.Path());
 					}
@@ -192,7 +209,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 #endif // DEBUG
 			}
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			OutputDebugStringW((L"ShowAddTorrentFileDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -204,8 +221,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	// Show HTTP download dialog for adding HTTP/HTTPS/FTP downloads
 	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromHttp_ClickAsync(
-		winrt::Windows::Foundation::IInspectable const & /*sender*/,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*e*/)
+		winrt::Windows::Foundation::IInspectable const& /*sender*/,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
 		try
 		{
@@ -224,7 +241,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 					if (!url.empty())
 					{
-						auto &dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+						auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
 						if (dlMgr.IsAria2Available())
 						{
 							// Move off UI thread – SimplePost blocks with .get()
@@ -251,13 +268,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 						}
 					}
 				}
-				catch (const std::exception &ex)
+				catch (const std::exception& ex)
 				{
 					OutputDebugStringW((L"HTTP download add error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 				}
 			}
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			OutputDebugStringW((L"HttpDownloadDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -268,7 +285,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	// Process the torrent link/file and show the metadata check window
-	void TasksPage::ProcessAndShowTorrentMetadataWindow(hstring const &torrentLink)
+	void TasksPage::ProcessAndShowTorrentMetadataWindow(hstring const& torrentLink)
 	{
 		if (torrentLink.empty())
 		{
@@ -282,7 +299,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			checkWindow->Activate();
 			// The window manages its own lifetime - it will close when user closes it or operations complete
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			// Log error if needed
 			OutputDebugStringW(L"Error creating torrent check window: ");
@@ -294,7 +311,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const & /*sender*/, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const &args)
+	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& /*sender*/, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
 	{
 		auto item = args.SelectedItem().try_as<Microsoft::UI::Xaml::Controls::NavigationViewItem>();
 		if (!item)
@@ -308,7 +325,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const & /*args*/)
+	void TasksPage::TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*args*/)
 	{
 		auto listView = TasksList();
 		if (!listView || !m_viewModel)
@@ -321,12 +338,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// SpeedGraph subscription is handled by TaskSummaryPage via ViewModel.PropertyChanged("SelectedTask").
 	}
 
-	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const &sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const &args)
+	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
 	{
 		// Context flyout is handled automatically by XAML
 	}
 
-	void TasksPage::SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const &sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const & /*args*/)
+	void TasksPage::SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& /*args*/)
 	{
 		if (m_viewModel)
 		{
@@ -335,8 +352,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	void TasksPage::Task_SelectBar_SelectionChanged(
-		winrt::Microsoft::UI::Xaml::Controls::SelectorBar const &sender,
-		winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const & /*args*/)
+		winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender,
+		winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& /*args*/)
 	{
 		auto selectedItem = sender.SelectedItem();
 		auto frame = ContentFrame();
@@ -443,7 +460,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
+	void TasksPage::MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
 	{
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
@@ -504,7 +521,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			OutputDebugStringW((L"Move task completed to: " + std::wstring(newPath.begin(), newPath.end()) + L"\n").c_str());
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			OutputDebugStringW((L"PerformMoveTaskAsync error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 		}
@@ -516,7 +533,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		co_return;
 	}
 
-	void TasksPage::OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
+	void TasksPage::OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
 	{
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
@@ -595,7 +612,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				OutputDebugStringW((L"Opened location: " + taskPath + L"\n").c_str());
 			}
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			OutputDebugStringW(winrt::to_hstring(ex.what()).c_str());
 		}
@@ -605,7 +622,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const & /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const & /*args*/)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
 	{
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
@@ -644,7 +661,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			// TODO: 显示为对话框而不是调试输出
 		}
-		catch (const std::exception &ex)
+		catch (const std::exception& ex)
 		{
 			OutputDebugStringW(winrt::to_hstring(ex.what()).c_str());
 		}
@@ -659,6 +676,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::RestoreColumnWidths()
 	{
 		using namespace ::OpenNet::Helpers;
+		RestoreColumn(ColName(), "Tasks.Name");
 		RestoreColumn(ColSize(), "Tasks.Size");
 		RestoreColumn(ColProgress(), "Tasks.Progress");
 		RestoreColumn(ColDLRate(), "Tasks.DLRate");
@@ -670,6 +688,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::SaveColumnWidths()
 	{
 		using namespace ::OpenNet::Helpers;
+		SaveColumnWidth("Tasks.Name", ColName().ActualWidth());
 		SaveColumnWidth("Tasks.Size", ColSize().ActualWidth());
 		SaveColumnWidth("Tasks.Progress", ColProgress().ActualWidth());
 		SaveColumnWidth("Tasks.DLRate", ColDLRate().ActualWidth());

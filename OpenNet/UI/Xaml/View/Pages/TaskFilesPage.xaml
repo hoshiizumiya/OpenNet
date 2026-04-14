@@ -3,7 +3,9 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskFilesPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:OpenNet.ViewModels"
@@ -25,44 +27,35 @@
                     Padding="8,4,0,4"
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
                     CornerRadius="4">
+                    <interactivity:Interaction.Behaviors>
+                        <behaviors:StickyHeaderBehavior />
+                    </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16">
-                        <labs:DataColumn  CanResize="True" x:Name="ColFileName" DesiredWidth="3*">
+                        <labs:DataColumn x:Name="ColFileName" CanResize="True">
                             <TextBlock
                                 x:Uid="FileHeader_Path"
                                 FontWeight="SemiBold"
                                 Text="File" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColFileSize"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColFileSize" CanResize="True">
                             <TextBlock
                                 x:Uid="FileHeader_Size"
                                 FontWeight="SemiBold"
                                 Text="Size" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColFileProgress"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColFileProgress" CanResize="True">
                             <TextBlock
                                 x:Uid="FileHeader_Progress"
                                 FontWeight="SemiBold"
                                 Text="Progress" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColFileDone"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColFileDone" CanResize="True">
                             <TextBlock
                                 x:Uid="FileHeader_Done"
                                 FontWeight="SemiBold"
                                 Text="Done" />
                         </labs:DataColumn>
-                        <labs:DataColumn
-                            x:Name="ColFilePriority"
-                            CanResize="True"
-                            DesiredWidth="*">
+                        <labs:DataColumn x:Name="ColFilePriority" CanResize="True">
                             <TextBlock
                                 x:Uid="FileHeader_Priority"
                                 FontWeight="SemiBold"

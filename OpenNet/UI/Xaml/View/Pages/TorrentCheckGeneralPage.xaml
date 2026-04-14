@@ -3,8 +3,10 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.TorrentCheckGeneralPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:controls="using:XamlToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -260,9 +262,12 @@
                                 SelectionMode="None">
                                 <controls:HeaderedTreeView.Header>
                                     <Border Padding="12" Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+                                        <interactivity:Interaction.Behaviors>
+                                            <behaviors:StickyHeaderBehavior />
+                                        </interactivity:Interaction.Behaviors>
                                         <labs:DataTable ColumnSpacing="8">
                                             <!--  Select checkbox column  -->
-                                            <labs:DataColumn MinWidth="32" DesiredWidth="Auto">
+                                            <labs:DataColumn MinWidth="32">
                                                 <CheckBox
                                                     x:Name="SelectAllHeaderCheckBox"
                                                     Checked="SelectAllCheckBox_Checked"
@@ -270,10 +275,7 @@
                                                     Unchecked="SelectAllCheckBox_Unchecked" />
                                             </labs:DataColumn>
                                             <!--  File Name column - Star width (fills remaining space)  -->
-                                            <labs:DataColumn
-                                                x:Name="ColCheckFileName"
-                                                CanResize="True"
-                                                DesiredWidth="*">
+                                            <labs:DataColumn x:Name="ColCheckFileName" CanResize="True">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_FileName"
                                                     FontWeight="SemiBold"
@@ -283,8 +285,7 @@
                                             <labs:DataColumn
                                                 x:Name="ColCheckSize"
                                                 HorizontalContentAlignment="Right"
-                                                CanResize="True"
-                                                DesiredWidth="Auto">
+                                                CanResize="True">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
                                                     HorizontalAlignment="Center"
@@ -295,8 +296,7 @@
                                             <labs:DataColumn
                                                 x:Name="ColCheckPriority"
                                                 HorizontalContentAlignment="Right"
-                                                CanResize="True"
-                                                DesiredWidth="Auto">
+                                                CanResize="True">
                                                 <TextBlock
                                                     x:Uid="TorrentCheckGeneralPage_ListHeader_Priority"
                                                     FontWeight="SemiBold"

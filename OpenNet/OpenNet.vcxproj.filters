@@ -371,9 +371,6 @@
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.cpp">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Behaviors\Headers\StickyHeaderBehavior.cpp">
-      <Filter>UI\Behaviors\Headers</Filter>
-    </ClCompile>
     <ClCompile Include="Core\RSS\RSSParser.cpp">
       <Filter>Core\RSS</Filter>
     </ClCompile>
@@ -385,12 +382,6 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Behaviors\Headers\HeaderBehaviorBase.cpp">
-      <Filter>UI\Behaviors\Headers</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Behaviors\BehaviorBase.cpp">
-      <Filter>UI\Behaviors</Filter>
     </ClCompile>
     <ClCompile Include="Core\IPFilter\IPFilterManager.cpp">
       <Filter>Core\IPFilter</Filter>
@@ -685,9 +676,6 @@
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\Behaviors\VisualTreeHelperEx.h">
-      <Filter>UI\Behaviors</Filter>
-    </ClInclude>
     <ClInclude Include="Core\IPFilter\IPFilterManager.h">
       <Filter>Core\IPFilter</Filter>
     </ClInclude>
@@ -744,6 +732,7 @@
     </ClInclude>
     <ClInclude Include="Core\AppRuntime.h" />
     <ClInclude Include="Web\WebView2\WebView2Version.h" />
+    <ClInclude Include="Helpers\ControlLengthHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -1108,7 +1097,6 @@
       <Filter>Assets\ModelIcons</Filter>
     </None>
     <None Include="OpenNet_TemporaryKey.pfx" />
-    <None Include="UI\Xaml\Behaviors\README.md" />
     <None Include="mvvm_framework\README.md">
       <Filter>UI\Behaviors</Filter>
     </None>
