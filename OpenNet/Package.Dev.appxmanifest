@@ -2,6 +2,8 @@
 
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:com="http://schemas.microsoft.com/appx/manifest/com/windows10"
+  xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
   xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
@@ -49,6 +51,31 @@
           <uap:Rotation Preference="landscapeFlipped"/>
           <uap:Rotation Preference="portraitFlipped"/></uap:InitialRotationPreference>
       </uap:VisualElements>
+	  <Extensions>
+	    <desktop:Extension Category="windows.toastNotificationActivation">
+	  	  <desktop:ToastNotificationActivation ToastActivatorCLSID="3C5E5C23-405B-45E9-97B6-F1105EED59F6"/>
+	    </desktop:Extension>
+	    <com:Extension Category="windows.comServer">
+	  	  <com:ComServer>
+	  		  <com:ExeServer Executable="OpenNet.exe" Arguments="----AppNotificationActivated:" DisplayName="OpenNet Toast Activator">
+	  			  <com:Class Id="3C5E5C23-405B-45E9-97B6-F1105EED59F6" DisplayName="OpenNet Toast Activator"/>
+	  		  </com:ExeServer>
+	  	  </com:ComServer>
+	    </com:Extension>
+	    <uap:Extension Category="windows.protocol">
+	  	  <uap:Protocol Name="opennet">
+	  		  <uap:DisplayName>OpenNet Dev</uap:DisplayName>
+	  	  </uap:Protocol>
+	    </uap:Extension>
+	    <uap:Extension Category="windows.fileTypeAssociation">
+	      <uap:FileTypeAssociation Name="torrent">
+	        <uap:SupportedFileTypes>
+	          <uap:FileType ContentType="application/x-bittorrent">.torrent</uap:FileType>
+	        </uap:SupportedFileTypes>
+	        <uap:DisplayName>OpenNet Dev - a bittorrnt client</uap:DisplayName>
+	      </uap:FileTypeAssociation>
+	    </uap:Extension>
+	  </Extensions>
     </Application>
   </Applications>
 

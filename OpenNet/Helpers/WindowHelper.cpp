@@ -117,6 +117,26 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		}
 	}
 
+	void WindowHelper::ShowMainWindow()
+	{
+		auto& window = winrt::OpenNet::implementation::App::window;
+		if (window)
+		{
+			window.AppWindow().Show();
+
+			HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
+			if (hwnd)
+			{
+				if (IsIconic(hwnd))
+				{
+					ShowWindow(hwnd, SW_RESTORE);
+				}
+				SetForegroundWindow(hwnd);
+				SetFocus(hwnd);
+			}
+		}
+	}
+
 	void WindowHelper::SetWindowMinSize(Window const& window, double const& width, double const& height)
 	{
 		auto windowContent = window.Content().try_as<FrameworkElement>();

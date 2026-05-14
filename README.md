@@ -1,7 +1,7 @@
 ﻿<p align="center">
 🎉Welcome to the OpenNet project
 </p>
-﻿<p align="center">
+<p align="center">
   <img src="https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png" alt="OpenNet Banner" heigth="200"/>
 </p>
 
@@ -12,6 +12,10 @@
 Our current framework is WinUI3 with C++/WinRT. Using WinUI3 allows us to create modern Windows applications with a contemporary look and feel, while C++/WinRT provides improved user experience and performance.  
 Currently, we plan to run only on Windows. Cross-platform support may be considered in the future (for cross-platform native apps using the MAUI build system and cross-platform calls via P/Invoke).  
 The main open-source library we currently use are `libtorrent` and `aria2`.
+
+## Support platforms
+- windows 11 ARM64/x64
+- windows 10 is not in my support plan, but it can still run but may occur some issues, include core functions error, UI display issues, report them if you have one.
 
 ## How to build the debug project
 
@@ -59,7 +63,28 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 ## Learn about the project
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hoshiizumiya/OpenNet)
 
-## Star History
+## Special thanks
+
+MVVM framework: @https://github.com/AlexAdasCca
+
+## ⚙️ Tech Stack
+
+- [arvidn/libtorrent](https://github.com/arvidn/libtorrent)
+- [dotnet/runtime](https://github.com/dotnet/runtime)
+- [getsentry/sentry-native](https://github.com/getsentry/sentry-native)
+- [HO-COOH/WinUIEssentials](https://github.com/HO-COOH/WinUIEssentials)
+- [lgztx96/CommunityToolkit.WinUI](https://github.com/lgztx96/CommunityToolkit.WinUI)
+- [microsoft/vs-validation](https://github.com/microsoft/vs-validation)
+- [microsoft/WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
+- [microsoft/microsoft-ui-xaml](https://github.com/microsoft/microsoft-ui-xaml)
+- [microsoft/vcpkg](https://github.com/microsoft/vcpkg)
+- [Millennium-Science-Technology-R-D-Inst/WinUI3-cppwinrt-MVVM](https://github.com/Millennium-Science-Technology-R-D-Inst/WinUI3-cppwinrt-MVVM)
+- [openssl/openssl](https://github.com/openssl/openssl)
+- [PBH-BTN/PeerBanHelper](https://github.com/PBH-BTN/PeerBanHelper)
+- [ProjectMile/Mile.Aria2](https://github.com/ProjectMile/Mile.Aria2)
+
+## 📈 Development
+![Alt](https://repobeats.axiom.co/api/embed/94389f8accb0f98aa0a71cbbc5efd10ff6152bc7.svg "Repobeats analytics image")
 
 [![Star History Chart](https://api.star-history.com/image?repos=hoshiizumiya/OpenNet&type=date&legend=top-left)](https://www.star-history.com/?repos=hoshiizumiya%2FOpenNet&type=date&legend=top-left)
 

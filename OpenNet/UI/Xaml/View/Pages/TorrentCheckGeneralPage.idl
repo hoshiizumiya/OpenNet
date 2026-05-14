@@ -1,16 +1,16 @@
-import "ViewModels/TorrentMetadataViewModel.idl";
+﻿import "ViewModels/TorrentMetadataViewModel.idl";
 
 namespace OpenNet.UI.Xaml.View.Pages
 {
-    [default_interface]
-    runtimeclass TorrentCheckGeneralPage : Microsoft.UI.Xaml.Controls.Page
-    {
-        TorrentCheckGeneralPage();
+	[default_interface]
+	runtimeclass TorrentCheckGeneralPage : Microsoft.UI.Xaml.Controls.Page
+	{
+		TorrentCheckGeneralPage();
 
-        // ViewModel for data binding
-        OpenNet.ViewModels.TorrentMetadataViewModel ViewModel{ get; };
+	// ViewModel for data binding
+	OpenNet.ViewModels.TorrentMetadataViewModel ViewModel{ get; };
 
-        // Static helper for XAML binding to get folder/file icon
-        static String GetNodeIcon(Boolean isFolder);
-    }
+	// Static helper for XAML binding to get folder/file icon
+	static String GetNodeIcon(Boolean isFolder);
+}
 }

@@ -78,6 +78,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
         static std::vector<winrt::Microsoft::UI::Xaml::Window> const& ActiveWindows();
         static winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::StorageFolder>
             GetAppLocalFolderAsync();
+        static void ShowMainWindow();
     private:
         static inline std::vector<winrt::Microsoft::UI::Xaml::Window> m_activeWindows;
     };

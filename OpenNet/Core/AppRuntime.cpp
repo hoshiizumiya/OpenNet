@@ -15,7 +15,12 @@ namespace OpenNet::Core
 
 	winrt::hstring AppRuntime::GetDisplayName()
 	{
+#ifdef _DEBUG
+		return L"OpenNet Dev";
+#else
 		return L"OpenNet";
+#endif // _DEBUG
+
 	}
 
     winrt::hstring AppRuntime::InitializeDeviceId()

@@ -122,6 +122,7 @@
     <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml" />
     <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml" />
     <Page Include="UI\Xaml\View\InfoBarView.xaml" />
+    <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -433,6 +434,8 @@
     </ClCompile>
     <ClCompile Include="Core\AppRuntime.cpp" />
     <ClCompile Include="Web\WebView2\WebView2Version.cpp" />
+    <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
+    <ClCompile Include="Core\ExceptionService\CapturedException.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

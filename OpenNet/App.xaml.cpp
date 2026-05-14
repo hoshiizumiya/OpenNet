@@ -1,7 +1,7 @@
 ﻿#include "pch.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
-#include "UI/Shell/NotifyIconContextMenu.xaml.h"
+#include "UI/Shell/NotifyIconXamlHostWindow.xaml.h"
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
 #include "Helpers/WindowHelper.h"
 #include "Helpers/ThemeHelper.h"
@@ -266,7 +266,7 @@ namespace winrt::OpenNet::implementation
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
 		// Create and show system tray icon (assign to static member, not a local)
-		trayIcon = OpenNet::UI::Shell::NotifyIconContextMenu();
+		trayIcon = OpenNet::UI::Shell::NotifyIconXamlHostWindow();
 		trayIcon.Show();
 
 		// Register window closing event - close strategy (hide to tray / ask / exit)
