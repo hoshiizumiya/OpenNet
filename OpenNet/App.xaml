@@ -14,6 +14,7 @@
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Card/TitleCard_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/HomePage/Header/HeaderTile_ResourceDictionary.xaml" />
 
+                <!--  Advice not add new ResourceDictionary here, instead, use ResourceDictionary in the file where it is used. It's good for performance, because ResourceDictionary in App.xaml will be loaded at the startup of the app, it will increase the startup time of the app. If you add new ResourceDictionary here, it will increase the startup time of the app, even if the ResourceDictionary is not used in the startup page.  -->
                 <!--  Other merged dictionaries here  -->
             </ResourceDictionary.MergedDictionaries>
             <!--  Other app resources here  -->

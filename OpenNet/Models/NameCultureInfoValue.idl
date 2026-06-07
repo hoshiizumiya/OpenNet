@@ -1,0 +1,12 @@
+﻿namespace OpenNet.Models
+{
+	[default_interface]
+	runtimeclass NameCultureInfoValue : Microsoft.UI.Xaml.Controls.Control
+	{
+		NameCultureInfoValue();
+	
+		String Value;
+		Boolean IsMaintainedByMSTRDI;
+		Boolean IsMaintainedByCrowdin;
+	}
+}

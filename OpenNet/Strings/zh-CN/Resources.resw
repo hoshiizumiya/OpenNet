@@ -1098,4 +1098,7 @@
   <data name="Appearance.Content" xml:space="preserve">
     <value>外观</value>
   </data>
+  <data name="GuideWindowTitle" xml:space="preserve">
+    <value>欢迎使用胡桃</value>
+  </data>
 </root>

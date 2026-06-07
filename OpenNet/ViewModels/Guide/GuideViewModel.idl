@@ -1,0 +1,12 @@
+﻿namespace OpenNet.ViewModels.Guide
+{
+	[default_interface]
+	runtimeclass GuideViewModel
+	{
+		GuideViewModel();
+
+		UInt32 State;
+		String AllCulturesWelcomeText;
+		Models.NameCultureInfoValue SelectedCulture;
+	}
+}

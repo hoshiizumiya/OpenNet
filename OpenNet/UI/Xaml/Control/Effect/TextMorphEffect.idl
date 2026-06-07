@@ -1,0 +1,50 @@
+﻿namespace OpenNet.UI.Xaml.Control.Effect
+{
+	[default_interface]
+	runtimeclass TextMorphEffect : Microsoft.UI.Xaml.Controls.Control
+	{
+		TextMorphEffect();
+
+		// Dependency properties
+		static Microsoft.UI.Xaml.DependencyProperty EasingProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty TimeLineFromProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty TimeLineToProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty DurationProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty BeginTimeProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty AutoReverseProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty EffectFontSizeProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty EffectFontWeightProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty DirectionProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty EffectVerticalAlignmentProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty EffectHorizontalAlignmentProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty TextProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty DelimiterProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty BlurAmountProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty ColorBrushProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty MorphSpeedProperty{ get; };
+
+		// Animation properties
+		Microsoft.UI.Xaml.Media.Animation.EasingMode Easing;
+		Double TimeLineFrom;
+		Double TimeLineTo;
+		Double Duration;
+		Windows.Foundation.TimeSpan BeginTime;
+		Boolean AutoReverse;
+
+		// Effect properties
+		Double EffectFontSize;
+		Windows.UI.Text.FontWeight EffectFontWeight;
+		Microsoft.Graphics.Canvas.Text.CanvasTextDirection Direction;
+		Microsoft.Graphics.Canvas.Text.CanvasVerticalAlignment EffectVerticalAlignment;
+		Microsoft.Graphics.Canvas.Text.CanvasHorizontalAlignment EffectHorizontalAlignment;
+
+		// Content properties
+		String Text;
+		String Delimiter;
+
+		// Rendering properties
+		Double BlurAmount;
+		Windows.UI.Color ColorBrush;
+		Int32 MorphSpeed;
+	}
+}

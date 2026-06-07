@@ -1,0 +1,11 @@
+﻿namespace OpenNet.Service
+{
+	[default_interface]
+	runtimeclass CultureOptions : Microsoft.UI.Xaml.Controls.Control
+	{
+		CultureOptions();
+
+		String CultureInfo;
+
+	}
+}

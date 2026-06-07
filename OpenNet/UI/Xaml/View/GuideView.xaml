@@ -1,0 +1,567 @@
+﻿<UserControl
+    x:Class="OpenNet.UI.Xaml.View.GuideView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cw="using:XamlToolkit.WinUI"
+    xmlns:cwc="using:XamlToolkit.WinUI.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:mxi="using:XamlToolkit.WinUI.Interactivity"
+    xmlns:om="using:OpenNet.Models"
+    xmlns:ouxb="using:OpenNet.UI.Xaml.Behavior"
+    xmlns:ouxcc="using:OpenNet.UI.Xaml.Control.Card"
+    xmlns:ouxce="using:OpenNet.UI.Xaml.Control.Effect"
+    xmlns:ouxm="using:OpenNet.UI.Xaml.Markup"
+    xmlns:ovg="using:OpenNet.ViewModels.Guide"
+    d:DataContext="{d:DesignInstance ovg:GuideViewModel}"
+    mc:Ignorable="d">
+
+    <!--<mxi:Interaction.Behaviors>
+        <ouxb:InvokeCommandOnLoadedBehavior Command="{x:Bind LoadCommand}" />
+    </mxi:Interaction.Behaviors>-->
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/FontStyle.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/TransitionCollection.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary.ThemeDictionaries>
+                <ResourceDictionary x:Key="Light">
+                    <x:String x:Key="LogoCrowdin">ms-appx:///Resource/GuideLocalization/crowdin-symbol-cDark-64.png</x:String>
+                </ResourceDictionary>
+                <ResourceDictionary x:Key="Dark">
+                    <x:String x:Key="LogoCrowdin">ms-appx:///Resource/GuideLocalization/crowdin-symbol-cWhite-64.png</x:String>
+                </ResourceDictionary>
+            </ResourceDictionary.ThemeDictionaries>
+            <essential:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+            <x:String x:Key="MSTRDI">ms-appx:///Resource/GuideLocalization/MSTRDI-64.png</x:String>
+
+            <DataTemplate x:Key="LanguageTemplate" x:DataType="om:NameCultureInfoValue">
+                <Grid MinWidth="280" Margin="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind Name}" />
+                        <TextBlock Opacity="0.8" Text="{x:Bind Value}" />
+                    </StackPanel>
+                    <StackPanel
+                        Grid.Column="1"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <Border
+                            VerticalAlignment="Center"
+                            CornerRadius="8"
+                            Visibility="{x:Bind IsMaintainedByMSTRDI, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Image
+                                Width="32"
+                                Height="32"
+                                VerticalAlignment="Center"
+                                Source="{ThemeResource LogoDGPStudio}"
+                                Stretch="Uniform" />
+                        </Border>
+                        <Border
+                            VerticalAlignment="Center"
+                            CornerRadius="8"
+                            Visibility="{x:Bind IsMaintainedByCrowdin, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Image
+                                Width="32"
+                                Height="32"
+                                VerticalAlignment="Center"
+                                Source="{ThemeResource LogoCrowdin}"
+                                Stretch="Uniform" />
+                        </Border>
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </UserControl.Resources>
+
+    <Grid Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Image
+            Grid.RowSpan="2"
+            MaxWidth="480"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
+            Opacity="0.20"
+            Source="ms-appx:///Resource/WelcomeView_Background.png" />
+        <essential:SwitchPresenter
+            Grid.Row="0"
+            ContentTransitions="{ThemeResource EntranceThemeTransitions}"
+            Value="{Binding State, Mode=OneWay}">
+            <!--  Language  -->
+            <essential:Case Value="{ouxm:UInt32 Value=0}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="100" />
+                        <RowDefinition />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <ouxce:TextMorphEffect
+                        Grid.Row="0"
+                        BlurAmount="5"
+                        ColorBrush="{ThemeResource TextFillColorPrimary}"
+                        Delimiter="+"
+                        EffectFontSize="36"
+                        EffectHorizontalAlignment="Center"
+                        EffectVerticalAlignment="Center"
+                        Text="{x:Bind AllCulturesWelcomeText}" />
+                    <Border
+                        Grid.Row="1"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Style="{ThemeResource BorderShimmerStyle}">
+                        <GridView
+                            Padding="0,0,-12,-12"
+                            ItemContainerStyle="{ThemeResource LargeGridViewItemStyle}"
+                            ItemTemplate="{StaticResource LanguageTemplate}"
+                            ItemsSource="{x:Bind CultureOptions.Cultures}"
+                            SelectedItem="{x:Bind SelectedCulture, Mode=TwoWay}"
+                            SelectionMode="Single" />
+                    </Border>
+
+                    <StackPanel
+                        Grid.Row="2"
+                        Margin="16"
+                        HorizontalAlignment="Center"
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <ouxcc:HorizontalCard>
+                            <ouxcc:HorizontalCard.Left>
+                                <Border VerticalAlignment="Center" CornerRadius="8">
+                                    <Image
+                                        Width="32"
+                                        Height="32"
+                                        VerticalAlignment="Center"
+                                        Source="{ThemeResource LogoMSTRDI}"
+                                        Stretch="Uniform" />
+                                </Border>
+                            </ouxcc:HorizontalCard.Left>
+                            <ouxcc:HorizontalCard.Right>
+                                <TextBlock
+                                    x:Uid="ViewGuideStepLanguageMaintainedByMSTRDI"
+                                    Margin="6,0"
+                                    VerticalAlignment="Center"
+                                    Text="ViewGuideStepLanguageMaintainedBy" />
+                            </ouxcc:HorizontalCard.Right>
+                        </ouxcc:HorizontalCard>
+                        <ouxcc:HorizontalCard>
+                            <ouxcc:HorizontalCard.Left>
+                                <Border VerticalAlignment="Center" CornerRadius="8">
+                                    <Image
+                                        Width="32"
+                                        Height="32"
+                                        VerticalAlignment="Center"
+                                        Source="{ThemeResource LogoCrowdin}"
+                                        Stretch="Uniform" />
+                                </Border>
+                            </ouxcc:HorizontalCard.Left>
+                            <ouxcc:HorizontalCard.Right>
+                                <TextBlock
+                                    x:Uid="ViewGuideStepLanguageMaintainedByCrowdin"
+                                    Margin="6,0"
+                                    VerticalAlignment="Center"
+                                    Text="ViewGuideStepLanguageMaintainedByCrowdin" />
+                            </ouxcc:HorizontalCard.Right>
+                        </ouxcc:HorizontalCard>
+                    </StackPanel>
+                </Grid>
+            </essential:Case>
+
+            <!--  Document  -->
+            <essential:Case Value="{ouxm:UInt32 Value=1}">
+                <Grid
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    ColumnSpacing="16">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
+                    <Image
+                        Grid.Column="0"
+                        Height="152"
+                        Source="ms-appx:///Assets/InAppLogo.png" />
+                    <StackPanel
+                        Grid.Column="1"
+                        VerticalAlignment="Center"
+                        Spacing="8">
+                        <StackPanel.Resources>
+                            <Style BasedOn="{StaticResource DefaultCheckBoxStyle}" TargetType="CheckBox">
+                                <Setter Property="FontSize" Value="16" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="FontSize" Value="16" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                            </Style>
+                        </StackPanel.Resources>
+                        <!--  Agreement checkboxes: grid for Chinese locales (zh*), vertical stack for others  -->
+                        <Grid
+                            Margin="0,8,0,0"
+                            ColumnSpacing="12"
+                            RowSpacing="4"
+                            Visibility="{Binding AgreementUseGrid, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition />
+                                <RowDefinition />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="0"
+                                IsChecked="{Binding IsTermOfServiceAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://x.org/statements/tos.html">
+                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="ViewGuideStepAgreementTermOfService" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                IsChecked="{Binding IsPrivacyPolicyAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://x.org/statements/privacy-notice.html">
+                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="ViewGuideStepAgreementPrivacyPolicy" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                IsChecked="{Binding IsIssueReportAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://x.org/statements/bug-report.html">
+                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="ViewGuideStepAgreementIssueReport" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                IsChecked="{Binding IsOpenSourceLicenseAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
+                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="ViewGuideStepAgreementOpenSourceLicense" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox
+                                Grid.Row="2"
+                                Grid.Column="0"
+                                Grid.ColumnSpan="2"
+                                IsChecked="{Binding IsAgreementCopyAgreed, Mode=TwoWay}">
+                                <TextBlock Text="{Binding AgreementCopyTarget}" TextWrapping="Wrap" />
+                            </CheckBox>
+                        </Grid>
+
+                        <!--  Vertical layout for non-Chinese locales  -->
+                        <StackPanel Margin="0,8,0,0" Visibility="{x:Bind AgreementUseGrid, Converter={StaticResource BoolToVisibilityRevertConverter}}">
+                            <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://x.org/statements/tos.html">
+                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="ViewGuideStepAgreementTermOfService" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://x.org/statements/privacy-notice.html">
+                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="ViewGuideStepAgreementPrivacyPolicy" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://x.org/statements/bug-report.html">
+                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="ViewGuideStepAgreementIssueReport" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
+                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="ViewGuideStepAgreementOpenSourceLicense" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </CheckBox>
+
+                            <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsAgreementCopyAgreed, Mode=TwoWay}">
+                                <TextBlock Text="{x:Bind AgreementCopyTarget}" TextWrapping="Wrap" />
+                            </CheckBox>
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+            </essential:Case>
+
+            <!--  Environment  -->
+            <essential:Case Value="{ouxm:UInt32 Value=2}">
+                <Grid>
+                    <StackPanel
+                        Margin="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="{ThemeResource SettingsCardSpacing}">
+                        <TextBlock
+                            Margin="1,0,0,5"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="Segoe Fluent Icons" />
+                        <StackPanel
+                            Margin="0,8"
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <!--  PUA E700-E900  -->
+                            <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xE8DF;" />
+                            <!--  PUA EA00-EC00  -->
+                            <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xEF58;" />
+                            <!--  PUA ED00-EF00  -->
+                            <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xED56;" />
+                            <!--  PUA F000-F200  -->
+                            <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xF012;" />
+                            <!--  PUA F300-F500  -->
+                            <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xF439;" />
+                            <!--  PUA F600-F800  -->
+                            <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xF6A9;" />
+                        </StackPanel>
+                        <TextBlock>
+                            <Run x:Uid="ViewGuideStepEnvironmentFontDescription1" Text="ViewGuideStepEnvironmentFontDescription1" />
+                            <Hyperlink NavigateUri="https://aka.ms/SegoeFluentIcons">
+                                <Run Text="Microsoft" />
+                            </Hyperlink>
+                            <Run x:Uid="ViewGuideStepEnvironmentFontDescription2" Text="ViewGuideStepEnvironmentFontDescription2" />
+                        </TextBlock>
+                        <TextBlock x:Uid="ViewGuideStepEnvironmentAfterInstallDescription" Text="ViewGuideStepEnvironmentAfterInstallDescription" />
+                        <TextBlock
+                            x:Uid="ViewPageSettingWebview2Header"
+                            Margin="1,32,0,5"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="ViewPageSettingWebview2Header" />
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{Binding RuntimeOptions.WebView2Version}" />
+                        <TextBlock>
+                            <Run x:Uid="ViewGuideStepEnvironmentWebView2Description1" Text="ViewGuideStepEnvironmentWebView2Description1" />
+                            <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/p/?LinkId=2124703">
+                                <Run Text="Microsoft" />
+                            </Hyperlink>
+                            <Run x:Uid="ViewGuideStepEnvironmentWebView2Description2" Text="ViewGuideStepEnvironmentWebView2Description2" />
+                        </TextBlock>
+                        <TextBlock x:Uid="ViewGuideStepEnvironmentAfterInstallDescription" Text="ViewGuideStepEnvironmentAfterInstallDescription" />
+                    </StackPanel>
+                </Grid>
+            </essential:Case>
+
+            <!--  DataFolder  -->
+            <essential:Case Value="{ouxm:UInt32 Value=3}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel
+                        Grid.Row="0"
+                        Margin="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="{ThemeResource SettingsCardSpacing}">
+                        <TextBlock
+                            x:Uid="ViewGuideStepDataFolderHeader"
+                            Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                            Text="ViewGuideStepDataFolderHeader" />
+                        <cwc:SettingsCard
+                            x:Uid="ViewPageSettingSetDataFolderHeader"
+                            HorizontalAlignment="Stretch"
+                            ActionIcon="{essential:FontIcon Glyph=&#xE76C;}"
+                            ActionIconToolTip="ViewPageSettingStorageSetAction"
+                            Command="{Binding SetDataFolderCommand}"
+                            Description="{Binding RuntimeOptions.DataFolder}"
+                            Header="ViewPageSettingSetDataFolderHeader"
+                            IsClickEnabled="{Binding IsSetDataFolderEnabled}" />
+                    </StackPanel>
+
+                    <TextBlock
+                        x:Uid="ViewGuideStepDataFolderHint"
+                        Grid.Row="1"
+                        Margin="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        HorizontalTextAlignment="Center"
+                        Opacity="0.7"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="ViewGuideStepDataFolderHint" />
+                </Grid>
+            </essential:Case>
+
+            <!--  StaticResourceSetting  -->
+            <!--<essential:Case Value="{ouxm:UInt32 Value=5}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid
+                        Grid.Row="0"
+                        Margin="72"
+                        HorizontalAlignment="Center"
+                        ColumnSpacing="32">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <cwc:ConstrainedBox Grid.Column="0" AspectRatio="1:1">
+                            <Border cw:Effects.Shadow="{ThemeResource CompatCardShadow}">
+                                <Grid
+                                    BorderBrush="{x:Null}"
+                                    BorderThickness="0"
+                                    Style="{ThemeResource GridCardStyle}">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition />
+                                        <RowDefinition Height="auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid Grid.Row="0">
+                                        <Image
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Source="ms-appx:///Resource/GuideStaticResourceQualityComparison.png" />
+                                        <Rectangle
+                                            Width="2"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Stretch"
+                                            Fill="White" />
+                                    </Grid>
+                                    <Grid
+                                        Grid.Row="1"
+                                        Padding="16"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Bottom"
+                                        Background="{ThemeResource ContentDialogBackground}"
+                                        BorderThickness="0,1,0,0"
+                                        CornerRadius="{ThemeResource ControlCornerRadiusBottom}"
+                                        Style="{ThemeResource GridCardStyle}">
+                                        <StackPanel HorizontalAlignment="Left" Orientation="Vertical">
+                                            <TextBlock
+                                                x:Uid="ViewModelGuideStaticResourceQualityHigh"
+                                                Text="ViewModelGuideStaticResourceQualityHigh"
+                                                TextAlignment="Left" />
+                                            <TextBlock Text="233 KB" TextAlignment="Left" />
+                                        </StackPanel>
+                                        <StackPanel HorizontalAlignment="Right" Orientation="Vertical">
+                                            <TextBlock
+                                                x:Uid="ViewModelGuideStaticResourceQualityRaw"
+                                                Text="ViewModelGuideStaticResourceQualityRaw"
+                                                TextAlignment="Right" />
+                                            <TextBlock Text="1030 KB" TextAlignment="Right" />
+                                        </StackPanel>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </cwc:ConstrainedBox>
+                        <StackPanel Grid.Column="1" VerticalAlignment="Top">
+                            <TextBlock
+                                x:Uid="ViewGuideStepStaticResourceSettingQualityHeader"
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="ViewGuideStepStaticResourceSettingQualityHeader" />
+                            <ListView
+                                MinWidth="320"
+                                Margin="0,8,0,32"
+                                DisplayMemberPath="Name"
+                                ItemsSource="{Binding StaticResourceOptions.ImageQualities}"
+                                SelectedItem="{Binding StaticResourceOptions.ImageQuality, Mode=TwoWay}" />
+                            <TextBlock
+                                x:Uid="ViewGuideStepStaticResourceSettingMinimumHeader"
+                                Style="{StaticResource SubtitleTextBlockStyle}"
+                                Text="ViewGuideStepStaticResourceSettingMinimumHeader" />
+                            <ListView
+                                MinWidth="320"
+                                Margin="0,8,0,32"
+                                DisplayMemberPath="Name"
+                                ItemsSource="{Binding StaticResourceOptions.ImageArchives}"
+                                SelectedItem="{Binding StaticResourceOptions.ImageArchive, Mode=TwoWay}" />
+                            <TextBlock Margin="0,16,0,0" Text="{Binding StaticResourceOptions.SizeInformationText, Mode=OneWay}" />
+                        </StackPanel>
+                    </Grid>
+
+                    <TextBlock
+                        x:Uid="ViewGuideStepStaticResourceSettingHint"
+                        Grid.Row="1"
+                        Margin="16"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                        HorizontalTextAlignment="Center"
+                        Style="{StaticResource CaptionTextBlockStyle}"
+                        Text="ViewGuideStepStaticResourceSettingHint" />
+                </Grid>
+            </essential:Case>-->
+
+            <!--  Complete - empty case for fallback  -->
+            <essential:Case Value="{ouxm:UInt32 Value=6}" />
+        </essential:SwitchPresenter>
+        <Grid Grid.Row="1">
+            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
+                <cwc:Segmented
+                    Margin="16"
+                    HorizontalAlignment="Center"
+                    IsHitTestVisible="False"
+                    SelectedIndex="{Binding State, Mode=TwoWay}">
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xF2B7;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xF28B;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE81E;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B7;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE713;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8BA;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B9;}" />
+                </cwc:Segmented>
+                <Button
+                    Command="{Binding NextOrCompleteCommand}"
+                    Content="{Binding NextOrCompleteButtonText}"
+                    IsEnabled="{Binding IsNextOrCompleteButtonEnabled}"
+                    Style="{ThemeResource AccentButtonStyle}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl>

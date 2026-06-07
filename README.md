@@ -23,6 +23,7 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 
 * Windows 11 25H2 or later — we recommend using the latest version of Windows 11.
 * Visual Studio 2026.
+* More than 64GB RAM (or increase your machine virtual memory - Auto management is not stable). Machine with less RAM may still build the project, but it may fail with C3859 - Failed to create virtual memory for PCH.
 * Workloads: C++ Desktop Development, WinUI Desktop Development, and C++ WinUI app tools.
 * Windows 11 SDK (10.0.26100.0 or later)
 * MSVC v145(or open solution and follow vs install prompts)
@@ -32,7 +33,7 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 2. Build the project
 
 * Open Visual Studio and choose to clone the repository.
-* Enter the project's Git repository URL and choose a local path with more than 30GB free space. Avoid spaces and non-ASCII characters in the path, as some older dependencies may fail. Then click "Clone". If your network is unreliable, consider using SSH or a TUN proxy for Git.
+* Enter the project's Git repository URL and choose a local path with more than 30GB free space (Strongly advise fast SSD). Avoid spaces and non-ASCII characters in the path, as some older dependencies may fail. Then click "Clone". If your network is unreliable, consider using SSH or a TUN proxy for Git.
 * Open OpenNet.slnx in Visual Studio.
 * In Solution Explorer, ensure the bolded project is `OpenNet` and configured as the startup project.
 * Click the green Start button to begin debugging and launch the application.

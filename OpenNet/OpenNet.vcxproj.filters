@@ -123,6 +123,13 @@
     <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml" />
     <Page Include="UI\Xaml\View\InfoBarView.xaml" />
     <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml" />
+    <Page Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml" />
+    <Page Include="UI\Xaml\View\Windows\GuideWindow.xaml" />
+    <Page Include="UI\Xaml\View\GuideView.xaml" />
+    <Page Include="UI\Xaml\Control\Card\HorizontalCard_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Effect\TextMorphEffect_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\FontStyle.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\TransitionCollection.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -224,6 +231,7 @@
     <Midl Include="ViewModels\RSSViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
+    <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
@@ -436,6 +444,14 @@
     <ClCompile Include="Web\WebView2\WebView2Version.cpp" />
     <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
     <ClCompile Include="Core\ExceptionService\CapturedException.ixx" />
+    <ClCompile Include="UI\Xaml\Control\Card\HorizontalCard.cpp" />
+    <ClCompile Include="UI\Xaml\Behavior\InvokeCommandOnLoadedBehavior.cpp" />
+    <ClCompile Include="ViewModels\Guide\GuideViewModel.cpp" />
+    <ClCompile Include="UI\Xaml\Control\Effect\TextMorphEffect.cpp" />
+    <ClCompile Include="UI\Xaml\Markup\UInt32Extension.cpp" />
+    <ClCompile Include="Models\NameCultureInfoValue.cpp" />
+    <ClCompile Include="UI\Xaml\Behavior\Action\ShowTeachingTipAction.cpp" />
+    <ClCompile Include="Service\CultureOptions.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -736,6 +752,7 @@
     <ClInclude Include="Core\AppRuntime.h" />
     <ClInclude Include="Web\WebView2\WebView2Version.h" />
     <ClInclude Include="Helpers\ControlLengthHelper.h" />
+    <ClInclude Include="UI\Xaml\Control\Effect\TextMorphEffect.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -1130,6 +1147,12 @@
     <PRIResource Include="Strings\en-US\Resources.resw">
       <Filter>Strings</Filter>
     </PRIResource>
+    <PRIResource Include="Strings\zh-Hant\Resources.resw" />
+    <PRIResource Include="Strings\ja\Resources.resw" />
+    <PRIResource Include="Strings\fr\Resources.resw" />
+    <PRIResource Include="Strings\it\Resources.resw" />
+    <PRIResource Include="Strings\ko\Resources.resw" />
+    <PRIResource Include="Strings\ru\Resources.resw" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

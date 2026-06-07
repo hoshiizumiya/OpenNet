@@ -1,0 +1,10 @@
+﻿namespace OpenNet.UI.Xaml.Markup
+{
+	[default_interface]
+	runtimeclass UInt32Extension : Microsoft.UI.Xaml.Markup.MarkupExtension
+	{
+		UInt32Extension();
+
+		String Value;
+	}
+}

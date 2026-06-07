@@ -1,0 +1,15 @@
+﻿namespace OpenNet.UI.Xaml.Control.Card
+{
+	[default_interface]
+	runtimeclass HorizontalCard : Microsoft.UI.Xaml.Controls.Control
+	{
+		HorizontalCard();
+
+		// Dependency properties
+		static Microsoft.UI.Xaml.DependencyProperty LeftProperty{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty RightProperty{ get; };
+
+		Microsoft.UI.Xaml.UIElement Left;
+		Microsoft.UI.Xaml.UIElement Right;
+	}
+}

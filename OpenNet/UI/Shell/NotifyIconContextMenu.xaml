@@ -206,13 +206,47 @@
         </Grid>
 
         <StackPanel Grid.Row="1" Padding="0,2">
-            <MenuFlyoutItem
-                Icon="{essential:FontIcon Glyph=&#xE768;}"
-                Style="{ThemeResource NotifyIconContextMenuFlyoutItemStyle}"
-                Text="" />
-            <MenuFlyoutItem Click="HomeAppBarButton_Click" Text="Show" />
+            <Grid Margin="4,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <MenuFlyoutItem
+                    x:Uid="NotifyIconContextMenuFloatWindow"
+                    Icon="{essential:FontIcon Glyph=&#xE78B;,
+                                              FontFamily=Segoe Fluent Icons}"
+                    Style="{ThemeResource NotifyIconContextMenuFlyoutItemStyle}"
+                    Text="Float window" />
+                <ToggleSwitch
+                    x:Uid="NotifyIconContextMenu"
+                    Grid.Column="1"
+                    Width="Auto"
+                    MinWidth="0"
+                    HorizontalAlignment="Right"
+                    OffContent=""
+                    OnContent="" />
+            </Grid>
+            <Grid Margin="4,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <MenuFlyoutItem
+                    x:Uid="NotifyIconContextMenuFloatWindow"
+                    Icon="{essential:FontIcon Glyph=&#xE78B;,
+                                              FontFamily=Segoe Fluent Icons}"
+                    Style="{ThemeResource NotifyIconContextMenuFlyoutItemStyle}"
+                    Text="Float window" />
+                <ToggleSwitch
+                    x:Uid="NotifyIconContextMenu"
+                    Grid.Column="1"
+                    Width="Auto"
+                    MinWidth="0"
+                    HorizontalAlignment="Right"
+                    OffContent=""
+                    OnContent="" />
+            </Grid>
             <MenuFlyoutSeparator />
-            <MenuFlyoutItem Click="ExitAppBarButton_Click" Text="Exit" />
         </StackPanel>
 
         <Grid

@@ -1,0 +1,15 @@
+﻿namespace OpenNet.UI.Xaml.Behavior.Action
+{
+	[default_interface]
+	runtimeclass ShowTeachingTipAction : Microsoft.UI.Xaml.DependencyObject, XamlToolkit.WinUI.Interactivity.IAction
+	{
+		ShowTeachingTipAction();
+
+		Object Execute(Object sender, Object parameter);
+
+		// Dependency properties
+		static Microsoft.UI.Xaml.DependencyProperty TeachingTipProperty{ get; };
+
+		Microsoft.UI.Xaml.Controls.TeachingTip TeachingTip;
+	}
+}

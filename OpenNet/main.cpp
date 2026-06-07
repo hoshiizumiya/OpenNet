@@ -122,8 +122,7 @@ bool DecideRedirection()
 	{
 		// 这是主实例，注册 Activated 事件处理器
 		// 当其他实例重定向激活到这里时会触发此事件
-		keyInstance.Activated(
-			[](auto&& sender, AppActivationArguments const& args)
+		keyInstance.Activated([](auto&& sender, AppActivationArguments const& args)
 		{
 			// 在 UI 线程中处理激活
 			auto dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
