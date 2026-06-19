@@ -2,17 +2,13 @@
 #ifndef __MVVM_CPPWINRT_ASYNC_DELEGATE_COMMAND_H_INCLUDED
 #define __MVVM_CPPWINRT_ASYNC_DELEGATE_COMMAND_H_INCLUDED
 
-#include <functional>
-#include <type_traits>
-#include <vector>
-
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Microsoft.UI.Xaml.Input.h>
-#include <winrt/Microsoft.UI.Xaml.Data.h>
-
 #include <mvvm_framework/mvvm_framework_events.h>  // Can/Execute EventArgs (same as sync)
 #include <mvvm_framework/mvvm_diagnostics.h>     // optional
 #include "mvvm_framework/mvvm_hresult_helper.h"
+
+import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Xaml.Input;
+import winrt.Microsoft.UI.Xaml.Data;
 
 namespace mvvm
 {
@@ -1086,3 +1082,7 @@ namespace mvvm
 }
 
 #endif // __MVVM_CPPWINRT_ASYNC_DELEGATE_COMMAND_H_INCLUDED
+
+import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Xaml.Input;
+import winrt.Microsoft.UI.Xaml.Data;

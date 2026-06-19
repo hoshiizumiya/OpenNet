@@ -1,47 +1,47 @@
 ﻿import "ViewModels/ObservableObject.idl"; // Base class for property change notifications
 namespace OpenNet.ViewModels
 {
-    // Download source type
-    enum DownloadTaskType
-    {
-        BitTorrent = 0,
-        Http = 1,
-    };
+	// Download source type
+	enum DownloadTaskType
+	{
+		BitTorrent = 0,
+		Http = 1,
+	};
 
-    [default_interface]
-    runtimeclass TaskViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        // Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
-        TaskViewModel();
+	[default_interface]
+	runtimeclass TaskViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		// Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
+		TaskViewModel();
 
-        // Item properties used by TasksPage ListView DataTemplate
-        String Name;
-        String Size;
-        String Progress;
-        String DownloadRate;
-        String UploadRate;
-        String Remaining;
-        String AddDate;
+	// Item properties used by TasksPage ListView DataTemplate
+		String Name;
+		String Size;
+		String Progress;
+		String DownloadRate;
+		String UploadRate;
+		String Remaining;
+		String AddDate;
 
-        // Download task type (BitTorrent or Http)
-        DownloadTaskType TaskType;
+		// Download task type (BitTorrent or Http)
+		DownloadTaskType TaskType;
 
-        // Task identifier — libtorrent taskId or HTTP recordId
-        String TaskId;
+		// Task identifier — libtorrent taskId or HTTP recordId
+		String TaskId;
 
-        // Aria2 GID (only for HTTP tasks)
-        String Gid;
+		// Aria2 GID (only for HTTP tasks)
+		String Gid;
 
-        // Download speed in KB/s (numeric value for SpeedGraph)
-        UInt64 DownloadSpeedKB;
+		// Download speed in KB/s (numeric value for SpeedGraph)
+		UInt64 DownloadSpeedKB;
 
-        // Progress percent as numeric value (0-100) for SpeedGraph
-        Double ProgressPercent;
+		// Progress percent as numeric value (0-100) for SpeedGraph
+		Double ProgressPercent;
 
-        // PointCollection for the speed graph visualization
-        Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };
+		// PointCollection for the speed graph visualization
+		Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };
 
-        // Call to update speed graph with new data point
-        void UpdateSpeedGraph(Double percent, UInt64 speedKB);
-    };
+		// Call to update speed graph with new data point
+		void UpdateSpeedGraph(Double percent, UInt64 speedKB);
+	};
 }

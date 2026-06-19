@@ -1,11 +1,11 @@
-﻿#include "pch.h"
-#include "TrackerManager.h"
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.Data.Json.h>
-#include <winrt/Windows.Web.Http.h>
-#include <winrt/Windows.Foundation.h>
-#include <sstream>
-#include <chrono>
+﻿module OpenNet.Core.Torrent.TrackerManager;
+
+import winrt.Windows.Storage;
+import winrt.Windows.Data.Json;
+import winrt.Windows.Web.Http;
+import winrt.Windows.Foundation;
+import winrt.Microsoft.Windows.Storage;
+import std;
 
 namespace OpenNet::Core::Torrent
 {
@@ -304,7 +304,7 @@ namespace OpenNet::Core::Torrent
                     info.url = obj.GetNamedString(L"url").c_str();
                     info.category = obj.GetNamedString(L"category", L"").c_str();
                     info.enabled = obj.GetNamedBoolean(L"enabled", true);
-                    info.addedTime = static_cast<long long>(obj.GetNamedNumber(L"addedTime", 0));
+                    info.addedTime = static_cast<std::int64_t>(obj.GetNamedNumber(L"addedTime", 0));
 
                     m_trackers.push_back(info);
                 }

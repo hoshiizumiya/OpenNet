@@ -2,19 +2,19 @@
 
 namespace OpenNet.UI.Xaml.View.Windows
 {
-    [default_interface]
-    runtimeclass TorrentCheckModalWindow : Microsoft.UI.Xaml.Window
-    {
-        TorrentCheckModalWindow();
-        TorrentCheckModalWindow(String torrentLink);
+	[default_interface]
+	runtimeclass TorrentCheckModalWindow : Microsoft.UI.Xaml.Window
+	{
+		TorrentCheckModalWindow();
+		TorrentCheckModalWindow(String torrentLink);
 
-        // Bindable properties
-        OpenNet.ViewModels.TorrentMetadataViewModel MetadataViewModel{ get; };
-        Boolean IsLoading{ get; };
-        String LoadingStatus{ get; };
-        Int32 LoadingProgress{ get; };
-        Boolean HasError{ get; };
-        String ErrorMessage{ get; };
-        Boolean MetadataReady{ get; };
-    }
+		// Bindable properties
+		OpenNet.ViewModels.TorrentMetadataViewModel MetadataViewModel{ get; };
+		Boolean IsLoading{ get; };
+		String LoadingStatus{ get; };
+		Int32 LoadingProgress{ get; };
+		Boolean HasError{ get; };
+		String ErrorMessage{ get; };
+		Boolean MetadataReady{ get; };
+	}
 }

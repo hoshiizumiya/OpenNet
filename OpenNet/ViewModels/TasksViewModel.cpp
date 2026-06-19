@@ -1,23 +1,25 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ViewModels/TasksViewModel.h"
-#include <winrt/Microsoft.UI.Dispatching.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Storage.Pickers.h>
-#include "Core/P2PManager.h"
-#include "Core/DownloadManager.h"
-#include "Core/HttpStateManager.h"
-#include "Core/torrentCore/TorrentStateManager.h"
 #include "Core/DataGraph/SpeedGraphDatabase.h"
-#include "Core/AppSettingsDatabase.h"
 #include "Core/IPFilter/IPFilterManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 
-#include <ctime>
+import Core.Utils.Misc;
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.DownloadManager;
+import OpenNet.Core.HttpStateManager;
+import OpenNet.Core.P2PManager;
+import OpenNet.Core.torrentCore.LibtorrentHandle;
+import winrt.Microsoft.UI.Dispatching;
+import winrt.Windows.Foundation;
+import winrt.Windows.Storage;
+import winrt.Windows.Storage.Pickers;
 
 using namespace std::string_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+	using namespace ::Core::Utils::Misc;
 	// Tip: All constructions will do in winrt::make<>().
 	TasksViewModel::TasksViewModel()
 	{
@@ -195,10 +197,20 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						// First cancel the active download (aria2.remove),
 						// then clean up the result (aria2.removeDownloadResult).
-						try { dlMgr.CancelHttpDownload(gid); }
-						catch (...) {}
-						try { dlMgr.RemoveHttpDownload(gid); }
-						catch (...) {}
+						try
+						{
+							dlMgr.CancelHttpDownload(gid);
+						}
+						catch (...)
+						{
+						}
+						try
+						{
+							dlMgr.RemoveHttpDownload(gid);
+						}
+						catch (...)
+						{
+						}
 					}
 					// Delete the persisted HTTP download record.
 					// TaskId now holds the stable recordId (not GID).
@@ -227,7 +239,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				OutputDebugStringW((L"DeleteCommand backend error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 			}
-			catch (...) {}
+			catch (...)
+			{
+			}
 
 			// Back to UI thread for observable collection mutation
 			auto dispatcher = self->m_dispatcher;
@@ -368,26 +382,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 	void TasksViewModel::Shutdown()
 	{
 		::OpenNet::Core::DownloadManager::Instance().Shutdown();
-	}
-
-	// Helper function to format timestamp to date string
-	static winrt::hstring FormatTimestamp(int64_t timestamp)
-	{
-		if (timestamp <= 0)
-			return L"-";
-
-		std::time_t time = static_cast<std::time_t>(timestamp);
-		std::tm tm_buf{};
-#ifdef _WIN32
-		localtime_s(&tm_buf, &time);
-#else
-		localtime_r(&time, &tm_buf);
-#endif
-		wchar_t buf[64];
-		swprintf(buf, 64, L"%04d-%02d-%02d %02d:%02d",
-				 tm_buf.tm_year + 1900, tm_buf.tm_mon + 1, tm_buf.tm_mday,
-				 tm_buf.tm_hour, tm_buf.tm_min);
-		return winrt::hstring{ buf };
 	}
 
 	void TasksViewModel::LoadSavedTasks()
@@ -920,7 +914,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 				bool found = false;
 				for (auto const& d : desired)
 				{
-					if (d == existing) { found = true; break; }
+					if (d == existing)
+					{
+						found = true; break;
+					}
 				}
 				if (!found)
 				{
@@ -934,7 +931,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 				bool found = false;
 				for (uint32_t j = 0; j < filtered.Size(); ++j)
 				{
-					if (filtered.GetAt(j) == d) { found = true; break; }
+					if (filtered.GetAt(j) == d)
+					{
+						found = true; break;
+					}
 				}
 				if (!found)
 				{

@@ -1,17 +1,17 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "TaskFilesPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskFilesPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.Data.h>
-#include <winrt/Windows.Foundation.Collections.h>
-
-#include "Core/Utils/Misc.h"
-#include "Core/P2PManager.h"
 #include "ViewModels/DisplayItems.h"
-#include "Helpers/ColumnWidthHelper.h"
+
+import Core.Utils.Misc;
+import OpenNet.Core.P2PManager;
+import OpenNet.Helpers.ColumnWidthHelper;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Windows.Foundation.Collections;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

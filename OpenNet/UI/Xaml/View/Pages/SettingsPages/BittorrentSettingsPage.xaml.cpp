@@ -1,14 +1,14 @@
-#include "pch.h"
+﻿#include <libtorrent/settings_pack.hpp>
+
+#include "XamlWorkaround.h"
 #include "BittorrentSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp"
 #endif
 
-#include "Core/P2PManager.h"
-#include "Core/TorrentSettings.h"
-#include <libtorrent/settings_pack.hpp>
-#include <winrt/Microsoft.UI.Dispatching.h>
-#include <wil/cppwinrt_helpers.h>
+import OpenNet.Core.P2PManager;
+import winrt.Microsoft.UI.Dispatching;
+import winrtplus_coroutine;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -69,7 +69,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         }
 
         // Back to UI thread to populate controls
-        co_await wil::resume_foreground(dispatcher);
+        co_await winrtplus::resume_foreground(dispatcher);
 
         m_loading = true;
         PopulateFromSettings(s);

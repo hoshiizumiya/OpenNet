@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Visuals/VisualTypes.h"
 
 #if __has_include("UI/Xaml/Media/Visuals/AttachedVisualFactoryBase.g.cpp")
@@ -11,9 +11,9 @@
 #include "UI/Xaml/Media/Visuals/UIElementExtensions.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
-#include <winrt/Windows.Foundation.Numerics.h>
+import winrt.Windows.Foundation.Numerics;
+import winrt.Microsoft.UI.Composition;
+import winrt.Microsoft.UI.Xaml.Hosting;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

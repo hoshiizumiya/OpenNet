@@ -1,8 +1,8 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "SettingsViewModel.h"
 
-#include <winrt/Windows.Data.Json.h>
-#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+import winrt.Windows.Data.Json;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
 
 using namespace winrt;
 using namespace Windows::Foundation;

@@ -12,7 +12,8 @@
 #ifndef __MVVM_CPPWINRT_PROPERTY_MACROS_H_INCLUDED
 #define __MVVM_CPPWINRT_PROPERTY_MACROS_H_INCLUDED
 
-#include <string_view>
+import std;
+
 using namespace std::literals;
 
 

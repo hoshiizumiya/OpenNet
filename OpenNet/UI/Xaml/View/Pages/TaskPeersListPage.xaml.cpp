@@ -1,21 +1,18 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
+import winrt.XamlToolkit.Labs.WinUI;
 #include "TaskPeersListPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"
 #endif
-
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.Data.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <format>
-#include <unordered_map>
-#include <unordered_set>
-
-#include "Core/P2PManager.h"
 #include "Core/IPFilter/IPFilterManager.h"
-#include "Core/GeoIP/GeoIPManager.h"
 #include "ViewModels/DisplayItems.h"
-#include "Helpers/ColumnWidthHelper.h"
+
+import OpenNet.Core.P2PManager;
+import OpenNet.Core.GeoIP.GeoIPManager;
+import OpenNet.Helpers.ColumnWidthHelper;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Windows.Foundation.Collections;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

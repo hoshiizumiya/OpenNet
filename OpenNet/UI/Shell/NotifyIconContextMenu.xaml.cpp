@@ -1,17 +1,18 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "NotifyIconContextMenu.xaml.h"
 #if __has_include("UI/Shell/NotifyIconContextMenu.g.cpp")
 #include "UI/Shell/NotifyIconContextMenu.g.cpp"
 #endif
 
-#include "App.xaml.h"
-#include "Core/AppRuntime.h"
-#include "Helpers/WindowHelper.h"
 #include "NotifyIconXamlHostWindow.xaml.h"
-#include <winrt/WinUI3Package.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.ApplicationModel.h>
+
+import OpenNet.App;
+import OpenNet.Core.AppRuntime;
+import OpenNet.Helpers.WindowHelper;
+import winrt.WinUI3Package;
+import winrt.Windows.ApplicationModel;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Windows.Foundation;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -96,7 +97,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	{
 		// Remove the tray icon
 		auto trayIcon = winrt::OpenNet::implementation::App::trayIcon;
-		trayIcon.Remove();
+		trayIcon->Remove();
 
 		// Allow the window to close (bypasses the hide-to-tray Closing handler)
 		winrt::OpenNet::implementation::App::s_isExiting = true;

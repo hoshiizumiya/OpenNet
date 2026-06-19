@@ -1,16 +1,16 @@
-﻿#include "pch.h"
-#include "App.xaml.h"
-//#include "Core/IO/FileOperation.h"
-#include "Core/ApplicationModel/PackageIdentityAdapter.h"
+﻿#include <Windows.h>
+#include <WindowsAppSDK-VersionInfo.h>
+#include <MddBootstrap.h>
 #include <sentry.h>
 
-#include <winrt/Microsoft.Windows.ApplicationModel.WindowsAppRuntime.h>
-#include <winrt/Windows.ApplicationModel.Activation.h>
-#include <winrt/Microsoft.Windows.AppLifecycle.h>
-#include <winrt/Microsoft.Windows.Storage.h>
-
-#include <WindowsAppSDK-VersionInfo.h>
-#include <mddbootstrap.h>
+import OpenNet.App;
+import OpenNet.Core.ApplicationModel;
+import winrt.Windows.ApplicationModel.Activation;
+import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Dispatching;
+import winrt.Microsoft.Windows.ApplicationModel.WindowsAppRuntime;
+import winrt.Microsoft.Windows.AppLifecycle;
+import winrt.Microsoft.Windows.Storage;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

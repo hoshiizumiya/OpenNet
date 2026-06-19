@@ -1,11 +1,10 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/NetworkSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.g.cpp"
 #endif
 
-#include "Core/Torrent/TrackerManager.h"
-#include <chrono>
+import winrt.Microsoft.UI.Dispatching;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;

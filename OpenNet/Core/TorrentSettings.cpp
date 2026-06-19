@@ -5,28 +5,18 @@
  *
  * LICENSE:   The MIT License
  */
-
-#include "pch.h"
-#include "Core/TorrentSettings.h"
-#include "Core/AppSettingsDatabase.h"
-#include "Core/IO/FileSystem.h"
-
-#include <nlohmann/json.hpp>
-
+module;
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/session.hpp> // for proxy_type_t
 
-#include <winrt/Windows.Foundation.h>
+module OpenNet.Core.TorrentSettings;
 
-#include <filesystem>
-#include <fstream>
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.AppSettingsDatabase;
+import winrt.Windows.Foundation;
 
-using json = nlohmann::json;
 namespace lt = libtorrent;
 
-// -------------------------------------------------------------------
-//  JSON serialization helpers (nlohmann)
-// -------------------------------------------------------------------
 namespace OpenNet::Core
 {
 	// -------------------------------------------------------------------

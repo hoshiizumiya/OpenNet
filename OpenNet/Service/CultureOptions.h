@@ -8,6 +8,8 @@ namespace winrt::OpenNet::Service::implementation
     {
         CultureOptions() = default;
 
+		hstring CultureInfo();
+		void CultureInfo(hstring const& value);
     };
 }
 

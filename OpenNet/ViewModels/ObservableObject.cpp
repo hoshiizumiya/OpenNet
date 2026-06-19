@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ObservableObject.h"
 #include "ViewModels/ObservableObject.g.cpp"
 

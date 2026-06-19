@@ -1,21 +1,25 @@
-﻿#include "pch.h"
-#include "App.xaml.h"
-#include "WindowHelper.h"
-#include "Core/Utils/Message.h"
-
+﻿module;
+#include <windows.h>
+#include <bcrypt.h>
+#include <minwindef.h>
+#include <microsoft.ui.xaml.window.h>       // IWindowNative
 #include <shlwapi.h> // For PathRemoveFileSpec
 #include <wil/result.h>
 #include <commctrl.h>
 
 #pragma comment(lib, "shlwapi.lib")
 #pragma comment(lib, "bcrypt.lib")
+module OpenNet.Helpers.WindowHelper;
 
+import OpenNet.App;
+import OpenNet.Core.Utils.Message;
+
+using namespace Core::Utils::Message;
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Windowing;
-using namespace Core::Utils::Message;
 
 namespace OpenNet::Helpers::WinUIWindowHelper
 {
@@ -98,23 +102,6 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 	std::vector<Window> const& WindowHelper::ActiveWindows()
 	{
 		return m_activeWindows;
-	}
-
-	winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::StorageFolder> WindowHelper::GetAppLocalFolderAsync()
-	{
-		if (!Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent(L"Windows.Foundation.UniversalApiContract", 1))
-		{
-			co_return ApplicationData::Current().LocalFolder();
-		}
-		else
-		{
-			WCHAR exePath[MAX_PATH]{};
-			GetModuleFileNameW(nullptr, exePath, MAX_PATH);
-			PathRemoveFileSpecW(exePath);
-
-			auto&& folder = co_await StorageFolder::GetFolderFromPathAsync(exePath);
-			co_return folder;
-		}
 	}
 
 	void WindowHelper::ShowMainWindow()

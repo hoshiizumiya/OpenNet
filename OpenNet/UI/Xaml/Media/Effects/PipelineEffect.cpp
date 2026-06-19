@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Effects/PipelineEffect.h"
 #include "UI/Xaml/Media/Effects/PipelineEffect.g.cpp"
 

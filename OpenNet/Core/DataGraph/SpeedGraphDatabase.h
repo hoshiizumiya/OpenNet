@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/DataGraph/SpeedGraphDatabase.h
  * PURPOSE:   SQLite persistence for speed graph data points.
@@ -13,10 +13,8 @@
 
 #pragma once
 
-#include <cstdint>
-#include <mutex>
-#include <string>
-#include <vector>
+import std;
+using namespace std;
 
 struct sqlite3;
 

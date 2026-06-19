@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "MainView.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/MainView.g.cpp")
 #include "UI/Xaml/View/Pages/MainView.g.cpp"
@@ -14,7 +14,7 @@
 #include "UI/Xaml/View/Pages/NatToolsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 
-#include <winrt/Microsoft.Windows.Storage.h>
+import winrt.Microsoft.Windows.Storage;
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;

@@ -1,11 +1,11 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "AddRSSFeedDialog.xaml.h"
 #if __has_include("UI/Xaml/View/Dialog/AddRSSFeedDialog.g.cpp")
 #include "UI/Xaml/View/Dialog/AddRSSFeedDialog.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include "Helpers/ThemeHelper.h"
+import OpenNet.Helpers.ThemeHelper;
+import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

@@ -5,17 +5,12 @@
  *
  * LICENSE:   The MIT License
  */
-
-#include "pch.h"
-#include "Core/DownloadManager.h"
-
-#include <chrono>
-#include <sstream>
-
-using namespace std::chrono_literals;
+module OpenNet.Core.DownloadManager;
 
 namespace OpenNet::Core
 {
+	using namespace std::chrono_literals;
+
 	// ------------------------------------------------------------------
 	//  Singleton accessor
 	// ------------------------------------------------------------------

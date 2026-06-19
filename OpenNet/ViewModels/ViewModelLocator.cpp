@@ -1,10 +1,10 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ViewModelLocator.h"
 
 ViewModelLocator& ViewModelLocator::GetInstance()
 {
-    static ViewModelLocator s_locator;
-    return s_locator;
+	static ViewModelLocator s_locator;
+	return s_locator;
 }
 
 
@@ -17,5 +17,5 @@ ViewModelLocator& ViewModelLocator::GetInstance()
 
 SpeedGraphData& ViewModelLocator::SpeedGraphData()
 {
-    return m_speedGraphData;
+	return m_speedGraphData;
 }

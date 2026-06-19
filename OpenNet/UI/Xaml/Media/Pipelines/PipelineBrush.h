@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+
+import winrt.OpenNet.UI.Xaml.Media;
 
 #include "UI/Xaml/Media/Pipelines/PipelineBrush.g.h"
 #include "UI/Xaml/Media/Pipelines/PipelineBuilder.h"

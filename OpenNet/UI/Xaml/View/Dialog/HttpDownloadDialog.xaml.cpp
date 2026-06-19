@@ -1,19 +1,15 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "HttpDownloadDialog.xaml.h"
 #if __has_include("UI/Xaml/View/Dialog/HttpDownloadDialog.g.cpp")
 #include "UI/Xaml/View/Dialog/HttpDownloadDialog.g.cpp"
 #endif
 
-#include "Core/Utils/Misc.h"
-#include "Helpers/ThemeHelper.h"
-
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Content.h>
-#include <winrt/Windows.ApplicationModel.DataTransfer.h>
-#include <winrt/Microsoft.Windows.Storage.Pickers.h>
-
-#include <algorithm>
-#include <string>
+import Core.Utils.Misc;
+import OpenNet.Helpers.ThemeHelper;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Content;
+import winrt.Windows.ApplicationModel.DataTransfer;
+import winrt.Microsoft.Windows.Storage.Pickers;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -23,7 +19,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
 	HttpDownloadDialog::HttpDownloadDialog()
 	{
-		RequestedTheme(::OpenNet::Helpers::ThemeHelper::ThemeHelper::RootTheme());
+		RequestedTheme(::OpenNet::Helpers::ThemeHelper::RootTheme());
 	}
 
 	// ------------------------------------------------------------------

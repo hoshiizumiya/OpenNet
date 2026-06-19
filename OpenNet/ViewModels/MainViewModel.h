@@ -1,15 +1,11 @@
 ﻿#pragma once
 #include "ViewModels/MainViewModel.g.h"
-#include <winrt/Microsoft.UI.Xaml.Data.h>
-#include <winrt/Microsoft.UI.Xaml.Input.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Microsoft.UI.Dispatching.h>
 #include "Core/NetworkDetector.h"
-#include <thread>
-#include <atomic>
-#include <chrono>
-#include <mutex>
-#include <condition_variable>
+
+import winrt.Windows.Foundation.Collections;
+import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Microsoft.UI.Xaml.Input;
+import winrt.Microsoft.UI.Dispatching;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -27,7 +23,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 
 		// Summary: 是否已连接
-		bool IsConnected() { return m_isConnected; }
+		bool IsConnected()
+		{
+			return m_isConnected;
+		}
 		void IsConnected(bool value)
 		{
 			if (m_isConnected != value)
@@ -38,45 +37,114 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 
 		// Summary: 用户名文本（状态栏）
-		winrt::hstring UserName() const { return m_userName; }
+		winrt::hstring UserName() const
+		{
+			return m_userName;
+		}
 		// Summary: 端口状态
-		winrt::hstring PortState() const { return m_portState; }
+		winrt::hstring PortState() const
+		{
+			return m_portState;
+		}
 
 		// 快速统计 / Quick stats
-		int32_t ConnectedPeersCount() const { return m_connectedPeersCount; }
-		int32_t DhtNodeCount() const { return m_dhtNodeCount; }
-		int32_t ActiveTransfersCount() const { return m_activeTransfersCount; }
-		winrt::hstring TotalBytesTransferredText() const { return m_totalBytesTransferredText; }
-		winrt::hstring CurrentTransferSpeedText() const { return m_currentTransferSpeedText; }
-		winrt::hstring SpeedLevel() const { return m_speedLevel; }
-		int32_t ListenPort() const { return m_listenPort; }
+		std::int32_t ConnectedPeersCount() const
+		{
+			return m_connectedPeersCount;
+		}
+		std::int32_t DhtNodeCount() const
+		{
+			return m_dhtNodeCount;
+		}
+		std::int32_t ActiveTransfersCount() const
+		{
+			return m_activeTransfersCount;
+		}
+		winrt::hstring TotalBytesTransferredText() const
+		{
+			return m_totalBytesTransferredText;
+		}
+		winrt::hstring CurrentTransferSpeedText() const
+		{
+			return m_currentTransferSpeedText;
+		}
+		winrt::hstring SpeedLevel() const
+		{
+			return m_speedLevel;
+		}
+		std::int32_t ListenPort() const
+		{
+			return m_listenPort;
+		}
 
 		// 网络状态 / Network status
-		winrt::hstring NetworkStatusText() const { return m_networkStatusText; }
-		winrt::hstring NetworkQualityText() const { return m_networkQualityText; }
+		winrt::hstring NetworkStatusText() const
+		{
+			return m_networkStatusText;
+		}
+		winrt::hstring NetworkQualityText() const
+		{
+			return m_networkQualityText;
+		}
 
 		// 活动列表 / Activities
-		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> RecentActivities() const { return m_recentActivities; }
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> RecentActivities() const
+		{
+			return m_recentActivities;
+		}
 
 		// 错误/通知 / Error & Notification
-		winrt::hstring LastError() const { return m_lastError; }
-		bool HasError() const { return !m_lastError.empty(); }
-		winrt::hstring LastNotification() const { return m_lastNotification; }
-		bool HasNotification() const { return !m_lastNotification.empty(); }
+		winrt::hstring LastError() const
+		{
+			return m_lastError;
+		}
+		bool HasError() const
+		{
+			return !m_lastError.empty();
+		}
+		winrt::hstring LastNotification() const
+		{
+			return m_lastNotification;
+		}
+		bool HasNotification() const
+		{
+			return !m_lastNotification.empty();
+		}
 
 		// Summary: 初始化核心组件（P2P引擎）
 		Windows::Foundation::IAsyncAction InitializeTorrentCore();
 
 		// INotifyPropertyChanged add/remove
-		winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler) { return m_propertyChanged.add(handler); }
-		void PropertyChanged(winrt::event_token const& token) noexcept { m_propertyChanged.remove(token); }
+		winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
+		{
+			return m_propertyChanged.add(handler);
+		}
+		void PropertyChanged(winrt::event_token const& token) noexcept
+		{
+			m_propertyChanged.remove(token);
+		}
 
 		// 命令（暂为占位，后续接入实际逻辑）/ Commands (placeholders)
-		winrt::Microsoft::UI::Xaml::Input::ICommand NavigateToPageCommand() const { return m_navigateToPageCommand; }
-		winrt::Microsoft::UI::Xaml::Input::ICommand StartNetworkDetectionCommand() const { return m_startNetworkDetectionCommand; }
-		winrt::Microsoft::UI::Xaml::Input::ICommand ConnectToPeerCommand() const { return m_connectToPeerCommand; }
-		winrt::Microsoft::UI::Xaml::Input::ICommand RefreshCommand() const { return m_refreshCommand; }
-		winrt::Microsoft::UI::Xaml::Input::ICommand ClearErrorCommand() const { return m_clearErrorCommand; }
+		winrt::Microsoft::UI::Xaml::Input::ICommand NavigateToPageCommand() const
+		{
+			return m_navigateToPageCommand;
+		}
+		winrt::Microsoft::UI::Xaml::Input::ICommand StartNetworkDetectionCommand() const
+		{
+			return m_startNetworkDetectionCommand;
+		}
+		winrt::Microsoft::UI::Xaml::Input::ICommand ConnectToPeerCommand() const
+		{
+			return m_connectToPeerCommand;
+		}
+		winrt::Microsoft::UI::Xaml::Input::ICommand RefreshCommand() const
+		{
+			return m_refreshCommand;
+		}
+		winrt::Microsoft::UI::Xaml::Input::ICommand ClearErrorCommand() const
+		{
+			return m_clearErrorCommand;
+		}
 
 		// 工具方法 / Utility
 		void OnPropertyChanged(winrt::hstring const& propertyName)
@@ -99,13 +167,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 		bool m_isSettingsSelected{ false };
 
 		// 快速统计 / Quick stats
-		int32_t m_connectedPeersCount{ 0 };
-		int32_t m_dhtNodeCount{ 0 };
-		int32_t m_activeTransfersCount{ 0 };
+		std::int32_t m_connectedPeersCount{ 0 };
+		std::int32_t m_dhtNodeCount{ 0 };
+		std::int32_t m_activeTransfersCount{ 0 };
 		winrt::hstring m_totalBytesTransferredText{ L"0 B" };
 		winrt::hstring m_currentTransferSpeedText{ L"0 bps" };
 		winrt::hstring m_speedLevel{ L"Low" };
-		int32_t m_listenPort{ 0 };
+		std::int32_t m_listenPort{ 0 };
 
 		// 网络状态 / Network status
 		winrt::hstring m_networkStatusText{ L"未知 / Unknown" };
@@ -139,7 +207,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// Port check state
 		std::chrono::steady_clock::time_point m_lastPortCheckTime{};
-		int m_lastCheckedPort{ 0 };
+		std::int32_t m_lastCheckedPort{ 0 };
 		std::wstring m_cachedPortState{ L"Unknown" };
 	};
 }

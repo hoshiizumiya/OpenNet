@@ -1,10 +1,12 @@
-﻿#include "pch.h"
-#include "AppRuntime.h"
-
-#include "Core/Utils/Message.h"
+﻿module;
+#include <Windows.h>
 #include <openssl/evp.h>
 #include <wil/registry.h>
-#include <winrt/Microsoft.Web.WebView2.Core.h>
+
+module OpenNet.Core.AppRuntime;
+
+import OpenNet.Core.Utils.Message;
+import winrt.Microsoft.Web.WebView2.Core;
 
 namespace OpenNet::Core
 {

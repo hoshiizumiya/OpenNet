@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Brushes/BrushTypes.h"
 
 #if __has_include("UI/Xaml/Media/Brushes/BackdropBlurBrush.g.cpp")
@@ -29,16 +29,17 @@
 #include "UI/Xaml/Media/Brushes/TilesBrush.g.cpp"
 #endif
 
-#include <winrt/Windows.UI.h>
-#include <winrt/Windows.Graphics.Effects.h>
-#include <winrt/Microsoft.Graphics.Canvas.Effects.h>
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+import winrt.Windows.Graphics.Effects;
+import winrt.Windows.UI;
+import winrt.Microsoft.Graphics.Canvas.Effects;
+import winrt.Microsoft.UI.Composition;
+import winrt.Microsoft.UI.Xaml.Media.Imaging;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Media;
 using namespace winrt::Microsoft::UI::Composition;
+
 using ::OpenNet::UI::Xaml::Media::Pipelines::PipelineBuilder;
 
 namespace winrt::OpenNet::UI::Xaml::Media::Brushes::implementation

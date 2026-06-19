@@ -1,6 +1,7 @@
-﻿#include "pch.h"
-#include "Message.h"
-#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>
+﻿module;
+#include <Windows.h>
+
+module OpenNet.Core.Utils.Message;
 
 using namespace winrt;
 using namespace winrt::Microsoft::Windows::ApplicationModel::Resources;

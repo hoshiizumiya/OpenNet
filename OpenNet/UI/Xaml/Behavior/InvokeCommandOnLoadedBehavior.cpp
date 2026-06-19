@@ -1,10 +1,10 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "InvokeCommandOnLoadedBehavior.h"
 #if __has_include("/UI/Xaml/Behavior/InvokeCommandOnLoadedBehavior.g.cpp")
 #include "/UI/Xaml/Behavior/InvokeCommandOnLoadedBehavior.g.cpp"
 #endif
 
-#include <winrt/XamlToolkit.WinUI.Behaviors.h>
+import winrt.XamlToolkit.WinUI.Behaviors;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

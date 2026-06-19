@@ -1,11 +1,8 @@
-﻿#pragma once
+#pragma once
 #ifndef __MVVM_CPPWINRT_OBJECT_CONVERTER_HPP_INCLUDED
 #define __MVVM_CPPWINRT_OBJECT_CONVERTER_HPP_INCLUDED
 
 #include <unknwn.h>
-#include <winrt/base.h>
-#include <type_traits>
-#include <stdexcept>
 #include <hstring.h>
 
 namespace COMRefTracking {

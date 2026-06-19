@@ -1,20 +1,24 @@
-﻿#include "pch.h"
+﻿#include <Shlwapi.h>
+
+#include "XamlWorkaround.h"
 #include "ThemesSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.cpp"
 #endif
 
-#include "Core/AppSettingsDatabase.h"
-#include "Helpers/WindowHelper.h"
 #include "MainSettingsPage.xaml.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
 #include "FontCustomizePage.xaml.h"
-#include <Shlwapi.h>
-#include <winrt/Microsoft.Windows.Storage.Pickers.h>
-#include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <winrt/WinUI3Package.h>
+
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Helpers.WindowHelper;
+import winrt.WinUI3Package;
+import winrt.Microsoft.Windows.Storage.Pickers;
+import winrt.Microsoft.UI;
+import winrt.Microsoft.UI.Content;
+import winrt.Microsoft.UI.Composition.SystemBackdrops;
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Microsoft.UI.Xaml.Media.Imaging;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -27,12 +31,12 @@ using namespace winrt::Microsoft::UI::Xaml::Media::Animation;
 
 namespace
 {
-	constexpr auto kBackdropFallbackColorKey = "backdrop_fallback_color";
-	constexpr auto kBackdropTintColorKey = "backdrop_tint_color";
-	constexpr auto kBackdropLuminosityOpacityKey = "backdrop_luminosity_opacity";
-	constexpr auto kBackdropTintOpacityKey = "backdrop_tint_opacity";
-	constexpr auto kBackdropEnableWhenInactiveKey = "backdrop_enable_when_inactive";
-	constexpr auto kBackdropUseFallbackKey = "backdrop_use_fallback";
+	constexpr auto kBackdropFallbackColorKey       = "backdrop_fallback_color";
+	constexpr auto kBackdropTintColorKey           = "backdrop_tint_color";
+	constexpr auto kBackdropLuminosityOpacityKey   = "backdrop_luminosity_opacity";
+	constexpr auto kBackdropTintOpacityKey         = "backdrop_tint_opacity";
+	constexpr auto kBackdropEnableWhenInactiveKey  = "backdrop_enable_when_inactive";
+	constexpr auto kBackdropUseFallbackKey         = "backdrop_use_fallback";
 
 	winrt::Microsoft::UI::Xaml::Media::Stretch StretchFromIndex(int index)
 	{
@@ -49,7 +53,7 @@ namespace
 
 	winrt::Windows::UI::Color ColorFromArgb(int64_t argb)
 	{
-		auto const value = static_cast<uint32_t>(argb);
+		auto const value = static_cast<std::uint32_t>(argb);
 		return winrt::Windows::UI::Color{
 			static_cast<uint8_t>((value >> 24) & 0xFF),
 			static_cast<uint8_t>((value >> 16) & 0xFF),

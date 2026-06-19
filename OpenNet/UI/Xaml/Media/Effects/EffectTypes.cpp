@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Effects/EffectTypes.h"
 
 // Include the generated .g.cpp files for all effect types

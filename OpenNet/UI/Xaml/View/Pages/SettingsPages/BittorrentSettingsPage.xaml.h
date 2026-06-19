@@ -1,8 +1,9 @@
-#pragma once
+﻿#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.h"
-#include "Core/TorrentSettings.h"
-#include <winrt/Microsoft.UI.Xaml.h>
+
+import OpenNet.Core.TorrentSettings;
+import winrt.Microsoft.UI.Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {

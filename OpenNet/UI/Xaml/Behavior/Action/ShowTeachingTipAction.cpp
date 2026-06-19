@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ShowTeachingTipAction.h"
 #if __has_include("UI/Xaml/Behavior/Action/ShowTeachingTipAction.g.cpp")
 #include "UI/Xaml/Behavior/Action/ShowTeachingTipAction.g.cpp"

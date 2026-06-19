@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "XamlWorkaround.h"
 #include "GuideView.xaml.h"
 #if __has_include("UI/Xaml/View/GuideView.g.cpp")
 #include "UI/Xaml/View/GuideView.g.cpp"

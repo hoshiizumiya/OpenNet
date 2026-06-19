@@ -2,15 +2,13 @@
 
 #include "UI/Xaml/Control/Effect/TextMorphEffect.g.h"
 
-#include <winrt/Microsoft.Graphics.Canvas.h>
-#include <winrt/Microsoft.Graphics.Canvas.Effects.h>
-#include <winrt/Microsoft.Graphics.Canvas.Text.h>
-#include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
-#include <winrt/Windows.UI.h>
-#include <winrt/Windows.UI.Text.h>
-
-#include <vector>
+import winrt.Microsoft.Graphics.Canvas.Effects;
+import winrt.Microsoft.Graphics.Canvas.Text;
+import winrt.Windows.UI;
+import winrt.Windows.UI.Text;
+import winrt.Microsoft.Graphics.Canvas;
+import winrt.Microsoft.Graphics.Canvas.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Media.Animation;
 
 namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 {

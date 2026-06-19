@@ -1,10 +1,10 @@
-﻿#pragma once
+#pragma once
 
 #include "UI/Shell/NotifyIconContextMenu.g.h"
-#include <winrt/WinUI3Package.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.Primitives.h>
 
+import winrt.WinUI3Package;
+import winrt.Microsoft.UI.Xaml.Controls.Primitives;
+import winrt.Microsoft.UI.Xaml.Controls;
 namespace winrt::OpenNet::UI::Shell::implementation
 {
 	struct NotifyIconContextMenu : NotifyIconContextMenuT<NotifyIconContextMenu>

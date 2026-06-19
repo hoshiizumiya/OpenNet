@@ -1,5 +1,4 @@
-﻿#include "pch.h"
-#include "TorrentMetadataFetcher.h"
+﻿module;
 
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
@@ -10,13 +9,9 @@
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/torrent_status.hpp>
 
-#include <fstream>
-#include <filesystem>
-#include <chrono>
+module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 
-#include "Core/IO/FileSystem.h"
-#include <sstream>
-#include <iomanip>
+import OpenNet.Core.IO.FileSystem;
 
 namespace lt = libtorrent;
 using namespace std::chrono_literals;

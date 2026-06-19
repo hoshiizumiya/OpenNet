@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.h"
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
+
+import winrt.Microsoft.UI.Xaml.Media.Animation;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
@@ -22,10 +23,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		void MainSettingsPage_Loaded(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		// Breadcrumb handler
-		void SettingsBar_ItemClicked(Microsoft::UI::Xaml::Controls::BreadcrumbBar const&, Microsoft::UI::Xaml::Controls::BreadcrumbBarItemClickedEventArgs const& args);
+		void SettingsBar_ItemClicked(winrt::Microsoft::UI::Xaml::Controls::BreadcrumbBar const&, winrt::Microsoft::UI::Xaml::Controls::BreadcrumbBarItemClickedEventArgs const& args);
 
 		// Navigation handler
-		void SettingsNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& sender, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
+		void SettingsNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> SettingsBarItems();
 	};

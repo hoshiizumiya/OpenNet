@@ -1,13 +1,17 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ExceptionWindow.xaml.h"
 #if __has_include("UI/Xaml/View/Windows/ExceptionWindow.g.cpp")
 #include "UI/Xaml/View/Windows/ExceptionWindow.g.cpp"
 #endif
 
-#include "App.xaml.h"
-#include "Helpers/ThemeHelper.h"
-#include "Helpers/WindowHelper.h"
-#include <format>
+import OpenNet.App;
+import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.WindowHelper;
+import winrt.Windows.Graphics;
+import winrt.Microsoft.UI;
+import winrt.Microsoft.UI.Dispatching;
+import winrt.Microsoft.UI.Windowing;
+import winrtplus.Microsoft.UI.Interop;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

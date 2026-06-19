@@ -1,11 +1,11 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "HeaderTile.h"
 #if __has_include("UI/Xaml/Control/HomePage/Header/HeaderTile.g.cpp")
 #include "UI/Xaml/Control/HomePage/Header/HeaderTile.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
-#include <winrt/Microsoft.UI.Xaml.Automation.h>
+import winrt.Microsoft.UI.Xaml.Hosting;
+import winrt.Microsoft.UI.Xaml.Automation;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

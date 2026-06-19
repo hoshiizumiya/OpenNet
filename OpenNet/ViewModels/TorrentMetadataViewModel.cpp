@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "TorrentMetadataViewModel.h"
 #if __has_include("ViewModels/TorrentFileNodeViewModel.g.cpp")
 #include "ViewModels/TorrentFileNodeViewModel.g.cpp"
@@ -10,18 +10,13 @@
 #include "ViewModels/TorrentMetadataViewModel.g.cpp"
 #endif
 
-#include "Core/Utils/Misc.h"
-
-#include <chrono>
-#include <ctime>
-#include <algorithm>
-#include <cctype>
-#include <map>
-#include <unordered_map>
-#include <sstream>
+import Core.Utils.Misc;
+import std;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+	using namespace std;
+	using namespace Core::Utils::Misc;
 	// ========== TorrentFileNodeViewModel ==========
 
 	TorrentFileNodeViewModel::TorrentFileNodeViewModel()
@@ -47,7 +42,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			// If this is a folder, update all children recursively
 			if (m_isFolder)
 			{
-				for (uint32_t i = 0; i < m_children.Size(); ++i)
+				for (std::uint32_t i = 0; i < m_children.Size(); ++i)
 				{
 					m_children.GetAt(i).IsSelected(v);
 				}
@@ -83,7 +78,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_isSelected = selected;
 		RaisePropertyChanged(L"IsSelected");
 
-		for (uint32_t i = 0; i < m_children.Size(); ++i)
+		for (std::uint32_t i = 0; i < m_children.Size(); ++i)
 		{
 			auto child = m_children.GetAt(i);
 			child.as<TorrentFileNodeViewModel>()->UpdateSelectionRecursive(selected);
@@ -516,7 +511,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 					if (child.IsFolder())
 					{
 						UpdateFolderStatesRecursive(
-							winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel>({child}));
+							winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel>({ child }));
 					}
 
 					if (child.IsSelected())
@@ -543,12 +538,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		UpdateFolderStatesRecursive(m_fileTree);
 	}
-	
+
 	::OpenNet::Core::Torrent::TorrentMetadataInfo TorrentMetadataViewModel::GetMetadataInfo() const
 	{
 		auto metadata = m_rawMetadata;
 
-		std::unordered_map<int, std::pair<bool, int>> fileStateByIndex;
+		std::unordered_map<std::int32_t, std::pair<bool, std::int32_t>> fileStateByIndex;
 		fileStateByIndex.reserve(m_files.Size());
 		for (uint32_t i = 0; i < m_files.Size(); ++i)
 		{
@@ -567,20 +562,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 
 		return metadata;
-	}
-
-	winrt::hstring TorrentMetadataViewModel::FormatTimestamp(int64_t timestamp)
-	{
-		if (timestamp == 0)
-			return L"Unknown";
-
-		std::time_t t = static_cast<std::time_t>(timestamp);
-		std::tm tm;
-		localtime_s(&tm, &t);
-
-		wchar_t buffer[64];
-		wcsftime(buffer, sizeof(buffer) / sizeof(wchar_t), L"%Y-%m-%d %H:%M", &tm);
-		return winrt::hstring(buffer);
 	}
 
 	void TorrentMetadataViewModel::BuildFileTree()

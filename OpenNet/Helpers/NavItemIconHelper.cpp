@@ -22,13 +22,14 @@
  *   启动期快速失败 fail-fast（看起来像“内部错误”）。
  * - reference: https://learn.microsoft.com/windows/apps/develop/platform/xaml/custom-dependency-properties
  */
-#include "pch.h"
+#include "XamlWorkaround.h"
 #include "NavItemIconHelper.h"
 #if __has_include("Helpers/NavItemIconHelper.g.cpp")
 #include "Helpers/NavItemIconHelper.g.cpp"
 #endif
 
-#include <winrt/Windows.UI.Xaml.Interop.h>
+import winrt.Windows.UI.Xaml.Interop;
+import winrt_base;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -135,7 +136,7 @@ namespace winrt::OpenNet::Helpers::implementation
 	bool NavItemIconHelper::GetShowNotificationDot(Microsoft::UI::Xaml::DependencyObject const& obj)
 	{
 		// 获取布尔值属性需要使用 unbox_value 进行类型转换
-		return unbox_value<bool>(obj.GetValue(ShowNotificationDotProperty()));
+		return winrt::unbox_value<bool>(obj.GetValue(ShowNotificationDotProperty()));
 	}
 
 	/// <summary>
@@ -146,7 +147,7 @@ namespace winrt::OpenNet::Helpers::implementation
 	void NavItemIconHelper::SetShowNotificationDot(Microsoft::UI::Xaml::DependencyObject const& obj, bool value)
 	{
 		// 设置布尔值属性需要使用 box_value 进行装箱
-		obj.SetValue(ShowNotificationDotProperty(), box_value(value));
+		obj.SetValue(ShowNotificationDotProperty(), winrt::box_value(value));
 	}
 
 	/// <summary>
@@ -179,7 +180,7 @@ namespace winrt::OpenNet::Helpers::implementation
 	Microsoft::UI::Xaml::Visibility NavItemIconHelper::GetStaticIconVisibility(Microsoft::UI::Xaml::DependencyObject const& obj)
 	{
 		// 获取可见性枚举值需要使用 unbox_value 进行类型转换
-		return unbox_value<Microsoft::UI::Xaml::Visibility>(obj.GetValue(StaticIconVisibilityProperty()));
+		return winrt::unbox_value<Microsoft::UI::Xaml::Visibility>(obj.GetValue(StaticIconVisibilityProperty()));
 	}
 
 	/// <summary>
@@ -190,7 +191,7 @@ namespace winrt::OpenNet::Helpers::implementation
 	void NavItemIconHelper::SetStaticIconVisibility(Microsoft::UI::Xaml::DependencyObject const& obj, Microsoft::UI::Xaml::Visibility const& value)
 	{
 		// 设置可见性枚举值需要使用 box_value 进行装箱
-		obj.SetValue(StaticIconVisibilityProperty(), box_value(value));
+		obj.SetValue(StaticIconVisibilityProperty(), winrt::box_value(value));
 	}
 }
 

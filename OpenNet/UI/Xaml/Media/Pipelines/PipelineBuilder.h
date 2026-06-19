@@ -1,21 +1,18 @@
-#pragma once
+﻿#pragma once
 // PipelineBuilder - C++/WinRT port of CommunityToolkit.WinUI.Media.Pipelines.PipelineBuilder
 // Allows building custom composition effects pipelines and creating CompositionBrush instances.
 // This is a pure C++ class (not a WinRT runtime type).
 
-#include <functional>
-#include <vector>
-#include <map>
-#include <string>
-#include <random>
+import std;
 
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Graphics.Effects.h>
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Microsoft.Graphics.Canvas.Effects.h>
+import winrt.Windows.Graphics.Effects;
+import winrt.Windows.Foundation;
+import winrt.Windows.UI;
+import winrt.Microsoft.UI.Composition;
+import winrt.Microsoft.UI.Xaml.Hosting;
+import winrt.Microsoft.Graphics.Canvas.Effects;
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Media;
 
 namespace OpenNet::UI::Xaml::Media::Pipelines
 {

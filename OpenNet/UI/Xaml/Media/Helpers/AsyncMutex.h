@@ -2,11 +2,9 @@
 // AsyncMutex - C++/WinRT port of CommunityToolkit AsyncMutex
 // An async mutex implementation using winrt::slim_mutex/event for use in WinRT async contexts
 
-#include <mutex>
 #include <queue>
-#include <functional>
-#include <winrt/Windows.Foundation.h>
 
+import winrt.Windows.Foundation;
 namespace OpenNet::UI::Xaml::Media::Helpers
 {
 	/// <summary>

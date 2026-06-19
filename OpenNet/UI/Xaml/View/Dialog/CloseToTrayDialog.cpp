@@ -1,12 +1,11 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
 #if __has_include("UI/Xaml/View/Dialog/CloseToTrayDialog.g.cpp")
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.h>
-
-#include "Helpers/ThemeHelper.h"
+import OpenNet.Helpers.ThemeHelper;
+import winrt.Microsoft.UI.Xaml;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

@@ -1,12 +1,12 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "AmbLight.h"
 #if __has_include("UI/Xaml/Control/HomePage/Header/AmbLight.g.cpp")
 #include "UI/Xaml/Control/HomePage/Header/AmbLight.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Windows.UI.h>
+import winrt.Microsoft.UI.Composition;
+import winrt.Windows.UI;
+import winrt.Microsoft.UI.Xaml.Media;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Composition;

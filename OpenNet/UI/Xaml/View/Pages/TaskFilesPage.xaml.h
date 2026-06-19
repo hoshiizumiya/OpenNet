@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+import winrt.XamlToolkit.Labs.WinUI;
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 

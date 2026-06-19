@@ -1,13 +1,20 @@
-#include "pch.h"
+﻿#include <windows.h>
+#include <WindowsAppSDK-VersionInfo.h>
+#include "Web/Request/Builder/GithubRequest.h"
+
+#include "XamlWorkaround.h"
 #include "AboutPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/AboutPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/AboutPage.g.cpp"
 #endif
+#if defined GetObject
+#undef GetObject
+#endif
 
-#include "Core/ApplicationModel/PackageIdentityAdapter.h"
-#include "Web/Request/Builder/GithubRequest.h"
-#include <WindowsAppSDK-VersionInfo.h>
-#include <winrt/Windows.System.h>
+import OpenNet.Core.ApplicationModel;
+import winrt.Windows.System;
+import winrt.Windows.Data.Json;
+import winrtplus_coroutine;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -21,14 +28,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		loadRepoInfos();
 		loadCommitMessage();
 
-		Loaded([this](auto&&, auto&&) { LoadAppVersion(); });
+		Loaded([this](auto&&, auto&&)
+		{
+			LoadAppVersion();
+		});
 	}
 
 	winrt::fire_and_forget AboutPage::LoadAppVersion()
 	{
 		co_await winrt::resume_background();
 		auto v = winrt::to_hstring(::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetAppVersion().ToString().c_str());
-		co_await wil::resume_foreground(VersionText().DispatcherQueue());
+		co_await winrtplus::resume_foreground(VersionText().DispatcherQueue());
 		VersionText().Text(v);
 	}
 
@@ -109,7 +119,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			auto result = co_await client.SendRequestAsync(GithubRequest{ L"https://api.github.com/repos/hoshiizumiya/OpenNet" });
 			auto resultStr = co_await result.Content().ReadAsStringAsync();
 
-            m_repoInfo.emplace(winrt::Windows::Data::Json::JsonObject::Parse(resultStr));
+			m_repoInfo.emplace(winrt::Windows::Data::Json::JsonObject::Parse(resultStr));
 			// Notify bindings that repo info has been loaded and properties changed
 			RaisePropertyChangedEvent(L"IsLoadingRepoInfo");
 			RaisePropertyChangedEvent(L"Stars");
@@ -128,7 +138,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			auto result = co_await client.SendRequestAsync(GithubRequest{ L"https://api.github.com/repos/hoshiizumiya/OpenNet/commits?per_page=1" });
 			auto resultStr = co_await result.Content().ReadAsStringAsync();
-            m_commitMessage = winrt::Windows::Data::Json::JsonArray::Parse(resultStr).GetAt(0).GetObjectW().GetNamedObject(L"commit").GetNamedString(L"message");
+			m_commitMessage = winrt::Windows::Data::Json::JsonArray::Parse(resultStr).GetAt(0).GetObject().GetNamedObject(L"commit").GetNamedString(L"message");
 			RaisePropertyChangedEvent(L"CommitMessage");
 		}
 		catch (...)

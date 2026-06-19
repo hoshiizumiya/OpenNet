@@ -1,7 +1,10 @@
 ﻿#pragma once
 
-#include "ViewModels/MainViewModel.h"
+// workaround for XAML-generated .xaml.g.h files not supporting C++20 modules
+import winrt.XamlToolkit.Labs.WinUI;
 #include "UI/Xaml/View/Pages/MainView.g.h"
+
+import winrt.OpenNet.ViewModels;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {

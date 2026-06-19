@@ -1,25 +1,24 @@
-﻿#include "pch.h"
+﻿//warning C4251
+#include "XamlWorkaround.h"
+import winrt.XamlToolkit.Labs.WinUI;
 #include "TorrentCheckModalWindow.xaml.h"
 #if __has_include("UI/Xaml/View/Windows/TorrentCheckModalWindow.g.cpp")
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Interop.h>
-#include <winrt/Microsoft.UI.Windowing.h>
-#include <winrt/Windows.Graphics.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
-#include <windowsx.h>
-#include <winuser.h>
-#include "Core/IO/FileSystem.h"
-#include "Helpers/WindowHelper.h"
-#include "Helpers/ThemeHelper.h"
-#include "App.xaml.h"
-#include "../Pages/TorrentCheckGeneralPage.xaml.h"
-#include "Core/P2PManager.h"
-#include "Core/Utils/Misc.h"
-#include "Core/torrentCore/TorrentMetadataFetcher.h"
 #include "ViewModels/TorrentMetadataViewModel.h"
-#include <algorithm>
+#include "../Pages/TorrentCheckGeneralPage.xaml.h"
+
+import OpenNet.App;
+import Core.Utils.Misc;
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.P2PManager;
+import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.WindowHelper;
+import winrt.Windows.Graphics;
+import winrtplus.Microsoft.UI.Interop;
+import winrt.Microsoft.UI.Windowing;
+import winrt.Microsoft.UI.Xaml.Media.Animation;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

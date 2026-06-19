@@ -1,25 +1,29 @@
-﻿#include "pch.h"
-#include "App.xaml.h"
+﻿module;
+#define WIN32_LEAN_AND_MEAN
+#include <sentry.h>
+#include <Shlwapi.h>
+
+#include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
 #include "UI/Shell/NotifyIconXamlHostWindow.xaml.h"
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
-#include "Helpers/WindowHelper.h"
-#include "Helpers/ThemeHelper.h"
-#include "Core/P2PManager.h"
-#include "Core/DownloadManager.h"
-#include "Core/RSS/RSSManager.h"
-#include "Core/GeoIP/GeoIPManager.h"
-#include "Core/AppSettingsDatabase.h"
 
-#include <winrt/Windows.ApplicationModel.Activation.h>
-#include <winrt/Microsoft.Windows.Storage.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/WinUI3Package.h>
-#include <sentry.h>
-#include <Shlwapi.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
+module OpenNet.App;
+
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.DownloadManager;
+import OpenNet.Core.GeoIP.GeoIPManager;
+import OpenNet.Core.P2PManager;
+import OpenNet.Core.RSS.RSSManager;;
+import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.WindowHelper;
+import winrt.Windows.ApplicationModel.Activation;
+import winrt.Windows.UI;
+import winrt.Microsoft.Windows.Storage;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Composition.SystemBackdrops;
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Microsoft.UI.Xaml.Media.Imaging;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -31,12 +35,12 @@ using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 
 namespace
 {
-	constexpr auto kBackdropFallbackColorKey = "backdrop_fallback_color";
-	constexpr auto kBackdropTintColorKey = "backdrop_tint_color";
-	constexpr auto kBackdropLuminosityOpacityKey = "backdrop_luminosity_opacity";
-	constexpr auto kBackdropTintOpacityKey = "backdrop_tint_opacity";
-	constexpr auto kBackdropEnableWhenInactiveKey = "backdrop_enable_when_inactive";
-	constexpr auto kBackdropUseFallbackKey = "backdrop_use_fallback";
+	constexpr auto kBackdropFallbackColorKey       = "backdrop_fallback_color";
+	constexpr auto kBackdropTintColorKey           = "backdrop_tint_color";
+	constexpr auto kBackdropLuminosityOpacityKey   = "backdrop_luminosity_opacity";
+	constexpr auto kBackdropTintOpacityKey         = "backdrop_tint_opacity";
+	constexpr auto kBackdropEnableWhenInactiveKey  = "backdrop_enable_when_inactive";
+	constexpr auto kBackdropUseFallbackKey         = "backdrop_use_fallback";
 
 	winrt::Windows::UI::Color ColorFromArgb(int64_t argb)
 	{
@@ -265,9 +269,8 @@ namespace winrt::OpenNet::implementation
 		// Apply saved theme to the window
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
-		// Create and show system tray icon (assign to static member, not a local)
-		trayIcon = OpenNet::UI::Shell::NotifyIconXamlHostWindow();
-		trayIcon.Show();
+		// show system tray icon
+		trayIcon->Show();
 
 		// Register window closing event - close strategy (hide to tray / ask / exit)
 		window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
@@ -450,7 +453,7 @@ namespace winrt::OpenNet::implementation
 			// Remove tray icon (UI operation, OK on UI thread)
 			if (trayIcon)
 			{
-				trayIcon.Remove();
+				trayIcon->Remove();
 				trayIcon = nullptr;
 			}
 

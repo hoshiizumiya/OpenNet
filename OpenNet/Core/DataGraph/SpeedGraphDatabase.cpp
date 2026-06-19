@@ -6,10 +6,11 @@
  * LICENSE:   The MIT License
  */
 
-#include "pch.h"
+#include <Windows.h>
 #include "Core/DataGraph/SpeedGraphDatabase.h"
-#include "Core/IO/FileSystem.h"
 #include "ThirdParty/Sqlite/sqlite3.h"
+
+import OpenNet.Core.IO.FileSystem;
 
 namespace OpenNet::Core
 {
@@ -151,7 +152,11 @@ namespace OpenNet::Core
 
 		sqlite3_stmt* stmt = nullptr;
 		int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
-		if (rc != SQLITE_OK) return;
+		if (rc != SQLITE_OK)
+		{
+			OutputDebugStringA("SpeedGraphDatabase: DeleteTask prepare failed\n");
+			return;
+		}
 
 		sqlite3_bind_text(stmt, 1, taskId.c_str(), static_cast<int>(taskId.size()), SQLITE_TRANSIENT);
 		sqlite3_step(stmt);

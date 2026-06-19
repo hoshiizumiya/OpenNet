@@ -1,5 +1,4 @@
-﻿#pragma once
-#include <winrt/Windows.Web.Http.h>
+﻿import winrt.Windows.Web.Http;
 
 class GithubRequest : public winrt::Windows::Web::Http::HttpRequestMessage
 {

@@ -1,12 +1,13 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ThemeSettingBackdropCustomizePage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/ThemeSettingBackdropCustomizePage.g.cpp"
 #endif
 
-#include "Core/AppSettingsDatabase.h"
-#include "Helpers/WindowHelper.h"
-#include <winrt/WinUI3Package.h>
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Helpers.WindowHelper;
+import winrt.WinUI3Package;
+import winrt.Windows.UI;
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -15,10 +16,10 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace
 {
-	constexpr auto kBackdropFallbackColorKey = "backdrop_fallback_color";
-	constexpr auto kBackdropTintColorKey = "backdrop_tint_color";
-	constexpr auto kBackdropLuminosityOpacityKey = "backdrop_luminosity_opacity";
-	constexpr auto kBackdropTintOpacityKey = "backdrop_tint_opacity";
+	constexpr auto kBackdropFallbackColorKey      = "backdrop_fallback_color";
+	constexpr auto kBackdropTintColorKey          = "backdrop_tint_color";
+	constexpr auto kBackdropLuminosityOpacityKey  = "backdrop_luminosity_opacity";
+	constexpr auto kBackdropTintOpacityKey        = "backdrop_tint_opacity";
 	constexpr auto kBackdropEnableWhenInactiveKey = "backdrop_enable_when_inactive";
 
 	int64_t ColorToArgb(winrt::Windows::UI::Color const& color)

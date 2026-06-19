@@ -1,16 +1,12 @@
-﻿#include "pch.h"
-#include "RSSManager.h"
-#include "RSSDatabase.h"
-#include "Core/AppSettingsDatabase.h"
-#include <winrt/Windows.Web.Http.h>
-#include <winrt/Windows.Web.Http.Headers.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Microsoft.Windows.Storage.h>
-#include <winrt/Windows.Data.Json.h>
-#include <random>
-#include <sstream>
-#include <iomanip>
-#include <unordered_set>
+﻿module OpenNet.Core.RSS.RSSManager;
+
+import OpenNet.Core.RSS.RSSDatabase;
+import OpenNet.Core.AppSettingsDatabase;
+import winrt.Windows.Web.Http.Headers;
+import winrt.Windows.Web.Http;
+import winrt.Windows.Storage;
+import winrt.Microsoft.Windows.Storage;
+import winrt.Windows.Data.Json;
 
 namespace OpenNet::Core::RSS
 {

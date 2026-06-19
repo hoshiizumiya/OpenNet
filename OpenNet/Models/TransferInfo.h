@@ -1,10 +1,10 @@
-﻿#pragma once
-
-#include <winrt/base.h>
-#include <winrt/Windows.Foundation.h>
+﻿
+import winrt.Windows.Foundation;
+import std;
 
 namespace winrt::OpenNet::Models
 {
+	using namespace std;
 	// 简化的文件信息模型 / Simplified File Information Model
 	struct OpenNet
 	{
@@ -12,7 +12,7 @@ namespace winrt::OpenNet::Models
 		winrt::hstring fileName;             // 文件名 / File Name
 		winrt::hstring filePath;             // 文件路径 / File Path
 		winrt::hstring relativePath;         // 相对路径 / Relative Path
-		uint64_t fileSize;                 // 文件大小 / File Size
+		std::uint64_t fileSize;                 // 文件大小 / File Size
 		winrt::hstring mimeType;             // MIME类型 / MIME Type
 		winrt::Windows::Foundation::DateTime lastModified; // 最后修改时间 / Last Modified
 
@@ -133,8 +133,8 @@ namespace winrt::OpenNet::Models
 
 		// 文件信息 / File Information
 		OpenNet OpenNet;                // 文件信息 / File Information
-		uint64_t totalSize;                // 总大小 / Total Size
-		uint64_t transferredSize;          // 已传输大小 / Transferred Size
+		std::uint64_t totalSize;                // 总大小 / Total Size
+		std::uint64_t transferredSize;          // 已传输大小 / Transferred Size
 
 		// 传输统计 / Transfer Statistics
 		double transferSpeed;              // 传输速度(字节/秒) / Transfer Speed (bytes/sec)
@@ -147,13 +147,13 @@ namespace winrt::OpenNet::Models
 		bool enableEncryption;             // 启用加密 / Enable Encryption
 		bool enableResume;                 // 启用断点续传 / Enable Resume
 		bool verifyIntegrity;              // 验证完整性 / Verify Integrity
-		uint32_t maxConcurrentChunks;      // 最大并发分块数 / Max Concurrent Chunks
-		uint64_t bandwidthLimit;           // 带宽限制 / Bandwidth Limit
+		std::uint32_t maxConcurrentChunks;      // 最大并发分块数 / Max Concurrent Chunks
+		std::uint64_t bandwidthLimit;           // 带宽限制 / Bandwidth Limit
 
 		// 错误信息 / Error Information
 		winrt::hstring lastError;          // 最后错误 / Last Error
-		uint32_t retryCount;               // 重试次数 / Retry Count
-		uint32_t maxRetries;               // 最大重试次数 / Max Retries
+		std::uint32_t retryCount;               // 重试次数 / Retry Count
+		std::uint32_t maxRetries;               // 最大重试次数 / Max Retries
 
 		// 构造函数 / Constructor
 		TransferInfo()
@@ -181,15 +181,15 @@ namespace winrt::OpenNet::Models
 		{
 			switch (status)
 			{
-			case Status::Pending: return L"等待中 / Pending";
-			case Status::Initializing: return L"初始化中 / Initializing";
-			case Status::Transferring: return L"传输中 / Transferring";
-			case Status::Paused: return L"已暂停 / Paused";
-			case Status::Completed: return L"已完成 / Completed";
-			case Status::Failed: return L"失败 / Failed";
-			case Status::Cancelled: return L"已取消 / Cancelled";
-			case Status::Verifying: return L"校验中 / Verifying";
-			default: return L"未知状态 / Unknown";
+				case Status::Pending: return L"等待中 / Pending";
+				case Status::Initializing: return L"初始化中 / Initializing";
+				case Status::Transferring: return L"传输中 / Transferring";
+				case Status::Paused: return L"已暂停 / Paused";
+				case Status::Completed: return L"已完成 / Completed";
+				case Status::Failed: return L"失败 / Failed";
+				case Status::Cancelled: return L"已取消 / Cancelled";
+				case Status::Verifying: return L"校验中 / Verifying";
+				default: return L"未知状态 / Unknown";
 			}
 		}
 

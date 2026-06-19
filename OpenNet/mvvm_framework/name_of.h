@@ -12,7 +12,8 @@
 #ifndef __MVVM_CPPWINRT_NAME_OF_H_INCLUDED
 #define __MVVM_CPPWINRT_NAME_OF_H_INCLUDED
 
-#include <string_view>
+import std;
+
 using namespace std::literals;
 
 /// <summary>
@@ -38,7 +39,7 @@ using namespace std::literals;
 #define NAME_OF(typeName, propertyName) \
 __pragma(warning(push)) \
 __pragma(warning(disable : 6237)) \
-    (false && details::_NAME_OF_MAKE_FALSE(details::_NAME_OF_POINTER_TYPET<typeName>()->propertyName()) ? L""sv : []{ constexpr auto name = (L""#propertyName##sv); return name; }() ) \
+	(false && details::_NAME_OF_MAKE_FALSE(details::_NAME_OF_POINTER_TYPET<typeName>()->propertyName()) ? L""sv : []{ constexpr auto name = (L""#propertyName##sv); return name; }() ) \
 __pragma(warning(pop))
 
 /// <summary>
@@ -48,30 +49,33 @@ __pragma(warning(pop))
 #define NAME_OF_NARROW(typeName, propertyName) \
 __pragma(warning(push)) \
 __pragma(warning(disable : 6237)) \
-    (false && details::_NAME_OF_MAKE_FALSE(details::_NAME_OF_POINTER_TYPET<typeName>()->propertyName()) ? ""sv : []{ constexpr auto name = (""#propertyName##sv); return name; }() ) \
+	(false && details::_NAME_OF_MAKE_FALSE(details::_NAME_OF_POINTER_TYPET<typeName>()->propertyName()) ? ""sv : []{ constexpr auto name = (""#propertyName##sv); return name; }() ) \
 __pragma(warning(pop))
 
 namespace details
 {
-    template<typename T>
-    constexpr T* _NAME_OF_POINTER_TYPET()
-    {
-        T* returnValue;
-        return returnValue;
-    }
+	template<typename T>
+	constexpr T* _NAME_OF_POINTER_TYPET()
+	{
+		T* returnValue;
+		return returnValue;
+	}
 
-    template<typename T>
-    constexpr bool _NAME_OF_MAKE_FALSE(T)
-    {
-        return false;
-    }
+	template<typename T>
+	constexpr bool _NAME_OF_MAKE_FALSE(T)
+	{
+		return false;
+	}
 }
 
 // This can be used to test the optimization at godbolt.org
 #if 0
 struct ViewModel
 {
-    int MyProperty() { return 0; }
+	int MyProperty()
+	{
+		return 0;
+	}
 };
 
 void wfoo(std::wstring_view const&);
@@ -79,8 +83,8 @@ void afoo(std::string_view const&);
 
 void bar()
 {
-    wfoo(NAME_OF(ViewModel, MyProperty));
-    afoo(NAME_OF_NARROW(ViewModel, MyProperty));
+	wfoo(NAME_OF(ViewModel, MyProperty));
+	afoo(NAME_OF_NARROW(ViewModel, MyProperty));
 }
 #endif
 

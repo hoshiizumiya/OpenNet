@@ -1,12 +1,13 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "HeaderCarousel.xaml.h"
 #if __has_include("UI/Xaml/Control/HomePage/Header/HeaderCarousel.g.cpp")
 #include "UI/Xaml/Control/HomePage/Header/HeaderCarousel.g.cpp"
 #endif
 
-#include "App.xaml.h"
 #include "MainWindow.xaml.h"
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
+
+import OpenNet.App;
+import winrt.Microsoft.UI.Xaml.Media.Animation;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

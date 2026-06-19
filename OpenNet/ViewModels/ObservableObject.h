@@ -1,10 +1,9 @@
 ﻿#pragma once
 #include "ViewModels/ObservableObject.g.h"
 
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Microsoft.UI.Xaml.Data.h>
-
+import winrt.Windows.Foundation;
+import winrt.Windows.Foundation.Collections;
+import winrt.Microsoft.UI.Xaml.Data;
 namespace winrt::OpenNet::ViewModels::implementation
 {
 	struct ObservableObject : ObservableObjectT<ObservableObject>

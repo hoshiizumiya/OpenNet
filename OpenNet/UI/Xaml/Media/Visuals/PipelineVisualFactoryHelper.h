@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 // PipelineVisualFactoryHelper - C++/WinRT port of CommunityToolkit.WinUI.Media.Visuals.PipelineVisualFactory
 // Creates SpriteVisuals from PipelineBuilder pipelines and attaches them to UIElements.
 // NOTE: This is a pure C++ helper class. The WinRT runtimeclass is defined in Visuals.idl / VisualTypes.h.

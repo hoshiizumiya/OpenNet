@@ -1,7 +1,4 @@
-﻿#include "pch.h"
-#include "RSSLinkResolver.h"
-#include <algorithm>
-#include <cctype>
+﻿module OpenNet.Core.RSS.RSSLinkResolver;
 
 namespace OpenNet::Core::RSS
 {
@@ -63,7 +60,7 @@ namespace OpenNet::Core::RSS
     {
         // Check if URL ends with .torrent
         std::wstring lowerUrl = url;
-        std::transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), ::tolower);
+        std::transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), std::towlower);
         
         if (lowerUrl.find(L".torrent") != std::wstring::npos)
         {
@@ -130,7 +127,7 @@ namespace OpenNet::Core::RSS
     std::wstring RSSLinkResolver::GetContentType(const std::wstring& url)
     {
         std::wstring lowerUrl = url;
-        std::transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), ::tolower);
+        std::transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), std::towlower);
 
         if (lowerUrl.find(L"magnet:") == 0)
         {

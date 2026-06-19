@@ -1,6 +1,8 @@
 ﻿#include "pch.h"
 #include "SpeedGraphData.h"
 
+#include <cassert>
+
 winrt::Microsoft::UI::Xaml::Media::PointCollection& SpeedGraphData::Points()
 {
     if (!m_points)
@@ -17,7 +19,7 @@ void SpeedGraphData::addInitialPointIfNeeded(uint32_t& count)
     }
 }
 
-SpeedGraphData::SetSpeedResult SpeedGraphData::SetSpeed(double percent, uint64_t speed)
+SpeedGraphData::SetSpeedResult SpeedGraphData::SetSpeed(double percent, std::uint64_t speed)
 {
     SetSpeedResult result;
 

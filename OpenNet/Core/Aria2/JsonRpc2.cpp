@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/Aria2/JsonRpc2.cpp
  * PURPOSE:   JSON-RPC 2.0 protocol implementation
@@ -6,10 +6,13 @@
  *
  * LICENSE:   The MIT License
  */
+module;
 
-#include "pch.h"
-#include "Core/Aria2/JsonRpc2.h"
-#include "Core/Aria2/Aria2Helpers.h"
+#include <nlohmann/json.hpp>
+
+module OpenNet.Core.Aria2.JsonRpc2;
+
+import OpenNet.Core.Aria2.Aria2Helpers;
 
 using namespace OpenNet::Core::Aria2::Helpers;
 

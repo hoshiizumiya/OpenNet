@@ -6,12 +6,13 @@
  * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
 
-#include "pch.h"
-#include "RSSDatabase.h"
-
+module;
+#include <Windows.h>
 #include <ThirdParty/Sqlite/sqlite3.h>
-#include "Core/IO/FileSystem.h"
-#include <filesystem>
+
+module OpenNet.Core.RSS.RSSDatabase;
+
+import OpenNet.Core.IO.FileSystem;
 
 namespace OpenNet::Core::RSS
 {
@@ -49,7 +50,7 @@ namespace OpenNet::Core::RSS
 			int rc = sqlite3_open16((std::filesystem::path(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) / "rss_data.db").c_str(), &m_db);
 			if (rc != SQLITE_OK)
 			{
-				OutputDebugString((L"RSSDatabase: failed to open DB – " + std::wstring(sqlite3_errmsg(m_db), sqlite3_errmsg(m_db) + strlen(sqlite3_errmsg(m_db))) + L"\n").c_str());
+				OutputDebugStringW((L"RSSDatabase: failed to open DB – " + std::wstring(sqlite3_errmsg(m_db), sqlite3_errmsg(m_db) + strlen(sqlite3_errmsg(m_db))) + L"\n").c_str());
 				m_db = nullptr;
 				return;
 			}
@@ -61,7 +62,7 @@ namespace OpenNet::Core::RSS
 		}
 		catch (std::exception const& ex)
 		{
-			OutputDebugString((L"RSSDatabase::Open exception: " + std::wstring(std::string(ex.what()).begin(), std::string(ex.what()).end()) + L"\n").c_str());
+			OutputDebugStringW((L"RSSDatabase::Open exception: " + std::wstring(std::string(ex.what()).begin(), std::string(ex.what()).end()) + L"\n").c_str());
 		}
 	}
 

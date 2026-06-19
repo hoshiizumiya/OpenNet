@@ -1,4 +1,6 @@
-﻿namespace OpenNet.ViewModels.Guide
+﻿import "Models/NameCultureInfoValue.idl";
+
+namespace OpenNet.ViewModels.Guide
 {
 	[default_interface]
 	runtimeclass GuideViewModel
@@ -6,7 +8,16 @@
 		GuideViewModel();
 
 		UInt32 State;
+		String NextOrCompleteButtonText;
+		Boolean IsNextOrCompleteButtonEnabled;
+		Boolean IsSetDataFolderEnabled;
 		String AllCulturesWelcomeText;
-		Models.NameCultureInfoValue SelectedCulture;
+		OpenNet.Models.NameCultureInfoValue SelectedCulture;
+
+		Boolean IsTermOfServiceAgreed;
+		Boolean IsPrivacyPolicyAgreed;
+		Boolean IsIssueReportAgreed;
+		Boolean IsOpenSourceLicenseAgreed;
+		Boolean IsAgreementCopyAgreed;
 	}
 }

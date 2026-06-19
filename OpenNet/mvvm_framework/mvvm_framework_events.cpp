@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "mvvm_framework_events.h"
 
 #if __has_include("Mvvm/Framework/Core/CanExecuteRequestedEventArgs.g.cpp")
@@ -29,5 +29,5 @@
 
 namespace winrt::Mvvm::Framework::Core::implementation
 {
-    // 模板基类已在头文件中实现，这里不需要额外方法实现
+	// 模板基类已在头文件中实现，这里不需要额外方法实现
 }

@@ -1,14 +1,14 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "NatToolsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/NatToolsPage.g.cpp")
 #include "UI/Xaml/View/Pages/NatToolsPage.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <wil/cppwinrt_helpers.h>
-#include <chrono>
-#include "Core/P2PManager.h"
-#include "Core/TorrentSettings.h"
+import OpenNet.Core.P2PManager;
+import OpenNet.Core.TorrentSettings;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Dispatching;
+import winrtplus_coroutine;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -260,7 +260,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             // Test 1: Server 1, same port
             auto r1 = std::make_shared<StunTestResult>();
             co_await PerformStunTest(server1, 19302, r1);
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
             StunTest1_1().Text(r1->success ? L"OK" : L"Failed");
             StunIP1_1().Text(r1->success ? r1->mappedAddress : L"N/A");
             StunLatency1_1().Text(winrt::to_hstring(r1->latencyMs) + L" ms");
@@ -268,7 +268,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             // Test 2: Server 1, alt port (simulating different port)
             auto r2 = std::make_shared<StunTestResult>();
             co_await PerformStunTest(server1alt, 19302, r2);
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
             StunTest1_2().Text(r2->success ? L"OK" : L"Failed");
             StunIP1_2().Text(r2->success ? r2->mappedAddress : L"N/A");
             StunLatency1_2().Text(winrt::to_hstring(r2->latencyMs) + L" ms");
@@ -276,13 +276,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             // Test 3: Server 2, same port
             auto r3 = std::make_shared<StunTestResult>();
             co_await PerformStunTest(server2, 3478, r3);
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
             StunTest1_3().Text(r3->success ? L"OK" : L"Failed");
             StunIP1_3().Text(r3->success ? r3->mappedAddress : L"N/A");
             StunLatency1_3().Text(winrt::to_hstring(r3->latencyMs) + L" ms");
 
             // Determine NAT type from results
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
 
             if (r1->success && r2->success && r3->success)
             {
@@ -333,7 +333,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
             // Public IP via HTTP
             auto publicIP = co_await m_detector.GetPublicIPAddressAsync();
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
             PublicIPText().Text(publicIP.empty() ? L"N/A" : publicIP);
 
             // IPv6 public IP
@@ -341,14 +341,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
             {
                 co_await winrt::resume_background();
                 auto publicIPv6 = co_await m_detector.GetPublicIPAddressAsync(true);
-                co_await wil::resume_foreground(dispatcher);
+                co_await winrtplus::resume_foreground(dispatcher);
                 PublicIPv6Text().Text(publicIPv6.empty() ? L"N/A" : publicIPv6);
             }
             catch (...)
             {
                 [dispatcher, this]() -> winrt::fire_and_forget
                 {
-                    co_await wil::resume_foreground(dispatcher);
+                    co_await winrtplus::resume_foreground(dispatcher);
                     PublicIPv6Text().Text(L"N/A");
                 }();
             }
@@ -363,7 +363,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
         if (detectError)
         {
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
             NatTypeText().Text(L"Error");
             PublicIPText().Text(L"Error");
             PublicIPv6Text().Text(L"Error");
@@ -400,7 +400,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         try
         {
             auto result = co_await m_detector.TestPortAccessibilityAsync(port, true);
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
 
             if (result)
             {
@@ -420,7 +420,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
         if (portError)
         {
-            co_await wil::resume_foreground(dispatcher);
+            co_await winrtplus::resume_foreground(dispatcher);
             PortResultText().Text(L"Error testing port");
             PortMappedText().Text(L"Could not complete the STUN-based port test. Check your network connection.");
         }

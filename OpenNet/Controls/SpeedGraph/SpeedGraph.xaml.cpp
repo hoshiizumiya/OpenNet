@@ -1,11 +1,12 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "SpeedGraph.xaml.h"
 #if __has_include("Controls/SpeedGraph/SpeedGraph.g.cpp")
 #include "Controls/SpeedGraph/SpeedGraph.g.cpp"
 #endif
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
-#include <format>
+
 #include "Core/DataGraph/ReadableUnitConverter.h"
+
+import winrt.Microsoft.UI.Xaml.Media.Animation;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;

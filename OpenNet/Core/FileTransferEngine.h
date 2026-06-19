@@ -1,19 +1,11 @@
 ﻿#pragma once
 
-#include <winrt/base.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.System.Threading.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Windows.Security.Cryptography.h>
-#include <memory>
-#include <vector>
-#include <string>
-#include <unordered_map>
-#include <functional>
-#include <mutex>
-#include <atomic>
+import winrt.Windows.System.Threading;
+import winrt.Windows.Security.Cryptography;
+import winrt.Windows.Foundation;
+import winrt.Windows.Foundation.Collections;
+import winrt.Windows.Storage;
+import winrt.Windows.Storage.Streams;
 
 namespace OpenNet::Core
 {
@@ -40,10 +32,10 @@ namespace OpenNet::Core
 	// 文件分块信息 / File Chunk Information
 	struct FileChunk
 	{
-		uint32_t chunkIndex;           // 分块索引 / Chunk Index
-		uint64_t offset;               // 文件偏移 / File Offset
-		uint32_t size;                 // 分块大小 / Chunk Size
-		std::vector<uint8_t> hash;     // 分块哈希 / Chunk Hash
+		std::uint32_t chunkIndex;           // 分块索引 / Chunk Index
+		std::uint64_t offset;               // 文件偏移 / File Offset
+		std::uint32_t size;                 // 分块大小 / Chunk Size
+		std::vector<std::uint8_t> hash;     // 分块哈希 / Chunk Hash
 		bool isComplete;               // 是否完成 / Is Complete
 		bool isVerified;               // 是否校验 / Is Verified
 		std::chrono::system_clock::time_point downloadTime; // 下载时间 / Download Time
@@ -66,19 +58,19 @@ namespace OpenNet::Core
 		std::wstring peerId;           // 对等节点ID / Peer ID
 		std::wstring fileName;         // 文件名 / File Name
 		std::wstring filePath;         // 文件路径 / File Path
-		uint64_t fileSize;             // 文件大小 / File Size
-		std::vector<uint8_t> fileHash; // 文件哈希 / File Hash
+		std::uint64_t fileSize;             // 文件大小 / File Size
+		std::vector<std::uint8_t> fileHash; // 文件哈希 / File Hash
 		TransferDirection direction;   // 传输方向 / Transfer Direction
 		TransferStatus status;         // 传输状态 / Transfer Status
 
 		// 分块信息 / Chunk Information
 		std::vector<FileChunk> chunks; // 分块列表 / Chunk List
-		uint32_t chunkSize;            // 分块大小 / Chunk Size
-		uint32_t totalChunks;          // 总分块数 / Total Chunks
-		uint32_t completedChunks;      // 已完成分块数 / Completed Chunks
+		std::uint32_t chunkSize;            // 分块大小 / Chunk Size
+		std::uint32_t totalChunks;          // 总分块数 / Total Chunks
+		std::uint32_t completedChunks;      // 已完成分块数 / Completed Chunks
 
 		// 传输统计 / Transfer Statistics
-		uint64_t transferredBytes;     // 已传输字节 / Transferred Bytes
+		std::uint64_t transferredBytes;     // 已传输字节 / Transferred Bytes
 		double transferSpeed;          // 传输速度 / Transfer Speed
 		std::chrono::system_clock::time_point startTime;    // 开始时间 / Start Time
 		std::chrono::system_clock::time_point endTime;      // 结束时间 / End Time
@@ -89,12 +81,12 @@ namespace OpenNet::Core
 		bool enableEncryption;         // 启用加密 / Enable Encryption
 		bool enableResume;             // 启用断点续传 / Enable Resume
 		bool verifyIntegrity;          // 校验完整性 / Verify Integrity
-		uint32_t maxConcurrentChunks;  // 最大并发分块数 / Max Concurrent Chunks
-		uint64_t bandwidthLimit;       // 带宽限制 / Bandwidth Limit
+		std::uint32_t maxConcurrentChunks;  // 最大并发分块数 / Max Concurrent Chunks
+		std::uint64_t bandwidthLimit;       // 带宽限制 / Bandwidth Limit
 
 		// 错误信息 / Error Information
 		std::wstring lastError;        // 最后错误 / Last Error
-		uint32_t retryCount;           // 重试次数 / Retry Count
+		std::uint32_t retryCount;           // 重试次数 / Retry Count
 
 		TransferSession()
 			: fileSize(0)
@@ -121,8 +113,8 @@ namespace OpenNet::Core
 	struct TransferProgressEventArgs
 	{
 		std::wstring transferId;
-		uint64_t transferredBytes;
-		uint64_t totalBytes;
+		std::uint64_t transferredBytes;
+		std::uint64_t totalBytes;
 		double percentage;
 		double speed;
 		std::chrono::milliseconds eta;
@@ -194,10 +186,10 @@ namespace OpenNet::Core
 		// 统计信息 / Statistics
 		struct TransferStatistics
 		{
-			uint32_t activeTransfers;
-			uint32_t completedTransfers;
-			uint32_t failedTransfers;
-			uint64_t totalBytesTransferred;
+			std::uint32_t activeTransfers;
+			std::uint32_t completedTransfers;
+			std::uint32_t failedTransfers;
+			std::uint64_t totalBytesTransferred;
 			double averageTransferSpeed;
 			std::chrono::milliseconds totalTransferTime;
 		};
@@ -214,16 +206,16 @@ namespace OpenNet::Core
 		winrt::Windows::Foundation::IAsyncAction InitializeChunksAsync(std::shared_ptr<TransferSession> session);
 		winrt::Windows::Foundation::IAsyncAction TransferChunkAsync(
 			std::shared_ptr<TransferSession> session,
-			uint32_t chunkIndex);
+			std::uint32_t chunkIndex);
 
 		winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Storage::Streams::IBuffer> ReadChunkAsync(
 			winrt::Windows::Storage::StorageFile const& file,
-			uint64_t offset,
-			uint32_t size);
+			std::uint64_t offset,
+			std::uint32_t size);
 
 		winrt::Windows::Foundation::IAsyncAction WriteChunkAsync(
 			winrt::Windows::Storage::StorageFile const& file,
-			uint64_t offset,
+			std::uint64_t offset,
 			winrt::Windows::Storage::Streams::IBuffer const& data);
 
 		// 数据压缩和加密 / Data Compression and Encryption
@@ -240,7 +232,7 @@ namespace OpenNet::Core
 			winrt::Windows::Storage::Streams::IBuffer const& encryptedData);
 
 		// 传输协议 / Transfer Protocol
-		enum class TransferMessageType : uint8_t
+		enum class TransferMessageType : std::uint8_t
 		{
 			TransferRequest = 0x10,
 			TransferResponse = 0x11,
@@ -257,7 +249,7 @@ namespace OpenNet::Core
 		{
 			TransferMessageType type;
 			std::wstring transferId;
-			uint32_t chunkIndex;
+			std::uint32_t chunkIndex;
 			winrt::Windows::Storage::Streams::IBuffer data;
 		};
 
@@ -281,7 +273,7 @@ namespace OpenNet::Core
 
 		winrt::Windows::Foundation::IAsyncOperation<bool> RetryChunkTransferAsync(
 			std::shared_ptr<TransferSession> session,
-			uint32_t chunkIndex);
+			std::uint32_t chunkIndex);
 
 		// 状态持久化 / State Persistence
 		winrt::Windows::Foundation::IAsyncAction SaveSessionStateAsync(std::shared_ptr<TransferSession> session);
@@ -300,9 +292,9 @@ namespace OpenNet::Core
 		mutable std::mutex m_sessionsMutex;
 
 		// 配置参数 / Configuration Parameters
-		uint32_t m_defaultChunkSize;
-		uint32_t m_maxConcurrentTransfers;
-		uint64_t m_bandwidthLimit;
+		std::uint32_t m_defaultChunkSize;
+		std::uint32_t m_maxConcurrentTransfers;
+		std::uint64_t m_bandwidthLimit;
 		bool m_compressionEnabled;
 		bool m_encryptionEnabled;
 
@@ -317,7 +309,7 @@ namespace OpenNet::Core
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_transferFailedEvent;
 
 		// 带宽限制 / Bandwidth Limiting
-		std::atomic<uint64_t> m_bytesTransferredThisSecond;
+		std::atomic<std::uint64_t> m_bytesTransferredThisSecond;
 		std::chrono::steady_clock::time_point m_lastBandwidthCheck;
 
 		// 定时器 / Timers
@@ -325,12 +317,12 @@ namespace OpenNet::Core
 		winrt::Windows::System::Threading::ThreadPoolTimer m_cleanupTimer;
 
 		// 常量 / Constants
-		static constexpr uint32_t DEFAULT_CHUNK_SIZE = 1024 * 1024;      // 1MB
-		static constexpr uint32_t MAX_CHUNK_SIZE = 16 * 1024 * 1024;     // 16MB
-		static constexpr uint32_t MIN_CHUNK_SIZE = 64 * 1024;            // 64KB
-		static constexpr uint32_t DEFAULT_MAX_CONCURRENT = 10;
-		static constexpr uint32_t PROGRESS_UPDATE_INTERVAL_MS = 1000;    // 1秒 / 1 second
-		static constexpr uint32_t CLEANUP_INTERVAL_MS = 300000;          // 5分钟 / 5 minutes
-		static constexpr uint32_t MAX_RETRY_COUNT = 3;
+		static constexpr std::uint32_t DEFAULT_CHUNK_SIZE = 1024 * 1024;      // 1MB
+		static constexpr std::uint32_t MAX_CHUNK_SIZE = 16 * 1024 * 1024;     // 16MB
+		static constexpr std::uint32_t MIN_CHUNK_SIZE = 64 * 1024;            // 64KB
+		static constexpr std::uint32_t DEFAULT_MAX_CONCURRENT = 10;
+		static constexpr std::uint32_t PROGRESS_UPDATE_INTERVAL_MS = 1000;    // 1秒 / 1 second
+		static constexpr std::uint32_t CLEANUP_INTERVAL_MS = 300000;          // 5分钟 / 5 minutes
+		static constexpr std::uint32_t MAX_RETRY_COUNT = 3;
 	};
 }

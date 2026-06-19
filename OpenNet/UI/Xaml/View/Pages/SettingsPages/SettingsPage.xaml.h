@@ -2,6 +2,8 @@
 
 #include "UI/Xaml/View/Pages/SettingsPages/SettingsPage.g.h"
 
+import winrt.Microsoft.UI.Dispatching;
+
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
 	struct SettingsPage : SettingsPageT<SettingsPage>

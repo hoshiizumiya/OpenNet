@@ -10,24 +10,24 @@
 
 #pragma once
 
-#include <cstdint>
-#include <mutex>
-#include <string>
-#include <vector>
+import std;
 
 struct sqlite3;
 
-namespace libtorrent { struct ip_filter; }
+namespace libtorrent
+{
+	struct ip_filter;
+}
 
 namespace OpenNet::Core
 {
 	/// A single IP filter rule persisted in the database.
 	struct IPRule
 	{
-		int64_t  id{};
+		std::int64_t  id{};
 		std::string firstIp;       // start of range (inclusive)
 		std::string lastIp;        // end of range (inclusive)
-		uint32_t    flags{ 1 };    // 0 = allowed, 1 = blocked (ip_filter::blocked)
+		std::uint32_t    flags{ 1 };    // 0 = allowed, 1 = blocked (ip_filter::blocked)
 		std::string description;   // original input or user comment
 	};
 
@@ -50,13 +50,13 @@ namespace OpenNet::Core
 		// ---------------------------------------------------------------
 
 		void AddRule(std::string const& firstIp, std::string const& lastIp,
-					 uint32_t flags = 1, std::string const& description = "");
+					 std::uint32_t flags = 1, std::string const& description = "");
 
-		void RemoveRule(int64_t id);
+		void RemoveRule(std::int64_t id);
 
 		std::vector<IPRule> GetAllRules() const;
 
-		int  GetRuleCount() const;
+		std::int32_t GetRuleCount() const;
 
 		void ClearAllRules();
 
@@ -78,7 +78,7 @@ namespace OpenNet::Core
 		/// Import rules from multi-line text (one entry per line).
 		/// Lines starting with '#' or ';' are treated as comments.
 		/// Returns the number of rules successfully imported.
-		int ImportFromText(std::string const& text);
+		std::int32_t ImportFromText(std::string const& text);
 
 		// ---------------------------------------------------------------
 		//  Session integration

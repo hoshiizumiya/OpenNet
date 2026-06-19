@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt.XamlToolkit.Labs.WinUI;
+
 // Ensure custom control types are declared before including the generated XAML header.
 // The generated header (`Pages/TasksPage.g.h`) uses `winrt::OpenNet::Controls::SpeedGraph::SpeedGraph`
 // in its declarations. If that type is not visible at the point the generated header is included

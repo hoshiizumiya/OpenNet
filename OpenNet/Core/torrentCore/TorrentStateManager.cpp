@@ -1,6 +1,4 @@
-﻿#include "pch.h"
-#include "TorrentStateManager.h"
-
+﻿module;
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_info.hpp>
@@ -10,17 +8,12 @@
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/entry.hpp>
 
-#include <winrt/Windows.Foundation.h>
-
-#include "Core/IO/FileSystem.h"
 #include "ThirdParty/Sqlite/sqlite3.h"
 
-#include <fstream>
-#include <random>
-#include <iomanip>
-#include <sstream>
-#include <chrono>
+module OpenNet.Core.torrentCore.TorrentStateManager;
 
+import OpenNet.Core.IO.FileSystem;
+import winrt.Windows.Foundation;
 namespace lt = libtorrent;
 
 namespace OpenNet::Core::Torrent

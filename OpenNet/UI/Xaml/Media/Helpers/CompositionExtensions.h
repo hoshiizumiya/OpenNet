@@ -1,13 +1,13 @@
+import winrt.Windows.UI;
+import winrt.Microsoft.UI.Composition;
+import winrt.Microsoft.UI.Xaml.Hosting;
 #pragma once
 // CompositionObjectExtensions - C++/WinRT port of CommunityToolkit CompositionObjectExtensions
 // Utility functions for binding visual sizes and animating composition properties
 
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.h>
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
 
+import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Xaml;
 namespace OpenNet::UI::Xaml::Media::Helpers
 {
 	namespace MUC = winrt::Microsoft::UI::Composition;

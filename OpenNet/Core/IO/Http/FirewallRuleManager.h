@@ -3,11 +3,12 @@
 #include <Windows.h>
 #include <netfw.h>
 #include <icftypes.h>
-#include <string>
 
 #pragma comment(lib, "ole32.lib")
 #pragma comment(lib, "oleaut32.lib")
 #pragma comment(lib, "advapi32.lib")
+
+import std;
 
 class FirewallRuleManager
 {

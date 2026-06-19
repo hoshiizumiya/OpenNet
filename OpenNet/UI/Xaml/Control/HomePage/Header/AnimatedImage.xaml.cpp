@@ -1,12 +1,12 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "AnimatedImage.xaml.h"
 #if __has_include("UI/Xaml/Control/HomePage/Header/AnimatedImage.g.cpp")
 #include "UI/Xaml/Control/HomePage/Header/AnimatedImage.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <winrt/Microsoft.Graphics.Canvas.Effects.h>
+import winrt.Microsoft.UI.Xaml.Hosting;
+import winrt.Microsoft.Graphics.Canvas.Effects;
+import winrt.Microsoft.UI.Xaml.Media.Imaging;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

@@ -1,14 +1,9 @@
-﻿#include "pch.h"
-#include "GeoIPDatabase.h"
-
+﻿module;
 #include <boost/asio/ip/address.hpp>
 #include <boost/asio/ip/address_v4.hpp>
 #include <boost/asio/ip/address_v6.hpp>
 
-#include <array>
-#include <cstring>
-#include <filesystem>
-#include <fstream>
+module OpenNet.Core.GeoIP.GeoIPDatabase;
 
 namespace OpenNet::Core
 {

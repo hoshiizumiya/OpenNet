@@ -1,21 +1,19 @@
-﻿#include "pch.h"
+﻿#include <Windows.h>
+#include <wil/resource.h>
+
+#include "XamlWorkaround.h"
+import winrt.XamlToolkit.Labs.WinUI;
 #include "TorrentCheckGeneralPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.cpp")
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.cpp"
 #endif
 
-#include <winrt/Microsoft.Windows.Storage.Pickers.h>
-#include <winrt/Microsoft.UI.Xaml.Navigation.h>
-#include <wil/resource.h>
-#include "Core/IO/FileSystem.h"
-#include "Core/Utils/Misc.h"
-#include "Helpers/WindowHelper.h"
-#include "Helpers/ColumnWidthHelper.h"
-#include <algorithm>
-#include <cctype>
-#include <windows.h>
-#include <iomanip>
-#include <sstream>
+import Core.Utils.Misc;
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.Helpers.WindowHelper;
+import winrt.Microsoft.UI.Xaml.Navigation;
+import winrt.Microsoft.Windows.Storage.Pickers;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -268,7 +266,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	void TorrentCheckGeneralPage::FilterCheckBox_Unchecked(
-		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Windows::Foundation::IInspectable const& /*sender*/,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		// When a filter is unchecked, deselect files matching that filter
@@ -284,7 +282,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	void TorrentCheckGeneralPage::FileCheckBox_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Windows::Foundation::IInspectable const& /*sender*/,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		// When an individual file/folder checkbox is clicked:
@@ -563,7 +561,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TorrentCheckGeneralPage::TorrentCheckGeneralPageSavePath_TextChanged(
 		winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender,
-		winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args)
+		winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& /*args*/)
 	{
 		std::wstring text{ sender.Text() };
 		if (!text.empty())

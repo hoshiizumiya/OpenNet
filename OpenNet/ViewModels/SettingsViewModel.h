@@ -5,13 +5,13 @@
 #include "ViewModels/ObservableMixin.h"
 #include "Core/NetworkDetector.h"
 #include "../Models/NetworkInfo.h"
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.System.h>
-#include <winrt/Windows.Data.Json.h>
-#include <string>
-#include <vector>
+
+import winrt.Windows.Foundation;
+import winrt.Windows.Foundation.Collections;
+import winrt.Windows.Storage;
+import winrt.Windows.System;
+import winrt.Windows.Data.Json;
+import winrt.Microsoft.UI.Xaml;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -570,9 +570,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		uint32_t m_portScanTimeout;
 
 		// 传输设置 / Transfer Settings
-		uint64_t m_maxFileSize;
-		uint32_t m_chunkSize;
-		uint64_t m_bandwidthLimit;
+		std::uint64_t m_maxFileSize;
+		std::uint32_t m_chunkSize;
+		std::uint64_t m_bandwidthLimit;
 		bool m_enableCompression;
 		bool m_enableEncryption;
 		bool m_enableResume;

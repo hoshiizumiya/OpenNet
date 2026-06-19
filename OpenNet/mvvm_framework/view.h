@@ -12,45 +12,46 @@
 #ifndef __MVVM_CPPWINRT_VIEW_H_INCLUDED
 #define __MVVM_CPPWINRT_VIEW_H_INCLUDED
 
-#include <string_view>
 #include "name_of.h"
 #include "view_model_base.h"
 
+import std;
+
 namespace mvvm
 {
-    using namespace std::literals;
+	using namespace std::literals;
 
-    template <typename Derived, typename ViewModelT>
-    struct __declspec(empty_bases) view : ViewModelBase<Derived>
-    {
-        using view_model_type = typename ViewModelT;
+	template <typename Derived, typename ViewModelT>
+	struct __declspec(empty_bases)view : ViewModelBase<Derived>
+	{
+		using view_model_type = typename ViewModelT;
 
-        friend typename Derived;
+		friend typename Derived;
 
-        view(view_model_type const& viewModel)
-            : m_viewModel(viewModel)
-        {
-        }
+		view(view_model_type const& viewModel)
+			: m_viewModel(viewModel)
+		{
+		}
 
-        view_model_type ViewModel()
-        {
-            return base::GetProperty(m_viewModel);
-        }
-        void ViewModel(view_model_type const& value)
-        {
-            base::SetProperty(m_viewModel, value, NAME_OF(view, ViewModelT));
-        }
+		view_model_type ViewModel()
+		{
+			return base::GetProperty(m_viewModel);
+		}
+		void ViewModel(view_model_type const& value)
+		{
+			base::SetProperty(m_viewModel, value, NAME_OF(view, ViewModelT));
+		}
 
-    protected:
-        view()
-        {
-            static_assert(std::is_base_of_v<ViewModelBase<Derived>, Derived>, "Derived class must inherit from ViewModelBase");
-        }
+	protected:
+		view()
+		{
+			static_assert(std::is_base_of_v<ViewModelBase<Derived>, Derived>, "Derived class must inherit from ViewModelBase");
+		}
 
-    private:
-        view_model_type m_viewModel;
-        using base = typename ViewModelBase<Derived>;
-    };
+	private:
+		view_model_type m_viewModel;
+		using base = typename ViewModelBase<Derived>;
+	};
 }
 
 #endif // __MVVM_CPPWINRT_VIEW_H_INCLUDED

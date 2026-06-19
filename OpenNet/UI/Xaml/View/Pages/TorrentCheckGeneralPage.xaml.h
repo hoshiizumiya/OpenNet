@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.h"
-#include <winrt/OpenNet.ViewModels.h>
+
+import winrt.OpenNet.ViewModels;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {

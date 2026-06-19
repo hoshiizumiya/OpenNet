@@ -1,15 +1,15 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "HoverLight.h"
 #if __has_include("UI/Xaml/Control/HomePage/Header/HoverLight.g.cpp")
 #include "UI/Xaml/Control/HomePage/Header/HoverLight.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Microsoft.UI.Xaml.Input.h>
-#include <winrt/Microsoft.UI.Input.h>
-#include <winrt/Windows.UI.h>
+import winrt.Microsoft.UI.Composition;
+import winrt.Microsoft.UI.Xaml.Hosting;
+import winrt.Microsoft.UI.Input;
+import winrt.Windows.UI;
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Microsoft.UI.Xaml.Input;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Composition;

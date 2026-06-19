@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "InfoBarView.xaml.h"
 #if __has_include("UI/Xaml/View/InfoBarView.g.cpp")
 #include "UI/Xaml/View/InfoBarView.g.cpp"

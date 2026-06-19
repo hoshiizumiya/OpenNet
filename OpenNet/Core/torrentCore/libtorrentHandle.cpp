@@ -1,8 +1,4 @@
-﻿#include "pch.h"
-#include "libtorrentHandle.h"
-#include "TorrentStateManager.h"
-#include "Core/TorrentSettings.h"
-
+﻿module;
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_handle.hpp>
@@ -17,11 +13,11 @@
 #include <libtorrent/session_stats.hpp>
 #include <libtorrent/ip_filter.hpp>
 
-#include <chrono>
-#include <thread>
-#include <iostream>
-#include <sstream>
-#include <algorithm>
+module OpenNet.Core.torrentCore.LibtorrentHandle;
+
+import OpenNet.Core.torrentCore.TorrentStateManager;
+import OpenNet.Core.TorrentSettings;
+import winrt_base;
 
 namespace lt = libtorrent;
 using namespace std::chrono_literals;

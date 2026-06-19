@@ -1,8 +1,9 @@
-﻿#include "pch.h"
-#include "FileOperation.h"
-#include "FileSystem.h"
-#include <windows.h>
-#include <filesystem>
+﻿module;
+#include <Windows.h>
+
+module OpenNet.Core.IO.FileOperation;
+
+import OpenNet.Core.IO.FileSystem;
 
 namespace fs = std::filesystem;
 
@@ -24,7 +25,7 @@ namespace winrt::OpenNet::Core::IO
 			auto destParent = fs::path(destinationPath).parent_path();
 			if (!destParent.empty())
 			{
-				FileSystem::CreateDirectory(destParent.wstring());
+				FileSystem::CreateAppDirectory(destParent.wstring());
 			}
 
 			// Convert to wide strings
@@ -65,7 +66,7 @@ namespace winrt::OpenNet::Core::IO
 			auto destParent = fs::path(destinationPath).parent_path();
 			if (!destParent.empty())
 			{
-				FileSystem::CreateDirectory(destParent.wstring());
+				FileSystem::CreateAppDirectory(destParent.wstring());
 			}
 
 			// Copy recursively
@@ -90,7 +91,7 @@ namespace winrt::OpenNet::Core::IO
 					auto destFile = fs::path(destinationPath) / relativePath;
 
 					// Create directory if needed
-					FileSystem::CreateDirectory(destFile.parent_path().wstring());
+					FileSystem::CreateAppDirectory(destFile.parent_path().wstring());
 
 					// Copy file
 					fs::copy_file(entry.path(), destFile, fs::copy_options::overwrite_existing);

@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "ViewModels/DisplayItems.h"
 
 // Include all three generated implementation files

@@ -1,242 +1,244 @@
-﻿#include "pch.h"
-#include "Core/P2PManager.h"
+﻿module;
+#include <Windows.h>
+
+module OpenNet.Core.P2PManager;
 
 using namespace winrt;
 using namespace Windows::Foundation;
 
 namespace OpenNet::Core
 {
-    P2PManager& P2PManager::Instance()
-    {
-        static P2PManager inst;
-        return inst;
-    }
+	P2PManager& P2PManager::Instance()
+	{
+		static P2PManager inst;
+		return inst;
+	}
 
-    // 确保核心已经完成初始化
-    IAsyncAction P2PManager::EnsureTorrentCoreInitializedAsync()
-    {
-        if (m_isTorrentCoreInitialized.load()) co_return;
-        if (m_initializing.exchange(true))
-        {
-            while (!m_isTorrentCoreInitialized.load())
-            {
-                co_await winrt::resume_after(std::chrono::milliseconds(30));
-            }
-            co_return;
-        }
-        co_await winrt::resume_background();
-        {
-            std::scoped_lock lk(m_torrentMutex);
-            
-            // Initialize state manager first
-            if (!m_stateManager)
-            {
-                m_stateManager = std::make_unique<OpenNet::Core::Torrent::TorrentStateManager>();
-                if (!m_stateManager->Initialize())
-                {
-                    OutputDebugStringA("Failed to initialize TorrentStateManager\n");
-                    // Continue anyway, persistence will just be disabled
-                }
-            }
-            
-            if (!m_torrentCore)
-            {
-                m_torrentCore = std::make_unique<OpenNet::Core::Torrent::LibtorrentHandle>();
-                
-                // Set state manager before initialization
-                if (m_stateManager)
-                {
-                    m_torrentCore->SetStateManager(m_stateManager.get());
-                }
-                
-                if (!m_torrentCore->Initialize())
-                {
-                    m_torrentCore.reset();
-                    m_initializing.store(false);
-                    co_return;
-                }
-                WireCoreCallbacks();
-                m_torrentCore->Start();
-            }
-        }
-        m_isTorrentCoreInitialized.store(true);
-        m_initializing.store(false);
-        
-        // Load and resume saved tasks
-        co_await LoadAndResumeSavedTasksAsync();
-    }
+	// 确保核心已经完成初始化
+	IAsyncAction P2PManager::EnsureTorrentCoreInitializedAsync()
+	{
+		if (m_isTorrentCoreInitialized.load()) co_return;
+		if (m_initializing.exchange(true))
+		{
+			while (!m_isTorrentCoreInitialized.load())
+			{
+				co_await winrt::resume_after(std::chrono::milliseconds(30));
+			}
+			co_return;
+		}
+		co_await winrt::resume_background();
+		{
+			std::scoped_lock lk(m_torrentMutex);
 
-    IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities)
-    {
-        co_await EnsureTorrentCoreInitializedAsync();
-        std::scoped_lock lk(m_torrentMutex);
-        if (!m_torrentCore) co_return false;
-        co_return m_torrentCore->AddMagnet(magnetUri, savePath, filePriorities);
-    }
+			// Initialize state manager first
+			if (!m_stateManager)
+			{
+				m_stateManager = std::make_unique<OpenNet::Core::Torrent::TorrentStateManager>();
+				if (!m_stateManager->Initialize())
+				{
+					OutputDebugStringA("Failed to initialize TorrentStateManager\n");
+					// Continue anyway, persistence will just be disabled
+				}
+			}
 
-    IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities)
-    {
-        co_await EnsureTorrentCoreInitializedAsync();
-        std::scoped_lock lk(m_torrentMutex);
-        if (!m_torrentCore) co_return false;
-        co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities);
-    }
+			if (!m_torrentCore)
+			{
+				m_torrentCore = std::make_unique<OpenNet::Core::Torrent::LibtorrentHandle>();
 
-    IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()
-    {
-        co_await winrt::resume_background();
+				// Set state manager before initialization
+				if (m_stateManager)
+				{
+					m_torrentCore->SetStateManager(m_stateManager.get());
+				}
 
-        std::scoped_lock lk(m_torrentMutex);
-        if (!m_stateManager || !m_torrentCore) co_return;
+				if (!m_torrentCore->Initialize())
+				{
+					m_torrentCore.reset();
+					m_initializing.store(false);
+					co_return;
+				}
+				WireCoreCallbacks();
+				m_torrentCore->Start();
+			}
+		}
+		m_isTorrentCoreInitialized.store(true);
+		m_initializing.store(false);
 
-        auto tasks = m_stateManager->LoadAllTasks();
-        for (auto const& task : tasks)
-        {
-            // Load all active tasks (downloading, paused, completed) into the session.
-            // Paused/completed torrents are restored in their correct state via resume data flags.
-            // Without loading them, "Resume" button won't work for paused tasks
-            // since they wouldn't exist in the libtorrent session.
-            if (task.status == 1 || task.status == 2 || task.status == 3)
-            {
-                std::string resumedId = m_torrentCore->AddTorrentFromResumeData(task.taskId);
-                if (!resumedId.empty())
-                {
-                    OutputDebugStringA(("Resumed task: " + task.taskId + " (status=" + std::to_string(task.status) + ")\n").c_str());
-                    
-                    // Ensure paused tasks stay paused even if resume data didn't preserve the flag
-                    if (task.status == 2)
-                    {
-                        m_torrentCore->PauseTorrent(task.taskId);
-                    }
-                }
-            }
-        }
-    }
+		// Load and resume saved tasks
+		co_await LoadAndResumeSavedTasksAsync();
+	}
 
-    std::vector<::OpenNet::Core::Torrent::TaskMetadata> P2PManager::GetAllTasks()
-    {
-        std::scoped_lock lk(m_torrentMutex);
-        if (!m_stateManager) return {};
-        return m_stateManager->LoadAllTasks();
-    }
+	IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities)
+	{
+		co_await EnsureTorrentCoreInitializedAsync();
+		std::scoped_lock lk(m_torrentMutex);
+		if (!m_torrentCore) co_return false;
+		co_return m_torrentCore->AddMagnet(magnetUri, savePath, filePriorities);
+	}
 
-    IAsyncOperation<bool> P2PManager::ExportTasksAsync(std::wstring filePath)
-    {
-        co_await winrt::resume_background();
-        std::scoped_lock lk(m_torrentMutex);
-        if (!m_stateManager) co_return false;
-        co_return m_stateManager->ExportToFile(filePath);
-    }
+	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities)
+	{
+		co_await EnsureTorrentCoreInitializedAsync();
+		std::scoped_lock lk(m_torrentMutex);
+		if (!m_torrentCore) co_return false;
+		co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities);
+	}
 
-    IAsyncOperation<bool> P2PManager::ImportTasksAsync(std::wstring filePath)
-    {
-        co_await winrt::resume_background();
-        std::scoped_lock lk(m_torrentMutex);
-        if (!m_stateManager) co_return false;
-        bool result = m_stateManager->ImportFromFile(filePath);
-        
-        // Resume imported tasks
-        if (result && m_torrentCore)
-        {
-            auto tasks = m_stateManager->LoadAllTasks();
-            for (auto const& task : tasks)
-            {
-                if (task.status == 1 || task.status == 2)
-                {
-                    m_torrentCore->AddTorrentFromResumeData(task.taskId);
-                }
-            }
-        }
-        
-        co_return result;
-    }
+	IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()
+	{
+		co_await winrt::resume_background();
 
-    void P2PManager::SetProgressCallback(ProgressCb cb)
-    {
-        std::scoped_lock lk(m_cbMutex);
-        m_progressCb = std::move(cb);
-    }
-    void P2PManager::SetFinishedCallback(FinishedCb cb)
-    {
-        std::scoped_lock lk(m_cbMutex);
-        m_finishedCb = std::move(cb);
-    }
-    void P2PManager::SetErrorCallback(ErrorCb cb)
-    {
-        std::scoped_lock lk(m_cbMutex);
-        m_errorCb = std::move(cb);
-    }
+		std::scoped_lock lk(m_torrentMutex);
+		if (!m_stateManager || !m_torrentCore) co_return;
 
-    void P2PManager::WireCoreCallbacks()
-    {
-        if (!m_torrentCore) return;
-        m_torrentCore->SetProgressCallback([this](const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
-        {
-            std::scoped_lock lk(m_cbMutex);
-            if (m_progressCb) m_progressCb(e);
-        });
-        m_torrentCore->SetFinishedCallback([this](const std::string& name)
-        {
-            std::scoped_lock lk(m_cbMutex);
-            if (m_finishedCb) m_finishedCb(name);
-        });
-        m_torrentCore->SetErrorCallback([this](const std::string& err)
-        {
-            std::scoped_lock lk(m_cbMutex);
-            if (m_errorCb) m_errorCb(err);
-        });
-    }
+		auto tasks = m_stateManager->LoadAllTasks();
+		for (auto const& task : tasks)
+		{
+			// Load all active tasks (downloading, paused, completed) into the session.
+			// Paused/completed torrents are restored in their correct state via resume data flags.
+			// Without loading them, "Resume" button won't work for paused tasks
+			// since they wouldn't exist in the libtorrent session.
+			if (task.status == 1 || task.status == 2 || task.status == 3)
+			{
+				std::string resumedId = m_torrentCore->AddTorrentFromResumeData(task.taskId);
+				if (!resumedId.empty())
+				{
+					OutputDebugStringA(("Resumed task: " + task.taskId + " (status=" + std::to_string(task.status) + ")\n").c_str());
 
-    void P2PManager::Shutdown()
-    {
-        // 这个方法需要安全地关闭torrent核心
-        try
-        {
-            std::scoped_lock lk(m_torrentMutex);
-            
-            OutputDebugStringA("P2PManager: Shutting down...\n");
-            
-            // Save all resume data then stop the core.
-            // Stop() internally waits for pending resume data alerts
-            // and saves session state before destroying the session.
-            if (m_torrentCore)
-            {
-                OutputDebugStringA("P2PManager: Saving all resume data...\n");
-                m_torrentCore->SaveAllResumeData();
-                
-                // Stop core (waits for resume data alerts, saves session state)
-                OutputDebugStringA("P2PManager: Stopping torrent core...\n");
-                m_torrentCore->Stop();
-            }
-            
-            // 清空回调以避免在shutdown期间调用它们
-            {
-                std::scoped_lock cbLk(m_cbMutex);
-                m_progressCb = nullptr;
-                m_finishedCb = nullptr;
-                m_errorCb = nullptr;
-            }
-            
-            // 释放torrent核心资源
-            m_torrentCore.reset();
-            
-            // 可选：保存状态管理器数据
-            if (m_stateManager)
-            {
-                // 状态管理器通常会自己处理持久化
-            }
-            
-            m_isTorrentCoreInitialized.store(false);
-            
-            OutputDebugStringA("P2PManager: Shutdown completed successfully\n");
-        }
-        catch (const std::exception& ex)
-        {
-            OutputDebugStringW((L"P2PManager: Shutdown error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
-        }
-        catch (...)
-        {
-            OutputDebugStringA("P2PManager: Unknown error during shutdown\n");
-        }
-    }
+					// Ensure paused tasks stay paused even if resume data didn't preserve the flag
+					if (task.status == 2)
+					{
+						m_torrentCore->PauseTorrent(task.taskId);
+					}
+				}
+			}
+		}
+	}
+
+	std::vector<::OpenNet::Core::Torrent::TaskMetadata> P2PManager::GetAllTasks()
+	{
+		std::scoped_lock lk(m_torrentMutex);
+		if (!m_stateManager) return {};
+		return m_stateManager->LoadAllTasks();
+	}
+
+	IAsyncOperation<bool> P2PManager::ExportTasksAsync(std::wstring filePath)
+	{
+		co_await winrt::resume_background();
+		std::scoped_lock lk(m_torrentMutex);
+		if (!m_stateManager) co_return false;
+		co_return m_stateManager->ExportToFile(filePath);
+	}
+
+	IAsyncOperation<bool> P2PManager::ImportTasksAsync(std::wstring filePath)
+	{
+		co_await winrt::resume_background();
+		std::scoped_lock lk(m_torrentMutex);
+		if (!m_stateManager) co_return false;
+		bool result = m_stateManager->ImportFromFile(filePath);
+
+		// Resume imported tasks
+		if (result && m_torrentCore)
+		{
+			auto tasks = m_stateManager->LoadAllTasks();
+			for (auto const& task : tasks)
+			{
+				if (task.status == 1 || task.status == 2)
+				{
+					m_torrentCore->AddTorrentFromResumeData(task.taskId);
+				}
+			}
+		}
+
+		co_return result;
+	}
+
+	void P2PManager::SetProgressCallback(ProgressCb cb)
+	{
+		std::scoped_lock lk(m_cbMutex);
+		m_progressCb = std::move(cb);
+	}
+	void P2PManager::SetFinishedCallback(FinishedCb cb)
+	{
+		std::scoped_lock lk(m_cbMutex);
+		m_finishedCb = std::move(cb);
+	}
+	void P2PManager::SetErrorCallback(ErrorCb cb)
+	{
+		std::scoped_lock lk(m_cbMutex);
+		m_errorCb = std::move(cb);
+	}
+
+	void P2PManager::WireCoreCallbacks()
+	{
+		if (!m_torrentCore) return;
+		m_torrentCore->SetProgressCallback([this](const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
+		{
+			std::scoped_lock lk(m_cbMutex);
+			if (m_progressCb) m_progressCb(e);
+		});
+		m_torrentCore->SetFinishedCallback([this](const std::string& name)
+		{
+			std::scoped_lock lk(m_cbMutex);
+			if (m_finishedCb) m_finishedCb(name);
+		});
+		m_torrentCore->SetErrorCallback([this](const std::string& err)
+		{
+			std::scoped_lock lk(m_cbMutex);
+			if (m_errorCb) m_errorCb(err);
+		});
+	}
+
+	void P2PManager::Shutdown()
+	{
+		// 这个方法需要安全地关闭torrent核心
+		try
+		{
+			std::scoped_lock lk(m_torrentMutex);
+
+			OutputDebugStringA("P2PManager: Shutting down...\n");
+
+			// Save all resume data then stop the core.
+			// Stop() internally waits for pending resume data alerts
+			// and saves session state before destroying the session.
+			if (m_torrentCore)
+			{
+				OutputDebugStringA("P2PManager: Saving all resume data...\n");
+				m_torrentCore->SaveAllResumeData();
+
+				// Stop core (waits for resume data alerts, saves session state)
+				OutputDebugStringA("P2PManager: Stopping torrent core...\n");
+				m_torrentCore->Stop();
+			}
+
+			// 清空回调以避免在shutdown期间调用它们
+			{
+				std::scoped_lock cbLk(m_cbMutex);
+				m_progressCb = nullptr;
+				m_finishedCb = nullptr;
+				m_errorCb = nullptr;
+			}
+
+			// 释放torrent核心资源
+			m_torrentCore.reset();
+
+			// 可选：保存状态管理器数据
+			if (m_stateManager)
+			{
+				// 状态管理器通常会自己处理持久化
+			}
+
+			m_isTorrentCoreInitialized.store(false);
+
+			OutputDebugStringA("P2PManager: Shutdown completed successfully\n");
+		}
+		catch (const std::exception& ex)
+		{
+			OutputDebugStringW((L"P2PManager: Shutdown error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+		}
+		catch (...)
+		{
+			OutputDebugStringA("P2PManager: Unknown error during shutdown\n");
+		}
+	}
 }

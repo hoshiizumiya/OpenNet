@@ -1,4 +1,4 @@
-/*
+﻿/*
  * PROJECT:   OpenNet
  * FILE:      Core/Aria2/Aria2Models.cpp
  * PURPOSE:   Aria2 data model implementations
@@ -7,9 +7,14 @@
  * LICENSE:   The MIT License
  */
 
-#include "pch.h"
-#include "Core/Aria2/Aria2Models.h"
-#include "Core/Aria2/Aria2Helpers.h"
+module;
+
+#include <Windows.h>
+#include <nlohmann/json.hpp>
+
+module OpenNet.Core.Aria2.Aria2Models;
+
+import OpenNet.Core.Aria2.Aria2Helpers;
 
 using namespace OpenNet::Core::Aria2::Helpers;
 

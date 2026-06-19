@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt_base;
+
 namespace winrt::Windows::Data::Json
 {
 	struct JsonObject;

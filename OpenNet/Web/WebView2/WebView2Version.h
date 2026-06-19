@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt_base;
+
 namespace OpenNet::Web::WebView2
 {
 	const struct WebView2Version

@@ -1,13 +1,15 @@
-﻿#include "pch.h"
-#include "PackageIdentityAdapter.h"  
-#include <PathCch.h>  
-#include <memory>  
-#include <mutex>  
-#include <vector>  
+﻿module;
 
+#include <windows.h>
+#include <PathCch.h>
 // Link with Version.lib for GetFileVersionInfo* and VerQueryValue
 #pragma comment(lib, "Version.lib")
 #pragma comment(lib, "Pathcch.lib")
+
+// Here without export keyword because this file is only for implementation, and the corresponding header file is PackageIdentityAdapter.ixx which contains the export keyword.
+module OpenNet.Core.ApplicationModel;
+
+import winrt.Windows.ApplicationModel;
 
 namespace OpenNet::Core::ApplicationModel
 {

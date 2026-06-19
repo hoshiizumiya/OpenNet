@@ -5,20 +5,14 @@
  *
  * LICENSE:   The MIT License
  */
-
-#include "pch.h"
-#include "Core/IPFilter/IPFilterManager.h"
-#include "Core/AppSettingsDatabase.h"
-#include "Core/P2PManager.h"
-#include "ThirdParty/Sqlite/sqlite3.h"
-
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/address.hpp>
+#include "ThirdParty/Sqlite/sqlite3.h"
+#include "Core/IPFilter/IPFilterManager.h"
 
-#include "Core/IO/FileSystem.h"
-
-#include <sstream>
-#include <algorithm>
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.P2PManager;
 
 namespace lt = libtorrent;
 
@@ -49,7 +43,7 @@ namespace OpenNet::Core
 		if (m_initialized) return true;
 
 		try
-		{			 
+		{
 			auto dbPath = std::wstring(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) + L"\\ipfilter.db";
 			int rc = sqlite3_open16(dbPath.c_str(), &m_db);
 			if (rc != SQLITE_OK)
@@ -88,15 +82,15 @@ namespace OpenNet::Core
 	void IPFilterManager::CreateTables()
 	{
 		const char* sql = R"(
-            CREATE TABLE IF NOT EXISTS ip_rules (
-                id          INTEGER PRIMARY KEY AUTOINCREMENT,
-                first_ip    TEXT NOT NULL,
-                last_ip     TEXT NOT NULL,
-                flags       INTEGER NOT NULL DEFAULT 1,
-                description TEXT DEFAULT ''
-            );
-            CREATE INDEX IF NOT EXISTS idx_ip_rules_first ON ip_rules(first_ip);
-        )";
+			CREATE TABLE IF NOT EXISTS ip_rules (
+				id          INTEGER PRIMARY KEY AUTOINCREMENT,
+				first_ip    TEXT NOT NULL,
+				last_ip     TEXT NOT NULL,
+				flags       INTEGER NOT NULL DEFAULT 1,
+				description TEXT DEFAULT ''
+			);
+			CREATE INDEX IF NOT EXISTS idx_ip_rules_first ON ip_rules(first_ip);
+		)";
 
 		char* errMsg = nullptr;
 		int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);
@@ -214,8 +208,14 @@ namespace OpenNet::Core
 		{
 			auto addrStr = input.substr(0, slashPos);
 			int prefix = 0;
-			try { prefix = std::stoi(input.substr(slashPos + 1)); }
-			catch (...) { return false; }
+			try
+			{
+				prefix = std::stoi(input.substr(slashPos + 1));
+			}
+			catch (...)
+			{
+				return false;
+			}
 
 			boost::system::error_code ec;
 			auto addr = lt::make_address(addrStr, ec);
@@ -296,7 +296,10 @@ namespace OpenNet::Core
 	int IPFilterManager::ImportFromText(std::string const& text)
 	{
 		// ---- Phase 1: parse on current thread (no lock) ----
-		struct ParsedRule { std::string first, last, desc; };
+		struct ParsedRule
+		{
+			std::string first, last, desc;
+		};
 		std::vector<ParsedRule> parsed;
 
 		std::istringstream iss(text);

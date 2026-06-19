@@ -1,15 +1,15 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Shadows/AttachedCardShadow.h"
 
 #if __has_include("UI/Xaml/Media/Shadows/AttachedCardShadow.g.cpp")
 #include "UI/Xaml/Media/Shadows/AttachedCardShadow.g.cpp"
 #endif
 
-#include <winrt/Windows.UI.h>
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Hosting.h>
-#include <winrt/Microsoft.Graphics.Canvas.Geometry.h>
-#include <winrt/Windows.Foundation.Numerics.h>
+import winrt.Windows.Foundation.Numerics;
+import winrt.Windows.UI;
+import winrt.Microsoft.UI.Composition;
+import winrt.Microsoft.UI.Xaml.Hosting;
+import winrt.Microsoft.Graphics.Canvas.Geometry;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -22,64 +22,112 @@ namespace winrt::OpenNet::UI::Xaml::Media::Shadows::implementation
 	// ---- DependencyProperty registrations ----
 
 	DependencyProperty AttachedCardShadow::s_colorProperty =
-		DependencyProperty::Register(L"Color", xaml_typename<winrt::Windows::UI::Color>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(winrt::Windows::UI::Color{ 255, 0, 0, 0 }) });
+		DependencyProperty::Register(L"Color", winrt::xaml_typename<winrt::Windows::UI::Color>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(winrt::Windows::UI::Color{ 255, 0, 0, 0 }) });
 
 	DependencyProperty AttachedCardShadow::s_opacityProperty =
-		DependencyProperty::Register(L"Opacity", xaml_typename<double>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(1.0) });
+		DependencyProperty::Register(L"Opacity", winrt::xaml_typename<double>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(1.0) });
 
 	DependencyProperty AttachedCardShadow::s_blurRadiusProperty =
-		DependencyProperty::Register(L"BlurRadius", xaml_typename<double>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(12.0) });
+		DependencyProperty::Register(L"BlurRadius", winrt::xaml_typename<double>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(12.0) });
 
 	DependencyProperty AttachedCardShadow::s_offsetXProperty =
-		DependencyProperty::Register(L"OffsetX", xaml_typename<double>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(0.0) });
+		DependencyProperty::Register(L"OffsetX", winrt::xaml_typename<double>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(0.0) });
 
 	DependencyProperty AttachedCardShadow::s_offsetYProperty =
-		DependencyProperty::Register(L"OffsetY", xaml_typename<double>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(4.0) });
+		DependencyProperty::Register(L"OffsetY", winrt::xaml_typename<double>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(4.0) });
 
 	DependencyProperty AttachedCardShadow::s_cornerRadiusProperty =
-		DependencyProperty::Register(L"CornerRadius", xaml_typename<double>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(4.0) });
+		DependencyProperty::Register(L"CornerRadius", winrt::xaml_typename<double>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(4.0) });
 
 	DependencyProperty AttachedCardShadow::s_innerContentClipModeProperty =
 		DependencyProperty::Register(L"InnerContentClipMode",
-			xaml_typename<OpenNet::UI::Xaml::Media::InnerContentClipMode>(),
-			xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
-			PropertyMetadata{ box_value(OpenNet::UI::Xaml::Media::InnerContentClipMode::CompositionGeometricClip) });
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::InnerContentClipMode>(),
+									 winrt::xaml_typename<OpenNet::UI::Xaml::Media::Shadows::AttachedCardShadow>(),
+									 PropertyMetadata{ box_value(OpenNet::UI::Xaml::Media::InnerContentClipMode::CompositionGeometricClip) });
 
 	// ---- Property accessors ----
 
-	winrt::Windows::UI::Color AttachedCardShadow::Color() const { return unbox_value<winrt::Windows::UI::Color>(GetValue(s_colorProperty)); }
-	void AttachedCardShadow::Color(winrt::Windows::UI::Color value) { SetValue(s_colorProperty, box_value(value)); if (m_dropShadow) UpdateShadow(); }
-	DependencyProperty AttachedCardShadow::ColorProperty() { return s_colorProperty; }
+	winrt::Windows::UI::Color AttachedCardShadow::Color() const
+	{
+		return unbox_value<winrt::Windows::UI::Color>(GetValue(s_colorProperty));
+	}
+	void AttachedCardShadow::Color(winrt::Windows::UI::Color value)
+	{
+		SetValue(s_colorProperty, box_value(value)); if (m_dropShadow) UpdateShadow();
+	}
+	DependencyProperty AttachedCardShadow::ColorProperty()
+	{
+		return s_colorProperty;
+	}
 
-	double AttachedCardShadow::Opacity() const { return unbox_value<double>(GetValue(s_opacityProperty)); }
-	void AttachedCardShadow::Opacity(double value) { SetValue(s_opacityProperty, box_value(value)); if (m_dropShadow) UpdateShadow(); }
-	DependencyProperty AttachedCardShadow::OpacityProperty() { return s_opacityProperty; }
+	double AttachedCardShadow::Opacity() const
+	{
+		return unbox_value<double>(GetValue(s_opacityProperty));
+	}
+	void AttachedCardShadow::Opacity(double value)
+	{
+		SetValue(s_opacityProperty, box_value(value)); if (m_dropShadow) UpdateShadow();
+	}
+	DependencyProperty AttachedCardShadow::OpacityProperty()
+	{
+		return s_opacityProperty;
+	}
 
-	double AttachedCardShadow::BlurRadius() const { return unbox_value<double>(GetValue(s_blurRadiusProperty)); }
-	void AttachedCardShadow::BlurRadius(double value) { SetValue(s_blurRadiusProperty, box_value(value)); if (m_dropShadow) UpdateShadow(); }
-	DependencyProperty AttachedCardShadow::BlurRadiusProperty() { return s_blurRadiusProperty; }
+	double AttachedCardShadow::BlurRadius() const
+	{
+		return unbox_value<double>(GetValue(s_blurRadiusProperty));
+	}
+	void AttachedCardShadow::BlurRadius(double value)
+	{
+		SetValue(s_blurRadiusProperty, box_value(value)); if (m_dropShadow) UpdateShadow();
+	}
+	DependencyProperty AttachedCardShadow::BlurRadiusProperty()
+	{
+		return s_blurRadiusProperty;
+	}
 
-	double AttachedCardShadow::OffsetX() const { return unbox_value<double>(GetValue(s_offsetXProperty)); }
-	void AttachedCardShadow::OffsetX(double value) { SetValue(s_offsetXProperty, box_value(value)); if (m_dropShadow) UpdateShadow(); }
-	DependencyProperty AttachedCardShadow::OffsetXProperty() { return s_offsetXProperty; }
+	double AttachedCardShadow::OffsetX() const
+	{
+		return unbox_value<double>(GetValue(s_offsetXProperty));
+	}
+	void AttachedCardShadow::OffsetX(double value)
+	{
+		SetValue(s_offsetXProperty, box_value(value)); if (m_dropShadow) UpdateShadow();
+	}
+	DependencyProperty AttachedCardShadow::OffsetXProperty()
+	{
+		return s_offsetXProperty;
+	}
 
-	double AttachedCardShadow::OffsetY() const { return unbox_value<double>(GetValue(s_offsetYProperty)); }
-	void AttachedCardShadow::OffsetY(double value) { SetValue(s_offsetYProperty, box_value(value)); if (m_dropShadow) UpdateShadow(); }
-	DependencyProperty AttachedCardShadow::OffsetYProperty() { return s_offsetYProperty; }
+	double AttachedCardShadow::OffsetY() const
+	{
+		return unbox_value<double>(GetValue(s_offsetYProperty));
+	}
+	void AttachedCardShadow::OffsetY(double value)
+	{
+		SetValue(s_offsetYProperty, box_value(value)); if (m_dropShadow) UpdateShadow();
+	}
+	DependencyProperty AttachedCardShadow::OffsetYProperty()
+	{
+		return s_offsetYProperty;
+	}
 
-	double AttachedCardShadow::CornerRadius() const { return unbox_value<double>(GetValue(s_cornerRadiusProperty)); }
+	double AttachedCardShadow::CornerRadius() const
+	{
+		return unbox_value<double>(GetValue(s_cornerRadiusProperty));
+	}
 	void AttachedCardShadow::CornerRadius(double value)
 	{
 		SetValue(s_cornerRadiusProperty, box_value(value));
@@ -89,7 +137,10 @@ namespace winrt::OpenNet::UI::Xaml::Media::Shadows::implementation
 			UpdateShadowClip();
 		}
 	}
-	DependencyProperty AttachedCardShadow::CornerRadiusProperty() { return s_cornerRadiusProperty; }
+	DependencyProperty AttachedCardShadow::CornerRadiusProperty()
+	{
+		return s_cornerRadiusProperty;
+	}
 
 	winrt::OpenNet::UI::Xaml::Media::InnerContentClipMode AttachedCardShadow::InnerContentClipMode() const
 	{
@@ -98,9 +149,15 @@ namespace winrt::OpenNet::UI::Xaml::Media::Shadows::implementation
 	void AttachedCardShadow::InnerContentClipMode(winrt::OpenNet::UI::Xaml::Media::InnerContentClipMode value)
 	{
 		SetValue(s_innerContentClipModeProperty, box_value(value));
-		if (m_dropShadow) { UpdateShadowClip(); }
+		if (m_dropShadow)
+		{
+			UpdateShadowClip();
+		}
 	}
-	DependencyProperty AttachedCardShadow::InnerContentClipModeProperty() { return s_innerContentClipModeProperty; }
+	DependencyProperty AttachedCardShadow::InnerContentClipModeProperty()
+	{
+		return s_innerContentClipModeProperty;
+	}
 
 	// ---- Core implementation ----
 
@@ -145,7 +202,7 @@ namespace winrt::OpenNet::UI::Xaml::Media::Shadows::implementation
 
 		// Listen for size changes
 		m_sizeChangedRevoker = element.SizeChanged(winrt::auto_revoke,
-			{ this, &AttachedCardShadow::OnSizeChanged });
+												   { this, &AttachedCardShadow::OnSizeChanged });
 	}
 
 	void AttachedCardShadow::DetachShadow()

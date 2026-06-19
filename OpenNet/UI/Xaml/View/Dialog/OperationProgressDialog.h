@@ -1,7 +1,7 @@
 ﻿#pragma once
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <functional>
+
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Controls;
 
 namespace winrt::OpenNet::UI::Xaml::View::Dialog
 {

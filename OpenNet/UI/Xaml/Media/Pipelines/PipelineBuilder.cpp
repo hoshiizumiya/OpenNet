@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Pipelines/PipelineBuilder.h"
 
 using namespace winrt;

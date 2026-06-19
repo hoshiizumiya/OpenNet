@@ -6,27 +6,25 @@
  *
  * LICENSE:   The MIT License
  */
-
+module;
 #define _WINSOCKAPI_
-
-#include "pch.h"
-#include "Core/Aria2/Aria2Engine.h"
-#include "Core/Aria2/Aria2Helpers.h"
-#include "Core/Aria2/JsonRpc2.h"
-
 #include <Windows.h>
-#include <objbase.h>
-#include "Core/IO/FileSystem.h"
-
 #include <WinSock2.h>
+#include <objbase.h>
 #include <iphlpapi.h>
+#include <nlohmann/json.hpp>
+
 #pragma comment(lib, "ws2_32.lib")
 
 #undef GetObject
+module OpenNet.Core.Aria2.Aria2Engine;
 
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Storage.Streams.h>
-#include <winrt/Windows.Web.Http.h>
+import OpenNet.Core.Aria2.Aria2Helpers;
+import OpenNet.Core.Aria2.JsonRpc2;
+import OpenNet.Core.IO.FileSystem;
+import winrt.Windows.Foundation.Collections;
+import winrt.Windows.Storage.Streams;
+import winrt.Windows.Web.Http;
 
 using namespace OpenNet::Core::Aria2::Helpers;
 

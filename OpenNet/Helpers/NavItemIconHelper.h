@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "pch.h"
 #include "Helpers/NavItemIconHelper.g.h"
 
 namespace winrt::OpenNet::Helpers::implementation

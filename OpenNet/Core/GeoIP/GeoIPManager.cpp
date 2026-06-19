@@ -1,169 +1,181 @@
-﻿#include "pch.h"
-#include "GeoIPManager.h"
+﻿module;
+#include <Windows.h>
 
-#include "GeoIPDatabase.h"
+module OpenNet.Core.GeoIP.GeoIPManager;
 
-#include <algorithm>
-#include <filesystem>
-#include <fstream>
-#include <sstream>
-
-#include <winrt/Windows.ApplicationModel.h>
-#include <winrt/Windows.Globalization.h>
+import OpenNet.Core.GeoIP.GeoIPDatabase;
+import winrt.Windows.ApplicationModel;
+import winrt.Windows.Globalization;
 
 namespace OpenNet::Core
 {
-    namespace
-    {
-        std::string ParseCSVField(std::istringstream& ss)
-        {
-            std::string result;
-            if (ss.peek() == '"')
-            {
-                ss.get();
-                std::getline(ss, result, '"');
-                if (ss.peek() == ',') ss.get();
-            }
-            else
-            {
-                std::getline(ss, result, ',');
-            }
-            return result;
-        }
-    }
+	using namespace std;
 
-    GeoIPManager& GeoIPManager::Instance()
-    {
-        static GeoIPManager instance;
-        return instance;
-    }
+	namespace
+	{
+		std::string ParseCSVField(std::istringstream& ss)
+		{
+			std::string result;
+			if (ss.peek() == '"')
+			{
+				ss.get();
+				std::getline(ss, result, '"');
+				if (ss.peek() == ',') ss.get();
+			}
+			else
+			{
+				std::getline(ss, result, ',');
+			}
+			return result;
+		}
+	}
 
-    void GeoIPManager::Initialize(std::wstring const& assetsDir)
-    {
-        std::lock_guard lk(m_mutex);
-        if (m_loaded)
-            return;
+	GeoIPManager& GeoIPManager::Instance()
+	{
+		static GeoIPManager instance;
+		return instance;
+	}
 
-        std::wstring dir = assetsDir;
-        if (dir.empty())
-        {
-            try
-            {
-                auto installPath = winrt::Windows::ApplicationModel::Package::Current().InstalledLocation().Path();
-                dir = std::wstring(installPath.c_str()) + L"\\Assets\\IP2Location";
-            }
-            catch (...)
-            {
-                OutputDebugStringA("GeoIPManager::Initialize: Failed to get installed location\n");
-                return;
-            }
-        }
+	void GeoIPManager::Initialize(std::wstring const& assetsDir)
+	{
+		std::lock_guard lk(m_mutex);
+		if (m_loaded)
+			return;
 
-        auto mmdbPath = dir + L"\\dbip-country-lite.mmdb";
-        auto multiPath = dir + L"\\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV";
+		std::wstring dir = assetsDir;
+		if (dir.empty())
+		{
+			try
+			{
+				auto installPath = winrt::Windows::ApplicationModel::Package::Current().InstalledLocation().Path();
+				dir = std::wstring(installPath.c_str()) + L"\\Assets\\IP2Location";
+			}
+			catch (...)
+			{
+				OutputDebugStringA("GeoIPManager::Initialize: Failed to get installed location\n");
+				return;
+			}
+		}
 
-        m_countryNames.clear();
-        LoadMultilingual(multiPath);
+		auto mmdbPath = dir + L"\\dbip-country-lite.mmdb";
+		auto multiPath = dir + L"\\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV";
 
-        auto db = std::make_unique<GeoIPDatabase>();
-        if (db->Load(mmdbPath))
-        {
-            m_database = std::move(db);
-            m_loaded = true;
-            OutputDebugStringA("GeoIPManager: MMDB loaded\n");
-        }
-        else
-        {
-            OutputDebugStringA("GeoIPManager: dbip-country-lite.mmdb not found or invalid. GeoIP lookups disabled.\n");
-        }
-    }
+		m_countryNames.clear();
+		LoadMultilingual(multiPath);
 
-    bool GeoIPManager::LoadMultilingual(std::wstring const& filePath)
-    {
-        if (!std::filesystem::exists(filePath))
-            return false;
+		auto db = std::make_unique<GeoIPDatabase>();
+		if (db->Load(mmdbPath))
+		{
+			m_database = std::move(db);
+			m_loaded = true;
+			OutputDebugStringA("GeoIPManager: MMDB loaded\n");
+		}
+		else
+		{
+			OutputDebugStringA("GeoIPManager: dbip-country-lite.mmdb not found or invalid. GeoIP lookups disabled.\n");
+		}
+	}
 
-        std::ifstream file(filePath);
-        if (!file.is_open())
-            return false;
+	bool GeoIPManager::LoadMultilingual(std::wstring const& filePath)
+	{
+		if (!std::filesystem::exists(filePath))
+			return false;
 
-        std::string preferredLang = "EN";
-        try
-        {
-            auto languages = winrt::Windows::Globalization::ApplicationLanguages::Languages();
-            if (languages.Size() > 0)
-            {
-                auto lang = winrt::to_string(languages.GetAt(0));
-                if (lang.size() >= 2)
-                {
-                    preferredLang = lang.substr(0, 2);
-                    std::transform(preferredLang.begin(), preferredLang.end(), preferredLang.begin(), ::toupper);
-                }
-            }
-        }
-        catch (...) {}
+		std::ifstream file(filePath);
+		if (!file.is_open())
+			return false;
 
-        bool const isZH = (preferredLang == "ZH");
+		std::string preferredLang = "EN";
+		try
+		{
+			auto languages = winrt::Windows::Globalization::ApplicationLanguages::Languages();
+			if (languages.Size() > 0)
+			{
+				auto lang = winrt::to_string(languages.GetAt(0));
+				if (lang.size() >= 2)
+				{
+					preferredLang = lang.substr(0, 2);
+					std::transform(preferredLang.begin(), preferredLang.end(), preferredLang.begin(), [](unsigned char c)
+					{
+						return static_cast<char>(
+							std::toupper(c));
+					});
+				}
+			}
+		}
+		catch (...)
+		{
+		}
 
-        std::string line;
-        bool headerSkipped = false;
+		bool const isZH = (preferredLang == "ZH");
 
-        while (std::getline(file, line))
-        {
-            if (line.empty()) continue;
-            if (!headerSkipped)
-            {
-                headerSkipped = true;
-                continue;
-            }
+		std::string line;
+		bool headerSkipped = false;
 
-            std::istringstream ss(line);
-            auto lang = ParseCSVField(ss);
-            ParseCSVField(ss);
-            auto alpha2 = ParseCSVField(ss);
-            ParseCSVField(ss);
-            ParseCSVField(ss);
-            auto countryName = ParseCSVField(ss);
+		while (std::getline(file, line))
+		{
+			if (line.empty()) continue;
+			if (!headerSkipped)
+			{
+				headerSkipped = true;
+				continue;
+			}
 
-            std::transform(lang.begin(), lang.end(), lang.begin(), ::toupper);
-            std::transform(alpha2.begin(), alpha2.end(), alpha2.begin(), ::toupper);
-            if (lang == preferredLang || (isZH && lang == "ZH"))
-            {
-                if (!alpha2.empty() && !countryName.empty())
-                    m_countryNames[alpha2] = countryName;
-            }
-        }
+			std::istringstream ss(line);
+			auto lang = ParseCSVField(ss);
+			ParseCSVField(ss);
+			auto alpha2 = ParseCSVField(ss);
+			ParseCSVField(ss);
+			ParseCSVField(ss);
+			auto countryName = ParseCSVField(ss);
 
-        return !m_countryNames.empty();
-    }
+			std::transform(lang.begin(), lang.end(), lang.begin(), [](unsigned char c)
+			{
+				return static_cast<char>(
+					std::toupper(c));
+			});
+			std::transform(alpha2.begin(), alpha2.end(), alpha2.begin(), [](unsigned char c)
+			{
+				return static_cast<char>(
+					std::toupper(c));
+			});
+			if (lang == preferredLang || (isZH && lang == "ZH"))
+			{
+				if (!alpha2.empty() && !countryName.empty())
+					m_countryNames[alpha2] = countryName;
+			}
+		}
 
-    std::string GeoIPManager::LookupCountryCode(std::string const& ipAddress) const
-    {
-        std::lock_guard lk(m_mutex);
-        if (!m_loaded || !m_database)
-            return {};
+		return !m_countryNames.empty();
+	}
 
-        return m_database->LookupCountryCode(ipAddress);
-    }
+	std::string GeoIPManager::LookupCountryCode(std::string const& ipAddress) const
+	{
+		std::lock_guard lk(m_mutex);
+		if (!m_loaded || !m_database)
+			return {};
 
-    std::string GeoIPManager::LookupCountryName(std::string const& ipAddress) const
-    {
-        std::lock_guard lk(m_mutex);
-        if (!m_loaded || !m_database)
-            return {};
+		return m_database->LookupCountryCode(ipAddress);
+	}
 
-        auto code = m_database->LookupCountryCode(ipAddress);
-        if (code.empty())
-            return {};
+	std::string GeoIPManager::LookupCountryName(std::string const& ipAddress) const
+	{
+		std::lock_guard lk(m_mutex);
+		if (!m_loaded || !m_database)
+			return {};
 
-        auto it = m_countryNames.find(code);
-        if (it != m_countryNames.end())
-            return it->second;
+		auto code = m_database->LookupCountryCode(ipAddress);
+		if (code.empty())
+			return {};
 
-        auto english = m_database->LookupCountryName(ipAddress);
-        if (!english.empty())
-            return english;
+		auto it = m_countryNames.find(code);
+		if (it != m_countryNames.end())
+			return it->second;
 
-        return code;
-    }
+		auto english = m_database->LookupCountryName(ipAddress);
+		if (!english.empty())
+			return english;
+
+		return code;
+	}
 }

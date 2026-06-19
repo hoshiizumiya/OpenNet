@@ -1,14 +1,13 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "DownloadSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.g.cpp"
 #endif
 
-#include "Core/TorrentSettings.h"
-
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Content.h>
-#include <winrt/Microsoft.Windows.Storage.Pickers.h>
+import OpenNet.Core.TorrentSettings;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Content;
+import winrt.Microsoft.Windows.Storage.Pickers;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

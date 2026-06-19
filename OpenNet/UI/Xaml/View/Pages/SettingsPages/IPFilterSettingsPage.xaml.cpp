@@ -1,19 +1,17 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "IPFilterSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp"
 #endif
 
 #include "Core/IPFilter/IPFilterManager.h"
-#include <winrt/Microsoft.UI.Dispatching.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Content.h>
-#include <winrt/Microsoft.Windows.Storage.Pickers.h>
-#include <winrt/Windows.Storage.h>
-#include <wil/cppwinrt_helpers.h>
 
-#include <fstream>
-#include <sstream>
+import winrt.Microsoft.UI.Dispatching;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Content;
+import winrt.Microsoft.Windows.Storage.Pickers;
+import winrt.Windows.Storage;
+import winrtplus_coroutine;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -45,7 +43,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         bool enabled = mgr.IsEnabled();
         int count = mgr.GetRuleCount();
 
-        co_await wil::resume_foreground(dispatcher);
+        co_await winrtplus::resume_foreground(dispatcher);
 
         m_loading = true;
         EnableFilterToggle().IsOn(enabled);
@@ -142,7 +140,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
                 mgr.ApplyToSession();
         }
 
-        co_await wil::resume_foreground(dispatcher);
+        co_await winrtplus::resume_foreground(dispatcher);
 
         RefreshRuleCount();
         if (added > 0)

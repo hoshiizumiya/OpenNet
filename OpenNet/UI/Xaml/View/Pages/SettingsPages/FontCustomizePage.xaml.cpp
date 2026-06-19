@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+#include "XamlWorkaround.h"
 #include "FontCustomizePage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/FontCustomizePage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/FontCustomizePage.g.cpp"

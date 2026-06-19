@@ -1,11 +1,11 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.g.h"
-#include "Core/torrentCore/TorrentMetadataFetcher.h"
 #include "ViewModels/TorrentMetadataViewModel.h"
-#include <winrt/Windows.Foundation.h>
-#include <winrt/OpenNet.ViewModels.h>
-#include <memory>
+
+import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
+import winrt.OpenNet.ViewModels;
+import winrt.Windows.Foundation;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {

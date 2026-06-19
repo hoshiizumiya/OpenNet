@@ -111,7 +111,7 @@ namespace OpenNet::Core
 		}
 	}
 
-	IAsyncOperation<int32_t> NetworkDetector::DetectNATTypeAsync()
+	IAsyncOperation<std::int32_t> NetworkDetector::DetectNATTypeAsync()
 	{
 		try
 		{
@@ -125,7 +125,7 @@ namespace OpenNet::Core
 					if (!result.empty())
 					{
 						// 简化的NAT类型判断 / Simplified NAT type determination
-						co_return static_cast<int32_t>(NATType::FullCone);
+						co_return static_cast<std::int32_t>(NATType::FullCone);
 					}
 				}
 				catch (...)
@@ -135,11 +135,11 @@ namespace OpenNet::Core
 				}
 			}
 
-			co_return static_cast<int32_t>(NATType::Unknown);
+			co_return static_cast<std::int32_t>(NATType::Unknown);
 		}
 		catch (...)
 		{
-			co_return static_cast<int32_t>(NATType::Unknown);
+			co_return static_cast<std::int32_t>(NATType::Unknown);
 		}
 	}
 

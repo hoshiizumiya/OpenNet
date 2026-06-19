@@ -1,22 +1,24 @@
-#pragma once
+﻿#pragma once
 #include "UI/Xaml/View/Pages/SettingsPages/AboutPage.g.h"
 #include "mvvm_framework/notify_property_changed.h"
 #include "ViewModels/MainViewModel.h"
-#include <winrt/Windows.Web.Http.h>
 #include "ThirdParty/RepoInfo.h"
+
+import winrt.Windows.Web.Http;
+import std;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-    struct AboutPage : AboutPageT<AboutPage>, mvvm::WrapNotifyPropertyChanged<AboutPage>
+	struct AboutPage : AboutPageT<AboutPage>, mvvm::WrapNotifyPropertyChanged<AboutPage>
 	{
 		AboutPage();
 		static winrt::hstring WASDKReleaseVersion();
 		static winrt::hstring WASDKRuntimeVersion();
 		static winrt::hstring FormatVersion(
-			uint32_t major,
-			uint32_t minor,
-			uint32_t patch,
-			uint32_t majorMinor,
+			std::uint32_t major,
+			std::uint32_t minor,
+			std::uint32_t patch,
+			std::uint32_t majorMinor,
 			winrt::hstring const& channel
 		);
 		bool IsLoadingRepoInfo();

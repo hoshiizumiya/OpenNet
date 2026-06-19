@@ -1,17 +1,15 @@
+import winrt.Microsoft.Graphics.Canvas.UI.Composition;
+import winrt.Microsoft.Graphics.DirectX;
 #pragma once
 // SurfaceLoader - C++/WinRT port of CommunityToolkit SurfaceLoader
 // Loads images to CompositionBrush instances using Win2D with caching support
 
-#include <mutex>
-#include <map>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.h>
-#include <winrt/Microsoft.UI.Composition.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Microsoft.Graphics.Canvas.h>
-#include <winrt/Microsoft.Graphics.Canvas.UI.Composition.h>
-#include <winrt/Microsoft.Graphics.DirectX.h>
 
+import winrt.Windows.UI;
+import winrt.Microsoft.UI.Composition;
+import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Microsoft.Graphics.Canvas;
 namespace OpenNet::UI::Xaml::Media::Helpers
 {
 	namespace MUC = winrt::Microsoft::UI::Composition;

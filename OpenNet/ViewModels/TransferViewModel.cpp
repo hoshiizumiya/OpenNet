@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "TransferViewModel.h"
 #if __has_include("ViewModels/TransferViewModel.g.cpp")
 #include "ViewModels/TransferViewModel.g.cpp"

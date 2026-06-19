@@ -1,8 +1,8 @@
 ﻿#pragma once
 
-#include "ViewModels/MainViewModel.h"
-#include <winrt/OpenNet.UI.Xaml.View.Pages.h>
+import winrt.OpenNet.UI.Xaml.View.Pages;
 #include "MainWindow.g.h"
+#include "ViewModels/MainViewModel.h"
 
 namespace winrt::OpenNet::implementation
 {

@@ -1,14 +1,16 @@
-﻿#include "pch.h"
-#include "FileSystem.h"
-#include "../AppEnvironment.h"
-#include <winrt/Microsoft.Windows.Storage.h>
+﻿module;
 #include <shlobj_core.h>
 #include <windows.h>
 #include <shellapi.h>
-#include <mutex>
+
+#include "../AppEnvironment.h"
 
 #pragma comment(lib, "shell32.lib")
 #pragma comment(lib, "ole32.lib")
+
+module OpenNet.Core.IO.FileSystem;
+
+import winrt.Microsoft.Windows.Storage;
 
 using namespace winrt;
 using namespace winrt::Microsoft::Windows::Storage;
@@ -26,7 +28,7 @@ namespace winrt::OpenNet::Core::IO
 	winrt::hstring FileSystem::AppDownloadPathW;
 
 	// Never use it
-	bool FileSystem::CreateDirectory(const std::wstring& path)
+	bool FileSystem::CreateAppDirectory(const std::wstring& path)
 	{
 		try
 		{

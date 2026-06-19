@@ -3,12 +3,14 @@
 #include "ViewModels/ObservableMixin.h"
 #include "ViewModels/TransferViewModel.g.h"
 #include "../Models/TransferInfo.h"
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Foundation.Collections.h>
-#include <winrt/Windows.Storage.h>
-#include <winrt/Windows.Storage.Pickers.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Input.h>
+
+import winrt.Windows.Foundation;
+import winrt.Windows.Foundation.Collections;
+import winrt.Windows.Storage;
+import winrt.Windows.Storage.Pickers;
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Input;
+import std;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -52,7 +54,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 			Failed                         // 失败 / Failed
 		};
 
-		TransferStatus Status() const { return m_status; }
+		TransferStatus Status() const
+		{
+			return m_status;
+		}
 		void Status(TransferStatus value)
 		{
 			if (SetProperty(m_status, value, L"Status"))
@@ -69,13 +74,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			switch (m_status)
 			{
-			case TransferStatus::Idle: return L"空闲 / Idle";
-			case TransferStatus::Preparing: return L"准备中 / Preparing";
-			case TransferStatus::Transferring: return L"传输中 / Transferring";
-			case TransferStatus::Paused: return L"已暂停 / Paused";
-			case TransferStatus::Completed: return L"已完成 / Completed";
-			case TransferStatus::Failed: return L"失败 / Failed";
-			default: return L"未知 / Unknown";
+				case TransferStatus::Idle: return L"空闲 / Idle";
+				case TransferStatus::Preparing: return L"准备中 / Preparing";
+				case TransferStatus::Transferring: return L"传输中 / Transferring";
+				case TransferStatus::Paused: return L"已暂停 / Paused";
+				case TransferStatus::Completed: return L"已完成 / Completed";
+				case TransferStatus::Failed: return L"失败 / Failed";
+				default: return L"未知 / Unknown";
 			}
 		}
 
@@ -98,11 +103,20 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 
 		// 传输统计属性 / Transfer Statistics Properties
-		uint32_t TotalFiles() const { return m_totalFiles; }
-		void TotalFiles(uint32_t value) { SetProperty(m_totalFiles, value, L"TotalFiles"); }
+		std::uint32_t TotalFiles() const
+		{
+			return m_totalFiles;
+		}
+		void TotalFiles(std::uint32_t value)
+		{
+			SetProperty(m_totalFiles, value, L"TotalFiles");
+		}
 
-		uint32_t CompletedFiles() const { return m_completedFiles; }
-		void CompletedFiles(uint32_t value)
+		std::uint32_t CompletedFiles() const
+		{
+			return m_completedFiles;
+		}
+		void CompletedFiles(std::uint32_t value)
 		{
 			if (SetProperty(m_completedFiles, value, L"CompletedFiles"))
 			{
@@ -115,8 +129,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return m_totalFiles > 0 ? (static_cast<double>(m_completedFiles) / m_totalFiles * 100.0) : 0.0;
 		}
 
-		uint64_t TotalBytes() const { return m_totalBytes; }
-		void TotalBytes(uint64_t value)
+		std::uint64_t TotalBytes() const
+		{
+			return m_totalBytes;
+		}
+		void TotalBytes(std::uint64_t value)
 		{
 			if (SetProperty(m_totalBytes, value, L"TotalBytes"))
 			{
@@ -124,10 +141,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 				RaisePropertyChanged(L"ByteProgress");
 			}
 		}
-		winrt::hstring TotalBytesText() const { return winrt::OpenNet::Models::OpenNet::FormatBytes(m_totalBytes); }
+		winrt::hstring TotalBytesText() const
+		{
+			return winrt::OpenNet::Models::OpenNet::FormatBytes(m_totalBytes);
+		}
 
-		uint64_t TransferredBytes() const { return m_transferredBytes; }
-		void TransferredBytes(uint64_t value)
+		std::uint64_t TransferredBytes() const
+		{
+			return m_transferredBytes;
+		}
+		void TransferredBytes(std::uint64_t value)
 		{
 			if (SetProperty(m_transferredBytes, value, L"TransferredBytes"))
 			{
@@ -143,12 +166,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_selectedFiles{ nullptr };
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_connectedPeers{ nullptr };
 		TransferStatus m_status{ TransferStatus::Idle };
-		uint32_t m_totalFiles{};
-		uint32_t m_completedFiles{};
-		uint64_t m_totalBytes{};
-		uint64_t m_transferredBytes{};
+		std::uint32_t m_totalFiles{};
+		std::uint32_t m_completedFiles{};
+		std::uint64_t m_totalBytes{};
+		std::uint64_t m_transferredBytes{};
 
-		void UpdateCommands() {}
+		void UpdateCommands()
+		{
+		}
 	};
 }
 

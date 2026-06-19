@@ -1,4 +1,6 @@
-#pragma once
+﻿#pragma once
+
+import winrt.OpenNet.UI.Xaml.Media;
 
 #include "UI/Xaml/Media/Brushes/BackdropBlurBrush.g.h"
 #include "UI/Xaml/Media/Brushes/BackdropSaturationBrush.g.h"
@@ -9,6 +11,7 @@
 #include "UI/Xaml/Media/Brushes/ImageBlendBrush.g.h"
 #include "UI/Xaml/Media/Brushes/AcrylicBrush.g.h"
 #include "UI/Xaml/Media/Brushes/TilesBrush.g.h"
+
 #include "UI/Xaml/Media/Pipelines/PipelineBuilder.h"
 
 namespace winrt::OpenNet::UI::Xaml::Media::Brushes::implementation

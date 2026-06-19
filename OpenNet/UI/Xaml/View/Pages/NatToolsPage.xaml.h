@@ -1,45 +1,45 @@
-#pragma once
+﻿#pragma once
 #include "UI/Xaml/View/Pages/NatToolsPage.g.h"
 #include "Core/NetworkDetector.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-    struct NatToolsPage : NatToolsPageT<NatToolsPage>
-    {
-        NatToolsPage();
-        ~NatToolsPage();
+	struct NatToolsPage : NatToolsPageT<NatToolsPage>
+	{
+		NatToolsPage();
+		~NatToolsPage();
 
-        winrt::Windows::Foundation::IAsyncAction DetectNat_Click(
-            winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction DetectNat_Click(
+			winrt::Windows::Foundation::IInspectable const& sender,
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
-        winrt::Windows::Foundation::IAsyncAction TestPort_Click(
-            winrt::Windows::Foundation::IInspectable const& sender,
-            winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction TestPort_Click(
+			winrt::Windows::Foundation::IInspectable const& sender,
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
-    private:
-        ::OpenNet::Core::NetworkDetector m_detector;
+	private:
+		::OpenNet::Core::NetworkDetector m_detector;
 
-        // Auto-refresh timer for libtorrent session stats
-        winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
-        winrt::event_token m_timerToken{};
+		// Auto-refresh timer for libtorrent session stats
+		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
+		winrt::event_token m_timerToken{};
 
-        // Perform individual STUN binding test and return mapped IP:port and latency
-        struct StunTestResult
-        {
-            bool success{false};
-            winrt::hstring mappedAddress;
-            int latencyMs{0};
-        };
-        winrt::Windows::Foundation::IAsyncAction PerformStunTest(
-            winrt::hstring const& server, uint16_t port, std::shared_ptr<StunTestResult> outResult);
-        void UpdateLibtorrentStatus();
-    };
+		// Perform individual STUN binding test and return mapped IP:port and latency
+		struct StunTestResult
+		{
+			bool success{ false };
+			winrt::hstring mappedAddress;
+			int latencyMs{ 0 };
+		};
+		winrt::Windows::Foundation::IAsyncAction PerformStunTest(
+			winrt::hstring const& server, uint16_t port, std::shared_ptr<StunTestResult> outResult);
+		void UpdateLibtorrentStatus();
+	};
 }
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::factory_implementation
 {
-    struct NatToolsPage : NatToolsPageT<NatToolsPage, implementation::NatToolsPage>
-    {
-    };
+	struct NatToolsPage : NatToolsPageT<NatToolsPage, implementation::NatToolsPage>
+	{
+	};
 }

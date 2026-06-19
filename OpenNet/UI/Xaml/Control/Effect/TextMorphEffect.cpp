@@ -1,15 +1,13 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "TextMorphEffect.h"
 #if __has_include("UI/Xaml/Control/Effect/TextMorphEffect.g.cpp")
 #include "UI/Xaml/Control/Effect/TextMorphEffect.g.cpp"
 #endif
-
-#include <winrt/Microsoft.UI.Text.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <algorithm>
-#include <cmath>
-#include <string>
+#undef DrawText
+import winrt.Microsoft.Graphics.Canvas;
+import winrt.Microsoft.UI.Text;
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

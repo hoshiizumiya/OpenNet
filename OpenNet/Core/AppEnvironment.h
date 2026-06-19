@@ -1,5 +1,6 @@
 ﻿#pragma once
-#include <string>
+
+import std;
 
 namespace winrt::OpenNet::Core
 {

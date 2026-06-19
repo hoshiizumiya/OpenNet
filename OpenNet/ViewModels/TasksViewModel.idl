@@ -2,35 +2,35 @@
 
 namespace OpenNet.ViewModels
 {
-    [default_interface]
-    runtimeclass TasksViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        TasksViewModel();
+	[default_interface]
+	runtimeclass TasksViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		TasksViewModel();
 
-        // Collection bound to ListView - source
-        Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> Tasks { get; };
-        // Filtered view for UI binding
-        Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> FilteredTasks { get; };
+	// Collection bound to ListView - source
+		Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> Tasks { get; };
+		// Filtered view for UI binding
+		Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> FilteredTasks { get; };
 
-        // Currently selected task for displaying details (including SpeedGraph)
-        OpenNet.ViewModels.TaskViewModel SelectedTask;
+		// Currently selected task for displaying details (including SpeedGraph)
+		OpenNet.ViewModels.TaskViewModel SelectedTask;
 
-        // Commands for toolbar (placeholders for now)
-        Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
-        Microsoft.UI.Xaml.Input.ICommand NewFromHttpCommand { get; };
-        Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
-        Microsoft.UI.Xaml.Input.ICommand PauseCommand { get; };
-        Microsoft.UI.Xaml.Input.ICommand DeleteCommand{ get; };
-        Microsoft.UI.Xaml.Input.ICommand ExportCommand { get; };
-        Microsoft.UI.Xaml.Input.ICommand ImportCommand { get; };
+		// Commands for toolbar (placeholders for now)
+		Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand NewFromHttpCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand PauseCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand DeleteCommand{ get; };
+		Microsoft.UI.Xaml.Input.ICommand ExportCommand { get; };
+		Microsoft.UI.Xaml.Input.ICommand ImportCommand { get; };
 
-        // Apply filter by tag: "AllTasks", "Downloading", "Completed", "Failed"
-        void ApplyFilter(String tag);
+		// Apply filter by tag: "AllTasks", "Downloading", "Completed", "Failed"
+		void ApplyFilter(String tag);
 
-        // Text search filter
-        void SetSearchFilter(String text);
+		// Text search filter
+		void SetSearchFilter(String text);
 
-        // Event raised to request adding a task (string parameter can carry task name or data)
-        event Windows.Foundation.EventHandler<String> AddTaskRequested;
-    }
+		// Event raised to request adding a task (string parameter can carry task name or data)
+		event Windows.Foundation.EventHandler<String> AddTaskRequested;
+	}
 }

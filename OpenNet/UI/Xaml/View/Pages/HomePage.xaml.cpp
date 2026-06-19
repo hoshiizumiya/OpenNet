@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "XamlWorkaround.h"
 #include "UI/Xaml/View/Pages/HomePage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/HomePage.g.cpp")
 #include "UI/Xaml/View/Pages/HomePage.g.cpp"

@@ -1,7 +1,9 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
+
 #include "OperationProgressDialog.h"
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.h>
+
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

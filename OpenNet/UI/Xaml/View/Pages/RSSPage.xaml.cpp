@@ -1,12 +1,13 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "RSSPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/RSSPage.g.cpp")
 #include "UI/Xaml/View/Pages/RSSPage.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
-#include "Core/AppSettingsDatabase.h"
+
+import OpenNet.Core.AppSettingsDatabase;
+import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

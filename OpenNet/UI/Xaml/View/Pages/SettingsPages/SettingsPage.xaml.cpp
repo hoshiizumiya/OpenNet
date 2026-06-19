@@ -1,34 +1,35 @@
-﻿#include "pch.h"
+﻿// 解析 BitmapImage 的构造函数实现
+// 用于解析字符串为整数
+#include <Shlwapi.h>   // UrlCreateFromPathW
+
+#include "XamlWorkaround.h"
 #include "SettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/SettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/SettingsPage.g.cpp"
 #endif
 
-#include <winrt/Windows.System.h>
-#include "Core/Utils/Message.h"
 #include "MainSettingsPage.xaml.h"
 #include "MainWindow.xaml.h"
-#include "Helpers/WindowHelper.h"
-#include "Helpers/ThemeHelper.h"
-#include "winrt/Microsoft.Windows.AppLifecycle.h"
-#include "winrt/Microsoft.Windows.Globalization.h"
-// 解析 BitmapImage 的构造函数实现
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Animation.h>
-#include <winrt/Microsoft.UI.Dispatching.h> 
-#include <wil/cppwinrt_helpers.h>
 
-// 用于解析字符串为整数
-#include <sstream>
-#include <winrt/Microsoft.Windows.Storage.h>
-#include <Shlwapi.h>   // UrlCreateFromPathW
+import OpenNet.Core.Utils.Message;
+import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.WindowHelper;
+import winrt.Windows.UI;
+import winrt.Windows.System;
+import winrt.Microsoft.UI.Xaml.Media.Imaging;
+import winrt.Microsoft.UI.Xaml.Media.Animation;
+import winrt.Microsoft.UI.Dispatching;
+import winrt.Microsoft.Windows.Storage;
+import winrt.Microsoft.Windows.AppLifecycle;
+import winrt.Microsoft.Windows.Globalization;
+import winrtplus_coroutine;
 
 using namespace winrt;
-using namespace Microsoft::UI::Xaml;
-using namespace Microsoft::UI::Xaml::Controls;
-using namespace Microsoft::UI::Xaml::Media;
-using namespace Microsoft::UI::Xaml::Media::Imaging;
-using namespace Microsoft::UI::Xaml::Media::Animation;
+using namespace winrt::Microsoft::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml::Controls;
+using namespace winrt::Microsoft::UI::Xaml::Media;
+using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
+using namespace winrt::Microsoft::UI::Xaml::Media::Animation;
 using namespace ::winrt::Windows::Globalization;
 using namespace Microsoft::Windows::ApplicationModel::Resources;
 using namespace winrt::Windows::Foundation::Collections;
@@ -272,7 +273,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 
 			// ========== 回到 UI 线程更新控件 ==========
-			co_await wil::resume_foreground(m_dispatcher);
+			co_await winrtplus::resume_foreground(m_dispatcher);
 
 			// 优先设置壁纸（如果获取成功）
 			if (hasWallpaper && img)
@@ -353,7 +354,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 #endif
 
 		// ========== 回到 UI 线程：执行所有 UI 初始化 ==========
-		co_await wil::resume_foreground(m_dispatcher);
+		co_await winrtplus::resume_foreground(m_dispatcher);
 
 		auto strong = weak.get();
 		if (!strong) co_return;

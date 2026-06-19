@@ -1,9 +1,10 @@
-#pragma once
+﻿#pragma once
 #include "pch.h"
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.g.h"
 #include "ViewModels/NetworkSettingsViewModel.h"
-#include "Core/Torrent/TrackerManager.h"
-#include <winrt/Windows.Foundation.Collections.h>
+
+import winrt.Windows.Foundation.Collections;
+import OpenNet.Core.Torrent.TrackerManager;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {

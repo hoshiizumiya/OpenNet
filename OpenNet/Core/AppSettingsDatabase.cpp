@@ -5,17 +5,19 @@
  *
  * LICENSE:   The MIT License
  */
-
-#include "pch.h"
-#include "Core/AppSettingsDatabase.h"
+module;
+#include <Windows.h>
 #include "ThirdParty/Sqlite/sqlite3.h"
-#include "Core/IO/FileSystem.h"
 
-#include <filesystem>
-#include <sstream>
+module OpenNet.Core.AppSettingsDatabase;
+
+import OpenNet.Core.IO.FileSystem;
+import std;
 
 namespace OpenNet::Core
 {
+	using namespace std;
+
 	AppSettingsDatabase& AppSettingsDatabase::Instance()
 	{
 		static AppSettingsDatabase s_instance;

@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "TitleCard.h"
 #if __has_include("UI/Xaml/Control/Card/TitleCard.g.cpp")
 #include "UI/Xaml/Control/Card/TitleCard.g.cpp"

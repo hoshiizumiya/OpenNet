@@ -1,15 +1,13 @@
-﻿#include "pch.h"
+﻿module OpenNet.Helpers.ThemeHelper;
 
-#include "Core/AppSettingsDatabase.h"
-
-#include "ThemeHelper.h"
-#include "WindowHelper.h"
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.UI.ViewManagement.h>
-#include <winrt/Microsoft.Windows.Storage.h>
-#include <winrt/Microsoft.UI.h>
-#include <winrt/Microsoft.UI.Composition.SystemBackdrops.h>
-#include <winrt/Microsoft.UI.Windowing.h>
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Helpers.WindowHelper;
+import winrt.Windows.Foundation;
+import winrt.Windows.UI.ViewManagement;
+import winrt.Microsoft.Windows.Storage;
+import winrt.Microsoft.UI;
+import winrt.Microsoft.UI.Composition.SystemBackdrops;
+import winrt.Microsoft.UI.Windowing;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI;

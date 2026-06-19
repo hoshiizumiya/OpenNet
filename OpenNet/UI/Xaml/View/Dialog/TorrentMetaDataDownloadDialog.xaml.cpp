@@ -1,20 +1,23 @@
-﻿#include "pch.h"
+﻿// warning C4189
+#include "XamlWorkaround.h"
+import winrt.XamlToolkit.Labs.WinUI;
 #include "TorrentMetaDataDownloadDialog.xaml.h"
 #if __has_include("UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.g.cpp")
 #include "UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Windows.UI.Xaml.Data.h>
-#include <winrt/Microsoft.Windows.ApplicationModel.Resources.h>  
-#include <winrt/Windows.Storage.Pickers.h>
-#include <winrt/Windows.ApplicationModel.DataTransfer.h>
-#include "Core/P2PManager.h"
-#include "Helpers/ThemeHelper.h"
-#include "Core/Utils/Misc.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Pages/TasksPage.xaml.h"
+
+import Core.Utils.Misc;
+import OpenNet.Core.P2PManager;
+import OpenNet.Helpers.ThemeHelper;
+import winrt.Windows.UI.Xaml.Data;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
+import winrt.Windows.Storage.Pickers;
+import winrt.Windows.ApplicationModel.DataTransfer;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

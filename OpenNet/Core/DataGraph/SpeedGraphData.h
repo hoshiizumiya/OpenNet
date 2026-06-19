@@ -1,6 +1,8 @@
 ﻿#pragma once
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Windows.Foundation.h>
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Windows.Foundation;
+import std;
+using namespace std;
 
 class SpeedGraphData
 {

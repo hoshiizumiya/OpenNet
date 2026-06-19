@@ -1,14 +1,10 @@
-﻿#pragma once
+import winrt.Windows.Security.Cryptography;
+import winrt.Windows.Security.Cryptography.Core;
+#pragma once
 
-#include <winrt/base.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.Security.Cryptography.h>
-#include <winrt/Windows.Security.Cryptography.Core.h>
-#include <winrt/Windows.Storage.Streams.h>
-#include <vector>
-#include <string>
-#include <memory>
 
+import winrt.Windows.Foundation;
+import winrt.Windows.Storage.Streams;
 namespace OpenNet::Core
 {
     // 加密算法类型 / Encryption Algorithm Type

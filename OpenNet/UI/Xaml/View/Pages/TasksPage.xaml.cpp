@@ -1,28 +1,12 @@
-﻿#include "pch.h"
+﻿#include <shobjidl.h> // For IInitializeWithWindow
+#include <shellapi.h> // For ShellExecute
+
+#include "XamlWorkaround.h"
 #include "TasksPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TasksPage.g.cpp")
 #include "UI/Xaml/View/Pages/TasksPage.g.cpp"
 #endif
 
-#include <winrt/Microsoft.UI.Xaml.Controls.h>
-#include <winrt/Microsoft.UI.Xaml.h>
-#include <winrt/Microsoft.UI.Xaml.Data.h>
-#include <winrt/Microsoft.UI.Xaml.Input.h>
-#include <winrt/Microsoft.UI.Content.h>
-#include <winrt/Windows.Foundation.h>
-#include <winrt/Windows.ApplicationModel.Resources.h>
-#include <winrt/Windows.UI.Xaml.Navigation.h>
-#include <winrt/Microsoft.Windows.Storage.Pickers.h>
-#include <format>
-#include <limits>
-
-#include <shobjidl.h> // For IInitializeWithWindow
-#include <shellapi.h> // For ShellExecute
-#include <winrt/Microsoft.UI.Windowing.h>
-#include "Core/P2PManager.h"
-#include "Core/DownloadManager.h"
-#include "Core/HttpStateManager.h"
-#include "Core/IO/FileSystem.h"
 #include "Core/AppEnvironment.h"
 #include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
@@ -32,8 +16,23 @@
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
-#include "Helpers/ControlLengthHelper.h"
-#include "Helpers/ColumnWidthHelper.h"
+
+import OpenNet.Core.DownloadManager;
+import OpenNet.Core.HttpStateManager;
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.P2PManager;
+import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.Helpers.ControlLengthHelper;
+import winrt.Windows.Foundation;
+import winrt.Windows.UI.Xaml.Navigation;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Microsoft.UI.Xaml.Input;
+import winrt.Microsoft.UI.Content;
+import winrt.Microsoft.UI.Windowing;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
+import winrt.Microsoft.Windows.Storage.Pickers;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -82,12 +81,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	// Restore saved column widths
-	void TasksPage::DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void TasksPage::DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
 		RestoreColumnWidths();
 	}
 
-	void TasksPage::GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+	void TasksPage::GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)
 	{
 		::OpenNet::Helpers::SaveControlHeight("TasksPage_ContentFrame_Height", TasksList().ActualHeight());
 	}

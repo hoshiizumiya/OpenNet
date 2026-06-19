@@ -234,7 +234,6 @@
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp" />
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
     <ClCompile Include="Core\NetworkDetector.cpp">
       <Filter>Core</Filter>
@@ -440,8 +439,6 @@
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp">
       <Filter>Core\GeoIP</Filter>
     </ClCompile>
-    <ClCompile Include="Core\AppRuntime.cpp" />
-    <ClCompile Include="Web\WebView2\WebView2Version.cpp" />
     <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
     <ClCompile Include="Core\ExceptionService\CapturedException.ixx" />
     <ClCompile Include="UI\Xaml\Control\Card\HorizontalCard.cpp" />
@@ -452,6 +449,106 @@
     <ClCompile Include="Models\NameCultureInfoValue.cpp" />
     <ClCompile Include="UI\Xaml\Behavior\Action\ShowTeachingTipAction.cpp" />
     <ClCompile Include="Service\CultureOptions.cpp" />
+    <ClCompile Include="Core\Setting\LocalSetting.ixx" />
+    <ClCompile Include="Core\Setting\SettingKeys.ixx" />
+    <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.ixx">
+      <Filter>Core\ApplicationModel</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Torrent\TrackerManager.ixx">
+      <Filter>Core\Torrent</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\WindowHelper.ixx">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Utils\Misc.ixx">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\HttpStateManager.ixx">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Aria2\Aria2Models.ixx">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Aria2\Aria2Engine.ixx">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\DownloadManager.ixx">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AppSettingsDatabase.ixx">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\ControlLengthHelper.ixx" />
+    <ClCompile Include="Helpers\ColumnWidthHelper.ixx">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\ThemeHelper.ixx">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\Guide\GuideState.ixx" />
+    <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.ixx">
+      <Filter>Core\torrentCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\torrentCore\TorrentMetadataInfo.ixx">
+      <Filter>Core\torrentCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\FileSystem.ixx">
+      <Filter>Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\torrentCore\libtorrentHandle.ixx">
+      <Filter>Core\torrentCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\torrentCore\TorrentStateManager.ixx">
+      <Filter>Core\torrentCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\P2PManager.ixx">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\FileOperation.ixx">
+      <Filter>Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\TorrentSettings.ixx">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Utils\Message.ixx">
+      <Filter>Core\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Aria2\Aria2Helpers.ixx">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Aria2\JsonRpc2.ixx">
+      <Filter>Core\Aria2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GeoIP\GeoIPManager.ixx">
+      <Filter>Core\GeoIP</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\GeoIP\GeoIPDatabase.ixx">
+      <Filter>Core\GeoIP</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSTypes.ixx">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSParser.ixx">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSManager.ixx">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSDatabase.ixx">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\RSS\RSSLinkResolver.ixx">
+      <Filter>Core\RSS</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AppRuntime.ixx">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\AppRuntime.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Web\WebView2\WebView2Version.cpp">
+      <Filter>Web\WebView2</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -463,21 +560,6 @@
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\NetworkDetector.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Aria2\Aria2Helpers.h">
-      <Filter>Core\Aria2</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Aria2\Aria2Models.h">
-      <Filter>Core\Aria2</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Aria2\JsonRpc2.h">
-      <Filter>Core\Aria2</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Aria2\Aria2Engine.h">
-      <Filter>Core\Aria2</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\DownloadManager.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Models\NetworkInfo.h">
@@ -515,15 +597,6 @@
     </ClInclude>
     <ClInclude Include="Models\NetModel.h" />
     <ClInclude Include="Helpers\NavItemIconHelper.h" />
-    <ClInclude Include="Helpers\WindowHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\torrentCore\libtorrentHandle.h">
-      <Filter>Core\torrentCore</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\torrentCore\TorrentStateManager.h">
-      <Filter>Core\torrentCore</Filter>
-    </ClInclude>
     <ClInclude Include="ViewModels\TaskViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
@@ -595,25 +668,7 @@
     <ClInclude Include="ViewModels\ViewModelLocator.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="Helpers\ThemeHelper.h">
-      <Filter>Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Utils\Misc.h">
-      <Filter>Core\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Utils\Message.h">
-      <Filter>Core\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\IO\FileSystem.h">
-      <Filter>Core\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\IO\FileOperation.h">
-      <Filter>Core\IO</Filter>
-    </ClInclude>
     <ClInclude Include="Core\AppEnvironment.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\AppSettingsDatabase.h">
       <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\DataGraph\SpeedGraphDatabase.h">
@@ -623,12 +678,6 @@
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\RSSViewModel.h" />
-    <ClInclude Include="Core\RSS\RSSLinkResolver.h">
-      <Filter>Core\RSS</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\RSS\RSSDatabase.h">
-      <Filter>Core\RSS</Filter>
-    </ClInclude>
     <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.h">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </ClInclude>
@@ -680,32 +729,14 @@
     <ClInclude Include="UI\Xaml\Media\Brushes\BrushTypes.h">
       <Filter>UI\Xaml\Media\Brushes</Filter>
     </ClInclude>
-    <ClInclude Include="Core\RSS\RSSTypes.h">
-      <Filter>Core\RSS</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\RSS\RSSParser.h">
-      <Filter>Core\RSS</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\RSS\RSSManager.h">
-      <Filter>Core\RSS</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\P2PManager.h">
-      <Filter>Core\RSS</Filter>
-    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClInclude>
     <ClInclude Include="Core\IPFilter\IPFilterManager.h">
       <Filter>Core\IPFilter</Filter>
     </ClInclude>
-    <ClInclude Include="Core\GeoIP\GeoIPManager.h">
-      <Filter>Core\GeoIP</Filter>
-    </ClInclude>
     <ClInclude Include="ViewModels\TorrentMetadataViewModel.h">
       <Filter>ViewModels</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\ApplicationModel\PackageIdentityAdapter.h">
-      <Filter>Core\ApplicationModel</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\TrackersSettingsViewModel.h">
       <Filter>ViewModels</Filter>
@@ -713,26 +744,8 @@
     <ClInclude Include="ThirdParty\RepoInfo.h">
       <Filter>ThirdPatry</Filter>
     </ClInclude>
-    <ClInclude Include="Core\TorrentSettings.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\torrentCore\TorrentMetadataFetcher.h">
-      <Filter>Core\torrentCore</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\torrentCore\TorrentMetadataInfo.h">
-      <Filter>Core\torrentCore</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\Torrent\TrackerManager.h">
-      <Filter>Core\Torrent</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\HttpStateManager.h">
-      <Filter>Core</Filter>
-    </ClInclude>
     <ClInclude Include="Web\Request\Builder\GithubRequest.h">
       <Filter>Web\Request\Builder</Filter>
-    </ClInclude>
-    <ClInclude Include="Helpers\ColumnWidthHelper.h">
-      <Filter>Helpers</Filter>
     </ClInclude>
     <ClInclude Include="Core\IO\Http\Loopback\LoopbackSupportCheck.h">
       <Filter>Core\IO\Http</Filter>
@@ -746,13 +759,12 @@
     <ClInclude Include="Core\IO\Http\FirewallRuleManager.h">
       <Filter>Core\IO\Http</Filter>
     </ClInclude>
-    <ClInclude Include="Core\GeoIP\GeoIPDatabase.h">
-      <Filter>Core\GeoIP</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\AppRuntime.h" />
-    <ClInclude Include="Web\WebView2\WebView2Version.h" />
-    <ClInclude Include="Helpers\ControlLengthHelper.h" />
     <ClInclude Include="UI\Xaml\Control\Effect\TextMorphEffect.h" />
+    <ClInclude Include="Core\Setting\LocalSetting.h" />
+    <ClInclude Include="XamlWorkaround.h" />
+    <ClInclude Include="Web\WebView2\WebView2Version.h">
+      <Filter>Web\WebView2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AppIcons\SmallTile.scale-100.png">
@@ -1102,6 +1114,9 @@
     <Filter Include="Core\IO\Http">
       <UniqueIdentifier>{8fb266bd-6ab3-4045-93ff-85be7f3fa69d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Web\WebView2">
+      <UniqueIdentifier>{78458ff8-179b-4059-a42a-f58ccd83108f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1147,12 +1162,24 @@
     <PRIResource Include="Strings\en-US\Resources.resw">
       <Filter>Strings</Filter>
     </PRIResource>
-    <PRIResource Include="Strings\zh-Hant\Resources.resw" />
-    <PRIResource Include="Strings\ja\Resources.resw" />
-    <PRIResource Include="Strings\fr\Resources.resw" />
-    <PRIResource Include="Strings\it\Resources.resw" />
-    <PRIResource Include="Strings\ko\Resources.resw" />
-    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\ja\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ko\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\zh-Hant\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\ru\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\fr\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
+    <PRIResource Include="Strings\it\Resources.resw">
+      <Filter>Strings</Filter>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

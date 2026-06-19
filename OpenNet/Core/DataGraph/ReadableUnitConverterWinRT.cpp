@@ -1,4 +1,5 @@
 ﻿#include "pch.h"
+#include "XamlWorkaround.h"
 #include "ReadableUnitConverterWinRT.h"
 #if __has_include("ReadableUnitConverterWinRT.g.cpp")
 #include "ReadableUnitConverterWinRT.g.cpp"

@@ -6,20 +6,15 @@
  *
  * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
-
-#include "pch.h"
-#include "Core/HttpStateManager.h"
-
+module;
+#include <Windows.h>
 #include "ThirdParty/Sqlite/sqlite3.h"
-#include "Core/IO/FileSystem.h"
-
-#include <chrono>
-#include <filesystem>
-#include <fstream>
-#include <random>
-
 // JSON is only needed for one-time migration from the old http_downloads.json
 #include <nlohmann/json.hpp>
+
+module OpenNet.Core.HttpStateManager;
+import OpenNet.Core.IO.FileSystem;
+
 using json = nlohmann::json;
 
 namespace OpenNet::Core

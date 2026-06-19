@@ -1,4 +1,4 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/Media/Pipelines/PipelineBrush.h"
 #include "UI/Xaml/Media/Pipelines/PipelineBrush.g.cpp"
 

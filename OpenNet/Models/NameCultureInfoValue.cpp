@@ -1,4 +1,4 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "NameCultureInfoValue.h"
 #if __has_include("Models/NameCultureInfoValue.g.cpp")
 #include "Models/NameCultureInfoValue.g.cpp"

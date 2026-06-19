@@ -1,9 +1,10 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "NotifyIconXamlHostWindow.xaml.h"
 #if __has_include("UI/Shell/NotifyIconXamlHostWindow.g.cpp")
 #include "UI/Shell/NotifyIconXamlHostWindow.g.cpp"
 #endif
-#include "Helpers/WindowHelper.h"
+
+import OpenNet.Helpers.WindowHelper;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;

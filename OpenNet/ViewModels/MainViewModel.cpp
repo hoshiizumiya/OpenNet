@@ -1,15 +1,15 @@
-﻿#include "pch.h"
+﻿#include "XamlWorkaround.h"
+import winrt.OpenNet.ViewModels;
+
 #include "MainViewModel.h"
 #include "ViewModels/MainViewModel.g.cpp"
-#include "Core/P2PManager.h"
-#include "Core/DownloadManager.h"
-#include "Core/NetworkDetector.h"
 
-#include <chrono>
-#include <format>
+import OpenNet.Core.DownloadManager;
+import OpenNet.Core.P2PManager;
+import winrtplus_coroutine;
 
 using namespace winrt;
-using namespace Windows::Foundation;
+using namespace winrt::Windows::Foundation;
 using namespace std::chrono_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -60,11 +60,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 		co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
 		if (::OpenNet::Core::P2PManager::Instance().IsTorrentCoreInitialized())
 		{
-			co_await wil::resume_foreground(dispatcher);
+			co_await winrtplus::resume_foreground(dispatcher);
 		}
 		else
 		{
-			co_await wil::resume_foreground(dispatcher);
+			co_await winrtplus::resume_foreground(dispatcher);
 		}
 	}
 
@@ -90,7 +90,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (core && core->IsRunning())
 				break;
 			std::unique_lock<std::mutex> lock(m_speedMutex);
-			m_speedCv.wait_for(lock, 500ms, [this] { return m_stopSpeedRefresh.load(); });
+			m_speedCv.wait_for(lock, 500ms, [this]
+			{
+				return m_stopSpeedRefresh.load();
+			});
 		}
 
 		while (!m_stopSpeedRefresh.load())
@@ -144,7 +147,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 				{
 					try
 					{
-                      auto op = m_networkDetector.TestPortAccessibilityAsync(
+						auto op = m_networkDetector.TestPortAccessibilityAsync(
 							static_cast<uint16_t>(listenPort), true);
 						// Wait with periodic stop-flag checks instead of blocking indefinitely
 						auto status = op.Status();
@@ -156,7 +159,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 								break;
 							}
 							std::unique_lock<std::mutex> lock(m_speedMutex);
-							m_speedCv.wait_for(lock, 200ms, [this] { return m_stopSpeedRefresh.load(); });
+							m_speedCv.wait_for(lock, 200ms, [this]
+							{
+								return m_stopSpeedRefresh.load();
+							});
 							status = op.Status();
 						}
 						if (status == winrt::Windows::Foundation::AsyncStatus::Completed)
@@ -231,7 +237,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 			{
 				std::unique_lock<std::mutex> lock(m_speedMutex);
-				m_speedCv.wait_for(lock, 1500ms, [this] { return m_stopSpeedRefresh.load(); });
+				m_speedCv.wait_for(lock, 1500ms, [this]
+				{
+					return m_stopSpeedRefresh.load();
+				});
 			}
 		}
 	}

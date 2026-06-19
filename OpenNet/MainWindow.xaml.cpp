@@ -1,21 +1,22 @@
-﻿#include "pch.h"
+﻿#include <windows.h>
+#include <Shlwapi.h>
+#include <wil/resource.h>
+#include <resource.h>
+
+#include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
 #endif
 
 #include "UI/Xaml/View/Pages/MainView.xaml.h"
-#include "Helpers/WindowHelper.h"
-#include "Core/AppSettingsDatabase.h"
-#include "winrt/microsoft.ui.interop.h"
-#include <Shlwapi.h>
-#include <wil/resource.h>
-#include <resource.h>
-#include <windows.h>
-#include <winrt/Microsoft.UI.Windowing.h>
-#include <winrt/Microsoft.UI.Xaml.Media.h>
-#include <winrt/Microsoft.UI.Xaml.Media.Imaging.h>
-#include <winrt/WinUI3Package.h>
+
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Helpers.WindowHelper;
+import winrtplus.Microsoft.UI.Interop;
+import winrt.Microsoft.UI.Windowing;
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Microsoft.UI.Xaml.Media.Imaging;
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;

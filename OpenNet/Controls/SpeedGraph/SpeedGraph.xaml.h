@@ -1,18 +1,20 @@
 ﻿#pragma once
 
-#include "Controls/SpeedGraph/SpeedGraph.g.h"
-#include "winrt/Microsoft.UI.Xaml.h"
-#include "winrt/Microsoft.UI.Xaml.Markup.h"
-#include "winrt/Microsoft.UI.Xaml.Controls.Primitives.h"
-#include <winrt/Windows.UI.h>
-#include <winrt/Microsoft.Graphics.Canvas.Brushes.h>
-#include <winrt/Microsoft.Graphics.Canvas.Geometry.h>
-#include <winrt/Microsoft.Graphics.Canvas.UI.h>
-#include <winrt/Microsoft.Graphics.Canvas.UI.Xaml.h>
+// workaround for xamlc generated .xaml.g.h
+import winrt.Microsoft.UI.Xaml.Shapes;
 
-#include <chrono>
+#include "Controls/SpeedGraph/SpeedGraph.g.h"
 #include "Core/DataGraph/SpeedGraphData.h"
 #include <ViewModels/ViewModelLocator.h>
+
+import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Markup;
+import winrt.Microsoft.UI.Xaml.Controls.Primitives;
+import winrt.Windows.UI;
+import winrt.Microsoft.Graphics.Canvas.Brushes;
+import winrt.Microsoft.Graphics.Canvas.Geometry;
+import winrt.Microsoft.Graphics.Canvas.UI;
+import winrt.Microsoft.Graphics.Canvas.UI.Xaml;
 
 namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 {
