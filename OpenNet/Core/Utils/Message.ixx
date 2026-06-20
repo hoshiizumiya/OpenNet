@@ -3,7 +3,7 @@
 import winrt_base;
 import winrt.Microsoft.Windows.ApplicationModel.Resources;
 
-export namespace Core::Utils::Message
+export namespace OpenNet::Core::Utils::Message
 {
 	enum Severity
 	{
@@ -13,6 +13,7 @@ export namespace Core::Utils::Message
 	};
 
 	void ShowMessageBox(const wchar_t* message, Severity level);
+	void ShowErrorMessage(const wchar_t* title, const wchar_t* message);
 
 }
 

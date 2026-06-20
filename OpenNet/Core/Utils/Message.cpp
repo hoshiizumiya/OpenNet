@@ -6,7 +6,7 @@ module OpenNet.Core.Utils.Message;
 using namespace winrt;
 using namespace winrt::Microsoft::Windows::ApplicationModel::Resources;
 
-namespace Core::Utils::Message
+namespace OpenNet::Core::Utils::Message
 {
 	void ShowMessageBox(const wchar_t* message, Severity level)
 	{
@@ -30,6 +30,25 @@ namespace Core::Utils::Message
 				break;
 		}
 
+	}
+
+	void ShowErrorMessage(const wchar_t* title, const wchar_t* message)
+	{
+		if ((title) == nullptr)
+		{
+			// TODO
+		}
+
+		// Show message box
+		int result = MessageBoxW(
+			nullptr,           // No parent window
+			message,           // Message text
+			title,             // Title
+			MB_OK | MB_ICONERROR | MB_SETFOREGROUND | MB_TOPMOST
+		);
+
+		// MessageBoxW returns IDOK (1) when user clicks OK button
+		// We always return S_OK because message box was shown successfully
 	}
 }
 

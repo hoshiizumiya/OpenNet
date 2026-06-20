@@ -118,18 +118,42 @@
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Page>
-    <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml" />
-    <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml" />
-    <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml" />
-    <Page Include="UI\Xaml\View\InfoBarView.xaml" />
-    <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml" />
-    <Page Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml" />
-    <Page Include="UI\Xaml\View\Windows\GuideWindow.xaml" />
-    <Page Include="UI\Xaml\View\GuideView.xaml" />
-    <Page Include="UI\Xaml\Control\Card\HorizontalCard_ResourceDictionary.xaml" />
-    <Page Include="UI\Xaml\Control\Effect\TextMorphEffect_ResourceDictionary.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\FontStyle.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\TransitionCollection.xaml" />
+    <Page Include="UI\Xaml\Control\Card\HorizontalCard_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Card</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Effect\TextMorphEffect_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </Page>
+    <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml">
+      <Filter>UI\Shell</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\ThemeSettingBackdropCustomizePage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\GuideView.xaml">
+      <Filter>UI\Xaml\View</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\GuideWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\FontStyle.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\TransitionCollection.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\InfoBarView.xaml">
+      <Filter>UI\Xaml\View</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -231,7 +255,9 @@
     <Midl Include="ViewModels\RSSViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
-    <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl" />
+    <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl">
+      <Filter>UI\Xaml\Media\Effects</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
@@ -424,33 +450,13 @@
     <ClCompile Include="Web\Request\Builder\GithubRequest.cpp">
       <Filter>Web\Request\Builder</Filter>
     </ClCompile>
-    <ClCompile Include="Core\IO\Http\Loopback\LoopbackSupportCheck.cpp">
-      <Filter>Core\IO\Http</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\IO\Http\LoopbackSupport.cpp">
-      <Filter>Core\IO\Http</Filter>
-    </ClCompile>
-    <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.cpp">
-      <Filter>Core\IO\Http</Filter>
-    </ClCompile>
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp">
       <Filter>Core\IO\Http</Filter>
     </ClCompile>
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp">
       <Filter>Core\GeoIP</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
-    <ClCompile Include="Core\ExceptionService\CapturedException.ixx" />
-    <ClCompile Include="UI\Xaml\Control\Card\HorizontalCard.cpp" />
-    <ClCompile Include="UI\Xaml\Behavior\InvokeCommandOnLoadedBehavior.cpp" />
-    <ClCompile Include="ViewModels\Guide\GuideViewModel.cpp" />
     <ClCompile Include="UI\Xaml\Control\Effect\TextMorphEffect.cpp" />
-    <ClCompile Include="UI\Xaml\Markup\UInt32Extension.cpp" />
-    <ClCompile Include="Models\NameCultureInfoValue.cpp" />
-    <ClCompile Include="UI\Xaml\Behavior\Action\ShowTeachingTipAction.cpp" />
-    <ClCompile Include="Service\CultureOptions.cpp" />
-    <ClCompile Include="Core\Setting\LocalSetting.ixx" />
-    <ClCompile Include="Core\Setting\SettingKeys.ixx" />
     <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.ixx">
       <Filter>Core\ApplicationModel</Filter>
     </ClCompile>
@@ -478,14 +484,12 @@
     <ClCompile Include="Core\AppSettingsDatabase.ixx">
       <Filter>Core</Filter>
     </ClCompile>
-    <ClCompile Include="Helpers\ControlLengthHelper.ixx" />
     <ClCompile Include="Helpers\ColumnWidthHelper.ixx">
       <Filter>Helpers</Filter>
     </ClCompile>
     <ClCompile Include="Helpers\ThemeHelper.ixx">
       <Filter>Helpers</Filter>
     </ClCompile>
-    <ClCompile Include="ViewModels\Guide\GuideState.ixx" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.ixx">
       <Filter>Core\torrentCore</Filter>
     </ClCompile>
@@ -548,6 +552,61 @@
     </ClCompile>
     <ClCompile Include="Web\WebView2\WebView2Version.cpp">
       <Filter>Web\WebView2</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\FirewallRuleManager.ixx">
+      <Filter>Core\IO\Http</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Setting\LocalSetting.ixx">
+      <Filter>Core\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\Setting\SettingKeys.ixx">
+      <Filter>Core\Setting</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Card\HorizontalCard.cpp">
+      <Filter>UI\Xaml\Control\Card</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behavior\Action\ShowTeachingTipAction.cpp">
+      <Filter>UI\Behavior\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.ixx">
+      <Filter>Core\IO\Http</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\Loopback\LoopbackSupportCheck.ixx">
+      <Filter>Core\IO\Http\Loopback</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\IO\Http\LoopbackSupport.ixx">
+      <Filter>Core\IO\Http\Loopback</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Markup\UInt32Extension.cpp">
+      <Filter>UI\Xaml\Markup</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behavior\InvokeCommandOnLoadedBehavior.cpp">
+      <Filter>UI\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\Guide\GuideViewModel.cpp">
+      <Filter>ViewModels\GuideView</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\Guide\GuideState.ixx">
+      <Filter>ViewModels\GuideView</Filter>
+    </ClCompile>
+    <ClCompile Include="Helpers\ControlLengthHelper.ixx">
+      <Filter>Helpers</Filter>
+    </ClCompile>
+    <ClCompile Include="Models\NameCultureInfoValue.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\CultureOptions.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx">
+      <Filter>Core\ExceptionService</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ExceptionService\CapturedException.ixx">
+      <Filter>Core\ExceptionService</Filter>
+    </ClCompile>
+    <ClCompile Include="XamlApplicationLifetime.ixx" />
+    <ClCompile Include="Core\ExceptionService\OpenNetException.ixx">
+      <Filter>Core\ExceptionService</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -747,20 +806,7 @@
     <ClInclude Include="Web\Request\Builder\GithubRequest.h">
       <Filter>Web\Request\Builder</Filter>
     </ClInclude>
-    <ClInclude Include="Core\IO\Http\Loopback\LoopbackSupportCheck.h">
-      <Filter>Core\IO\Http</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\IO\Http\LoopbackSupport.h">
-      <Filter>Core\IO\Http</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.h">
-      <Filter>Core\IO\Http</Filter>
-    </ClInclude>
-    <ClInclude Include="Core\IO\Http\FirewallRuleManager.h">
-      <Filter>Core\IO\Http</Filter>
-    </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Effect\TextMorphEffect.h" />
-    <ClInclude Include="Core\Setting\LocalSetting.h" />
     <ClInclude Include="XamlWorkaround.h" />
     <ClInclude Include="Web\WebView2\WebView2Version.h">
       <Filter>Web\WebView2</Filter>
@@ -1069,12 +1115,6 @@
     <Filter Include="UI\Xaml\Media\Helpers">
       <UniqueIdentifier>{e5f6a7b8-c9d0-1234-efab-5678901234ef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Behaviors">
-      <UniqueIdentifier>{4d2e1f47-697a-4208-a477-a2d624a47c4c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Behaviors\Headers">
-      <UniqueIdentifier>{22552afb-1ef7-426d-9eae-f5a76f5fd9ea}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\RSS">
       <UniqueIdentifier>{10e84fea-0a8d-40c3-88ac-918f59810154}</UniqueIdentifier>
     </Filter>
@@ -1117,6 +1157,33 @@
     <Filter Include="Web\WebView2">
       <UniqueIdentifier>{78458ff8-179b-4059-a42a-f58ccd83108f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Core\Setting">
+      <UniqueIdentifier>{8b305ef9-5414-4487-8b5d-8c0804c66284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\IO\Http\Loopback">
+      <UniqueIdentifier>{240ae173-5e68-43fc-99f8-5f9c7ff5dbd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Service">
+      <UniqueIdentifier>{2c7c6c7e-1c8d-41f6-b4fa-16cab4d658aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Markup">
+      <UniqueIdentifier>{e8bba0d3-f42a-45cd-ae76-68fe530c7e0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Behavior">
+      <UniqueIdentifier>{4d2e1f47-697a-4208-a477-a2d624a47c4c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Behavior\Action">
+      <UniqueIdentifier>{937b2d47-bc68-40d9-850f-ea27f9dec424}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModels\GuideView">
+      <UniqueIdentifier>{c0cdbf21-ea4d-4143-b350-7a34a3a5c12c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI\Xaml\Control\Theme">
+      <UniqueIdentifier>{2f11c28e-7486-44e8-8e6f-fb42251f975d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Core\ExceptionService">
+      <UniqueIdentifier>{3d5d8fae-4849-4e62-9879-4d3592e537cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -1133,7 +1200,7 @@
     </None>
     <None Include="OpenNet_TemporaryKey.pfx" />
     <None Include="mvvm_framework\README.md">
-      <Filter>UI\Behaviors</Filter>
+      <Filter>UI\Behavior</Filter>
     </None>
     <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV">
       <Filter>Assets\IP2Location</Filter>

@@ -14,7 +14,7 @@ module OpenNet.Helpers.WindowHelper;
 import OpenNet.App;
 import OpenNet.Core.Utils.Message;
 
-using namespace Core::Utils::Message;
+using namespace OpenNet::Core::Utils::Message;
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
@@ -32,11 +32,11 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		auto appWindow = GetAppWindow(newWindow);
 
 		newWindow.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const&)
-						 {
-							 auto closedWindow = sender.try_as<Window>();
-							 auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
-							 m_activeWindows.erase(it, m_activeWindows.end());
-						 });
+		{
+			auto closedWindow = sender.try_as<Window>();
+			auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
+			m_activeWindows.erase(it, m_activeWindows.end());
+		});
 
 		return newWindow;
 	}
@@ -48,14 +48,14 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		auto appWindow = GetAppWindow(window);
 
 		window.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const& /*args*/)
-					  {
-						  auto closedWindow = sender.try_as<Window>();
-						  if (closedWindow)
-						  {
-							  auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
-							  m_activeWindows.erase(it, m_activeWindows.end());
-						  }
-					  });
+		{
+			auto closedWindow = sender.try_as<Window>();
+			if (closedWindow)
+			{
+				auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
+				m_activeWindows.erase(it, m_activeWindows.end());
+			}
+		});
 	}
 
 	Window WindowHelper::GetWindowForElement(UIElement const& element)

@@ -62,15 +62,12 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           submodules: recursive
 
       - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Setup NuGet
-        uses: nuget/setup-nuget@v2
+        uses: microsoft/setup-msbuild@v3
 
       - name: Set up vcpkg
         working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}

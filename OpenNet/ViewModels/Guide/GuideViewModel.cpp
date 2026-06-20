@@ -86,7 +86,6 @@ namespace winrt::OpenNet::ViewModels::Guide::implementation
 	{
 	}
 
-#pragma region Agreement
 	winrt::OpenNet::Models::NameCultureInfoValue GuideViewModel::SelectedCulture()
 	{
 		throw hresult_not_implemented();
@@ -95,6 +94,8 @@ namespace winrt::OpenNet::ViewModels::Guide::implementation
 	{
 		throw hresult_not_implemented();
 	}
+#pragma region Agreement
+
 	bool GuideViewModel::IsTermOfServiceAgreed()
 	{
 		throw hresult_not_implemented();

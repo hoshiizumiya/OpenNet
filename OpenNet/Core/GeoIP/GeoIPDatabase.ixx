@@ -53,7 +53,7 @@ export namespace OpenNet::Core
         std::string LookupCountryName(std::string const& ipAddress) const;
 
     private:
-        enum class DataType : uint8_t
+        enum class DataType : std::uint8_t
         {
             Unknown = 0,
             Pointer = 1,

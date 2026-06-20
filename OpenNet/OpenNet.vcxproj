@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.props" Condition="Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.props')" />
+  <Import Project="..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.props" Condition="Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.props')" />
   <Import Project="..\packages\Microsoft.Windows.SDK.BuildTools.MSIX.1.7.260610101\build\Microsoft.Windows.SDK.BuildTools.MSIX.props" Condition="Exists('..\packages\Microsoft.Windows.SDK.BuildTools.MSIX.1.7.260610101\build\Microsoft.Windows.SDK.BuildTools.MSIX.props')" />
   <Import Project="..\packages\Microsoft.Windows.AI.MachineLearning.2.1.71\build\native\Microsoft.Windows.AI.MachineLearning.props" Condition="Exists('..\packages\Microsoft.Windows.AI.MachineLearning.2.1.71\build\native\Microsoft.Windows.AI.MachineLearning.props')" />
   <Import Project="..\packages\Microsoft.WindowsAppSDK.2.2.0\build\native\Microsoft.WindowsAppSDK.props" Condition="Exists('..\packages\Microsoft.WindowsAppSDK.2.2.0\build\native\Microsoft.WindowsAppSDK.props')" />
@@ -169,6 +169,8 @@
     <ClCompile Include="Core\AppRuntime.ixx">
       <FileType>Document</FileType>
     </ClCompile>
+    <ClCompile Include="Core\ExceptionService\OpenNetException.ixx" />
+    <ClCompile Include="XamlApplicationLifetime.ixx" />
     <ClInclude Include="Controls\SpeedGraph\SpeedGraph.xaml.h">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -183,10 +185,9 @@
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Core\IO\Http\FirewallRuleManager.h" />
-    <ClInclude Include="Core\IO\Http\LoopbackSupport.h" />
-    <ClInclude Include="Core\IO\Http\Loopback\LoopbackSupportCheck.h" />
-    <ClInclude Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.h" />
+    <ClCompile Include="Core\IO\Http\FirewallRuleManager.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="Core\IPFilter\IPFilterManager.h" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.ixx">
       <FileType>Document</FileType>
@@ -198,6 +199,9 @@
     <ClCompile Include="Core\IO\FileSystem.ixx">
       <FileType>Document</FileType>
     </ClCompile>
+    <ClCompile Include="Core\IO\Http\LoopbackSupport.ixx" />
+    <ClCompile Include="Core\IO\Http\Loopback\LoopbackSupportCheck.ixx" />
+    <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.ixx" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -213,7 +217,6 @@
     <ClCompile Include="Core\RSS\RSSTypes.ixx">
       <FileType>Document</FileType>
     </ClCompile>
-    <ClInclude Include="Core\Setting\LocalSetting.h" />
     <ClCompile Include="Core\Setting\SettingKeys.ixx">
       <FileType>Document</FileType>
     </ClCompile>
@@ -754,10 +757,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp" />
-    <ClCompile Include="Core\IO\Http\LoopbackSupport.cpp" />
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp" />
-    <ClCompile Include="Core\IO\Http\Loopback\LoopbackSupportCheck.cpp" />
-    <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.cpp" />
     <ClCompile Include="Core\IPFilter\IPFilterManager.cpp" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.cpp" />
     <ClCompile Include="Core\DataGraph\SpeedGraphDatabase.cpp" />
@@ -1512,7 +1512,7 @@
     <Import Project="..\packages\XamlToolkit.WinUI.Helpers.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" />
     <Import Project="..\packages\XamlToolkit.WinUI.Controls.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets" Condition="Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" />
     <Import Project="..\packages\XamlToolkit.Labs.WinUI.Native.0.6.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets" Condition="Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.6.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" />
-    <Import Project="..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.targets" Condition="Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.targets')" />
+    <Import Project="..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.targets" Condition="Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -1559,8 +1559,8 @@
     <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Helpers.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Helpers.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Helpers.Native.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.WinUI.Controls.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.WinUI.Controls.Native.0.6.0-alpha\build\native\XamlToolkit.WinUI.Controls.Native.targets'))" />
     <Error Condition="!Exists('..\packages\XamlToolkit.Labs.WinUI.Native.0.6.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\XamlToolkit.Labs.WinUI.Native.0.6.0-alpha\build\native\XamlToolkit.Labs.WinUI.Native.targets'))" />
-    <Error Condition="!Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.props'))" />
-    <Error Condition="!Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.3\build\native\YexuanXiao.CppWinRTPlus.Ext.targets'))" />
+    <Error Condition="!Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.props'))" />
+    <Error Condition="!Exists('..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\YexuanXiao.CppWinRTPlus.Ext.0.9.0.4\build\native\YexuanXiao.CppWinRTPlus.Ext.targets'))" />
   </Target>
   <!-- Inject module imports into XAML-generated source files -->
   <Target Name="InjectModuleImportsIntoXamlGenerated" AfterTargets="ComputeXamlGeneratedCompileInputs" BeforeTargets="ClCompile">
