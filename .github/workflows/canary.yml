@@ -90,6 +90,17 @@ jobs:
           & $nuget setapikey "${{ secrets.GITHUB_TOKEN }}" `
             -Source "${{ env.FEED_URL }}"
 
+      - name: Set up vcpkg dependencies
+        shell: pwsh
+        run: |
+          $triplet = if ('${{ matrix.platform }}' -eq 'ARM64') { 'arm64-windows' } else { 'x64-windows' }
+
+          & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install `
+            --triplet $triplet `
+            --vcpkg-root "$env:VCPKG_INSTALLATION_ROOT" `
+            --x-manifest-root "$env:GITHUB_WORKSPACE\OpenNet" `
+            --x-install-root "$env:GITHUB_WORKSPACE\OpenNet\vcpkg_installed\$triplet"
+
       - name: Restore NuGet
         shell: pwsh
         run: nuget restore OpenNet.slnx
@@ -152,7 +163,8 @@ jobs:
           $date = Get-Date -Format yyyyMMdd
           $shortSha = "${{ github.sha }}".Substring(0, 7)
           $name = "OpenNet.Canary_${date}_${{ matrix.platform }}_${shortSha}"
-          $version = "$dateYear.$dateMonth.$dateDay.${shortSha}"
+          $revision = ${{ github.run_number }} % 65536
+          $version = "$dateYear.$dateMonth.$dateDay.$revision"
           "date=$date" >> $env:GITHUB_OUTPUT
           "package_name=$name" >> $env:GITHUB_OUTPUT
           "version=$version" >> $env:GITHUB_OUTPUT

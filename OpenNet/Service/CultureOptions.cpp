@@ -2,6 +2,8 @@
 #include "CultureOptions.h"
 #include "Service/CultureOptions.g.cpp"
 
+import winrt.Windows.Globalization;
+
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 

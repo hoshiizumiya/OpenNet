@@ -94,8 +94,8 @@ namespace winrt::OpenNet::ViewModels::Guide::implementation
 	{
 		throw hresult_not_implemented();
 	}
-#pragma region Agreement
 
+#pragma region Agreement
 	bool GuideViewModel::IsTermOfServiceAgreed()
 	{
 		throw hresult_not_implemented();
