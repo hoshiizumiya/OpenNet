@@ -56,6 +56,7 @@ jobs:
       package_name: ${{ steps.meta.outputs.package_name }}
 
     strategy:
+      fail-fast: false
       matrix:
         configuration: [Release]
         platform: [x64, ARM64]

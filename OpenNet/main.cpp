@@ -180,6 +180,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	{
 		winrt::make<winrt::OpenNet::implementation::App>();
 	});
+	sentry_close();
 
 	return 0;
 }

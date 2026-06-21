@@ -1,6 +1,5 @@
 ﻿module;
 #define WIN32_LEAN_AND_MEAN
-#include <sentry.h>
 #include <Shlwapi.h>
 
 #include "XamlWorkaround.h"
@@ -14,7 +13,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.P2PManager;
-import OpenNet.Core.RSS.RSSManager;;
+import OpenNet.Core.RSS.RSSManager;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.ApplicationModel.Activation;
@@ -465,7 +464,6 @@ namespace winrt::OpenNet::implementation
 				ShutdownEngines();
 			}
 
-			sentry_close();
 			OutputDebugStringA("App: Destructor completed\n");
 		}
 		catch (...)

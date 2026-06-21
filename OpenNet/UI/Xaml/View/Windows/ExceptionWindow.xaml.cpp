@@ -1,4 +1,6 @@
-﻿#include "XamlWorkaround.h"
+﻿#include <sentry.h>
+
+#include "XamlWorkaround.h"
 #include "ExceptionWindow.xaml.h"
 #if __has_include("UI/Xaml/View/Windows/ExceptionWindow.g.cpp")
 #include "UI/Xaml/View/Windows/ExceptionWindow.g.cpp"

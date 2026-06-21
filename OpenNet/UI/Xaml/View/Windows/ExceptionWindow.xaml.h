@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Windows/ExceptionWindow.g.h"
-#include <sentry.h>
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
