@@ -6,7 +6,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	struct ExceptionWindow : ExceptionWindowT<ExceptionWindow>
 	{
-		ExceptionWindow(GUID const& sentryId, hstring const& exception);
+		ExceptionWindow(winrt::guid const& sentryId, hstring const& exception);
 
 		void InitializeWindow();
 
@@ -17,12 +17,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		void ViewWindowExceptionCloseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
-		static void Show(GUID const& sentryId, hstring const& exception);
+		static void Show(winrt::guid const& sentryId, hstring const& exception);
 
 	private:
 		winrt::fire_and_forget CloseWindowAsync();
 
-		GUID m_sentryId;
+		sentry_uuid_t m_sentryId;
 		hstring m_exception;
 		hstring m_comment;
 	};

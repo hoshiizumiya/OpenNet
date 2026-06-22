@@ -1,4 +1,6 @@
-﻿//warning C4251
+﻿#include <Windows.h>
+
+//warning C4251
 #include "XamlWorkaround.h"
 import winrt.XamlToolkit.Labs.WinUI;
 #include "TorrentCheckModalWindow.xaml.h"

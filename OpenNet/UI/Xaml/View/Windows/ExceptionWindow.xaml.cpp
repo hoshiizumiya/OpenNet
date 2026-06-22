@@ -7,6 +7,7 @@
 #endif
 
 import OpenNet.App;
+import OpenNet.Core.ExceptionService.ExceptionFormat;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.Graphics;
@@ -20,8 +21,10 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	ExceptionWindow::ExceptionWindow(GUID const& sentryId, hstring const& exception)
-		: m_sentryId(sentryId), m_exception(exception), m_comment(L"")
+	ExceptionWindow::ExceptionWindow(winrt::guid const& sentryId, hstring const& exception) :
+		m_sentryId(::OpenNet::Core::ExceptionService::ExceptionFormat::ToSentryUuid(sentryId)),
+		m_exception(exception),
+		m_comment(L"")
 	{
 		InitializeComponent();
 		InitializeWindow();
@@ -76,17 +79,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	hstring ExceptionWindow::TraceId()
 	{
 		// Convert GUID to string format
-		wchar_t guidStr[37];
-		swprintf_s(guidStr, sizeof(guidStr) / sizeof(wchar_t),
-			L"%08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X",
-			m_sentryId.Data1,
-			m_sentryId.Data2,
-			m_sentryId.Data3,
-			m_sentryId.Data4[0], m_sentryId.Data4[1],
-			m_sentryId.Data4[2], m_sentryId.Data4[3],
-			m_sentryId.Data4[4], m_sentryId.Data4[5],
-			m_sentryId.Data4[6], m_sentryId.Data4[7]);
-		return winrt::hstring(std::format(L"trace.id: {}", guidStr));
+		char guidStr[37];
+		sentry_uuid_as_string(&m_sentryId, guidStr);
+		return winrt::hstring(std::format(L"trace.id: {}", winrt::to_hstring(guidStr)));
 	}
 
 	hstring ExceptionWindow::Exception()
@@ -104,7 +99,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_comment = value;
 	}
 
-	void ExceptionWindow::ViewWindowExceptionCloseButton_Click(winrt::Windows::Foundation::IInspectable const& sender, RoutedEventArgs const& e)
+	void ExceptionWindow::ViewWindowExceptionCloseButton_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
 	{
 		CloseWindowAsync();
 	}
@@ -119,14 +114,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			// Submit feedback if comment is provided
 			if (!m_comment.empty())
 			{
-				sentry_value_t feedback = sentry_value_new_object();
-				sentry_value_set_by_key(feedback, "comments", sentry_value_new_string(winrt::to_string(m_comment).c_str()));
-				sentry_value_set_by_key(feedback, "level", sentry_value_new_string("info"));
-				sentry_capture_feedback(feedback);
+				sentry_value_t user_feedback = sentry_value_new_feedback(
+					winrt::to_string(m_comment).c_str(), nullptr, nullptr, &m_sentryId);
+				sentry_capture_feedback(user_feedback);
+
+				// Flush events to Sentry
+				sentry_flush(5000); // 5 second timeout
 			}
 
-			// Flush events to Sentry
-			sentry_flush(5000); // 5 second timeout
 		}
 		catch (...)
 		{
@@ -144,7 +139,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void ExceptionWindow::Show(GUID const& sentryId, hstring const& exception)
+	void ExceptionWindow::Show(winrt::guid const& sentryId, hstring const& exception)
 	{
 		auto window = winrt::make<ExceptionWindow>(sentryId, exception);
 		window.AppWindow().Show();

@@ -154,6 +154,7 @@
     <Page Include="UI\Xaml\View\InfoBarView.xaml">
       <Filter>UI\Xaml\View</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Windows\DevWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -608,6 +609,7 @@
     <ClCompile Include="Core\ExceptionService\OpenNetException.ixx">
       <Filter>Core\ExceptionService</Filter>
     </ClCompile>
+    <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

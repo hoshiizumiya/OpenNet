@@ -1,0 +1,10 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+	[default_interface]
+	runtimeclass DevWindow : Microsoft.UI.Xaml.Window
+	{
+		DevWindow();
+
+		
+	}
+}

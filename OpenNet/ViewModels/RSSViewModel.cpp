@@ -9,10 +9,10 @@ import OpenNet.Core.RSS.RSSManager;
 import OpenNet.Core.RSS.RSSParser;
 import winrt.Windows.Storage;
 
+using namespace ::OpenNet::Core::RSS;
+
 namespace winrt::OpenNet::ViewModels::implementation
 {
-	using namespace ::OpenNet::Core::RSS;
-
 	// Helper to format date
 	static winrt::hstring FormatDate(std::chrono::system_clock::time_point tp)
 	{

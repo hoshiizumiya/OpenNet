@@ -162,7 +162,12 @@
     <ClCompile Include="Core\AppRuntime.ixx">
       <FileType>Document</FileType>
     </ClCompile>
+    <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx" />
     <ClCompile Include="Core\ExceptionService\OpenNetException.ixx" />
+    <ClCompile Include="UI\Xaml\View\Windows\DevWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="XamlApplicationLifetime.ixx" />
     <ClInclude Include="Controls\SpeedGraph\SpeedGraph.xaml.h">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
@@ -392,6 +397,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\DevWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\ExceptionWindow.xaml.h">
@@ -669,6 +678,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\DevWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml">
@@ -1189,6 +1201,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TorrentCheckGeneralPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\TorrentCheckGeneralPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\DevWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\ExceptionWindow.idl">

@@ -22,7 +22,7 @@ namespace winrt::OpenNet::UI::Xaml::Behavior::Action::implementation
 		return s_property;
 	}
 
-	winrt::Windows::Foundation::IInspectable ShowTeachingTipAction::Execute(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& parameter)
+	winrt::Windows::Foundation::IInspectable ShowTeachingTipAction::Execute(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& /*parameter*/)
 	{
 		if (sender == nullptr)
 		{
