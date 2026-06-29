@@ -1,7 +1,8 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.g.h"
-#include "ViewModels/ObservableMixin.h"
+
+import OpenNet.ViewModels.ObservableMixin;
 
 namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {

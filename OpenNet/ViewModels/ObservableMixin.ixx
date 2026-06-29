@@ -1,9 +1,9 @@
-﻿#pragma once
+﻿export module OpenNet.ViewModels.ObservableMixin;
 
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Windows.Foundation;
 
-namespace OpenNet::ViewModels
+export namespace OpenNet::ViewModels
 {
 	// Lightweight mixin for INotifyPropertyChanged without deriving from winrt::implements
 	// CRTP: D should be the derived type (e.g., SettingsViewModel)

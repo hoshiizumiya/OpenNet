@@ -1,4 +1,5 @@
 ﻿import "ViewModels/ObservableObject.idl"; // Base class for property change notifications
+
 namespace OpenNet.ViewModels
 {
 	// Download source type
@@ -18,6 +19,10 @@ namespace OpenNet.ViewModels
 		String Name;
 		String Size;
 		String Progress;
+		String DownloadSize;
+		String UploadSize;
+		String TotalDownloadSize;
+		String TotalUploadSize;
 		String DownloadRate;
 		String UploadRate;
 		String Remaining;

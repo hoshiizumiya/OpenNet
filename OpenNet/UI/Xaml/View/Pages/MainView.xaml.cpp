@@ -80,29 +80,45 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	bool MainView::CanGoBack()
 	{
-		if (m_isUnloaded) return false;
-		try
-		{
-			return NavFrame().CanGoBack();
-		}
-		catch (...)
+		if (m_isUnloaded)
 		{
 			return false;
+		}
+		else
+		{
+			return NavFrame().CanGoBack();
 		}
 	}
 
 	void MainView::GoBack()
 	{
-		if (m_isUnloaded) return;
-		try
+		if (m_isUnloaded)
+			return;
+		if (NavFrame().CanGoBack())
 		{
-			if (NavFrame().CanGoBack())
-			{
-				NavFrame().GoBack();
-			}
+			NavFrame().GoBack();
 		}
-		catch (...)
+	}
+
+	bool MainView::CanGoForward()
+	{
+		if (m_isUnloaded)
 		{
+			return false;
+		}
+		else
+		{
+			return NavFrame().CanGoForward();
+		}
+	}
+
+	void MainView::GoForward()
+	{
+		if (m_isUnloaded)
+			return;
+		if (NavFrame().CanGoForward())
+		{
+			NavFrame().GoForward();
 		}
 	}
 
@@ -374,6 +390,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!tag.empty()) UpdateNavigationSelection(tag);
 
 		m_canGoBackChanged(*this, NavFrame().CanGoBack());
+	}
+
+	void MainView::NavFrame_NavigationFailed(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const& e)
+	{
+		// https://github.com/microsoft/PowerToys/pull/48457
+		// A page constructor or XAML load failure here would otherwise bubble out of the Frame and crash the launcher.
+		// Log the failure and mark it handled so the flyout can remain available; the next summon will retry navigation.
+		// TODO: uniform exception handle
+		OutputDebugStringW((L"Navigation failed to " + e.SourcePageType().Name + L": " + e.Exception() + L"\n").c_str());
+		e.Handled(true);
 	}
 
 	void MainView::SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)

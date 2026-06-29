@@ -88,5 +88,17 @@ export namespace OpenNet::Core::Setting::SettingKeys
 	inline constexpr wchar_t const* CompactWebView2WindowPreviousSourceUrl   = L"OpenNet::Web::WebView::Compact::PreviousSourceUrl";
 	inline constexpr wchar_t const* WebView2VideoFastForwardOrRewindSeconds  = L"OpenNet::Web::WebView::Video::FastForwardOrRewind::Seconds";
 
+	// Tasks UI columns display settings
+	inline constexpr wchar_t const* IsColumnNameLoadKey              = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnNameLoad";
+	inline constexpr wchar_t const* IsColumnSizeLoadKey              = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnSizeLoad";
+	inline constexpr wchar_t const* IsColumnProgressLoadKey          = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnProgressLoad";
+	inline constexpr wchar_t const* IsColumnDownloadSizeLoadKey      = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnDownloadSizeLoad";
+	inline constexpr wchar_t const* IsColumnUploadSizeLoadKey        = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnUploadSizeLoad";
+	inline constexpr wchar_t const* IsColumnTotalDownloadSizeLoadKey = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnTotalDownloadSizeLoad";
+	inline constexpr wchar_t const* IsColumnTotalUploadSizeLoadKey   = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnTotalUploadSizeLoad";
+	inline constexpr wchar_t const* IsColumnDLRateLoadKey            = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnDLRateLoad";
+	inline constexpr wchar_t const* IsColumnULRateLoadKey            = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnULRateLoad";
+	inline constexpr wchar_t const* IsColumnRemainingLoadKey         = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnRemainingLoad";
+	inline constexpr wchar_t const* IsColumnAddDateLoadKey           = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnAddDateLoad";
 
 }

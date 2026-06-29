@@ -30,10 +30,20 @@ export namespace OpenNet::Helpers
 	template <typename TColumn>
 	inline void RestoreColumn(TColumn const& col, std::string const& key)
 	{
-		double w = GetColumnWidth(key);
-		if (w > 0)
+		double width = GetColumnWidth(key);
+		if (width > 0)
 		{
-			col.Width(w);
+			col.Width(width);
+		}
+	}
+
+	// Get the max width row of the selected column
+	template <typename TColumns>
+	inline winrt::hstring GetColumnMaxWidth(TColumns const& columns)
+	{
+		for (auto const& col : columns)
+		{
+
 		}
 	}
 }

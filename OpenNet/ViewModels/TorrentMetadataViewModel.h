@@ -5,10 +5,10 @@
 #include "ViewModels/TorrentFileNodeViewModel.g.h"
 #include "ViewModels/TorrentFileInfoViewModel.g.h"
 #include "ViewModels/TorrentMetadataViewModel.g.h"
-#include "ViewModels/ObservableMixin.h"
 
 import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 import OpenNet.Core.torrentCore.TorrentMetadataInfo;
+import OpenNet.ViewModels.ObservableMixin;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Windows.Foundation.Collections;
 

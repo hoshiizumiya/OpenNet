@@ -7,7 +7,7 @@ namespace OpenNet.ViewModels
 	{
 		TasksViewModel();
 
-	// Collection bound to ListView - source
+		// Collection bound to ListView - source
 		Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> Tasks { get; };
 		// Filtered view for UI binding
 		Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.TaskViewModel> FilteredTasks { get; };
@@ -32,5 +32,19 @@ namespace OpenNet.ViewModels
 
 		// Event raised to request adding a task (string parameter can carry task name or data)
 		event Windows.Foundation.EventHandler<String> AddTaskRequested;
+
+		// Tasks column display flags
+		Boolean IsColNameLoad;
+		Boolean IsColSizeLoad;
+		Boolean IsColProgressLoad;
+		Boolean IsColDownloadSizeLoad;
+		Boolean IsColUploadSizeLoad;
+		Boolean IsColumnTotalDownloadSizeLoad;
+		Boolean IsColumnTotalUploadSizeLoad;
+		Boolean IsColDLRateLoad;
+		Boolean IsColULRateLoad;
+		Boolean IsColRemainingLoad;
+		Boolean IsColAddDateLoad;
+
 	}
 }

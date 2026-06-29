@@ -1,13 +1,14 @@
 ﻿#pragma once
 #include "ViewModels/TaskViewModel.g.h"
-#include "ViewModels/ObservableMixin.h"
 #include "Core/DataGraph/SpeedGraphData.h"
 
+import OpenNet.ViewModels.ObservableMixin;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+	// It actually is the task property. TODO: Remove the "ViewModel" suffix; update to mvvm framework
 	struct TaskViewModel : TaskViewModelT<TaskViewModel>, ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>
 	{
 		TaskViewModel();
@@ -60,6 +61,42 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void UploadRate(winrt::hstring const& v)
 		{
 			SetProperty(m_uploadRate, v, L"UploadRate");
+		}
+
+		winrt::hstring DownloadSize() const
+		{
+			return m_downloadSize;
+		}
+		void DownloadSize(winrt::hstring const& v)
+		{
+			SetProperty(m_downloadSize, v, L"DownloadSize");
+		}
+
+		winrt::hstring UploadSize() const
+		{
+			return m_uploadSize;
+		}
+		void UploadSize(winrt::hstring const& v)
+		{
+			SetProperty(m_uploadSize, v, L"UploadSize");
+		}
+
+		winrt::hstring TotalDownloadSize() const
+		{
+			return m_totalDownloadSize;
+		}
+		void TotalDownloadSize(winrt::hstring const& v)
+		{
+			SetProperty(m_totalDownloadSize, v, L"TotalDownloadSize");
+		}
+
+		winrt::hstring TotalUploadSize() const
+		{
+			return m_totalUploadSize;
+		}
+		void TotalUploadSize(winrt::hstring const& v)
+		{
+			SetProperty(m_totalUploadSize, v, L"TotalUploadSize");
 		}
 
 		winrt::hstring Remaining() const
@@ -142,12 +179,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_progress;
 		winrt::hstring m_downloadRate;
 		winrt::hstring m_uploadRate;
+		winrt::hstring m_downloadSize;
+		winrt::hstring m_uploadSize;
+		winrt::hstring m_totalDownloadSize;
+		winrt::hstring m_totalUploadSize;
 		winrt::hstring m_remaining;
 		winrt::hstring m_addDate;
 		winrt::hstring m_gid;
 		winrt::hstring m_taskId;
 		winrt::OpenNet::ViewModels::DownloadTaskType m_taskType{ winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent };
-		uint64_t m_downloadSpeedKB{ 0 };
+		std::uint64_t m_downloadSpeedKB{ 0 };
 		double m_progressPercent{ 0.0 };
 		int m_lastSavedPercent{ -1 };  // Track last saved 1% boundary for SpeedGraph persistence
 		SpeedGraphData m_speedGraphData;

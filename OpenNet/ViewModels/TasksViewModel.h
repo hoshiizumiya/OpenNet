@@ -99,6 +99,29 @@ namespace winrt::OpenNet::ViewModels::implementation
 			m_addTaskRequested.remove(token);
 		}
 
+		bool IsColNameLoad();
+		void IsColNameLoad(bool value);
+		bool IsColSizeLoad();
+		void IsColSizeLoad(bool value);
+		bool IsColProgressLoad();
+		void IsColProgressLoad(bool value);
+		bool IsColDownloadSizeLoad();
+		void IsColDownloadSizeLoad(bool value);
+		bool IsColUploadSizeLoad();
+		void IsColUploadSizeLoad(bool value);
+		bool IsColumnTotalDownloadSizeLoad();
+		void IsColumnTotalDownloadSizeLoad(bool value);
+		bool IsColumnTotalUploadSizeLoad();
+		void IsColumnTotalUploadSizeLoad(bool value);
+		bool IsColDLRateLoad();
+		void IsColDLRateLoad(bool value);
+		bool IsColULRateLoad();
+		void IsColULRateLoad(bool value);
+		bool IsColRemainingLoad();
+		void IsColRemainingLoad(bool value);
+		bool IsColAddDateLoad();
+		void IsColAddDateLoad(bool value);
+
 	private:
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_filteredTasks{ nullptr };
@@ -140,6 +163,18 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// GIDs that were explicitly deleted ─ prevents OnHttpProgress/Finished
 		// from re-creating the task after deletion.
 		std::unordered_set<std::string> m_deletedGids;
+
+		bool m_isColNameLoad{ true };
+		bool m_isColSizeLoad{ true };
+		bool m_isColProgressLoad{ true };
+		bool m_isColDownloadSizeLoad{ true };
+		bool m_isColUploadSizeLoad{ true };
+		bool m_isColumnTotalDownloadSizeLoad{ true };
+		bool m_isColumnTotalUploadSizeLoad{ true };
+		bool m_isColDLRateLoad{ true };
+		bool m_isColULRateLoad{ true };
+		bool m_isColRemainingLoad{ true };
+		bool m_isColAddDateLoad{ true };
 	};
 }
 

@@ -9,14 +9,13 @@
 #include "MainWindow.g.cpp"
 #endif
 
-#include "UI/Xaml/View/Pages/MainView.xaml.h"
-
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.WindowHelper;
 import winrtplus.Microsoft.UI.Interop;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Microsoft.UI.Xaml.Media.Imaging;
+import winrt.OpenNet.UI.Xaml.View.Pages;
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -121,6 +120,28 @@ namespace winrt::OpenNet::implementation
 			if (auto xamlRoot = rootGrid.XamlRoot())
 			{
 				xamlRoot.Changed({ this, &MainWindow::RootGridXamlRoot_Changed });
+			}
+		}
+	}
+
+	void MainWindow::RootGrid_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+	{
+		auto props = e.GetCurrentPoint(nullptr).Properties();
+
+		if (props.IsXButton1Pressed())
+		{
+			if (MainContentView().CanGoBack())
+			{
+				MainContentView().GoBack();
+				e.Handled(true);
+			}
+		}
+		else if (props.IsXButton2Pressed())
+		{
+			if (MainContentView().CanGoForward())
+			{
+				MainContentView().GoForward();
+				e.Handled(true);
 			}
 		}
 	}

@@ -1,12 +1,13 @@
 ﻿#pragma once
 
 import winrt.XamlToolkit.Labs.WinUI;
+import OpenNet.ViewModels.ObservableMixin;
 
 // Ensure custom control types are declared before including the generated XAML header.
 // The generated header (`Pages/TasksPage.g.h`) uses `winrt::OpenNet::Controls::SpeedGraph::SpeedGraph`
 // in its declarations. If that type is not visible at the point the generated header is included
 // the compiler will fail with errors such as "symbol must be a type" or "variable cannot have type void".
-#include "../Controls/SpeedGraph/SpeedGraph.xaml.h"
+#include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Pages/TaskSummaryPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
@@ -16,11 +17,17 @@ import winrt.XamlToolkit.Labs.WinUI;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	struct TasksPage : TasksPageT<TasksPage>
+	struct TasksPage : TasksPageT<TasksPage>, ::OpenNet::ViewModels::ObservableMixin<TasksPage>
 	{
+	public:
 		TasksPage();
 		~TasksPage();
+		using ::OpenNet::ViewModels::ObservableMixin<TasksPage>::SetProperty;
+		using ::OpenNet::ViewModels::ObservableMixin<TasksPage>::RaisePropertyChanged;
 
+		void InitializeComponent();
+		winrt::fire_and_forget Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void OnNavigatingFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&);
 		void DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
@@ -30,12 +37,35 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return m_viewModel;
 		}
 
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingNameTextBlock();
+		void TextWrappingNameTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingSizeTextBlock();
+		void TextWrappingSizeTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingProgressTextBlock();
+		void TextWrappingProgressTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingDownloadSizeTextBlock();
+		void TextWrappingDownloadSizeTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingUploadSizeTextBlock();
+		void TextWrappingUploadSizeTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingTotalDownloadSizeTextBlock();
+		void TextWrappingTotalDownloadSizeTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingTotalUploadSizeTextBlock();
+		void TextWrappingTotalUploadSizeTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingDLRateTextBlock();
+		void TextWrappingDLRateTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingULRateTextBlock();
+		void TextWrappingULRateTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingRemainingTextBlock();
+		void TextWrappingRemainingTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingAddDateTextBlock();
+		void TextWrappingAddDateTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
+
 		// Filter nav selection (must be public for XAML wiring)
 		void FilterNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
-
+		// Task list container content changing
+		void TasksList_ContainerContentChanging(winrt::Microsoft::UI::Xaml::Controls::ListViewBase const&, winrt::Microsoft::UI::Xaml::Controls::ContainerContentChangingEventArgs const& args);
 		// Task list selection changed handler
 		void TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
-
 		// Task list right-click handlers
 		void TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 
@@ -46,13 +76,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void Task_SelectBar_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& args);
 
 		// Context menu item handlers
-		winrt::Windows::Foundation::IAsyncAction RenameTaskMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void TasksColumnAutoSizeSelectedWidth_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void TasksColumnAutoSizeAllWidth_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void TasksColumnDisplayItemsReset_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
-		void MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-
-		void OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-
-		winrt::Windows::Foundation::IAsyncAction PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction RenameTaskMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 
 		// Make these handlers public so XAML generated code can bind to them
 		winrt::Windows::Foundation::IAsyncAction MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -61,6 +92,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
+
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingNameTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingSizeTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingProgressTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingDownloadSizeTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingUploadSizeTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingTotalDownloadSizeTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingTotalUploadSizeTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingDLRateTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingULRateTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingRemainingTextBlock;
+		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingAddDateTextBlock;
+
 		winrt::event_token m_addTaskToken{};
 
 		// Handle when ViewModel requests adding a new task
@@ -76,6 +120,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Column width persistence
 		void RestoreColumnWidths();
 		void SaveColumnWidths();
+
+		// Static persisted variables are used by ListViewPersistenceHelper
+		// We need to save the item container height if the items have variable heights. If all items have a constant fixed height, you can manually 
+		// set the height to the fixed value in ItemsListView_ContainerContentChanging
+		static double _persistedItemContainerHeight;
+		static wchar_t const* _persistedItemKey;
+		static wchar_t const* _persistedPosition;
+
+		winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> GetItem(hstring const& key);
+		hstring GetKey(IInspectable const& object);
 	};
 }
 

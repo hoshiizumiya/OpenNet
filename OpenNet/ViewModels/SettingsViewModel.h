@@ -1,11 +1,11 @@
 ﻿#pragma once
-#include "ViewModels/SettingsViewModel.g.h"
 
-// Use lightweight mixin instead of deriving from a WinRT runtimeclass to avoid multiple inheritance conflicts
-#include "ViewModels/ObservableMixin.h"
+#include "ViewModels/SettingsViewModel.g.h"
 #include "Core/NetworkDetector.h"
 #include "../Models/NetworkInfo.h"
 
+// Use lightweight mixin instead of deriving from a WinRT runtimeclass to avoid multiple inheritance conflicts
+import OpenNet.ViewModels.ObservableMixin;
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
 import winrt.Windows.Storage;

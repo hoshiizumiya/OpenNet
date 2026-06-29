@@ -3,18 +3,24 @@
 #include "Core/DataGraph/SpeedGraphDatabase.h"
 #include "Core/IPFilter/IPFilterManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
+#include "mvvm_framework/notify_property_changed.h"
 
 import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.Setting.LocalSetting;
+import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Windows.Foundation;
 import winrt.Windows.Storage;
 import winrt.Windows.Storage.Pickers;
 
+using namespace ::OpenNet::Core::Setting;
+using namespace ::OpenNet::Core::Setting::SettingKeys;
+using namespace ::mvvm;
 using namespace std::string_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -908,9 +914,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 			// This avoids clearing the list (which triggers ListView re-entrance animations).
 
 			// 1. Remove items no longer matching
-			for (int i = static_cast<int>(filtered.Size()) - 1; i >= 0; --i)
+			for (std::int32_t i = static_cast<std::int32_t>(filtered.Size()) - 1; i >= 0; --i)
 			{
-				auto existing = filtered.GetAt(static_cast<uint32_t>(i));
+				auto existing = filtered.GetAt(static_cast<std::uint32_t>(i));
 				bool found = false;
 				for (auto const& d : desired)
 				{
@@ -921,7 +927,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 				}
 				if (!found)
 				{
-					filtered.RemoveAt(static_cast<uint32_t>(i));
+					filtered.RemoveAt(static_cast<std::uint32_t>(i));
 				}
 			}
 
@@ -929,7 +935,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			for (auto const& d : desired)
 			{
 				bool found = false;
-				for (uint32_t j = 0; j < filtered.Size(); ++j)
+				for (std::uint32_t j = 0; j < filtered.Size(); ++j)
 				{
 					if (filtered.GetAt(j) == d)
 					{
@@ -943,4 +949,115 @@ namespace winrt::OpenNet::ViewModels::implementation
 			}
 		});
 	}
+
+	bool TasksViewModel::IsColNameLoad()
+	{
+		 return LocalSetting::Get(IsColumnNameLoadKey, true);
+	}
+	void TasksViewModel::IsColNameLoad(bool value)
+	{
+		SetProperty(m_isColNameLoad, value, NAME_OF(TasksViewModel, IsColNameLoad));
+		LocalSetting::Set(IsColumnNameLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColSizeLoad()
+	{
+		return LocalSetting::Get(IsColumnSizeLoadKey, true);
+	}
+	void TasksViewModel::IsColSizeLoad(bool value)
+	{
+		SetProperty(m_isColSizeLoad, value, NAME_OF(TasksViewModel, IsColSizeLoad));
+		LocalSetting::Set(IsColumnSizeLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColProgressLoad()
+	{
+		return LocalSetting::Get(IsColumnProgressLoadKey, true);
+	}
+	void TasksViewModel::IsColProgressLoad(bool value)
+	{
+		SetProperty(m_isColProgressLoad, value, NAME_OF(TasksViewModel, IsColProgressLoad));
+		LocalSetting::Set(IsColumnProgressLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColDownloadSizeLoad()
+	{
+		return LocalSetting::Get(IsColumnDownloadSizeLoadKey, true);
+	}
+	void TasksViewModel::IsColDownloadSizeLoad(bool value)
+	{
+		SetProperty(m_isColDownloadSizeLoad, value, NAME_OF(TasksViewModel, IsColDownloadSizeLoad));
+		LocalSetting::Set(IsColumnDownloadSizeLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColUploadSizeLoad()
+	{
+		return LocalSetting::Get(IsColumnUploadSizeLoadKey, true);
+	}
+	void TasksViewModel::IsColUploadSizeLoad(bool value)
+	{
+		SetProperty(m_isColUploadSizeLoad, value, NAME_OF(TasksViewModel, IsColUploadSizeLoad));
+		LocalSetting::Set(IsColumnUploadSizeLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColumnTotalDownloadSizeLoad()
+	{
+		return LocalSetting::Get(IsColumnTotalDownloadSizeLoadKey, true);
+	}
+	void TasksViewModel::IsColumnTotalDownloadSizeLoad(bool value)
+	{
+		SetProperty(m_isColumnTotalDownloadSizeLoad, value, NAME_OF(TasksViewModel, IsColumnTotalDownloadSizeLoad));
+		LocalSetting::Set(IsColumnTotalDownloadSizeLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColumnTotalUploadSizeLoad()
+	{
+		return LocalSetting::Get(IsColumnTotalUploadSizeLoadKey, true);
+	}
+	void TasksViewModel::IsColumnTotalUploadSizeLoad(bool value)
+	{
+		SetProperty(m_isColumnTotalUploadSizeLoad, value, NAME_OF(TasksViewModel, IsColumnTotalUploadSizeLoad));
+		LocalSetting::Set(IsColumnTotalUploadSizeLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColDLRateLoad()
+	{
+		return LocalSetting::Get(IsColumnDLRateLoadKey, true);
+	}
+	void TasksViewModel::IsColDLRateLoad(bool value)
+	{
+		SetProperty(m_isColDLRateLoad, value, NAME_OF(TasksViewModel, IsColDLRateLoad));
+		LocalSetting::Set(IsColumnDLRateLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColULRateLoad()
+	{
+		return LocalSetting::Get(IsColumnULRateLoadKey, true);
+	}
+	void TasksViewModel::IsColULRateLoad(bool value)
+	{
+		SetProperty(m_isColULRateLoad, value, NAME_OF(TasksViewModel, IsColULRateLoad));
+		LocalSetting::Set(IsColumnULRateLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColRemainingLoad()
+	{
+		return LocalSetting::Get(IsColumnRemainingLoadKey, true);
+	}
+	void TasksViewModel::IsColRemainingLoad(bool value)
+	{
+		SetProperty(m_isColRemainingLoad, value, NAME_OF(TasksViewModel, IsColRemainingLoad));
+		LocalSetting::Set(IsColumnRemainingLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColAddDateLoad()
+	{
+		return LocalSetting::Get(IsColumnAddDateLoadKey, true);
+	}
+	void TasksViewModel::IsColAddDateLoad(bool value)
+	{
+		SetProperty(m_isColAddDateLoad, value, NAME_OF(TasksViewModel, IsColAddDateLoad));
+		LocalSetting::Set(IsColumnAddDateLoadKey, value);
+	}
+
 }

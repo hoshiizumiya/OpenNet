@@ -1,9 +1,9 @@
 ﻿#pragma once
 
-#include "ViewModels/ObservableMixin.h"
 #include "ViewModels/TransferViewModel.g.h"
 #include "../Models/TransferInfo.h"
 
+import OpenNet.ViewModels.ObservableMixin;
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
 import winrt.Windows.Storage;

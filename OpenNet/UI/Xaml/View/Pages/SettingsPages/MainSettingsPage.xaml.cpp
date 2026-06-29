@@ -1,4 +1,4 @@
-#include "XamlWorkaround.h"
+﻿#include "XamlWorkaround.h"
 #include "MainSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.cpp"
@@ -45,6 +45,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	void MainSettingsPage::MainSettingsPage_Loaded(IInspectable const&, RoutedEventArgs const&)
 	{
 		SettingsNavView().SelectedItem(GeneralNavItem());
+	}
+
+	void MainSettingsPage::MainSettingsPage_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
+	{
+		auto props = e.GetCurrentPoint(nullptr).Properties();
+
+		if (props.IsXButton1Pressed())
+		{
+			if (SettingsFrame().CanGoBack())
+			{
+				SettingsFrame().GoBack();
+				e.Handled(true);
+			}
+		}
+		else if (props.IsXButton2Pressed())
+		{
+			if (SettingsFrame().CanGoForward())
+			{
+				SettingsFrame().GoForward();
+				e.Handled(true);
+			}
+		}
 	}
 
 	void MainSettingsPage::SettingsBar_ItemClicked(BreadcrumbBar const& /*sender*/, BreadcrumbBarItemClickedEventArgs const& args)

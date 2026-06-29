@@ -254,3 +254,64 @@ jobs:
 
             Trigger: ${{ github.event_name }}
             Actor: ${{ github.actor }}
+
+  cleanup-cache:
+    needs: prerelease
+    runs-on: ubuntu-latest
+  
+    permissions:
+      packages: write
+  
+    steps:
+      - name: Delete old NuGet package versions
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OWNER: hoshiizumiya
+        shell: bash
+        run: |
+          set -e
+  
+          echo "Listing NuGet packages..."
+  
+          gh api \
+            "/users/$OWNER/packages?package_type=nuget&per_page=100" \
+            --paginate \
+            > packages.json
+  
+          jq -c '.[]' packages.json | while read pkg; do
+  
+            PACKAGE_NAME=$(echo "$pkg" | jq -r '.name')
+  
+            echo "Processing $PACKAGE_NAME"
+  
+            gh api \
+              "/users/$OWNER/packages/nuget/$PACKAGE_NAME/versions?per_page=100" \
+              --paginate \
+              > versions.json
+  
+            COUNT=$(jq length versions.json)
+  
+            if [ "$COUNT" -le 1 ]; then
+              echo "Only one version exists."
+              continue
+            fi
+  
+            jq '
+              sort_by(.created_at)
+              | reverse
+              | .[1:]
+            ' versions.json > delete.json
+  
+            jq -c '.[]' delete.json | while read version; do
+  
+              ID=$(echo "$version" | jq -r '.id')
+  
+              echo "Deleting version $ID"
+  
+              gh api \
+                --method DELETE \
+                "/users/$OWNER/packages/nuget/$PACKAGE_NAME/versions/$ID"
+  
+            done
+  
+          done

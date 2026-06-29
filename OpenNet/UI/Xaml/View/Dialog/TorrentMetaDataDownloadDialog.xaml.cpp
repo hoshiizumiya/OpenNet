@@ -12,6 +12,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 import Core.Utils.Misc;
 import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.ViewModels.ObservableMixin;
 import winrt.Windows.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml;

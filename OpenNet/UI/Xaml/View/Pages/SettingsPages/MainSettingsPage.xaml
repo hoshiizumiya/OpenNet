@@ -7,8 +7,9 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    NavigationCacheMode="Disabled"
     Loaded="MainSettingsPage_Loaded"
+    NavigationCacheMode="Disabled"
+    PointerPressed="MainSettingsPage_PointerPressed"
     mc:Ignorable="d">
 
     <NavigationView

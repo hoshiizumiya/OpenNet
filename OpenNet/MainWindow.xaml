@@ -12,7 +12,10 @@
     Title="OpenNet"
     mc:Ignorable="d">
 
-    <Grid x:Name="RootGrid" Loaded="Grid_Loaded">
+    <Grid
+        x:Name="RootGrid"
+        Loaded="Grid_Loaded"
+        PointerPressed="RootGrid_PointerPressed">
         <Grid.Resources>
             <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind}" />
         </Grid.Resources>

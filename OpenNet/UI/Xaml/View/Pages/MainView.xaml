@@ -115,7 +115,8 @@
                 <Frame
                     x:Name="NavFrame"
                     Navigated="NavFrame_Navigated"
-                    Navigating="NavFrame_Navigating" />
+                    Navigating="NavFrame_Navigating"
+                    NavigationFailed="NavFrame_NavigationFailed" />
             </NavigationView.Content>
         </NavigationView>
 

@@ -1,8 +1,9 @@
 ﻿#pragma once
 
-#include "ViewModels/ObservableMixin.h"
 #include "ViewModels/NetworkSettingsViewModel.g.h"
 #include "../Models/NetworkInfo.h"
+
+import OpenNet.ViewModels.ObservableMixin;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {

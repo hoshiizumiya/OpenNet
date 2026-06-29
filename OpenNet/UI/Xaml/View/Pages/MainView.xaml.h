@@ -19,6 +19,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void Navigate(winrt::hstring const& tag);
 		bool CanGoBack();
 		void GoBack();
+		bool CanGoForward();
+		void GoForward();
 
 		// Event: CanGoBackChanged
 		winrt::event_token CanGoBackChanged(winrt::Windows::Foundation::EventHandler<bool> const& handler);
@@ -37,15 +39,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Event handlers (XAML wired)
 		void NavView_ItemInvoked(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&,
-		                         winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs const&);
+								 winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs const&);
 		void NavFrame_Navigating(winrt::Windows::Foundation::IInspectable const&,
-		                         winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&);
+								 winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&);
 		void NavFrame_Navigated(winrt::Windows::Foundation::IInspectable const&,
-		                        winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
+								winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
+		void NavFrame_NavigationFailed(winrt::Windows::Foundation::IInspectable const&,
+									   winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const&);
 		void SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		void SettingButton_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&,
-		                              winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const&);
+									  winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const&);
 
 	private:
 		void UpdateNavigationSelection(winrt::hstring const& tag);

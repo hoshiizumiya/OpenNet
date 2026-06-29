@@ -610,6 +610,10 @@
       <Filter>Core\ExceptionService</Filter>
     </ClCompile>
     <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx" />
+    <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
+    <ClCompile Include="ViewModels\ObservableMixin.ixx">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -712,9 +716,6 @@
       <Filter>mvvm_framework</Filter>
     </ClInclude>
     <ClInclude Include="Helpers\ObjectConverter.hpp">
-      <Filter>ViewModels</Filter>
-    </ClInclude>
-    <ClInclude Include="ViewModels\ObservableMixin.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h">

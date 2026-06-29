@@ -5,6 +5,7 @@
 #include "MainWindow.xaml.h"
 #include "UI/Shell/NotifyIconXamlHostWindow.xaml.h"
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
+#include "UI/Xaml/View/Windows/DevWindow.xaml.h"
 
 module OpenNet.App;
 
@@ -348,6 +349,9 @@ namespace winrt::OpenNet::implementation
 			debugOut += L"\n";
 		}
 		OutputDebugStringW(debugOut.c_str());
+
+		winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow devWindow;
+		devWindow.Activate();
 #endif
 		// Handle initial activation arguments
 		auto activationArgs = AppInstance::GetCurrent().GetActivatedEventArgs();
@@ -363,8 +367,7 @@ namespace winrt::OpenNet::implementation
 		Microsoft::UI::Xaml::Application::Current().Exit();
 	}
 
-	// To do: Custom activation, Windows integration
-	void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
+	bool App::CreateSetMainWindow()
 	{
 		// 检查窗口是否存在
 		if (!window)
@@ -400,6 +403,11 @@ namespace winrt::OpenNet::implementation
 
 		// 确保窗口获得焦点
 		SetFocus(hwnd);
+	}
+
+	void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
+	{
+		CreateSetMainWindow();
 
 		// 根据激活类型处理不同的激活参数
 		ExtendedActivationKind kind = args.Kind();
@@ -414,6 +422,9 @@ namespace winrt::OpenNet::implementation
 				// auto cmdLineArgs = launchArgs.Arguments();
 				// OutputDebugStringW((L"Launch args: " + std::wstring(cmdLineArgs.c_str()) + L"\n").c_str());
 			}
+		}
+		else if (kind == ExtendedActivationKind::AppNotification)
+		{
 		}
 		else if (kind == ExtendedActivationKind::File)
 		{
