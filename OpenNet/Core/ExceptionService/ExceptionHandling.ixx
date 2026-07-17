@@ -34,14 +34,18 @@ export namespace OpenNet::Core::ExceptionService
 			ExitProcess(EXIT_FAILURE);
 		}
 
-	private:
 		static void OnAppUnhandledException(winrt::Windows::Foundation::IInspectable sender, winrt::Microsoft::UI::Xaml::UnhandledExceptionEventArgs e)
 		{
+#if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
+			if (IsDebuggerPresent())
+			{
+				auto errorMessage = e.Message();
+				OutputDebugStringW((L"UnhandledException: " + std::wstring(errorMessage.c_str()) + L"\r\n").c_str());
+			__debugbreak();
+			}
+#endif
 			// Gets the HRESULT code associated with the unhandled exception.
 			winrt::hresult exception = e.Exception();
-#ifdef _DEBUG
-			__debugbreak();
-#endif
 			OpenNet::XamlApplicationLifetime::Exiting = true;
 
 			KillProcessOnDatabaseException(OpenNetException(e.Exception()));

@@ -7,6 +7,7 @@
 
 module OpenNet.App;
 
+import OpenNet.Core.ExceptionService.ExceptionHandling;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
@@ -230,17 +231,8 @@ namespace winrt::OpenNet::implementation
 		// Xaml objects should not call InitializeComponent during construction.
 		// See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
 
-#if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
-		UnhandledException([](IInspectable const&, UnhandledExceptionEventArgs const& e)
-		{
-			if (IsDebuggerPresent())
-			{
-				auto errorMessage = e.Message();
-				OutputDebugStringW((L"UnhandledException: " + std::wstring(errorMessage.c_str()) + L"\r\n").c_str());
-				__debugbreak();
-			}
-		});
-#endif
+		// Register unified exception handler
+		UnhandledException(::OpenNet::Core::ExceptionService::ExceptionHandling::OnAppUnhandledException);
 	}
 
 	/// <summary>
