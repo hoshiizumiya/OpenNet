@@ -3,7 +3,7 @@
 namespace OpenNet.ViewModels.Guide
 {
 	[default_interface]
-	runtimeclass GuideViewModel
+	runtimeclass GuideViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
 	{
 		GuideViewModel();
 

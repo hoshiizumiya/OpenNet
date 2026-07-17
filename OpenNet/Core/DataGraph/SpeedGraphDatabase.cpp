@@ -8,7 +8,7 @@
 
 #include <Windows.h>
 #include "Core/DataGraph/SpeedGraphDatabase.h"
-#include "ThirdParty/Sqlite/sqlite3.h"
+#include <sqlite3.h>
 
 import OpenNet.Core.IO.FileSystem;
 

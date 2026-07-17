@@ -14,12 +14,7 @@ module;
 export module OpenNet.Core.torrentCore.LibtorrentHandle;
 
 import std;
-
-// Forward declaration
-export namespace OpenNet::Core::Torrent
-{
-    class TorrentStateManager;
-}
+import OpenNet.Core.torrentCore.TorrentStateManager;
 
 export namespace OpenNet::Core::Torrent
 {
@@ -68,7 +63,10 @@ export namespace OpenNet::Core::Torrent
         void SaveAllResumeData();
 
         // Set the state manager for persistence
-        void SetStateManager(TorrentStateManager *stateManager);
+        void SetStateManager(TorrentStateManager *stateManager) noexcept
+        {
+            m_stateManager = stateManager;
+        }
 
         void SetProgressCallback(ProgressCallback cb);
         void SetFinishedCallback(FinishedCallback cb);

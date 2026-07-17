@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "ViewModels/TransferViewModel.g.h"
-#include "../Models/TransferInfo.h"
 
+import OpenNet.Models.TransferInfo;
 import OpenNet.ViewModels.ObservableMixin;
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
@@ -143,7 +143,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		winrt::hstring TotalBytesText() const
 		{
-			return winrt::OpenNet::Models::OpenNet::FormatBytes(m_totalBytes);
+			return winrt::OpenNet::Models::FileInfo::FormatBytes(m_totalBytes);
 		}
 
 		std::uint64_t TransferredBytes() const

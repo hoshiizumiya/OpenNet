@@ -1,5 +1,4 @@
 ﻿#include "XamlWorkaround.h"
-import winrt.XamlToolkit.Labs.WinUI;
 #include "TaskPeersListPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"

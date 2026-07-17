@@ -8,7 +8,7 @@
  */
 module;
 #include <Windows.h>
-#include "ThirdParty/Sqlite/sqlite3.h"
+#include <sqlite3.h>
 // JSON is only needed for one-time migration from the old http_downloads.json
 #include <nlohmann/json.hpp>
 

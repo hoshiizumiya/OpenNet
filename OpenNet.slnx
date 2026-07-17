@@ -7,6 +7,8 @@
   </Configurations>
   <Folder Name="/Solution Items/">
     <File Path=".gitignore" />
+    <File Path="Directory.Packages.props" />
+    <File Path="nuget.config" />
     <File Path="README.md" />
     <File Path="README_zh-CN.md" />
   </Folder>

@@ -1,6 +1,4 @@
 ﻿module;
-#include <Shlwapi.h>
-
 #include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
 #include "UI/Shell/NotifyIconXamlHostWindow.xaml.h"
@@ -188,19 +186,10 @@ namespace
 			return;
 		}
 
-		constexpr DWORD kMaxUrlLen = 2083;
-		WCHAR encodedUrl[kMaxUrlLen]{};
-		DWORD urlLen = kMaxUrlLen;
-		std::wstring imageUri;
-		if (SUCCEEDED(UrlCreateFromPathW(imagePath.c_str(), encodedUrl, &urlLen, 0)))
-		{
-			imageUri = encodedUrl;
-		}
-		else
-		{
-			imageUri = L"file:///" + imagePath;
-			std::replace(imageUri.begin(), imageUri.end(), L'\\', L'/');
-		}
+		// Construct a file URI without depending on Shlwapi's UrlCreateFromPathW.
+		// generic_wstring() normalizes Windows separators to URI separators.
+		std::filesystem::path const path{ imagePath };
+		std::wstring imageUri = L"file:///" + path.lexically_normal().generic_wstring();
 
 		auto stretchIndex = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_stretch", 3)), 0, 3);
 		auto opacity = std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_opacity").value_or(20.0), 0.0, 100.0) / 100.0;
@@ -269,7 +258,8 @@ namespace winrt::OpenNet::implementation
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
 		// show system tray icon
-		trayIcon->Show();
+		trayIcon = OpenNet::UI::Shell::NotifyIconXamlHostWindow();
+		trayIcon.Show();
 
 		// Register window closing event - close strategy (hide to tray / ask / exit)
 		window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
@@ -350,7 +340,7 @@ namespace winrt::OpenNet::implementation
 		}
 		OutputDebugStringW(debugOut.c_str());
 
-		winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow devWindow;
+		auto devWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
 		devWindow.Activate();
 #endif
 		// Handle initial activation arguments
@@ -386,7 +376,7 @@ namespace winrt::OpenNet::implementation
 		HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
 		if (!hwnd)
 		{
-			return;
+			return false;
 		}
 
 		// 如果窗口被最小化，恢复它
@@ -403,11 +393,15 @@ namespace winrt::OpenNet::implementation
 
 		// 确保窗口获得焦点
 		SetFocus(hwnd);
+		return true;
 	}
 
 	void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
 	{
 		CreateSetMainWindow();
+		HWND hwnd = window
+			? ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window)
+			: nullptr;
 
 		// 根据激活类型处理不同的激活参数
 		ExtendedActivationKind kind = args.Kind();
@@ -462,7 +456,7 @@ namespace winrt::OpenNet::implementation
 			// Remove tray icon (UI operation, OK on UI thread)
 			if (trayIcon)
 			{
-				trayIcon->Remove();
+				trayIcon.Remove();
 				trayIcon = nullptr;
 			}
 

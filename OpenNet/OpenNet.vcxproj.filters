@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -259,6 +259,8 @@
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl">
       <Filter>UI\Xaml\Media\Effects</Filter>
     </Midl>
+    <Midl Include="UI\Xaml\Control\Card\HorizontalCard.idl" />
+    <Midl Include="UI\Xaml\Markup\UInt32Extension.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
@@ -288,9 +290,6 @@
     </ClCompile>
     <ClCompile Include="ViewModels\ObservableObject.cpp">
       <Filter>ViewModels</Filter>
-    </ClCompile>
-    <ClCompile Include="ThirdParty\Sqlite\sqlite3.c">
-      <Filter>ThirdPatry\sqlite</Filter>
     </ClCompile>
     <ClCompile Include="Models\NetModel.cpp" />
     <ClCompile Include="Helpers\NavItemIconHelper.cpp" />
@@ -633,9 +632,6 @@
     <ClInclude Include="Models\PeerInfo.h">
       <Filter>Models</Filter>
     </ClInclude>
-    <ClInclude Include="Models\TransferInfo.h">
-      <Filter>Models</Filter>
-    </ClInclude>
     <ClInclude Include="ViewModels\MainViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
@@ -656,9 +652,6 @@
     </ClInclude>
     <ClInclude Include="ViewModels\TransferViewModel.h">
       <Filter>ViewModels</Filter>
-    </ClInclude>
-    <ClInclude Include="ThirdParty\Sqlite\sqlite3.h">
-      <Filter>ThirdPatry\sqlite</Filter>
     </ClInclude>
     <ClInclude Include="Models\NetModel.h" />
     <ClInclude Include="Helpers\NavItemIconHelper.h" />
@@ -1189,7 +1182,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="vcpkg-configuration.json" />
     <None Include="vcpkg.json" />
     <None Include="Resource.aps" />

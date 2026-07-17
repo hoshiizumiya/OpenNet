@@ -8,7 +8,7 @@
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/entry.hpp>
 
-#include "ThirdParty/Sqlite/sqlite3.h"
+#include <sqlite3.h>
 
 module OpenNet.Core.torrentCore.TorrentStateManager;
 

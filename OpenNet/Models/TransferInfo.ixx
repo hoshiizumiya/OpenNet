@@ -1,12 +1,13 @@
-﻿
+﻿export module OpenNet.Models.TransferInfo;
+
 import winrt.Windows.Foundation;
 import std;
 
-namespace winrt::OpenNet::Models
+export namespace winrt::OpenNet::Models
 {
 	using namespace std;
 	// 简化的文件信息模型 / Simplified File Information Model
-	struct OpenNet
+	struct FileInfo
 	{
 		// 基本文件信息 / Basic File Information
 		winrt::hstring fileName;             // 文件名 / File Name
@@ -31,7 +32,7 @@ namespace winrt::OpenNet::Models
 		bool isEncrypted;              // 是否加密 / Is Encrypted
 
 		// 构造函数 / Constructor
-		OpenNet()
+		FileInfo()
 			: fileSize(0)
 			, lastModified(winrt::clock::now())
 			, isExecutable(false)
@@ -132,7 +133,7 @@ namespace winrt::OpenNet::Models
 		} status;
 
 		// 文件信息 / File Information
-		OpenNet OpenNet;                // 文件信息 / File Information
+		FileInfo fileInfo;                // 文件信息 / File Information
 		std::uint64_t totalSize;                // 总大小 / Total Size
 		std::uint64_t transferredSize;          // 已传输大小 / Transferred Size
 
@@ -203,13 +204,13 @@ namespace winrt::OpenNet::Models
 		// 获取传输速度字符串 / Get Transfer Speed String
 		winrt::hstring GetSpeedString() const
 		{
-			return OpenNet::FormatBytes(static_cast<uint64_t>(transferSpeed)) + L"/s";
+			return FileInfo::FormatBytes(static_cast<uint64_t>(transferSpeed)) + L"/s";
 		}
 
 		// 获取平均速度字符串 / Get Average Speed String
 		winrt::hstring GetAverageSpeedString() const
 		{
-			return OpenNet::FormatBytes(static_cast<uint64_t>(averageSpeed)) + L"/s";
+			return FileInfo::FormatBytes(static_cast<uint64_t>(averageSpeed)) + L"/s";
 		}
 	};
 }

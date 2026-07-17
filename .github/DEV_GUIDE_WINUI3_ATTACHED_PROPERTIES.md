@@ -1,6 +1,6 @@
 ﻿# WinUI 3 (C++/WinRT) Attached Properties 开发指南（本仓库实践）
 
-> 适用范围：`OpenNet`（WinUI 3 + C++/WinRT）。
+> 适用范围：WinUI 3 + C++/WinRT。
 >
 > 本文针对这次问题：应用启动期出现 `0xC000027B`（fail-fast）或 `0x802B000A`/`0x80004005`，表现为“内部错误/未指定错误”，最终定位为 **AttachedProperty 实现方式 + 模板绑定方式**不符合 WinUI 3 预期。
 

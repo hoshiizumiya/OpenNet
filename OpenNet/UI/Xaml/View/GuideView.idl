@@ -1,9 +1,24 @@
-﻿namespace OpenNet.UI.Xaml.View
+import "ViewModels/Guide/GuideViewModel.idl";
+import "Models/NameCultureInfoValue.idl";
+
+namespace OpenNet.UI.Xaml.View
 {
     [default_interface]
     runtimeclass GuideView : Microsoft.UI.Xaml.Controls.UserControl
     {
         GuideView();
 
+        OpenNet.ViewModels.Guide.GuideViewModel ViewModel;
+        Int32 StateIndex { get; };
+        String AllCulturesWelcomeText { get; };
+        Windows.Foundation.Collections.IObservableVector<OpenNet.Models.NameCultureInfoValue> Cultures { get; };
+        OpenNet.Models.NameCultureInfoValue SelectedCulture;
+        Boolean AgreementUseGrid { get; };
+        String AgreementCopyTarget { get; };
+        Boolean IsTermOfServiceAgreed;
+        Boolean IsPrivacyPolicyAgreed;
+        Boolean IsIssueReportAgreed;
+        Boolean IsOpenSourceLicenseAgreed;
+        Boolean IsAgreementCopyAgreed;
     }
 }

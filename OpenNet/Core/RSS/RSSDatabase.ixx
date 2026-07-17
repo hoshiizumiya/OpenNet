@@ -5,12 +5,14 @@
  *
  * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
+module;
+
+struct sqlite3;
+
 export module OpenNet.Core.RSS.RSSDatabase;
 
 import OpenNet.Core.RSS.RSSTypes;
 import std;
-
-struct sqlite3;
 
 export namespace OpenNet::Core::RSS
 {

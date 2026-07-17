@@ -4,6 +4,8 @@
 #include "Models/NameCultureInfoValue.g.cpp"
 #endif
 
+import winrt.OpenNet.Models;
+
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 
@@ -13,6 +15,16 @@ namespace winrt::OpenNet::Models::implementation
 	{
 		m_isMaintainedByMSTRDI = false;
 		m_isMaintainedByCrowdin = false;
+	}
+
+	winrt::hstring NameCultureInfoValue::Name()
+	{
+		return m_name;
+	}
+
+	void NameCultureInfoValue::Name(winrt::hstring const& value)
+	{
+		m_name = value;
 	}
 
 	winrt::hstring NameCultureInfoValue::Value()

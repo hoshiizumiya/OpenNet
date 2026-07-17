@@ -1,6 +1,6 @@
-﻿# OpenNet WinUI 3 自定义控件与样式编写指南（C++/WinRT）
+﻿# WinUI 3 自定义控件与样式编写指南（C++/WinRT）
 
-> 适用范围：本仓库 `OpenNet`（WinUI 3 + C++/WinRT）。
+> 适用范围：WinUI 3 + C++/WinRT。
 >
 > 目标：用“自定义 `Control` + `Generic.xaml`/资源字典模板”的方式实现可复用 UI 组件（类似 `TitleCard`）。
 >

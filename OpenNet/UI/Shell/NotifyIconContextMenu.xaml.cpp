@@ -95,9 +95,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 
 	void NotifyIconContextMenu::ExitApplication()
 	{
-		// Remove the tray icon
-		auto trayIcon = winrt::OpenNet::implementation::App::trayIcon;
-		trayIcon->Remove();
+		winrt::OpenNet::implementation::App::trayIcon.Remove();
 
 		// Allow the window to close (bypasses the hide-to-tray Closing handler)
 		winrt::OpenNet::implementation::App::s_isExiting = true;

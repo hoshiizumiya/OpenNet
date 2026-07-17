@@ -35,7 +35,7 @@
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="$targetentrypoint$" uap18:RuntimeBehavior="windowsApp">
+      EntryPoint="$targetentrypoint$" uap18:RuntimeBehavior="packagedClassicApp">
       <uap:VisualElements
         DisplayName="OpenNet Dev"
         Description="OpenNet Dev"

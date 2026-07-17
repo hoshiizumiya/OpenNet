@@ -175,6 +175,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		return 0;
 	}
 
+	winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(XamlChangeId.Perf2026);
+
 	// 这是主实例，启动 WinUI 3 应用
 	winrt::Microsoft::UI::Xaml::Application::Start([](auto&&)
 	{

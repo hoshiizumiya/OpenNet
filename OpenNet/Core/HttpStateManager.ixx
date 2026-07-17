@@ -7,11 +7,13 @@
  * LICENSE:   Attribution-NonCommercial-ShareAlike 4.0 International
  */
 
+module;
+
+struct sqlite3;
+
 export module OpenNet.Core.HttpStateManager;
 
 import std;
-
-struct sqlite3;
 
 export namespace OpenNet::Core
 {

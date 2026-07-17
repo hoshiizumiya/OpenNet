@@ -363,8 +363,6 @@ MigrationBackup/
 FodyWeavers.xsd
 
 #vcpkg
-/OpenNet/vcpkg_installed/
-/NanaGet
-/src
-/HomePage
+vcpkg_installed/
+
 /.vscode

@@ -7,7 +7,7 @@
  */
 module;
 #include <Windows.h>
-#include "ThirdParty/Sqlite/sqlite3.h"
+#include <sqlite3.h>
 
 module OpenNet.Core.AppSettingsDatabase;
 

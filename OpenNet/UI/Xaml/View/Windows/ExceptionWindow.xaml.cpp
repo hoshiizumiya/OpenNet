@@ -22,7 +22,7 @@ using namespace winrt::Microsoft::UI::Xaml;
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	ExceptionWindow::ExceptionWindow(winrt::guid const& sentryId, hstring const& exception) :
-		m_sentryId(::OpenNet::Core::ExceptionService::ExceptionFormat::ToSentryUuid(sentryId)),
+		m_sentryId(sentryId),
 		m_exception(exception),
 		m_comment(L"")
 	{
@@ -80,7 +80,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		// Convert GUID to string format
 		char guidStr[37];
-		sentry_uuid_as_string(&m_sentryId, guidStr);
+		auto const& sentryUuid = ::OpenNet::Core::ExceptionService::ExceptionFormat::ToSentryUuid(m_sentryId);
+		sentry_uuid_as_string(&sentryUuid, guidStr);
 		return winrt::hstring(std::format(L"trace.id: {}", winrt::to_hstring(guidStr)));
 	}
 
@@ -106,6 +107,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	winrt::fire_and_forget ExceptionWindow::CloseWindowAsync()
 	{
+		auto strong = get_strong();
+		auto dispatcher = DispatcherQueue();
 		// Switch to background thread for Sentry operations
 		co_await winrt::resume_background();
 
@@ -114,8 +117,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			// Submit feedback if comment is provided
 			if (!m_comment.empty())
 			{
+				auto const& sentryUuid = ::OpenNet::Core::ExceptionService::ExceptionFormat::ToSentryUuid(m_sentryId);
 				sentry_value_t user_feedback = sentry_value_new_feedback(
-					winrt::to_string(m_comment).c_str(), nullptr, nullptr, &m_sentryId);
+					winrt::to_string(m_comment).c_str(), nullptr, nullptr, &sentryUuid);
 				sentry_capture_feedback(user_feedback);
 
 				// Flush events to Sentry
@@ -129,14 +133,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 
 		// Switch back to UI thread to close the window
-		auto dispatcher = DispatcherQueue();
-		if (dispatcher)
+		dispatcher.TryEnqueue([this]()
 		{
-			dispatcher.TryEnqueue([this]()
-			{
-				Close();
-			});
-		}
+			Close();
+		});
 	}
 
 	void ExceptionWindow::Show(winrt::guid const& sentryId, hstring const& exception)

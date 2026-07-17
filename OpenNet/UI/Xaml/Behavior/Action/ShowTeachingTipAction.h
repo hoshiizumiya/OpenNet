@@ -6,8 +6,6 @@ namespace winrt::OpenNet::UI::Xaml::Behavior::Action::implementation
 {
 	struct ShowTeachingTipAction : ShowTeachingTipActionT<ShowTeachingTipAction>
     {
-        ShowTeachingTipAction();
-
 		winrt::Windows::Foundation::IInspectable Execute(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& parameter);
 		static winrt::Microsoft::UI::Xaml::DependencyProperty TeachingTipProperty();
 

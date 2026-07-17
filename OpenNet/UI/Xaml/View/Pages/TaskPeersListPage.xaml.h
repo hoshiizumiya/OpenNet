@@ -1,5 +1,24 @@
-#pragma once
+﻿#pragma once
 
+import winrt.XamlToolkit.Labs.WinUI;
+import winrt.XamlToolkit.WinUI.Animations;
+import winrt.XamlToolkit.WinUI.Behaviors;
+import winrt.XamlToolkit.WinUI.Controls;
+import winrt.XamlToolkit.WinUI.Interactivity;
+import winrt.OpenNet.UI.Xaml.Markup;
+import winrt.OpenNet.UI.Xaml.Media;
+import winrt.OpenNet.UI.Xaml.Behavior;
+import winrt.OpenNet.UI.Xaml.Control.Card;
+import winrt.OpenNet.UI.Xaml.Control.Effect;
+import winrt.OpenNet.UI.Xaml.Control.HomePage.Header;
+import winrt.OpenNet.UI.Xaml.Media.Brushes;
+import winrt.OpenNet.UI.Xaml.Media.Effects;
+import winrt.OpenNet.UI.Xaml.Media.Pipelines;
+import winrt.OpenNet.UI.Xaml.Media.Shadows;
+import winrt.OpenNet.UI.Xaml.Media.Visuals;
+import winrt.Microsoft.UI.Xaml.Controls.AnimatedVisuals;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Composition.SystemBackdrops;
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 

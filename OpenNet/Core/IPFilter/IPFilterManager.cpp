@@ -7,7 +7,7 @@
  */
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/address.hpp>
-#include "ThirdParty/Sqlite/sqlite3.h"
+#include <sqlite3.h>
 #include "Core/IPFilter/IPFilterManager.h"
 
 import OpenNet.Core.AppSettingsDatabase;

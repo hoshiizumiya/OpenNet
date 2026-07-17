@@ -463,11 +463,6 @@ namespace OpenNet::Core::Torrent
         }
     }
 
-    void LibtorrentHandle::SetStateManager(TorrentStateManager *stateManager)
-    {
-        m_stateManager = stateManager;
-    }
-
     void LibtorrentHandle::SetProgressCallback(ProgressCallback cb)
     {
         std::lock_guard lk(m_cbMutex);

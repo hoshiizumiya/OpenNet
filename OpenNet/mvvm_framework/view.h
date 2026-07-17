@@ -39,7 +39,7 @@ namespace mvvm
 		}
 		void ViewModel(view_model_type const& value)
 		{
-			base::SetProperty(m_viewModel, value, NAME_OF(view, ViewModelT));
+			base::SetProperty(m_viewModel, value, NAME_OF(view, ViewModel));
 		}
 
 	protected:

@@ -10,11 +10,13 @@
  *
  * LICENSE:   The MIT License
  */
+module;
+
+struct sqlite3;
+
 export module OpenNet.Core.AppSettingsDatabase;
 
 import std;
-
-struct sqlite3;
 
 export namespace OpenNet::Core
 {

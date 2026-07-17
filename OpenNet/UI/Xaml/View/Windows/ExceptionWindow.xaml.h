@@ -22,7 +22,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	private:
 		winrt::fire_and_forget CloseWindowAsync();
 
-		sentry_uuid_t m_sentryId;
+		winrt::guid m_sentryId;
 		hstring m_exception;
 		hstring m_comment;
 	};

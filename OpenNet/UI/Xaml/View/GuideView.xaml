@@ -13,6 +13,7 @@
     xmlns:ouxcc="using:OpenNet.UI.Xaml.Control.Card"
     xmlns:ouxce="using:OpenNet.UI.Xaml.Control.Effect"
     xmlns:ouxm="using:OpenNet.UI.Xaml.Markup"
+    xmlns:ov="using:OpenNet.ViewModels"
     xmlns:ovg="using:OpenNet.ViewModels.Guide"
     d:DataContext="{d:DesignInstance ovg:GuideViewModel}"
     mc:Ignorable="d">
@@ -96,7 +97,7 @@
         <essential:SwitchPresenter
             Grid.Row="0"
             ContentTransitions="{ThemeResource EntranceThemeTransitions}"
-            Value="{Binding State, Mode=OneWay}">
+            Value="{x:Bind ViewModel.State, Mode=OneWay}">
             <!--  Language  -->
             <essential:Case Value="{ouxm:UInt32 Value=0}">
                 <Grid>
@@ -123,7 +124,7 @@
                             Padding="0,0,-12,-12"
                             ItemContainerStyle="{ThemeResource LargeGridViewItemStyle}"
                             ItemTemplate="{StaticResource LanguageTemplate}"
-                            ItemsSource="{x:Bind CultureOptions.Cultures}"
+                            ItemsSource="{x:Bind Cultures}"
                             SelectedItem="{x:Bind SelectedCulture, Mode=TwoWay}"
                             SelectionMode="Single" />
                     </Border>
@@ -209,7 +210,7 @@
                             Margin="0,8,0,0"
                             ColumnSpacing="12"
                             RowSpacing="4"
-                            Visibility="{Binding AgreementUseGrid, Converter={StaticResource BoolToVisibilityConverter}}">
+                            Visibility="{x:Bind AgreementUseGrid, Converter={StaticResource BoolToVisibilityConverter}}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition />
@@ -223,7 +224,7 @@
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="0"
-                                IsChecked="{Binding IsTermOfServiceAgreed, Mode=TwoWay}">
+                                IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
@@ -237,7 +238,7 @@
                             <CheckBox
                                 Grid.Row="0"
                                 Grid.Column="1"
-                                IsChecked="{Binding IsPrivacyPolicyAgreed, Mode=TwoWay}">
+                                IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
@@ -251,7 +252,7 @@
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="0"
-                                IsChecked="{Binding IsIssueReportAgreed, Mode=TwoWay}">
+                                IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
@@ -265,7 +266,7 @@
                             <CheckBox
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                IsChecked="{Binding IsOpenSourceLicenseAgreed, Mode=TwoWay}">
+                                IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
@@ -280,8 +281,8 @@
                                 Grid.Row="2"
                                 Grid.Column="0"
                                 Grid.ColumnSpan="2"
-                                IsChecked="{Binding IsAgreementCopyAgreed, Mode=TwoWay}">
-                                <TextBlock Text="{Binding AgreementCopyTarget}" TextWrapping="Wrap" />
+                                IsChecked="{x:Bind IsAgreementCopyAgreed, Mode=TwoWay}">
+                                <TextBlock Text="{x:Bind AgreementCopyTarget}" TextWrapping="Wrap" />
                             </CheckBox>
                         </Grid>
 
@@ -547,7 +548,7 @@
                     Margin="16"
                     HorizontalAlignment="Center"
                     IsHitTestVisible="False"
-                    SelectedIndex="{Binding State, Mode=TwoWay}">
+                    SelectedIndex="{x:Bind StateIndex, Mode=OneWay}">
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xF2B7;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xF28B;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE81E;}" />
@@ -557,9 +558,9 @@
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B9;}" />
                 </cwc:Segmented>
                 <Button
-                    Command="{Binding NextOrCompleteCommand}"
-                    Content="{Binding NextOrCompleteButtonText}"
-                    IsEnabled="{Binding IsNextOrCompleteButtonEnabled}"
+                    Click="NextOrComplete"
+                    Content="{x:Bind ViewModel.NextOrCompleteButtonText, Mode=OneWay}"
+                    IsEnabled="{x:Bind ViewModel.IsNextOrCompleteButtonEnabled, Mode=OneWay}"
                     Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </Grid>

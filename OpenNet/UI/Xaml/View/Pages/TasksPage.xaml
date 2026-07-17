@@ -8,14 +8,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
-    xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:xtlw="using:XamlToolkit.Labs.WinUI"
     x:Uid="TasksPageRoot"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <essential:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -161,118 +165,118 @@
                             <interactivity:Interaction.Behaviors>
                                 <behaviors:StickyHeaderBehavior />
                             </interactivity:Interaction.Behaviors>
-                            <labs:DataTable ColumnSpacing="16" Loaded="DataTable_Loaded">
-                                <labs:DataColumn
+                            <xtlw:DataTable ColumnSpacing="16" Loaded="DataTable_Loaded">
+                                <xtlw:DataColumn
                                     x:Name="ColName"
-                                    x:Load="{x:Bind ViewModel.IsColNameLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColNameLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="Name">
                                     <TextBlock
                                         x:Uid="Header_TaskName"
                                         FontWeight="SemiBold"
                                         Text="Name" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColSize"
-                                    x:Load="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="Size">
                                     <TextBlock
                                         x:Uid="Header_Size"
                                         FontWeight="SemiBold"
                                         Text="Size" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColProgress"
-                                    x:Load="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="Progress">
                                     <TextBlock
                                         x:Uid="Header_Progress"
                                         FontWeight="SemiBold"
                                         Text="Progress" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColDownloadSize"
-                                    x:Load="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="DownloadSize">
                                     <TextBlock
                                         x:Uid="Header_DownloadSize"
                                         FontWeight="SemiBold"
                                         Text="Download Size" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColUploadSize"
-                                    x:Load="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="UploadSize">
                                     <TextBlock
                                         x:Uid="Header_UploadSize"
                                         FontWeight="SemiBold"
                                         Text="Upload Size" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColumnTotalDownloadSize"
-                                    x:Load="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="TotalDownloadSize">
                                     <TextBlock
                                         x:Uid="Header_TotalDownloadSize"
                                         FontWeight="SemiBold"
                                         Text="Total Download Size" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColumnTotalUploadSize"
-                                    x:Load="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="TotalUploadSize">
                                     <TextBlock
                                         x:Uid="Header_TotalUploadSize"
                                         FontWeight="SemiBold"
                                         Text="Total Upload Size" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColDLRate"
-                                    x:Load="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="DLRate">
                                     <TextBlock
                                         x:Uid="Header_DLRate"
                                         FontWeight="SemiBold"
                                         Text="DL Rate" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColULRate"
-                                    x:Load="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="ULRate">
                                     <TextBlock
                                         x:Uid="Header_ULRate"
                                         FontWeight="SemiBold"
                                         Text="UL Rate" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColRemaining"
-                                    x:Load="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="Remaining">
                                     <TextBlock
                                         x:Uid="Header_Remaining"
                                         FontWeight="SemiBold"
                                         Text="Remaining" />
-                                </labs:DataColumn>
-                                <labs:DataColumn
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
                                     x:Name="ColAddDate"
-                                    x:Load="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay}"
+                                    Visibility="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
                                     Tag="AddDate">
                                     <TextBlock
                                         x:Uid="Header_AddDate"
                                         FontWeight="SemiBold"
                                         Text="Add Date" />
-                                </labs:DataColumn>
-                            </labs:DataTable>
+                                </xtlw:DataColumn>
+                            </xtlw:DataTable>
                             <muxc:Border.ContextFlyout>
                                 <MenuFlyout>
                                     <MenuFlyoutItem
@@ -286,47 +290,47 @@
                                     <MenuFlyoutSeparator />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_TaskName"
-                                        IsChecked="{x:Bind ViewModel.IsColNameLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColNameLoad, Mode=TwoWay}"
                                         Text="Name" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_Size"
-                                        IsChecked="{x:Bind ViewModel.IsColSizeLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColSizeLoad, Mode=TwoWay}"
                                         Text="Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_Progress"
-                                        IsChecked="{x:Bind ViewModel.IsColProgressLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColProgressLoad, Mode=TwoWay}"
                                         Text="Progress" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_DownloadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColDownloadSizeLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=TwoWay}"
                                         Text="Download Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_UploadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColUploadSizeLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=TwoWay}"
                                         Text="Upload Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_TotalDownloadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=TwoWay}"
                                         Text="Total Download Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_TotalUploadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=TwoWay}"
                                         Text="Total Upload Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_DLRate"
-                                        IsChecked="{x:Bind ViewModel.IsColDLRateLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColDLRateLoad, Mode=TwoWay}"
                                         Text="Download Rate" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_ULRate"
-                                        IsChecked="{x:Bind ViewModel.IsColULRateLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColULRateLoad, Mode=TwoWay}"
                                         Text="Upload Rate" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_Remaining"
-                                        IsChecked="{x:Bind ViewModel.IsColRemainingLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColRemainingLoad, Mode=TwoWay}"
                                         Text="Remaining" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_AddDate"
-                                        IsChecked="{x:Bind ViewModel.IsColAddDateLoad}"
+                                        IsChecked="{x:Bind ViewModel.IsColAddDateLoad, Mode=TwoWay}"
                                         Text="Add Date" />
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
@@ -374,67 +378,67 @@
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="vm:TaskViewModel">
                             <!--  We set HorizontalAlignment to Left here as we're not stretching our content with a star column  -->
-                            <labs:DataRow HorizontalAlignment="Left">
+                            <xtlw:DataRow HorizontalAlignment="Left">
                                 <TextBlock
                                     x:Name="NameTextBlock"
                                     Margin="12,0,8,0"
-                                    x:Load="{x:Bind ViewModel.IsColNameLoad, Mode=OneWay}"
                                     IsTextSelectionEnabled="True"
-                                    Text="{x:Bind vm:TaskViewModel.Name, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingNameTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind Name, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColName.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="SizeTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.Size, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingSizeTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind Size, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="ProgressTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.Progress, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingProgressTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind Progress, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="DownloadSizeTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.DownloadSize, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingDownloadSizeTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind DownloadSize, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColDownloadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="UploadSizeTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.UploadSize, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingUploadSizeTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind UploadSize, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColUploadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="TotalDownloadSizeTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.TotalDownloadSize, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingTotalDownloadSizeTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind TotalDownloadSize, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColumnTotalDownloadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="TotalUploadSizeTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.TotalUploadSize, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingTotalUploadSizeTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind TotalUploadSize, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColumnTotalUploadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="DLRateTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.DownloadRate, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingDLRateTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind DownloadRate, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColDLRate.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="ULRateTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.UploadRate, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingULRateTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind UploadRate, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColULRate.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="RemainingTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.Remaining, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingRemainingTextBlock, Mode=OneWay}" />
+                                    Text="{x:Bind Remaining, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColRemaining.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="AddDateTextBlock"
-                                    x:Load="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay}"
-                                    Text="{x:Bind vm:TaskViewModel.AddDate, Mode=OneWay}"
-                                    TextWrapping="{x:Bind TextWrappingAddDateTextBlock, Mode=OneWay}" />
-                            </labs:DataRow>
+                                    Text="{x:Bind AddDate, Mode=OneWay}"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColAddDate.Visibility, Mode=OneWay}" />
+                            </xtlw:DataRow>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
