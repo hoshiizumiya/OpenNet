@@ -66,10 +66,47 @@ jobs:
         uses: actions/checkout@v7
         with:
           submodules: recursive
-
+      
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
-
+      
+      - name: Install MSVC Preview Build Tools
+        shell: pwsh
+        run: |
+          $vsInstaller = "C:\Program Files (x86)\Microsoft Visual Studio\Installer\setup.exe"
+          $vsPath = "C:\Program Files\Microsoft Visual Studio\18\Enterprise"
+      
+          & $vsInstaller modify `
+            --installPath "$vsPath" `
+            --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 `
+            --add Microsoft.VisualStudio.Component.VC.Preview.ARM64 `
+            --quiet `
+            --norestart `
+            --wait
+      
+          if ($LASTEXITCODE -ne 0) {
+            throw "Failed to install MSVC Preview Build Tools. Exit code: $LASTEXITCODE"
+          }
+      
+      - name: Verify MSVC Preview
+        shell: pwsh
+        run: |
+          $previewFile = "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Auxiliary\Build\Microsoft.VCToolsVersion.Preview.txt"
+      
+          if (-not (Test-Path $previewFile)) {
+            throw "MSVC Preview toolset was not installed."
+          }
+      
+          $version = Get-Content $previewFile
+          Write-Host "MSVC Preview version: $version"
+      
+          $toolsetPath = "C:\Program Files\Microsoft Visual Studio\18\Enterprise\VC\Tools\MSVC\$version"
+          Write-Host "Toolset path: $toolsetPath"
+      
+          if (-not (Test-Path $toolsetPath)) {
+            throw "MSVC Preview toolset directory not found."
+          }
+      
       - name: Set up vcpkg
         working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
         shell: pwsh

@@ -723,7 +723,7 @@
       <DependentUpon>UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Markup\UInt32Extension.cpp">
-      <DependentUpon>UI\Xaml\Control\HomePage\Header\UInt32Extension.idl</DependentUpon>
+      <DependentUpon>UI\Xaml\Markup\UInt32Extension.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBuilder.cpp" />

@@ -8,6 +8,7 @@ import OpenNet.Core.ApplicationModel;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Windows.Foundation;
 import winrt.Microsoft.UI.Dispatching;
+import winrt.Microsoft.UI.Xaml.Settings;
 import winrt.Microsoft.Windows.ApplicationModel.WindowsAppRuntime;
 import winrt.Microsoft.Windows.AppLifecycle;
 import winrt.Microsoft.Windows.Storage;
@@ -175,7 +176,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		return 0;
 	}
 
-	winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(XamlChangeId.Perf2026);
+	winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::DefaultStyleOptimizations);
+	winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::DeferContextFlyoutInit);
+	winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::IconNoGridOptimization);
+	winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::OptimizeApplyStyles);
 
 	// 这是主实例，启动 WinUI 3 应用
 	winrt::Microsoft::UI::Xaml::Application::Start([](auto&&)

@@ -154,7 +154,9 @@
     <Page Include="UI\Xaml\View\InfoBarView.xaml">
       <Filter>UI\Xaml\View</Filter>
     </Page>
-    <Page Include="UI\Xaml\View\Windows\DevWindow.xaml" />
+    <Page Include="UI\Xaml\View\Windows\DevWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -259,8 +261,12 @@
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl">
       <Filter>UI\Xaml\Media\Effects</Filter>
     </Midl>
-    <Midl Include="UI\Xaml\Control\Card\HorizontalCard.idl" />
-    <Midl Include="UI\Xaml\Markup\UInt32Extension.idl" />
+    <Midl Include="UI\Xaml\Markup\UInt32Extension.idl">
+      <Filter>UI\Xaml\Markup</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\Card\HorizontalCard.idl">
+      <Filter>UI\Xaml\Control\Card</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
@@ -608,10 +614,15 @@
     <ClCompile Include="Core\ExceptionService\OpenNetException.ixx">
       <Filter>Core\ExceptionService</Filter>
     </ClCompile>
-    <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
     <ClCompile Include="ViewModels\ObservableMixin.ixx">
       <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Markup\UInt32Extension.cpp">
+      <Filter>UI\Xaml\Markup</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx">
+      <Filter>Core\ExceptionService</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
