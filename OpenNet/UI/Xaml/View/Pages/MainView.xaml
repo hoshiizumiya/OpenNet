@@ -8,8 +8,13 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxv="using:OpenNet.UI.Xaml.View"
     xmlns:xtwa="using:XamlToolkit.WinUI.Animations"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary Source="ms-appx:///Styles/NavigationView.xaml" />
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -31,7 +36,7 @@
             Style="{StaticResource MainNavigationViewStyle}">
             <NavigationView.MenuItems>
                 <!--  主页 / Home  -->
-                <NavigationViewItem
+                <!--<NavigationViewItem
                     x:Name="NavItem_Home"
                     x:Uid="NavItem_Home"
                     Tag="home">
@@ -41,7 +46,7 @@
                             xtwa:Implicit.Animations="{StaticResource IconOpacityAnim}"
                             Glyph="&#xE80F;" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>
+                </NavigationViewItem>-->
 
                 <NavigationViewItem
                     x:Name="NavItem_Tasks"
@@ -75,25 +80,35 @@
                 </NavigationViewItem>
             </NavigationView.MenuItems>
 
-            <!--  底部  -->
+            <!--  Footer  -->
             <NavigationView.FooterMenuItems>
-                <!--<NavigationViewItem
-                    Content="Contribute"
+                <!--  More  -->
+                <NavigationViewItem
+                    x:Name="NavItem_More"
+                    x:Uid="NavItem_More"
+                    Content="More"
                     SelectsOnInvoked="False"
-                    Tag="Contribute">
+                    Tag="more"
+                    Tapped="NavItem_More_Tapped">
                     <NavigationViewItem.Icon>
-                        <ImageIcon Opacity="0.6" Source="{ThemeResource GitHubIconImage}" />
+                        <FontIcon Glyph="&#xE700;" />
                     </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
+
+                    <FlyoutBase.AttachedFlyout>
+                        <Flyout
+                            essential:FlyoutHelper.AcrylicWorkaround="True"
+                            LightDismissOverlayMode="On"
+                            Placement="RightEdgeAlignedBottom">
+                            <ouxv:ItemsCardPopupView />
+                        </Flyout>
+                    </FlyoutBase.AttachedFlyout>
+
+                </NavigationViewItem>
+                <!--  Settings  -->
                 <NavigationViewItem
                     x:Name="NavItem_Settings"
                     x:Uid="NavItem_Settings"
                     Tag="settings">
-                    <!--<NavigationViewItem.Content>
-                    -->
-                    <!--<FontIcon
-                            x:Name="SettingsIcon"
-                            Glyph="&#xE713;" />-->
                     <NavigationViewItem.Icon>
                         <AnimatedIcon
                             x:Name="AnimatedIcon"

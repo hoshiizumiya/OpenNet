@@ -106,6 +106,10 @@
     <Link>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LargeAddressAware>
+    </Link>
+    <Link>
+      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
@@ -127,6 +131,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</LargeAddressAware>
+      <LargeAddressAware Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</LargeAddressAware>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -134,6 +140,10 @@
     <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx" />
     <ClCompile Include="Core\ExceptionService\OpenNetException.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
+    <ClCompile Include="UI\Xaml\View\ItemsCardPopupView.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\ItemsCardPopupView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\DevWindow.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -284,6 +294,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\InfoBarView.xaml.h">
       <DependentUpon>UI\Xaml\View\InfoBarView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\ItemsCardPopupView.xaml.h">
+      <DependentUpon>UI\Xaml\View\ItemsCardPopupView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h" />
@@ -556,6 +570,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\InfoBarView.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\ItemsCardPopupView.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
@@ -1062,6 +1079,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\InfoBarView.idl">
       <DependentUpon>UI\Xaml\View\InfoBarView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\ItemsCardPopupView.idl">
+      <DependentUpon>UI\Xaml\View\ItemsCardPopupView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl" />

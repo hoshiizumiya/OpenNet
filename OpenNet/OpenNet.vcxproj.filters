@@ -157,6 +157,7 @@
     <Page Include="UI\Xaml\View\Windows\DevWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\ItemsCardPopupView.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />

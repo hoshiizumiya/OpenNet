@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Xaml.View
+{
+    [default_interface]
+    runtimeclass ItemsCardPopupView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        ItemsCardPopupView();
+
+    }
+}

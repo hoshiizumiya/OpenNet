@@ -846,7 +846,6 @@
                                     animations:Implicit.Animations="{StaticResource RailNavigationIconImplicitOffsetAnimation}"
                                     Opacity="0"
                                     Visibility="{TemplateBinding helpers:NavItemIconHelper.StaticIconVisibility}">
-                                    <!--  Visibility="{TemplateBinding ui:NavItemIconHelper.StaticIconVisibility}"  -->
                                     <ContentPresenter
                                         x:Name="SelectedIcon"
                                         Content="{TemplateBinding helpers:NavItemIconHelper.SelectedIcon}"

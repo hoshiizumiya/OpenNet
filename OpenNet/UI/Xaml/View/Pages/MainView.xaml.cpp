@@ -50,16 +50,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel = winrt::OpenNet::ViewModels::MainViewModel();
 		m_viewModel.Initialize();
 
-		// Navigate to saved start page (default: home)
+		// Navigate to saved start page (default: tasks)
 		{
-			winrt::hstring startTag = L"home";
+			winrt::hstring startTag = L"tasks";
 			try
 			{
 				auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
 				auto values = localSettings.Values();
 				if (values.HasKey(L"StartPage"))
 				{
-					startTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
+					startTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"tasks");
 				}
 			}
 			catch (...)
@@ -69,7 +69,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (startTag == L"tasks") openTasksPage();
 			else if (startTag == L"rss") openRSSPage();
 			else if (startTag == L"settings") openSettingsPage();
-			else openHomePage();
+			else openTasksPage();
 		}
 	}
 
@@ -352,7 +352,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 
 			if (content && content.try_as<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>()) return;
-			openHomePage();
+			openTasksPage();
 			return;
 		}
 
@@ -400,6 +400,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// TODO: uniform exception handle
 		OutputDebugStringW((L"Navigation failed to " + e.SourcePageType().Name + L": " + e.Exception() + L"\n").c_str());
 		e.Handled(true);
+	}
+
+	void MainView::NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+	{
+		Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ShowAttachedFlyout(sender.as<FrameworkElement>());
 	}
 
 	void MainView::SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)

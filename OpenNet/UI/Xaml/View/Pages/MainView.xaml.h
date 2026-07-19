@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 // workaround for XAML-generated .xaml.g.h files not supporting C++20 modules
+import winrt.OpenNet.Helpers;
+import winrt.OpenNet.UI.Xaml.View;
 import winrt.XamlToolkit.Labs.WinUI;
 #include "UI/Xaml/View/Pages/MainView.g.h"
 
@@ -46,6 +48,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 								winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
 		void NavFrame_NavigationFailed(winrt::Windows::Foundation::IInspectable const&,
 									   winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const&);
+		void NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
 		void SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		void SettingButton_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&,
