@@ -865,13 +865,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::SaveColumnWidths()
 	{
 		using namespace ::OpenNet::Helpers;
-		SaveColumnWidth("Tasks.Name", ColName().ActualWidth());
-		SaveColumnWidth("Tasks.Size", ColSize().ActualWidth());
-		SaveColumnWidth("Tasks.Progress", ColProgress().ActualWidth());
-		SaveColumnWidth("Tasks.DLRate", ColDLRate().ActualWidth());
-		SaveColumnWidth("Tasks.ULRate", ColULRate().ActualWidth());
-		SaveColumnWidth("Tasks.Remaining", ColRemaining().ActualWidth());
-		SaveColumnWidth("Tasks.AddDate", ColAddDate().ActualWidth());
+		SaveColumnWidth("Tasks.Name", ColName());
+		SaveColumnWidth("Tasks.Size", ColSize());
+		SaveColumnWidth("Tasks.Progress", ColProgress());
+		SaveColumnWidth("Tasks.DLRate", ColDLRate());
+		SaveColumnWidth("Tasks.ULRate", ColULRate());
+		SaveColumnWidth("Tasks.Remaining", ColRemaining());
+		SaveColumnWidth("Tasks.AddDate", ColAddDate());
 	}
 
 	winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> TasksPage::GetItem(hstring const& key)

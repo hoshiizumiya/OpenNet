@@ -19,6 +19,12 @@ export namespace OpenNet::Helpers
 				::OpenNet::Core::AppSettingsDatabase::CAT_COLUMN_WIDTH, key, width);
 	}
 
+	template <typename TColumn>
+	inline void SaveColumnWidth(std::string const& key, TColumn const& column)
+	{
+		SaveColumnWidth(key, column.ActualColumnWidth());
+	}
+
 	inline double GetColumnWidth(std::string const& key, double defaultWidth = 0.0)
 	{
 		return ::OpenNet::Core::AppSettingsDatabase::Instance().GetDouble(
@@ -33,7 +39,7 @@ export namespace OpenNet::Helpers
 		double width = GetColumnWidth(key);
 		if (width > 0)
 		{
-			col.Width(width);
+			col.DesiredWidth(winrt::Microsoft::UI::Xaml::GridLengthHelper::FromPixels(width));
 		}
 	}
 

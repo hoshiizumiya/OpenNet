@@ -65,13 +65,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		InitializeComponent();
 		Loaded([this](auto, auto)
 		{
+			RestoreColumn(ColCheckFileName(), "TorrentCheck.FileName");
 			RestoreColumn(ColCheckSize(), "TorrentCheck.Size");
 			RestoreColumn(ColCheckPriority(), "TorrentCheck.Priority");
 		});
 		Unloaded([this](auto, auto)
 		{
-			SaveColumnWidth("TorrentCheck.Size", ColCheckSize().ActualWidth());
-			SaveColumnWidth("TorrentCheck.Priority", ColCheckPriority().ActualWidth());
+			SaveColumnWidth("TorrentCheck.FileName", ColCheckFileName());
+			SaveColumnWidth("TorrentCheck.Size", ColCheckSize());
+			SaveColumnWidth("TorrentCheck.Priority", ColCheckPriority());
 		});
 	}
 
@@ -305,15 +307,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto totalCount = m_viewModel.TotalFileCount();
 			auto selectedCount = m_viewModel.SelectedFileCount();
 
-			if (auto headerCb = SelectAllHeaderCheckBox())
-			{
-				if (selectedCount == 0)
-					headerCb.IsChecked(false);
-				else if (selectedCount == totalCount)
-					headerCb.IsChecked(true);
-				else
-					headerCb.IsChecked(winrt::Windows::Foundation::IReference<bool>{ nullptr }); // Indeterminate
-			}
 			if (auto filterCb = SelectAllFilterCheckBox())
 			{
 				if (selectedCount == 0)

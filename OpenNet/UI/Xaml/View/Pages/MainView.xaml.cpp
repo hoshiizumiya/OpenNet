@@ -274,6 +274,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			tag = unbox_value_or<hstring>(container.Tag(), L"");
 		}
+		if (tag == L"more") return;
 		Navigate(tag);
 	}
 

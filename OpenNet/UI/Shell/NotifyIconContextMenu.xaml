@@ -221,7 +221,7 @@
                     x:Uid="NotifyIconContextMenu"
                     Grid.Column="1"
                     Width="Auto"
-                    MinWidth="0"
+                    MinWidth="10"
                     HorizontalAlignment="Right"
                     OffContent=""
                     OnContent="" />

@@ -13,6 +13,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	DevWindow::DevWindow()
 	{
+		ExtendsContentIntoTitleBar(true);
 	}
 
 	void DevWindow::TriggerXamlException_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)

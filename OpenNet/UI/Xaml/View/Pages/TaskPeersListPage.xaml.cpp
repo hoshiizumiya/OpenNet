@@ -39,16 +39,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			   });
 		Unloaded([this](auto, auto)
 				 {
-					 SaveColumnWidth("Peers.Location", ColPeerLocation().ActualWidth());
-					 SaveColumnWidth("Peers.Progress", ColPeerProgress().ActualWidth());
-					 SaveColumnWidth("Peers.DLSpeed", ColPeerDLSpeed().ActualWidth());
-					 SaveColumnWidth("Peers.ULSpeed", ColPeerULSpeed().ActualWidth());
-					 SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded().ActualWidth());
-					 SaveColumnWidth("Peers.Client", ColPeerClient().ActualWidth());
-					 SaveColumnWidth("Peers.Status", ColPeerStatus().ActualWidth());
-					 SaveColumnWidth("Peers.Protocol", ColPeerProtocol().ActualWidth());
-					 SaveColumnWidth("Peers.Initiator", ColPeerInitiator().ActualWidth());
-					 SaveColumnWidth("Peers.Source", ColPeerSource().ActualWidth());
+					 SaveColumnWidth("Peers.Location", ColPeerLocation());
+					 SaveColumnWidth("Peers.Progress", ColPeerProgress());
+					 SaveColumnWidth("Peers.DLSpeed", ColPeerDLSpeed());
+					 SaveColumnWidth("Peers.ULSpeed", ColPeerULSpeed());
+					 SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded());
+					 SaveColumnWidth("Peers.Client", ColPeerClient());
+					 SaveColumnWidth("Peers.Status", ColPeerStatus());
+					 SaveColumnWidth("Peers.Protocol", ColPeerProtocol());
+					 SaveColumnWidth("Peers.Initiator", ColPeerInitiator());
+					 SaveColumnWidth("Peers.Source", ColPeerSource());
 				 });
 	}
 

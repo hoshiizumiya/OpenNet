@@ -1,7 +1,7 @@
 ﻿namespace OpenNet.UI.Xaml.View.Windows
 {
 	[default_interface]
-	runtimeclass DevWindow : Microsoft.UI.Xaml.Window
+	runtimeclass DevWindow : WinUI3Package.WindowEx
 	{
 		DevWindow();
 

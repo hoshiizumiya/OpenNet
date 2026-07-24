@@ -52,10 +52,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 		Unloaded([this](auto, auto) {
 			using namespace ::OpenNet::Helpers;
-			SaveColumnWidth("Files.Size", ColFileSize().ActualWidth());
-			SaveColumnWidth("Files.Progress", ColFileProgress().ActualWidth());
-			SaveColumnWidth("Files.Done", ColFileDone().ActualWidth());
-			SaveColumnWidth("Files.Priority", ColFilePriority().ActualWidth());
+			SaveColumnWidth("Files.Size", ColFileSize());
+			SaveColumnWidth("Files.Progress", ColFileProgress());
+			SaveColumnWidth("Files.Done", ColFileDone());
+			SaveColumnWidth("Files.Priority", ColFilePriority());
 		});
 	}
 

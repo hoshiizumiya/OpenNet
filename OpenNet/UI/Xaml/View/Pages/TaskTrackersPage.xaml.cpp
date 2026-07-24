@@ -30,10 +30,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 		Unloaded([this](auto, auto)
 		{
-			SaveColumnWidth("Trackers.Tier", ColTrackerTier().ActualWidth());
-			SaveColumnWidth("Trackers.Peers", ColTrackerPeers().ActualWidth());
-			SaveColumnWidth("Trackers.Status", ColTrackerStatus().ActualWidth());
-			SaveColumnWidth("Trackers.Message", ColTrackerMessage().ActualWidth());
+			SaveColumnWidth("Trackers.Tier", ColTrackerTier());
+			SaveColumnWidth("Trackers.Peers", ColTrackerPeers());
+			SaveColumnWidth("Trackers.Status", ColTrackerStatus());
+			SaveColumnWidth("Trackers.Message", ColTrackerMessage());
 		});
 	}
 

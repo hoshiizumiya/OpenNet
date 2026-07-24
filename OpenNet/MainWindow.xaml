@@ -24,6 +24,8 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+
         <!--  标题栏 / Title Bar  -->
         <TitleBar
             x:Name="AppTitleBar"
