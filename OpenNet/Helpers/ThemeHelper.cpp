@@ -54,12 +54,12 @@ namespace OpenNet::Helpers
 		{
 			UISettings uiSettings;
 			s_actualThemeChangedToken = uiSettings.ColorValuesChanged([](auto&&, auto&&)
+			{
+				if (s_rootTheme == ElementTheme::Default)
 				{
-					if (s_rootTheme == ElementTheme::Default)
-					{
-						// System theme changed
-					}
-				});
+					// System theme changed
+				}
+			});
 		}
 		catch (...)
 		{
@@ -125,10 +125,10 @@ namespace OpenNet::Helpers
 	{
 		switch (theme)
 		{
-		case ElementTheme::Light: return L"Light";
-		case ElementTheme::Dark: return L"Dark";
-		case ElementTheme::Default:
-		default: return L"Default";
+			case ElementTheme::Light: return L"Light";
+			case ElementTheme::Dark: return L"Dark";
+			case ElementTheme::Default:
+			default: return L"Default";
 		}
 	}
 
@@ -139,16 +139,6 @@ namespace OpenNet::Helpers
 		else return ElementTheme::Default;
 	}
 
-	constexpr auto kBackdropFallbackColorKey = "backdrop_fallback_color";
-	constexpr auto kBackdropTintColorKey = "backdrop_tint_color";
-	constexpr auto kBackdropLuminosityOpacityKey = "backdrop_luminosity_opacity";
-	constexpr auto kBackdropTintOpacityKey = "backdrop_tint_opacity";
-	constexpr auto kBackdropEnableWhenInactiveKey = "backdrop_enable_when_inactive";
-	constexpr auto kBackdropUseFallbackKey = "backdrop_use_fallback";
-
-	void ThemeHelper::ApplyBackdropFromSettings()
-	{
-	}
 
 	ElementTheme ThemeHelper::GetSystemTheme()
 	{

@@ -17,55 +17,135 @@ namespace OpenNet::Core
 	// 确保核心已经完成初始化
 	IAsyncAction P2PManager::EnsureTorrentCoreInitializedAsync()
 	{
-		if (m_isTorrentCoreInitialized.load()) co_return;
-		if (m_initializing.exchange(true))
+		std::shared_ptr<std::promise<void>> completionSource;
+		std::shared_future<void> completion;
+		bool ownsInitialization = false;
+
 		{
-			while (!m_isTorrentCoreInitialized.load())
+			std::scoped_lock lifecycleLock(m_lifecycleMutex);
+			switch (m_initializationState)
 			{
-				co_await winrt::resume_after(std::chrono::milliseconds(30));
+			case InitializationState::Initialized:
+				co_return;
+			case InitializationState::ShuttingDown:
+				throw winrt::hresult_error(RO_E_CLOSED, L"The torrent core is shutting down.");
+			case InitializationState::Initializing:
+				completion = m_initializationCompletion;
+				break;
+			case InitializationState::Uninitialized:
+				completionSource = std::make_shared<std::promise<void>>();
+				completion = completionSource->get_future().share();
+				m_initializationCompletion = completion;
+				m_initializationState = InitializationState::Initializing;
+				ownsInitialization = true;
+				break;
 			}
+		}
+
+		co_await winrt::resume_background();
+
+		if (!ownsInitialization)
+		{
+			// Propagate the initializer's result to every concurrent caller.
+			completion.get();
 			co_return;
 		}
-		co_await winrt::resume_background();
+
+		bool createdCore = false;
+		try
 		{
-			std::scoped_lock lk(m_torrentMutex);
-
-			// Initialize state manager first
-			if (!m_stateManager)
 			{
-				m_stateManager = std::make_unique<OpenNet::Core::Torrent::TorrentStateManager>();
-				if (!m_stateManager->Initialize())
+				std::scoped_lock lk(m_torrentMutex);
+
+				// Initialize state manager first
+				if (!m_stateManager)
 				{
-					OutputDebugStringA("Failed to initialize TorrentStateManager\n");
-					// Continue anyway, persistence will just be disabled
+					m_stateManager = std::make_unique<OpenNet::Core::Torrent::TorrentStateManager>();
+					if (!m_stateManager->Initialize())
+					{
+						OutputDebugStringA("Failed to initialize TorrentStateManager\n");
+						// Continue anyway, persistence will just be disabled
+					}
+				}
+
+				if (!m_torrentCore)
+				{
+					m_torrentCore = std::make_unique<OpenNet::Core::Torrent::LibtorrentHandle>();
+					createdCore = true;
+
+					// Set state manager before initialization
+					if (m_stateManager)
+					{
+						m_torrentCore->SetStateManager(m_stateManager.get());
+					}
+
+					if (!m_torrentCore->Initialize())
+					{
+						throw winrt::hresult_error(E_FAIL, L"Failed to initialize the libtorrent session.");
+					}
+					WireCoreCallbacks();
+					m_torrentCore->Start();
+					if (!m_torrentCore->IsRunning())
+					{
+						throw winrt::hresult_error(E_FAIL, L"Failed to start the libtorrent alert loop.");
+					}
 				}
 			}
 
-			if (!m_torrentCore)
 			{
-				m_torrentCore = std::make_unique<OpenNet::Core::Torrent::LibtorrentHandle>();
-
-				// Set state manager before initialization
-				if (m_stateManager)
+				std::scoped_lock lifecycleLock(m_lifecycleMutex);
+				if (m_initializationState == InitializationState::ShuttingDown)
 				{
-					m_torrentCore->SetStateManager(m_stateManager.get());
+					throw winrt::hresult_error(RO_E_CLOSED, L"The torrent core was shut down during initialization.");
 				}
-
-				if (!m_torrentCore->Initialize())
-				{
-					m_torrentCore.reset();
-					m_initializing.store(false);
-					co_return;
-				}
-				WireCoreCallbacks();
-				m_torrentCore->Start();
+				m_isTorrentCoreInitialized.store(true);
+				m_initializationState = InitializationState::Initialized;
 			}
+
+			completionSource->set_value();
 		}
-		m_isTorrentCoreInitialized.store(true);
-		m_initializing.store(false);
+		catch (...)
+		{
+			auto initializationError = std::current_exception();
 
-		// Load and resume saved tasks
-		co_await LoadAndResumeSavedTasksAsync();
+			if (createdCore)
+			{
+				std::scoped_lock lk(m_torrentMutex);
+				if (m_torrentCore)
+				{
+					m_torrentCore->Stop();
+					m_torrentCore.reset();
+				}
+			}
+
+			{
+				std::scoped_lock lifecycleLock(m_lifecycleMutex);
+				m_isTorrentCoreInitialized.store(false);
+				if (m_initializationState != InitializationState::ShuttingDown)
+				{
+					// A later user action may start a fresh attempt. Existing
+					// waiters still hold this attempt's failed shared future.
+					m_initializationState = InitializationState::Uninitialized;
+				}
+			}
+
+			completionSource->set_exception(initializationError);
+			std::rethrow_exception(initializationError);
+		}
+
+		// Core readiness is independent from restoring persisted tasks.
+		try
+		{
+			co_await LoadAndResumeSavedTasksAsync();
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("P2PManager: Failed to restore saved tasks: " + std::string(ex.what()) + "\n").c_str());
+		}
+		catch (...)
+		{
+			OutputDebugStringA("P2PManager: Unknown error while restoring saved tasks\n");
+		}
 	}
 
 	IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities)
@@ -194,6 +274,16 @@ namespace OpenNet::Core
 		// 这个方法需要安全地关闭torrent核心
 		try
 		{
+			{
+				std::scoped_lock lifecycleLock(m_lifecycleMutex);
+				if (m_initializationState == InitializationState::ShuttingDown)
+				{
+					return;
+				}
+				m_initializationState = InitializationState::ShuttingDown;
+				m_isTorrentCoreInitialized.store(false);
+			}
+
 			std::scoped_lock lk(m_torrentMutex);
 
 			OutputDebugStringA("P2PManager: Shutting down...\n");
@@ -227,8 +317,6 @@ namespace OpenNet::Core
 			{
 				// 状态管理器通常会自己处理持久化
 			}
-
-			m_isTorrentCoreInitialized.store(false);
 
 			OutputDebugStringA("P2PManager: Shutdown completed successfully\n");
 		}

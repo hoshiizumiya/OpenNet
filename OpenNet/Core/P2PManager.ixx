@@ -1,5 +1,6 @@
 ﻿export module OpenNet.Core.P2PManager;
 
+import std;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.torrentCore.TorrentStateManager;
 import winrt.Windows.Foundation;
@@ -62,6 +63,14 @@ export namespace OpenNet::Core
 		void SetErrorCallback(ErrorCb cb);
 
 	private:
+		enum class InitializationState
+		{
+			Uninitialized,
+			Initializing,
+			Initialized,
+			ShuttingDown,
+		};
+
 		P2PManager() = default;
 		~P2PManager() = default;
 
@@ -70,8 +79,12 @@ export namespace OpenNet::Core
 		std::unique_ptr<::OpenNet::Core::Torrent::LibtorrentHandle> m_torrentCore;
 		std::unique_ptr<::OpenNet::Core::Torrent::TorrentStateManager> m_stateManager;
 		std::mutex m_torrentMutex;
+		// Concurrent callers share one attempt and receive its success or
+		// failure. This avoids polling forever when initialization fails.
+		std::mutex m_lifecycleMutex;
+		InitializationState m_initializationState{ InitializationState::Uninitialized };
+		std::shared_future<void> m_initializationCompletion;
 		std::atomic<bool> m_isTorrentCoreInitialized{ false };
-		std::atomic<bool> m_initializing{ false };
 
 		std::mutex m_cbMutex;
 		ProgressCb m_progressCb;

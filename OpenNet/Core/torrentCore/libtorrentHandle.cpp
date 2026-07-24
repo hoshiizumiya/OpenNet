@@ -53,6 +53,7 @@ namespace OpenNet::Core::Torrent
         }
         catch (std::exception const &ex)
         {
+            OutputDebugStringA((std::string("LibtorrentHandle: Session initialization failed: ") + ex.what() + "\n").c_str());
             std::lock_guard lk(m_cbMutex);
             if (m_errorCb)
                 m_errorCb(std::string("Session init error: ") + ex.what());
