@@ -625,6 +625,11 @@
     <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx">
       <Filter>Core\ExceptionService</Filter>
     </ClCompile>
+    <ClCompile Include="Factory\Window\WindowFactory.ixx" />
+    <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
+    <ClCompile Include="Extension\DependencyObjectExtensions.ixx" />
+    <ClCompile Include="Extension\Predicates.ixx" />
+    <ClCompile Include="Extension\FrameworkElementExtensions.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

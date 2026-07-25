@@ -77,9 +77,27 @@
                 Command="{x:Bind ViewModel.DeleteCommand}"
                 Icon="Delete" />
             <CommandBar.SecondaryCommands>
-                <AppBarButton Icon="Setting" Label="Settings">
+                <AppBarButton
+                    x:Uid="ViewTasksPagePortTestAppBarButton"
+                    Icon="{essential:FontIcon Glyph=&#xF196;}"
+                    Label="Port Test">
                     <AppBarButton.KeyboardAccelerators>
-                        <KeyboardAccelerator Key="I" Modifiers="Control" />
+                        <KeyboardAccelerator
+                            Key="T"
+                            Invoked="PortTestKeyboardAccelerator_Invoked"
+                            Modifiers="Control" />
+                    </AppBarButton.KeyboardAccelerators>
+                </AppBarButton>
+                <AppBarButton
+                    x:Uid="ViewTasksPageSettingsAppBarButton"
+                    Click="ViewTasksPageSettingsAppBarButton_Click"
+                    Icon="Setting"
+                    Label="Settings">
+                    <AppBarButton.KeyboardAccelerators>
+                        <KeyboardAccelerator
+                            Key="I"
+                            Invoked="SettingKeyboardAccelerator_Invoked"
+                            Modifiers="Control" />
                     </AppBarButton.KeyboardAccelerators>
                 </AppBarButton>
             </CommandBar.SecondaryCommands>
@@ -95,7 +113,14 @@
             essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
             PlaceholderText="Search"
             QueryIcon="Find"
-            TextChanged="SearchBox_TextChanged" />
+            TextChanged="SearchBox_TextChanged">
+            <AutoSuggestBox.KeyboardAccelerators>
+                <KeyboardAccelerator
+                    Key="F"
+                    Invoked="SearchKeyboardAccelerator_Invoked"
+                    Modifiers="Control" />
+            </AutoSuggestBox.KeyboardAccelerators>
+        </AutoSuggestBox>
 
         <SplitView
             Grid.Row="1"

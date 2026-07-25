@@ -21,8 +21,11 @@ import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
+import OpenNet.Extension.DependencyObjectExtensions;
+import OpenNet.Factory.Window;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.Helpers.ControlLengthHelper;
+import winrt.OpenNet.UI.Xaml.View.Pages.SettingsPages;
 import winrt.Windows.Foundation;
 import winrt.Windows.UI.Xaml.Navigation;
 import winrt.Microsoft.UI.Content;
@@ -317,7 +320,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 				multiFileCheckDialog.PrimaryButtonText(L"Check in new windows");
 				auto btnStyle = Microsoft::UI::Xaml::Style(xaml_typename<Button>());
-				auto baseStyle = Application::Current().Resources().Lookup(box_value(L"DefaultButtonStyle")).as<winrt::Microsoft::UI::Xaml::Style>();
+				auto baseStyle = Microsoft::UI::Xaml::Application::Current().Resources().Lookup(box_value(L"DefaultButtonStyle")).as<winrt::Microsoft::UI::Xaml::Style>();
 
 				btnStyle.BasedOn(baseStyle);
 				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::WidthProperty(), box_value(800.0)));
@@ -428,6 +431,36 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			OutputDebugStringA("HttpDownloadDialog unknown error\n");
 		}
+	}
+
+	void TasksPage::ViewTasksPageSettingsAppBarButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		auto window = ::OpenNet::Factory::Window::WindowFactory::CreateStandardWindow();
+		window.Content(winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage());
+		window.Activate();
+		return;
+	}
+
+	void TasksPage::PortTestKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+	}
+
+	void TasksPage::SettingKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		ViewTasksPageSettingsAppBarButton_Click(sender, args);
+	}
+
+	void TasksPage::SearchKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		auto strong = get_strong();
+		SearchBox().Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+
+		if (auto textBox = ::OpenNet::Extension::DependencyObjectEx::FindDescendant<winrt::Microsoft::UI::Xaml::Controls::TextBox>(SearchBox()))
+		{
+			textBox.SelectAll();
+		}
+
+		args.Handled(true);
 	}
 
 	// Process the torrent link/file and show the metadata check window
