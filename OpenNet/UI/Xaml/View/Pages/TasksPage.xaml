@@ -139,7 +139,7 @@
 
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition x:Name="TasksListRow" Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
@@ -162,7 +162,8 @@
                         <Border
                             Padding="8,4,0,4"
                             Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-                            CornerRadius="4">
+                            CornerRadius="4"
+                            RightTapped="TasksColumnHeader_RightTapped">
                             <interactivity:Interaction.Behaviors>
                                 <behaviors:StickyHeaderBehavior />
                             </interactivity:Interaction.Behaviors>
@@ -279,12 +280,14 @@
                                 </xtlw:DataColumn>
                             </xtlw:DataTable>
                             <muxc:Border.ContextFlyout>
-                                <MenuFlyout>
+                                <MenuFlyout Closed="TasksColumnMenuFlyout_Closed" Opening="TasksColumnMenuFlyout_Opening">
                                     <MenuFlyoutItem
+                                        x:Name="ViewPageTasksColumnAutoSizeSelectedWidth"
                                         x:Uid="ViewPageTasksColumnAutoSizeSelectedWidth"
                                         Click="TasksColumnAutoSizeSelectedWidth_Click"
                                         Text="Auto Size Selected Column's Width to Fit" />
                                     <MenuFlyoutItem
+                                        x:Name="ViewPageTasksColumnAutoSizeAllWidth"
                                         x:Uid="ViewPageTasksColumnAutoSizeAllWidth"
                                         Click="TasksColumnAutoSizeAllWidth_Click"
                                         Text="Auto Size All Column's Width to Fit" />
@@ -337,15 +340,14 @@
                                     <MenuFlyoutItem
                                         x:Uid="ViewPageTasksColumnDisplayItemsReset"
                                         Click="TasksColumnDisplayItemsReset_Click"
-                                        Text="Reset To Default Display Items"
-                                        Visibility="Collapsed" />
+                                        Text="Reset To Default Display Items" />
 
                                 </MenuFlyout>
                             </muxc:Border.ContextFlyout>
                         </Border>
                     </ListView.Header>
                     <ListView.ContextFlyout>
-                        <MenuFlyout>
+                        <MenuFlyout Opening="TasksContextMenuFlyout_Opening">
                             <MenuFlyoutItem
                                 x:Name="RenameTaskMenuItem"
                                 x:Uid="RenameTaskMenuItem"

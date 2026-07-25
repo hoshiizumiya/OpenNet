@@ -27,7 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		void InitializeComponent();
 		winrt::fire_and_forget Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void OnNavigatingFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&);
+		void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
 		void DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
@@ -76,6 +76,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void Task_SelectBar_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& args);
 
 		// Context menu item handlers
+		void TasksColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
+		void TasksColumnMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void TasksColumnMenuFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void TasksContextMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksColumnAutoSizeSelectedWidth_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void TasksColumnAutoSizeAllWidth_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void TasksColumnDisplayItemsReset_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -120,14 +124,32 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Column width persistence
 		void RestoreColumnWidths();
 		void SaveColumnWidths();
+		void AutoSizeTaskColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
+		void AutoSizeAllTaskColumns();
+		bool HasFilteredTasks();
 
-		// Static persisted variables are used by ListViewPersistenceHelper
-		// We need to save the item container height if the items have variable heights. If all items have a constant fixed height, you can manually 
-		// set the height to the fixed value in ItemsListView_ContainerContentChanging
-		static double _persistedItemContainerHeight;
-		static winrt::hstring _persistedItemKey;
-		static winrt::hstring _persistedPosition;
+		struct PersistedScrollState
+		{
+			double itemContainerHeight{ -1.0 };
+			winrt::hstring itemKey;
+			winrt::hstring position;
+		};
 
+		// Each navigation filter owns an independent scroll position.
+		static std::map<std::wstring, PersistedScrollState> s_persistedScrollStates;
+		winrt::hstring m_currentFilterKey{ L"AllTasks" };
+		winrt::hstring m_savingFilterKey;
+		winrt::hstring m_restoringFilterKey;
+		std::uint64_t m_scrollRestoreGeneration{ 0 };
+		bool m_isRestoringScrollPosition{ false };
+
+		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
+
+		PersistedScrollState& ScrollStateFor(winrt::hstring const& filterKey);
+		void SaveScrollPosition(winrt::hstring const& filterKey);
+		winrt::fire_and_forget RestoreScrollPositionAsync(winrt::hstring filterKey);
+		void ClearRestoredItemContainerHeight();
+		void CancelScrollRestore();
 		winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> GetItem(hstring const& key);
 		hstring GetKey(IInspectable const& object);
 	};

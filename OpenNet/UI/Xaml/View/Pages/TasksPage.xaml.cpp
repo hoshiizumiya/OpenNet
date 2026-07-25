@@ -46,9 +46,7 @@ using namespace winrt::Microsoft::Windows::Storage::Pickers;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	double TasksPage::_persistedItemContainerHeight = -1.0;
-	hstring TasksPage::_persistedItemKey;
-	hstring TasksPage::_persistedPosition;
+	std::map<std::wstring, TasksPage::PersistedScrollState> TasksPage::s_persistedScrollStates;
 
 	namespace
 	{
@@ -112,22 +110,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
-		::OpenNet::Helpers::RestoreControlHeight(TasksList(), "TasksPage_ContentFrame_Height");
-
-		// https://github.com/microsoft/Windows-universal-samples/blob/main/Samples/XamlListView/cppwinrt/Scenario5_RestoreScrollPosition.cpp
-		if (!_persistedPosition.empty())
+		auto const tasksListHeight = ::OpenNet::Helpers::GetControlHeight("TasksPage_ContentFrame_Height");
+		if (tasksListHeight > 0.0)
 		{
-			// Here we kick off the async function to use the saved string _persistedPosition and the function GetItem to restore the scroll posistion
-			co_await ListViewPersistenceHelper::SetRelativeScrollPositionAsync(TasksList(), _persistedPosition, { this, &TasksPage::GetItem });
+			TasksListRow().Height(GridLength(tasksListHeight, GridUnitType::Pixel));
 		}
+		RestoreScrollPositionAsync(m_currentFilterKey);
+		co_return;
 	}
 
 	// Save the current scroll position and selected item when navigating away
-	void TasksPage::OnNavigatingFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&)
+	void TasksPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
-		_persistedItemKey = {};
-		_persistedItemContainerHeight = -1.0;
-		_persistedPosition = ListViewPersistenceHelper::GetRelativeScrollPosition(TasksList(), { this, &TasksPage::GetKey });
+		SaveScrollPosition(m_currentFilterKey);
 	}
 
 	// Restore saved column widths
@@ -138,7 +133,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::GridSplitter_PointerReleased(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)
 	{
-		::OpenNet::Helpers::SaveControlHeight("TasksPage_ContentFrame_Height", TasksList().ActualHeight());
+		::OpenNet::Helpers::SaveControlHeight("TasksPage_ContentFrame_Height", TasksListRow().ActualHeight());
 	}
 
 	winrt::Microsoft::UI::Xaml::TextWrapping TasksPage::TextWrappingNameTextBlock()
@@ -470,9 +465,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto tag = unbox_value_or<winrt::hstring>(item.Tag(), L"");
 		if (tag.empty())
 			return;
-		if (m_viewModel)
+		if (m_viewModel && tag != m_currentFilterKey)
 		{
+			SaveScrollPosition(m_currentFilterKey);
+			m_currentFilterKey = tag;
 			m_viewModel.ApplyFilter(tag);
+
+			// ApplyFilter queues the collection update. Queue restoration after it
+			// so GetItem sees the items belonging to the newly selected filter.
+			auto weak = get_weak();
+			DispatcherQueue().TryEnqueue([weak, tag]()
+			{
+				if (auto self = weak.get())
+				{
+					self->RestoreScrollPositionAsync(tag);
+				}
+			});
 		}
 	}
 
@@ -481,26 +489,35 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// This function manually sets the height of the item ListViewPersistenceHelper is attempting to scroll to. We need to set the height
 		// because if the item is not fully rendered at the time of scrolling, it can return an incorrect height and cause ListViewPersistenceHelper 
 		// to overscroll. 
-		auto item = args.Item().try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
-
-		if (item && !_persistedItemKey.empty() && GetTaskPersistenceKey(item) == _persistedItemKey)
+		// A recycled container can retain a locally set Height. Always clear it
+		// before the container is reused, regardless of which item it held.
+		if (args.InRecycleQueue())
 		{
-			if (!args.InRecycleQueue())
-			{
-				// Here we set the container's height equal to the fully rendered container height we had saved before navigating away. If all the items in 
-				// your list have the same fixed height, you can replace this variable with a hardcoded height value. 
-				if (_persistedItemContainerHeight > 0.0)
-				{
-					args.ItemContainer().Height(_persistedItemContainerHeight);
-				}
-			}
-			else
-			{
-				// Containers in a list are recycled when they are scrolled out of view. However, if those containers have their Height property set and the content
-				// changes, that set Height is still applied. This creates an incorect UI if the items in your list are supposed to be of variable height. 
-				// If all the items in your list have the same fixed height, you do not have to do this. 
-				args.ItemContainer().ClearValue(FrameworkElement::HeightProperty());
-			}
+			args.ItemContainer().ClearValue(FrameworkElement::HeightProperty());
+			return;
+		}
+
+		if (!m_isRestoringScrollPosition || m_restoringFilterKey.empty())
+		{
+			return;
+		}
+
+		auto const stateIt = s_persistedScrollStates.find(std::wstring{ m_restoringFilterKey.c_str() });
+		if (stateIt == s_persistedScrollStates.end())
+		{
+			return;
+		}
+
+		auto const& state = stateIt->second;
+		auto item = args.Item().try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
+		if (item &&
+			!state.itemKey.empty() &&
+			state.itemContainerHeight > 0.0 &&
+			GetTaskPersistenceKey(item) == state.itemKey)
+		{
+			// The stored height is only applied while ListViewPersistenceHelper
+			// is restoring this filter's relative position.
+			args.ItemContainer().Height(state.itemContainerHeight);
 		}
 	}
 
@@ -519,25 +536,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
 	{
-		// Context flyout is handled automatically by XAML
-		// Here we record the selected task for context menu actions
-		auto source = args.OriginalSource().try_as<DependencyObject>();
+		auto listView = sender.try_as<ListView>();
+		if (!listView)
+		{
+			return;
+		}
 
+		auto source = args.OriginalSource().try_as<DependencyObject>();
 		while (source)
 		{
-			if (auto fe = source.try_as<FrameworkElement>())
+			if (auto container = source.try_as<ListViewItem>())
 			{
-				OutputDebugString((winrt::get_class_name(fe) + L"\n").c_str());
+				listView.SelectedItem(container.Content());
+				return;
 			}
 
 			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
 		}
+
+		// A right-click on the empty list area must not leave an old task active.
+		listView.SelectedItem(nullptr);
 	}
 
 	void TasksPage::SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& /*args*/)
 	{
 		if (m_viewModel)
 		{
+			CancelScrollRestore();
 			m_viewModel.SetSearchFilter(sender.Text());
 		}
 	}
@@ -569,19 +594,95 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::TasksColumnAutoSizeSelectedWidth_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void TasksPage::TasksColumnHeader_RightTapped(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
 	{
-		// Get the max column widths from the ListView's GridView
+		m_contextColumn = nullptr;
+		auto source = args.OriginalSource().try_as<DependencyObject>();
+		while (source)
+		{
+			if (auto column = source.try_as<winrt::XamlToolkit::Labs::WinUI::DataColumn>())
+			{
+				m_contextColumn = column;
+				break;
+			}
 
+			source = VisualTreeHelper::GetParent(source);
+		}
 	}
 
-	void TasksPage::TasksColumnAutoSizeAllWidth_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void TasksPage::TasksColumnMenuFlyout_Opening(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Windows::Foundation::IInspectable const&)
 	{
-		// https://deepwiki.com/search/_2f49cc80-d33e-42a4-9e29-29cd4929dcc2?mode=fast
+		auto const hasItems = HasFilteredTasks();
+		ViewPageTasksColumnAutoSizeSelectedWidth().IsEnabled(hasItems && m_contextColumn);
+		ViewPageTasksColumnAutoSizeAllWidth().IsEnabled(hasItems);
 	}
 
-	void TasksPage::TasksColumnDisplayItemsReset_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void TasksPage::TasksColumnMenuFlyout_Closed(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Windows::Foundation::IInspectable const&)
 	{
+		m_contextColumn = nullptr;
+	}
+
+	void TasksPage::TasksContextMenuFlyout_Opening(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Windows::Foundation::IInspectable const&)
+	{
+		auto const hasSelection = m_viewModel && m_viewModel.SelectedTask();
+		RenameTaskMenuItem().IsEnabled(hasSelection);
+		// The current picker-only implementation does not move payload data or
+		// update either download backend's persisted save path. Keep it
+		// unavailable instead of presenting a command that reports false success.
+		MoveTaskMenuItem().IsEnabled(false);
+		OpenTaskLocationMenuItem().IsEnabled(hasSelection);
+		PropertiesMenuItem().IsEnabled(hasSelection);
+	}
+
+	void TasksPage::TasksColumnAutoSizeSelectedWidth_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (HasFilteredTasks() && m_contextColumn)
+		{
+			AutoSizeTaskColumn(m_contextColumn);
+		}
+	}
+
+	void TasksPage::TasksColumnAutoSizeAllWidth_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (HasFilteredTasks())
+		{
+			AutoSizeAllTaskColumns();
+		}
+	}
+
+	void TasksPage::TasksColumnDisplayItemsReset_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (!m_viewModel)
+		{
+			return;
+		}
+
+		m_viewModel.IsColNameLoad(true);
+		m_viewModel.IsColSizeLoad(true);
+		m_viewModel.IsColProgressLoad(true);
+		m_viewModel.IsColDownloadSizeLoad(true);
+		m_viewModel.IsColUploadSizeLoad(true);
+		m_viewModel.IsColumnTotalDownloadSizeLoad(true);
+		m_viewModel.IsColumnTotalUploadSizeLoad(true);
+		m_viewModel.IsColDLRateLoad(true);
+		m_viewModel.IsColULRateLoad(true);
+		m_viewModel.IsColRemainingLoad(true);
+		m_viewModel.IsColAddDateLoad(true);
+		AutoSizeAllTaskColumns();
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::RenameTaskMenuItem_ClickAsync(
@@ -848,24 +949,47 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				co_return;
 			}
 
-			// TODO: 创建并显示任务属性对话框
-			// auto propertiesDialog = make<TaskPropertiesDialog>(task);
-			// auto result = co_await propertiesDialog.ShowAsync();
+			auto const taskType = task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent
+				? L"BitTorrent"
+				: L"HTTP";
 
-			// 临时实现：显示调试输出
-			auto taskName = task.Name();
-			auto size = task.Size();
-			auto progress = task.Progress();
+			TextBlock details;
+			details.IsTextSelectionEnabled(true);
+			details.TextWrapping(TextWrapping::Wrap);
+			details.Text(winrt::hstring{ std::format(
+				L"Type: {}\n"
+				L"Task ID: {}\n"
+				L"GID: {}\n"
+				L"Size: {}\n"
+				L"Progress: {}\n"
+				L"Downloaded: {}\n"
+				L"Uploaded: {}\n"
+				L"Download rate: {}\n"
+				L"Upload rate: {}\n"
+				L"Remaining: {}\n"
+				L"Added: {}",
+				taskType,
+				std::wstring_view{ task.TaskId() },
+				std::wstring_view{ task.Gid() },
+				std::wstring_view{ task.Size() },
+				std::wstring_view{ task.Progress() },
+				std::wstring_view{ task.DownloadSize() },
+				std::wstring_view{ task.UploadSize() },
+				std::wstring_view{ task.DownloadRate() },
+				std::wstring_view{ task.UploadRate() },
+				std::wstring_view{ task.Remaining() },
+				std::wstring_view{ task.AddDate() }) });
 
-			auto message = std::format(
-				L"Task Properties:\nName: {}\nSize: {}\nProgress: {}\n",
-				std::wstring_view{ taskName },
-				std::wstring_view{ size },
-				std::wstring_view{ progress });
+			ScrollViewer contentScroller;
+			contentScroller.MaxHeight(480.0);
+			contentScroller.Content(details);
 
-			OutputDebugStringW(message.c_str());
-
-			// TODO: 显示为对话框而不是调试输出
+			ContentDialog dialog;
+			dialog.XamlRoot(XamlRoot());
+			dialog.Title(box_value(task.Name()));
+			dialog.Content(contentScroller);
+			dialog.CloseButtonText(L"Close");
+			co_await dialog.ShowAsync();
 		}
 		catch (const std::exception& ex)
 		{
@@ -885,6 +1009,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RestoreColumn(ColName(), "Tasks.Name");
 		RestoreColumn(ColSize(), "Tasks.Size");
 		RestoreColumn(ColProgress(), "Tasks.Progress");
+		RestoreColumn(ColDownloadSize(), "Tasks.DownloadSize");
+		RestoreColumn(ColUploadSize(), "Tasks.UploadSize");
+		RestoreColumn(ColumnTotalDownloadSize(), "Tasks.TotalDownloadSize");
+		RestoreColumn(ColumnTotalUploadSize(), "Tasks.TotalUploadSize");
 		RestoreColumn(ColDLRate(), "Tasks.DLRate");
 		RestoreColumn(ColULRate(), "Tasks.ULRate");
 		RestoreColumn(ColRemaining(), "Tasks.Remaining");
@@ -897,10 +1025,171 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		SaveColumnWidth("Tasks.Name", ColName());
 		SaveColumnWidth("Tasks.Size", ColSize());
 		SaveColumnWidth("Tasks.Progress", ColProgress());
+		SaveColumnWidth("Tasks.DownloadSize", ColDownloadSize());
+		SaveColumnWidth("Tasks.UploadSize", ColUploadSize());
+		SaveColumnWidth("Tasks.TotalDownloadSize", ColumnTotalDownloadSize());
+		SaveColumnWidth("Tasks.TotalUploadSize", ColumnTotalUploadSize());
 		SaveColumnWidth("Tasks.DLRate", ColDLRate());
 		SaveColumnWidth("Tasks.ULRate", ColULRate());
 		SaveColumnWidth("Tasks.Remaining", ColRemaining());
 		SaveColumnWidth("Tasks.AddDate", ColAddDate());
+	}
+
+	void TasksPage::AutoSizeTaskColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
+	{
+		if (!column)
+		{
+			return;
+		}
+
+		column.DesiredWidth(GridLengthHelper::Auto());
+		column.InvalidateMeasure();
+		TasksList().InvalidateMeasure();
+	}
+
+	void TasksPage::AutoSizeAllTaskColumns()
+	{
+		std::array<winrt::XamlToolkit::Labs::WinUI::DataColumn, 11> const columns
+		{
+			ColName(),
+			ColSize(),
+			ColProgress(),
+			ColDownloadSize(),
+			ColUploadSize(),
+			ColumnTotalDownloadSize(),
+			ColumnTotalUploadSize(),
+			ColDLRate(),
+			ColULRate(),
+			ColRemaining(),
+			ColAddDate()
+		};
+
+		for (auto const& column : columns)
+		{
+			AutoSizeTaskColumn(column);
+		}
+	}
+
+	bool TasksPage::HasFilteredTasks()
+	{
+		if (!m_viewModel)
+		{
+			return false;
+		}
+
+		auto const items = m_viewModel.FilteredTasks();
+		return items && items.Size() != 0;
+	}
+
+	TasksPage::PersistedScrollState& TasksPage::ScrollStateFor(hstring const& filterKey)
+	{
+		return s_persistedScrollStates[std::wstring{ filterKey.c_str() }];
+	}
+
+	void TasksPage::CancelScrollRestore()
+	{
+		ClearRestoredItemContainerHeight();
+		++m_scrollRestoreGeneration;
+		m_isRestoringScrollPosition = false;
+		m_restoringFilterKey = {};
+	}
+
+	void TasksPage::ClearRestoredItemContainerHeight()
+	{
+		if (m_restoringFilterKey.empty() || !m_viewModel)
+		{
+			return;
+		}
+
+		auto const stateIt = s_persistedScrollStates.find(std::wstring{ m_restoringFilterKey.c_str() });
+		if (stateIt == s_persistedScrollStates.end() || stateIt->second.itemKey.empty())
+		{
+			return;
+		}
+
+		auto const items = m_viewModel.FilteredTasks();
+		if (!items)
+		{
+			return;
+		}
+
+		auto const found = std::find_if(items.begin(), items.end(), [&](auto const& item)
+		{
+			return GetTaskPersistenceKey(item) == stateIt->second.itemKey;
+		});
+		if (found != items.end())
+		{
+			if (auto container = TasksList().ContainerFromItem(*found).try_as<ListViewItem>())
+			{
+				container.ClearValue(FrameworkElement::HeightProperty());
+			}
+		}
+	}
+
+	void TasksPage::SaveScrollPosition(hstring const& filterKey)
+	{
+		if (filterKey.empty() || !TasksList())
+		{
+			return;
+		}
+
+		CancelScrollRestore();
+		auto& state = ScrollStateFor(filterKey);
+		state = {};
+
+		m_savingFilterKey = filterKey;
+		try
+		{
+			state.position = ListViewPersistenceHelper::GetRelativeScrollPosition(
+				TasksList(),
+				{ this, &TasksPage::GetKey });
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			state = {};
+			OutputDebugStringW((L"Failed to save task list scroll position: " + std::wstring{ error.message().c_str() } + L"\n").c_str());
+		}
+		m_savingFilterKey = {};
+	}
+
+	winrt::fire_and_forget TasksPage::RestoreScrollPositionAsync(hstring filterKey)
+	{
+		auto strong = get_strong();
+		auto const generation = ++m_scrollRestoreGeneration;
+
+		if (filterKey.empty() || filterKey != m_currentFilterKey)
+		{
+			co_return;
+		}
+
+		auto const stateIt = s_persistedScrollStates.find(std::wstring{ filterKey.c_str() });
+		if (stateIt == s_persistedScrollStates.end() || stateIt->second.position.empty())
+		{
+			co_return;
+		}
+
+		m_restoringFilterKey = filterKey;
+		m_isRestoringScrollPosition = true;
+		auto const position = stateIt->second.position;
+
+		try
+		{
+			co_await ListViewPersistenceHelper::SetRelativeScrollPositionAsync(
+				TasksList(),
+				position,
+				{ this, &TasksPage::GetItem });
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			OutputDebugStringW((L"Failed to restore task list scroll position: " + std::wstring{ error.message().c_str() } + L"\n").c_str());
+		}
+
+		if (generation == m_scrollRestoreGeneration)
+		{
+			ClearRestoredItemContainerHeight();
+			m_isRestoringScrollPosition = false;
+			m_restoringFilterKey = {};
+		}
 	}
 
 	winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> TasksPage::GetItem(hstring const& key)
@@ -911,6 +1200,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto items = m_viewModel.FilteredTasks();
+		if (!items)
+		{
+			co_return nullptr;
+		}
+
 		auto found = std::find_if(items.begin(), items.end(), [&](auto&& item)
 		{
 			return GetTaskPersistenceKey(item) == key;
@@ -920,25 +1214,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	hstring TasksPage::GetKey(IInspectable const& object)
 	{
+		if (m_savingFilterKey.empty())
+		{
+			return {};
+		}
+
 		auto item = object.try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
 		if (item)
 		{
-			_persistedItemKey = GetTaskPersistenceKey(item);
-			if (_persistedItemKey.empty())
+			auto& state = ScrollStateFor(m_savingFilterKey);
+			state.itemKey = GetTaskPersistenceKey(item);
+			if (state.itemKey.empty())
 			{
 				return {};
 			}
 
 			if (auto container = TasksList().ContainerFromItem(item).try_as<ListViewItem>())
 			{
-				_persistedItemContainerHeight = container.ActualHeight();
+				state.itemContainerHeight = container.ActualHeight();
 			}
 			else
 			{
-				_persistedItemContainerHeight = -1.0;
+				state.itemContainerHeight = -1.0;
 			}
 
-			return _persistedItemKey;
+			return state.itemKey;
 		}
 
 		return {};
