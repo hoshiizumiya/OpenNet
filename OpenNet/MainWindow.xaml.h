@@ -25,8 +25,6 @@ namespace winrt::OpenNet::implementation
 		void Grid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void RootGrid_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
-		winrt::Windows::Foundation::IAsyncAction LoadBackground();
-
 		Microsoft::UI::Xaml::Visibility IsDebug();
 	private:
 		void InitWindowStyle(winrt::Microsoft::UI::Xaml::Window const& window);

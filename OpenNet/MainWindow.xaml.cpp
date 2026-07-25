@@ -146,58 +146,6 @@ namespace winrt::OpenNet::implementation
 		}
 	}
 
-	IAsyncAction MainWindow::LoadBackground()
-	{
-		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		auto imagePath = db.GetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image").value_or(L"");
-		if (imagePath.empty())
-		{
-			RootGrid().Background(nullptr);
-			co_return;
-		}
-
-		constexpr DWORD kMaxUrlLen = 2083;
-		WCHAR encodedUrl[kMaxUrlLen]{};
-		DWORD urlLen = kMaxUrlLen;
-		std::wstring imageUri;
-		if (SUCCEEDED(UrlCreateFromPathW(imagePath.c_str(), encodedUrl, &urlLen, 0)))
-		{
-			imageUri = encodedUrl;
-		}
-		else
-		{
-			imageUri = L"file:///" + imagePath;
-			std::replace(imageUri.begin(), imageUri.end(), L'\\', L'/');
-		}
-
-		auto const stretchIndex = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_stretch", 3)), 0, 3);
-		auto const opacity = std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_opacity").value_or(20.0), 0.0, 100.0) / 100.0;
-
-		auto brush = ImageBrush{};
-		auto bitmap = BitmapImage{};
-		bitmap.UriSource(winrt::Windows::Foundation::Uri{ imageUri });
-		brush.ImageSource(bitmap);
-		switch (stretchIndex)
-		{
-			case 1:
-				brush.Stretch(Stretch::Fill);
-				break;
-			case 2:
-				brush.Stretch(Stretch::Uniform);
-				break;
-			case 3:
-				brush.Stretch(Stretch::UniformToFill);
-				break;
-			case 0:
-			default:
-				brush.Stretch(Stretch::None);
-				break;
-		}
-		brush.Opacity(opacity);
-		RootGrid().Background(brush);
-		co_return;
-	}
-
 	Microsoft::UI::Xaml::Visibility MainWindow::IsDebug()
 	{
 #ifdef _DEBUG

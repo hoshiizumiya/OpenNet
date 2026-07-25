@@ -15,6 +15,7 @@
     xmlns:vm="using:OpenNet.ViewModels"
     xmlns:xtlw="using:XamlToolkit.Labs.WinUI"
     x:Uid="TasksPageRoot"
+    Loaded="Loaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -168,9 +169,9 @@
                             <xtlw:DataTable ColumnSpacing="16" Loaded="DataTable_Loaded">
                                 <xtlw:DataColumn
                                     x:Name="ColName"
-                                    Visibility="{x:Bind ViewModel.IsColNameLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="Name">
+                                    Tag="Name"
+                                    Visibility="{x:Bind ViewModel.IsColNameLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_TaskName"
                                         FontWeight="SemiBold"
@@ -178,9 +179,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColSize"
-                                    Visibility="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="Size">
+                                    Tag="Size"
+                                    Visibility="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_Size"
                                         FontWeight="SemiBold"
@@ -188,9 +189,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColProgress"
-                                    Visibility="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="Progress">
+                                    Tag="Progress"
+                                    Visibility="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_Progress"
                                         FontWeight="SemiBold"
@@ -198,9 +199,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColDownloadSize"
-                                    Visibility="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="DownloadSize">
+                                    Tag="DownloadSize"
+                                    Visibility="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_DownloadSize"
                                         FontWeight="SemiBold"
@@ -208,9 +209,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColUploadSize"
-                                    Visibility="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="UploadSize">
+                                    Tag="UploadSize"
+                                    Visibility="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_UploadSize"
                                         FontWeight="SemiBold"
@@ -218,9 +219,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColumnTotalDownloadSize"
-                                    Visibility="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="TotalDownloadSize">
+                                    Tag="TotalDownloadSize"
+                                    Visibility="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_TotalDownloadSize"
                                         FontWeight="SemiBold"
@@ -228,9 +229,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColumnTotalUploadSize"
-                                    Visibility="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="TotalUploadSize">
+                                    Tag="TotalUploadSize"
+                                    Visibility="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_TotalUploadSize"
                                         FontWeight="SemiBold"
@@ -238,9 +239,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColDLRate"
-                                    Visibility="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="DLRate">
+                                    Tag="DLRate"
+                                    Visibility="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_DLRate"
                                         FontWeight="SemiBold"
@@ -248,9 +249,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColULRate"
-                                    Visibility="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="ULRate">
+                                    Tag="ULRate"
+                                    Visibility="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_ULRate"
                                         FontWeight="SemiBold"
@@ -258,9 +259,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColRemaining"
-                                    Visibility="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="Remaining">
+                                    Tag="Remaining"
+                                    Visibility="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_Remaining"
                                         FontWeight="SemiBold"
@@ -268,9 +269,9 @@
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColAddDate"
-                                    Visibility="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"
                                     CanResize="True"
-                                    Tag="AddDate">
+                                    Tag="AddDate"
+                                    Visibility="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
                                     <TextBlock
                                         x:Uid="Header_AddDate"
                                         FontWeight="SemiBold"

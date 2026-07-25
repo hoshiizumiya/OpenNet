@@ -22,13 +22,13 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 1. Development environment requirements
 
 * Windows 11 25H2 or later — we recommend using the latest version of Windows 11.
-* Visual Studio 2026.
-* More than 64GB RAM (or increase your machine virtual memory - Auto management is not stable). Machine with less RAM may still build the project, but it may fail with C3859 - Failed to create virtual memory for PCH.
+* Visual Studio 2026 (Latest).
+* More than 64GB RAM is adviced(or increase your machine virtual memory - Auto management is not stable). Machine with less RAM may still build the project, but your code and debug experience may be impacted.
 * Workloads: C++ Desktop Development, WinUI Desktop Development, and C++ WinUI app tools.
 * Windows 11 SDK (10.0.26100.0 or later)
-* MSVC v145(or open solution and follow vs install prompts)
+* MSVC v145/MSVC preview(or open solution and follow vs install prompts)
 * `vcpkg` package manager (the VS-integrated version is acceptable)
-* You may need to have [vcpkg](https://vcpkg.io/) installed and integrate setup for msbuild. See [this documentation for guide](https://learn.microsoft.com/en-us/vcpkg/get_started/get-started-msbuild?pivots=shell-powershell).
+* You may need to have [vcpkg](https://vcpkg.io/) installed and integrate setup for msbuild. See [this documentation for guide](https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild?pivots=shell-powershell).
 
 2. Build the project
 

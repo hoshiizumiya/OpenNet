@@ -47,8 +47,31 @@ using namespace winrt::Microsoft::Windows::Storage::Pickers;
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	double TasksPage::_persistedItemContainerHeight = -1.0;
-	wchar_t const* TasksPage::_persistedItemKey;
-	wchar_t const* TasksPage::_persistedPosition;
+	hstring TasksPage::_persistedItemKey;
+	hstring TasksPage::_persistedPosition;
+
+	namespace
+	{
+		hstring GetTaskPersistenceKey(winrt::OpenNet::ViewModels::TaskViewModel const& item)
+		{
+			if (!item)
+			{
+				return {};
+			}
+
+			if (auto const taskId = item.TaskId(); !taskId.empty())
+			{
+				return taskId;
+			}
+
+			if (auto const gid = item.Gid(); !gid.empty())
+			{
+				return gid;
+			}
+
+			return item.Name();
+		}
+	}
 
 	TasksPage::TasksPage()
 	{
@@ -86,22 +109,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		auto strong = get_strong();
 		::OpenNet::Helpers::RestoreControlHeight(TasksList(), "TasksPage_ContentFrame_Height");
 
 		// https://github.com/microsoft/Windows-universal-samples/blob/main/Samples/XamlListView/cppwinrt/Scenario5_RestoreScrollPosition.cpp
-		if (_persistedPosition != nullptr)
+		if (!_persistedPosition.empty())
 		{
 			// Here we kick off the async function to use the saved string _persistedPosition and the function GetItem to restore the scroll posistion
-			auto lifetime = get_strong();
 			co_await ListViewPersistenceHelper::SetRelativeScrollPositionAsync(TasksList(), _persistedPosition, { this, &TasksPage::GetItem });
 		}
 	}
 
+	// Save the current scroll position and selected item when navigating away
 	void TasksPage::OnNavigatingFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&)
 	{
-		ListViewPersistenceHelper::GetRelativeScrollPosition(TasksList(), { this, &TasksPage::GetKey });
+		_persistedItemKey = {};
+		_persistedItemContainerHeight = -1.0;
+		_persistedPosition = ListViewPersistenceHelper::GetRelativeScrollPosition(TasksList(), { this, &TasksPage::GetKey });
 	}
 
 	// Restore saved column widths
@@ -457,13 +483,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// to overscroll. 
 		auto item = args.Item().try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
 
-		if (item != nullptr && item.Name() == _persistedItemKey)
+		if (item && !_persistedItemKey.empty() && GetTaskPersistenceKey(item) == _persistedItemKey)
 		{
 			if (!args.InRecycleQueue())
 			{
 				// Here we set the container's height equal to the fully rendered container height we had saved before navigating away. If all the items in 
 				// your list have the same fixed height, you can replace this variable with a hardcoded height value. 
-				args.ItemContainer().Height(_persistedItemContainerHeight);
+				if (_persistedItemContainerHeight > 0.0)
+				{
+					args.ItemContainer().Height(_persistedItemContainerHeight);
+				}
 			}
 			else
 			{
@@ -876,10 +905,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> TasksPage::GetItem(hstring const& key)
 	{
+		if (!m_viewModel || key.empty())
+		{
+			co_return nullptr;
+		}
+
 		auto items = m_viewModel.FilteredTasks();
 		auto found = std::find_if(items.begin(), items.end(), [&](auto&& item)
 		{
-			return item.Name() == key;
+			return GetTaskPersistenceKey(item) == key;
 		});
 		co_return found == items.end() ? nullptr : *found;
 	}
@@ -887,15 +921,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	hstring TasksPage::GetKey(IInspectable const& object)
 	{
 		auto item = object.try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
-		if (item != nullptr)
+		if (item)
 		{
-			_persistedItemContainerHeight = TasksList().ContainerFromItem(item).as<ListViewItem>().ActualHeight();
-			_persistedItemKey = item.Name().c_str();
+			_persistedItemKey = GetTaskPersistenceKey(item);
+			if (_persistedItemKey.empty())
+			{
+				return {};
+			}
+
+			if (auto container = TasksList().ContainerFromItem(item).try_as<ListViewItem>())
+			{
+				_persistedItemContainerHeight = container.ActualHeight();
+			}
+			else
+			{
+				_persistedItemContainerHeight = -1.0;
+			}
+
 			return _persistedItemKey;
 		}
-		else
-		{
-			return L"";
-		}
+
+		return {};
 	}
 }

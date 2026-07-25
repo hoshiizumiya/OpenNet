@@ -125,8 +125,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// We need to save the item container height if the items have variable heights. If all items have a constant fixed height, you can manually 
 		// set the height to the fixed value in ItemsListView_ContainerContentChanging
 		static double _persistedItemContainerHeight;
-		static wchar_t const* _persistedItemKey;
-		static wchar_t const* _persistedPosition;
+		static winrt::hstring _persistedItemKey;
+		static winrt::hstring _persistedPosition;
 
 		winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> GetItem(hstring const& key);
 		hstring GetKey(IInspectable const& object);
