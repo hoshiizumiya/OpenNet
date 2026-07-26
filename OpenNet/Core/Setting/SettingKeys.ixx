@@ -86,6 +86,8 @@ export namespace OpenNet::Core::Setting::SettingKeys
 	inline constexpr wchar_t const* BridgeShareSaveType                      = L"OpenNet::Web::WebView::BridgeShare::SaveType";
 	inline constexpr wchar_t const* CompactWebView2WindowInactiveOpacity     = L"OpenNet::Web::WebView::Compact::InactiveOpacity";
 	inline constexpr wchar_t const* CompactWebView2WindowPreviousSourceUrl   = L"OpenNet::Web::WebView::Compact::PreviousSourceUrl";
+	inline constexpr wchar_t const* ServerDomainMode                         = L"OpenNet::Web::ServerDomainMode";
+	inline constexpr wchar_t const* TraversalDirectoryUri                    = L"OpenNet::Network::TraversalDirectoryUri";
 	inline constexpr wchar_t const* WebView2VideoFastForwardOrRewindSeconds  = L"OpenNet::Web::WebView::Video::FastForwardOrRewind::Seconds";
 
 	// Tasks UI columns display settings

@@ -263,42 +263,48 @@
             </StackPanel>
 
             <!--  Port State  -->
-            <StackPanel
+            <Button
                 Grid.Column="3"
                 Margin="16,0,0,0"
-                VerticalAlignment="Center"
-                Orientation="Horizontal"
-                Spacing="6">
-                <essential:SwitchPresenter Padding="0" Value="{x:Bind ViewModel.PortState, Mode=OneWay}">
-                    <essential:Case Value="Unknown">
-                        <FontIcon
-                            FontFamily="Segoe UI Emoji"
-                            FontSize="14"
-                            Glyph="&#x1F7E4;" />
-                    </essential:Case>
-                    <essential:Case Value="Open">
-                        <FontIcon
-                            FontFamily="Segoe UI Emoji"
-                            FontSize="14"
-                            Glyph="&#x1F7E2;" />
-                    </essential:Case>
-                    <essential:Case Value="Blocked">
-                        <FontIcon
-                            FontFamily="Segoe UI Emoji"
-                            FontSize="20"
-                            Glyph="&#x1F7E1;">
-                            <ToolTipService.ToolTip>
-                                <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Port is blocked. Please check your router or firewall settings." />
-                            </ToolTipService.ToolTip>
-                        </FontIcon>
-                    </essential:Case>
-                </essential:SwitchPresenter>
-                <TextBlock
+                Padding="6,3"
+                Click="PortState_Click"
+                Style="{StaticResource SubtleButtonStyle}"
+                ToolTipService.ToolTip="Open NAT and port detection">
+                <StackPanel
                     VerticalAlignment="Center"
-                    FontSize="12"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="{x:Bind ViewModel.ListenPort, Mode=OneWay, FallbackValue='0'}" />
-            </StackPanel>
+                    Orientation="Horizontal"
+                    Spacing="6">
+                    <essential:SwitchPresenter Padding="0" Value="{x:Bind ViewModel.PortState, Mode=OneWay}">
+                        <essential:Case Value="Unknown">
+                            <FontIcon
+                                FontFamily="Segoe UI Emoji"
+                                FontSize="14"
+                                Glyph="&#x1F7E4;" />
+                        </essential:Case>
+                        <essential:Case Value="Open">
+                            <FontIcon
+                                FontFamily="Segoe UI Emoji"
+                                FontSize="14"
+                                Glyph="&#x1F7E2;" />
+                        </essential:Case>
+                        <essential:Case Value="Blocked">
+                            <FontIcon
+                                FontFamily="Segoe UI Emoji"
+                                FontSize="20"
+                                Glyph="&#x1F7E1;">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Port is blocked. Please check your router or firewall settings." />
+                                </ToolTipService.ToolTip>
+                            </FontIcon>
+                        </essential:Case>
+                    </essential:SwitchPresenter>
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="12"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="{x:Bind ViewModel.ListenPort, Mode=OneWay, FallbackValue='0'}" />
+                </StackPanel>
+            </Button>
 
             <!--  Notification Information  -->
             <StackPanel

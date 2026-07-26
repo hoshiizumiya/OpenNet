@@ -158,6 +158,7 @@
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
     <Page Include="UI\Xaml\View\ItemsCardPopupView.xaml" />
+    <Page Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -456,6 +457,12 @@
     </ClCompile>
     <ClCompile Include="Web\Request\Builder\GithubRequest.cpp">
       <Filter>Web\Request\Builder</Filter>
+    </ClCompile>
+    <ClCompile Include="Web\ServerDomain.ixx">
+      <Filter>Web</Filter>
+    </ClCompile>
+    <ClCompile Include="Web\ServerDomainMode.ixx">
+      <Filter>Web</Filter>
     </ClCompile>
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp">
       <Filter>Core\IO\Http</Filter>

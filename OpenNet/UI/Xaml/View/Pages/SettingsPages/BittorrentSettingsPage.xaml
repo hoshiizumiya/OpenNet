@@ -47,7 +47,7 @@
                         x:Name="ListenInterfacesTextBox"
                         MinWidth="260"
                         LostFocus="OnSettingChanged"
-                        PlaceholderText="0.0.0.0:6881,[::]:6881" />
+                        PlaceholderText="0.0.0.0:0,[::]:0" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_ConnectionsLimit">

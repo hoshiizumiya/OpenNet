@@ -660,6 +660,45 @@ namespace OpenNet::Core::Torrent
             {
                 HandleSaveResumeDataFailedAlert(srdf);
             }
+            else if (auto mapping = lt::alert_cast<lt::portmap_alert>(a))
+            {
+                std::lock_guard lock(m_portMappingMutex);
+                std::string mechanism =
+                    mapping->map_transport == lt::portmap_transport::upnp
+                    ? "UPnP" : "NAT-PMP/PCP";
+                if (mapping->map_protocol == lt::portmap_protocol::tcp)
+                {
+                    m_portMappingStatus.tcpExternalPort = mapping->external_port;
+                    m_portMappingStatus.tcpMechanism = mechanism;
+                }
+                else if (mapping->map_protocol == lt::portmap_protocol::udp)
+                {
+                    m_portMappingStatus.udpExternalPort = mapping->external_port;
+                    m_portMappingStatus.udpMechanism = mechanism;
+                }
+                m_portMappingStatus.lastError.clear();
+            }
+            else if (auto mappingError = lt::alert_cast<lt::portmap_error_alert>(a))
+            {
+                std::lock_guard lock(m_portMappingMutex);
+                m_portMappingStatus.lastError = mappingError->message();
+            }
+            else if (auto externalIp = lt::alert_cast<lt::external_ip_alert>(a))
+            {
+                std::lock_guard lock(m_portMappingMutex);
+                m_portMappingStatus.externalAddress =
+                    externalIp->external_address.to_string();
+            }
+            else if (auto listenFailed = lt::alert_cast<lt::listen_failed_alert>(a))
+            {
+                std::lock_guard lock(m_listenStateMutex);
+                m_lastListenError = listenFailed->message();
+            }
+            else if (lt::alert_cast<lt::listen_succeeded_alert>(a))
+            {
+                std::lock_guard lock(m_listenStateMutex);
+                m_lastListenError.clear();
+            }
             else if (auto se = lt::alert_cast<lt::session_error_alert>(a))
             {
                 ErrorCallback errorCbCopy;
@@ -860,6 +899,34 @@ namespace OpenNet::Core::Torrent
         }
     }
 
+    LibtorrentHandle::PortMappingStatus LibtorrentHandle::GetPortMappingStatus() const
+    {
+        std::lock_guard lock(m_portMappingMutex);
+        auto status = m_portMappingStatus;
+        if (m_session)
+        {
+            auto settings = m_session->get_settings();
+            status.upnpEnabled = settings.get_bool(lt::settings_pack::enable_upnp);
+            status.natPmpEnabled = settings.get_bool(lt::settings_pack::enable_natpmp);
+        }
+        return status;
+    }
+
+    void LibtorrentHandle::RefreshPortMappings()
+    {
+        if (!m_session)
+            return;
+        {
+            std::lock_guard lock(m_portMappingMutex);
+            m_portMappingStatus.tcpExternalPort = 0;
+            m_portMappingStatus.udpExternalPort = 0;
+            m_portMappingStatus.tcpMechanism.clear();
+            m_portMappingStatus.udpMechanism.clear();
+            m_portMappingStatus.lastError.clear();
+        }
+        m_session->reopen_network_sockets(lt::session_handle::reopen_map_ports);
+    }
+
     // ---------------------------------------------------------------
     //  Session-level aggregate statistics
     // ---------------------------------------------------------------
@@ -890,9 +957,24 @@ namespace OpenNet::Core::Torrent
             // DHT nodes — use the cached value from dht_stats_alert / session_stats_alert
             stats.dhtNodes = m_cachedDhtNodeCount.load();
 
-            // Listen port
-            try { stats.listenPort = static_cast<int>(m_session->listen_port()); }
-            catch (...) { stats.listenPort = 0; }
+            // Only expose the port that libtorrent actually opened. The configured
+            // listen_interfaces value is not proof that bind/listen succeeded.
+            try
+            {
+                stats.isListening = m_session->is_listening();
+                stats.listenPort = stats.isListening
+                    ? static_cast<int>(m_session->listen_port())
+                    : 0;
+            }
+            catch (...)
+            {
+                stats.isListening = false;
+                stats.listenPort = 0;
+            }
+            {
+                std::lock_guard lock(m_listenStateMutex);
+                stats.listenError = m_lastListenError;
+            }
 
             // Session-level totals from session_stats_alert (more accurate than per-torrent sums)
             {

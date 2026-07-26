@@ -33,6 +33,81 @@ namespace OpenNet::Core
 		Symmetric                        // 对称 / Symmetric
 	};
 
+	enum class NatMappingBehavior
+	{
+		Unknown,
+		Direct,
+		EndpointIndependent,
+		AddressDependent,
+		AddressAndPortDependent
+	};
+
+	enum class NatFilteringBehavior
+	{
+		Unknown,
+		EndpointIndependent,
+		AddressDependent,
+		AddressAndPortDependent
+	};
+
+	struct TraversalServerDescriptor
+	{
+		winrt::hstring name;
+		winrt::hstring ipv4Address;
+		winrt::hstring ipv6Address;
+		winrt::hstring alternateIPv4Address;
+		std::uint16_t apiPort{};
+		std::uint16_t stunPort{};
+		std::uint16_t alternateStunPort{};
+		std::int32_t priority{};
+	};
+
+	struct StunObservation
+	{
+		bool success{};
+		winrt::hstring server;
+		std::uint16_t serverPort{};
+		winrt::hstring mappedAddress;
+		std::uint16_t mappedPort{};
+		std::int32_t latencyMs{};
+	};
+
+	struct PortProbeResult
+	{
+		bool completed{};
+		bool tcpCompleted{};
+		bool udpCompleted{};
+		bool tcpReachable{};
+		bool udpReachable{};
+		bool ipv6Completed{};
+		bool ipv6TcpCompleted{};
+		bool ipv6UdpCompleted{};
+		bool ipv6TcpReachable{};
+		bool ipv6UdpReachable{};
+		winrt::hstring observedAddress;
+		winrt::hstring serverName;
+		winrt::hstring detail;
+		winrt::hstring tcpEvidence;
+		winrt::hstring udpEvidence;
+		winrt::hstring ipv6TcpEvidence;
+		winrt::hstring ipv6UdpEvidence;
+	};
+
+	struct NatDetectionResult
+	{
+		bool completed{};
+		bool udpAvailable{};
+		winrt::hstring localIPv4;
+		winrt::hstring publicIPv4;
+		NatMappingBehavior mapping{ NatMappingBehavior::Unknown };
+		NatFilteringBehavior filtering{ NatFilteringBehavior::Unknown };
+		NATType legacyType{ NATType::Unknown };
+		winrt::hstring summary;
+		winrt::hstring diagnostic;
+		std::vector<StunObservation> observations;
+		PortProbeResult portProbe;
+	};
+
 	// 增强的网络检测器类 / Enhanced Network Detector Class
 	class NetworkDetector
 	{
@@ -50,6 +125,21 @@ namespace OpenNet::Core
 
 		// 端口检测 / Port checking
 		winrt::Windows::Foundation::IAsyncOperation<bool> TestPortAccessibilityAsync(std::uint16_t port, bool tcp = true);
+		winrt::Windows::Foundation::IAsyncAction TestPortAccessibilityDetailedAsync(
+			std::uint16_t port,
+			std::shared_ptr<PortProbeResult> result);
+		winrt::Windows::Foundation::IAsyncAction DetectNATBehaviorAsync(
+			std::uint16_t listenPort,
+			std::shared_ptr<NatDetectionResult> result);
+		winrt::Windows::Foundation::IAsyncAction GetTraversalServersAsync(
+			std::shared_ptr<std::vector<TraversalServerDescriptor>> servers);
+
+		winrt::hstring TraversalDirectoryUri() const;
+		void TraversalDirectoryUri(winrt::hstring const& value);
+
+		static winrt::hstring MappingBehaviorToString(NatMappingBehavior value);
+		static winrt::hstring FilteringBehaviorToString(NatFilteringBehavior value);
+		static winrt::hstring NATTypeToString(NATType value);
 
 		// 公网IP检测 / Public IP detection
 		winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> GetPublicIPAddressAsync(bool ipv6 = false);
@@ -75,11 +165,26 @@ namespace OpenNet::Core
 	private:
 		// 内部方法 / Internal Methods
 		winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> SendSTUNBindingRequestAsync(winrt::hstring const& stunServer, std::uint16_t port);
+		winrt::Windows::Foundation::IAsyncAction PerformStunExchangeAsync(
+			winrt::Windows::Networking::Sockets::DatagramSocket const& socket,
+			winrt::hstring const& server,
+			std::uint16_t port,
+			bool changeIp,
+			bool changePort,
+			std::shared_ptr<StunObservation> result);
+		winrt::hstring GetLocalIPv4Address() const;
+		winrt::Windows::Foundation::IAsyncAction ProbeServerPortAsync(
+			TraversalServerDescriptor const& server,
+			std::uint16_t port,
+			bool tcp,
+			bool useIpv6,
+			std::shared_ptr<PortProbeResult> result);
 		NetworkType DetermineNetworkType();
 
 		// 成员变量 / Member Variables
 		bool m_isDetecting;
 		winrt::Windows::Foundation::Collections::IVector<winrt::hstring> m_stunServers;
+		winrt::hstring m_traversalDirectoryUri;
 
 		// 事件 / Events
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable>> m_networkStateChanged;

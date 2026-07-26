@@ -147,8 +147,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 				{
 					try
 					{
-						auto op = m_networkDetector.TestPortAccessibilityAsync(
-							static_cast<uint16_t>(listenPort), true);
+						auto result = std::make_shared<::OpenNet::Core::PortProbeResult>();
+						auto op = m_networkDetector.TestPortAccessibilityDetailedAsync(
+							static_cast<uint16_t>(listenPort),
+							result);
 						// Wait with periodic stop-flag checks instead of blocking indefinitely
 						auto status = op.Status();
 						while (status == winrt::Windows::Foundation::AsyncStatus::Started)
@@ -167,8 +169,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 						}
 						if (status == winrt::Windows::Foundation::AsyncStatus::Completed)
 						{
-							bool isOpen = op.GetResults();
-							m_cachedPortState = isOpen ? L"Open" : L"Blocked";
+							op.GetResults();
+							m_cachedPortState = result->tcpCompleted
+								? (result->tcpReachable ? L"Open" : L"Blocked")
+								: L"Unknown";
 						}
 						else
 						{

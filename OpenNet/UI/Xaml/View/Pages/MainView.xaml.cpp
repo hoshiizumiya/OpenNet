@@ -12,6 +12,7 @@
 #include "UI/Xaml/View/Pages/ServersPage.xaml.h"
 #include "UI/Xaml/View/Pages/RSSPage.xaml.h"
 #include "UI/Xaml/View/Pages/NatToolsPage.xaml.h"
+#include "UI/Xaml/View/Windows/NATDetectorWindow.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 
 import winrt.Microsoft.Windows.Storage;
@@ -418,5 +419,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		if (m_isUnloaded) return;
 		AnimatedIcon::SetState(this->AnimatedIcon(), L"Normal");
+	}
+
+	void MainView::PortState_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto window = winrt::make_self<
+			winrt::OpenNet::UI::Xaml::View::Windows::implementation::NATDetectorWindow>();
+		window->Activate();
 	}
 }

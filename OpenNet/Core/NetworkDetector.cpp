@@ -1,6 +1,11 @@
 ﻿#include "pch.h"
 #include "NetworkDetector.h"
 
+import OpenNet.Core.Setting.LocalSetting;
+import OpenNet.Core.Setting.SettingKeys;
+import OpenNet.Web.ServerDomain;
+import winrt.Windows.Data.Json;
+
 using namespace winrt;
 using namespace Windows::Foundation;
 using namespace Windows::Networking;
@@ -8,11 +13,20 @@ using namespace Windows::Networking::Connectivity;
 using namespace Windows::Networking::Sockets;
 using namespace Windows::Storage::Streams;
 using namespace Windows::Web::Http;
+using namespace Windows::Data::Json;
 
 namespace OpenNet::Core
 {
 	NetworkDetector::NetworkDetector() : m_isDetecting(false)
 	{
+		std::wstring directoryUri{
+			::OpenNet::Web::ServerDomain::GetApiRoot() };
+		if (!directoryUri.ends_with(L'/'))
+			directoryUri.push_back(L'/');
+		directoryUri.append(L"api/v1/traversal/servers");
+		m_traversalDirectoryUri = ::OpenNet::Core::Setting::LocalSetting::Get<winrt::hstring>(
+			::OpenNet::Core::Setting::SettingKeys::TraversalDirectoryUri,
+			winrt::hstring{ directoryUri });
 		// 初始化推荐的STUN服务器列表 / Initialize recommended STUN server list
 		m_stunServers = winrt::single_threaded_vector<winrt::hstring>();
 		// Google STUN servers
@@ -212,80 +226,200 @@ namespace OpenNet::Core
 	{
 		try
 		{
-			// Use STUN to determine the external mapped port for a local socket
-			// bound to the requested port. If the mapped port matches, the port
-			// is likely directly accessible (Full Cone / EIM).
-			DatagramSocket socket;
-
-			// Bind to the specific local port
-			// co_await socket.BindServiceNameAsync(winrt::to_hstring(port)); TODO: USE server with system TCP handshke to check 
-
-			// Send STUN Binding Request to discover mapped address
-			auto stunServer = L"stun.l.google.com";
-			auto stunPort = L"19302";
-			co_await socket.ConnectAsync(HostName(stunServer), stunPort);
-
-			// Build STUN Binding Request (RFC 5389)
-			uint8_t txId[12];
-			for (int i = 0; i < 12; ++i) txId[i] = static_cast<uint8_t>(rand() & 0xFF);
-
-			DataWriter writer(socket.OutputStream());
-			writer.WriteByte(0x00); writer.WriteByte(0x01); // Binding Request
-			writer.WriteByte(0x00); writer.WriteByte(0x00); // Length: 0
-			writer.WriteByte(0x21); writer.WriteByte(0x12); // Magic cookie
-			writer.WriteByte(0xA4); writer.WriteByte(0x42);
-			writer.WriteBytes(winrt::array_view<const uint8_t>(txId, 12));
-			co_await writer.StoreAsync();
-
-			// Wait for response
-			bool gotResponse = false;
-			uint16_t mappedPort = 0;
-			socket.MessageReceived([&](DatagramSocket const&, DatagramSocketMessageReceivedEventArgs const& args)
-			{
-				try
-				{
-					auto reader = args.GetDataReader();
-					auto len = reader.UnconsumedBufferLength();
-					if (len < 20) return;
-
-					std::vector<uint8_t> data(len);
-					reader.ReadBytes(winrt::array_view<uint8_t>(data));
-
-					uint16_t msgType = (data[0] << 8) | data[1];
-					uint16_t msgLen = (data[2] << 8) | data[3];
-					if (msgType != 0x0101 || data.size() < static_cast<size_t>(20 + msgLen)) return;
-
-					// Parse XOR-MAPPED-ADDRESS
-					size_t offset = 20;
-					while (offset + 4 <= 20u + msgLen)
-					{
-						uint16_t attrType = (data[offset] << 8) | data[offset + 1];
-						uint16_t attrLen = (data[offset + 2] << 8) | data[offset + 3];
-						if ((attrType == 0x0020 || attrType == 0x0001) && attrLen >= 8)
-						{
-							mappedPort = (data[offset + 6] << 8) | data[offset + 7];
-							if (attrType == 0x0020) mappedPort ^= 0x2112;
-							gotResponse = true;
-							break;
-						}
-						offset += 4 + ((attrLen + 3) & ~3u);
-					}
-				}
-				catch (...) {}
-			});
-
-			for (int i = 0; i < 30 && !gotResponse; ++i)
-				co_await winrt::resume_after(std::chrono::milliseconds(100));
-
-			socket.Close();
-
-			// If the external mapped port equals our local port, the port is accessible
-			co_return gotResponse && (mappedPort == port);
+			auto result = std::make_shared<PortProbeResult>();
+			co_await TestPortAccessibilityDetailedAsync(port, result);
+			co_return tcp ? result->tcpReachable : result->udpReachable;
 		}
 		catch (...)
 		{
 			co_return false;
 		}
+	}
+
+	winrt::hstring NetworkDetector::TraversalDirectoryUri() const
+	{
+		return m_traversalDirectoryUri;
+	}
+
+	void NetworkDetector::TraversalDirectoryUri(winrt::hstring const& value)
+	{
+		m_traversalDirectoryUri = value;
+		::OpenNet::Core::Setting::LocalSetting::Set(
+			::OpenNet::Core::Setting::SettingKeys::TraversalDirectoryUri,
+			value);
+	}
+
+	IAsyncAction NetworkDetector::GetTraversalServersAsync(
+		std::shared_ptr<std::vector<TraversalServerDescriptor>> servers)
+	{
+		servers->clear();
+		try
+		{
+			HttpClient client;
+			auto request = client.GetStringAsync(Uri(m_traversalDirectoryUri));
+			for (int index = 0;
+				index < 50 && request.Status() == AsyncStatus::Started;
+				++index)
+			{
+				co_await winrt::resume_after(std::chrono::milliseconds(100));
+			}
+			if (request.Status() != AsyncStatus::Completed)
+			{
+				request.Cancel();
+				co_return;
+			}
+			auto json = request.GetResults();
+			auto root = JsonObject::Parse(json);
+			auto items = root.GetNamedArray(L"servers");
+			servers->reserve(items.Size());
+			for (uint32_t index = 0; index < items.Size(); ++index)
+			{
+				auto item = items.GetObjectAt(index);
+				TraversalServerDescriptor server;
+				server.name = item.GetNamedString(L"name", L"Traversal server");
+				server.ipv4Address = item.GetNamedString(L"ipv4Address", L"");
+				if (item.HasKey(L"ipv6Address"))
+				{
+					auto ipv6 = item.Lookup(L"ipv6Address");
+					if (ipv6.ValueType() == JsonValueType::String)
+						server.ipv6Address = ipv6.GetString();
+				}
+				if (item.HasKey(L"alternateIPv4Address"))
+				{
+					auto alternate = item.Lookup(L"alternateIPv4Address");
+					if (alternate.ValueType() == JsonValueType::String)
+						server.alternateIPv4Address = alternate.GetString();
+				}
+				server.apiPort = static_cast<uint16_t>(item.GetNamedNumber(L"apiPort", 48100));
+				server.stunPort = static_cast<uint16_t>(item.GetNamedNumber(L"stunPort", 3478));
+				server.alternateStunPort = static_cast<uint16_t>(
+					item.GetNamedNumber(L"alternateStunPort", 3479));
+				server.priority = static_cast<int32_t>(item.GetNamedNumber(L"priority", 100));
+				if (!server.ipv4Address.empty())
+					servers->push_back(std::move(server));
+			}
+		}
+		catch (...)
+		{
+		}
+		co_return;
+	}
+
+	IAsyncAction NetworkDetector::ProbeServerPortAsync(
+		TraversalServerDescriptor const& server,
+		uint16_t port,
+		bool tcp,
+		bool useIpv6,
+		std::shared_ptr<PortProbeResult> result)
+	{
+		try
+		{
+			auto host = useIpv6 ? L"[" + server.ipv6Address + L"]" : server.ipv4Address;
+			auto uri = Uri(
+				L"http://" + host + L":" + winrt::to_hstring(server.apiPort)
+				+ (tcp ? L"/v1/probes/tcp" : L"/v1/probes/udp"));
+			HttpClient client;
+			HttpStringContent content(
+				L"{\"port\":" + winrt::to_hstring(port) + L"}",
+				UnicodeEncoding::Utf8,
+				L"application/json");
+			auto request = client.PostAsync(uri, content);
+			for (int index = 0;
+				index < 50 && request.Status() == AsyncStatus::Started;
+				++index)
+			{
+				co_await winrt::resume_after(std::chrono::milliseconds(100));
+			}
+			if (request.Status() != AsyncStatus::Completed)
+			{
+				request.Cancel();
+				co_return;
+			}
+			auto response = request.GetResults();
+			if (!response.IsSuccessStatusCode())
+				co_return;
+
+			auto json = co_await response.Content().ReadAsStringAsync();
+			auto body = JsonObject::Parse(json);
+			bool reachable = body.GetNamedBoolean(L"reachable", false);
+			auto evidence = body.GetNamedString(L"evidence", L"");
+			if (useIpv6)
+			{
+				result->ipv6Completed = true;
+				if (tcp)
+					result->ipv6TcpCompleted = true;
+				else
+					result->ipv6UdpCompleted = true;
+			}
+			else
+			{
+				result->completed = true;
+				if (tcp)
+					result->tcpCompleted = true;
+				else
+					result->udpCompleted = true;
+			}
+			if (reachable || result->serverName.empty())
+			{
+				result->serverName = server.name;
+				result->observedAddress =
+					body.GetNamedString(L"targetAddress", L"");
+			}
+			result->detail = evidence;
+			if (useIpv6 && tcp)
+			{
+				if (reachable || result->ipv6TcpEvidence.empty())
+					result->ipv6TcpEvidence = evidence;
+			}
+			else if (useIpv6)
+			{
+				if (reachable || result->ipv6UdpEvidence.empty())
+					result->ipv6UdpEvidence = evidence;
+			}
+			else if (tcp)
+			{
+				if (reachable || result->tcpEvidence.empty())
+					result->tcpEvidence = evidence;
+			}
+			else
+			{
+				if (reachable || result->udpEvidence.empty())
+					result->udpEvidence = evidence;
+			}
+			if (useIpv6 && tcp)
+				result->ipv6TcpReachable = result->ipv6TcpReachable || reachable;
+			else if (useIpv6)
+				result->ipv6UdpReachable = result->ipv6UdpReachable || reachable;
+			else if (tcp)
+				result->tcpReachable = result->tcpReachable || reachable;
+			else
+				result->udpReachable = result->udpReachable || reachable;
+		}
+		catch (...)
+		{
+		}
+	}
+
+	IAsyncAction NetworkDetector::TestPortAccessibilityDetailedAsync(
+		uint16_t port,
+		std::shared_ptr<PortProbeResult> result)
+	{
+		*result = {};
+		auto servers = std::make_shared<std::vector<TraversalServerDescriptor>>();
+		co_await GetTraversalServersAsync(servers);
+		for (size_t index = 0; index < std::min<size_t>(servers->size(), 2); ++index)
+		{
+			co_await ProbeServerPortAsync((*servers)[index], port, true, false, result);
+			co_await ProbeServerPortAsync((*servers)[index], port, false, false, result);
+			if (!(*servers)[index].ipv6Address.empty())
+			{
+				co_await ProbeServerPortAsync((*servers)[index], port, true, true, result);
+				co_await ProbeServerPortAsync((*servers)[index], port, false, true, result);
+			}
+			if (result->tcpReachable && result->udpReachable)
+				break;
+		}
+		co_return;
 	}
 
 	IAsyncOperation<winrt::hstring> NetworkDetector::GetPublicIPAddressAsync(bool ipv6)
@@ -465,6 +599,361 @@ namespace OpenNet::Core
 		}
 	}
 
+	IAsyncAction NetworkDetector::PerformStunExchangeAsync(
+		DatagramSocket const& socket,
+		winrt::hstring const& server,
+		uint16_t port,
+		bool changeIp,
+		bool changePort,
+		std::shared_ptr<StunObservation> result)
+	{
+		struct ExchangeState
+		{
+			std::atomic<bool> received{ false };
+			std::array<uint8_t, 12> transaction{};
+			StunObservation observation;
+		};
+
+		auto state = std::make_shared<ExchangeState>();
+		state->observation.server = server;
+		state->observation.serverPort = port;
+		std::random_device random;
+		for (auto& value : state->transaction)
+			value = static_cast<uint8_t>(random());
+
+		auto started = std::chrono::steady_clock::now();
+		auto token = socket.MessageReceived(
+			[state, started](DatagramSocket const&, DatagramSocketMessageReceivedEventArgs const& args)
+			{
+				try
+				{
+					auto reader = args.GetDataReader();
+					auto length = reader.UnconsumedBufferLength();
+					if (length < 20)
+						return;
+
+					std::vector<uint8_t> data(length);
+					reader.ReadBytes(winrt::array_view<uint8_t>(data));
+					auto read16 = [&data](size_t offset)
+					{
+						return static_cast<uint16_t>(
+							(static_cast<uint16_t>(data[offset]) << 8) | data[offset + 1]);
+					};
+					if (read16(0) != 0x0101
+						|| data[4] != 0x21 || data[5] != 0x12
+						|| data[6] != 0xA4 || data[7] != 0x42
+						|| !std::equal(
+							state->transaction.begin(),
+							state->transaction.end(),
+							data.begin() + 8))
+					{
+						return;
+					}
+
+					uint16_t messageLength = read16(2);
+					if (data.size() < 20U + messageLength)
+						return;
+					for (size_t offset = 20; offset + 4 <= 20U + messageLength;)
+					{
+						uint16_t type = read16(offset);
+						uint16_t attributeLength = read16(offset + 2);
+						size_t value = offset + 4;
+						if (value + attributeLength > 20U + messageLength)
+							break;
+						if ((type == 0x0020 || type == 0x0001)
+							&& attributeLength >= 8
+							&& data[value + 1] == 0x01)
+						{
+							uint16_t mappedPort = read16(value + 2);
+							uint32_t mappedIp =
+								(static_cast<uint32_t>(data[value + 4]) << 24)
+								| (static_cast<uint32_t>(data[value + 5]) << 16)
+								| (static_cast<uint32_t>(data[value + 6]) << 8)
+								| data[value + 7];
+							if (type == 0x0020)
+							{
+								mappedPort ^= 0x2112;
+								mappedIp ^= 0x2112A442;
+							}
+							state->observation.mappedAddress = winrt::hstring{ std::format(
+								L"{}.{}.{}.{}",
+								(mappedIp >> 24) & 0xff,
+								(mappedIp >> 16) & 0xff,
+								(mappedIp >> 8) & 0xff,
+								mappedIp & 0xff) };
+							state->observation.mappedPort = mappedPort;
+							state->observation.latencyMs = static_cast<int32_t>(
+								std::chrono::duration_cast<std::chrono::milliseconds>(
+									std::chrono::steady_clock::now() - started).count());
+							state->observation.success = true;
+							state->received.store(true);
+							return;
+						}
+						offset = value + ((attributeLength + 3U) & ~3U);
+					}
+				}
+				catch (...)
+				{
+				}
+			});
+
+		try
+		{
+			std::vector<uint8_t> packet;
+			packet.reserve(28);
+			packet.insert(packet.end(), { 0x00, 0x01, 0x00, 0x00, 0x21, 0x12, 0xA4, 0x42 });
+			packet.insert(packet.end(), state->transaction.begin(), state->transaction.end());
+			if (changeIp || changePort)
+			{
+				packet[2] = 0x00;
+				packet[3] = 0x08;
+				packet.insert(packet.end(), { 0x00, 0x03, 0x00, 0x04, 0x00, 0x00, 0x00,
+					static_cast<uint8_t>((changeIp ? 0x04 : 0) | (changePort ? 0x02 : 0)) });
+			}
+
+			auto stream = co_await socket.GetOutputStreamAsync(
+				HostName(server),
+				winrt::to_hstring(port));
+			DataWriter writer(stream);
+			writer.WriteBytes(packet);
+			co_await writer.StoreAsync();
+			writer.DetachStream();
+
+			for (int index = 0; index < 30 && !state->received.load(); ++index)
+				co_await winrt::resume_after(std::chrono::milliseconds(100));
+		}
+		catch (...)
+		{
+		}
+
+		socket.MessageReceived(token);
+		*result = std::move(state->observation);
+		co_return;
+	}
+
+	winrt::hstring NetworkDetector::GetLocalIPv4Address() const
+	{
+		try
+		{
+			for (auto const& host : NetworkInformation::GetHostNames())
+			{
+				if (host.Type() != HostNameType::Ipv4)
+					continue;
+				auto address = host.CanonicalName();
+				if (address != L"127.0.0.1" && !address.starts_with(L"169.254."))
+					return address;
+			}
+		}
+		catch (...)
+		{
+		}
+		return {};
+	}
+
+	IAsyncAction NetworkDetector::DetectNATBehaviorAsync(
+		uint16_t listenPort,
+		std::shared_ptr<NatDetectionResult> output)
+	{
+		*output = {};
+		auto& result = *output;
+		result.localIPv4 = GetLocalIPv4Address();
+		auto servers = std::make_shared<std::vector<TraversalServerDescriptor>>();
+		co_await GetTraversalServersAsync(servers);
+		if (servers->empty())
+		{
+			result.diagnostic =
+				L"No traversal server was returned by " + m_traversalDirectoryUri;
+			co_return;
+		}
+
+		DatagramSocket socket;
+		try
+		{
+			co_await socket.BindServiceNameAsync(L"");
+			auto const& primary = servers->front();
+			auto first = std::make_shared<StunObservation>();
+			co_await PerformStunExchangeAsync(
+				socket, primary.ipv4Address, primary.stunPort, false, false, first);
+			result.observations.push_back(*first);
+			if (!first->success)
+			{
+				result.diagnostic = L"The primary STUN endpoint did not respond.";
+				socket.Close();
+				co_return;
+			}
+
+			result.udpAvailable = true;
+			result.publicIPv4 = first->mappedAddress;
+			auto differentPort = std::make_shared<StunObservation>();
+			co_await PerformStunExchangeAsync(
+				socket,
+				primary.ipv4Address,
+				primary.alternateStunPort,
+				false,
+				false,
+				differentPort);
+			result.observations.push_back(*differentPort);
+
+			StunObservation differentAddress;
+			if (!primary.alternateIPv4Address.empty())
+			{
+				auto observation = std::make_shared<StunObservation>();
+				co_await PerformStunExchangeAsync(
+					socket,
+					primary.alternateIPv4Address,
+					primary.stunPort,
+					false,
+					false,
+					observation);
+				differentAddress = std::move(*observation);
+			}
+			else if (servers->size() > 1)
+			{
+				auto observation = std::make_shared<StunObservation>();
+				co_await PerformStunExchangeAsync(
+					socket,
+					(*servers)[1].ipv4Address,
+					(*servers)[1].stunPort,
+					false,
+					false,
+					observation);
+				differentAddress = std::move(*observation);
+			}
+			if (!differentAddress.server.empty())
+				result.observations.push_back(differentAddress);
+
+			auto sameMapping = [](StunObservation const& left, StunObservation const& right)
+			{
+				return left.success && right.success
+					&& left.mappedAddress == right.mappedAddress
+					&& left.mappedPort == right.mappedPort;
+			};
+
+			if (!result.localIPv4.empty() && result.localIPv4 == result.publicIPv4)
+			{
+				result.mapping = NatMappingBehavior::Direct;
+			}
+			else if (differentPort->success && !sameMapping(*first, *differentPort))
+			{
+				result.mapping = NatMappingBehavior::AddressAndPortDependent;
+			}
+			else if (differentAddress.success && !sameMapping(*first, differentAddress))
+			{
+				result.mapping = NatMappingBehavior::AddressDependent;
+			}
+			else if (differentPort->success && differentAddress.success)
+			{
+				result.mapping = NatMappingBehavior::EndpointIndependent;
+			}
+
+			if (!primary.alternateIPv4Address.empty())
+			{
+				auto changeBoth = std::make_shared<StunObservation>();
+				co_await PerformStunExchangeAsync(
+					socket, primary.ipv4Address, primary.stunPort, true, true, changeBoth);
+				if (changeBoth->success)
+				{
+					result.filtering = NatFilteringBehavior::EndpointIndependent;
+				}
+				else
+				{
+					auto changePort = std::make_shared<StunObservation>();
+					co_await PerformStunExchangeAsync(
+						socket, primary.ipv4Address, primary.stunPort, false, true, changePort);
+					result.filtering = changePort->success
+						? NatFilteringBehavior::AddressDependent
+						: NatFilteringBehavior::AddressAndPortDependent;
+				}
+			}
+			socket.Close();
+
+			if (listenPort > 0)
+			{
+				auto portProbe = std::make_shared<PortProbeResult>();
+				co_await TestPortAccessibilityDetailedAsync(listenPort, portProbe);
+				result.portProbe = std::move(*portProbe);
+			}
+
+			if (result.mapping == NatMappingBehavior::Direct)
+			{
+				result.legacyType = result.portProbe.tcpReachable || result.portProbe.udpReachable
+					? NATType::Open
+					: NATType::Unknown;
+			}
+			else if (result.mapping == NatMappingBehavior::EndpointIndependent)
+			{
+				if (result.filtering == NatFilteringBehavior::EndpointIndependent)
+					result.legacyType = NATType::FullCone;
+				else if (result.filtering == NatFilteringBehavior::AddressDependent)
+					result.legacyType = NATType::RestrictedCone;
+				else if (result.filtering == NatFilteringBehavior::AddressAndPortDependent)
+					result.legacyType = NATType::PortRestricted;
+			}
+			else if (result.mapping == NatMappingBehavior::AddressDependent
+				|| result.mapping == NatMappingBehavior::AddressAndPortDependent)
+			{
+				result.legacyType = NATType::Symmetric;
+			}
+
+			result.completed = true;
+			result.summary = MappingBehaviorToString(result.mapping)
+				+ L" / " + FilteringBehaviorToString(result.filtering);
+			if (primary.alternateIPv4Address.empty())
+			{
+				result.diagnostic =
+					L"Mapping behavior was measured, but filtering behavior requires "
+					L"a traversal node with two public IPv4 addresses.";
+			}
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			socket.Close();
+			result.diagnostic = error.message();
+		}
+		catch (...)
+		{
+			socket.Close();
+			result.diagnostic = L"Unexpected NAT detection failure.";
+		}
+		co_return;
+	}
+
+	winrt::hstring NetworkDetector::MappingBehaviorToString(NatMappingBehavior value)
+	{
+		switch (value)
+		{
+		case NatMappingBehavior::Direct: return L"Direct / no address translation";
+		case NatMappingBehavior::EndpointIndependent: return L"Endpoint-independent mapping";
+		case NatMappingBehavior::AddressDependent: return L"Address-dependent mapping";
+		case NatMappingBehavior::AddressAndPortDependent: return L"Address-and-port-dependent mapping";
+		default: return L"Unknown";
+		}
+	}
+
+	winrt::hstring NetworkDetector::FilteringBehaviorToString(NatFilteringBehavior value)
+	{
+		switch (value)
+		{
+		case NatFilteringBehavior::EndpointIndependent: return L"Endpoint-independent filtering";
+		case NatFilteringBehavior::AddressDependent: return L"Address-dependent filtering";
+		case NatFilteringBehavior::AddressAndPortDependent: return L"Address-and-port-dependent filtering";
+		default: return L"Unknown";
+		}
+	}
+
+	winrt::hstring NetworkDetector::NATTypeToString(NATType value)
+	{
+		switch (value)
+		{
+		case NATType::Open: return L"Open Internet";
+		case NATType::FullCone: return L"Full cone NAT (compatibility label)";
+		case NATType::RestrictedCone: return L"Restricted cone NAT (compatibility label)";
+		case NATType::PortRestricted: return L"Port-restricted cone NAT (compatibility label)";
+		case NATType::Symmetric: return L"Symmetric NAT (compatibility label)";
+		default: return L"Unknown";
+		}
+	}
+
 	NetworkType NetworkDetector::DetermineNetworkType()
 	{
 		try
@@ -506,7 +995,7 @@ namespace OpenNet::Core
 		// 启动网络状态监控 / Start network state monitoring
 		try
 		{
-           // Register network status changed handler and store token so we can unregister later
+		   // Register network status changed handler and store token so we can unregister later
 			m_networkStatusChangedToken = NetworkInformation::NetworkStatusChanged([this](auto&&)
 			{
 				// 网络状态发生变化时触发事件 / Trigger event when network state changes
@@ -524,7 +1013,7 @@ namespace OpenNet::Core
 		// 停止网络状态监控 / Stop network state monitoring
 		// WinRT NetworkInformation 不提供直接的取消注册方法
 		// WinRT NetworkInformation doesn't provide direct unregister method
-       try
+	   try
 		{
 			if (m_networkStatusChangedToken.value != 0)
 			{

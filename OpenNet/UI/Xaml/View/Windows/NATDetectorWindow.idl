@@ -1,0 +1,9 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+    [default_interface]
+    runtimeclass NATDetectorWindow : WinUI3Package.ModalWindow
+    {
+        NATDetectorWindow();
+
+    }
+}

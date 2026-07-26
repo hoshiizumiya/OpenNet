@@ -17,6 +17,7 @@
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
 
+import OpenNet.App;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;
 import OpenNet.Core.IO.FileSystem;
@@ -26,6 +27,7 @@ import OpenNet.Factory.Window;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.Helpers.ControlLengthHelper;
 import winrt.OpenNet.UI.Xaml.View.Pages.SettingsPages;
+import winrt.OpenNet.UI.Xaml.View.Windows;
 import winrt.Windows.Foundation;
 import winrt.Windows.UI.Xaml.Navigation;
 import winrt.Microsoft.UI.Content;
@@ -433,6 +435,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	void TasksPage::ViewTasksPagePortTestAppBarButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	{
+		auto window = winrt::OpenNet::UI::Xaml::View::Windows::NATDetectorWindow();
+		window.Activate();
+	}
+
 	void TasksPage::ViewTasksPageSettingsAppBarButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		auto window = ::OpenNet::Factory::Window::WindowFactory::CreateStandardWindow();
@@ -443,11 +451,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::PortTestKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
 	{
+		auto window = winrt::OpenNet::UI::Xaml::View::Windows::NATDetectorWindow();
+		window.Activate();
+		args.Handled(true);
 	}
 
 	void TasksPage::SettingKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
 	{
-		ViewTasksPageSettingsAppBarButton_Click(sender, args);
+		ViewTasksPageSettingsAppBarButton_Click(nullptr, nullptr);
 	}
 
 	void TasksPage::SearchKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)

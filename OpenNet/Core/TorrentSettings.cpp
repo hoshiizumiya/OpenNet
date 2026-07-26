@@ -284,6 +284,7 @@ namespace OpenNet::Core
 	{
 		// Connection
 		pack.set_str(lt::settings_pack::listen_interfaces, s.listenInterfaces);
+		pack.set_bool(lt::settings_pack::listen_system_port_fallback, false);
 		pack.set_int(lt::settings_pack::connections_limit, s.connectionsLimit);
 		pack.set_bool(lt::settings_pack::enable_incoming_tcp, s.enableIncomingTcp);
 		pack.set_bool(lt::settings_pack::enable_outgoing_tcp, s.enableOutgoingTcp);
@@ -367,7 +368,8 @@ namespace OpenNet::Core
 					 lt::alert_category::peer |
 					 lt::alert_category::tracker |
 					 lt::alert_category::stats |
-					 lt::alert_category::dht);
+					 lt::alert_category::dht |
+					 lt::alert_category::port_mapping);
 
 		// Seeding limits are per-torrent in libtorrent; share_ratio_limit / seed_time_limit
 		// are applied via session settings:

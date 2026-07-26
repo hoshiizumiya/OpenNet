@@ -145,12 +145,18 @@
     <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
     <ClCompile Include="Factory\Window\WindowFactory.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
+    <ClCompile Include="Web\ServerDomain.ixx" />
+    <ClCompile Include="Web\ServerDomainMode.ixx" />
     <ClCompile Include="UI\Xaml\View\ItemsCardPopupView.xaml.cpp">
       <DependentUpon>UI\Xaml\View\ItemsCardPopupView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\DevWindow.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\NATDetectorWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="XamlApplicationLifetime.ixx" />
@@ -360,6 +366,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml.h">
       <DependentUpon>UI\Xaml\View\Windows\InfoOverlayWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\NATDetectorWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.h">
@@ -620,6 +630,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
@@ -1145,6 +1158,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\InfoOverlayWindow.idl">
       <DependentUpon>UI\Xaml\View\Windows\InfoOverlayWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\NATDetectorWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\NATDetectorWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.idl">

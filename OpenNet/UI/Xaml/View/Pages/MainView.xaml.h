@@ -51,6 +51,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
 		void SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		void SettingButton_PointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
+		void PortState_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&,
 									  winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const&);
 

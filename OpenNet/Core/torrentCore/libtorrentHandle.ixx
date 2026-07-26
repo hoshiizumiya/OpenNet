@@ -97,8 +97,24 @@ export namespace OpenNet::Core::Torrent
             int numPeers{};
             int dhtNodes{};
             int listenPort{};                 // primary listen port (0 if not listening)
+            bool isListening{};
+            std::string listenError;
         };
         SessionStats GetSessionStats() const;
+
+        struct PortMappingStatus
+        {
+            bool upnpEnabled{};
+            bool natPmpEnabled{};
+            int tcpExternalPort{};
+            int udpExternalPort{};
+            std::string tcpMechanism;
+            std::string udpMechanism;
+            std::string externalAddress;
+            std::string lastError;
+        };
+        PortMappingStatus GetPortMappingStatus() const;
+        void RefreshPortMappings();
 
         // -----------------------------------------------------------
         //  Per-torrent detail information
@@ -201,6 +217,11 @@ export namespace OpenNet::Core::Torrent
 
         // Cached DHT node count (updated via dht_stats_alert)
         std::atomic<int> m_cachedDhtNodeCount{0};
+
+        mutable std::mutex m_portMappingMutex;
+        PortMappingStatus m_portMappingStatus;
+        mutable std::mutex m_listenStateMutex;
+        std::string m_lastListenError;
 
         // Cached session-level counters (updated via session_stats_alert)
         mutable std::mutex m_sessionStatsMutex;
