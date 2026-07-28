@@ -145,6 +145,7 @@
     <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
     <ClCompile Include="Factory\Window\WindowFactory.ixx" />
     <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
+    <ClCompile Include="Helpers\TemplateControlHelper.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
@@ -593,8 +594,9 @@
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml" />
     <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\FontStyle.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\TransitionCollection.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\FontStyle_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\SettingsStyle_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\TransitionCollection_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
     <Page Include="UI\Xaml\View\Dialog\CloseToTrayDialog.xaml">
       <SubType>Designer</SubType>
@@ -1391,6 +1393,9 @@
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-200.png" />
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-400.png" />
     <Image Include="Assets\AppIcons\win3264.ico" />
+    <Image Include="Assets\GuideLocalization\crowdin-symbol-cDark-64.png" />
+    <Image Include="Assets\GuideLocalization\crowdin-symbol-cWhite-64.png" />
+    <Image Include="Assets\GuideLocalization\MSTRDI-64.png" />
     <Image Include="Assets\TileImages\FileTransfer.png" />
     <Image Include="Assets\TileImages\NetworkDiscovery.png" />
     <Image Include="Assets\TileImages\PeerChat.png" />
@@ -1541,5 +1546,10 @@
     <PackageReference Include="XamlToolkit.WinUI.Media.Native" />
     <PackageReference Include="XamlToolkit.WinUI.Native" />
     <PackageReference Include="YexuanXiao.CppWinRTPlus.Ext" />
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="Assets\Fonts\CascadiaMono.ttf" />
+    <Font Include="Assets\Fonts\GeosansLight.ttf" />
+    <Font Include="Assets\Fonts\MiSans-Regular.ttf" />
   </ItemGroup>
 </Project>

@@ -46,7 +46,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		}
 	};
 
-	struct TextMorphEffect : TextMorphEffectT<TextMorphEffect>
+	struct TextMorphEffect : TextMorphEffectT<TextMorphEffect>, EnsureDependencyProperty<TextMorphEffect>
 	{
 		TextMorphEffect();
 

@@ -3,6 +3,8 @@
     <ResourceDictionary.MergedDictionaries>
         <XamlControlsResources />
     </ResourceDictionary.MergedDictionaries>
+    <FontFamily x:Key="MiSans">ms-appx:///Assets/Font/MiSans-Regular.ttf#MiSans</FontFamily>
+    <FontFamily x:Key="CascadiaMonoAndMiSans">ms-appx:///Assets/Font/CascadiaMono.ttf#Cascadia Mono, ms-appx:///Assets/Font/MiSans-Regular.ttf#MiSans</FontFamily>
 
     <StaticResource x:Key="PivotHeaderItemFontFamily" ResourceKey="MiSans" />
     <StaticResource x:Key="ContentControlThemeFontFamily" ResourceKey="MiSans" />

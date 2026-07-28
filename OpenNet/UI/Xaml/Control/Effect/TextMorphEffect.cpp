@@ -4,10 +4,12 @@
 #include "UI/Xaml/Control/Effect/TextMorphEffect.g.cpp"
 #endif
 #undef DrawText
+import OpenNet.Helpers.EnsureDependencyProperties;
 import winrt.Microsoft.Graphics.Canvas;
 import winrt.Microsoft.UI.Text;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Windows.UI;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -385,12 +387,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 
 	Color TextMorphEffect::ColorBrush()
 	{
-		return winrt::unbox_value<Color>(GetValue(ColorBrushProperty()));
+		return winrt::unbox_value<Color>(GetValue(s_colorBrushProperty));
 	}
 
 	void TextMorphEffect::ColorBrush(Color const& value)
 	{
-		SetValue(ColorBrushProperty(), box_value(value));
+		SetValue(s_colorBrushProperty, box_value(value));
 	}
 
 	int32_t TextMorphEffect::MorphSpeed()

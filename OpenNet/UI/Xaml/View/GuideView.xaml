@@ -27,8 +27,9 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Effect/TextMorphEffect_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/Card_ResourceDictionary.xaml" />
-                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/FontStyle.xaml" />
-                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/TransitionCollection.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/FontStyle_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/SettingsStyle_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/TransitionCollection_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
@@ -39,7 +40,7 @@
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <essential:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-            <x:String x:Key="MSTRDI">ms-appx:///Resource/GuideLocalization/MSTRDI-64.png</x:String>
+            <x:String x:Key="LogoMSTRDI">ms-appx:///Resource/GuideLocalization/MSTRDI-64.png</x:String>
 
             <DataTemplate x:Key="LanguageTemplate" x:DataType="om:NameCultureInfoValue">
                 <Grid MinWidth="280" Margin="16">
@@ -63,7 +64,7 @@
                                 Width="32"
                                 Height="32"
                                 VerticalAlignment="Center"
-                                Source="{ThemeResource LogoDGPStudio}"
+                                Source="{ThemeResource LogoMSTRDI}"
                                 Stretch="Uniform" />
                         </Border>
                         <Border
@@ -289,7 +290,7 @@
                         </Grid>
 
                         <!--  Vertical layout for non-Chinese locales  -->
-                        <StackPanel Margin="0,8,0,0" Visibility="{x:Bind AgreementUseGrid, Converter={StaticResource BoolToVisibilityRevertConverter}}">
+                        <StackPanel Margin="0,8,0,0" Visibility="{x:Bind AgreementUseGrid, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Reverse}">
                             <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>

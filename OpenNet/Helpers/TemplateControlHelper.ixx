@@ -1,0 +1,53 @@
+﻿export module OpenNet.Helpers.TemplateControlHelper;
+
+import winrt.Windows.UI.Xaml.Interop;
+import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Xaml;
+
+export template<typename Self, bool useXamlResource = true>
+struct XamlResourceHelper
+{
+	XamlResourceHelper()
+	{
+		if constexpr (!useXamlResource)
+			return;
+		else if constexpr (requires { Self::ResourceUri; }) //this must be inside an else if branch, otherwise it will be evaluated even when useXamlResource is false
+		{
+			if constexpr (requires {Self::DefaultStyleResourceUri(); })
+				static_cast<Self*>(this)->DefaultStyleResourceUri(winrt::Windows::Foundation::Uri{ Self::ResourceUri });
+			else
+			{
+				[[maybe_unused]] static bool s_resourceLoaded = []
+				{
+					winrt::Microsoft::UI::Xaml::ResourceDictionary resourceDictionary;
+					resourceDictionary.Source(winrt::Windows::Foundation::Uri{ Self::ResourceUri });
+					winrt::Microsoft::UI::Xaml::Application::Current().Resources().MergedDictionaries().Append(resourceDictionary);
+					return true;
+				}();
+			}
+			return;
+		}
+		else
+			static_assert(!sizeof(Self), "Did you forget to add a ResourceUri?");
+	}
+};
+
+
+/**
+ * @brief Helper class for calling `DefaultStyleKey` for your templated control
+ * @tparam Self Should be the implementation type
+ * @code{.cpp}
+ *		struct MyControl : MyControlT<MyControl>, TemplateControlHelper<MyControl>
+ * @endcode
+ * If Self contains a @c constexpr @c static @c wchar_t @c const* @c ResourceUri member,
+ * the corresponding ResourceDictionary is automatically loaded into Application.Current.Resources.MergedDictionaries.
+*/
+export template<typename Self, bool useXamlResource = true>
+struct TemplateControlHelper : public XamlResourceHelper<Self, useXamlResource>
+{
+	TemplateControlHelper()
+	{
+		using ProjectionType = Self::class_type;
+		static_cast<Self*>(this)->DefaultStyleKey(winrt::box_value(winrt::xaml_typename<ProjectionType>()));
+	}
+};
