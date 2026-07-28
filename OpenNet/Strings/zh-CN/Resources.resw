@@ -1014,6 +1014,39 @@
   <data name="IPF_ClearBtn.Content" xml:space="preserve">
     <value>全部清除</value>
   </data>
+  <data name="IPF_RuleFiles.Header" xml:space="preserve">
+    <value>规则文件</value>
+  </data>
+  <data name="IPF_RuleFiles.Description" xml:space="preserve">
+    <value>打开应用数据中的可编辑副本；文件修改后可重新导入，当前生效规则可在下方直接编辑</value>
+  </data>
+  <data name="IPF_OpenFolderBtn.Content" xml:space="preserve">
+    <value>打开目录</value>
+  </data>
+  <data name="IPF_OpenPrimaryFileBtn.Content" xml:space="preserve">
+    <value>编辑 ipfilter.txt</value>
+  </data>
+  <data name="IPF_OpenSecondaryFileBtn.Content" xml:space="preserve">
+    <value>编辑 ipfilter2.txt</value>
+  </data>
+  <data name="IPF_RuleEditor.Header" xml:space="preserve">
+    <value>编辑已存储规则</value>
+  </data>
+  <data name="IPF_RuleEditor.Description" xml:space="preserve">
+    <value>搜索、编辑或删除当前生效的数据库规则，修改会立即应用到 libtorrent</value>
+  </data>
+  <data name="IPF_RefreshRulesBtn.Content" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="IPF_RuleSearch.PlaceholderText" xml:space="preserve">
+    <value>按 IP、范围、描述或规则 ID 搜索</value>
+  </data>
+  <data name="IPF_EditRuleBtn.Content" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="IPF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>删除</value>
+  </data>
   <data name="RenameTaskMenuItem.Text" xml:space="preserve">
     <value>重命名</value>
   </data>
@@ -1100,5 +1133,146 @@
   </data>
   <data name="GuideWindowTitle" xml:space="preserve">
     <value>欢迎使用胡桃</value>
+  </data>
+  <data name="ClientFilterNavItem.Content" xml:space="preserve">
+    <value>客户端筛选</value>
+  </data>
+  <data name="CF_Title.Text" xml:space="preserve">
+    <value>客户端筛选</value>
+  </data>
+  <data name="CF_Subtitle.Text" xml:space="preserve">
+    <value>按照 BitTorrent 对端声明的客户端名称进行拦截。完成握手并命中规则后，对端地址会被加入当前会话的 IP 过滤器。</value>
+  </data>
+  <data name="CF_Section_General.Text" xml:space="preserve">
+    <value>常规</value>
+  </data>
+  <data name="CF_Enable.Header" xml:space="preserve">
+    <value>启用客户端筛选</value>
+  </data>
+  <data name="CF_Enable.Description" xml:space="preserve">
+    <value>持续检查已连接对端，并断开命中规则的客户端。</value>
+  </data>
+  <data name="CF_RuleCount.Header" xml:space="preserve">
+    <value>已保存规则</value>
+  </data>
+  <data name="CF_RuleCount.Description" xml:space="preserve">
+    <value>本地数据库中保存的客户端匹配规则总数。</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Header" xml:space="preserve">
+    <value>本次会话已拦截地址</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Description" xml:space="preserve">
+    <value>自上次规则变更以来，客户端规则拦截的唯一对端 IP 地址数。</value>
+  </data>
+  <data name="CF_Section_Create.Text" xml:space="preserve">
+    <value>创建与测试</value>
+  </data>
+  <data name="CF_AddRule.Header" xml:space="preserve">
+    <value>添加客户端规则</value>
+  </data>
+  <data name="CF_AddRule.Description" xml:space="preserve">
+    <value>支持包含、完全匹配、通配符（* 和 ?）及正则表达式。</value>
+  </data>
+  <data name="CF_AddBtn.Content" xml:space="preserve">
+    <value>添加规则</value>
+  </data>
+  <data name="CF_Pattern.Header" xml:space="preserve">
+    <value>客户端匹配模式</value>
+  </data>
+  <data name="CF_Pattern.PlaceholderText" xml:space="preserve">
+    <value>例如：BitComet 或 *Xunlei*</value>
+  </data>
+  <data name="CF_MatchType.Header" xml:space="preserve">
+    <value>匹配方式</value>
+  </data>
+  <data name="CF_MatchContains.Content" xml:space="preserve">
+    <value>包含</value>
+  </data>
+  <data name="CF_MatchExact.Content" xml:space="preserve">
+    <value>完全匹配</value>
+  </data>
+  <data name="CF_MatchWildcard.Content" xml:space="preserve">
+    <value>通配符</value>
+  </data>
+  <data name="CF_MatchRegex.Content" xml:space="preserve">
+    <value>正则表达式</value>
+  </data>
+  <data name="CF_Description.Header" xml:space="preserve">
+    <value>说明</value>
+  </data>
+  <data name="CF_Description.PlaceholderText" xml:space="preserve">
+    <value>可选备注</value>
+  </data>
+  <data name="CF_CaseSensitive.Header" xml:space="preserve">
+    <value>区分大小写</value>
+  </data>
+  <data name="CF_Test.Header" xml:space="preserve">
+    <value>测试客户端名称</value>
+  </data>
+  <data name="CF_Test.Description" xml:space="preserve">
+    <value>预览首条会命中的已启用规则，不会实际拦截地址。</value>
+  </data>
+  <data name="CF_TestInput.PlaceholderText" xml:space="preserve">
+    <value>粘贴客户端名称，例如 qBittorrent/5.0.4</value>
+  </data>
+  <data name="CF_TestBtn.Content" xml:space="preserve">
+    <value>测试</value>
+  </data>
+  <data name="CF_Section_Manage.Text" xml:space="preserve">
+    <value>规则</value>
+  </data>
+  <data name="CF_RuleManager.Header" xml:space="preserve">
+    <value>管理规则</value>
+  </data>
+  <data name="CF_RuleManager.Description" xml:space="preserve">
+    <value>搜索、启用、禁用、编辑或删除单条客户端规则。</value>
+  </data>
+  <data name="CF_RefreshBtn.Content" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="CF_Search.PlaceholderText" xml:space="preserve">
+    <value>搜索匹配模式、说明、类型或 ID</value>
+  </data>
+  <data name="CF_ToggleRuleBtn.Content" xml:space="preserve">
+    <value>启用 / 禁用</value>
+  </data>
+  <data name="CF_EditRuleBtn.Content" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="CF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="CF_ImportExport.Header" xml:space="preserve">
+    <value>导入、导出与重置</value>
+  </data>
+  <data name="CF_ImportExport.Description" xml:space="preserve">
+    <value>导入 JSON 或纯文本，以完整 JSON 导出，或移除全部规则。</value>
+  </data>
+  <data name="CF_ImportBtn.Content" xml:space="preserve">
+    <value>导入</value>
+  </data>
+  <data name="CF_ExportBtn.Content" xml:space="preserve">
+    <value>导出</value>
+  </data>
+  <data name="CF_ClearRulesBtn.Content" xml:space="preserve">
+    <value>清空全部规则</value>
+  </data>
+  <data name="CF_Section_History.Text" xml:space="preserve">
+    <value>命中记录</value>
+  </data>
+  <data name="CF_History.Header" xml:space="preserve">
+    <value>最近命中</value>
+  </data>
+  <data name="CF_History.Description" xml:space="preserve">
+    <value>最多保存 500 条客户端规则命中记录，包括客户端、地址、任务和时间。</value>
+  </data>
+  <data name="CF_RefreshHistoryBtn.Content" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="CF_ClearHistoryBtn.Content" xml:space="preserve">
+    <value>清空记录</value>
+  </data>
+  <data name="ViewModelGuideActionNext" xml:space="preserve">
+    <value>下一页</value>
   </data>
 </root>
