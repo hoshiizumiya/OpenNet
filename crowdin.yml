@@ -1,0 +1,3 @@
+files:
+  - source: /OpenNet/Strings/zh-CN/Resources.resw
+    translation: /OpenNet/Strings/%language%/Resources.resw
