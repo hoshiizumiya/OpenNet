@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Window
+    x:Class="OpenNet.UI.Xaml.View.Windows.RuntimeStatusWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Uid="RuntimeStatusWindow"
+    Title="OpenNet Runtime Status"
+    mc:Ignorable="d">
+
+    <Grid
+        x:Name="RootGrid"
+        Padding="16"
+        RowSpacing="12">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <CommandBar
+            x:Uid="RuntimeStatusCommandBar"
+            Background="Transparent"
+            DefaultLabelPosition="Right">
+            <AppBarButton
+                x:Uid="RuntimeStatusRefreshButton"
+                Click="RefreshButton_Click"
+                Icon="{essential:FontIcon Glyph=&#xE72C;}"
+                Label="Refresh" />
+            <AppBarButton
+                x:Uid="RuntimeStatusCopyButton"
+                Click="CopyButton_Click"
+                Icon="{essential:FontIcon Glyph=&#xE8C8;}"
+                Label="Copy all" />
+            <CommandBar.Content>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <FontIcon Glyph="&#xE9D9;" />
+                    <TextBlock
+                        x:Uid="RuntimeStatusTitle"
+                        VerticalAlignment="Center"
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="OpenNet Runtime Status" />
+                </StackPanel>
+            </CommandBar.Content>
+        </CommandBar>
+
+        <TextBox
+            x:Name="ReportTextBox"
+            x:Uid="RuntimeStatusReport"
+            Grid.Row="1"
+            AcceptsReturn="True"
+            FontFamily="Cascadia Mono, Consolas"
+            FontSize="12"
+            IsReadOnly="True"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+            TextWrapping="NoWrap" />
+
+        <StackPanel
+            Grid.Row="2"
+            Orientation="Horizontal"
+            Spacing="8">
+            <ProgressRing
+                x:Name="RefreshIndicator"
+                x:Uid="RuntimeStatusRefreshIndicator"
+                Width="16"
+                Height="16"
+                IsActive="False" />
+            <TextBlock
+                x:Name="LastUpdatedText"
+                x:Uid="RuntimeStatusLastUpdated"
+                VerticalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="Waiting for first refresh" />
+        </StackPanel>
+    </Grid>
+</Window>

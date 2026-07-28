@@ -1,4 +1,4 @@
-import "ViewModels/Guide/GuideViewModel.idl";
+﻿import "ViewModels/Guide/GuideViewModel.idl";
 import "Models/NameCultureInfoValue.idl";
 
 namespace OpenNet.UI.Xaml.View
@@ -10,6 +10,7 @@ namespace OpenNet.UI.Xaml.View
 
         OpenNet.ViewModels.Guide.GuideViewModel ViewModel;
         Int32 StateIndex { get; };
+        Int32 StateIndexFromState(UInt32 value);
         String AllCulturesWelcomeText { get; };
         Windows.Foundation.Collections.IObservableVector<OpenNet.Models.NameCultureInfoValue> Cultures { get; };
         OpenNet.Models.NameCultureInfoValue SelectedCulture;
@@ -20,5 +21,6 @@ namespace OpenNet.UI.Xaml.View
         Boolean IsIssueReportAgreed;
         Boolean IsOpenSourceLicenseAgreed;
         Boolean IsAgreementCopyAgreed;
+        event Windows.Foundation.EventHandler<Object> Completed;
     }
 }

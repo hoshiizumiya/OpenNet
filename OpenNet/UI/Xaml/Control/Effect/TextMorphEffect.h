@@ -2,6 +2,7 @@
 
 #include "UI/Xaml/Control/Effect/TextMorphEffect.g.h"
 
+import OpenNet.Helpers.EnsureDependencyProperties;
 import winrt.Microsoft.Graphics.Canvas.Effects;
 import winrt.Microsoft.Graphics.Canvas.Text;
 import winrt.Windows.UI;
@@ -48,6 +49,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 	struct TextMorphEffect : TextMorphEffectT<TextMorphEffect>
 	{
 		TextMorphEffect();
+
+		static void EnsureDependencyProperties();
 
 		// DependencyProperty accessors
 		static winrt::Microsoft::UI::Xaml::DependencyProperty EasingProperty();
@@ -144,31 +147,22 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		static winrt::Windows::Foundation::IInspectable CreateBeginTimeDefaultValue();
 		static winrt::Windows::Foundation::IInspectable CreateFontWeightDefaultValue();
 
-		static void OnPropertyChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
+		static void OnPropertyChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
 
-		static void OnTextChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
+		static void OnTextChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
 
-		static void OnResourcePropertyValueChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
+		static void OnResourcePropertyValueChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
 
-		static void OnAnimationChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
+		static void OnAnimationChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& e);
 
 		void UpdateTextMorph();
 
 		// Event handlers
-		void OnDraw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender,
-					winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args);
-		void OnCreateResources(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender,
-							   winrt::Windows::Foundation::IInspectable const& args);
-		void OnCanvasSizeChanged(winrt::Windows::Foundation::IInspectable const& sender,
-								 winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
+		void OnDraw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args);
+		void OnCreateResources(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void OnCanvasSizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e);
+
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_colorBrushProperty{ nullptr };
 	};
 }
 

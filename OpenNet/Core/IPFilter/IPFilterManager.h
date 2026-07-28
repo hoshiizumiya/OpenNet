@@ -52,6 +52,12 @@ namespace OpenNet::Core
 		void AddRule(std::string const& firstIp, std::string const& lastIp,
 					 std::uint32_t flags = 1, std::string const& description = "");
 
+		/// Update an existing persisted rule. Returns false if the rule does not
+		/// exist or the new range duplicates another rule.
+		bool UpdateRule(std::int64_t id, std::string const& firstIp,
+						std::string const& lastIp, std::uint32_t flags,
+						std::string const& description);
+
 		void RemoveRule(std::int64_t id);
 
 		std::vector<IPRule> GetAllRules() const;
@@ -88,12 +94,18 @@ namespace OpenNet::Core
 		libtorrent::ip_filter BuildFilter() const;
 
 		/// Build the filter and apply it to the running libtorrent session.
-		/// If the filter is disabled, an empty (allow-all) filter is applied.
+		/// Persisted rules respect the IP-filter switch. Runtime addresses
+		/// produced by the client filter are merged independently.
 		void ApplyToSession();
 
 		/// Whether the IP filter is globally enabled.
 		bool IsEnabled() const;
 		void SetEnabled(bool enabled);
+
+		/// Replace the session-only addresses blocked by client-name rules.
+		/// These addresses are deliberately not persisted in ipfilter.db.
+		void SetClientBlockedAddresses(
+			std::vector<std::string> const& addresses);
 
 	private:
 		IPFilterManager() = default;
@@ -105,9 +117,12 @@ namespace OpenNet::Core
 		void SeedBundledRules();
 
 		mutable std::mutex m_mutex;
+		mutable std::mutex m_clientBlockedMutex;
+		std::mutex m_applyMutex;
 		std::once_flag m_seedOnce;
 		sqlite3* m_db{ nullptr };
 		bool m_initialized{ false };
+		std::unordered_set<std::string> m_clientBlockedAddresses;
 	};
 
 } // namespace OpenNet::Core

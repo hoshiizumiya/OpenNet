@@ -16,9 +16,11 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		GuideViewMvvmBase
 	{
 		GuideView();
+		void InitializeComponent();
 		winrt::OpenNet::ViewModels::Guide::GuideViewModel ViewModel();
 		void ViewModel(winrt::OpenNet::ViewModels::Guide::GuideViewModel const& value);
 		std::int32_t StateIndex();
+		std::int32_t StateIndexFromState(std::uint32_t value);
 		winrt::hstring AllCulturesWelcomeText();
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::Models::NameCultureInfoValue> Cultures();
 		winrt::OpenNet::Models::NameCultureInfoValue SelectedCulture();
@@ -36,12 +38,18 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		bool IsAgreementCopyAgreed();
 		void IsAgreementCopyAgreed(bool value);
 		void NextOrComplete(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		winrt::event_token Completed(
+			winrt::Windows::Foundation::EventHandler<
+			winrt::Windows::Foundation::IInspectable> const& handler);
+		void Completed(winrt::event_token const& token) noexcept;
 
 	private:
+		bool SaveWebUISettings();
+		void SaveGuiSettings();
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::Models::NameCultureInfoValue> m_cultures;
 		winrt::hstring m_allCulturesWelcomeText;
-
-
+		winrt::event<winrt::Windows::Foundation::EventHandler<
+			winrt::Windows::Foundation::IInspectable>> m_completed;
 	};
 }
 

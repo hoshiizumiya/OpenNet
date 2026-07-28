@@ -39,7 +39,7 @@
             <AppBarButton
                 x:Name="TaskNewButton"
                 x:Uid="TaskNewButton"
-                Icon="Add">
+                Icon="{essential:FontIcon Glyph=&#xE710;}">
                 <muxc:AppBarButton.Flyout>
                     <muxc:MenuFlyout Placement="Bottom">
                         <muxc:MenuFlyoutItem
@@ -60,7 +60,7 @@
                             x:Name="MenuItemAddFromHttp"
                             x:Uid="TaskNewFromHttpButton"
                             Click="MenuItemAddFromHttp_ClickAsync"
-                            Icon="Link"
+                            Icon="{essential:FontIcon Glyph=&#xE71B;}"
                             Text="HTTP Download" />
                     </muxc:MenuFlyout>
                 </muxc:AppBarButton.Flyout>
@@ -68,15 +68,15 @@
             <AppBarButton
                 x:Uid="TaskStartButton"
                 Command="{x:Bind ViewModel.StartCommand}"
-                Icon="Play" />
+                Icon="{essential:FontIcon Glyph=&#xE768;}" />
             <AppBarButton
                 x:Uid="TaskPauseButton"
                 Command="{x:Bind ViewModel.PauseCommand}"
-                Icon="Pause" />
+                Icon="{essential:FontIcon Glyph=&#xE769;}" />
             <AppBarButton
                 x:Uid="TaskDeleteButton"
                 Command="{x:Bind ViewModel.DeleteCommand}"
-                Icon="Delete" />
+                Icon="{essential:FontIcon Glyph=&#xE74D;}" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton
                     x:Uid="ViewTasksPagePortTestAppBarButton"
@@ -93,7 +93,7 @@
                 <AppBarButton
                     x:Uid="ViewTasksPageSettingsAppBarButton"
                     Click="ViewTasksPageSettingsAppBarButton_Click"
-                    Icon="Setting"
+                    Icon="{essential:FontIcon Glyph=&#xE713;}"
                     Label="Settings">
                     <AppBarButton.KeyboardAccelerators>
                         <KeyboardAccelerator
@@ -145,20 +145,20 @@
                     <muxc:NavigationView.MenuItems>
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewAllTasks"
-                            Icon="ViewAll"
+                            Icon="{essential:FontIcon Glyph=&#xE8A9;}"
                             IsSelected="True"
                             Tag="AllTasks" />
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewDownloading"
-                            Icon="Download"
+                            Icon="{essential:FontIcon Glyph=&#xE896;}"
                             Tag="Downloading" />
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewCompleted"
-                            Icon="Accept"
+                            Icon="{essential:FontIcon Glyph=&#xE73E;}"
                             Tag="Completed" />
                         <muxc:NavigationViewItem
                             x:Uid="FilterNavViewFailed"
-                            Icon="Cancel"
+                            Icon="{essential:FontIcon Glyph=&#xE711;}"
                             Tag="Failed" />
                     </muxc:NavigationView.MenuItems>
                 </muxc:NavigationView>
@@ -211,7 +211,7 @@
                                         FontWeight="SemiBold"
                                         PointerEntered="OnSortTaskNameButtonPointerEntered"
                                         PointerExited="OnSortTaskNameButtonPointerExited"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Name">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
@@ -286,7 +286,7 @@
                                         FontWeight="SemiBold"
                                         PointerEntered="OnSortTaskSizeButtonPointerEntered"
                                         PointerExited="OnSortTaskSizeButtonPointerExited"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Size">
                                         <TextBlock
                                             x:Uid="Header_Size"
@@ -306,7 +306,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Progress">
                                         <TextBlock
                                             x:Uid="Header_Progress"
@@ -326,7 +326,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="DownloadSize">
                                         <TextBlock
                                             x:Uid="Header_DownloadSize"
@@ -346,7 +346,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="UploadSize">
                                         <TextBlock
                                             x:Uid="Header_UploadSize"
@@ -366,7 +366,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="TotalDownloadSize">
                                         <TextBlock
                                             x:Uid="Header_TotalDownloadSize"
@@ -386,7 +386,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="TotalUploadSize">
                                         <TextBlock
                                             x:Uid="Header_TotalUploadSize"
@@ -406,7 +406,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="DLRate">
                                         <TextBlock
                                             x:Uid="Header_DLRate"
@@ -426,7 +426,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="ULRate">
                                         <TextBlock
                                             x:Uid="Header_ULRate"
@@ -446,7 +446,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Remaining">
                                         <TextBlock
                                             x:Uid="Header_Remaining"
@@ -466,7 +466,7 @@
                                         HorizontalContentAlignment="Right"
                                         Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="AddDate">
                                         <TextBlock
                                             x:Uid="Header_AddDate"
@@ -548,26 +548,26 @@
                                 x:Name="RenameTaskMenuItem"
                                 x:Uid="RenameTaskMenuItem"
                                 Click="RenameTaskMenuItem_ClickAsync"
-                                Icon="Rename"
+                                Icon="{essential:FontIcon Glyph=&#xE8AC;}"
                                 Text="Rename" />
                             <MenuFlyoutItem
                                 x:Name="MoveTaskMenuItem"
                                 x:Uid="MoveTaskMenuItem"
                                 Click="MoveTaskMenuItem_Click"
-                                Icon="MoveToFolder"
+                                Icon="{essential:FontIcon Glyph=&#xE8DE;}"
                                 Text="Move to..." />
                             <MenuFlyoutItem
                                 x:Name="OpenTaskLocationMenuItem"
                                 x:Uid="OpenTaskLocationMenuItem"
                                 Click="OpenTaskLocationMenuItem_Click"
-                                Icon="OpenFile"
+                                Icon="{essential:FontIcon Glyph=&#xE8E5;}"
                                 Text="Open Location" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
                                 x:Name="PropertiesMenuItem"
                                 x:Uid="PropertiesMenuItem"
                                 Click="PropertiesMenuItem_Click"
-                                Icon="More"
+                                Icon="{essential:FontIcon Glyph=&#xE712;}"
                                 Text="Properties" />
                         </MenuFlyout>
                     </ListView.ContextFlyout>

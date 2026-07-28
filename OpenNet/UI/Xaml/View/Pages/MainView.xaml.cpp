@@ -123,6 +123,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	winrt::OpenNet::UI::Xaml::View::Pages::TasksPage MainView::CurrentTasksPage()
+	{
+		if (m_isUnloaded)
+		{
+			return nullptr;
+		}
+		return NavFrame().Content()
+			.try_as<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>();
+	}
+
 	winrt::event_token MainView::CanGoBackChanged(winrt::Windows::Foundation::EventHandler<bool> const& handler)
 	{
 		return m_canGoBackChanged.add(handler);

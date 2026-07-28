@@ -32,6 +32,9 @@
     <PackageVersion Include="XamlToolkit.WinUI.Converters.Native" Version="0.7.0-alpha" />
     <PackageVersion Include="XamlToolkit.WinUI.Helpers.Native" Version="0.7.0-alpha" />
     <PackageVersion Include="XamlToolkit.WinUI.Interactivity.Native" Version="0.7.0-alpha" />
+    <PackageVersion Include="XamlToolkit.WinUI.Media.Native">
+      <Version>0.7.0-alpha</Version>
+    </PackageVersion>
     <PackageVersion Include="XamlToolkit.WinUI.Native" Version="0.7.0-alpha" />
     <PackageVersion Include="YexuanXiao.CppWinRTPlus.Ext" Version="0.9.0.4" />
   </ItemGroup>

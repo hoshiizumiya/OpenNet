@@ -1,9 +1,9 @@
-namespace OpenNet.ViewModels
+﻿namespace OpenNet.ViewModels
 {
     // Lightweight display items for task detail sub-pages (x:Bind DataTable rows).
 
     [default_interface]
-    runtimeclass PeerDisplayItem
+    runtimeclass PeerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         PeerDisplayItem();
         String IP;
@@ -26,7 +26,7 @@ namespace OpenNet.ViewModels
     };
 
     [default_interface]
-    runtimeclass TrackerDisplayItem
+    runtimeclass TrackerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         TrackerDisplayItem();
         String URL;
@@ -37,7 +37,7 @@ namespace OpenNet.ViewModels
     };
 
     [default_interface]
-    runtimeclass FileDisplayItem
+    runtimeclass FileDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         FileDisplayItem();
         String Path;

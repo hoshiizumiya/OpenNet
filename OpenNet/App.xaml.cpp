@@ -1,9 +1,13 @@
 ﻿module;
+#include "Core/WebUI/WebUIHost.h"
 #include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
 #include "UI/Shell/NotifyIconXamlHostWindow.xaml.h"
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
 #include "UI/Xaml/View/Windows/DevWindow.xaml.h"
+#include "UI/Xaml/View/Windows/GuideWindow.xaml.h"
+#include "UI/Xaml/View/InfoBarView.xaml.h"
+#include "UI/Xaml/Control/Effect/TextMorphEffect.h"
 
 module OpenNet.App;
 
@@ -56,15 +60,11 @@ namespace winrt::OpenNet::implementation
 		// Apply saved theme to the window
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
-		// show system tray icon
-		trayIcon = OpenNet::UI::Shell::NotifyIconXamlHostWindow();
-		trayIcon.Show();
-
 		// Register window closing event - close strategy (hide to tray / ask / exit)
 		window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
 		{
 			// If we are in an intentional exit, allow the window to close
-			if (App::s_isExiting)
+			if (App::s_isExiting.load())
 				return;
 
 			// If no tray icon was created, allow direct close
@@ -119,42 +119,76 @@ namespace winrt::OpenNet::implementation
 		});
 
 
-		window.Activate();
-
-		InitializeRSSManagerAsync();
-		::OpenNet::Core::GeoIPManager::Instance().Initialize();
-
-
-#if _DEBUG
-		// Language Hot-Reload support
-		auto supportedLanguages = Windows::Globalization::ApplicationLanguages::Languages();
-
-		std::wstring debugOut;
-		debugOut.reserve(256);
-		debugOut += L"Supported languages:\n";
-		for (auto const& lang : supportedLanguages)
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		if (!database.GetBool("webui_host", "initialized").value_or(false))
 		{
-			debugOut += std::wstring(lang.c_str());
-			debugOut += L"\n";
+			guideWindow = winrt::make<
+				winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
+				guideWindow);
+			guideWindow.Activate();
+			return;
 		}
-		OutputDebugStringW(debugOut.c_str());
 
-		auto devWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
-		devWindow.Activate();
-#endif
-		// Handle initial activation arguments
-		auto activationArgs = AppInstance::GetCurrent().GetActivatedEventArgs();
-		HandleActivation(activationArgs);
+		StartMainExperience();
 	}
 
 	void App::Exit()
 	{
-		s_isExiting = true;
-		Microsoft::UI::Xaml::Application::Current().Exit();
+		RequestExit();
+	}
+
+	void App::RequestExit()
+	{
+		ReallyClose();
+	}
+
+	void App::CompleteFirstRun()
+	{
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		database.SetBool("webui_host", "initialized", true);
+		StartMainExperience();
+		guideWindow = nullptr;
+	}
+
+	void App::StartMainExperience()
+	{
+		if (s_mainExperienceStarted.exchange(true))
+		{
+			CreateSetMainWindow();
+			return;
+		}
+
+		if (!trayIcon)
+		{
+			trayIcon = OpenNet::UI::Shell::NotifyIconXamlHostWindow();
+			trayIcon.Show();
+		}
+
+		window.Activate();
+		::OpenNet::Core::GeoIPManager::Instance().Initialize();
+		InitializeTorrentCoreAsync();
+		InitializeRSSManagerAsync();
+		InitializeWebUIAsync();
+
+#if _DEBUG
+		auto devWindow = winrt::make<
+			winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
+		devWindow.Activate();
+#endif
+
+		HandleActivation(AppInstance::GetCurrent().GetActivatedEventArgs());
 	}
 
 	bool App::CreateSetMainWindow()
 	{
+		if (s_isExiting.load())
+		{
+			return false;
+		}
+
 		// 检查窗口是否存在
 		if (!window)
 		{
@@ -182,7 +216,14 @@ namespace winrt::OpenNet::implementation
 		}
 
 		// 显示并激活窗口
-		window.AppWindow().Show();
+		try
+		{
+			window.AppWindow().Show();
+		}
+		catch (...)
+		{
+			return false;
+		}
 
 		// 将窗口置于前台
 		SetForegroundWindow(hwnd);
@@ -258,7 +299,7 @@ namespace winrt::OpenNet::implementation
 
 			// Engines should already be shut down by ShutdownEngines().
 			// Defensive: if somehow not, do a quick stop of RSS (lightweight).
-			if (!s_enginesShutdown)
+			if (!s_enginesShutdown.load())
 			{
 				OutputDebugStringA("App: Warning - engines not yet shut down, doing emergency shutdown\n");
 				ShutdownEngines();
@@ -340,36 +381,65 @@ namespace winrt::OpenNet::implementation
 
 	void App::HideToTray()
 	{
-		if (window)
+		if (window && !s_isExiting.load())
 		{
-			window.AppWindow().Hide();
+			try
+			{
+				window.AppWindow().Hide();
+			}
+			catch (...)
+			{
+			}
 		}
 		OutputDebugStringA("App: MainWindow hidden to tray\n");
 	}
 
 	winrt::fire_and_forget App::ReallyClose()
 	{
-		s_isExiting = true;
+		// All exit sources (main-window close, tray Exit, App::Exit) converge
+		// here. Only the first one may tear down XAML and background engines.
+		if (s_isExiting.exchange(true))
+		{
+			co_return;
+		}
 
-		// Capture dispatcher before leaving the UI thread
-		auto dispatcher = window.DispatcherQueue();
+		auto dispatcher = Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+
+		// Remove the native notification icon before engine shutdown. This also
+		// prevents late tray callbacks from trying to show an AppWindow which is
+		// already closing.
+		try
+		{
+			if (trayIcon)
+			{
+				trayIcon.Remove();
+				trayIcon.Close();
+				trayIcon = nullptr;
+			}
+		}
+		catch (...)
+		{
+			trayIcon = nullptr;
+		}
 
 		// Shut down all engines on a background thread to avoid STA assertions
 		co_await winrt::resume_background();
 		ShutdownEngines();
 
 		// Return to UI thread to call Exit()
-		dispatcher.TryEnqueue([]()
+		if (dispatcher)
 		{
-			Microsoft::UI::Xaml::Application::Current().Exit();
-		});
+			dispatcher.TryEnqueue([]()
+			{
+				Microsoft::UI::Xaml::Application::Current().Exit();
+			});
+		}
 	}
 
 	void App::ShutdownEngines()
 	{
-		if (s_enginesShutdown)
+		if (s_enginesShutdown.exchange(true))
 			return;
-		s_enginesShutdown = true;
 
 		OutputDebugStringA("App: Shutting down engines...\n");
 
@@ -381,6 +451,15 @@ namespace winrt::OpenNet::implementation
 		catch (...)
 		{
 			OutputDebugStringA("App: RSS shutdown error\n");
+		}
+
+		try
+		{
+			::OpenNet::Core::WebUI::WebUIHost::Instance().Stop();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: WebUI shutdown error\n");
 		}
 
 		// Shutdown P2PManager (torrent session uses abort() + proxy, non-blocking)
@@ -406,6 +485,41 @@ namespace winrt::OpenNet::implementation
 		OutputDebugStringA("App: Engine shutdown completed\n");
 	}
 
+	winrt::fire_and_forget App::InitializeTorrentCoreAsync()
+	{
+		try
+		{
+			co_await ::OpenNet::Core::P2PManager::Instance()
+				.EnsureTorrentCoreInitializedAsync();
+			OutputDebugStringA("App: libtorrent core initialized\n");
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				L"BitTorrent engine",
+				L"libtorrent initialized successfully.",
+				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Success,
+				3500);
+		}
+		catch (std::exception const& exception)
+		{
+			OutputDebugStringA((
+				"App: Failed to initialize libtorrent core: "
+				+ std::string(exception.what()) + "\n").c_str());
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				L"BitTorrent engine failed",
+				to_hstring(exception.what()),
+				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
+				0);
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: Failed to initialize libtorrent core\n");
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				L"BitTorrent engine failed",
+				L"An unknown error occurred while initializing libtorrent.",
+				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
+				0);
+		}
+	}
+
 	winrt::fire_and_forget App::InitializeRSSManagerAsync()
 	{
 		try
@@ -418,6 +532,79 @@ namespace winrt::OpenNet::implementation
 		catch (...)
 		{
 			OutputDebugStringA("App: Failed to initialize RSS Manager\n");
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				L"RSS service failed",
+				L"RSS background updates could not be started.",
+				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Warning,
+				0);
+		}
+	}
+
+	winrt::fire_and_forget App::InitializeWebUIAsync()
+	{
+		try
+		{
+			auto dispatcher =
+				Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+			co_await ::OpenNet::Core::P2PManager::Instance()
+				.EnsureTorrentCoreInitializedAsync();
+			co_await winrt::resume_background();
+			::OpenNet::Core::WebUI::WebUIOptions options;
+			options.shutdownCallback = [dispatcher]
+			{
+				dispatcher.TryEnqueue([]
+				{
+					App::RequestExit();
+				});
+			};
+			if (!::OpenNet::Core::WebUI::WebUIHost::Instance().Start(
+				std::move(options)))
+			{
+				OutputDebugStringA("App: Failed to start WebUI Host\n");
+				dispatcher.TryEnqueue([]
+				{
+					winrt::OpenNet::UI::Xaml::View::implementation::
+						InfoBarView::Show(
+							L"Web UI failed",
+							L"The local qBittorrent-compatible Web UI could not be started.",
+							Microsoft::UI::Xaml::Controls::
+							InfoBarSeverity::Error,
+							0);
+				});
+			}
+			else
+			{
+				dispatcher.TryEnqueue([]
+				{
+					winrt::OpenNet::UI::Xaml::View::implementation::
+						InfoBarView::Show(
+							L"Web UI",
+							L"The qBittorrent-compatible Web UI is running.",
+							Microsoft::UI::Xaml::Controls::
+							InfoBarSeverity::Success,
+							4500);
+				});
+			}
+		}
+		catch (std::exception const& exception)
+		{
+			OutputDebugStringA((
+				"App: Failed to initialize WebUI: "
+				+ std::string(exception.what()) + "\n").c_str());
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				L"Web UI failed",
+				to_hstring(exception.what()),
+				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
+				0);
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: Failed to initialize WebUI\n");
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				L"Web UI failed",
+				L"An unknown error occurred while starting the Web UI.",
+				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
+				0);
 		}
 	}
 

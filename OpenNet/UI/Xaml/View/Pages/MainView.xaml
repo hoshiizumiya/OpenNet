@@ -70,14 +70,6 @@
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
-                <NavigationViewItem
-                    x:Uid="NavItem_NatTools"
-                    Content="NAT Tools"
-                    Tag="nattools">
-                    <NavigationViewItem.Icon>
-                        <FontIcon Glyph="&#xE968;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>
             </NavigationView.MenuItems>
 
             <!--  Footer  -->

@@ -35,6 +35,40 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 
 		CloseButtonText(ResourceLoader().GetString(L"Cancel"));
 		PrimaryButtonText(ResourceLoader().GetString(L"OK"));
+
+		// Keep the tray "Capture Clipboard URL" flow frictionless: when the
+		// add-from-URL dialog opens, prefill a valid torrent link if one is
+		// currently on the clipboard.
+		auto weak = get_weak();
+		Loaded([weak](auto const&, auto const&) -> winrt::fire_and_forget
+		{
+			auto self = weak.get();
+			auto strong = self ? self->get_strong() : nullptr;
+			if (!strong)
+			{
+				co_return;
+			}
+			try
+			{
+				auto clipboard =
+					winrt::Windows::ApplicationModel::DataTransfer::Clipboard::
+						GetContent();
+				if (clipboard.Contains(
+					winrt::Windows::ApplicationModel::DataTransfer::
+						StandardDataFormats::Text()))
+				{
+					auto text = co_await clipboard.GetTextAsync();
+					if (Core::Utils::Misc::isTorrentLink(text))
+					{
+						strong->MagnetBox().Text(text);
+						strong->IsLinkValid(false);
+					}
+				}
+			}
+			catch (...)
+			{
+			}
+		});
 	}
 
 	void TorrentMetaDataDownloadDialog::OnPrimaryButtonClick(ContentDialog const& /*sender*/, ContentDialogButtonClickEventArgs const& args)

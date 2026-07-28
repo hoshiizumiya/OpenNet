@@ -41,7 +41,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		Closed([](auto&&, auto&&)
 		{
 			// Close the application on exception window close
-			winrt::Microsoft::UI::Xaml::Application::Current().Exit();
+			winrt::OpenNet::implementation::App::RequestExit();
 		});
 
 		AppWindow().Resize(winrt::Windows::Graphics::SizeInt32(800, 400));

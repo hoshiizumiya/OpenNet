@@ -8,6 +8,7 @@
 
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
@@ -85,10 +86,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-			m_refreshTimer.Interval(std::chrono::seconds(2));
 			m_timerTickToken = m_refreshTimer.Tick(
 				{ this, &TaskPeersListPage::OnRefreshTimerTick });
 		}
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		m_refreshTimer.Interval(std::chrono::milliseconds(
+			std::clamp<std::int64_t>(
+				database.GetInt("ui", "refresh_interval_ms").value_or(1000),
+				100,
+				60000)));
 		m_refreshTimer.Start();
 
 		RefreshPeerList();
@@ -646,9 +653,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		auto replaceChildren = [](auto const& target, auto const& values)
 		{
-			target.Clear();
-			for (auto const& value : values)
-				target.Append(value);
+			for (std::uint32_t index = 0;
+				 index < static_cast<std::uint32_t>(values.size());
+				 ++index)
+			{
+				if (index >= target.Size())
+					target.Append(values[index]);
+				else if (target.GetAt(index) != values[index])
+					target.SetAt(index, values[index]);
+			}
+			while (target.Size() > values.size())
+				target.RemoveAtEnd();
 		};
 		SortPeerItems(connected);
 		SortPeerItems(connecting);

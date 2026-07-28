@@ -966,6 +966,39 @@
   <data name="IPF_ClearBtn.Content" xml:space="preserve">
     <value>Clear All</value>
   </data>
+  <data name="IPF_RuleFiles.Header" xml:space="preserve">
+    <value>Rule Files</value>
+  </data>
+  <data name="IPF_RuleFiles.Description" xml:space="preserve">
+    <value>Open the editable copies in application data; import a file to add changes, or edit active database rules below</value>
+  </data>
+  <data name="IPF_OpenFolderBtn.Content" xml:space="preserve">
+    <value>Open Folder</value>
+  </data>
+  <data name="IPF_OpenPrimaryFileBtn.Content" xml:space="preserve">
+    <value>Edit ipfilter.txt</value>
+  </data>
+  <data name="IPF_OpenSecondaryFileBtn.Content" xml:space="preserve">
+    <value>Edit ipfilter2.txt</value>
+  </data>
+  <data name="IPF_RuleEditor.Header" xml:space="preserve">
+    <value>Edit Stored Rules</value>
+  </data>
+  <data name="IPF_RuleEditor.Description" xml:space="preserve">
+    <value>Search, edit, or delete active database rules; changes are applied to libtorrent immediately</value>
+  </data>
+  <data name="IPF_RefreshRulesBtn.Content" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="IPF_RuleSearch.PlaceholderText" xml:space="preserve">
+    <value>Search by IP, range, description, or rule ID</value>
+  </data>
+  <data name="IPF_EditRuleBtn.Content" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="IPF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="RenameTaskMenuItem.Text" xml:space="preserve">
     <value>Rename</value>
   </data>
@@ -1049,5 +1082,146 @@
   </data>
   <data name="Appearance.Content" xml:space="preserve">
     <value>Appearance</value>
+  </data>
+  <data name="ClientFilterNavItem.Content" xml:space="preserve">
+    <value>Client Filter</value>
+  </data>
+  <data name="CF_Title.Text" xml:space="preserve">
+    <value>Client Filter</value>
+  </data>
+  <data name="CF_Subtitle.Text" xml:space="preserve">
+    <value>Block BitTorrent peers by their advertised client name. Matches are enforced after the peer handshake by adding the peer address to the session IP filter.</value>
+  </data>
+  <data name="CF_Section_General.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="CF_Enable.Header" xml:space="preserve">
+    <value>Enable client filtering</value>
+  </data>
+  <data name="CF_Enable.Description" xml:space="preserve">
+    <value>Continuously inspect connected peers and disconnect matching clients.</value>
+  </data>
+  <data name="CF_RuleCount.Header" xml:space="preserve">
+    <value>Saved rules</value>
+  </data>
+  <data name="CF_RuleCount.Description" xml:space="preserve">
+    <value>Total client matching rules stored in the local database.</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Header" xml:space="preserve">
+    <value>Blocked addresses this session</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Description" xml:space="preserve">
+    <value>Unique peer IP addresses blocked by client rules since the last rule change.</value>
+  </data>
+  <data name="CF_Section_Create.Text" xml:space="preserve">
+    <value>Create and test</value>
+  </data>
+  <data name="CF_AddRule.Header" xml:space="preserve">
+    <value>Add a client rule</value>
+  </data>
+  <data name="CF_AddRule.Description" xml:space="preserve">
+    <value>Choose contains, exact, wildcard (* and ?), or regular-expression matching.</value>
+  </data>
+  <data name="CF_AddBtn.Content" xml:space="preserve">
+    <value>Add Rule</value>
+  </data>
+  <data name="CF_Pattern.Header" xml:space="preserve">
+    <value>Client pattern</value>
+  </data>
+  <data name="CF_Pattern.PlaceholderText" xml:space="preserve">
+    <value>Example: BitComet or *Xunlei*</value>
+  </data>
+  <data name="CF_MatchType.Header" xml:space="preserve">
+    <value>Match type</value>
+  </data>
+  <data name="CF_MatchContains.Content" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="CF_MatchExact.Content" xml:space="preserve">
+    <value>Exact</value>
+  </data>
+  <data name="CF_MatchWildcard.Content" xml:space="preserve">
+    <value>Wildcard</value>
+  </data>
+  <data name="CF_MatchRegex.Content" xml:space="preserve">
+    <value>Regular expression</value>
+  </data>
+  <data name="CF_Description.Header" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="CF_Description.PlaceholderText" xml:space="preserve">
+    <value>Optional note</value>
+  </data>
+  <data name="CF_CaseSensitive.Header" xml:space="preserve">
+    <value>Case sensitive</value>
+  </data>
+  <data name="CF_Test.Header" xml:space="preserve">
+    <value>Test a client name</value>
+  </data>
+  <data name="CF_Test.Description" xml:space="preserve">
+    <value>Preview the first enabled rule that would match without blocking anything.</value>
+  </data>
+  <data name="CF_TestInput.PlaceholderText" xml:space="preserve">
+    <value>Paste a client name, for example qBittorrent/5.0.4</value>
+  </data>
+  <data name="CF_TestBtn.Content" xml:space="preserve">
+    <value>Test</value>
+  </data>
+  <data name="CF_Section_Manage.Text" xml:space="preserve">
+    <value>Rules</value>
+  </data>
+  <data name="CF_RuleManager.Header" xml:space="preserve">
+    <value>Manage rules</value>
+  </data>
+  <data name="CF_RuleManager.Description" xml:space="preserve">
+    <value>Search, enable, disable, edit, or delete individual client rules.</value>
+  </data>
+  <data name="CF_RefreshBtn.Content" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="CF_Search.PlaceholderText" xml:space="preserve">
+    <value>Search pattern, description, type, or ID</value>
+  </data>
+  <data name="CF_ToggleRuleBtn.Content" xml:space="preserve">
+    <value>Enable / Disable</value>
+  </data>
+  <data name="CF_EditRuleBtn.Content" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="CF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="CF_ImportExport.Header" xml:space="preserve">
+    <value>Import, export, and reset</value>
+  </data>
+  <data name="CF_ImportExport.Description" xml:space="preserve">
+    <value>Import JSON or plain text, export full-fidelity JSON, or remove all rules.</value>
+  </data>
+  <data name="CF_ImportBtn.Content" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="CF_ExportBtn.Content" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="CF_ClearRulesBtn.Content" xml:space="preserve">
+    <value>Clear All Rules</value>
+  </data>
+  <data name="CF_Section_History.Text" xml:space="preserve">
+    <value>Hit history</value>
+  </data>
+  <data name="CF_History.Header" xml:space="preserve">
+    <value>Recent matches</value>
+  </data>
+  <data name="CF_History.Description" xml:space="preserve">
+    <value>Up to 500 recent client-rule hits with client, address, torrent, and time.</value>
+  </data>
+  <data name="CF_RefreshHistoryBtn.Content" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="CF_ClearHistoryBtn.Content" xml:space="preserve">
+    <value>Clear History</value>
+  </data>
+  <data name="ViewModelGuideActionNext" xml:space="preserve">
+    <value>Next Page</value>
   </data>
 </root>

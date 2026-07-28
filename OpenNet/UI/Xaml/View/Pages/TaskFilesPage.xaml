@@ -74,7 +74,7 @@
                                 x:Name="SortFileNameButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Path">
                                 <TextBlock
                                     x:Uid="FileHeader_Path"
@@ -87,7 +87,7 @@
                                 x:Name="SortFileSizeButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Size">
                                 <TextBlock
                                     x:Uid="FileHeader_Size"
@@ -100,7 +100,7 @@
                                 x:Name="SortFileProgressButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Progress">
                                 <TextBlock
                                     x:Uid="FileHeader_Progress"
@@ -113,7 +113,7 @@
                                 x:Name="SortFileDoneButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Done">
                                 <TextBlock
                                     x:Uid="FileHeader_Done"
@@ -126,7 +126,7 @@
                                 x:Name="SortFilePriorityButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Priority">
                                 <TextBlock
                                     x:Uid="FileHeader_Priority"
@@ -141,16 +141,16 @@
                 <DataTemplate x:DataType="vm:FileDisplayItem">
                     <labs:DataRow HorizontalAlignment="Left">
                         <TextBlock
-                            Text="{x:Bind Path}"
+                            Text="{x:Bind Path, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind Path}" />
-                        <TextBlock Text="{x:Bind Size}" TextTrimming="CharacterEllipsis" />
+                            ToolTipService.ToolTip="{x:Bind Path, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind Size, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <ProgressBar
                             Margin="4,0"
                             VerticalAlignment="Center"
                             Maximum="100"
-                            Value="{x:Bind ProgressValue}" />
-                        <TextBlock Text="{x:Bind Done}" TextTrimming="CharacterEllipsis" />
+                            Value="{x:Bind ProgressValue, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind Done, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <ComboBox
                             MinWidth="80"
                             HorizontalAlignment="Stretch"

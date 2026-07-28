@@ -14,6 +14,14 @@ namespace OpenNet::Core
 		return inst;
 	}
 
+	::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats P2PManager::GetSessionStats()
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->GetSessionStats()
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats{};
+	}
+
 	// 确保核心已经完成初始化
 	IAsyncAction P2PManager::EnsureTorrentCoreInitializedAsync()
 	{
@@ -25,20 +33,20 @@ namespace OpenNet::Core
 			std::scoped_lock lifecycleLock(m_lifecycleMutex);
 			switch (m_initializationState)
 			{
-			case InitializationState::Initialized:
-				co_return;
-			case InitializationState::ShuttingDown:
-				throw winrt::hresult_error(RO_E_CLOSED, L"The torrent core is shutting down.");
-			case InitializationState::Initializing:
-				completion = m_initializationCompletion;
-				break;
-			case InitializationState::Uninitialized:
-				completionSource = std::make_shared<std::promise<void>>();
-				completion = completionSource->get_future().share();
-				m_initializationCompletion = completion;
-				m_initializationState = InitializationState::Initializing;
-				ownsInitialization = true;
-				break;
+				case InitializationState::Initialized:
+					co_return;
+				case InitializationState::ShuttingDown:
+					throw winrt::hresult_error(RO_E_CLOSED, L"The torrent core is shutting down.");
+				case InitializationState::Initializing:
+					completion = m_initializationCompletion;
+					break;
+				case InitializationState::Uninitialized:
+					completionSource = std::make_shared<std::promise<void>>();
+					completion = completionSource->get_future().share();
+					m_initializationCompletion = completion;
+					m_initializationState = InitializationState::Initializing;
+					ownsInitialization = true;
+					break;
 			}
 		}
 

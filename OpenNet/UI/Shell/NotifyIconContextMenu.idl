@@ -1,11 +1,10 @@
 ﻿namespace OpenNet.UI.Shell
 {
 	[default_interface]
-	runtimeclass NotifyIconContextMenu : Microsoft.UI.Xaml.Controls.Flyout
+	runtimeclass NotifyIconContextMenu : Microsoft.UI.Xaml.Controls.MenuFlyout
 	{
 		NotifyIconContextMenu();
 
-		String Title{ get; };
 		void ExitApplication();
 	}
 }

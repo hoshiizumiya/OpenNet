@@ -29,6 +29,8 @@ export namespace OpenNet::Core
 		{
 			return m_torrentCore.get();
 		}
+		::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats
+			GetSessionStats();
 
 		// State manager access
 		::OpenNet::Core::Torrent::TorrentStateManager* StateManager() noexcept

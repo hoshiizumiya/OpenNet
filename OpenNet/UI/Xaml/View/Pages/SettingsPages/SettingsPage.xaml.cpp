@@ -12,6 +12,7 @@
 #include "MainWindow.xaml.h"
 
 import OpenNet.Core.Utils.Message;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.UI;
@@ -46,9 +47,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		// Defer all UI element initialization to Loaded event per C++/WinRT guidelines
 		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
-			   {
-				   m_loadAction = OnSettingsPageLoadedAsync(sender, e);
-			   });
+		{
+			m_loadAction = OnSettingsPageLoadedAsync(sender, e);
+		});
 
 	}
 	SettingsPage::~SettingsPage()
@@ -205,6 +206,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
+	void SettingsPage::GuiRefreshIntervalBox_ValueChanged(
+		NumberBox const& sender,
+		NumberBoxValueChangedEventArgs const&)
+	{
+		if (m_isRefreshIntervalLoading || std::isnan(sender.Value()))
+			return;
+		auto const value = std::clamp<std::int64_t>(
+			static_cast<std::int64_t>(sender.Value()), 100, 60000);
+		if (sender.Value() != static_cast<double>(value))
+			sender.Value(static_cast<double>(value));
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		database.SetInt("ui", "refresh_interval_ms", value);
+	}
+
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::SetDesktopBackground()
 	{
 		// 在 UI 线程获取控件引用（调用者已确保在 UI 线程）
@@ -283,9 +299,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 					BitmapImage bitmap;
 					bitmap.ImageFailed([](winrt::Windows::Foundation::IInspectable const&,
 										  winrt::Microsoft::UI::Xaml::ExceptionRoutedEventArgs const& args)
-									   {
-										   OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
-									   });
+					{
+						OutputDebugStringW((L"SetDesktopBackground ImageFailed: " + args.ErrorMessage() + L"\n").c_str());
+					});
 					bitmap.UriSource(winrt::Windows::Foundation::Uri{ imageUri });
 					img.Source(bitmap);
 					OutputDebugStringW(L"壁纸已更改！\n");
@@ -372,7 +388,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				int32_t selectedIndex = 0;
 
 				auto autoItem = ComboBoxItem();
-				
+
 				autoItem.Content(box_value(ResourceGetString(L"ViewComboBoxSystemLang")));
 				autoItem.Tag(box_value(hstring(L"")));
 				comboLang.Items().Append(autoItem);
@@ -381,7 +397,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				for (auto const& langTag : supported)
 				{
 					winrt::Windows::Globalization::Language lang{ langTag };
-					auto display = lang.NativeName()+L" (" + lang.DisplayName()+L")";
+					auto display = lang.NativeName() + L" (" + lang.DisplayName() + L")";
 					auto item = ComboBoxItem();
 					item.Content(box_value(display));
 					item.Tag(box_value(langTag));
@@ -430,6 +446,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			{
 				infoBar.IsOpen(false);
 			}
+
+			m_isRefreshIntervalLoading = true;
+			{
+				auto& database =
+					::OpenNet::Core::AppSettingsDatabase::Instance();
+				database.Initialize();
+				GuiRefreshIntervalBox().Value(static_cast<double>(
+					std::clamp<std::int64_t>(
+						database.GetInt("ui", "refresh_interval_ms")
+						.value_or(1000),
+						100,
+						60000)));
+			}
+			m_isRefreshIntervalLoading = false;
 
 			// Load current theme from ThemeHelper
 			ElementTheme currentTheme = ::OpenNet::Helpers::ThemeHelper::RootTheme();

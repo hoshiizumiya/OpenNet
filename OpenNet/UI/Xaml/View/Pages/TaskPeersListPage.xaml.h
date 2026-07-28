@@ -5,6 +5,7 @@ import winrt.XamlToolkit.WinUI.Animations;
 import winrt.XamlToolkit.WinUI.Behaviors;
 import winrt.XamlToolkit.WinUI.Controls;
 import winrt.XamlToolkit.WinUI.Interactivity;
+import winrt.XamlToolkit.WinUI.Media;
 import winrt.OpenNet.UI.Xaml.Markup;
 import winrt.OpenNet.UI.Xaml.Media;
 import winrt.OpenNet.UI.Xaml.Behavior;

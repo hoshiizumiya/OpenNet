@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.OpenNet.UI.Xaml.View.Pages;
+import winrt.OpenNet.UI.Xaml.View;
 #include "MainWindow.g.h"
 #include "ViewModels/MainViewModel.h"
 
@@ -17,6 +18,7 @@ namespace winrt::OpenNet::implementation
 
 		// Navigation (delegated to MainContentView)
 		void Navigate(winrt::hstring const& tag);
+		winrt::Windows::Foundation::IAsyncAction ShowAddTaskDialogAsync(winrt::hstring const& kind);
 
 		// Event handlers (XAML wired)
 		void AppTitleBar_BackRequested(winrt::Microsoft::UI::Xaml::Controls::TitleBar const&,

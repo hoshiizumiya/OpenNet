@@ -106,20 +106,35 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 
 	void WindowHelper::ShowMainWindow()
 	{
+		if (winrt::OpenNet::implementation::App::s_isExiting.load())
+		{
+			return;
+		}
+
 		auto& window = winrt::OpenNet::implementation::App::window;
 		if (window)
 		{
-			window.AppWindow().Show();
-
-			HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
-			if (hwnd)
+			try
 			{
+				HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
+				if (!hwnd || !IsWindow(hwnd))
+				{
+					return;
+				}
+
+				window.AppWindow().Show();
+
 				if (IsIconic(hwnd))
 				{
 					ShowWindow(hwnd, SW_RESTORE);
 				}
 				SetForegroundWindow(hwnd);
 				SetFocus(hwnd);
+			}
+			catch (...)
+			{
+				// A tray callback can race with AppWindow destruction. Treat a
+				// closed window as a no-op instead of escaping a user callback.
 			}
 		}
 	}

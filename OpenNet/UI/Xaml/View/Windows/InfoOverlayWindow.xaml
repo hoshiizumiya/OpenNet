@@ -10,5 +10,48 @@
     Title="InfoOverlayWindow"
     mc:Ignorable="d">
 
-    <Grid />
+    <Grid
+        x:Name="OverlayRoot"
+        Width="300"
+        MinHeight="116"
+        Padding="14,10"
+        Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+        CornerRadius="10"
+        Loaded="OverlayRoot_Loaded">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <TextBlock FontWeight="SemiBold" Text="OpenNet" />
+        <Grid
+            Grid.Row="1"
+            Margin="0,10,0,0"
+            ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <StackPanel>
+                <TextBlock Opacity="0.65" Text="Download" />
+                <TextBlock
+                    x:Name="DownloadSpeedText"
+                    FontSize="18"
+                    Text="0 B/s" />
+            </StackPanel>
+            <StackPanel Grid.Column="1">
+                <TextBlock Opacity="0.65" Text="Upload" />
+                <TextBlock
+                    x:Name="UploadSpeedText"
+                    FontSize="18"
+                    Text="0 B/s" />
+            </StackPanel>
+        </Grid>
+        <TextBlock
+            x:Name="DhtText"
+            Grid.Row="2"
+            Margin="0,8,0,0"
+            Opacity="0.65"
+            Text="DHT: 0 nodes" />
+    </Grid>
 </Window>

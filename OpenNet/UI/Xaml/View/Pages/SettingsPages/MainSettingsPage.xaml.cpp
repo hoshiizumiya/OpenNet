@@ -11,8 +11,10 @@
 #include "FontCustomizePage.xaml.h"
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/ClientFilterSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/WebUISettingsPage.xaml.h"
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -185,6 +187,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::IPFilterSettingsPage>(),
+				nullptr,
+				transitionInfo);
+		}
+		else if (tag == L"clientfilter")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ClientFilterSettingsPage>(),
+				nullptr,
+				transitionInfo);
+		}
+		else if (tag == L"webui")
+		{
+			SettingsFrame().Navigate(
+				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::WebUISettingsPage>(),
 				nullptr,
 				transitionInfo);
 		}

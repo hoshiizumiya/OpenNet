@@ -144,22 +144,25 @@ namespace OpenNet::Core
 				L"ipfilter2.txt",
 			};
 
-			bool copiedAny = false;
+			bool availableAny = false;
 			for (auto const fileName : ruleFiles)
 			{
 				auto const source = sourceFolder / fileName;
 				auto const destination = destinationFolder / fileName;
-				if (!std::filesystem::exists(source))
-					continue;
-
-				std::filesystem::copy_file(
-					source,
-					destination,
-					std::filesystem::copy_options::overwrite_existing);
-				copiedAny = true;
+				if (!std::filesystem::exists(destination) &&
+					std::filesystem::exists(source))
+				{
+					// The AppData copy is user-editable. Seed it once and never
+					// overwrite later edits on subsequent application starts.
+					std::filesystem::copy_file(
+						source,
+						destination,
+						std::filesystem::copy_options::skip_existing);
+				}
+				availableAny = availableAny || std::filesystem::exists(destination);
 			}
 
-			if (!copiedAny)
+			if (!availableAny)
 			{
 				OutputDebugStringA("IPFilterManager: Bundled rule files were not found\n");
 				return;
@@ -224,6 +227,33 @@ namespace OpenNet::Core
 			sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
 		}
+	}
+
+	bool IPFilterManager::UpdateRule(int64_t id, std::string const& firstIp,
+									 std::string const& lastIp, uint32_t flags,
+									 std::string const& description)
+	{
+		std::lock_guard lk(m_mutex);
+		if (!m_db) return false;
+
+		const char* sql = R"(
+			UPDATE OR IGNORE ip_rules
+			SET first_ip = ?, last_ip = ?, flags = ?, description = ?
+			WHERE id = ?;
+		)";
+		sqlite3_stmt* stmt = nullptr;
+		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) != SQLITE_OK)
+			return false;
+
+		sqlite3_bind_text(stmt, 1, firstIp.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_text(stmt, 2, lastIp.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int(stmt, 3, static_cast<int>(flags));
+		sqlite3_bind_text(stmt, 4, description.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int64(stmt, 5, id);
+		auto const result = sqlite3_step(stmt);
+		auto const changed = result == SQLITE_DONE && sqlite3_changes(m_db) > 0;
+		sqlite3_finalize(stmt);
+		return changed;
 	}
 
 	void IPFilterManager::RemoveRule(int64_t id)
@@ -476,17 +506,32 @@ namespace OpenNet::Core
 
 	void IPFilterManager::ApplyToSession()
 	{
+		// Keep independently triggered IP-rule and client-rule updates ordered,
+		// so a slower older snapshot cannot overwrite a newer client block set.
+		std::lock_guard applyLock(m_applyMutex);
 		auto* core = P2PManager::Instance().TorrentCore();
 		if (!core || !core->IsRunning()) return;
 
-		if (!IsEnabled())
+		lt::ip_filter filter;
+		if (IsEnabled())
 		{
-			// Apply an empty (allow-all) filter.
-			core->SetIpFilter(lt::ip_filter{});
-			return;
+			filter = BuildFilter();
 		}
 
-		auto filter = BuildFilter();
+		std::vector<std::string> clientBlocked;
+		{
+			std::lock_guard lock(m_clientBlockedMutex);
+			clientBlocked.assign(
+				m_clientBlockedAddresses.begin(),
+				m_clientBlockedAddresses.end());
+		}
+		for (auto const& ip : clientBlocked)
+		{
+			boost::system::error_code error;
+			auto const address = lt::make_address(ip, error);
+			if (!error)
+				filter.add_rule(address, address, lt::ip_filter::blocked);
+		}
 		core->SetIpFilter(filter);
 	}
 
@@ -501,6 +546,14 @@ namespace OpenNet::Core
 	{
 		AppSettingsDatabase::Instance()
 			.SetBool(AppSettingsDatabase::CAT_APP, "ipfilter_enabled", enabled);
+	}
+
+	void IPFilterManager::SetClientBlockedAddresses(
+		std::vector<std::string> const& addresses)
+	{
+		std::lock_guard lock(m_clientBlockedMutex);
+		m_clientBlockedAddresses.clear();
+		m_clientBlockedAddresses.insert(addresses.begin(), addresses.end());
 	}
 
 } // namespace OpenNet::Core

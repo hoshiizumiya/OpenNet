@@ -18,91 +18,91 @@ namespace lt = libtorrent;
 
 namespace OpenNet::Core::Torrent
 {
-    TorrentStateManager::TorrentStateManager() = default;
+	TorrentStateManager::TorrentStateManager() = default;
 
-    TorrentStateManager::~TorrentStateManager()
-    {
-        CloseDatabase();
-    }
+	TorrentStateManager::~TorrentStateManager()
+	{
+		CloseDatabase();
+	}
 
-    bool TorrentStateManager::Initialize(std::wstring const& basePath)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (m_initialized) return true;
+	bool TorrentStateManager::Initialize(std::wstring const& basePath)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (m_initialized) return true;
 
-        try
-        {
-            if (basePath.empty())
-            {
-                // Use unified FileSystem path
-                m_storagePath = winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
-            }
-            else
-            {
-                m_storagePath = basePath;
-            }
+		try
+		{
+			if (basePath.empty())
+			{
+				// Use unified FileSystem path
+				m_storagePath = winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
+			}
+			else
+			{
+				m_storagePath = basePath;
+			}
 
-            // Ensure the storage path ends with a separator
-            if (!m_storagePath.empty() && m_storagePath.back() != L'\\' && m_storagePath.back() != L'/')
-            {
-                m_storagePath += L"\\";
-            }
+			// Ensure the storage path ends with a separator
+			if (!m_storagePath.empty() && m_storagePath.back() != L'\\' && m_storagePath.back() != L'/')
+			{
+				m_storagePath += L"\\";
+			}
 
-            // Create resume data subfolder
-            std::wstring resumeFolder = m_storagePath + L"resume_data";
-            std::filesystem::create_directories(resumeFolder);
+			// Create resume data subfolder
+			std::wstring resumeFolder = m_storagePath + L"resume_data";
+			std::filesystem::create_directories(resumeFolder);
 
-            m_dbPath = m_storagePath + DATABASE_FILENAME;
+			m_dbPath = m_storagePath + DATABASE_FILENAME;
 
-            if (!InitializeDatabase())
-            {
-                return false;
-            }
+			if (!InitializeDatabase())
+			{
+				return false;
+			}
 
-            m_initialized = true;
-            return true;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("TorrentStateManager::Initialize error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			m_initialized = true;
+			return true;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("TorrentStateManager::Initialize error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-    std::wstring TorrentStateManager::GetStoragePath() const
-    {
-        return m_storagePath;
-    }
+	std::wstring TorrentStateManager::GetStoragePath() const
+	{
+		return m_storagePath;
+	}
 
-    bool TorrentStateManager::InitializeDatabase()
-    {
-        std::string dbPathUtf8 = winrt::to_string(m_dbPath);
-        
-        sqlite3* db = nullptr;
-        int rc = sqlite3_open(dbPathUtf8.c_str(), &db);
-        if (rc != SQLITE_OK)
-        {
-            if (db) sqlite3_close(db);
-            OutputDebugStringA("Failed to open SQLite database\n");
-            return false;
-        }
+	bool TorrentStateManager::InitializeDatabase()
+	{
+		std::string dbPathUtf8 = winrt::to_string(m_dbPath);
 
-        m_db = db;
+		sqlite3* db = nullptr;
+		int rc = sqlite3_open(dbPathUtf8.c_str(), &db);
+		if (rc != SQLITE_OK)
+		{
+			if (db) sqlite3_close(db);
+			OutputDebugStringA("Failed to open SQLite database\n");
+			return false;
+		}
 
-        if (!CreateTables())
-        {
-            CloseDatabase();
-            return false;
-        }
+		m_db = db;
 
-        return true;
-    }
+		if (!CreateTables())
+		{
+			CloseDatabase();
+			return false;
+		}
 
-    bool TorrentStateManager::CreateTables()
-    {
-        if (!m_db) return false;
+		return true;
+	}
 
-        const char* createTasksTable = R"(
+	bool TorrentStateManager::CreateTables()
+	{
+		if (!m_db) return false;
+
+		const char* createTasksTable = R"(
             CREATE TABLE IF NOT EXISTS tasks (
                 task_id TEXT PRIMARY KEY,
                 magnet_uri TEXT NOT NULL,
@@ -116,32 +116,32 @@ namespace OpenNet::Core::Torrent
             );
         )";
 
-        const char* createSessionTable = R"(
+		const char* createSessionTable = R"(
             CREATE TABLE IF NOT EXISTS session_state (
                 id INTEGER PRIMARY KEY CHECK (id = 1),
                 state_data BLOB
             );
         )";
 
-        char* errMsg = nullptr;
-        int rc = sqlite3_exec(static_cast<sqlite3*>(m_db), createTasksTable, nullptr, nullptr, &errMsg);
-        if (rc != SQLITE_OK)
-        {
-            if (errMsg)
-            {
-                OutputDebugStringA(("SQLite error creating tasks table: " + std::string(errMsg) + "\n").c_str());
-                sqlite3_free(errMsg);
-            }
-            return false;
-        }
+		char* errMsg = nullptr;
+		int rc = sqlite3_exec(static_cast<sqlite3*>(m_db), createTasksTable, nullptr, nullptr, &errMsg);
+		if (rc != SQLITE_OK)
+		{
+			if (errMsg)
+			{
+				OutputDebugStringA(("SQLite error creating tasks table: " + std::string(errMsg) + "\n").c_str());
+				sqlite3_free(errMsg);
+			}
+			return false;
+		}
 
-        // Older builds keyed progress rows by the mutable torrent name. A
-        // magnet therefore could leave a nameless metadata row beside the
-        // real row once metadata arrived. Remove only the provably duplicate
-        // nameless record (same non-empty magnet URI, named sibling exists).
-        sqlite3_exec(
-            static_cast<sqlite3*>(m_db),
-            R"(
+		// Older builds keyed progress rows by the mutable torrent name. A
+		// magnet therefore could leave a nameless metadata row beside the
+		// real row once metadata arrived. Remove only the provably duplicate
+		// nameless record (same non-empty magnet URI, named sibling exists).
+		sqlite3_exec(
+			static_cast<sqlite3*>(m_db),
+			R"(
                 DELETE FROM tasks
                 WHERE COALESCE(name, '') = ''
                   AND magnet_uri <> ''
@@ -153,637 +153,656 @@ namespace OpenNet::Core::Torrent
                         AND COALESCE(named.name, '') <> ''
                   );
             )",
-            nullptr,
-            nullptr,
-            nullptr);
+			nullptr,
+			nullptr,
+			nullptr);
 
-        rc = sqlite3_exec(static_cast<sqlite3*>(m_db), createSessionTable, nullptr, nullptr, &errMsg);
-        if (rc != SQLITE_OK)
-        {
-            if (errMsg)
-            {
-                OutputDebugStringA(("SQLite error creating session_state table: " + std::string(errMsg) + "\n").c_str());
-                sqlite3_free(errMsg);
-            }
-            return false;
-        }
+		rc = sqlite3_exec(static_cast<sqlite3*>(m_db), createSessionTable, nullptr, nullptr, &errMsg);
+		if (rc != SQLITE_OK)
+		{
+			if (errMsg)
+			{
+				OutputDebugStringA(("SQLite error creating session_state table: " + std::string(errMsg) + "\n").c_str());
+				sqlite3_free(errMsg);
+			}
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    bool TorrentStateManager::CloseDatabase()
-    {
-        if (m_db)
-        {
-            sqlite3_close(static_cast<sqlite3*>(m_db));
-            m_db = nullptr;
-        }
-        return true;
-    }
+	bool TorrentStateManager::CloseDatabase()
+	{
+		if (m_db)
+		{
+			sqlite3_close(static_cast<sqlite3*>(m_db));
+			m_db = nullptr;
+		}
+		return true;
+	}
 
-    bool TorrentStateManager::SaveSessionState(lt::session& session)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+	bool TorrentStateManager::SaveSessionState(lt::session& session)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
 
-        try
-        {
-            // Get session state and serialize it
-            lt::session_params params = session.session_state();
-            std::vector<char> buf = lt::write_session_params_buf(params, lt::session::save_dht_state);
+		try
+		{
+			// Get session state and serialize it
+			lt::session_params params = session.session_state();
+			std::vector<char> buf = lt::write_session_params_buf(params, lt::session::save_dht_state);
 
-            const char* sql = R"(
+			const char* sql = R"(
                 INSERT OR REPLACE INTO session_state (id, state_data) VALUES (1, ?);
             )";
 
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            sqlite3_bind_blob(stmt, 1, buf.data(), static_cast<int>(buf.size()), SQLITE_TRANSIENT);
+			sqlite3_bind_blob(stmt, 1, buf.data(), static_cast<int>(buf.size()), SQLITE_TRANSIENT);
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("SaveSessionState error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("SaveSessionState error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-    bool TorrentStateManager::LoadSessionState(lt::session& session)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+	bool TorrentStateManager::LoadSessionState(lt::session& session)
+	{
+		auto params = LoadSessionParams();
+		if (!params)
+			return false;
 
-        try
-        {
-            const char* sql = "SELECT state_data FROM session_state WHERE id = 1;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+		try
+		{
+			session.apply_settings(params->settings);
+			session.set_dht_state(std::move(params->dht_state));
+			return true;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("LoadSessionState error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-            rc = sqlite3_step(stmt);
-            if (rc == SQLITE_ROW)
-            {
-                const void* data = sqlite3_column_blob(stmt, 0);
-                int size = sqlite3_column_bytes(stmt, 0);
+	std::optional<lt::session_params> TorrentStateManager::LoadSessionParams()
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return std::nullopt;
 
-                if (data && size > 0)
-                {
-                    lt::span<char const> buf(static_cast<char const*>(data), size);
-                    lt::session_params params = lt::read_session_params(buf);
-                    session.apply_settings(params.settings);
-                    // DHT state is applied automatically
-                }
-            }
+		try
+		{
+			const char* sql = "SELECT state_data FROM session_state WHERE id = 1;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return std::nullopt;
 
-            sqlite3_finalize(stmt);
-            return true;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("LoadSessionState error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			rc = sqlite3_step(stmt);
+			if (rc == SQLITE_ROW)
+			{
+				const void* data = sqlite3_column_blob(stmt, 0);
+				int size = sqlite3_column_bytes(stmt, 0);
 
-    bool TorrentStateManager::SaveTaskResumeData(std::string const& taskId, lt::add_torrent_params const& params)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+				if (data && size > 0)
+				{
+					lt::span<char const> buf(static_cast<char const*>(data), size);
+					lt::session_params params = lt::read_session_params(buf);
+					sqlite3_finalize(stmt);
+					return params;
+				}
+			}
 
-        try
-        {
-            // Serialize resume data using libtorrent's write_resume_data
-            std::vector<char> buf = lt::write_resume_data_buf(params);
+			sqlite3_finalize(stmt);
+			return std::nullopt;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("LoadSessionParams error: " + std::string(ex.what()) + "\n").c_str());
+			return std::nullopt;
+		}
+	}
 
-            const char* sql = "UPDATE tasks SET resume_data = ? WHERE task_id = ?;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+	bool TorrentStateManager::SaveTaskResumeData(std::string const& taskId, lt::add_torrent_params const& params)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
 
-            sqlite3_bind_blob(stmt, 1, buf.data(), static_cast<int>(buf.size()), SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+		try
+		{
+			// Serialize resume data using libtorrent's write_resume_data
+			std::vector<char> buf = lt::write_resume_data_buf(params);
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+			const char* sql = "UPDATE tasks SET resume_data = ? WHERE task_id = ?;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("SaveTaskResumeData error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			sqlite3_bind_blob(stmt, 1, buf.data(), static_cast<int>(buf.size()), SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-    std::optional<lt::add_torrent_params> TorrentStateManager::LoadTaskResumeData(std::string const& taskId)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return std::nullopt;
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
 
-        try
-        {
-            const char* sql = "SELECT resume_data FROM tasks WHERE task_id = ?;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return std::nullopt;
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("SaveTaskResumeData error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-            sqlite3_bind_text(stmt, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
+	std::optional<lt::add_torrent_params> TorrentStateManager::LoadTaskResumeData(std::string const& taskId)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return std::nullopt;
 
-            rc = sqlite3_step(stmt);
-            if (rc == SQLITE_ROW)
-            {
-                const void* data = sqlite3_column_blob(stmt, 0);
-                int size = sqlite3_column_bytes(stmt, 0);
+		try
+		{
+			const char* sql = "SELECT resume_data FROM tasks WHERE task_id = ?;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return std::nullopt;
 
-                if (data && size > 0)
-                {
-                    lt::span<char const> buf(static_cast<char const*>(data), size);
-                    lt::error_code ec;
-                    lt::add_torrent_params params = lt::read_resume_data(buf, ec);
-                    sqlite3_finalize(stmt);
-                    
-                    if (!ec)
-                    {
-                        return params;
-                    }
-                    OutputDebugStringA(("LoadTaskResumeData: read_resume_data failed for " + taskId + ": " + ec.message() + "\n").c_str());
-                }
-            }
+			sqlite3_bind_text(stmt, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-            sqlite3_finalize(stmt);
-            return std::nullopt;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("LoadTaskResumeData error: " + std::string(ex.what()) + "\n").c_str());
-            return std::nullopt;
-        }
-    }
+			rc = sqlite3_step(stmt);
+			if (rc == SQLITE_ROW)
+			{
+				const void* data = sqlite3_column_blob(stmt, 0);
+				int size = sqlite3_column_bytes(stmt, 0);
 
-    bool TorrentStateManager::SaveTaskMetadata(TaskMetadata const& metadata)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+				if (data && size > 0)
+				{
+					lt::span<char const> buf(static_cast<char const*>(data), size);
+					lt::error_code ec;
+					lt::add_torrent_params params = lt::read_resume_data(buf, ec);
+					sqlite3_finalize(stmt);
 
-        try
-        {
-            const char* sql = R"(
+					if (!ec)
+					{
+						return params;
+					}
+					OutputDebugStringA(("LoadTaskResumeData: read_resume_data failed for " + taskId + ": " + ec.message() + "\n").c_str());
+				}
+			}
+
+			sqlite3_finalize(stmt);
+			return std::nullopt;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("LoadTaskResumeData error: " + std::string(ex.what()) + "\n").c_str());
+			return std::nullopt;
+		}
+	}
+
+	bool TorrentStateManager::SaveTaskMetadata(TaskMetadata const& metadata)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
+
+		try
+		{
+			const char* sql = R"(
                 INSERT OR REPLACE INTO tasks 
                 (task_id, magnet_uri, save_path, name, added_timestamp, total_size, downloaded_size, status, resume_data)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
             )";
 
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            sqlite3_bind_text(stmt, 1, metadata.taskId.c_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 2, metadata.magnetUri.c_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 3, metadata.savePath.c_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 4, metadata.name.c_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_int64(stmt, 5, metadata.addedTimestamp);
-            sqlite3_bind_int64(stmt, 6, metadata.totalSize);
-            sqlite3_bind_int64(stmt, 7, metadata.downloadedSize);
-            sqlite3_bind_int(stmt, 8, metadata.status);
-            
-            if (metadata.resumeData.empty())
-            {
-                sqlite3_bind_null(stmt, 9);
-            }
-            else
-            {
-                sqlite3_bind_blob(stmt, 9, metadata.resumeData.data(), 
-                    static_cast<int>(metadata.resumeData.size()), SQLITE_TRANSIENT);
-            }
+			sqlite3_bind_text(stmt, 1, metadata.taskId.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 2, metadata.magnetUri.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 3, metadata.savePath.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 4, metadata.name.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_int64(stmt, 5, metadata.addedTimestamp);
+			sqlite3_bind_int64(stmt, 6, metadata.totalSize);
+			sqlite3_bind_int64(stmt, 7, metadata.downloadedSize);
+			sqlite3_bind_int(stmt, 8, metadata.status);
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+			if (metadata.resumeData.empty())
+			{
+				sqlite3_bind_null(stmt, 9);
+			}
+			else
+			{
+				sqlite3_bind_blob(stmt, 9, metadata.resumeData.data(),
+								  static_cast<int>(metadata.resumeData.size()), SQLITE_TRANSIENT);
+			}
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("SaveTaskMetadata error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
 
-    std::optional<TaskMetadata> TorrentStateManager::LoadTaskMetadata(std::string const& taskId)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return std::nullopt;
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("SaveTaskMetadata error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-        try
-        {
-            const char* sql = R"(
+	std::optional<TaskMetadata> TorrentStateManager::LoadTaskMetadata(std::string const& taskId)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return std::nullopt;
+
+		try
+		{
+			const char* sql = R"(
                 SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
                        total_size, downloaded_size, status, resume_data 
                 FROM tasks WHERE task_id = ?;
             )";
 
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return std::nullopt;
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return std::nullopt;
 
-            sqlite3_bind_text(stmt, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-            rc = sqlite3_step(stmt);
-            if (rc == SQLITE_ROW)
-            {
-                TaskMetadata metadata;
-                auto col0 = sqlite3_column_text(stmt, 0);
-                auto col1 = sqlite3_column_text(stmt, 1);
-                auto col2 = sqlite3_column_text(stmt, 2);
-                metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
-                metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
-                metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
-                
-                auto namePtr = sqlite3_column_text(stmt, 3);
-                metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
-                
-                metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
-                metadata.totalSize = sqlite3_column_int64(stmt, 5);
-                metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
-                metadata.status = sqlite3_column_int(stmt, 7);
+			rc = sqlite3_step(stmt);
+			if (rc == SQLITE_ROW)
+			{
+				TaskMetadata metadata;
+				auto col0 = sqlite3_column_text(stmt, 0);
+				auto col1 = sqlite3_column_text(stmt, 1);
+				auto col2 = sqlite3_column_text(stmt, 2);
+				metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
+				metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
+				metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
 
-                const void* blobData = sqlite3_column_blob(stmt, 8);
-                int blobSize = sqlite3_column_bytes(stmt, 8);
-                if (blobData && blobSize > 0)
-                {
-                    metadata.resumeData.assign(
-                        static_cast<const uint8_t*>(blobData),
-                        static_cast<const uint8_t*>(blobData) + blobSize
-                    );
-                }
+				auto namePtr = sqlite3_column_text(stmt, 3);
+				metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
 
-                sqlite3_finalize(stmt);
-                return metadata;
-            }
+				metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
+				metadata.totalSize = sqlite3_column_int64(stmt, 5);
+				metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
+				metadata.status = sqlite3_column_int(stmt, 7);
 
-            sqlite3_finalize(stmt);
-            return std::nullopt;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("LoadTaskMetadata error: " + std::string(ex.what()) + "\n").c_str());
-            return std::nullopt;
-        }
-    }
+				const void* blobData = sqlite3_column_blob(stmt, 8);
+				int blobSize = sqlite3_column_bytes(stmt, 8);
+				if (blobData && blobSize > 0)
+				{
+					metadata.resumeData.assign(
+						static_cast<const uint8_t*>(blobData),
+						static_cast<const uint8_t*>(blobData) + blobSize
+					);
+				}
 
-    std::vector<TaskMetadata> TorrentStateManager::LoadAllTasks()
-    {
-        std::lock_guard lk(m_dbMutex);
-        std::vector<TaskMetadata> tasks;
-        if (!m_db) return tasks;
+				sqlite3_finalize(stmt);
+				return metadata;
+			}
 
-        try
-        {
-            const char* sql = R"(
+			sqlite3_finalize(stmt);
+			return std::nullopt;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("LoadTaskMetadata error: " + std::string(ex.what()) + "\n").c_str());
+			return std::nullopt;
+		}
+	}
+
+	std::vector<TaskMetadata> TorrentStateManager::LoadAllTasks()
+	{
+		std::lock_guard lk(m_dbMutex);
+		std::vector<TaskMetadata> tasks;
+		if (!m_db) return tasks;
+
+		try
+		{
+			const char* sql = R"(
                 SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
                        total_size, downloaded_size, status, resume_data 
                 FROM tasks ORDER BY added_timestamp DESC;
             )";
 
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return tasks;
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return tasks;
 
-            while (sqlite3_step(stmt) == SQLITE_ROW)
-            {
-                TaskMetadata metadata;
-                auto col0 = sqlite3_column_text(stmt, 0);
-                auto col1 = sqlite3_column_text(stmt, 1);
-                auto col2 = sqlite3_column_text(stmt, 2);
-                metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
-                metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
-                metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
-                
-                auto namePtr = sqlite3_column_text(stmt, 3);
-                metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
-                
-                metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
-                metadata.totalSize = sqlite3_column_int64(stmt, 5);
-                metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
-                metadata.status = sqlite3_column_int(stmt, 7);
+			while (sqlite3_step(stmt) == SQLITE_ROW)
+			{
+				TaskMetadata metadata;
+				auto col0 = sqlite3_column_text(stmt, 0);
+				auto col1 = sqlite3_column_text(stmt, 1);
+				auto col2 = sqlite3_column_text(stmt, 2);
+				metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
+				metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
+				metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
 
-                const void* blobData = sqlite3_column_blob(stmt, 8);
-                int blobSize = sqlite3_column_bytes(stmt, 8);
-                if (blobData && blobSize > 0)
-                {
-                    metadata.resumeData.assign(
-                        static_cast<const uint8_t*>(blobData),
-                        static_cast<const uint8_t*>(blobData) + blobSize
-                    );
-                }
+				auto namePtr = sqlite3_column_text(stmt, 3);
+				metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
 
-                tasks.push_back(std::move(metadata));
-            }
+				metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
+				metadata.totalSize = sqlite3_column_int64(stmt, 5);
+				metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
+				metadata.status = sqlite3_column_int(stmt, 7);
 
-            sqlite3_finalize(stmt);
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("LoadAllTasks error: " + std::string(ex.what()) + "\n").c_str());
-        }
+				const void* blobData = sqlite3_column_blob(stmt, 8);
+				int blobSize = sqlite3_column_bytes(stmt, 8);
+				if (blobData && blobSize > 0)
+				{
+					metadata.resumeData.assign(
+						static_cast<const uint8_t*>(blobData),
+						static_cast<const uint8_t*>(blobData) + blobSize
+					);
+				}
 
-        return tasks;
-    }
+				tasks.push_back(std::move(metadata));
+			}
 
-    bool TorrentStateManager::DeleteTask(std::string const& taskId)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+			sqlite3_finalize(stmt);
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("LoadAllTasks error: " + std::string(ex.what()) + "\n").c_str());
+		}
 
-        try
-        {
-            const char* sql = "DELETE FROM tasks WHERE task_id = ?;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+		return tasks;
+	}
 
-            sqlite3_bind_text(stmt, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
+	bool TorrentStateManager::DeleteTask(std::string const& taskId)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+		try
+		{
+			const char* sql = "DELETE FROM tasks WHERE task_id = ?;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("DeleteTask error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			sqlite3_bind_text(stmt, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-    bool TorrentStateManager::UpdateTaskStatus(std::string const& taskId, int status)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
 
-        try
-        {
-            const char* sql = "UPDATE tasks SET status = ? WHERE task_id = ?;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("DeleteTask error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-            sqlite3_bind_int(stmt, 1, status);
-            sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+	bool TorrentStateManager::UpdateTaskStatus(std::string const& taskId, int status)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+		try
+		{
+			const char* sql = "UPDATE tasks SET status = ? WHERE task_id = ?;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("UpdateTaskStatus error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			sqlite3_bind_int(stmt, 1, status);
+			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-    bool TorrentStateManager::UpdateTaskProgress(std::string const& taskId, int64_t downloadedSize)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
 
-        try
-        {
-            const char* sql = "UPDATE tasks SET downloaded_size = ? WHERE task_id = ?;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("UpdateTaskStatus error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-            sqlite3_bind_int64(stmt, 1, downloadedSize);
-            sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+	bool TorrentStateManager::UpdateTaskProgress(std::string const& taskId, int64_t downloadedSize)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+		try
+		{
+			const char* sql = "UPDATE tasks SET downloaded_size = ? WHERE task_id = ?;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("UpdateTaskProgress error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			sqlite3_bind_int64(stmt, 1, downloadedSize);
+			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-    bool TorrentStateManager::UpdateTaskName(std::string const& taskId, std::string const& name)
-    {
-        std::lock_guard lk(m_dbMutex);
-        if (!m_db) return false;
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
 
-        try
-        {
-            const char* sql = "UPDATE tasks SET name = ? WHERE task_id = ?;";
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("UpdateTaskProgress error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-            sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
-            sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+	bool TorrentStateManager::UpdateTaskName(std::string const& taskId, std::string const& name)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
 
-            rc = sqlite3_step(stmt);
-            sqlite3_finalize(stmt);
+		try
+		{
+			const char* sql = "UPDATE tasks SET name = ? WHERE task_id = ?;";
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            return rc == SQLITE_DONE;
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("UpdateTaskName error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+			sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
-    bool TorrentStateManager::ExportToFile(std::wstring const& filePath)
-    {
-        // Don't hold lock while doing I/O - load data first, then write
-        std::vector<TaskMetadata> tasks;
-        
-        // Load all tasks with lock held
-        {
-            std::lock_guard lk(m_dbMutex);
-            if (!m_db) return false;
-            
-            // Inline query to avoid recursive locking
-            const char* sql = R"(
+			rc = sqlite3_step(stmt);
+			sqlite3_finalize(stmt);
+
+			return rc == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("UpdateTaskName error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
+
+	bool TorrentStateManager::ExportToFile(std::wstring const& filePath)
+	{
+		// Don't hold lock while doing I/O - load data first, then write
+		std::vector<TaskMetadata> tasks;
+
+		// Load all tasks with lock held
+		{
+			std::lock_guard lk(m_dbMutex);
+			if (!m_db) return false;
+
+			// Inline query to avoid recursive locking
+			const char* sql = R"(
                 SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
                        total_size, downloaded_size, status, resume_data 
                 FROM tasks ORDER BY added_timestamp DESC;
             )";
 
-            sqlite3_stmt* stmt = nullptr;
-            int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
-            if (rc != SQLITE_OK) return false;
+			sqlite3_stmt* stmt = nullptr;
+			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
+			if (rc != SQLITE_OK) return false;
 
-            while (sqlite3_step(stmt) == SQLITE_ROW)
-            {
-                TaskMetadata metadata;
-                auto col0 = sqlite3_column_text(stmt, 0);
-                auto col1 = sqlite3_column_text(stmt, 1);
-                auto col2 = sqlite3_column_text(stmt, 2);
-                metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
-                metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
-                metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
-                
-                auto namePtr = sqlite3_column_text(stmt, 3);
-                metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
-                
-                metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
-                metadata.totalSize = sqlite3_column_int64(stmt, 5);
-                metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
-                metadata.status = sqlite3_column_int(stmt, 7);
+			while (sqlite3_step(stmt) == SQLITE_ROW)
+			{
+				TaskMetadata metadata;
+				auto col0 = sqlite3_column_text(stmt, 0);
+				auto col1 = sqlite3_column_text(stmt, 1);
+				auto col2 = sqlite3_column_text(stmt, 2);
+				metadata.taskId = col0 ? reinterpret_cast<const char*>(col0) : "";
+				metadata.magnetUri = col1 ? reinterpret_cast<const char*>(col1) : "";
+				metadata.savePath = col2 ? reinterpret_cast<const char*>(col2) : "";
 
-                const void* blobData = sqlite3_column_blob(stmt, 8);
-                int blobSize = sqlite3_column_bytes(stmt, 8);
-                if (blobData && blobSize > 0)
-                {
-                    metadata.resumeData.assign(
-                        static_cast<const uint8_t*>(blobData),
-                        static_cast<const uint8_t*>(blobData) + blobSize
-                    );
-                }
+				auto namePtr = sqlite3_column_text(stmt, 3);
+				metadata.name = namePtr ? reinterpret_cast<const char*>(namePtr) : "";
 
-                tasks.push_back(std::move(metadata));
-            }
-            sqlite3_finalize(stmt);
-        }
+				metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
+				metadata.totalSize = sqlite3_column_int64(stmt, 5);
+				metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
+				metadata.status = sqlite3_column_int(stmt, 7);
 
-        // Now write to file without lock
-        try
-        {
-            lt::entry exportData;
-            lt::entry::list_type& taskList = exportData["tasks"].list();
+				const void* blobData = sqlite3_column_blob(stmt, 8);
+				int blobSize = sqlite3_column_bytes(stmt, 8);
+				if (blobData && blobSize > 0)
+				{
+					metadata.resumeData.assign(
+						static_cast<const uint8_t*>(blobData),
+						static_cast<const uint8_t*>(blobData) + blobSize
+					);
+				}
 
-            for (auto const& task : tasks)
-            {
-                lt::entry taskEntry;
-                taskEntry["task_id"] = task.taskId;
-                taskEntry["magnet_uri"] = task.magnetUri;
-                taskEntry["save_path"] = task.savePath;
-                taskEntry["name"] = task.name;
-                taskEntry["added_timestamp"] = task.addedTimestamp;
-                taskEntry["total_size"] = task.totalSize;
-                taskEntry["downloaded_size"] = task.downloadedSize;
-                taskEntry["status"] = task.status;
-                
-                if (!task.resumeData.empty())
-                {
-                    taskEntry["resume_data"] = std::string(
-                        reinterpret_cast<const char*>(task.resumeData.data()),
-                        task.resumeData.size()
-                    );
-                }
+				tasks.push_back(std::move(metadata));
+			}
+			sqlite3_finalize(stmt);
+		}
 
-                taskList.push_back(std::move(taskEntry));
-            }
+		// Now write to file without lock
+		try
+		{
+			lt::entry exportData;
+			lt::entry::list_type& taskList = exportData["tasks"].list();
 
-            std::vector<char> buf;
-            lt::bencode(std::back_inserter(buf), exportData);
+			for (auto const& task : tasks)
+			{
+				lt::entry taskEntry;
+				taskEntry["task_id"] = task.taskId;
+				taskEntry["magnet_uri"] = task.magnetUri;
+				taskEntry["save_path"] = task.savePath;
+				taskEntry["name"] = task.name;
+				taskEntry["added_timestamp"] = task.addedTimestamp;
+				taskEntry["total_size"] = task.totalSize;
+				taskEntry["downloaded_size"] = task.downloadedSize;
+				taskEntry["status"] = task.status;
 
-            std::ofstream file(filePath, std::ios::binary);
-            if (!file) return false;
+				if (!task.resumeData.empty())
+				{
+					taskEntry["resume_data"] = std::string(
+						reinterpret_cast<const char*>(task.resumeData.data()),
+						task.resumeData.size()
+					);
+				}
 
-            file.write(buf.data(), buf.size());
-            return file.good();
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("ExportToFile error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
-    }
+				taskList.push_back(std::move(taskEntry));
+			}
 
-    bool TorrentStateManager::ImportFromFile(std::wstring const& filePath)
-    {
-        // Read file first without lock, then save to database
-        std::vector<TaskMetadata> tasksToImport;
+			std::vector<char> buf;
+			lt::bencode(std::back_inserter(buf), exportData);
 
-        try
-        {
-            std::ifstream file(filePath, std::ios::binary);
-            if (!file) return false;
+			std::ofstream file(filePath, std::ios::binary);
+			if (!file) return false;
 
-            std::vector<char> buf((std::istreambuf_iterator<char>(file)),
-                                   std::istreambuf_iterator<char>());
+			file.write(buf.data(), buf.size());
+			return file.good();
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("ExportToFile error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
 
-            lt::error_code ec;
-            lt::bdecode_node node = lt::bdecode(buf, ec);
-            if (ec) return false;
+	bool TorrentStateManager::ImportFromFile(std::wstring const& filePath)
+	{
+		// Read file first without lock, then save to database
+		std::vector<TaskMetadata> tasksToImport;
 
-            auto tasksNode = node.dict_find_list("tasks");
-            if (!tasksNode) return false;
+		try
+		{
+			std::ifstream file(filePath, std::ios::binary);
+			if (!file) return false;
 
-            for (int i = 0; i < tasksNode.list_size(); ++i)
-            {
-                auto taskNode = tasksNode.list_at(i);
-                if (taskNode.type() != lt::bdecode_node::dict_t) continue;
+			std::vector<char> buf((std::istreambuf_iterator<char>(file)),
+								  std::istreambuf_iterator<char>());
 
-                TaskMetadata metadata;
-                metadata.taskId = taskNode.dict_find_string_value("task_id").to_string();
-                metadata.magnetUri = taskNode.dict_find_string_value("magnet_uri").to_string();
-                metadata.savePath = taskNode.dict_find_string_value("save_path").to_string();
-                metadata.name = taskNode.dict_find_string_value("name").to_string();
-                metadata.addedTimestamp = taskNode.dict_find_int_value("added_timestamp");
-                metadata.totalSize = taskNode.dict_find_int_value("total_size");
-                metadata.downloadedSize = taskNode.dict_find_int_value("downloaded_size");
-                metadata.status = static_cast<int>(taskNode.dict_find_int_value("status"));
+			lt::error_code ec;
+			lt::bdecode_node node = lt::bdecode(buf, ec);
+			if (ec) return false;
 
-                auto resumeStr = taskNode.dict_find_string_value("resume_data");
-                if (!resumeStr.empty())
-                {
-                    metadata.resumeData.assign(
-                        reinterpret_cast<const uint8_t*>(resumeStr.data()),
-                        reinterpret_cast<const uint8_t*>(resumeStr.data()) + resumeStr.size()
-                    );
-                }
+			auto tasksNode = node.dict_find_list("tasks");
+			if (!tasksNode) return false;
 
-                // Generate new task ID if empty
-                if (metadata.taskId.empty())
-                {
-                    metadata.taskId = GenerateTaskId();
-                }
+			for (int i = 0; i < tasksNode.list_size(); ++i)
+			{
+				auto taskNode = tasksNode.list_at(i);
+				if (taskNode.type() != lt::bdecode_node::dict_t) continue;
 
-                tasksToImport.push_back(std::move(metadata));
-            }
-        }
-        catch (std::exception const& ex)
-        {
-            OutputDebugStringA(("ImportFromFile read error: " + std::string(ex.what()) + "\n").c_str());
-            return false;
-        }
+				TaskMetadata metadata;
+				metadata.taskId = taskNode.dict_find_string_value("task_id").to_string();
+				metadata.magnetUri = taskNode.dict_find_string_value("magnet_uri").to_string();
+				metadata.savePath = taskNode.dict_find_string_value("save_path").to_string();
+				metadata.name = taskNode.dict_find_string_value("name").to_string();
+				metadata.addedTimestamp = taskNode.dict_find_int_value("added_timestamp");
+				metadata.totalSize = taskNode.dict_find_int_value("total_size");
+				metadata.downloadedSize = taskNode.dict_find_int_value("downloaded_size");
+				metadata.status = static_cast<int>(taskNode.dict_find_int_value("status"));
 
-        // Now save all tasks to database
-        for (auto const& metadata : tasksToImport)
-        {
-            SaveTaskMetadata(metadata);
-        }
+				auto resumeStr = taskNode.dict_find_string_value("resume_data");
+				if (!resumeStr.empty())
+				{
+					metadata.resumeData.assign(
+						reinterpret_cast<const uint8_t*>(resumeStr.data()),
+						reinterpret_cast<const uint8_t*>(resumeStr.data()) + resumeStr.size()
+					);
+				}
 
-        return true;
-    }
+				// Generate new task ID if empty
+				if (metadata.taskId.empty())
+				{
+					metadata.taskId = GenerateTaskId();
+				}
 
-    std::string TorrentStateManager::GenerateTaskId()
-    {
-        auto now = std::chrono::system_clock::now();
-        auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
-            now.time_since_epoch()).count();
+				tasksToImport.push_back(std::move(metadata));
+			}
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA(("ImportFromFile read error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
 
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, 0xFFFF);
+		// Now save all tasks to database
+		for (auto const& metadata : tasksToImport)
+		{
+			SaveTaskMetadata(metadata);
+		}
 
-        std::ostringstream oss;
-        oss << std::hex << std::setfill('0') << std::setw(12) << timestamp
-            << std::setw(4) << dis(gen);
+		return true;
+	}
 
-        return oss.str();
-    }
+	std::string TorrentStateManager::GenerateTaskId()
+	{
+		auto now = std::chrono::system_clock::now();
+		auto timestamp = std::chrono::duration_cast<std::chrono::milliseconds>(
+			now.time_since_epoch()).count();
+
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dis(0, 0xFFFF);
+
+		std::ostringstream oss;
+		oss << std::hex << std::setfill('0') << std::setw(12) << timestamp
+			<< std::setw(4) << dis(gen);
+
+		return oss.str();
+	}
 
 } // namespace OpenNet::Core::Torrent

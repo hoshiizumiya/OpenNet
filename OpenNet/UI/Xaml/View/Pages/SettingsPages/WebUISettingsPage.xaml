@@ -1,0 +1,164 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.WebUISettingsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <x:Double x:Key="SettingsCardSpacing">4</x:Double>
+        <Style
+            x:Key="SettingsSectionHeaderTextBlockStyle"
+            BasedOn="{StaticResource BodyStrongTextBlockStyle}"
+            TargetType="TextBlock">
+            <Setter Property="Margin" Value="1,30,0,6" />
+        </Style>
+    </Page.Resources>
+
+    <ScrollViewer VerticalAlignment="Top">
+        <StackPanel Margin="24,20,24,32" Spacing="{StaticResource SettingsCardSpacing}">
+            <TextBlock
+                x:Uid="WebUISettingsTitle"
+                Style="{StaticResource TitleTextBlockStyle}"
+                Text="Web UI" />
+            <TextBlock
+                x:Uid="WebUISettingsDescription"
+                Margin="0,0,0,8"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="Use the bundled qBittorrent WebUI from a browser or any qBittorrent Web API compatible client."
+                TextWrapping="Wrap" />
+
+            <InfoBar
+                x:Name="StatusInfoBar"
+                x:Uid="WebUISettingsStatus"
+                IsClosable="False"
+                IsOpen="True"
+                Severity="Informational" />
+
+            <TextBlock
+                x:Uid="WebUISettingsConnectionHeader"
+                Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                Text="Connection" />
+
+            <essential:SettingsCard
+                x:Uid="WebUISettingsAddressCard"
+                Description="The IP address accepted by the embedded HTTP server."
+                Header="Listen address">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE968;" />
+                </essential:SettingsCard.HeaderIcon>
+                <TextBox
+                    x:Name="AddressTextBox"
+                    x:Uid="WebUISettingsAddress"
+                    MinWidth="240"
+                    PlaceholderText="127.0.0.1" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
+                x:Uid="WebUISettingsPortCard"
+                Description="Restarting the Web UI applies a new port immediately."
+                Header="Port">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE839;" />
+                </essential:SettingsCard.HeaderIcon>
+                <NumberBox
+                    x:Name="PortNumberBox"
+                    x:Uid="WebUISettingsPort"
+                    MinWidth="160"
+                    Maximum="65535"
+                    Minimum="1"
+                    SpinButtonPlacementMode="Compact" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
+                x:Uid="WebUISettingsLocaleCard"
+                Description="Language code used by qBittorrent WebUI, for example en or zh_CN."
+                Header="Locale">
+                <TextBox
+                    x:Name="LocaleTextBox"
+                    x:Uid="WebUISettingsLocale"
+                    MinWidth="180"
+                    PlaceholderText="en" />
+            </essential:SettingsCard>
+
+            <TextBlock
+                x:Uid="WebUISettingsAuthenticationHeader"
+                Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                Text="Authentication" />
+
+            <essential:SettingsCard
+                x:Uid="WebUISettingsUsernameCard"
+                Description="At least 3 characters; a colon is not allowed."
+                Header="Username">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE77B;" />
+                </essential:SettingsCard.HeaderIcon>
+                <TextBox
+                    x:Name="UsernameTextBox"
+                    x:Uid="WebUISettingsUsername"
+                    MinWidth="240" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
+                x:Uid="WebUISettingsPasswordCard"
+                Description="At least 6 characters. Existing browser sessions are cleared when settings are applied."
+                Header="Password">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE72E;" />
+                </essential:SettingsCard.HeaderIcon>
+                <PasswordBox
+                    x:Name="PasswordInput"
+                    x:Uid="WebUISettingsPassword"
+                    MinWidth="240"
+                    PasswordRevealMode="Peek" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
+                x:Uid="WebUISettingsApiKeyCard"
+                Description="Optional bearer token for API clients. Treat it like a password."
+                Header="API key">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE8D7;" />
+                </essential:SettingsCard.HeaderIcon>
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <PasswordBox
+                        x:Name="ApiKeyInput"
+                        x:Uid="WebUISettingsApiKey"
+                        MinWidth="240"
+                        PasswordRevealMode="Peek" />
+                    <Button
+                        x:Uid="WebUISettingsGenerateApiKey"
+                        Click="OnGenerateApiKeyClick"
+                        Content="Generate" />
+                    <Button
+                        x:Uid="WebUISettingsCopyApiKey"
+                        Click="OnCopyApiKeyClick"
+                        Content="Copy" />
+                    <Button
+                        x:Uid="WebUISettingsClearApiKey"
+                        Click="OnClearApiKeyClick"
+                        Content="Clear" />
+                </StackPanel>
+            </essential:SettingsCard>
+
+            <StackPanel
+                Margin="0,24,0,0"
+                Orientation="Horizontal"
+                Spacing="8">
+                <Button
+                    x:Name="SaveButton"
+                    x:Uid="WebUISettingsSave"
+                    Click="OnSaveClick"
+                    Content="Save and restart Web UI"
+                    Style="{StaticResource AccentButtonStyle}" />
+                <Button
+                    x:Uid="WebUISettingsOpen"
+                    Click="OnOpenWebUIClick"
+                    Content="Open Web UI" />
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Page>

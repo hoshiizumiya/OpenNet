@@ -7,6 +7,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 #include "ViewModels/DisplayItems.h"
 
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
@@ -21,7 +22,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	TaskTrackersPage::TaskTrackersPage()
 	{
-		InitializeComponent();
+		m_trackerItems = winrt::single_threaded_observable_vector<
+			winrt::Windows::Foundation::IInspectable>();
+	}
+
+	void TaskTrackersPage::InitializeComponent()
+	{
+		TaskTrackersPageT::InitializeComponent();
+		TrackersListView().ItemsSource(m_trackerItems);
 		Loaded([this](auto, auto)
 		{
 			RestoreColumn(ColTrackerTier(), "Trackers.Tier");
@@ -67,10 +75,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-			m_refreshTimer.Interval(std::chrono::seconds(3));
 			m_timerTickToken = m_refreshTimer.Tick(
 				{ this, &TaskTrackersPage::OnRefreshTimerTick });
 		}
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		m_refreshTimer.Interval(std::chrono::milliseconds(
+			std::clamp<std::int64_t>(
+				database.GetInt("ui", "refresh_interval_ms").value_or(1000),
+				100,
+				60000)));
 		m_refreshTimer.Start();
 
 		RefreshTrackerList();
@@ -263,7 +277,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
-			listView.ItemsSource(nullptr);
+			m_trackerItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -273,7 +287,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
-			listView.ItemsSource(nullptr);
+			m_trackerItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -281,7 +295,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto taskId = winrt::to_string(selectedTask.TaskId());
 		if (taskId.empty())
 		{
-			listView.ItemsSource(nullptr);
+			m_trackerItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -289,7 +303,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
 		{
-			listView.ItemsSource(nullptr);
+			m_trackerItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -298,52 +312,69 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (detail.trackers.empty())
 		{
-			listView.ItemsSource(nullptr);
+			m_trackerItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
-
-		auto items = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
 
 		if (m_sortDirection != 0)
 		{
 			auto const direction = m_sortDirection;
 			auto const column = m_sortColumn;
 			std::stable_sort(detail.trackers.begin(), detail.trackers.end(),
-				[direction, column](auto const& left, auto const& right)
+							 [direction, column](auto const& left, auto const& right)
+			{
+				auto ascending = [&]()
 				{
-					auto ascending = [&]()
-					{
-						if (column == L"URL") return left.url < right.url;
-						if (column == L"Tier") return left.tier < right.tier;
-						if (column == L"Peers") return left.numPeers < right.numPeers;
-						if (column == L"Status") return left.status < right.status;
-						return left.message < right.message;
-					};
-					auto descending = [&]()
-					{
-						if (column == L"URL") return right.url < left.url;
-						if (column == L"Tier") return right.tier < left.tier;
-						if (column == L"Peers") return right.numPeers < left.numPeers;
-						if (column == L"Status") return right.status < left.status;
-						return right.message < left.message;
-					};
-					return direction == 1 ? ascending() : descending();
-				});
+					if (column == L"URL") return left.url < right.url;
+					if (column == L"Tier") return left.tier < right.tier;
+					if (column == L"Peers") return left.numPeers < right.numPeers;
+					if (column == L"Status") return left.status < right.status;
+					return left.message < right.message;
+				};
+				auto descending = [&]()
+				{
+					if (column == L"URL") return right.url < left.url;
+					if (column == L"Tier") return right.tier < left.tier;
+					if (column == L"Peers") return right.numPeers < left.numPeers;
+					if (column == L"Status") return right.status < left.status;
+					return right.message < left.message;
+				};
+				return direction == 1 ? ascending() : descending();
+			});
 		}
 
-		for (auto const& tracker : detail.trackers)
+		for (std::uint32_t index = 0;
+			 index < static_cast<std::uint32_t>(detail.trackers.size());
+			 ++index)
 		{
-			auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
+			auto const& tracker = detail.trackers[index];
+			winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
+			if (index < m_trackerItems.Size())
+			{
+				item = m_trackerItems.GetAt(index)
+					.try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>();
+				if (item && item.URL() != winrt::to_hstring(tracker.url))
+					item = nullptr;
+			}
+			if (!item)
+			{
+				item = winrt::make<
+					winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
+				if (index < m_trackerItems.Size())
+					m_trackerItems.SetAt(index, item);
+				else
+					m_trackerItems.Append(item);
+			}
 			item.URL(winrt::to_hstring(tracker.url));
 			item.Tier(winrt::to_hstring(tracker.tier));
 			item.Peers(winrt::to_hstring(tracker.numPeers));
 			item.Status(winrt::to_hstring(tracker.status));
 			item.Message(winrt::to_hstring(tracker.message));
-			items.Append(item);
 		}
+		while (m_trackerItems.Size() > detail.trackers.size())
+			m_trackerItems.RemoveAtEnd();
 
-		listView.ItemsSource(items);
 		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
 	}
 }

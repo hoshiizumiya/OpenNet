@@ -2,6 +2,7 @@
 #include "ViewModels/TasksViewModel.h"
 #include "Core/DataGraph/SpeedGraphDatabase.h"
 #include "Core/IPFilter/IPFilterManager.h"
+#include "Core/ClientFilter/ClientFilterManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 #include "mvvm_framework/notify_property_changed.h"
 
@@ -368,6 +369,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// Initialize IP filter database
 		::OpenNet::Core::IPFilterManager::Instance().Initialize();
+		::OpenNet::Core::ClientFilterManager::Instance().Initialize();
 
 		// Fire-and-forget: await torrent core init on background, then load tasks
 		[](auto weak) -> winrt::Windows::Foundation::IAsyncAction
@@ -945,7 +947,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColNameLoad()
 	{
-		 return LocalSetting::Get(IsColumnNameLoadKey, true);
+		return LocalSetting::Get(IsColumnNameLoadKey, true);
 	}
 	void TasksViewModel::IsColNameLoad(bool value)
 	{

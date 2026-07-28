@@ -25,6 +25,8 @@
     <UserControl.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Effect/TextMorphEffect_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/Card_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/FontStyle.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/TransitionCollection.xaml" />
             </ResourceDictionary.MergedDictionaries>
@@ -228,7 +230,7 @@
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
-                                        <Hyperlink NavigateUri="https://x.org/statements/tos.html">
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
                                             <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="ViewGuideStepAgreementTermOfService" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
@@ -242,7 +244,7 @@
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
-                                        <Hyperlink NavigateUri="https://x.org/statements/privacy-notice.html">
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
                                             <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="ViewGuideStepAgreementPrivacyPolicy" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
@@ -256,7 +258,7 @@
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
-                                        <Hyperlink NavigateUri="https://x.org/statements/bug-report.html">
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
                                             <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="ViewGuideStepAgreementIssueReport" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
@@ -292,7 +294,7 @@
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
-                                        <Hyperlink NavigateUri="https://x.org/statements/tos.html">
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
                                             <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="ViewGuideStepAgreementTermOfService" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
@@ -303,7 +305,7 @@
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
-                                        <Hyperlink NavigateUri="https://x.org/statements/privacy-notice.html">
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
                                             <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="ViewGuideStepAgreementPrivacyPolicy" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
@@ -314,7 +316,7 @@
                                 <TextBlock>
                                     <TextBlock.Inlines>
                                         <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
-                                        <Hyperlink NavigateUri="https://x.org/statements/bug-report.html">
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
                                             <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="ViewGuideStepAgreementIssueReport" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
@@ -349,6 +351,7 @@
                         VerticalAlignment="Center"
                         Spacing="{ThemeResource SettingsCardSpacing}">
                         <TextBlock
+                            x:Uid="GuideEnvironmentSegoeFluentIcons"
                             Margin="1,0,0,5"
                             Style="{StaticResource TitleTextBlockStyle}"
                             Text="Segoe Fluent Icons" />
@@ -372,7 +375,7 @@
                         <TextBlock>
                             <Run x:Uid="ViewGuideStepEnvironmentFontDescription1" Text="ViewGuideStepEnvironmentFontDescription1" />
                             <Hyperlink NavigateUri="https://aka.ms/SegoeFluentIcons">
-                                <Run Text="Microsoft" />
+                                <Run x:Uid="GuideEnvironmentFontMicrosoftLink" Text="Microsoft" />
                             </Hyperlink>
                             <Run x:Uid="ViewGuideStepEnvironmentFontDescription2" Text="ViewGuideStepEnvironmentFontDescription2" />
                         </TextBlock>
@@ -386,7 +389,7 @@
                         <TextBlock>
                             <Run x:Uid="ViewGuideStepEnvironmentWebView2Description1" Text="ViewGuideStepEnvironmentWebView2Description1" />
                             <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/p/?LinkId=2124703">
-                                <Run Text="Microsoft" />
+                                <Run x:Uid="GuideEnvironmentWebViewMicrosoftLink" Text="Microsoft" />
                             </Hyperlink>
                             <Run x:Uid="ViewGuideStepEnvironmentWebView2Description2" Text="ViewGuideStepEnvironmentWebView2Description2" />
                         </TextBlock>
@@ -436,8 +439,128 @@
                 </Grid>
             </essential:Case>
 
+            <!--  WebUI credential initialization  -->
+            <essential:Case Value="{ouxm:UInt32 Value=4}">
+                <ScrollViewer>
+                    <StackPanel
+                        Width="520"
+                        Margin="32"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="12">
+                        <FontIcon
+                            x:Uid="GuideWebUIIcon"
+                            FontSize="44"
+                            Glyph="&#xE774;" />
+                        <TextBlock
+                            x:Uid="GuideWebUITitle"
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="Initialize qBittorrent Web UI" />
+                        <TextBlock
+                            x:Uid="GuideWebUIDescription"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Set the local Web UI account before the service starts. The password must contain at least 6 characters."
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <InfoBar
+                            x:Name="WebUIValidationInfoBar"
+                            x:Uid="GuideWebUIValidation"
+                            Title="Web UI settings are incomplete"
+                            IsClosable="False"
+                            IsOpen="False"
+                            Message="Enter a valid address, port, account and a password of at least 6 characters."
+                            Severity="Error" />
+                        <TextBox
+                            x:Name="WebUIAddressBox"
+                            x:Uid="GuideWebUIAddress"
+                            Header="Listen address"
+                            PlaceholderText="127.0.0.1" />
+                        <NumberBox
+                            x:Name="WebUIPortBox"
+                            x:Uid="GuideWebUIPort"
+                            Header="Port"
+                            Maximum="65535"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Compact" />
+                        <TextBox
+                            x:Name="WebUIUserNameBox"
+                            x:Uid="GuideWebUIUsername"
+                            Header="Account"
+                            PlaceholderText="admin" />
+                        <PasswordBox
+                            x:Name="WebUIPasswordBox"
+                            x:Uid="GuideWebUIPassword"
+                            Header="Password"
+                            PasswordRevealMode="Peek"
+                            PlaceholderText="At least 6 characters" />
+                    </StackPanel>
+                </ScrollViewer>
+            </essential:Case>
+
+            <!--  Common settings  -->
+            <essential:Case Value="{ouxm:UInt32 Value=5}">
+                <StackPanel
+                    Width="520"
+                    Margin="32"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="12">
+                    <FontIcon
+                        x:Uid="GuideCommonSettingsIcon"
+                        FontSize="44"
+                        Glyph="&#xE713;" />
+                    <TextBlock
+                        x:Uid="GuideCommonSettingsTitle"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="GUI data refresh" />
+                    <TextBlock
+                        x:Uid="GuideCommonSettingsDescription"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Controls how often task files, peers, trackers and status data update. Lower values use more CPU."
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                    <NumberBox
+                        x:Name="GuiRefreshIntervalBox"
+                        x:Uid="GuideGuiRefreshInterval"
+                        Header="Refresh interval (milliseconds)"
+                        Maximum="60000"
+                        Minimum="100"
+                        SpinButtonPlacementMode="Compact"
+                        Value="1000" />
+                </StackPanel>
+            </essential:Case>
+
+            <!--  Complete  -->
+            <essential:Case Value="{ouxm:UInt32 Value=6}">
+                <StackPanel
+                    Width="520"
+                    Margin="32"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Spacing="12">
+                    <FontIcon
+                        x:Uid="GuideCompletedIcon"
+                        FontSize="52"
+                        Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                        Glyph="&#xE73E;" />
+                    <TextBlock
+                        x:Uid="GuideCompletedTitle"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="OpenNet is ready" />
+                    <TextBlock
+                        x:Uid="GuideCompletedDescription"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Your Web UI credentials and GUI refresh interval have been saved. You can reopen this guide later from More."
+                        TextAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </essential:Case>
+
             <!--  StaticResourceSetting  -->
-            <!--<essential:Case Value="{ouxm:UInt32 Value=5}">
+            <!--<essential:Case Value="{ouxm:UInt32 Value=7}">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition />
@@ -539,8 +662,6 @@
                 </Grid>
             </essential:Case>-->
 
-            <!--  Complete - empty case for fallback  -->
-            <essential:Case Value="{ouxm:UInt32 Value=6}" />
         </essential:SwitchPresenter>
         <Grid Grid.Row="1">
             <StackPanel HorizontalAlignment="Center" Orientation="Horizontal">
@@ -548,7 +669,7 @@
                     Margin="16"
                     HorizontalAlignment="Center"
                     IsHitTestVisible="False"
-                    SelectedIndex="{x:Bind StateIndex, Mode=OneWay}">
+                    SelectedIndex="{x:Bind StateIndexFromState(ViewModel.State), Mode=OneWay}">
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xF2B7;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xF28B;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE81E;}" />
@@ -558,6 +679,7 @@
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B9;}" />
                 </cwc:Segmented>
                 <Button
+                    x:Uid="GuideNextOrCompleteButton"
                     Click="NextOrComplete"
                     Content="{x:Bind ViewModel.NextOrCompleteButtonText, Mode=OneWay}"
                     IsEnabled="{x:Bind ViewModel.IsNextOrCompleteButtonEnabled, Mode=OneWay}"

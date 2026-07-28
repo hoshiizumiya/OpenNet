@@ -7,6 +7,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxv="using:OpenNet.UI.Xaml.View"
     xmlns:pages="using:OpenNet.UI.Xaml.View.Pages"
     x:Uid="MainWindowRoot"
     Title="OpenNet"
@@ -75,5 +76,10 @@
 
         <!--  Main content: NavigationView + StatusBar  -->
         <pages:MainView x:Name="MainContentView" Grid.Row="1" />
+        <ouxv:InfoBarView
+            x:Name="GlobalInfoBarView"
+            x:Uid="GlobalInfoBarView"
+            Grid.RowSpan="2"
+            Canvas.ZIndex="100" />
     </Grid>
 </Window>

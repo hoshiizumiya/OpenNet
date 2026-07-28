@@ -5,6 +5,7 @@
 #endif
 
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.App;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -26,22 +27,43 @@ namespace winrt::OpenNet::UI::Shell::implementation
 
 	void NotifyIconXamlHostWindow::ShowMainWindow()
 	{
+		if (winrt::OpenNet::implementation::App::s_isExiting.load())
+		{
+			return;
+		}
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::ShowMainWindow();
 	}
 
 	void NotifyIconXamlHostWindow::Show()
 	{
-		if (trayIcon())
+		if (trayIcon() && !m_removed)
 		{
-			trayIcon().Show();
+			try
+			{
+				trayIcon().Show();
+			}
+			catch (...)
+			{
+			}
 		}
 	}
 
 	void NotifyIconXamlHostWindow::Remove()
 	{
+		if (m_removed)
+		{
+			return;
+		}
+		m_removed = true;
 		if (trayIcon())
 		{
-			trayIcon().Remove();
+			try
+			{
+				trayIcon().Remove();
+			}
+			catch (...)
+			{
+			}
 		}
 	}
 }

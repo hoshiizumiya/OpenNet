@@ -70,6 +70,22 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		DefaultStyleKey(winrt::box_value(winrt::xaml_typename<OpenNet::UI::Xaml::Control::Effect::TextMorphEffect>()));
 	}
 
+	// ThemeResource, Binding, and other XAML value expressions require the
+	// dependency properties to exist before the XAML property system assigns
+	// the expression. Do not rely on the wrapper accessors to register lazily.
+	void TextMorphEffect::EnsureDependencyProperties()
+	{
+		if (s_colorBrushProperty)
+		{
+			return;
+		}
+		s_colorBrushProperty = DependencyProperty::Register(
+			L"ColorBrush",
+			winrt::xaml_typename<Windows::UI::Color>(),
+			winrt::xaml_typename<OpenNet::UI::Xaml::Control::Effect::TextMorphEffect>(),
+			PropertyMetadata{ box_value(Windows::UI::Colors::White()), PropertyChangedCallback{ &TextMorphEffect::OnResourcePropertyValueChanged } });
+	}
+
 	// DependencyProperty definitions
 	DependencyProperty TextMorphEffect::EasingProperty()
 	{
@@ -213,12 +229,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 
 	DependencyProperty TextMorphEffect::ColorBrushProperty()
 	{
-		static DependencyProperty s_property = DependencyProperty::Register(
-			L"ColorBrush",
-			winrt::xaml_typename<Color>(),
-			winrt::xaml_typename<OpenNet::UI::Xaml::Control::Effect::TextMorphEffect>(),
-			PropertyMetadata{ box_value(Colors::White()), PropertyChangedCallback{ &TextMorphEffect::OnPropertyChanged } });
-		return s_property;
+		return s_colorBrushProperty;
 	}
 
 	DependencyProperty TextMorphEffect::MorphSpeedProperty()
@@ -294,7 +305,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 
 	winrt::Windows::UI::Text::FontWeight TextMorphEffect::EffectFontWeight()
 	{
-		return (GetValue(EffectFontWeightProperty()).as<winrt::Windows::UI::Text::FontWeight>());
+		return winrt::unbox_value<winrt::Windows::UI::Text::FontWeight>(GetValue(EffectFontWeightProperty()));
 	}
 
 	void TextMorphEffect::EffectFontWeight(winrt::Windows::UI::Text::FontWeight const& value)

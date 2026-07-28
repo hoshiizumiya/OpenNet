@@ -40,6 +40,7 @@ export namespace OpenNet::Core::Torrent
 
 		// Session state operations
 		bool SaveSessionState(libtorrent::session& session);
+		std::optional<libtorrent::session_params> LoadSessionParams();
 		bool LoadSessionState(libtorrent::session& session);
 
 		// Task resume data operations

@@ -3,13 +3,18 @@
 #include "ViewModels/TrackerDisplayItem.g.h"
 #include "ViewModels/FileDisplayItem.g.h"
 
+import OpenNet.ViewModels.ObservableMixin;
+import winrt.Microsoft.UI.Xaml.Data;
+
 namespace winrt::OpenNet::ViewModels::implementation
 {
 	// ---------------------------------------------------------------
 	// PeerDisplayItem
 	// ---------------------------------------------------------------
-	struct PeerDisplayItem : PeerDisplayItemT<PeerDisplayItem>
+	struct PeerDisplayItem : PeerDisplayItemT<PeerDisplayItem>,
+		::OpenNet::ViewModels::ObservableMixin<PeerDisplayItem>
 	{
+		using ::OpenNet::ViewModels::ObservableMixin<PeerDisplayItem>::SetProperty;
 		PeerDisplayItem()
 		{
 			m_children = winrt::single_threaded_observable_vector<
@@ -22,7 +27,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void IP(winrt::hstring const& v)
 		{
-			m_ip = v;
+			SetProperty(m_ip, v, L"IP");
 		}
 
 		winrt::hstring Client() const
@@ -31,7 +36,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Client(winrt::hstring const& v)
 		{
-			m_client = v;
+			SetProperty(m_client, v, L"Client");
 		}
 
 		winrt::hstring Progress() const
@@ -40,7 +45,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Progress(winrt::hstring const& v)
 		{
-			m_progress = v;
+			SetProperty(m_progress, v, L"Progress");
 		}
 
 		winrt::hstring DLSpeed() const
@@ -49,7 +54,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void DLSpeed(winrt::hstring const& v)
 		{
-			m_dlSpeed = v;
+			SetProperty(m_dlSpeed, v, L"DLSpeed");
 		}
 
 		winrt::hstring ULSpeed() const
@@ -58,7 +63,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void ULSpeed(winrt::hstring const& v)
 		{
-			m_ulSpeed = v;
+			SetProperty(m_ulSpeed, v, L"ULSpeed");
 		}
 
 		winrt::hstring Downloaded() const
@@ -67,7 +72,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Downloaded(winrt::hstring const& v)
 		{
-			m_downloaded = v;
+			SetProperty(m_downloaded, v, L"Downloaded");
 		}
 
 		winrt::hstring PeerStatus() const
@@ -76,7 +81,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void PeerStatus(winrt::hstring const& v)
 		{
-			m_peerStatus = v;
+			SetProperty(m_peerStatus, v, L"PeerStatus");
 		}
 
 		winrt::hstring Location() const
@@ -85,7 +90,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Location(winrt::hstring const& v)
 		{
-			m_location = v;
+			SetProperty(m_location, v, L"Location");
 		}
 
 		winrt::hstring CountryCode() const
@@ -94,7 +99,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void CountryCode(winrt::hstring const& v)
 		{
-			m_countryCode = v;
+			SetProperty(m_countryCode, v, L"CountryCode");
 		}
 
 		winrt::hstring FlagSvg() const
@@ -103,7 +108,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void FlagSvg(winrt::hstring const& v)
 		{
-			m_flagSvg = v;
+			SetProperty(m_flagSvg, v, L"FlagSvg");
 		}
 
 		winrt::hstring ConnectionTime() const
@@ -112,7 +117,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void ConnectionTime(winrt::hstring const& v)
 		{
-			m_connectionTime = v;
+			SetProperty(m_connectionTime, v, L"ConnectionTime");
 		}
 
 		winrt::hstring Protocol() const
@@ -121,7 +126,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Protocol(winrt::hstring const& v)
 		{
-			m_protocol = v;
+			SetProperty(m_protocol, v, L"Protocol");
 		}
 
 		winrt::hstring Initiator() const
@@ -130,7 +135,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Initiator(winrt::hstring const& v)
 		{
-			m_initiator = v;
+			SetProperty(m_initiator, v, L"Initiator");
 		}
 
 		winrt::hstring Source() const
@@ -139,7 +144,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Source(winrt::hstring const& v)
 		{
-			m_source = v;
+			SetProperty(m_source, v, L"Source");
 		}
 
 		bool IsExpanded() const
@@ -148,7 +153,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void IsExpanded(bool value)
 		{
-			m_isExpanded = value;
+			SetProperty(m_isExpanded, value, L"IsExpanded");
 		}
 
 		bool IsGroup() const
@@ -157,7 +162,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void IsGroup(bool value)
 		{
-			m_isGroup = value;
+			SetProperty(m_isGroup, value, L"IsGroup");
 		}
 
 		winrt::Windows::Foundation::Collections::IObservableVector<
@@ -190,8 +195,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 	// ---------------------------------------------------------------
 	// TrackerDisplayItem
 	// ---------------------------------------------------------------
-	struct TrackerDisplayItem : TrackerDisplayItemT<TrackerDisplayItem>
+	struct TrackerDisplayItem : TrackerDisplayItemT<TrackerDisplayItem>,
+		::OpenNet::ViewModels::ObservableMixin<TrackerDisplayItem>
 	{
+		using ::OpenNet::ViewModels::ObservableMixin<TrackerDisplayItem>::SetProperty;
 		TrackerDisplayItem() = default;
 
 		winrt::hstring URL() const
@@ -200,7 +207,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void URL(winrt::hstring const& v)
 		{
-			m_url = v;
+			SetProperty(m_url, v, L"URL");
 		}
 
 		winrt::hstring Tier() const
@@ -209,7 +216,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Tier(winrt::hstring const& v)
 		{
-			m_tier = v;
+			SetProperty(m_tier, v, L"Tier");
 		}
 
 		winrt::hstring Peers() const
@@ -218,7 +225,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Peers(winrt::hstring const& v)
 		{
-			m_peers = v;
+			SetProperty(m_peers, v, L"Peers");
 		}
 
 		winrt::hstring Status() const
@@ -227,7 +234,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Status(winrt::hstring const& v)
 		{
-			m_status = v;
+			SetProperty(m_status, v, L"Status");
 		}
 
 		winrt::hstring Message() const
@@ -236,7 +243,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Message(winrt::hstring const& v)
 		{
-			m_message = v;
+			SetProperty(m_message, v, L"Message");
 		}
 
 	private:
@@ -250,8 +257,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 	// ---------------------------------------------------------------
 	// FileDisplayItem
 	// ---------------------------------------------------------------
-	struct FileDisplayItem : FileDisplayItemT<FileDisplayItem>
+	struct FileDisplayItem : FileDisplayItemT<FileDisplayItem>,
+		::OpenNet::ViewModels::ObservableMixin<FileDisplayItem>
 	{
+		using ::OpenNet::ViewModels::ObservableMixin<FileDisplayItem>::SetProperty;
 		FileDisplayItem() = default;
 
 		winrt::hstring Path() const
@@ -260,7 +269,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Path(winrt::hstring const& v)
 		{
-			m_path = v;
+			SetProperty(m_path, v, L"Path");
 		}
 
 		winrt::hstring Size() const
@@ -269,7 +278,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Size(winrt::hstring const& v)
 		{
-			m_size = v;
+			SetProperty(m_size, v, L"Size");
 		}
 
 		double ProgressValue() const
@@ -278,7 +287,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void ProgressValue(double v)
 		{
-			m_progressValue = v;
+			SetProperty(m_progressValue, v, L"ProgressValue");
 		}
 
 		winrt::hstring Done() const
@@ -287,7 +296,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void Done(winrt::hstring const& v)
 		{
-			m_done = v;
+			SetProperty(m_done, v, L"Done");
 		}
 
 		int32_t PriorityIndex() const
@@ -296,7 +305,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void PriorityIndex(int32_t v)
 		{
-			m_priorityIndex = v;
+			SetProperty(m_priorityIndex, v, L"PriorityIndex");
 		}
 
 		int32_t FileIndex() const
@@ -305,7 +314,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void FileIndex(int32_t v)
 		{
-			m_fileIndex = v;
+			SetProperty(m_fileIndex, v, L"FileIndex");
 		}
 
 	private:

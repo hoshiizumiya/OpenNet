@@ -43,8 +43,9 @@
         <NavigationView.MenuItems>
             <NavigationViewItem
                 x:Name="GeneralNavItem"
+                x:Uid="SettingsGeneralNavItem"
                 Content="General"
-                Icon="Setting"
+                Icon="{essential:FontIcon Glyph=&#xE713;}"
                 Tag="general">
                 <!--<NavigationViewItem.InfoBadge>
                     <InfoBadge />
@@ -55,6 +56,7 @@
 
             <NavigationViewItem
                 x:Name="BitTorrentNavItem"
+                x:Uid="SettingsBitTorrentNavItem"
                 Content="BitTorrent"
                 IsExpanded="True"
                 Tag="bittorrent">
@@ -64,23 +66,33 @@
                 <NavigationViewItem.MenuItems>
                     <NavigationViewItem
                         x:Name="NetworkNavItem"
+                        x:Uid="SettingsNetworkNavItem"
                         Content="Network"
                         Tag="network">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE968;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="Tracker" Tag="tracker">
+                    <NavigationViewItem
+                        x:Uid="SettingsTrackerNavItem"
+                        Content="Tracker"
+                        Tag="tracker">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE774;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="IP Filter" Tag="ipfilter">
+                    <NavigationViewItem
+                        x:Uid="SettingsIPFilterNavItem"
+                        Content="IP Filter"
+                        Tag="ipfilter">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE8D7;" />
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
-                    <NavigationViewItem Content="Client Filter" Tag="clientfilter">
+                    <NavigationViewItem
+                        x:Uid="ClientFilterNavItem"
+                        Content="Client Filter"
+                        Tag="clientfilter">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE71C;" />
                         </NavigationViewItem.Icon>
@@ -90,6 +102,7 @@
 
             <NavigationViewItem
                 x:Name="SerialPortNavItem"
+                x:Uid="SettingsSerialPortNavItem"
                 Content="Serial Port"
                 Tag="serialport">
                 <NavigationViewItem.Icon>
@@ -99,6 +112,7 @@
 
             <NavigationViewItem
                 x:Name="DownloadBehaviorNavItem"
+                x:Uid="SettingsDownloadNavItem"
                 Content="DownloadBehavior"
                 Tag="download">
                 <NavigationViewItem.Icon>
@@ -108,10 +122,21 @@
 
             <NavigationViewItem
                 x:Name="RSSNavItem"
+                x:Uid="SettingsRSSNavItem"
                 Content="RSS"
                 Tag="rss">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE71A;" />
+                </NavigationViewItem.Icon>
+            </NavigationViewItem>
+
+            <NavigationViewItem
+                x:Name="WebUINavItem"
+                x:Uid="SettingsWebUINavItem"
+                Content="Web UI"
+                Tag="webui">
+                <NavigationViewItem.Icon>
+                    <FontIcon Glyph="&#xE774;" />
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
@@ -127,6 +152,7 @@
 
             <NavigationViewItem
                 x:Name="AdvancedNavItem"
+                x:Uid="SettingsAdvancedNavItem"
                 Content="Advanced"
                 Tag="advanced">
                 <NavigationViewItem.Icon>
@@ -138,6 +164,7 @@
 
             <NavigationViewItem
                 x:Name="AboutNavItem"
+                x:Uid="SettingsAboutNavItem"
                 Content="About"
                 Tag="about">
                 <NavigationViewItem.Icon>

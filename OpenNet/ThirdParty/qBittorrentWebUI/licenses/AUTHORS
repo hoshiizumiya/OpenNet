@@ -1,0 +1,147 @@
+Current maintainer:
+* Sledgehammer999 <sledgehammer999@qbittorrent.org>
+
+Original author:
+* Christophe Dumez <chris@qbittorrent.org>
+
+Contributors:
+* Vladimir Golovnev <glassez@yandex.ru>
+* Stefanos Antaris <santaris@csd.auth.gr>
+* Mohammad Dib <mdib@qbittorrent.org>
+* Mirco Chinelli <infinity89@fastwebmail.it>
+* Ishan Arora <ishan@qbittorrent.org>
+* Arnaud Demaizière <arnaud@qbittorrent.org>
+* Grigis Gaëtan <cipher16@gmail.com>
+* Christian Kandeler <zambesi@users.sourceforge.net>
+* Silvan Scherrer <silvan.scherrer@aroa.ch>
+* Nick Tiskov <daymansmail@gmail.com>
+
+Code from other projects:
+* files src/app/qtlocalpeer/*
+  copyright: Nokia Corporation
+  license: mixed
+
+* files src/gui/lineedit.*
+  copyright: Trolltech ASA <info@trolltech.com>
+  license: custom
+
+* files src/search_engine/socks.py
+  copyright: Dan Haim <negativeiq@users.sourceforge.net>
+  license: BSD
+
+* files src/webui/www/private/css/lib/vanillaSelectBox.css src/webui/www/private/scripts/lib/vanillaSelectBox.js
+  copyright: Philippe Meyer <pmg.meyer@gmail.com>
+  license: MIT
+
+* files src/base/3rdparty/lua/*
+  copyright: Lua.org, PUC-Rio
+  license: MIT
+  url: https://www.lua.org
+
+* files src/base/3rdparty/luabridge/*
+  copyright: kunitoki <kunitoki@gmail.com> and other contributors
+  license: MIT
+  url: https://kunitoki.github.io/LuaBridge3
+
+Images Authors:
+* files: src/icons/qbittorrent-tray.svg
+  copyright: Provided by HVS <hvs linuxmail org> (raster first proposal) and Atif Afzal(@atfzl github) <atif5801@gmail.com> (vectorized and modified)
+  license: GPLv2+
+
+* files: src/qbittorrent_file.ico src/icons/fileicon.svg
+  copyright: 'unknown.svg' (LGPLv3+) from Oxygen Icon Theme was used as base which was slightly modified and 'qbittorrent-tray.svg' (GPLv2+) was overlaid above it.
+  license: GPLv3+
+
+* files: src/icons/flags/*.svg
+  copyright: lipis/flag-icons
+  license: MIT
+  url: https://github.com/lipis/flag-icons/
+
+* file: src/webui/www/private/images/tabs.gif
+  copyright: Greg Houston <gregory.houston@gmail.com>
+  license: MIT
+
+* file: src/icons/qbittorrent-tray-dark.svg src/icons/qbittorrent-tray-light.svg
+  copyright: Daniel Eguren <deguren@gmail.com>
+  modified by: now-im <now-im.d8gcu@simplelogin.com> (@now-im)
+  license: LGPL
+
+* folder: src/icons/
+  files: application-rss+xml.svg, application-x-mswinurl.svg, connected.svg, disconnected.svg, checked-completed.svg, configure.svg,
+         edit-copy.svg, edit-rename.svg, folder-documents.svg, folder-new.svg, folder-remote.svg, go-bottom.svg, go-down.svg, go-top.svg,
+         go-up.svg, hash.svg, inode-directory.svg, insert-link.svg, kt-magnet.svg, media-playback-pause.svg, media-playback-start.svg,
+         media-seek-forward.svg, network-connect.svg, object-locked.svg, queued.svg, ratio.svg, reannounce.svg, slow_off.svg, slow.svg,
+         speedometer.svg, system-log-out.svg, tags.svg, task-complete.svg, task-reject.svg, tracker-error.svg, tracker-warning.svg,
+         trackerless.svg, trackers.svg, view-categories.svg
+  copyright: now-im <now-im.d8gcu@simplelogin.com> (@now-im) modified from La-Capitaine icon theme (https://github.com/keeferrourke/la-capitaine-icon-theme)
+  license: GPLv3+
+
+* folder: src/icons/
+  files: application-exit.svg, collapse.svg, dialog-warning.svg, edit-find-user.svg, edit-find.svg, filter-all.svg, firewalled.svg,
+         help-about.svg, help-contents.svg, ip-blocked.svg, list-remove.svg, loading.svg, mail-folder-inbox.svg, name.svg, network-server.svg,
+         office-chart-line.svg, plugins.svg, preferences-desktop.svg, preferences-other.svg, preferences-system-network.svg, security-high.svg,
+         security-low.svg, set-location.svg, torrent-creator.svg, user-group-delete.svg, user-group-new.svg, view-preview.svg, view-refresh.svg,
+         view-statistics.svg, wallet-open.svg, webuiapplication-exit.svg, collapse.svg, dialog-warning.svg, edit-find-user.svg, edit-find.svg,
+         filter-all.svg, firewalled.svg, help-about.svg, help-contents.svg, ip-blocked.svg, list-remove.svg, loading.svg, mail-folder-inbox.svg,
+         name.svg, network-server.svg, office-chart-line.svg, plugins.svg, preferences-desktop.svg, preferences-other.svg,
+         preferences-system-network.svg, security-high.svg, security-low.svg, set-location.svg, torrent-creator.svg, user-group-delete.svg,
+         user-group-new.svg, view-preview.svg, view-refresh.svg, view-statistics.svg, wallet-open.svg, webui.svg
+  copyright: now-im <now-im.d8gcu@simplelogin.com> (@now-im) modified from Ionicons icon theme (https://github.com/ionic-team/ionicons)
+  license: MIT
+
+* folder: src/icons/
+  files: force-recheck.svg
+  copyright: now-im <now-im.d8gcu@simplelogin.com> (@now-im) modified from Font-Awesome icon theme (https://github.com/FortAwesome/Font-Awesome)
+  license: CC BY 4.0 License
+
+* folder: src/icons/
+  files: downloading.svg, edit-clear.svg, error.svg, filter-active.svg, filter-inactive.svg, filter-stalled.svg, kt-set-max-download-speed.svg,
+         kt-set-max-upload-speed.svg, list-add.svg, preferences-web-browser-cookies.svg, stalledDL.svg, stalledUP.svg
+  copyright: now-im <now-im.d8gcu@simplelogin.com> (@now-im)
+  license: BSD 2-Clause License
+
+Translations authors:
+* files: src/lang/*.ts
+* file: src/icons/qBittorrent.desktop
+  copyright:
+  - Arabic: SDERAWI (abz8868@msn.com), sn51234 (nesseyan@gmail.com) and Ibrahim Saed ibraheem_alex(Transifex)
+  - Armenian: Hrant Ohanyan (hrantohanyan@mail.am)
+  - Basque: Xabier Aramendi (azpidatziak@gmail.com)
+  - Belarusian: Mihas Varantsou (meequz@gmail.com)
+  - Bulgarian: Tsvetan & Boyko Bankoff (emerge_life@users.sourceforge.net)
+  - Catalan: Francisco Luque Contreras (frannoe@ya.com)
+  - Chinese (Simplified): Guo Yue (yue.guo0418@gmail.com)
+  - Chinese (Traditional): Yi-Shun Wang (dnextstep@gmail.com) and 冥王歐西里斯 s8321414(Transifex)
+  - Croatian: Oliver Mucafir (oliver.untwist@gmail.com)
+  - Czech: Jirka Vilim (web@tets.cz) and Petr Cernobila abr(Transifex)
+  - Danish: Mathias Nielsen (comoneo@gmail.com), scootergrisen, Nicolaj (fuskern@gmail.com) and Joe Hansen (joedalton2@yahoo.dk)
+  - Dutch: Pieter Heyvaert (pieter_heyvaert@hotmail.com)
+  - English(Australia): Robert Readman readmanr(Transifex)
+  - English(United Kingdom): Robert Readman readmanr(Transifex)
+  - English: Christophe Dumez (chris@qbittorrent.org)
+  - Finnish: Niklas Laxström (nikerabbit@users.sourceforge.net), Pekka Niemi (pekka.niemi@iki.fi) and Jiri Grönroos artnay(Transifex)
+  - French: Christophe Dumez (chris@qbittorrent.org)
+  - Galician: Marcos Lans (marcoslansgarza@gmail.com) and antiparvos(Transifex)
+  - Georgian: Beqa Arabuli (arabulibeqa@yahoo.com)
+  - German: Niels Hoffmann (zentralmaschine@users.sourceforge.net), schnurlos (schnurlos@gmail.com)
+  - Greek: Tsvetan Bankov (emerge_life@users.sourceforge.net), Stephanos Antaris (santaris@csd.auth.gr), sledgehammer999(hammered999@gmail.com), Γιάννης Ανθυμίδης Evropi(Transifex) and Panagiotis Tabakis(tabakisp@gmail.com)
+  - Hebrew: David Deutsch (d.deffo@gmail.com)
+  - Hungarian: Majoros Péter
+  - Italian: bovirus (bovirus@live.it) and Matteo Sechi (bu17714@gmail.com)
+  - Japanese: Masato Hashimoto (cabezon.hashimoto@gmail.com)
+  - Korean: Jin Woo Sin (jin828sin@users.sourceforge.net)
+  - Lithuanian: Naglis Jonaitis (njonaitis@gmail.com)
+  - Norwegian: Tomaso, Imre Kristoffer Eilertsen (imreeil42@gmail.com) and Kingu (Transifex)
+  - Polish: Mariusz Fik (fisiu@opensuse.org)
+  - Portuguese(Brazil): Nick Marinho (nickmarinho@gmail.com)
+  - Portuguese: Sérgio Marques smarquespt(Transifex), L.Sousa(Transifex), Hugo Carvalho (hugok Transifex)
+  - Romanian: Obada Denis (obadadenis@users.sourceforge.net), Adrian Gabor Adriannho(Transifex) and Mihai Coman z0id(Transifex)
+  - Russian: Nick Khazov (m2k3d0n at users.sourceforge.net), Alexey Morsov (samurai@ricom.ru), Nick Tiskov Dayman(daymansmail (at) gmail (dot) com), Dmitry DmitryKX(Transifex) and kraleksandr kraleksandr(Transifex)
+  - Serbian: Anaximandar Milet (anaximandar@operamail.com)
+  - Slovak: helix84
+  - Spanish: Francisco Luque Contreras (frannoe@ya.com), Alfredo Monclus alfrix(Transifex) and José Antonio Moray moray33(Transifex)
+  - Swedish: Daniel Nylander (po@danielnylander.se) and Emil Hammarberg Ooglogput(Transifex)
+  - Turkish: Hasan Yilmaz (iletisim@hedefturkce.com)
+  - Ukrainian: Oleh Prypin (blaxpirit@gmail.com) and zubr139(Transifex)
+  - Vietnamese: Anh Phan ppanhh(Transifex)
+  license: GPLv2

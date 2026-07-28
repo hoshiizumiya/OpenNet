@@ -74,7 +74,7 @@
                                 x:Name="SortTrackerUrlButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="URL">
                                 <TextBlock
                                     x:Uid="TrackerHeader_URL"
@@ -87,7 +87,7 @@
                                 x:Name="SortTrackerTierButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Tier">
                                 <TextBlock
                                     x:Uid="TrackerHeader_Tier"
@@ -100,7 +100,7 @@
                                 x:Name="SortTrackerPeersButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Peers">
                                 <TextBlock
                                     x:Uid="TrackerHeader_Peers"
@@ -113,7 +113,7 @@
                                 x:Name="SortTrackerStatusButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
                                 <TextBlock
                                     x:Uid="TrackerHeader_Status"
@@ -126,7 +126,7 @@
                                 x:Name="SortTrackerMessageButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Message">
                                 <TextBlock
                                     x:Uid="TrackerHeader_Message"
@@ -140,11 +140,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackerDisplayItem">
                     <labs:DataRow HorizontalAlignment="Left">
-                        <TextBlock Text="{x:Bind URL}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Tier}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Peers}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Status}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Message}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind URL, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Tier, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Peers, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Status, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Message, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                     </labs:DataRow>
                 </DataTemplate>
             </ListView.ItemTemplate>

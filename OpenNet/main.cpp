@@ -157,7 +157,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// 初始化 WinRT
 	winrt::init_apartment(winrt::apartment_type::single_threaded);
 
-	std::thread sentryInitThread([]()
+	std::jthread sentryInitThread([]()
 	{
 		sentry_options_t* options = sentry_options_new();
 		sentry_options_set_dsn(options, "https://8030af3a7ff2e854f827e44c62f50880@o4510805000454144.ingest.de.sentry.io/4510939441397840");
@@ -169,10 +169,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		sentry_init(options);
 	});
 
-	// 决定是否需要重定向
-	if (DecideRedirection())
+	// Decide redirection while Sentry initializes in parallel, then always join
+	// before leaving wWinMain. Destroying a joinable std::thread calls
+	// std::terminate(), which was the source of the ucrtbased.dll shutdown crash.
+	const bool shouldRedirect = DecideRedirection();
+	if (sentryInitThread.joinable())
+	{
+		sentryInitThread.join();
+	}
+
+	if (shouldRedirect)
 	{
 		// 需要重定向，退出当前实例
+		sentry_close();
 		return 0;
 	}
 

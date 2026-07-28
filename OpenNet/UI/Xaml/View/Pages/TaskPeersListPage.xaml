@@ -128,7 +128,7 @@
                                 x:Name="SortPeerIpButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="IP">
                                 <TextBlock
                                     x:Uid="PeerHeader_IP"
@@ -141,7 +141,7 @@
                                 x:Name="SortPeerLocationButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Location">
                                 <TextBlock
                                     x:Uid="PeerHeader_Location"
@@ -154,7 +154,7 @@
                                 x:Name="SortPeerProgressButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Progress">
                                 <TextBlock
                                     x:Uid="PeerHeader_Progress"
@@ -167,7 +167,7 @@
                                 x:Name="SortPeerDlSpeedButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="DLSpeed">
                                 <TextBlock
                                     x:Uid="PeerHeader_DLSpeed"
@@ -180,7 +180,7 @@
                                 x:Name="SortPeerUlSpeedButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="ULSpeed">
                                 <TextBlock
                                     x:Uid="PeerHeader_ULSpeed"
@@ -193,7 +193,7 @@
                                 x:Name="SortPeerDownloadedButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
                                 <TextBlock
                                     x:Uid="PeerHeader_Downloaded"
@@ -206,7 +206,7 @@
                                 x:Name="SortPeerClientButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Client">
                                 <TextBlock
                                     x:Uid="PeerHeader_Client"
@@ -219,7 +219,7 @@
                                 x:Name="SortPeerStatusButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
                                 <TextBlock
                                     x:Uid="PeerHeader_PeerStatus"
@@ -232,7 +232,7 @@
                                 x:Name="SortPeerProtocolButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Protocol">
                                 <TextBlock
                                     x:Uid="PeerHeader_Protocol"
@@ -245,7 +245,7 @@
                                 x:Name="SortPeerInitiatorButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Initiator">
                                 <TextBlock
                                     x:Uid="PeerHeader_Initiator"
@@ -258,7 +258,7 @@
                                 x:Name="SortPeerSourceButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Style="{StaticResource SubtleButtonStyle}"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Source">
                                 <TextBlock
                                     x:Uid="PeerHeader_Source"
@@ -277,7 +277,7 @@
                         IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
                         ItemsSource="{x:Bind Children}">
                         <labs:DataRow HorizontalAlignment="Left">
-                            <TextBlock Text="{x:Bind IP}" />
+                            <TextBlock Text="{x:Bind IP, Mode=OneWay}" />
                             <Grid ColumnSpacing="6">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="20" />
@@ -295,18 +295,18 @@
                                 <TextBlock
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
-                                    Text="{x:Bind Location}"
+                                    Text="{x:Bind Location, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis" />
                             </Grid>
-                            <TextBlock Text="{x:Bind Progress}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind DLSpeed}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind ULSpeed}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind Downloaded}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind Client}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind PeerStatus}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind Protocol}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind Initiator}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind Source}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Progress, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind DLSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind ULSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Client, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind PeerStatus, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Protocol, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Initiator, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Source, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         </labs:DataRow>
                     </muxc:TreeViewItem>
                 </DataTemplate>

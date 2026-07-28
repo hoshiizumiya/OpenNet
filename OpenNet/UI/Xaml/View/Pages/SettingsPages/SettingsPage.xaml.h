@@ -23,6 +23,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void SoftBackgroundCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void StartPageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void themeMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+		void GuiRefreshIntervalBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction SetDesktopBackground();
 
 		// void AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -43,13 +44,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		winrt::Windows::Foundation::IAsyncAction m_loadAction;
 		winrt::Windows::Foundation::IAsyncAction m_githubAction;
 		winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr }; // 在构造里捕获
-		winrt::Windows::Foundation::Uri m_githubReleaseLinkUri{ L"https://github.com/hoshiizumiya/OpenNet/releases"};
+		winrt::Windows::Foundation::Uri m_githubReleaseLinkUri{ L"https://github.com/hoshiizumiya/OpenNet/releases" };
 
 		// Track the language override at page load, and any pending selection
 		winrt::hstring m_initialLanguageOverride{};
 		winrt::hstring m_pendingLanguageOverride{};
 		bool m_hasPendingLangChange{ false };
 		bool m_isStartPageLoading{ false };
+		bool m_isRefreshIntervalLoading{ false };
 	};
 }
 

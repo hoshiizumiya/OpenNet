@@ -144,6 +144,7 @@
     <ClCompile Include="Extension\Predicates.ixx" />
     <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
     <ClCompile Include="Factory\Window\WindowFactory.ixx" />
+    <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
@@ -161,6 +162,10 @@
       <DependentUpon>UI\Xaml\View\Windows\NATDetectorWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\RuntimeStatusWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\RuntimeStatusWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="XamlApplicationLifetime.ixx" />
     <ClInclude Include="Controls\SpeedGraph\SpeedGraph.xaml.h">
       <DependentUpon>Controls\SpeedGraph\SpeedGraph.xaml</DependentUpon>
@@ -171,7 +176,10 @@
     <ClCompile Include="Core\AppSettingsDatabase.ixx" />
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.ixx" />
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.ixx" />
+    <ClInclude Include="Core\ClientFilter\ClientFilterManager.h" />
     <ClInclude Include="Core\IPFilter\IPFilterManager.h" />
+    <ClInclude Include="Core\WebUI\WebUIHost.h" />
+    <ClInclude Include="Core\WebUI\WebUIControl.h" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.ixx" />
     <ClInclude Include="Core\DataGraph\SpeedGraphDatabase.h" />
     <ClCompile Include="Core\IO\FileOperation.ixx" />
@@ -318,12 +326,20 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.h">
@@ -372,6 +388,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml.h">
       <DependentUpon>UI\Xaml\View\Windows\NATDetectorWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\RuntimeStatusWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\RuntimeStatusWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.h">
@@ -564,12 +584,15 @@
     <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\Control\Theme\Card_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\Color_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Card\HorizontalCard_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Card\TitleCard_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Effect\TextMorphEffect_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\FontStyle.xaml" />
     <Page Include="UI\Xaml\Control\Theme\TransitionCollection.xaml" />
     <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
@@ -595,10 +618,16 @@
     <Page Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml">
@@ -635,6 +664,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\RuntimeStatusWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
@@ -694,6 +726,7 @@
     <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp" />
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp" />
+    <ClCompile Include="Core\ClientFilter\ClientFilterManager.cpp" />
     <ClCompile Include="Core\IPFilter\IPFilterManager.cpp" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.cpp" />
     <ClCompile Include="Core\DataGraph\SpeedGraphDatabase.cpp" />
@@ -704,6 +737,7 @@
     <ClCompile Include="Core\RSS\RSSDatabase.cpp" />
     <ClCompile Include="Core\RSS\RSSParser.cpp" />
     <ClCompile Include="Core\Setting\LocalSetting.ixx" />
+    <ClCompile Include="Core\WebUI\WebUIHost.cpp" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
     <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
     <ClCompile Include="Core\Utils\Misc.cpp" />
@@ -820,12 +854,20 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.xaml.cpp">
@@ -1110,12 +1152,20 @@
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\ClientFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.idl">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\FontCustomizePage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\IPFilterSettingsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\SettingsPages\WebUISettingsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\DownloadSettingsPage.idl">
@@ -1164,6 +1214,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\NATDetectorWindow.idl">
       <DependentUpon>UI\Xaml\View\Windows\NATDetectorWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\RuntimeStatusWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\RuntimeStatusWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.idl">
@@ -1275,6 +1329,12 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*">
+      <DeploymentContent>true</DeploymentContent>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>WebUI\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      <Link>WebUI\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
     <Image Include="Assets\AppIcons\BadgeLogo.scale-100.png" />
     <Image Include="Assets\AppIcons\BadgeLogo.scale-125.png" />
     <Image Include="Assets\AppIcons\BadgeLogo.scale-150.png" />
@@ -1478,6 +1538,7 @@
     <PackageReference Include="XamlToolkit.WinUI.Converters.Native" />
     <PackageReference Include="XamlToolkit.WinUI.Helpers.Native" />
     <PackageReference Include="XamlToolkit.WinUI.Interactivity.Native" />
+    <PackageReference Include="XamlToolkit.WinUI.Media.Native" />
     <PackageReference Include="XamlToolkit.WinUI.Native" />
     <PackageReference Include="YexuanXiao.CppWinRTPlus.Ext" />
   </ItemGroup>

@@ -7,6 +7,7 @@
 #include "ViewModels/DisplayItems.h"
 
 import Core.Utils.Misc;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ColumnWidthHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -43,15 +44,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskFilesPage::TaskFilesPage()
 	{
-		InitializeComponent();
-		Loaded([this](auto, auto) {
+		m_fileItems = winrt::single_threaded_observable_vector<
+			winrt::Windows::Foundation::IInspectable>();
+	}
+
+	void TaskFilesPage::InitializeComponent()
+	{
+		TaskFilesPageT::InitializeComponent();
+		FilesListView().ItemsSource(m_fileItems);
+		Loaded([this](auto, auto)
+		{
 			using namespace ::OpenNet::Helpers;
 			RestoreColumn(ColFileSize(), "Files.Size");
 			RestoreColumn(ColFileProgress(), "Files.Progress");
 			RestoreColumn(ColFileDone(), "Files.Done");
 			RestoreColumn(ColFilePriority(), "Files.Priority");
 		});
-		Unloaded([this](auto, auto) {
+		Unloaded([this](auto, auto)
+		{
 			using namespace ::OpenNet::Helpers;
 			SaveColumnWidth("Files.Size", ColFileSize());
 			SaveColumnWidth("Files.Progress", ColFileProgress());
@@ -89,10 +99,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-			m_refreshTimer.Interval(std::chrono::seconds(5)); // Files change less often
 			m_timerTickToken = m_refreshTimer.Tick(
 				{ this, &TaskFilesPage::OnRefreshTimerTick });
 		}
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		m_refreshTimer.Interval(std::chrono::milliseconds(
+			std::clamp<std::int64_t>(
+				database.GetInt("ui", "refresh_interval_ms").value_or(1000),
+				100,
+				60000)));
 		m_refreshTimer.Start();
 
 		RefreshFileList();
@@ -284,7 +300,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
-			listView.ItemsSource(nullptr);
+			m_fileItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -294,7 +310,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
-			listView.ItemsSource(nullptr);
+			m_fileItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -302,7 +318,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto taskId = winrt::to_string(selectedTask.TaskId());
 		if (taskId.empty())
 		{
-			listView.ItemsSource(nullptr);
+			m_fileItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -310,7 +326,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
 		{
-			listView.ItemsSource(nullptr);
+			m_fileItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -319,7 +335,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (detail.files.empty())
 		{
-			listView.ItemsSource(nullptr);
+			m_fileItems.Clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
@@ -331,37 +347,56 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto const direction = m_sortDirection;
 			auto const column = m_sortColumn;
 			std::stable_sort(detail.files.begin(), detail.files.end(),
-				[direction, column](auto const& left, auto const& right)
+							 [direction, column](auto const& left, auto const& right)
+			{
+				bool less = false;
+				if (column == L"Path") less = left.path < right.path;
+				else if (column == L"Size") less = left.size < right.size;
+				else if (column == L"Progress")
 				{
-					bool less = false;
-					if (column == L"Path") less = left.path < right.path;
-					else if (column == L"Size") less = left.size < right.size;
-					else if (column == L"Progress")
-					{
-						auto const lp = left.size > 0
-							? static_cast<double>(left.bytesCompleted) / left.size : 0.0;
-						auto const rp = right.size > 0
-							? static_cast<double>(right.bytesCompleted) / right.size : 0.0;
-						less = lp < rp;
-					}
-					else if (column == L"Done") less = left.bytesCompleted < right.bytesCompleted;
-					else if (column == L"Priority") less = left.priority < right.priority;
-					return direction == 1 ? less :
-						(column == L"Path" ? right.path < left.path :
-						 column == L"Size" ? right.size < left.size :
-						 column == L"Progress"
-							? (right.size > 0 ? static_cast<double>(right.bytesCompleted) / right.size : 0.0) <
-							  (left.size > 0 ? static_cast<double>(left.bytesCompleted) / left.size : 0.0)
-							: column == L"Done" ? right.bytesCompleted < left.bytesCompleted
-							: right.priority < left.priority);
-				});
+					auto const lp = left.size > 0
+						? static_cast<double>(left.bytesCompleted) / left.size : 0.0;
+					auto const rp = right.size > 0
+						? static_cast<double>(right.bytesCompleted) / right.size : 0.0;
+					less = lp < rp;
+				}
+				else if (column == L"Done") less = left.bytesCompleted < right.bytesCompleted;
+				else if (column == L"Priority") less = left.priority < right.priority;
+				return direction == 1 ? less :
+					(column == L"Path" ? right.path < left.path :
+					 column == L"Size" ? right.size < left.size :
+					 column == L"Progress"
+					 ? (right.size > 0 ? static_cast<double>(right.bytesCompleted) / right.size : 0.0) <
+					 (left.size > 0 ? static_cast<double>(left.bytesCompleted) / left.size : 0.0)
+					 : column == L"Done" ? right.bytesCompleted < left.bytesCompleted
+					 : right.priority < left.priority);
+			});
 		}
 
-		auto items = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
-
-		for (auto const& file : detail.files)
+		for (std::uint32_t index = 0;
+			 index < static_cast<std::uint32_t>(detail.files.size());
+			 ++index)
 		{
-			auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
+			auto const& file = detail.files[index];
+			winrt::OpenNet::ViewModels::FileDisplayItem item{ nullptr };
+			if (index < m_fileItems.Size())
+			{
+				item = m_fileItems.GetAt(index)
+					.try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
+				if (item && item.FileIndex() != file.fileIndex)
+				{
+					item = nullptr;
+				}
+			}
+			if (!item)
+			{
+				item = winrt::make<
+					winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
+				if (index < m_fileItems.Size())
+					m_fileItems.SetAt(index, item);
+				else
+					m_fileItems.Append(item);
+			}
 			item.Path(winrt::to_hstring(file.path));
 			item.Size(::Core::Utils::Misc::friendlyUnit(file.size));
 
@@ -372,10 +407,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.Done(::Core::Utils::Misc::friendlyUnit(file.bytesCompleted));
 			item.PriorityIndex(PriorityToComboIndex(file.priority));
 			item.FileIndex(file.fileIndex);
-			items.Append(item);
 		}
+		while (m_fileItems.Size() > detail.files.size())
+			m_fileItems.RemoveAtEnd();
 
-		listView.ItemsSource(items);
 		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
 
 		m_isRefreshing = false;

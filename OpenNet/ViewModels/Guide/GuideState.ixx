@@ -30,6 +30,11 @@ export namespace OpenNet::ViewModels::Guide
 		DataFolder,
 
 		/// <summary>
+		/// 初始化 WebUI
+		/// </summary>
+		WebUI,
+
+		/// <summary>
 		/// 查看常用设置
 		/// </summary>
 		CommonSetting,

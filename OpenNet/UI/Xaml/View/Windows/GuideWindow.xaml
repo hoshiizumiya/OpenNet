@@ -11,5 +11,8 @@
     Title="GuideWindow"
     mc:Ignorable="d">
 
-    <ouxv:GuideView />
+    <ouxv:GuideView
+        x:Name="GuideContent"
+        x:Uid="GuideContent"
+        Completed="OnGuideCompleted" />
 </Window>

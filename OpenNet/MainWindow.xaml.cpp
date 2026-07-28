@@ -1,15 +1,22 @@
 ﻿#include <windows.h>
 #include <Shlwapi.h>
+#include <algorithm>
+#include <sstream>
+#include <string>
+#include <vector>
 #include <wil/resource.h>
 #include <resource.h>
 
 #include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
+#include "UI/Xaml/View/Pages/MainView.xaml.h"
+#include "UI/Xaml/View/Pages/TasksPage.xaml.h"
 #if __has_include("MainWindow.g.cpp")
 #include "MainWindow.g.cpp"
 #endif
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.DownloadManager;
 import OpenNet.Helpers.WindowHelper;
 import winrtplus.Microsoft.UI.Interop;
 import winrt.Microsoft.UI.Windowing;
@@ -89,6 +96,99 @@ namespace winrt::OpenNet::implementation
 	void MainWindow::Navigate(hstring const& tag)
 	{
 		MainContentView().Navigate(tag);
+	}
+
+	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(
+		hstring const& kind)
+	{
+		auto strong = get_strong();
+		Navigate(L"tasks");
+
+		auto mainViewImpl = winrt::get_self<
+			winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(
+				MainContentView());
+		auto tasksPage = mainViewImpl->CurrentTasksPage();
+		if (!tasksPage)
+		{
+			co_return;
+		}
+
+		auto tasksPageImpl = winrt::get_self<
+			winrt::OpenNet::UI::Xaml::View::Pages::implementation::TasksPage>(
+				tasksPage);
+		RoutedEventArgs args;
+
+		if (kind == L"file")
+		{
+			co_await tasksPageImpl->MenuItemAddFromFile_ClickAsync(tasksPage, args);
+		}
+		else if (kind == L"url")
+		{
+			co_await tasksPageImpl->MenuItemAddFromLink_ClickAsync(tasksPage, args);
+		}
+		else if (kind == L"http")
+		{
+			co_await tasksPageImpl->MenuItemAddFromHttp_ClickAsync(tasksPage, args);
+		}
+		else if (kind == L"http-batch")
+		{
+			TextBox urls;
+			urls.AcceptsReturn(true);
+			urls.TextWrapping(TextWrapping::Wrap);
+			urls.MinWidth(420);
+			urls.MinHeight(180);
+			urls.PlaceholderText(
+				L"Enter one HTTP, HTTPS, or FTP URL per line");
+
+			ContentDialog dialog;
+			dialog.XamlRoot(tasksPage.XamlRoot());
+			dialog.Title(box_value(L"HTTP/FTP Batch Download"));
+			dialog.Content(urls);
+			dialog.PrimaryButtonText(L"Add");
+			dialog.CloseButtonText(L"Cancel");
+			dialog.DefaultButton(ContentDialogButton::Primary);
+
+			if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
+			{
+				co_return;
+			}
+
+			std::vector<std::string> parsedUrls;
+			std::wistringstream lines{ std::wstring(urls.Text()) };
+			for (std::wstring line; std::getline(lines, line);)
+			{
+				const auto first = line.find_first_not_of(L" \t\r");
+				if (first == std::wstring::npos)
+				{
+					continue;
+				}
+				const auto last = line.find_last_not_of(L" \t\r");
+				line = line.substr(first, last - first + 1);
+
+				std::wstring lower = line;
+				std::transform(
+					lower.begin(), lower.end(), lower.begin(), ::towlower);
+				if (lower.starts_with(L"http://")
+					|| lower.starts_with(L"https://")
+					|| lower.starts_with(L"ftp://"))
+				{
+					parsedUrls.push_back(winrt::to_string(line));
+				}
+			}
+
+			if (parsedUrls.empty())
+			{
+				co_return;
+			}
+
+			co_await ::OpenNet::Core::DownloadManager::Instance().InitializeAsync();
+			co_await winrt::resume_background();
+			auto& downloadManager = ::OpenNet::Core::DownloadManager::Instance();
+			for (auto const& url : parsedUrls)
+			{
+				downloadManager.AddHttpDownload(url);
+			}
+		}
 	}
 
 	void MainWindow::InitWindowStyle(Window const& window)

@@ -85,8 +85,93 @@
                     <Button x:Uid="IPF_ImportBtn" Click="OnImportClick" />
                 </essential:SettingsCard>
 
+                <essential:SettingsCard x:Uid="IPF_RuleFiles">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE8B7;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <StackPanel MinWidth="420" Spacing="8">
+                        <TextBlock
+                            x:Name="RulesFolderPathText"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            IsTextSelectionEnabled="True"
+                            TextTrimming="CharacterEllipsis" />
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <Button x:Uid="IPF_OpenFolderBtn" Click="OnOpenRulesFolderClick" />
+                            <Button
+                                x:Uid="IPF_OpenPrimaryFileBtn"
+                                Click="OnOpenRuleFileClick"
+                                Tag="ipfilter.txt" />
+                            <Button
+                                x:Uid="IPF_OpenSecondaryFileBtn"
+                                Click="OnOpenRuleFileClick"
+                                Tag="ipfilter2.txt" />
+                        </StackPanel>
+                    </StackPanel>
+                </essential:SettingsCard>
+
                 <!--  Manage Rules  -->
                 <TextBlock x:Uid="IPF_Section_Manage" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsExpander x:Uid="IPF_RuleEditor">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE70F;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <Button x:Uid="IPF_RefreshRulesBtn" Click="OnRefreshRulesClick" />
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard>
+                            <Grid RowSpacing="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="360" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBox
+                                    x:Name="RuleSearchTextBox"
+                                    x:Uid="IPF_RuleSearch"
+                                    TextChanged="OnRuleSearchTextChanged" />
+                                <TextBlock
+                                    x:Name="RulesShownText"
+                                    Grid.Row="1"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}" />
+                                <ListView
+                                    x:Name="RulesList"
+                                    Grid.Row="2"
+                                    IsItemClickEnabled="False"
+                                    SelectionChanged="OnRuleSelectionChanged"
+                                    SelectionMode="Single">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                FontFamily="Consolas"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{Binding}"
+                                                TextTrimming="CharacterEllipsis"
+                                                ToolTipService.ToolTip="{Binding}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <StackPanel
+                                    Grid.Row="3"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <Button
+                                        x:Name="EditSelectedRuleButton"
+                                        x:Uid="IPF_EditRuleBtn"
+                                        Click="OnEditRuleClick"
+                                        IsEnabled="False" />
+                                    <Button
+                                        x:Name="DeleteSelectedRuleButton"
+                                        x:Uid="IPF_DeleteRuleBtn"
+                                        Click="OnDeleteRuleClick"
+                                        IsEnabled="False" />
+                                </StackPanel>
+                            </Grid>
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
 
                 <essential:SettingsCard x:Uid="IPF_ClearAll">
                     <essential:SettingsCard.HeaderIcon>
