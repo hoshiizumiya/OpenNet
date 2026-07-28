@@ -26,40 +26,113 @@
                 <Border
                     Padding="8,4,0,4"
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-                    CornerRadius="4">
+                    CornerRadius="4"
+                    RightTapped="ColumnHeader_RightTapped">
+                    <Border.ContextFlyout>
+                        <MenuFlyout Opening="ColumnMenu_Opening">
+                            <MenuFlyoutItem
+                                x:Name="AutoSizeSelectedColumnItem"
+                                Click="AutoSizeSelectedColumn_Click"
+                                Text="Auto Size Selected Column's Width to Fit" />
+                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
+                            <MenuFlyoutSeparator />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Path"
+                                Text="File" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Size"
+                                Text="Size" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Progress"
+                                Text="Progress" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Done"
+                                Text="Done" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Priority"
+                                Text="Priority" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Click="ResetColumns_Click" Text="Reset Columns and Sorting" />
+                        </MenuFlyout>
+                    </Border.ContextFlyout>
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StickyHeaderBehavior />
                     </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16">
                         <labs:DataColumn x:Name="ColFileName" CanResize="True">
-                            <TextBlock
-                                x:Uid="FileHeader_Path"
+                            <Button
+                                x:Name="SortFileNameButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="File" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Path">
+                                <TextBlock
+                                    x:Uid="FileHeader_Path"
+                                    Text="File"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFileSize" CanResize="True">
-                            <TextBlock
-                                x:Uid="FileHeader_Size"
+                            <Button
+                                x:Name="SortFileSizeButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Size" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Size">
+                                <TextBlock
+                                    x:Uid="FileHeader_Size"
+                                    Text="Size"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFileProgress" CanResize="True">
-                            <TextBlock
-                                x:Uid="FileHeader_Progress"
+                            <Button
+                                x:Name="SortFileProgressButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Progress" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Progress">
+                                <TextBlock
+                                    x:Uid="FileHeader_Progress"
+                                    Text="Progress"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFileDone" CanResize="True">
-                            <TextBlock
-                                x:Uid="FileHeader_Done"
+                            <Button
+                                x:Name="SortFileDoneButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Done" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Done">
+                                <TextBlock
+                                    x:Uid="FileHeader_Done"
+                                    Text="Done"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFilePriority" CanResize="True">
-                            <TextBlock
-                                x:Uid="FileHeader_Priority"
+                            <Button
+                                x:Name="SortFilePriorityButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Priority" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Priority">
+                                <TextBlock
+                                    x:Uid="FileHeader_Priority"
+                                    Text="Priority"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                     </labs:DataTable>
                 </Border>
@@ -71,13 +144,13 @@
                             Text="{x:Bind Path}"
                             TextTrimming="CharacterEllipsis"
                             ToolTipService.ToolTip="{x:Bind Path}" />
-                        <TextBlock Text="{x:Bind Size}" />
+                        <TextBlock Text="{x:Bind Size}" TextTrimming="CharacterEllipsis" />
                         <ProgressBar
                             Margin="4,0"
                             VerticalAlignment="Center"
                             Maximum="100"
                             Value="{x:Bind ProgressValue}" />
-                        <TextBlock Text="{x:Bind Done}" />
+                        <TextBlock Text="{x:Bind Done}" TextTrimming="CharacterEllipsis" />
                         <ComboBox
                             MinWidth="80"
                             HorizontalAlignment="Stretch"

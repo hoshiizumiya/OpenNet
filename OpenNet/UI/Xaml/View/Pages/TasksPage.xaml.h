@@ -77,6 +77,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Context menu item handlers
 		void TasksColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
+		void TasksColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OnSortTaskNameButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OnSortTaskNameButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OnSortTaskSizeButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OnSortTaskSizeButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void TasksColumnMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksColumnMenuFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksContextMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -151,7 +156,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool m_isRestoringScrollPosition{ false };
 
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
+		winrt::hstring m_sortColumn;
+		int m_sortDirection{};
+		bool m_isApplyingSort{};
+		bool m_sortPending{};
+		winrt::event_token m_filteredTasksChangedToken{};
 
+		void UpdateTaskSortHeaders();
+		void SortFilteredTasks();
 		PersistedScrollState& ScrollStateFor(winrt::hstring const& filterKey);
 		void SaveScrollPosition(winrt::hstring const& filterKey);
 		winrt::fire_and_forget RestoreScrollPositionAsync(winrt::hstring filterKey);

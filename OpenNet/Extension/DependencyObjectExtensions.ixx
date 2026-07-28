@@ -275,8 +275,6 @@ export namespace OpenNet::Extension
 
 		static std::generator<winrt::DependencyObject> FindAscendants(winrt::DependencyObject element)
 		{
-			std::vector<winrt::DependencyObject> result;
-
 			while (true)
 			{
 				winrt::DependencyObject parent = winrt::VisualTreeHelper::GetParent(element);

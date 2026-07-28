@@ -114,7 +114,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
-      <PreprocessorDefinitions>TORRENT_NO_DEPRECATE;TORRENT_LINKING_SHARED;NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TORRENT_NO_DEPRECATE;TORRENT_LINKING_SHARED;NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp23</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc11</LanguageStandard_C>
@@ -145,6 +145,8 @@
     <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
     <ClCompile Include="Factory\Window\WindowFactory.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
+    <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
+    <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
     <ClCompile Include="Web\ServerDomain.ixx" />
     <ClCompile Include="Web\ServerDomainMode.ixx" />
     <ClCompile Include="UI\Xaml\View\ItemsCardPopupView.xaml.cpp">
@@ -1366,6 +1368,12 @@
     <None Include="Assets\Rules\dhtnodes6.dat">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="Assets\Rules\ipfilter.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Rules\ipfilter2.txt">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
     <None Include="Directory.Build.props" />
     <None Include="HybridCRT.props" />
     <None Include="mvvm_framework\README.md" />
@@ -1401,8 +1409,6 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
-    <Text Include="Assets\Rules\ipfilter.txt" />
-    <Text Include="Assets\Rules\ipfilter2.txt" />
   </ItemGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
@@ -1464,6 +1470,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
     <PackageReference Include="Mile.Aria2" />
     <PackageReference Include="WinUIEssential.WinUI3" />
+    <PackageReference Include="WinUIEssential.WinUI3.Svg" />
     <PackageReference Include="XamlToolkit.Labs.WinUI.Native" />
     <PackageReference Include="XamlToolkit.WinUI.Animations.Native" />
     <PackageReference Include="XamlToolkit.WinUI.Behaviors.Native" />

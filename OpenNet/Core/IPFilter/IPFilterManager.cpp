@@ -8,6 +8,7 @@
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/address.hpp>
 #include <sqlite3.h>
+#include <Windows.h>
 #include "Core/IPFilter/IPFilterManager.h"
 
 import OpenNet.Core.AppSettingsDatabase;
@@ -39,33 +40,43 @@ namespace OpenNet::Core
 
 	bool IPFilterManager::Initialize()
 	{
-		std::lock_guard lk(m_mutex);
-		if (m_initialized) return true;
-
-		try
 		{
-			auto dbPath = std::wstring(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) + L"\\ipfilter.db";
-			int rc = sqlite3_open16(dbPath.c_str(), &m_db);
-			if (rc != SQLITE_OK)
+			std::lock_guard lk(m_mutex);
+			if (!m_initialized)
 			{
-				OutputDebugStringA(("IPFilterManager: Failed to open database: " +
-									std::string(sqlite3_errmsg(m_db)) + "\n").c_str());
-				return false;
+				try
+				{
+					auto dbPath = std::wstring(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) + L"\\ipfilter.db";
+					int rc = sqlite3_open16(dbPath.c_str(), &m_db);
+					if (rc != SQLITE_OK)
+					{
+						OutputDebugStringA(("IPFilterManager: Failed to open database: " +
+											std::string(sqlite3_errmsg(m_db)) + "\n").c_str());
+						return false;
+					}
+
+					sqlite3_exec(m_db, "PRAGMA journal_mode=WAL;", nullptr, nullptr, nullptr);
+					sqlite3_exec(m_db, "PRAGMA synchronous=NORMAL;", nullptr, nullptr, nullptr);
+
+					CreateTables();
+					m_initialized = true;
+				}
+				catch (std::exception const& ex)
+				{
+					OutputDebugStringA(("IPFilterManager::Initialize error: " +
+										std::string(ex.what()) + "\n").c_str());
+					return false;
+				}
 			}
-
-			sqlite3_exec(m_db, "PRAGMA journal_mode=WAL;", nullptr, nullptr, nullptr);
-			sqlite3_exec(m_db, "PRAGMA synchronous=NORMAL;", nullptr, nullptr, nullptr);
-
-			CreateTables();
-			m_initialized = true;
-			return true;
 		}
-		catch (std::exception const& ex)
+
+		// File I/O and bulk imports must run outside m_mutex because
+		// ImportFromText acquires the same mutex.
+		std::call_once(m_seedOnce, [this]()
 		{
-			OutputDebugStringA(("IPFilterManager::Initialize error: " +
-								std::string(ex.what()) + "\n").c_str());
-			return false;
-		}
+			SeedBundledRules();
+		});
+		return true;
 	}
 
 	void IPFilterManager::Close()
@@ -90,6 +101,12 @@ namespace OpenNet::Core
 				description TEXT DEFAULT ''
 			);
 			CREATE INDEX IF NOT EXISTS idx_ip_rules_first ON ip_rules(first_ip);
+			DELETE FROM ip_rules
+			WHERE id NOT IN (
+				SELECT MIN(id) FROM ip_rules GROUP BY first_ip, last_ip, flags
+			);
+			CREATE UNIQUE INDEX IF NOT EXISTS idx_ip_rules_unique
+				ON ip_rules(first_ip, last_ip, flags);
 		)";
 
 		char* errMsg = nullptr;
@@ -99,6 +116,90 @@ namespace OpenNet::Core
 			OutputDebugStringA(("IPFilterManager: CreateTables error: " +
 								std::string(errMsg ? errMsg : "unknown") + "\n").c_str());
 			sqlite3_free(errMsg);
+		}
+	}
+
+	void IPFilterManager::SeedBundledRules()
+	{
+		try
+		{
+			auto const appData = std::filesystem::path(
+				winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW());
+			if (appData.empty())
+				return;
+
+			wchar_t executablePath[MAX_PATH]{};
+			auto const length = GetModuleFileNameW(nullptr, executablePath, MAX_PATH);
+			if (length == 0 || length == MAX_PATH)
+				return;
+
+			auto const sourceFolder =
+				std::filesystem::path(executablePath).parent_path() / L"Assets" / L"Rules";
+			auto const destinationFolder = appData / L"Rules";
+			std::filesystem::create_directories(destinationFolder);
+
+			std::array<std::wstring_view, 2> const ruleFiles
+			{
+				L"ipfilter.txt",
+				L"ipfilter2.txt",
+			};
+
+			bool copiedAny = false;
+			for (auto const fileName : ruleFiles)
+			{
+				auto const source = sourceFolder / fileName;
+				auto const destination = destinationFolder / fileName;
+				if (!std::filesystem::exists(source))
+					continue;
+
+				std::filesystem::copy_file(
+					source,
+					destination,
+					std::filesystem::copy_options::overwrite_existing);
+				copiedAny = true;
+			}
+
+			if (!copiedAny)
+			{
+				OutputDebugStringA("IPFilterManager: Bundled rule files were not found\n");
+				return;
+			}
+
+			auto& settings = AppSettingsDatabase::Instance();
+			if (settings.GetBool(
+				AppSettingsDatabase::CAT_APP,
+				"ipfilter_bundled_rules_imported").value_or(false))
+			{
+				return;
+			}
+
+			int imported = 0;
+			for (auto const fileName : ruleFiles)
+			{
+				auto const path = destinationFolder / fileName;
+				std::ifstream stream(path, std::ios::binary);
+				if (!stream)
+					continue;
+
+				std::string const text{
+					std::istreambuf_iterator<char>{ stream },
+					std::istreambuf_iterator<char>{} };
+				imported += ImportFromText(text);
+			}
+
+			settings.SetBool(
+				AppSettingsDatabase::CAT_APP,
+				"ipfilter_bundled_rules_imported",
+				true);
+			OutputDebugStringA((
+				"IPFilterManager: Seeded " + std::to_string(imported) +
+				" bundled IP filter rules\n").c_str());
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA((
+				"IPFilterManager::SeedBundledRules error: " +
+				std::string(ex.what()) + "\n").c_str());
 		}
 	}
 
@@ -112,7 +213,7 @@ namespace OpenNet::Core
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 
-		const char* sql = "INSERT INTO ip_rules(first_ip, last_ip, flags, description) VALUES(?, ?, ?, ?);";
+		const char* sql = "INSERT OR IGNORE INTO ip_rules(first_ip, last_ip, flags, description) VALUES(?, ?, ?, ?);";
 		sqlite3_stmt* stmt = nullptr;
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) == SQLITE_OK)
 		{
@@ -329,7 +430,7 @@ namespace OpenNet::Core
 
 		sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
 
-		const char* sql = "INSERT INTO ip_rules(first_ip, last_ip, flags, description) VALUES(?, ?, ?, ?);";
+		const char* sql = "INSERT OR IGNORE INTO ip_rules(first_ip, last_ip, flags, description) VALUES(?, ?, ?, ?);";
 		sqlite3_stmt* stmt = nullptr;
 		int count = 0;
 

@@ -49,6 +49,13 @@ namespace OpenNet::Core::Torrent
             if (m_stateManager)
             {
                 m_stateManager->LoadSessionState(*m_session);
+
+                // Session-state blobs from older launches may contain stale
+                // listen/DHT settings. The dedicated TorrentSettings store is
+                // authoritative, so reapply it after restoring session state.
+                lt::settings_pack currentSettings;
+                ConfigureDefaultSettings(currentSettings);
+                m_session->apply_settings(currentSettings);
             }
         }
         catch (std::exception const &ex)
@@ -230,22 +237,10 @@ namespace OpenNet::Core::Torrent
                 }
             }
 
-            // Generate task ID and save metadata
+            // Generate the stable application task ID. Persist only after
+            // libtorrent accepted the torrent, otherwise a failed/duplicate
+            // add would leave a blank ghost task in the database.
             std::string taskId = TorrentStateManager::GenerateTaskId();
-
-            if (m_stateManager)
-            {
-                TaskMetadata metadata;
-                metadata.taskId = taskId;
-                metadata.magnetUri = magnetUri;
-                metadata.savePath = savePath;
-                metadata.name = ""; // Will be updated when metadata is received
-                metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
-                                              std::chrono::system_clock::now().time_since_epoch())
-                                              .count();
-                metadata.status = 1; // Downloading
-                m_stateManager->SaveTaskMetadata(metadata);
-            }
 
             lt::torrent_handle handle = m_session->add_torrent(atp);
 
@@ -254,6 +249,20 @@ namespace OpenNet::Core::Torrent
                 std::lock_guard lk(m_torrentMapMutex);
                 m_taskIdToHandle[taskId] = handle;
                 m_handleToTaskId[handle] = taskId;
+            }
+
+            if (m_stateManager)
+            {
+                TaskMetadata metadata;
+                metadata.taskId = taskId;
+                metadata.magnetUri = magnetUri;
+                metadata.savePath = savePath;
+                metadata.name = ""; // Updated when metadata is received
+                metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
+                                              std::chrono::system_clock::now().time_since_epoch())
+                                              .count();
+                metadata.status = 1; // Downloading
+                m_stateManager->SaveTaskMetadata(metadata);
             }
 
             return true;
@@ -299,23 +308,9 @@ namespace OpenNet::Core::Torrent
                 }
             }
 
-            // Generate task ID and save metadata
+            // Generate the stable application task ID. Persist only after
+            // libtorrent accepted the torrent.
             std::string taskId = TorrentStateManager::GenerateTaskId();
-
-            if (m_stateManager)
-            {
-                TaskMetadata metadata;
-                metadata.taskId = taskId;
-                metadata.magnetUri = ""; // Not a magnet, store file path reference if needed
-                metadata.savePath = savePath;
-                metadata.name = ti.name();
-                metadata.totalSize = ti.total_size();
-                metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
-                                              std::chrono::system_clock::now().time_since_epoch())
-                                              .count();
-                metadata.status = 1; // Downloading
-                m_stateManager->SaveTaskMetadata(metadata);
-            }
 
             lt::torrent_handle handle = m_session->add_torrent(atp);
 
@@ -324,6 +319,21 @@ namespace OpenNet::Core::Torrent
                 std::lock_guard lk(m_torrentMapMutex);
                 m_taskIdToHandle[taskId] = handle;
                 m_handleToTaskId[handle] = taskId;
+            }
+
+            if (m_stateManager)
+            {
+                TaskMetadata metadata;
+                metadata.taskId = taskId;
+                metadata.magnetUri = ""; // Not a magnet; resume data carries torrent metadata
+                metadata.savePath = savePath;
+                metadata.name = ti.name();
+                metadata.totalSize = ti.total_size();
+                metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
+                                              std::chrono::system_clock::now().time_since_epoch())
+                                              .count();
+                metadata.status = 1; // Downloading
+                m_stateManager->SaveTaskMetadata(metadata);
             }
 
             return true;
@@ -394,30 +404,45 @@ namespace OpenNet::Core::Torrent
 
     void LibtorrentHandle::PauseTorrent(std::string const &taskId)
     {
-        std::lock_guard lk(m_torrentMapMutex);
-        auto it = m_taskIdToHandle.find(taskId);
-        if (it != m_taskIdToHandle.end() && it->second.is_valid())
+        lt::torrent_handle handle;
         {
-            it->second.pause();
-            if (m_stateManager)
-            {
-                m_stateManager->UpdateTaskStatus(taskId, 2); // Paused
-            }
+            std::lock_guard lk(m_torrentMapMutex);
+            auto it = m_taskIdToHandle.find(taskId);
+            if (it == m_taskIdToHandle.end() || !it->second.is_valid())
+                return;
+            handle = it->second;
         }
+
+        // libtorrent auto-manages torrents by default and may resume an
+        // auto-managed torrent after pause(). Make this an explicit user-
+        // managed pause and persist the state immediately.
+        handle.unset_flags(lt::torrent_flags::auto_managed);
+        handle.pause();
+        if (m_stateManager)
+        {
+            m_stateManager->UpdateTaskStatus(taskId, 2); // Paused
+        }
+        RequestResumeDataForTorrent(handle);
     }
 
     void LibtorrentHandle::ResumeTorrent(std::string const &taskId)
     {
-        std::lock_guard lk(m_torrentMapMutex);
-        auto it = m_taskIdToHandle.find(taskId);
-        if (it != m_taskIdToHandle.end() && it->second.is_valid())
+        lt::torrent_handle handle;
         {
-            it->second.resume();
-            if (m_stateManager)
-            {
-                m_stateManager->UpdateTaskStatus(taskId, 1); // Downloading
-            }
+            std::lock_guard lk(m_torrentMapMutex);
+            auto it = m_taskIdToHandle.find(taskId);
+            if (it == m_taskIdToHandle.end() || !it->second.is_valid())
+                return;
+            handle = it->second;
         }
+
+        handle.set_flags(lt::torrent_flags::auto_managed);
+        handle.resume();
+        if (m_stateManager)
+        {
+            m_stateManager->UpdateTaskStatus(taskId, 1); // Downloading
+        }
+        RequestResumeDataForTorrent(handle);
     }
 
     void LibtorrentHandle::RemoveTorrent(std::string const &taskId, bool deleteFiles)
@@ -598,7 +623,22 @@ namespace OpenNet::Core::Torrent
                 {
                     for (auto const &s : st->status)
                     {
+                        std::string taskId;
+                        {
+                            std::lock_guard mapLk(m_torrentMapMutex);
+                            auto const it = m_handleToTaskId.find(s.handle);
+                            if (it != m_handleToTaskId.end())
+                                taskId = it->second;
+                        }
+
+                        // Ignore handles that do not belong to an OpenNet task.
+                        // This prevents anonymous session activity from creating
+                        // UI rows that cannot be controlled or persisted.
+                        if (taskId.empty())
+                            continue;
+
                         ProgressEvent evt;
+                        evt.taskId = taskId;
                         evt.progressPercent = static_cast<int>(s.progress_ppm / 10000); // 1e6 -> %
                         evt.downloadRateKB = static_cast<int>(s.download_rate / 1000);
                         evt.uploadRateKB = static_cast<int>(s.upload_rate / 1000);
@@ -608,19 +648,34 @@ namespace OpenNet::Core::Torrent
                         // Update progress in database
                         if (m_stateManager)
                         {
-                            std::lock_guard mapLk(m_torrentMapMutex);
-                            auto it = m_handleToTaskId.find(s.handle);
-                            if (it != m_handleToTaskId.end())
-                            {
-                                m_stateManager->UpdateTaskProgress(it->second, s.total_done);
-                            }
+                            m_stateManager->UpdateTaskProgress(taskId, s.total_done);
                         }
                     }
                 }
             }
             else if (auto tf = lt::alert_cast<lt::torrent_finished_alert>(a))
             {
-                // Request resume data when torrent finishes
+                // Completed downloads should remain stopped. In particular,
+                // clear auto_managed before pausing or libtorrent may resume
+                // the torrent automatically for seeding.
+                tf->handle.unset_flags(lt::torrent_flags::auto_managed);
+                tf->handle.pause();
+
+                std::string taskId;
+                {
+                    std::lock_guard mapLk(m_torrentMapMutex);
+                    auto const it = m_handleToTaskId.find(tf->handle);
+                    if (it != m_handleToTaskId.end())
+                        taskId = it->second;
+                }
+
+                if (m_stateManager && !taskId.empty())
+                {
+                    m_stateManager->UpdateTaskStatus(taskId, 3); // Completed
+                }
+
+                // Save after changing flags so the completed/paused state is
+                // what is restored on the next launch.
                 RequestResumeDataForTorrent(tf->handle);
 
                 FinishedCallback finishedCbCopy;
@@ -634,18 +689,7 @@ namespace OpenNet::Core::Torrent
                     try
                     {
                         auto status = tf->handle.status();
-                        finishedCbCopy(status.name);
-
-                        // Update status in database
-                        if (m_stateManager)
-                        {
-                            std::lock_guard mapLk(m_torrentMapMutex);
-                            auto it = m_handleToTaskId.find(tf->handle);
-                            if (it != m_handleToTaskId.end())
-                            {
-                                m_stateManager->UpdateTaskStatus(it->second, 3); // Completed
-                            }
-                        }
+                        finishedCbCopy(taskId, status.name);
                     }
                     catch (...)
                     {
@@ -1061,6 +1105,9 @@ namespace OpenNet::Core::Torrent
                 pi.connectionType = static_cast<int>(static_cast<std::uint8_t>(p.connection_type));
                 pi.source = static_cast<int>(static_cast<std::uint8_t>(p.source));
                 pi.isIncoming = (p.source & lt::peer_info::incoming) != lt::peer_source_flags_t{};
+                pi.isConnecting =
+                    (p.flags & (lt::peer_info::connecting | lt::peer_info::handshake)) !=
+                    lt::peer_flags_t{};
                 info.peers.push_back(std::move(pi));
             }
 

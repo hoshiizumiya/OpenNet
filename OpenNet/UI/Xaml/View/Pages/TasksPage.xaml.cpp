@@ -83,6 +83,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Create and attach the view-model
 		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
+		m_filteredTasksChangedToken = m_viewModel.FilteredTasks().VectorChanged(
+			[this](auto const&, auto const&)
+		{
+			if (m_isApplyingSort || m_sortDirection == 0 || m_sortPending)
+				return;
+			m_sortPending = true;
+			DispatcherQueue().TryEnqueue([weak = get_weak()]()
+			{
+				if (auto self = weak.get())
+				{
+					self->m_sortPending = false;
+					self->SortFilteredTasks();
+				}
+			});
+		});
 
 		// Subscribe to AddTaskRequested event (currently not used, but kept for compatibility)
 		m_addTaskToken = m_viewModel.AddTaskRequested({ this, &TasksPage::OnAddTaskRequested });
@@ -98,6 +113,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (m_viewModel && m_addTaskToken.value)
 		{
 			m_viewModel.AddTaskRequested(m_addTaskToken);
+		}
+		if (m_viewModel && m_filteredTasksChangedToken.value)
+		{
+			m_viewModel.FilteredTasks().VectorChanged(m_filteredTasksChangedToken);
 		}
 	}
 
@@ -656,6 +675,160 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	void TasksPage::TasksColumnHeader_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
+		if (!button || !button.Tag()) return;
+		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
+		if (m_sortColumn == column)
+			m_sortDirection = (m_sortDirection + 1) % 3;
+		else
+		{
+			m_sortColumn = column;
+			m_sortDirection = 1;
+		}
+		UpdateTaskSortHeaders();
+		SortFilteredTasks();
+	}
+
+	void TasksPage::OnSortTaskNameButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		if (OpenedChevronAnimatedIcon() != nullptr)
+		{
+			AnimatedIcon::SetState(OpenedChevronAnimatedIcon(), L"PointerOver");
+		}
+
+		if (ClosedChevronAnimatedIcon() != nullptr)
+		{
+			AnimatedIcon::SetState(ClosedChevronAnimatedIcon(), L"PointerOver");
+		}
+	}
+
+	void TasksPage::OnSortTaskNameButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		if (OpenedChevronAnimatedIcon() != nullptr)
+		{
+			AnimatedIcon::SetState(OpenedChevronAnimatedIcon(), L"Normal");
+		}
+
+		if (ClosedChevronAnimatedIcon() != nullptr)
+		{
+			AnimatedIcon::SetState(ClosedChevronAnimatedIcon(), L"Normal");
+		}
+	}
+
+	void TasksPage::OnSortTaskSizeButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+	}
+
+	void TasksPage::OnSortTaskSizeButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+	}
+
+	void TasksPage::UpdateTaskSortHeaders()
+	{
+		auto update = [this](auto const& button)
+		{
+			auto label = button.Content().try_as<
+				winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
+			if (!label) return;
+			std::wstring text{ label.Text() };
+			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
+				(text.back() == L'\u2191' || text.back() == L'\u2193'))
+			{
+				text.resize(text.size() - 2);
+			}
+			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
+			{
+				if (m_sortDirection == 1) text += L" \u2191";
+				else if (m_sortDirection == 2) text += L" \u2193";
+			}
+			label.Text(text);
+		};
+		update(SortTaskNameButton());
+		update(SortTaskSizeButton());
+		update(SortTaskProgressButton());
+		update(SortTaskDownloadSizeButton());
+		update(SortTaskUploadSizeButton());
+		update(SortTaskTotalDownloadButton());
+		update(SortTaskTotalUploadButton());
+		update(SortTaskDlRateButton());
+		update(SortTaskUlRateButton());
+		update(SortTaskRemainingButton());
+		update(SortTaskAddDateButton());
+	}
+
+	void TasksPage::SortFilteredTasks()
+	{
+		if (!m_viewModel || m_isApplyingSort) return;
+		auto filtered = m_viewModel.FilteredTasks();
+		if (!filtered) return;
+		m_isApplyingSort = true;
+
+		std::vector<winrt::OpenNet::ViewModels::TaskViewModel> items;
+		items.reserve(filtered.Size());
+		for (auto const& item : filtered)
+			items.push_back(item);
+
+		if (m_sortDirection == 0)
+		{
+			auto all = m_viewModel.Tasks();
+			auto originalIndex = [all](auto const& item)
+			{
+				for (uint32_t index = 0; index < all.Size(); ++index)
+					if (all.GetAt(index) == item) return index;
+				return (std::numeric_limits<std::uint32_t>::max)();
+			};
+			std::stable_sort(items.begin(), items.end(),
+							 [originalIndex](auto const& left, auto const& right)
+			{
+				return originalIndex(left) < originalIndex(right);
+			});
+		}
+		else
+		{
+			auto const column = m_sortColumn;
+			auto const direction = m_sortDirection;
+			auto textValue = [column](auto const& item)
+			{
+				if (column == L"Name") return std::wstring(item.Name());
+				if (column == L"Size") return std::wstring(item.Size());
+				if (column == L"DownloadSize") return std::wstring(item.DownloadSize());
+				if (column == L"UploadSize") return std::wstring(item.UploadSize());
+				if (column == L"TotalDownloadSize") return std::wstring(item.TotalDownloadSize());
+				if (column == L"TotalUploadSize") return std::wstring(item.TotalUploadSize());
+				if (column == L"DLRate") return std::wstring(item.DownloadRate());
+				if (column == L"ULRate") return std::wstring(item.UploadRate());
+				if (column == L"Remaining") return std::wstring(item.Remaining());
+				return std::wstring(item.AddDate());
+			};
+			std::stable_sort(items.begin(), items.end(),
+							 [column, direction, textValue](auto const& left, auto const& right)
+			{
+				bool less;
+				if (column == L"Progress")
+					less = left.ProgressPercent() < right.ProgressPercent();
+				else if (column == L"DLRate")
+					less = left.DownloadSpeedKB() < right.DownloadSpeedKB();
+				else
+					less = textValue(left) < textValue(right);
+				if (direction == 1) return less;
+				if (column == L"Progress")
+					return right.ProgressPercent() < left.ProgressPercent();
+				if (column == L"DLRate")
+					return right.DownloadSpeedKB() < left.DownloadSpeedKB();
+				return textValue(right) < textValue(left);
+			});
+		}
+
+		filtered.Clear();
+		for (auto const& item : items)
+			filtered.Append(item);
+		m_isApplyingSort = false;
+	}
+
 	void TasksPage::TasksColumnMenuFlyout_Opening(
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Windows::Foundation::IInspectable const&)
@@ -726,6 +899,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel.IsColULRateLoad(true);
 		m_viewModel.IsColRemainingLoad(true);
 		m_viewModel.IsColAddDateLoad(true);
+		m_sortColumn = {};
+		m_sortDirection = 0;
+		UpdateTaskSortHeaders();
+		SortFilteredTasks();
 		AutoSizeAllTaskColumns();
 	}
 

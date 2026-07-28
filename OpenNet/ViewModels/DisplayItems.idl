@@ -14,10 +14,15 @@ namespace OpenNet.ViewModels
         String Downloaded;
         String PeerStatus;
         String Location;
+        String CountryCode;
+        String FlagSvg;
         String ConnectionTime;
         String Protocol;
         String Initiator;
         String Source;
+        Boolean IsExpanded;
+        Boolean IsGroup;
+        Windows.Foundation.Collections.IObservableVector<PeerDisplayItem> Children{ get; };
     };
 
     [default_interface]

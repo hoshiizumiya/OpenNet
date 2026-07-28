@@ -598,6 +598,7 @@ namespace OpenNet::Extension
 				}
 
 				current = current.Parent().try_as<winrt::FrameworkElement>();
+
 			}
 			while (current);
 

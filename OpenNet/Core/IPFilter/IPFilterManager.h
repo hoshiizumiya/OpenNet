@@ -102,8 +102,10 @@ namespace OpenNet::Core
 		IPFilterManager& operator=(IPFilterManager const&) = delete;
 
 		void CreateTables();
+		void SeedBundledRules();
 
 		mutable std::mutex m_mutex;
+		std::once_flag m_seedOnce;
 		sqlite3* m_db{ nullptr };
 		bool m_initialized{ false };
 	};

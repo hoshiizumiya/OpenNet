@@ -7,10 +7,10 @@ import winrt.Microsoft.UI.Xaml;
 export namespace winrt
 {
     template <typename D, typename B>
-    concept derived_from = std::is_base_of<impl::base_one<D, B>, D>::value || std::is_base_of<B, D>::value;
+	concept derived_from = std::is_base_of<winrt::impl::base_one<D, B>, D>::value || std::is_base_of<B, D>::value;
 
-    template <typename D, typename IB>
-    concept derived_from_interface = std::is_base_of<impl::require_one<D, IB>, D>::value;
+	template <typename D, typename IB>
+	concept derived_from_interface = std::is_base_of<winrt::impl::require_one<D, IB>, D>::value;
 
     //https://github.com/microsoft/cppwinrt/issues/609
     template <typename D, typename B>

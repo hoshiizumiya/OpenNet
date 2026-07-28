@@ -637,6 +637,8 @@
     <ClCompile Include="Extension\DependencyObjectExtensions.ixx" />
     <ClCompile Include="Extension\Predicates.ixx" />
     <ClCompile Include="Extension\FrameworkElementExtensions.ixx" />
+    <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
+    <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1236,6 +1238,12 @@
     <None Include="Assets\Rules\dhtnodes6.dat">
       <Filter>Assets\Rules</Filter>
     </None>
+    <None Include="Assets\Rules\ipfilter.txt">
+      <Filter>Assets\Rules</Filter>
+    </None>
+    <None Include="Assets\Rules\ipfilter2.txt">
+      <Filter>Assets\Rules</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />
@@ -1278,11 +1286,5 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
-    <Text Include="Assets\Rules\ipfilter.txt">
-      <Filter>Assets\Rules</Filter>
-    </Text>
-    <Text Include="Assets\Rules\ipfilter2.txt">
-      <Filter>Assets\Rules</Filter>
-    </Text>
   </ItemGroup>
 </Project>

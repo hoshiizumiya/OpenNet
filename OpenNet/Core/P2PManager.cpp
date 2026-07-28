@@ -89,6 +89,7 @@ namespace OpenNet::Core
 					{
 						throw winrt::hresult_error(E_FAIL, L"Failed to start the libtorrent alert loop.");
 					}
+					ProbePortAfterStartupAsync();
 				}
 			}
 
@@ -148,6 +149,34 @@ namespace OpenNet::Core
 		}
 	}
 
+	winrt::fire_and_forget P2PManager::ProbePortAfterStartupAsync()
+	{
+		try
+		{
+			// Give the freshly-created session time to bind its configured
+			// interfaces, then explicitly reopen/probe sockets and port mappings.
+			// This also recovers sessions which initially reported listen port 0.
+			co_await winrt::resume_after(std::chrono::seconds(2));
+
+			std::scoped_lock lk(m_torrentMutex);
+			if (m_torrentCore && m_torrentCore->IsRunning())
+			{
+				m_torrentCore->RefreshPortMappings();
+				OutputDebugStringA("P2PManager: Startup listen-port probe requested\n");
+			}
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA((
+				"P2PManager: Startup listen-port probe failed: " +
+				std::string(ex.what()) + "\n").c_str());
+		}
+		catch (...)
+		{
+			OutputDebugStringA("P2PManager: Startup listen-port probe failed\n");
+		}
+	}
+
 	IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities)
 	{
 		co_await EnsureTorrentCoreInitializedAsync();
@@ -185,10 +214,15 @@ namespace OpenNet::Core
 				{
 					OutputDebugStringA(("Resumed task: " + task.taskId + " (status=" + std::to_string(task.status) + ")\n").c_str());
 
-					// Ensure paused tasks stay paused even if resume data didn't preserve the flag
-					if (task.status == 2)
+					// Ensure paused and completed tasks stay stopped even when
+					// older resume data did not preserve that state.
+					if (task.status == 2 || task.status == 3)
 					{
 						m_torrentCore->PauseTorrent(task.taskId);
+						if (task.status == 3 && m_stateManager)
+						{
+							m_stateManager->UpdateTaskStatus(task.taskId, 3);
+						}
 					}
 				}
 			}
@@ -257,10 +291,10 @@ namespace OpenNet::Core
 			std::scoped_lock lk(m_cbMutex);
 			if (m_progressCb) m_progressCb(e);
 		});
-		m_torrentCore->SetFinishedCallback([this](const std::string& name)
+		m_torrentCore->SetFinishedCallback([this](const std::string& taskId, const std::string& name)
 		{
 			std::scoped_lock lk(m_cbMutex);
-			if (m_finishedCb) m_finishedCb(name);
+			if (m_finishedCb) m_finishedCb(taskId, name);
 		});
 		m_torrentCore->SetErrorCallback([this](const std::string& err)
 		{

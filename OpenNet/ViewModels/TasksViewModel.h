@@ -148,7 +148,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateItemByTaskId(std::string const& taskId, winrt::hstring const& name);
 		winrt::OpenNet::ViewModels::TaskViewModel FindOrCreateHttpItem(winrt::hstring const& gid, winrt::hstring const& name);
 		void OnProgress(const struct ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e);
-		void OnFinished(std::string const& name);
+		void OnFinished(std::string const& taskId, std::string const& name);
 		void OnError(std::string const& msg);
 		void OnHttpProgress(::OpenNet::Core::HttpTaskProgress const& progress);
 		void OnHttpFinished(std::string const& gid, std::string const& name);

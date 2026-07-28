@@ -322,9 +322,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			if (auto self = weak.get()) self->OnProgress(e);
 		});
-		::OpenNet::Core::P2PManager::Instance().SetFinishedCallback([weak = get_weak()](const std::string& name)
+		::OpenNet::Core::P2PManager::Instance().SetFinishedCallback([weak = get_weak()](const std::string& taskId, const std::string& name)
 		{
-			if (auto self = weak.get()) self->OnFinished(name);
+			if (auto self = weak.get()) self->OnFinished(taskId, name);
 		});
 		::OpenNet::Core::P2PManager::Instance().SetErrorCallback([weak = get_weak()](const std::string& msg)
 		{
@@ -607,20 +607,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (auto self = weak.get())
 			{
 				auto sizeBefore = self->m_tasks.Size();
-				auto item = self->FindOrCreateItem(name);
+				auto item = self->FindOrCreateItemByTaskId(e.taskId, name);
 				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
-				if (item.TaskId().empty())
+				if (!name.empty() && item.Name() != name)
 				{
-					auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-					if (core)
-					{
-						auto taskId = core->GetTaskIdByName(winrt::to_string(name));
-						if (!taskId.empty())
-						{
-							item.TaskId(winrt::to_hstring(taskId));
-							item.TaskType(winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent);
-						}
-					}
+					item.Name(name);
 				}
 				item.Progress(to_hstring_percent(e.progressPercent));
 				item.DownloadRate(to_hstring_rate(e.downloadRateKB));
@@ -637,17 +628,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 		});
 	}
 
-	void TasksViewModel::OnFinished(std::string const& name)
+	void TasksViewModel::OnFinished(std::string const& taskId, std::string const& name)
 	{
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
 			return;
 		auto hname = winrt::to_hstring(name);
-		dispatcher.TryEnqueue([weak = get_weak(), hname]()
+		dispatcher.TryEnqueue([weak = get_weak(), taskId, hname]()
 		{
 			if (auto self = weak.get())
 			{
-				auto item = self->FindOrCreateItem(hname);
+				auto item = self->FindOrCreateItemByTaskId(taskId, hname);
+				if (!hname.empty() && item.Name() != hname)
+					item.Name(hname);
 				item.Progress(L"100%");
 				item.DownloadRate(L"0 KB/s");
 				item.Remaining(L"0");

@@ -3,6 +3,7 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.TasksPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:controls="using:XamlToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -199,110 +200,279 @@
                                     CanResize="True"
                                     Tag="Name"
                                     Visibility="{x:Bind ViewModel.IsColNameLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_TaskName"
+                                    <Button
+                                        x:Name="SortTaskNameButton"
+                                        Padding="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Left"
+                                        VerticalContentAlignment="Center"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Name" />
+                                        PointerEntered="OnSortTaskNameButtonPointerEntered"
+                                        PointerExited="OnSortTaskNameButtonPointerExited"
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="Name">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock
+                                                x:Uid="Header_TaskName"
+                                                Grid.Column="0"
+                                                Padding="0"
+                                                Text="Name"
+                                                TextTrimming="CharacterEllipsis" />
+                                            <essential:SwitchPresenter
+                                                Grid.Column="1"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center"
+                                                Value="{Binding SortCondition, Mode=OneWay}">
+                                                <essential:Case>
+                                                    <essential:Case.Value>
+                                                        <x:String>0</x:String>
+                                                    </essential:Case.Value>
+                                                    <AnimatedIcon
+                                                        x:Name="OpenedChevronAnimatedIcon"
+                                                        Width="16"
+                                                        Height="16">
+                                                        <AnimatedIcon.Source>
+                                                            <animatedvisuals:AnimatedChevronUpDownSmallVisualSource />
+                                                        </AnimatedIcon.Source>
+                                                        <AnimatedIcon.FallbackIconSource>
+                                                            <FontIconSource FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70D;" />
+                                                        </AnimatedIcon.FallbackIconSource>
+                                                    </AnimatedIcon>
+                                                </essential:Case>
+                                                <essential:Case>
+                                                    <essential:Case.Value>
+                                                        <x:String>1</x:String>
+                                                    </essential:Case.Value>
+                                                    <AnimatedIcon
+                                                        x:Name="ClosedChevronAnimatedIcon"
+                                                        Width="16"
+                                                        Height="16">
+                                                        <AnimatedIcon.Source>
+                                                            <animatedvisuals:AnimatedChevronDownSmallVisualSource />
+                                                        </AnimatedIcon.Source>
+                                                        <AnimatedIcon.FallbackIconSource>
+                                                            <FontIconSource FontFamily="{StaticResource SymbolThemeFontFamily}" Glyph="&#xE70E;" />
+                                                        </AnimatedIcon.FallbackIconSource>
+                                                    </AnimatedIcon>
+                                                </essential:Case>
+                                                <essential:Case>
+                                                    <essential:Case.Value>
+                                                        <x:String>2</x:String>
+                                                    </essential:Case.Value>
+                                                    <!--  Cancel set sort icon state  -->
+                                                </essential:Case>
+                                            </essential:SwitchPresenter>
+                                        </Grid>
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColSize"
                                     CanResize="True"
                                     Tag="Size"
                                     Visibility="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_Size"
+                                    <Button
+                                        x:Name="SortTaskSizeButton"
+                                        Padding="0"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Size" />
+                                        PointerEntered="OnSortTaskSizeButtonPointerEntered"
+                                        PointerExited="OnSortTaskSizeButtonPointerExited"
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="Size">
+                                        <TextBlock
+                                            x:Uid="Header_Size"
+                                            Text="Size"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColProgress"
                                     CanResize="True"
                                     Tag="Progress"
                                     Visibility="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_Progress"
+                                    <Button
+                                        x:Name="SortTaskProgressButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Progress" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="Progress">
+                                        <TextBlock
+                                            x:Uid="Header_Progress"
+                                            Text="Progress"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColDownloadSize"
                                     CanResize="True"
                                     Tag="DownloadSize"
                                     Visibility="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_DownloadSize"
+                                    <Button
+                                        x:Name="SortTaskDownloadSizeButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Download Size" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="DownloadSize">
+                                        <TextBlock
+                                            x:Uid="Header_DownloadSize"
+                                            Text="Download Size"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColUploadSize"
                                     CanResize="True"
                                     Tag="UploadSize"
                                     Visibility="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_UploadSize"
+                                    <Button
+                                        x:Name="SortTaskUploadSizeButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Upload Size" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="UploadSize">
+                                        <TextBlock
+                                            x:Uid="Header_UploadSize"
+                                            Text="Upload Size"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColumnTotalDownloadSize"
                                     CanResize="True"
                                     Tag="TotalDownloadSize"
                                     Visibility="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_TotalDownloadSize"
+                                    <Button
+                                        x:Name="SortTaskTotalDownloadButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Total Download Size" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="TotalDownloadSize">
+                                        <TextBlock
+                                            x:Uid="Header_TotalDownloadSize"
+                                            Text="Total Download Size"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColumnTotalUploadSize"
                                     CanResize="True"
                                     Tag="TotalUploadSize"
                                     Visibility="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_TotalUploadSize"
+                                    <Button
+                                        x:Name="SortTaskTotalUploadButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Total Upload Size" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="TotalUploadSize">
+                                        <TextBlock
+                                            x:Uid="Header_TotalUploadSize"
+                                            Text="Total Upload Size"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColDLRate"
                                     CanResize="True"
                                     Tag="DLRate"
                                     Visibility="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_DLRate"
+                                    <Button
+                                        x:Name="SortTaskDlRateButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="DL Rate" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="DLRate">
+                                        <TextBlock
+                                            x:Uid="Header_DLRate"
+                                            Text="DL Rate"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColULRate"
                                     CanResize="True"
                                     Tag="ULRate"
                                     Visibility="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_ULRate"
+                                    <Button
+                                        x:Name="SortTaskUlRateButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="UL Rate" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="ULRate">
+                                        <TextBlock
+                                            x:Uid="Header_ULRate"
+                                            Text="UL Rate"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColRemaining"
                                     CanResize="True"
                                     Tag="Remaining"
                                     Visibility="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_Remaining"
+                                    <Button
+                                        x:Name="SortTaskRemainingButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Remaining" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="Remaining">
+                                        <TextBlock
+                                            x:Uid="Header_Remaining"
+                                            Text="Remaining"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColAddDate"
                                     CanResize="True"
                                     Tag="AddDate"
                                     Visibility="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
-                                    <TextBlock
-                                        x:Uid="Header_AddDate"
+                                    <Button
+                                        x:Name="SortTaskAddDateButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
                                         FontWeight="SemiBold"
-                                        Text="Add Date" />
+                                        Style="{StaticResource SubtleButtonStyle}"
+                                        Tag="AddDate">
+                                        <TextBlock
+                                            x:Uid="Header_AddDate"
+                                            Text="Add Date"
+                                            TextTrimming="CharacterEllipsis" />
+                                    </Button>
                                 </xtlw:DataColumn>
                             </xtlw:DataTable>
                             <muxc:Border.ContextFlyout>
@@ -413,58 +583,80 @@
                                 <TextBlock
                                     x:Name="NameTextBlock"
                                     Margin="12,0,8,0"
+                                    HorizontalAlignment="Left"
                                     IsTextSelectionEnabled="True"
                                     Text="{x:Bind Name, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColName.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="SizeTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind Size, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="ProgressTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind Progress, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="DownloadSizeTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind DownloadSize, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColDownloadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="UploadSizeTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind UploadSize, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColUploadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="TotalDownloadSizeTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind TotalDownloadSize, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColumnTotalDownloadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="TotalUploadSizeTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind TotalUploadSize, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColumnTotalUploadSize.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="DLRateTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind DownloadRate, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColDLRate.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="ULRateTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind UploadRate, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColULRate.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="RemainingTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind Remaining, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColRemaining.Visibility, Mode=OneWay}" />
                                 <TextBlock
                                     x:Name="AddDateTextBlock"
+                                    HorizontalAlignment="Right"
                                     Text="{x:Bind AddDate, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColAddDate.Visibility, Mode=OneWay}" />
                             </xtlw:DataRow>

@@ -10,6 +10,7 @@ import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ColumnWidthHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Windows.Foundation.Collections;
 
 using namespace winrt;
@@ -111,6 +112,149 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RefreshTrackerList();
 	}
 
+	void TaskTrackersPage::ColumnHeader_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
+		if (!button || !button.Tag()) return;
+		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
+		if (m_sortColumn == column)
+			m_sortDirection = (m_sortDirection + 1) % 3;
+		else
+		{
+			m_sortColumn = column;
+			m_sortDirection = 1;
+		}
+		UpdateSortHeaders();
+		RefreshTrackerList();
+	}
+
+	void TaskTrackersPage::UpdateSortHeaders()
+	{
+		auto update = [this](auto const& button)
+		{
+			auto label = button.Content().try_as<
+				winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
+			if (!label) return;
+			std::wstring text{ label.Text() };
+			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
+				(text.back() == L'\u2191' || text.back() == L'\u2193'))
+			{
+				text.resize(text.size() - 2);
+			}
+			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
+			{
+				if (m_sortDirection == 1) text += L" \u2191";
+				else if (m_sortDirection == 2) text += L" \u2193";
+			}
+			label.Text(text);
+		};
+		update(SortTrackerUrlButton());
+		update(SortTrackerTierButton());
+		update(SortTrackerPeersButton());
+		update(SortTrackerStatusButton());
+		update(SortTrackerMessageButton());
+	}
+
+	void TaskTrackersPage::ColumnHeader_RightTapped(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	{
+		m_contextColumn = nullptr;
+		auto source = args.OriginalSource().try_as<DependencyObject>();
+		while (source)
+		{
+			if (auto column = source.try_as<winrt::XamlToolkit::Labs::WinUI::DataColumn>())
+			{
+				m_contextColumn = column;
+				break;
+			}
+			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
+		}
+	}
+
+	void TaskTrackersPage::ColumnMenu_Opening(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Windows::Foundation::IInspectable const&)
+	{
+		AutoSizeSelectedColumnItem().IsEnabled(m_contextColumn != nullptr);
+		if (auto menu = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>())
+		{
+			for (auto const& entry : menu.Items())
+			{
+				if (auto toggle = entry.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>())
+				{
+					auto column = ColumnForTag(
+						winrt::unbox_value<winrt::hstring>(toggle.Tag()));
+					toggle.IsChecked(column && column.Visibility() == Visibility::Visible);
+				}
+			}
+		}
+	}
+
+	winrt::XamlToolkit::Labs::WinUI::DataColumn TaskTrackersPage::ColumnForTag(
+		winrt::hstring const& tag)
+	{
+		if (tag == L"URL") return ColTrackerURL();
+		if (tag == L"Tier") return ColTrackerTier();
+		if (tag == L"Peers") return ColTrackerPeers();
+		if (tag == L"Status") return ColTrackerStatus();
+		if (tag == L"Message") return ColTrackerMessage();
+		return nullptr;
+	}
+
+	void TaskTrackersPage::ColumnVisibility_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto toggle = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>();
+		if (!toggle || !toggle.Tag()) return;
+		if (auto column = ColumnForTag(winrt::unbox_value<winrt::hstring>(toggle.Tag())))
+			column.Visibility(toggle.IsChecked() ? Visibility::Visible : Visibility::Collapsed);
+	}
+
+	void TaskTrackersPage::AutoSizeColumn(
+		winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
+	{
+		if (!column) return;
+		column.DesiredWidth(GridLengthHelper::Auto());
+		column.InvalidateMeasure();
+		TrackersListView().InvalidateMeasure();
+	}
+
+	void TaskTrackersPage::AutoSizeSelectedColumn_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		AutoSizeColumn(m_contextColumn);
+	}
+
+	void TaskTrackersPage::AutoSizeAllColumns_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		for (auto const& column : std::array{
+			ColTrackerURL(), ColTrackerTier(), ColTrackerPeers(),
+			ColTrackerStatus(), ColTrackerMessage() })
+			AutoSizeColumn(column);
+	}
+
+	void TaskTrackersPage::ResetColumns_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		m_sortColumn = {};
+		m_sortDirection = 0;
+		UpdateSortHeaders();
+		for (auto const& column : std::array{
+			ColTrackerURL(), ColTrackerTier(), ColTrackerPeers(),
+			ColTrackerStatus(), ColTrackerMessage() })
+			column.Visibility(Visibility::Visible);
+		AutoSizeAllColumns_Click(sender, args);
+		RefreshTrackerList();
+	}
+
 	void TaskTrackersPage::RefreshTrackerList()
 	{
 		auto listView = TrackersListView();
@@ -160,6 +304,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto items = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
+
+		if (m_sortDirection != 0)
+		{
+			auto const direction = m_sortDirection;
+			auto const column = m_sortColumn;
+			std::stable_sort(detail.trackers.begin(), detail.trackers.end(),
+				[direction, column](auto const& left, auto const& right)
+				{
+					auto ascending = [&]()
+					{
+						if (column == L"URL") return left.url < right.url;
+						if (column == L"Tier") return left.tier < right.tier;
+						if (column == L"Peers") return left.numPeers < right.numPeers;
+						if (column == L"Status") return left.status < right.status;
+						return left.message < right.message;
+					};
+					auto descending = [&]()
+					{
+						if (column == L"URL") return right.url < left.url;
+						if (column == L"Tier") return right.tier < left.tier;
+						if (column == L"Peers") return right.numPeers < left.numPeers;
+						if (column == L"Status") return right.status < left.status;
+						return right.message < left.message;
+					};
+					return direction == 1 ? ascending() : descending();
+				});
+		}
 
 		for (auto const& tracker : detail.trackers)
 		{

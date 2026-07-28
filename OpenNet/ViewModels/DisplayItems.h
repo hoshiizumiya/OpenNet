@@ -10,7 +10,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 	// ---------------------------------------------------------------
 	struct PeerDisplayItem : PeerDisplayItemT<PeerDisplayItem>
 	{
-		PeerDisplayItem() = default;
+		PeerDisplayItem()
+		{
+			m_children = winrt::single_threaded_observable_vector<
+				winrt::OpenNet::ViewModels::PeerDisplayItem>();
+		}
 
 		winrt::hstring IP() const
 		{
@@ -84,6 +88,24 @@ namespace winrt::OpenNet::ViewModels::implementation
 			m_location = v;
 		}
 
+		winrt::hstring CountryCode() const
+		{
+			return m_countryCode;
+		}
+		void CountryCode(winrt::hstring const& v)
+		{
+			m_countryCode = v;
+		}
+
+		winrt::hstring FlagSvg() const
+		{
+			return m_flagSvg;
+		}
+		void FlagSvg(winrt::hstring const& v)
+		{
+			m_flagSvg = v;
+		}
+
 		winrt::hstring ConnectionTime() const
 		{
 			return m_connectionTime;
@@ -120,6 +142,30 @@ namespace winrt::OpenNet::ViewModels::implementation
 			m_source = v;
 		}
 
+		bool IsExpanded() const
+		{
+			return m_isExpanded;
+		}
+		void IsExpanded(bool value)
+		{
+			m_isExpanded = value;
+		}
+
+		bool IsGroup() const
+		{
+			return m_isGroup;
+		}
+		void IsGroup(bool value)
+		{
+			m_isGroup = value;
+		}
+
+		winrt::Windows::Foundation::Collections::IObservableVector<
+			winrt::OpenNet::ViewModels::PeerDisplayItem> Children() const
+		{
+			return m_children;
+		}
+
 	private:
 		winrt::hstring m_ip;
 		winrt::hstring m_client;
@@ -129,10 +175,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_downloaded;
 		winrt::hstring m_peerStatus;
 		winrt::hstring m_location;
+		winrt::hstring m_countryCode;
+		winrt::hstring m_flagSvg;
 		winrt::hstring m_connectionTime;
 		winrt::hstring m_protocol;
 		winrt::hstring m_initiator;
 		winrt::hstring m_source;
+		bool m_isExpanded{ true };
+		bool m_isGroup{ false };
+		winrt::Windows::Foundation::Collections::IObservableVector<
+			winrt::OpenNet::ViewModels::PeerDisplayItem> m_children{ nullptr };
 	};
 
 	// ---------------------------------------------------------------

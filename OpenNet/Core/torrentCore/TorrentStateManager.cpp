@@ -135,6 +135,28 @@ namespace OpenNet::Core::Torrent
             return false;
         }
 
+        // Older builds keyed progress rows by the mutable torrent name. A
+        // magnet therefore could leave a nameless metadata row beside the
+        // real row once metadata arrived. Remove only the provably duplicate
+        // nameless record (same non-empty magnet URI, named sibling exists).
+        sqlite3_exec(
+            static_cast<sqlite3*>(m_db),
+            R"(
+                DELETE FROM tasks
+                WHERE COALESCE(name, '') = ''
+                  AND magnet_uri <> ''
+                  AND EXISTS (
+                      SELECT 1
+                      FROM tasks AS named
+                      WHERE named.task_id <> tasks.task_id
+                        AND named.magnet_uri = tasks.magnet_uri
+                        AND COALESCE(named.name, '') <> ''
+                  );
+            )",
+            nullptr,
+            nullptr,
+            nullptr);
+
         rc = sqlite3_exec(static_cast<sqlite3*>(m_db), createSessionTable, nullptr, nullptr, &errMsg);
         if (rc != SQLITE_OK)
         {

@@ -11,6 +11,7 @@ import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Helpers.ColumnWidthHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Windows.Foundation.Collections;
 
 using namespace winrt;
@@ -25,31 +26,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Required);
 
 		Loaded([this](auto, auto)
-			   {
-				   RestoreColumn(ColPeerLocation(), "Peers.Location");
-				   RestoreColumn(ColPeerProgress(), "Peers.Progress");
-				   RestoreColumn(ColPeerDLSpeed(), "Peers.DLSpeed");
-				   RestoreColumn(ColPeerULSpeed(), "Peers.ULSpeed");
-				   RestoreColumn(ColPeerDownloaded(), "Peers.Downloaded");
-				   RestoreColumn(ColPeerClient(), "Peers.Client");
-				   RestoreColumn(ColPeerStatus(), "Peers.Status");
-				   RestoreColumn(ColPeerProtocol(), "Peers.Protocol");
-				   RestoreColumn(ColPeerInitiator(), "Peers.Initiator");
-				   RestoreColumn(ColPeerSource(), "Peers.Source");
-			   });
+		{
+			RestoreColumn(ColPeerLocation(), "Peers.Location");
+			RestoreColumn(ColPeerProgress(), "Peers.Progress");
+			RestoreColumn(ColPeerDLSpeed(), "Peers.DLSpeed");
+			RestoreColumn(ColPeerULSpeed(), "Peers.ULSpeed");
+			RestoreColumn(ColPeerDownloaded(), "Peers.Downloaded");
+			RestoreColumn(ColPeerClient(), "Peers.Client");
+			RestoreColumn(ColPeerStatus(), "Peers.Status");
+			RestoreColumn(ColPeerProtocol(), "Peers.Protocol");
+			RestoreColumn(ColPeerInitiator(), "Peers.Initiator");
+			RestoreColumn(ColPeerSource(), "Peers.Source");
+		});
 		Unloaded([this](auto, auto)
-				 {
-					 SaveColumnWidth("Peers.Location", ColPeerLocation());
-					 SaveColumnWidth("Peers.Progress", ColPeerProgress());
-					 SaveColumnWidth("Peers.DLSpeed", ColPeerDLSpeed());
-					 SaveColumnWidth("Peers.ULSpeed", ColPeerULSpeed());
-					 SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded());
-					 SaveColumnWidth("Peers.Client", ColPeerClient());
-					 SaveColumnWidth("Peers.Status", ColPeerStatus());
-					 SaveColumnWidth("Peers.Protocol", ColPeerProtocol());
-					 SaveColumnWidth("Peers.Initiator", ColPeerInitiator());
-					 SaveColumnWidth("Peers.Source", ColPeerSource());
-				 });
+		{
+			SaveColumnWidth("Peers.Location", ColPeerLocation());
+			SaveColumnWidth("Peers.Progress", ColPeerProgress());
+			SaveColumnWidth("Peers.DLSpeed", ColPeerDLSpeed());
+			SaveColumnWidth("Peers.ULSpeed", ColPeerULSpeed());
+			SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded());
+			SaveColumnWidth("Peers.Client", ColPeerClient());
+			SaveColumnWidth("Peers.Status", ColPeerStatus());
+			SaveColumnWidth("Peers.Protocol", ColPeerProtocol());
+			SaveColumnWidth("Peers.Initiator", ColPeerInitiator());
+			SaveColumnWidth("Peers.Source", ColPeerSource());
+		});
 	}
 
 	TaskPeersListPage::~TaskPeersListPage()
@@ -130,6 +131,304 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const&)
 	{
 		RefreshPeerList();
+	}
+
+	void TaskPeersListPage::ColumnHeader_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
+		if (!button || !button.Tag()) return;
+		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
+		if (m_sortColumn == column)
+			m_sortDirection = (m_sortDirection + 1) % 3;
+		else
+		{
+			m_sortColumn = column;
+			m_sortDirection = 1;
+		}
+		UpdateSortHeaders();
+		RefreshPeerList();
+	}
+
+	void TaskPeersListPage::UpdateSortHeaders()
+	{
+		auto update = [this](auto const& button)
+		{
+			auto label = button.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
+			if (!label)
+			{
+				return;
+			}
+			std::wstring text{ label.Text() };
+			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
+				(text.back() == L'\u2191' || text.back() == L'\u2193'))
+			{
+				text.resize(text.size() - 2);
+			}
+			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
+			{
+				if (m_sortDirection == 1) text += L" \u2191";
+				else if (m_sortDirection == 2) text += L" \u2193";
+			}
+			label.Text(text);
+		};
+		update(SortPeerIpButton());
+		update(SortPeerLocationButton());
+		update(SortPeerProgressButton());
+		update(SortPeerDlSpeedButton());
+		update(SortPeerUlSpeedButton());
+		update(SortPeerDownloadedButton());
+		update(SortPeerClientButton());
+		update(SortPeerStatusButton());
+		update(SortPeerProtocolButton());
+		update(SortPeerInitiatorButton());
+		update(SortPeerSourceButton());
+	}
+
+	void TaskPeersListPage::SortPeerItems(
+		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem>& items)
+	{
+		if (m_sortDirection == 0) return;
+		auto const column = m_sortColumn;
+		auto const direction = m_sortDirection;
+		auto value = [column](auto const& item)
+		{
+			if (column == L"IP") return item.IP();
+			if (column == L"Location") return item.Location();
+			if (column == L"Progress") return item.Progress();
+			if (column == L"DLSpeed") return item.DLSpeed();
+			if (column == L"ULSpeed") return item.ULSpeed();
+			if (column == L"Downloaded") return item.Downloaded();
+			if (column == L"Client") return item.Client();
+			if (column == L"Status") return item.PeerStatus();
+			if (column == L"Protocol") return item.Protocol();
+			if (column == L"Initiator") return item.Initiator();
+			return item.Source();
+		};
+		std::stable_sort(items.begin(), items.end(),
+						 [direction, value](auto const& left, auto const& right)
+		{
+			return direction == 1
+				? value(left) < value(right)
+				: value(right) < value(left);
+		});
+	}
+
+	void TaskPeersListPage::ColumnHeader_RightTapped(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	{
+		m_contextColumn = nullptr;
+		auto source = args.OriginalSource().try_as<DependencyObject>();
+		while (source)
+		{
+			if (auto column = source.try_as<winrt::XamlToolkit::Labs::WinUI::DataColumn>())
+			{
+				m_contextColumn = column;
+				break;
+			}
+			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
+		}
+	}
+
+	void TaskPeersListPage::ColumnMenu_Opening(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Windows::Foundation::IInspectable const&)
+	{
+		AutoSizeSelectedColumnItem().IsEnabled(m_contextColumn != nullptr);
+		if (auto menu = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>())
+		{
+			for (auto const& entry : menu.Items())
+			{
+				if (auto toggle = entry.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>())
+				{
+					auto column = ColumnForTag(
+						winrt::unbox_value<winrt::hstring>(toggle.Tag()));
+					toggle.IsChecked(column && column.Visibility() == Visibility::Visible);
+				}
+			}
+		}
+	}
+
+	winrt::XamlToolkit::Labs::WinUI::DataColumn TaskPeersListPage::ColumnForTag(
+		winrt::hstring const& tag)
+	{
+		if (tag == L"IP") return ColPeerIP();
+		if (tag == L"Location") return ColPeerLocation();
+		if (tag == L"Progress") return ColPeerProgress();
+		if (tag == L"DLSpeed") return ColPeerDLSpeed();
+		if (tag == L"ULSpeed") return ColPeerULSpeed();
+		if (tag == L"Downloaded") return ColPeerDownloaded();
+		if (tag == L"Client") return ColPeerClient();
+		if (tag == L"Status") return ColPeerStatus();
+		if (tag == L"Protocol") return ColPeerProtocol();
+		if (tag == L"Initiator") return ColPeerInitiator();
+		if (tag == L"Source") return ColPeerSource();
+		return nullptr;
+	}
+
+	void TaskPeersListPage::ColumnVisibility_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto toggle = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>();
+		if (!toggle || !toggle.Tag()) return;
+		if (auto column = ColumnForTag(winrt::unbox_value<winrt::hstring>(toggle.Tag())))
+			column.Visibility(toggle.IsChecked() ? Visibility::Visible : Visibility::Collapsed);
+	}
+
+	void TaskPeersListPage::AutoSizeColumn(
+		winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
+	{
+		if (!column) return;
+		column.DesiredWidth(GridLengthHelper::Auto());
+		column.InvalidateMeasure();
+		PeersTreeView().InvalidateMeasure();
+	}
+
+	void TaskPeersListPage::AutoSizeSelectedColumn_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		AutoSizeColumn(m_contextColumn);
+	}
+
+	void TaskPeersListPage::AutoSizeAllColumns_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		for (auto const& column : std::array{
+			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
+			AutoSizeColumn(column);
+	}
+
+	void TaskPeersListPage::ResetColumns_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		m_sortColumn = {};
+		m_sortDirection = 0;
+		UpdateSortHeaders();
+		for (auto const& column : std::array{
+			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
+			column.Visibility(Visibility::Visible);
+		AutoSizeAllColumns_Click(sender, args);
+		RefreshPeerList();
+	}
+
+	void TaskPeersListPage::ResetPeerGroups()
+	{
+		m_peerItems = nullptr;
+		m_connectedGroup = nullptr;
+		m_connectingGroup = nullptr;
+		m_disconnectedGroup = nullptr;
+		m_lastActivePeers.clear();
+		m_disconnectedPeers.clear();
+		m_bannedPeers.clear();
+		if (auto tree = PeersTreeView())
+			tree.ItemsSource(nullptr);
+	}
+
+	void TaskPeersListPage::EnsurePeerGroups()
+	{
+		if (m_peerItems)
+			return;
+
+		m_peerItems = winrt::single_threaded_observable_vector<
+			winrt::Windows::Foundation::IInspectable>();
+
+		auto makeGroup = [](winrt::hstring const& title)
+		{
+			auto group = winrt::make<
+				winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
+			group.IP(title);
+			group.FlagSvg(
+				L"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"/>");
+			group.IsGroup(true);
+			group.IsExpanded(true);
+			return group;
+		};
+
+		m_connectedGroup = makeGroup(L"bt_connected");
+		m_connectingGroup = makeGroup(L"bt_connecting");
+		m_disconnectedGroup = makeGroup(L"disconnected/banned");
+		m_peerItems.Append(m_connectedGroup);
+		m_peerItems.Append(m_connectingGroup);
+		m_peerItems.Append(m_disconnectedGroup);
+		PeersTreeView().ItemsSource(m_peerItems);
+	}
+
+	winrt::hstring TaskPeersListPage::BuildFlagSvg(std::string countryCode)
+	{
+		static winrt::hstring const emptyFlag{
+			L"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"/>" };
+		std::transform(countryCode.begin(), countryCode.end(), countryCode.begin(),
+					   [](unsigned char value)
+		{
+			return static_cast<char>(std::tolower(value));
+		});
+		if (countryCode.size() != 2)
+			return emptyFlag;
+
+		if (auto const cached = m_flagSvgCache.find(countryCode);
+			cached != m_flagSvgCache.end())
+		{
+			return cached->second;
+		}
+
+		if (m_flagSprite.empty())
+		{
+			wchar_t executablePath[MAX_PATH]{};
+			auto const length = GetModuleFileNameW(nullptr, executablePath, MAX_PATH);
+			if (length > 0 && length < MAX_PATH)
+			{
+				auto const spritePath =
+					std::filesystem::path(executablePath).parent_path() /
+					L"Assets" / L"IP2Location" / L"sprite.svg";
+				std::ifstream stream(spritePath, std::ios::binary);
+				if (stream)
+				{
+					m_flagSprite.assign(
+						std::istreambuf_iterator<char>(stream),
+						std::istreambuf_iterator<char>());
+				}
+			}
+		}
+
+		auto const symbolStart = m_flagSprite.find(
+			"<symbol id=\"" + countryCode + "\"");
+		if (symbolStart == std::string::npos)
+			return emptyFlag;
+		auto const contentStart = m_flagSprite.find('>', symbolStart);
+		auto const symbolEnd = m_flagSprite.find("</symbol>", contentStart);
+		if (contentStart == std::string::npos || symbolEnd == std::string::npos)
+			return emptyFlag;
+
+		auto const openingTag =
+			m_flagSprite.substr(symbolStart, contentStart - symbolStart + 1);
+		std::string viewBox = "0 0 640 480";
+		auto const viewBoxStart = openingTag.find("viewBox=\"");
+		if (viewBoxStart != std::string::npos)
+		{
+			auto const valueStart = viewBoxStart + 9;
+			auto const valueEnd = openingTag.find('"', valueStart);
+			if (valueEnd != std::string::npos)
+				viewBox = openingTag.substr(valueStart, valueEnd - valueStart);
+		}
+
+		std::string svg =
+			"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"" +
+			viewBox + "\">" +
+			m_flagSprite.substr(contentStart + 1, symbolEnd - contentStart - 1) +
+			"</svg>";
+		auto result = winrt::to_hstring(svg);
+		m_flagSvgCache.emplace(countryCode, result);
+		return result;
 	}
 
 	// Helper to format speed
@@ -223,14 +522,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPeersListPage::RefreshPeerList()
 	{
-		auto listView = PeersListView();
+		auto listView = PeersTreeView();
 		auto emptyText = EmptyStateText();
 		if (!listView) return;
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
 			listView.ItemsSource(nullptr);
-			m_peerItems = nullptr;
+			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
@@ -243,7 +542,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			listView.ItemsSource(nullptr);
-			m_peerItems = nullptr;
+			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
@@ -253,7 +552,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (taskId.empty())
 		{
 			listView.ItemsSource(nullptr);
-			m_peerItems = nullptr;
+			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
@@ -262,7 +561,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// If task changed, clear cached items
 		if (taskId != m_lastTaskId)
 		{
-			m_peerItems = nullptr;
+			ResetPeerGroups();
 			m_lastTaskId = taskId;
 		}
 
@@ -270,158 +569,124 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
 		{
 			listView.ItemsSource(nullptr);
-			m_peerItems = nullptr;
+			ResetPeerGroups();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			return;
 		}
 
 		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
 
-		if (detail.peers.empty())
+		EnsurePeerGroups();
+
+		auto updateItem = [this](auto const& peer, auto const& item)
 		{
-			listView.ItemsSource(nullptr);
-			m_peerItems = nullptr;
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
-		}
+			auto const ipPort =
+				winrt::to_hstring(peer.ip) + L":" + winrt::to_hstring(peer.port);
+			item.IP(ipPort);
+			item.Client(winrt::to_hstring(peer.client));
+			wchar_t progress[32];
+			swprintf(progress, 32, L"%.1f%%", peer.progress * 100.0);
+			item.Progress(progress);
+			item.DLSpeed(FormatSpeed(peer.downloadRateKB));
+			item.ULSpeed(FormatSpeed(peer.uploadRateKB));
+			item.Downloaded(FormatBytes(peer.totalDownloaded));
+			item.PeerStatus(FormatPeerStatus(peer.flags));
+			auto& geo = ::OpenNet::Core::GeoIPManager::Instance();
+			auto const countryCode = geo.LookupCountryCode(peer.ip);
+			auto const country = geo.LookupCountryName(peer.ip);
+			item.CountryCode(winrt::to_hstring(countryCode));
+			item.FlagSvg(BuildFlagSvg(countryCode));
+			item.Location(country.empty() ? L"-" : winrt::to_hstring(country));
+			item.ConnectionTime(L"-");
+			item.Protocol(FormatConnectionType(peer.connectionType));
+			item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
+			item.Source(FormatPeerSource(peer.source));
+			item.IsGroup(false);
+		};
 
-		// Build a map of new peers keyed by IP:port
-		std::unordered_map<std::string, size_t> newPeerMap;
-		for (size_t i = 0; i < detail.peers.size(); ++i)
+		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> currentPeers;
+		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connected;
+		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connecting;
+		for (auto const& peer : detail.peers)
 		{
-			auto key = detail.peers[i].ip + ":" + std::to_string(detail.peers[i].port);
-			newPeerMap[key] = i;
-		}
+			auto const key = peer.ip + ":" + std::to_string(peer.port);
+			auto item = m_lastActivePeers.contains(key)
+				? m_lastActivePeers.at(key)
+				: winrt::make<
+				winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
+			updateItem(peer, item);
+			currentPeers.emplace(key, item);
+			m_disconnectedPeers.erase(key);
 
-		if (!m_peerItems)
-		{
-			// First time or task changed: create fresh collection
-			m_peerItems = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
-
-			for (auto const& peer : detail.peers)
+			if (m_bannedPeers.contains(key))
 			{
-				auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
-				auto ipPort = winrt::to_hstring(peer.ip) + L":" + winrt::to_hstring(peer.port);
-				item.IP(ipPort);
-				item.Client(winrt::to_hstring(peer.client));
-				wchar_t progBuf[32];
-				swprintf(progBuf, 32, L"%.1f%%", peer.progress * 100.0);
-				item.Progress(winrt::hstring{ progBuf });
-				item.DLSpeed(FormatSpeed(peer.downloadRateKB));
-				item.ULSpeed(FormatSpeed(peer.uploadRateKB));
-				item.Downloaded(FormatBytes(peer.totalDownloaded));
-				item.PeerStatus(FormatPeerStatus(peer.flags));
-				{
-					auto& geo = ::OpenNet::Core::GeoIPManager::Instance();
-					auto country = geo.LookupCountryName(peer.ip);
-					item.Location(country.empty() ? L"-" : winrt::to_hstring(country));
-				}
-				item.ConnectionTime(L"-");
-				item.Protocol(FormatConnectionType(peer.connectionType));
-				item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
-				item.Source(FormatPeerSource(peer.source));
-
-				m_peerItems.Append(item);
+				item.PeerStatus(L"Banned");
+				m_disconnectedPeers[key] = item;
 			}
-
-			listView.ItemsSource(m_peerItems);
-		}
-		else
-		{
-			// Incremental update: build index of existing items
-			std::unordered_map<std::string, uint32_t> existingMap;
-			for (uint32_t i = 0; i < m_peerItems.Size(); ++i)
+			else if (peer.isConnecting)
 			{
-				auto item = m_peerItems.GetAt(i).as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
-				existingMap[winrt::to_string(item.IP())] = i;
+				connecting.push_back(item);
 			}
-
-			// Remove peers that no longer exist (iterate backwards to preserve indices)
-			std::vector<uint32_t> toRemove;
-			for (auto const& [key, idx] : existingMap)
+			else
 			{
-				if (newPeerMap.find(key) == newPeerMap.end())
-				{
-					toRemove.push_back(idx);
-				}
-			}
-			std::sort(toRemove.rbegin(), toRemove.rend());
-			for (auto idx : toRemove)
-			{
-				m_peerItems.RemoveAt(idx);
-			}
-
-			// Update existing and add new peers
-			// Rebuild existingMap after removals
-			existingMap.clear();
-			for (uint32_t i = 0; i < m_peerItems.Size(); ++i)
-			{
-				auto item = m_peerItems.GetAt(i).as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
-				existingMap[winrt::to_string(item.IP())] = i;
-			}
-
-			for (auto const& peer : detail.peers)
-			{
-				auto key = peer.ip + ":" + std::to_string(peer.port);
-				auto it = existingMap.find(key);
-				if (it != existingMap.end())
-				{
-					// Update existing item in-place (no structural change → no ListView flicker)
-					auto item = m_peerItems.GetAt(it->second).as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
-					wchar_t progBuf[32];
-					swprintf(progBuf, 32, L"%.1f%%", peer.progress * 100.0);
-					item.Progress(winrt::hstring{ progBuf });
-					item.DLSpeed(FormatSpeed(peer.downloadRateKB));
-					item.ULSpeed(FormatSpeed(peer.uploadRateKB));
-					item.Downloaded(FormatBytes(peer.totalDownloaded));
-					item.Client(winrt::to_hstring(peer.client));
-					item.PeerStatus(FormatPeerStatus(peer.flags));
-					item.Protocol(FormatConnectionType(peer.connectionType));
-					item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
-					item.Source(FormatPeerSource(peer.source));
-				}
-				else
-				{
-					// Add new peer
-					auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
-					auto ipPort = winrt::to_hstring(peer.ip) + L":" + winrt::to_hstring(peer.port);
-					item.IP(ipPort);
-					item.Client(winrt::to_hstring(peer.client));
-					wchar_t progBuf[32];
-					swprintf(progBuf, 32, L"%.1f%%", peer.progress * 100.0);
-					item.Progress(winrt::hstring{ progBuf });
-					item.DLSpeed(FormatSpeed(peer.downloadRateKB));
-					item.ULSpeed(FormatSpeed(peer.uploadRateKB));
-					item.Downloaded(FormatBytes(peer.totalDownloaded));
-					item.PeerStatus(FormatPeerStatus(peer.flags));
-					{
-						auto& geo = ::OpenNet::Core::GeoIPManager::Instance();
-						auto country = geo.LookupCountryName(peer.ip);
-						item.Location(country.empty() ? L"-" : winrt::to_hstring(country));
-					}
-					item.ConnectionTime(L"-");
-					item.Protocol(FormatConnectionType(peer.connectionType));
-					item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
-					item.Source(FormatPeerSource(peer.source));
-
-					m_peerItems.Append(item);
-				}
+				connected.push_back(item);
 			}
 		}
 
-		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
+		for (auto const& [key, item] : m_lastActivePeers)
+		{
+			if (!currentPeers.contains(key))
+			{
+				if (!m_bannedPeers.contains(key))
+					item.PeerStatus(L"Disconnected");
+				m_disconnectedPeers[key] = item;
+			}
+		}
+		m_lastActivePeers = std::move(currentPeers);
+
+		auto replaceChildren = [](auto const& target, auto const& values)
+		{
+			target.Clear();
+			for (auto const& value : values)
+				target.Append(value);
+		};
+		SortPeerItems(connected);
+		SortPeerItems(connecting);
+		replaceChildren(m_connectedGroup.Children(), connected);
+		replaceChildren(m_connectingGroup.Children(), connecting);
+
+		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> disconnected;
+		disconnected.reserve(m_disconnectedPeers.size());
+		for (auto const& [key, item] : m_disconnectedPeers)
+		{
+			(void)key;
+			disconnected.push_back(item);
+		}
+		SortPeerItems(disconnected);
+		replaceChildren(m_disconnectedGroup.Children(), disconnected);
+
+		m_connectedGroup.IP(
+			L"bt_connected (" + winrt::to_hstring(connected.size()) + L")");
+		m_connectingGroup.IP(
+			L"bt_connecting (" + winrt::to_hstring(connecting.size()) + L")");
+		m_disconnectedGroup.IP(
+			L"disconnected/banned (" + winrt::to_hstring(disconnected.size()) + L")");
+
+		auto const hasAny = !connected.empty() || !connecting.empty() || !disconnected.empty();
+		if (emptyText)
+			emptyText.Visibility(hasAny ? Visibility::Collapsed : Visibility::Visible);
 	}
 
 	// ---- Ban peer handlers ----
 
 	void TaskPeersListPage::BanSelectedPeer(winrt::hstring const& description)
 	{
-		auto listView = PeersListView();
+		auto listView = PeersTreeView();
 		if (!listView) return;
 		auto selected = listView.SelectedItem();
 		if (!selected) return;
 		auto peer = selected.try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
-		if (!peer) return;
+		if (!peer || peer.IsGroup()) return;
 
 		auto ipPortStr = winrt::to_string(peer.IP());
 		// Extract IP (strip port)
@@ -433,6 +698,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto& ipFilter = ::OpenNet::Core::IPFilterManager::Instance();
 			ipFilter.AddRule(ip, ip, 1, winrt::to_string(description));
 			ipFilter.ApplyToSession();
+
+			auto const key = winrt::to_string(peer.IP());
+			m_bannedPeers.insert(key);
+			peer.PeerStatus(L"Banned");
+			m_disconnectedPeers[key] = peer;
 
 			OutputDebugStringW((L"Banned peer: " + winrt::to_hstring(ip) + L" - " + description + L"\n").c_str());
 		}

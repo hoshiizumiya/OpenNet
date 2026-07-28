@@ -55,7 +55,7 @@ export namespace OpenNet::Core
 
 		// Callback registration
 		using ProgressCb = std::function<void(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent&)>;
-		using FinishedCb = std::function<void(const std::string&)>;
+		using FinishedCb = std::function<void(const std::string&, const std::string&)>;
 		using ErrorCb = std::function<void(const std::string&)>;
 
 		void SetProgressCallback(ProgressCb cb);
@@ -75,6 +75,7 @@ export namespace OpenNet::Core
 		~P2PManager() = default;
 
 		void WireCoreCallbacks();
+		winrt::fire_and_forget ProbePortAfterStartupAsync();
 
 		std::unique_ptr<::OpenNet::Core::Torrent::LibtorrentHandle> m_torrentCore;
 		std::unique_ptr<::OpenNet::Core::Torrent::TorrentStateManager> m_stateManager;

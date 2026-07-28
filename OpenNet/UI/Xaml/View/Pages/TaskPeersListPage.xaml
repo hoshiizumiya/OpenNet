@@ -4,11 +4,14 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
+    xmlns:controls="using:XamlToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:svg="using:WinUI3Package.Svg"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
@@ -19,11 +22,11 @@
         </Grid.RowDefinitions>
 
         <!--  Peer list  -->
-        <ListView
-            x:Name="PeersListView"
+        <controls:HeaderedTreeView
+            x:Name="PeersTreeView"
             Grid.Row="1"
             SelectionMode="Single">
-            <ListView.ContextFlyout>
+            <controls:HeaderedTreeView.ContextFlyout>
                 <MenuFlyout>
                     <MenuFlyoutItem
                         x:Name="BanPeer1hItem"
@@ -41,105 +44,274 @@
                         Click="BanPeerPermanent_Click"
                         Text="Ban IP permanently" />
                 </MenuFlyout>
-            </ListView.ContextFlyout>
+            </controls:HeaderedTreeView.ContextFlyout>
             <!--  Column Headers  -->
-            <ListView.Header>
+            <controls:HeaderedTreeView.Header>
                 <Border
                     Padding="8,4,0,4"
                     Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-                    CornerRadius="4">
+                    CornerRadius="4"
+                    RightTapped="ColumnHeader_RightTapped">
+                    <Border.ContextFlyout>
+                        <MenuFlyout Opening="ColumnMenu_Opening">
+                            <MenuFlyoutItem
+                                x:Name="AutoSizeSelectedColumnItem"
+                                Click="AutoSizeSelectedColumn_Click"
+                                Text="Auto Size Selected Column's Width to Fit" />
+                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
+                            <MenuFlyoutSeparator />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="IP"
+                                Text="IP" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Location"
+                                Text="Location" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Progress"
+                                Text="Progress" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="DLSpeed"
+                                Text="DL Speed" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="ULSpeed"
+                                Text="UL Speed" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Downloaded"
+                                Text="Downloaded" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Client"
+                                Text="Client" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Status"
+                                Text="Status" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Protocol"
+                                Text="Protocol" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Initiator"
+                                Text="Initiator" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Source"
+                                Text="Source" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem Click="ResetColumns_Click" Text="Reset Columns and Sorting" />
+                        </MenuFlyout>
+                    </Border.ContextFlyout>
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StickyHeaderBehavior />
                     </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16">
                         <labs:DataColumn x:Name="ColPeerIP" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_IP"
+                            <Button
+                                x:Name="SortPeerIpButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="IP" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="IP">
+                                <TextBlock
+                                    x:Uid="PeerHeader_IP"
+                                    Text="IP"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerLocation" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Location"
+                            <Button
+                                x:Name="SortPeerLocationButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Location" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Location">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Location"
+                                    Text="Location"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProgress" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Progress"
+                            <Button
+                                x:Name="SortPeerProgressButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Progress" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Progress">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Progress"
+                                    Text="Progress"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerDLSpeed" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_DLSpeed"
+                            <Button
+                                x:Name="SortPeerDlSpeedButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="DL Speed" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="DLSpeed">
+                                <TextBlock
+                                    x:Uid="PeerHeader_DLSpeed"
+                                    Text="DL Speed"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerULSpeed" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_ULSpeed"
+                            <Button
+                                x:Name="SortPeerUlSpeedButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="UL Speed" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="ULSpeed">
+                                <TextBlock
+                                    x:Uid="PeerHeader_ULSpeed"
+                                    Text="UL Speed"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerDownloaded" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Downloaded"
+                            <Button
+                                x:Name="SortPeerDownloadedButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Downloaded" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Downloaded">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Downloaded"
+                                    Text="Downloaded"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerClient" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Client"
+                            <Button
+                                x:Name="SortPeerClientButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Client" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Client">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Client"
+                                    Text="Client"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerStatus" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_PeerStatus"
+                            <Button
+                                x:Name="SortPeerStatusButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Status" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Status">
+                                <TextBlock
+                                    x:Uid="PeerHeader_PeerStatus"
+                                    Text="Status"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProtocol" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Protocol"
+                            <Button
+                                x:Name="SortPeerProtocolButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Protocol" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Protocol">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Protocol"
+                                    Text="Protocol"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerInitiator" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Initiator"
+                            <Button
+                                x:Name="SortPeerInitiatorButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Initiator" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Initiator">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Initiator"
+                                    Text="Initiator"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerSource" CanResize="True">
-                            <TextBlock
-                                x:Uid="PeerHeader_Source"
+                            <Button
+                                x:Name="SortPeerSourceButton"
+                                Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
-                                Text="Source" />
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="Source">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Source"
+                                    Text="Source"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
                         </labs:DataColumn>
                     </labs:DataTable>
 
                 </Border>
-            </ListView.Header>
-            <ListView.ItemTemplate>
+            </controls:HeaderedTreeView.Header>
+            <controls:HeaderedTreeView.ItemTemplate>
                 <DataTemplate x:DataType="vm:PeerDisplayItem">
-                    <labs:DataRow HorizontalAlignment="Left">
-                        <TextBlock Text="{x:Bind IP}" />
-                        <TextBlock Text="{x:Bind Location}" />
-                        <TextBlock Text="{x:Bind Progress}" />
-                        <TextBlock Text="{x:Bind DLSpeed}" />
-                        <TextBlock Text="{x:Bind ULSpeed}" />
-                        <TextBlock Text="{x:Bind Downloaded}" />
-                        <TextBlock Text="{x:Bind Client}" />
-                        <TextBlock Text="{x:Bind PeerStatus}" />
-                        <TextBlock Text="{x:Bind Protocol}" />
-                        <TextBlock Text="{x:Bind Initiator}" />
-                        <TextBlock Text="{x:Bind Source}" />
-                    </labs:DataRow>
+                    <muxc:TreeViewItem
+                        HorizontalContentAlignment="Stretch"
+                        IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                        ItemsSource="{x:Bind Children}">
+                        <labs:DataRow HorizontalAlignment="Left">
+                            <TextBlock Text="{x:Bind IP}" />
+                            <Grid ColumnSpacing="6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="20" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <Image
+                                    x:Name="PeerFlagImage"
+                                    Width="18"
+                                    Height="14"
+                                    VerticalAlignment="Center">
+                                    <Image.Source>
+                                        <svg:SvgImageSource BindSizeTo="{x:Bind PeerFlagImage}" StringSource="{x:Bind FlagSvg, Mode=OneWay}" />
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Location}"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <TextBlock Text="{x:Bind Progress}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind DLSpeed}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind ULSpeed}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Downloaded}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Client}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind PeerStatus}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Protocol}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Initiator}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Source}" TextTrimming="CharacterEllipsis" />
+                        </labs:DataRow>
+                    </muxc:TreeViewItem>
                 </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+            </controls:HeaderedTreeView.ItemTemplate>
+        </controls:HeaderedTreeView>
 
         <!--  Empty state when no task selected or no peers  -->
         <TextBlock

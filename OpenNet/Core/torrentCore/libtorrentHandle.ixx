@@ -23,6 +23,7 @@ export namespace OpenNet::Core::Torrent
     public:
         struct ProgressEvent
         {
+            std::string taskId;
             int progressPercent{};
             int downloadRateKB{};
             int uploadRateKB{};
@@ -30,7 +31,7 @@ export namespace OpenNet::Core::Torrent
         };
 
         typedef std::function<void(ProgressEvent const &)> ProgressCallback;
-        typedef std::function<void(std::string const &)> FinishedCallback;
+        typedef std::function<void(std::string const &, std::string const &)> FinishedCallback;
         typedef std::function<void(std::string const &)> ErrorCallback;
 
         LibtorrentHandle();
@@ -133,6 +134,7 @@ export namespace OpenNet::Core::Torrent
             int connectionType{};     // 0=standard_bittorrent, 1=web_seed, 2=http_seed
             int source{};             // libtorrent peer_info::source_flags bitmask
             bool isIncoming{};        // true if peer initiated the connection
+            bool isConnecting{};      // connecting or waiting for handshake
         };
 
         struct TorrentTrackerInfo
