@@ -42,7 +42,16 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 			totalDuration *= 2;
 		}
 
-		double progress = std::fmod(elapsedSeconds, totalDuration);
+		// Each text timeline runs only once. The complete sequence is repeated by
+		// OnDraw's totalTime(..., repeat: false, ...).
+		// Repeating every individual timeline here makes already-faded text
+		// reappear while later text is being rendered.
+		if (elapsedSeconds >= totalDuration)
+		{
+			return autoReverse ? from : to;
+		}
+
+		double progress = elapsedSeconds;
 
 		if (autoReverse && progress > duration)
 		{
@@ -563,6 +572,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 
 		// Create color matrix effect
 		ColorMatrixEffect colorMatrixEffect;
+		Matrix5x4 colorMatrix{};
+		colorMatrix.M11 = 1.0f;
+		colorMatrix.M22 = 1.0f;
+		colorMatrix.M33 = 1.0f;
+		colorMatrix.M44 = 10.0f;
+		colorMatrix.M54 = -4.5f;
+		colorMatrixEffect.ColorMatrix(colorMatrix);
 		colorMatrixEffect.Source(m_blurEffect);
 		colorMatrixEffect.ClampOutput(true);
 		m_colorMatrixEffect = colorMatrixEffect;
@@ -592,9 +608,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 				double progress = item.timeline.GetCurrentProgress(currentTime);
 				maxProgress = std::max(maxProgress, progress);
 
-				Color textColor = ColorBrush();
-				textColor.A = static_cast<uint8_t>(255 * progress);
-				Microsoft::Graphics::Canvas::Brushes::CanvasSolidColorBrush textBrush(sender, textColor);
+				Microsoft::Graphics::Canvas::Brushes::CanvasSolidColorBrush textBrush(sender, ColorBrush());
+				textBrush.Opacity(static_cast<float>(progress));
 
 				drawingSession.DrawText(item.Text, m_centerPoint, textBrush, m_textFormat);
 			}

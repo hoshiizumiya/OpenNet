@@ -64,6 +64,11 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 ## Learn about the project
 [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/hoshiizumiya/OpenNet)
 
+## 🌍 Localization
+
+OpenNet uses [Crowdin](https://crowdin.com/project/opennet/) as a client text translation platform where you can submit translated text for languages you are familiar with. We are grateful to every community member who has contributed to Snap Hutao Remastered and welcome more friends to participate in this project.  
+[![Crowdin](https://badges.crowdin.net/opennet/localized.svg)](https://crowdin.com/project/opennet) 
+
 ## Special thanks
 
 MVVM framework: @https://github.com/AlexAdasCca
