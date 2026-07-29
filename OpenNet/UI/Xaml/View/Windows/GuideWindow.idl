@@ -1,7 +1,7 @@
 ﻿namespace OpenNet.UI.Xaml.View.Windows
 {
     [default_interface]
-    runtimeclass GuideWindow : Microsoft.UI.Xaml.Window
+    runtimeclass GuideWindow : WinUI3Package.WindowEx
     {
         GuideWindow();
 

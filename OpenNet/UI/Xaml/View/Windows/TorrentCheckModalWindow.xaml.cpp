@@ -13,8 +13,10 @@ import winrt.XamlToolkit.Labs.WinUI;
 
 import OpenNet.App;
 import Core.Utils.Misc;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.Graphics;
@@ -70,6 +72,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		// Initialize metadata fetcher
 		m_metadataFetcher = std::make_unique<::OpenNet::Core::Torrent::TorrentMetadataFetcher>();
+
+		// The general page is available immediately. Magnet metadata fills in
+		// the content section later, but save-path and task settings remain
+		// usable from the moment the window opens.
+		m_metadataViewModel =
+			winrt::make<winrt::OpenNet::ViewModels::implementation::
+				TorrentMetadataViewModel>();
+		m_metadataViewModel.MetadataState(L"Loading");
+		m_metadataViewModel.MetadataStatus(L"Connecting to peers...");
+		m_metadataViewModel.TorrentName(L"Magnet download");
+		auto const defaultPath =
+			winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
+		if (!defaultPath.empty())
+		{
+			m_metadataViewModel.SavePath(defaultPath);
+		}
+
+		auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		settingsDb.Initialize();
+		SaveTorrentCopyCheckBox().IsChecked(settingsDb.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+			"saveTorrentCopyToDownloadDirectory").value_or(false));
 	}
 
 	void TorrentCheckModalWindow::StartParseMetadata()
@@ -88,6 +112,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		auto lifetime = get_strong();
 		auto dispatcherQueue = DispatcherQueue();
+
+		try
+		{
+			auto& trackerManager =
+				::OpenNet::Core::Torrent::TrackerManager::Instance();
+			co_await trackerManager.InitializeAsync();
+			auto enabled = trackerManager.GetEnabledTrackers();
+			dispatcherQueue.TryEnqueue([this, enabled = std::move(enabled)]()
+			{
+				std::vector<std::string> urls;
+				urls.reserve(enabled.size());
+				for (auto const& tracker : enabled)
+				{
+					urls.push_back(winrt::to_string(
+						winrt::hstring{ tracker.url }));
+				}
+				MergeTrackerList(urls);
+			});
+		}
+		catch (...)
+		{
+			// Custom trackers improve discovery but are not required for a
+			// magnet or .torrent source to remain addable.
+		}
 
 		// Update UI to loading state
 		dispatcherQueue.TryEnqueue([this]()
@@ -123,7 +171,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		try
 		{
-			// Fetch metadata using callback-based API (60 second timeout)
+			// Wait without a deadline. The user may add the magnet task at any
+			// time; otherwise metadata discovery continues until success or the
+			// window is closed.
 			co_await m_metadataFetcher->FetchMetadataAsync(
 				torrentSource,
 				// On success callback
@@ -139,11 +189,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			{
 				dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(errorMsg)]()
 				{
-					ShowError(msg);
+					if (!m_closing)
+					{
+						ShowError(msg);
+					}
 				});
 			},
-				60  // timeout seconds
+				0
 			);
+
+			if (!m_metadataReady && !m_closing && m_metadataFetcher)
+			{
+				co_await winrt::resume_after(std::chrono::seconds(2));
+				if (!m_closing)
+				{
+					StartParseMetadata();
+				}
+			}
 		}
 		catch (winrt::hresult_error const& ex)
 		{
@@ -174,56 +236,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_loadingStatus = status;
 		m_loadingProgress = progress;
 		m_hasError = false;
+		if (m_metadataViewModel && !m_metadataReady)
+		{
+			m_metadataViewModel.MetadataState(L"Loading");
+			m_metadataViewModel.MetadataStatus(status);
+		}
 
-		// Update UI elements
-		if (auto loadingPanel = LoadingPanel())
-		{
-			loadingPanel.Visibility(isLoading ? Visibility::Visible : Visibility::Collapsed);
-		}
-		if (auto loadingText = LoadingStatusText())
-		{
-			loadingText.Text(status);
-		}
-		if (auto progressRing = LoadingProgressRing())
-		{
-			progressRing.IsIndeterminate(progress < 0);
-			if (progress >= 0)
-			{
-				progressRing.Value(static_cast<double>(progress));
-			}
-		}
-		if (auto errorPanel = ErrorPanel())
-		{
-			errorPanel.Visibility(Visibility::Collapsed);
-		}
 		if (auto contentPanel = ContentPanel())
 		{
-			contentPanel.Visibility(isLoading ? Visibility::Collapsed : Visibility::Visible);
+			contentPanel.Visibility(Visibility::Visible);
 		}
 	}
 
 	void TorrentCheckModalWindow::ShowError(winrt::hstring const& message)
 	{
 		m_isLoading = false;
-		m_hasError = true;
+		m_hasError = false;
 		m_errorMessage = message;
-		m_metadataReady = false;
-
-		if (auto loadingPanel = LoadingPanel())
+		if (m_metadataViewModel && !m_metadataReady)
 		{
-			loadingPanel.Visibility(Visibility::Collapsed);
-		}
-		if (auto errorPanel = ErrorPanel())
-		{
-			errorPanel.Visibility(Visibility::Visible);
-		}
-		if (auto errorText = ErrorMessageText())
-		{
-			errorText.Text(message);
+			m_metadataViewModel.MetadataState(L"Loading");
+			m_metadataViewModel.MetadataStatus(message);
 		}
 		if (auto contentPanel = ContentPanel())
 		{
-			contentPanel.Visibility(Visibility::Collapsed);
+			contentPanel.Visibility(Visibility::Visible);
 		}
 
 		OutputDebugStringW((L"TorrentCheckModalWindow Error: " + message + L"\n").c_str());
@@ -235,25 +272,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_hasError = false;
 		m_metadataReady = true;
 
-		// Create ViewModel from metadata
-		m_metadataViewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TorrentMetadataViewModel>(metadata);
+		auto const previousSavePath = m_metadataViewModel
+			? m_metadataViewModel.SavePath() : winrt::hstring{};
+		auto const previousCreateSubfolder = m_metadataViewModel
+			? m_metadataViewModel.CreateSubfolder() : true;
+
+		m_metadataViewModel = winrt::make<
+			winrt::OpenNet::ViewModels::implementation::TorrentMetadataViewModel>(
+				metadata);
+		m_metadataViewModel.CreateSubfolder(previousCreateSubfolder);
 
 		// Set default save path
-		const std::wstring_view& defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
-		if (!defaultPath.empty())
+		if (!previousSavePath.empty())
 		{
-			m_metadataViewModel.SavePath(defaultPath);
+			m_metadataViewModel.SavePath(previousSavePath);
 		}
+		else
+		{
+			const std::wstring_view& defaultPath =
+				winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW()
+					.GetResults();
+			if (!defaultPath.empty())
+			{
+				m_metadataViewModel.SavePath(defaultPath);
+			}
+		}
+		MergeTrackerList(metadata.trackers);
 
 		// Update UI
-		if (auto loadingPanel = LoadingPanel())
-		{
-			loadingPanel.Visibility(Visibility::Collapsed);
-		}
-		if (auto errorPanel = ErrorPanel())
-		{
-			errorPanel.Visibility(Visibility::Collapsed);
-		}
 		if (auto contentPanel = ContentPanel())
 		{
 			contentPanel.Visibility(Visibility::Visible);
@@ -276,14 +322,74 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
+	void TorrentCheckModalWindow::MergeTrackerList(
+		std::vector<std::string> const& trackers)
+	{
+		if (!TrackerListTextBox())
+		{
+			return;
+		}
+
+		auto merged = GetTaskTrackers();
+		std::unordered_set<std::string> seen(merged.begin(), merged.end());
+		for (auto const& tracker : trackers)
+		{
+			if (!tracker.empty() && seen.insert(tracker).second)
+			{
+				merged.push_back(tracker);
+			}
+		}
+
+		std::wstring text;
+		for (auto const& tracker : merged)
+		{
+			if (!text.empty())
+			{
+				text += L"\r\n";
+			}
+			text += winrt::to_hstring(tracker);
+		}
+		TrackerListTextBox().Text(text);
+	}
+
+	std::vector<std::string> TorrentCheckModalWindow::GetTaskTrackers()
+	{
+		std::vector<std::string> trackers;
+		if (!TrackerListTextBox())
+		{
+			return trackers;
+		}
+
+		std::wistringstream lines{ std::wstring{
+			TrackerListTextBox().Text().c_str() } };
+		for (std::wstring line; std::getline(lines, line);)
+		{
+			auto const first = line.find_first_not_of(L" \t\r");
+			if (first == std::wstring::npos)
+			{
+				continue;
+			}
+			auto const last = line.find_last_not_of(L" \t\r");
+			line = line.substr(first, last - first + 1);
+			auto url = winrt::to_string(winrt::hstring{ line });
+			if (!url.empty())
+			{
+				trackers.push_back(std::move(url));
+			}
+		}
+		return trackers;
+	}
+
 	IAsyncAction TorrentCheckModalWindow::StartDownloadAsync()
 	{
 		auto lifetime = get_strong();
 
-		if (!m_metadataViewModel)
+		if (!m_metadataViewModel || m_downloadStarting)
 		{
 			co_return;
 		}
+		m_downloadStarting = true;
+		StartDownloadButton().IsEnabled(false);
 
 		try
 		{
@@ -306,22 +412,45 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			}
 
 			bool success = false;
+			auto taskTrackers = GetTaskTrackers();
+			auto const startImmediately =
+				StartImmediatelyCheckBox().IsChecked().Value();
+			auto const saveTorrentCopy =
+				SaveTorrentCopyCheckBox().IsChecked().Value();
+			auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
+			settingsDb.Initialize();
+			settingsDb.SetBool(
+				::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+				"saveTorrentCopyToDownloadDirectory",
+				saveTorrentCopy);
 
 			// Determine if it's a magnet link or a torrent file
 			if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsMagnetLink(torrentSource))
 			{
 				// It's a magnet link
-				success = co_await p2pManager.AddMagnetAsync(torrentSource, savePath, filePriorities);
+				success = co_await p2pManager.AddMagnetAsync(
+					torrentSource,
+					savePath,
+					filePriorities,
+					taskTrackers,
+					startImmediately);
 			}
 			else if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsTorrentFile(torrentSource))
 			{
 				// It's a torrent file
-				success = co_await p2pManager.AddTorrentFileAsync(torrentSource, savePath, filePriorities);
+				success = co_await p2pManager.AddTorrentFileAsync(
+					torrentSource,
+					savePath,
+					filePriorities,
+					taskTrackers,
+					startImmediately);
 			}
 			else
 			{
 				DispatcherQueue().TryEnqueue([this]()
 				{
+					m_downloadStarting = false;
+					StartDownloadButton().IsEnabled(true);
 					ShowError(L"Invalid torrent source: not a magnet link or torrent file");
 				});
 				co_return;
@@ -336,6 +465,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			{
 				DispatcherQueue().TryEnqueue([this]()
 				{
+					m_downloadStarting = false;
+					StartDownloadButton().IsEnabled(true);
 					ShowError(L"Failed to start download");
 				});
 			}
@@ -344,6 +475,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			DispatcherQueue().TryEnqueue([this, msg = winrt::to_hstring(ex.what())]()
 			{
+				m_downloadStarting = false;
+				StartDownloadButton().IsEnabled(true);
 				ShowError(L"Error starting download: " + msg);
 			});
 		}
@@ -361,6 +494,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		m_closing = true;
 		// Safely cancel any ongoing operations
 		if (m_metadataFetcher)
 		{
@@ -368,13 +502,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			// Don't access m_metadataFetcher after Cancel() to avoid use-after-free
 		}
 		this->Close();
-	}
-
-	void TorrentCheckModalWindow::RetryButton_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-	{
-		StartParseMetadata();
 	}
 
 	void TorrentCheckModalWindow::SetWindowOwner()
@@ -397,12 +524,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void TorrentCheckModalWindow::ModalWindow_Closed(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::WindowEventArgs const&)
 	{
+		m_closing = true;
 		// Cancel any ongoing operations and clear the fetcher
 		if (m_metadataFetcher)
 		{
 			m_metadataFetcher->Cancel();
-			// Clear the unique_ptr to ensure proper cleanup
-			m_metadataFetcher.reset();
+			// ParseTorrentMetadataAsync keeps this window alive until the
+			// fetch loop observes cancellation. Do not destroy the fetcher
+			// while that coroutine is still executing inside it.
 		}
 
 		auto const& ownerWindow = winrt::OpenNet::implementation::App::window;
@@ -436,26 +565,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		m_selectedTabIndex = selectedIndex;
 
-		// Navigate to the appropriate page based on selected tab
-		// 0: General, 1: Snapshots, 2: Advanced, 3: Publisher, 4: Download Order
-		if (auto frame = TorrentCheckFrame())
+		if (selectedIndex == 0)
 		{
-			switch (selectedIndex)
+			TrackersPanel().Visibility(Visibility::Collapsed);
+			TorrentCheckFrame().Visibility(Visibility::Visible);
+			if (auto frame = TorrentCheckFrame())
 			{
-				case 0:
-					frame.Navigate(
-						winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TorrentCheckGeneralPage>(),
-						m_metadataViewModel);
-					break;
-					// TODO: Add other pages when implemented
-				default:
-					break;
+				frame.Navigate(
+					winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::
+						TorrentCheckGeneralPage>(),
+					m_metadataViewModel);
 			}
+		}
+		else
+		{
+			TorrentCheckFrame().Visibility(Visibility::Collapsed);
+			TrackersPanel().Visibility(Visibility::Visible);
 		}
 	}
 
 	void TorrentCheckModalWindow::TorrentCreateGrid_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		NavigateToGeneralPage();
 		StartParseMetadata();
 	}
 

@@ -17,6 +17,7 @@ import OpenNet.Core.DownloadManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.RSS.RSSManager;
+import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.ApplicationModel.Activation;
@@ -489,6 +490,8 @@ namespace winrt::OpenNet::implementation
 	{
 		try
 		{
+			co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
+				.InitializeAsync();
 			co_await ::OpenNet::Core::P2PManager::Instance()
 				.EnsureTorrentCoreInitializedAsync();
 			OutputDebugStringA("App: libtorrent core initialized\n");

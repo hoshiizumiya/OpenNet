@@ -21,6 +21,7 @@ import winrt.Windows.System.UserProfile;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Windows::ApplicationModel::DataTransfer;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
@@ -114,7 +115,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		IInspectable const&, RoutedEventArgs const&)
 	{
 		DataPackage package;
-		package.SetText(ReportTextBox().Text());
+		package.SetText(m_lastReport);
 		Clipboard::SetContent(package);
 		LastUpdatedText().Text(L"Report copied to clipboard");
 	}
@@ -122,7 +123,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void RuntimeStatusWindow::RefreshReport()
 	{
 		RefreshIndicator().IsActive(true);
-		ReportTextBox().Text(BuildReport());
+		m_lastReport = BuildReport();
+		RebuildStatusTree();
 		SYSTEMTIME now{};
 		GetLocalTime(&now);
 		LastUpdatedText().Text(std::format(
@@ -132,6 +134,53 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			now.wSecond,
 			now.wMilliseconds));
 		RefreshIndicator().IsActive(false);
+	}
+
+	void RuntimeStatusWindow::RebuildStatusTree()
+	{
+		auto const roots = StatusTreeView().RootNodes();
+		roots.Clear();
+
+		for (auto const& section : m_statusSections)
+		{
+			TreeViewNode sectionNode;
+			sectionNode.Content(box_value(hstring{ section.title }));
+			sectionNode.IsExpanded(true);
+
+			for (auto const& row : section.rows)
+			{
+				Grid content;
+				content.Padding(Thickness{ 8, 4, 8, 4 });
+				content.ColumnSpacing(12);
+
+				ColumnDefinition nameColumn;
+				nameColumn.Width(GridLength{ 320, GridUnitType::Pixel });
+				content.ColumnDefinitions().Append(nameColumn);
+
+				ColumnDefinition valueColumn;
+				valueColumn.Width(GridLength{ 1, GridUnitType::Star });
+				content.ColumnDefinitions().Append(valueColumn);
+
+				TextBlock nameText;
+				nameText.Text(row.name);
+				nameText.TextTrimming(TextTrimming::CharacterEllipsis);
+				nameText.VerticalAlignment(VerticalAlignment::Center);
+				content.Children().Append(nameText);
+
+				TextBlock valueText;
+				valueText.Text(row.value);
+				valueText.TextWrapping(TextWrapping::Wrap);
+				valueText.VerticalAlignment(VerticalAlignment::Center);
+				Grid::SetColumn(valueText, 1);
+				content.Children().Append(valueText);
+
+				TreeViewNode rowNode;
+				rowNode.Content(content);
+				sectionNode.Children().Append(rowNode);
+			}
+
+			roots.Append(sectionNode);
+		}
 	}
 
 	hstring RuntimeStatusWindow::BuildReport()
@@ -202,14 +251,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		GetDiskFreeSpaceExW(
 			nullptr, &diskAvailable, &diskTotal, &diskFree);
 
-		std::wstring report;
-		auto section = [&report](std::wstring_view title)
+		m_statusSections.clear();
+		std::wstring report = L"OpenNet complete runtime status\r\n";
+		StatusSection* currentSection = nullptr;
+		auto section = [this, &report, &currentSection](std::wstring_view title)
 		{
+			m_statusSections.push_back(StatusSection{ std::wstring(title), {} });
+			currentSection = &m_statusSections.back();
 			report += L"\r\n[" + std::wstring(title) + L"]\r\n";
 		};
-		auto row = [&report](
+		auto row = [&report, &currentSection](
 			std::wstring_view name, std::wstring const& value)
 		{
+			if (currentSection)
+				currentSection->rows.push_back(
+					StatusRow{ std::wstring(name), value });
 			report += std::format(L"{:<38} {}\r\n", name, value);
 		};
 		auto unavailable = [&row](std::wstring_view name)
@@ -217,7 +273,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			row(name, Unavailable);
 		};
 
-		report = L"OpenNet complete runtime status\r\n";
+		section(L"Application and tasks");
 		row(L"Version", version);
 		row(
 			L"Up time",

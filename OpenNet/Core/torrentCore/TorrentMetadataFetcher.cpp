@@ -8,10 +8,12 @@
 #include <libtorrent/alert_types.hpp>
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/torrent_status.hpp>
+#include <libtorrent/create_torrent.hpp>
 
 module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 
 import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.Torrent.TrackerManager;
 
 namespace lt = libtorrent;
 using namespace std::chrono_literals;
@@ -24,6 +26,48 @@ namespace OpenNet::Core::Torrent
         std::ostringstream oss;
         oss << ih;
         return oss.str();
+    }
+
+    static void PersistMetadataTorrent(lt::torrent_handle const& handle)
+    {
+        try
+        {
+            auto info = handle.torrent_file();
+            if (!info || !info->is_valid())
+            {
+                return;
+            }
+
+            lt::create_torrent torrent(*info);
+            auto bytes = torrent.generate_buf();
+            auto directory = std::filesystem::path(
+                winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW())
+                / L"Torrents";
+            std::filesystem::create_directories(directory);
+
+            std::wstring stem = winrt::to_hstring(
+                InfoHashToHex(info->info_hashes())).c_str();
+            for (auto& ch : stem)
+            {
+                if (ch == L'<' || ch == L'>' || ch == L':' || ch == L'"'
+                    || ch == L'/' || ch == L'\\' || ch == L'|'
+                    || ch == L'?' || ch == L'*' || std::iswspace(ch))
+                {
+                    ch = L'_';
+                }
+            }
+
+            std::ofstream output(
+                directory / ((stem.empty() ? L"metadata" : stem) + L".torrent"),
+                std::ios::binary | std::ios::trunc);
+            output.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
+        }
+        catch (std::exception const& ex)
+        {
+            OutputDebugStringA((
+                "TorrentMetadataFetcher: Failed to save metadata: "
+                + std::string(ex.what()) + "\n").c_str());
+        }
     }
 
     TorrentMetadataFetcher::TorrentMetadataFetcher()
@@ -145,6 +189,22 @@ namespace OpenNet::Core::Torrent
             // Parse magnet URI
             lt::add_torrent_params atp = lt::parse_magnet_uri(torrentSource);
 
+            auto& trackerManager = TrackerManager::Instance();
+            if (trackerManager.AutoAddToNewTorrents())
+            {
+                std::unordered_set<std::string> existing(
+                    atp.trackers.begin(), atp.trackers.end());
+                for (auto const& tracker : trackerManager.GetEnabledTrackers())
+                {
+                    auto url = winrt::to_string(winrt::hstring{ tracker.url });
+                    if (!url.empty() && existing.insert(url).second)
+                    {
+                        atp.trackers.push_back(std::move(url));
+                        atp.tracker_tiers.push_back(0);
+                    }
+                }
+            }
+
             // Use temp directory for metadata
             std::filesystem::path tempDir = std::filesystem::path(winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW()) / "MetadataTemp";
             std::filesystem::create_directories(tempDir);
@@ -167,12 +227,12 @@ namespace OpenNet::Core::Torrent
 
             // Wait for metadata with timeout
             auto startTime = std::chrono::steady_clock::now();
-            auto timeout = std::chrono::seconds(timeoutSeconds);
+            auto timeout = std::chrono::seconds(std::max(0, timeoutSeconds));
 
-            while (!m_cancelled.load() && !m_metadataReceived.load() && !m_metadataFailed.load())
+            while (!m_cancelled.load() && !m_metadataReceived.load())
             {
                 auto elapsed = std::chrono::steady_clock::now() - startTime;
-                if (elapsed >= timeout)
+                if (timeoutSeconds > 0 && elapsed >= timeout)
                 {
                     // Clean up before returning
                     if (m_handle.is_valid())
@@ -203,6 +263,7 @@ namespace OpenNet::Core::Torrent
                         }
 
                         m_result = ExtractMetadata(m_handle);
+                        PersistMetadataTorrent(m_handle);
                         break;
                     }
 
@@ -211,9 +272,9 @@ namespace OpenNet::Core::Torrent
                     {
                         auto elapsedSec = std::chrono::duration_cast<std::chrono::seconds>(elapsed).count();
                         auto timeoutSec = std::chrono::duration_cast<std::chrono::seconds>(timeout).count();
-                        int progressPercent = (timeoutSec > 0)
+                        int progressPercent = (timeoutSeconds > 0 && timeoutSec > 0)
                             ? 10 + static_cast<int>((elapsedSec * 80) / timeoutSec)
-                            : 10;
+                            : std::min(90, 10 + static_cast<int>(elapsedSec));
                         progressPercent = std::min(progressPercent, 90);
 
                         std::string statusMsg = "Downloading metadata... (" + 
@@ -235,18 +296,6 @@ namespace OpenNet::Core::Torrent
                 }
                 m_isFetching.store(false);
                 if (onError) onError("Operation cancelled");
-                co_return;
-            }
-
-            if (m_metadataFailed.load())
-            {
-                if (m_handle.is_valid())
-                {
-                    m_session->remove_torrent(m_handle, lt::session::delete_files);
-                    m_handle = lt::torrent_handle{};
-                }
-                m_isFetching.store(false);
-                if (onError) onError(m_errorMessage.empty() ? "Metadata download failed" : m_errorMessage);
                 co_return;
             }
 
@@ -298,7 +347,9 @@ namespace OpenNet::Core::Torrent
             {
                 OutputDebugStringA(("TorrentMetadataFetcher: Metadata failed: " + mfa->message() + "\n").c_str());
                 m_errorMessage = mfa->message();
-                m_metadataFailed.store(true);
+                // This alert reports that one metadata exchange failed (often
+                // a bad or incomplete peer response). Other peers may still
+                // provide valid metadata, so it must not terminate the fetch.
             }
             else if (auto* tea = lt::alert_cast<lt::torrent_error_alert>(a))
             {

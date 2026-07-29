@@ -20,6 +20,9 @@
 
 module OpenNet.Core.torrentCore.LibtorrentHandle;
 
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Core.torrentCore.TorrentStateManager;
 import OpenNet.Core.TorrentSettings;
 import winrt_base;
@@ -29,6 +32,127 @@ using namespace std::chrono_literals;
 
 namespace OpenNet::Core::Torrent
 {
+	namespace
+	{
+		std::vector<std::string> TrackersForNewTask(
+			std::vector<std::string> const& taskTrackers)
+		{
+			std::vector<std::string> result = taskTrackers;
+			auto& manager = TrackerManager::Instance();
+			if (manager.AutoAddToNewTorrents())
+			{
+				for (auto const& tracker : manager.GetEnabledTrackers())
+				{
+					auto url = winrt::to_string(winrt::hstring{ tracker.url });
+					if (!url.empty())
+					{
+						result.push_back(std::move(url));
+					}
+				}
+			}
+
+			std::vector<std::string> unique;
+			std::unordered_set<std::string> seen;
+			for (auto const& url : result)
+			{
+				if (!url.empty() && seen.insert(url).second)
+				{
+					unique.push_back(url);
+				}
+			}
+			return unique;
+		}
+
+		void ApplyTrackers(
+			lt::torrent_handle const& handle,
+			std::vector<std::string> const& taskTrackers)
+		{
+			if (!handle.is_valid())
+			{
+				return;
+			}
+
+			std::unordered_set<std::string> existing;
+			for (auto const& tracker : handle.trackers())
+			{
+				existing.insert(tracker.url);
+			}
+			for (auto const& url : TrackersForNewTask(taskTrackers))
+			{
+				if (existing.insert(url).second)
+				{
+					handle.add_tracker(lt::announce_entry(url));
+				}
+			}
+		}
+
+		std::wstring SafeTorrentFileStem(lt::torrent_info const& info)
+		{
+			std::ostringstream hashText;
+			hashText << info.info_hashes();
+			std::wstring stem = winrt::to_hstring(hashText.str()).c_str();
+			for (auto& ch : stem)
+			{
+				if (ch == L'<' || ch == L'>' || ch == L':' || ch == L'"'
+					|| ch == L'/' || ch == L'\\' || ch == L'|'
+					|| ch == L'?' || ch == L'*' || std::iswspace(ch))
+				{
+					ch = L'_';
+				}
+			}
+			return stem.empty() ? L"metadata" : stem;
+		}
+
+		void WriteTorrentFile(
+			lt::torrent_handle const& handle,
+			std::string const& downloadPath,
+			bool copyToDownloadDirectory)
+		{
+			if (!handle.is_valid())
+			{
+				return;
+			}
+			auto info = handle.torrent_file();
+			if (!info || !info->is_valid())
+			{
+				return;
+			}
+
+			try
+			{
+				lt::create_torrent torrent(*info);
+				auto bytes = torrent.generate_buf();
+				auto appDataDirectory = std::filesystem::path(
+					winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW())
+					/ L"Torrents";
+				std::filesystem::create_directories(appDataDirectory);
+				auto fileName = SafeTorrentFileStem(*info) + L".torrent";
+				auto appDataFile = appDataDirectory / fileName;
+
+				std::ofstream output(appDataFile, std::ios::binary | std::ios::trunc);
+				output.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
+				output.close();
+
+				if (copyToDownloadDirectory && !downloadPath.empty())
+				{
+					auto targetDirectory = std::filesystem::path(
+						winrt::to_hstring(downloadPath).c_str());
+					std::filesystem::create_directories(targetDirectory);
+					std::filesystem::copy_file(
+						appDataFile,
+						targetDirectory / fileName,
+						std::filesystem::copy_options::overwrite_existing);
+				}
+			}
+			catch (std::exception const& ex)
+			{
+				OutputDebugStringA((
+					"LibtorrentHandle: Failed to persist .torrent metadata: "
+					+ std::string(ex.what()) + "\n").c_str());
+			}
+		}
+	}
+
 	LibtorrentHandle::LibtorrentHandle()
 	{
 	}
@@ -246,7 +370,12 @@ namespace OpenNet::Core::Torrent
 		OutputDebugStringA("LibtorrentHandle: Stop completed\n");
 	}
 
-	bool LibtorrentHandle::AddMagnet(std::string const& magnetUri, std::string const& savePath, std::vector<int> const& filePriorities)
+	bool LibtorrentHandle::AddMagnet(
+		std::string const& magnetUri,
+		std::string const& savePath,
+		std::vector<int> const& filePriorities,
+		std::vector<std::string> const& extraTrackers,
+		bool startImmediately)
 	{
 		if (!Initialize())
 			return false;
@@ -256,6 +385,11 @@ namespace OpenNet::Core::Torrent
 			atp.save_path = savePath; // 目标目录
 			// Remove seed_mode flag for downloads
 			atp.flags &= ~lt::torrent_flags::seed_mode;
+			if (!startImmediately)
+			{
+				atp.flags &= ~lt::torrent_flags::auto_managed;
+				atp.flags |= lt::torrent_flags::paused;
+			}
 
 			// Apply storage preallocation setting
 			auto torrentSettings = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
@@ -280,6 +414,7 @@ namespace OpenNet::Core::Torrent
 			std::string taskId = TorrentStateManager::GenerateTaskId();
 
 			lt::torrent_handle handle = m_session->add_torrent(atp);
+			ApplyTrackers(handle, extraTrackers);
 
 			// Store mapping
 			{
@@ -298,7 +433,7 @@ namespace OpenNet::Core::Torrent
 				metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now().time_since_epoch())
 					.count();
-				metadata.status = 1; // Downloading
+				metadata.status = startImmediately ? 1 : 2;
 				m_stateManager->SaveTaskMetadata(metadata);
 			}
 
@@ -313,7 +448,12 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	bool LibtorrentHandle::AddTorrentFile(std::string const& torrentFilePath, std::string const& savePath, std::vector<int> const& filePriorities)
+	bool LibtorrentHandle::AddTorrentFile(
+		std::string const& torrentFilePath,
+		std::string const& savePath,
+		std::vector<int> const& filePriorities,
+		std::vector<std::string> const& extraTrackers,
+		bool startImmediately)
 	{
 		if (!Initialize())
 			return false;
@@ -327,6 +467,11 @@ namespace OpenNet::Core::Torrent
 			atp.save_path = savePath;
 			// Remove seed_mode flag for downloads
 			atp.flags &= ~lt::torrent_flags::seed_mode;
+			if (!startImmediately)
+			{
+				atp.flags &= ~lt::torrent_flags::auto_managed;
+				atp.flags |= lt::torrent_flags::paused;
+			}
 
 			// Apply storage preallocation setting
 			auto torrentSettings = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
@@ -350,6 +495,7 @@ namespace OpenNet::Core::Torrent
 			std::string taskId = TorrentStateManager::GenerateTaskId();
 
 			lt::torrent_handle handle = m_session->add_torrent(atp);
+			ApplyTrackers(handle, extraTrackers);
 
 			// Store mapping
 			{
@@ -369,9 +515,18 @@ namespace OpenNet::Core::Torrent
 				metadata.addedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now().time_since_epoch())
 					.count();
-				metadata.status = 1; // Downloading
+				metadata.status = startImmediately ? 1 : 2;
 				m_stateManager->SaveTaskMetadata(metadata);
 			}
+
+			auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
+			settingsDb.Initialize();
+			WriteTorrentFile(
+				handle,
+				savePath,
+				settingsDb.GetBool(
+					::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+					"saveTorrentCopyToDownloadDirectory").value_or(false));
 
 			return true;
 		}
@@ -409,6 +564,7 @@ namespace OpenNet::Core::Torrent
 				atp.flags &= ~lt::torrent_flags::seed_mode;
 
 				lt::torrent_handle handle = m_session->add_torrent(atp);
+				ApplyTrackers(handle, {});
 
 				{
 					std::lock_guard lk(m_torrentMapMutex);
@@ -895,23 +1051,42 @@ namespace OpenNet::Core::Torrent
 			}
 			else if (auto ma = lt::alert_cast<lt::metadata_received_alert>(a))
 			{
-				// Update task name when metadata is received
+				// Update the task and persist a reusable .torrent file as soon
+				// as a magnet has received its metadata.
 				if (m_stateManager && ma->handle.is_valid())
 				{
 					try
 					{
 						auto status = ma->handle.status();
-						std::lock_guard mapLk(m_torrentMapMutex);
-						auto it = m_handleToTaskId.find(ma->handle);
-						if (it != m_handleToTaskId.end())
+						std::string taskId;
 						{
-							auto metaOpt = m_stateManager->LoadTaskMetadata(it->second);
+							std::lock_guard mapLk(m_torrentMapMutex);
+							auto it = m_handleToTaskId.find(ma->handle);
+							if (it != m_handleToTaskId.end())
+							{
+								taskId = it->second;
+							}
+						}
+						if (!taskId.empty())
+						{
+							auto metaOpt = m_stateManager->LoadTaskMetadata(taskId);
 							if (metaOpt.has_value())
 							{
 								TaskMetadata meta = metaOpt.value();
 								meta.name = status.name;
 								meta.totalSize = status.total_wanted;
 								m_stateManager->SaveTaskMetadata(meta);
+
+								auto& settingsDb =
+									::OpenNet::Core::AppSettingsDatabase::Instance();
+								settingsDb.Initialize();
+								WriteTorrentFile(
+									ma->handle,
+									meta.savePath,
+									settingsDb.GetBool(
+										::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+										"saveTorrentCopyToDownloadDirectory")
+										.value_or(false));
 							}
 						}
 					}

@@ -27,7 +27,9 @@ export namespace OpenNet::Core::Torrent
             std::string const& torrentSource,
             std::function<void(TorrentMetadataInfo const&)> onSuccess,
             std::function<void(std::string const&)> onError,
-            int timeoutSeconds = 60);
+            // A timeout <= 0 waits until metadata arrives or the operation is
+            // cancelled. This is used by the add-torrent window.
+            int timeoutSeconds = 0);
 
         // Set progress callback
         void SetProgressCallback(MetadataProgressCallback callback);

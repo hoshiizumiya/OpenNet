@@ -42,8 +42,18 @@ export namespace OpenNet::Core
 		void Shutdown();
 
 		// Torrent operations
-		winrt::Windows::Foundation::IAsyncOperation<bool> AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities = {});
-		winrt::Windows::Foundation::IAsyncOperation<bool> AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities = {});
+		winrt::Windows::Foundation::IAsyncOperation<bool> AddMagnetAsync(
+			std::string magnetUri,
+			std::string savePath,
+			std::vector<int> const& filePriorities = {},
+			std::vector<std::string> const& extraTrackers = {},
+			bool startImmediately = true);
+		winrt::Windows::Foundation::IAsyncOperation<bool> AddTorrentFileAsync(
+			std::string torrentFilePath,
+			std::string savePath,
+			std::vector<int> const& filePriorities = {},
+			std::vector<std::string> const& extraTrackers = {},
+			bool startImmediately = true);
 
 		// Load all saved tasks and resume them
 		winrt::Windows::Foundation::IAsyncAction LoadAndResumeSavedTasksAsync();

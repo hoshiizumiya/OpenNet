@@ -7,6 +7,7 @@
 #include "NotifyIconXamlHostWindow.xaml.h"
 #include "MainWindow.xaml.h"
 #include "UI/Xaml/View/Windows/InfoOverlayWindow.xaml.h"
+#include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
@@ -95,7 +96,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			};
 			SchedulerToggle().IsChecked(read(L"Tray.EnableScheduler", false));
 			CaptureClipboardToggle().IsChecked(
-				read(L"Tray.CaptureClipboardUrl", false));
+				read(L"Tray.CaptureClipboardUrl", true));
 			TrayBalloonToggle().IsChecked(read(L"Tray.BalloonEnabled", true));
 			FloatingWindowToggle().IsChecked(
 				read(L"Tray.FloatingWindowEnabled", false));
@@ -478,6 +479,15 @@ namespace winrt::OpenNet::UI::Shell::implementation
 				co_return;
 			}
 			auto text = co_await content.GetTextAsync();
+			std::wstring normalized{ text.c_str() };
+			auto const first = normalized.find_first_not_of(L" \t\r\n");
+			if (first == std::wstring::npos)
+			{
+				co_return;
+			}
+			auto const last = normalized.find_last_not_of(L" \t\r\n");
+			normalized = normalized.substr(first, last - first + 1);
+			text = winrt::hstring{ normalized };
 			std::wstring lower(text);
 			std::transform(
 				lower.begin(), lower.end(), lower.begin(), ::towlower);
@@ -493,7 +503,27 @@ namespace winrt::OpenNet::UI::Shell::implementation
 
 			m_lastCapturedClipboardUrl = text;
 			m_clipboardDialogOpen = true;
-			co_await OpenAddDialogAsync(torrent ? L"url" : L"http");
+			if (torrent)
+			{
+				try
+				{
+					Hide();
+				}
+				catch (...)
+				{
+				}
+				if (winrt::OpenNet::implementation::App::CreateSetMainWindow())
+				{
+					auto checkWindow = winrt::make_self<
+						winrt::OpenNet::UI::Xaml::View::Windows::implementation::
+							TorrentCheckModalWindow>(text);
+					checkWindow->Activate();
+				}
+			}
+			else
+			{
+				co_await OpenAddDialogAsync(L"http");
+			}
 			m_clipboardDialogOpen = false;
 		}
 		catch (...)

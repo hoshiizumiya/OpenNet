@@ -45,8 +45,18 @@ export namespace OpenNet::Core::Torrent
 		bool Initialize();
 		void Start();
 		void Stop();
-		bool AddMagnet(std::string const& magnetUri, std::string const& savePath, std::vector<int> const& filePriorities = {});
-		bool AddTorrentFile(std::string const& torrentFilePath, std::string const& savePath, std::vector<int> const& filePriorities = {});
+		bool AddMagnet(
+			std::string const& magnetUri,
+			std::string const& savePath,
+			std::vector<int> const& filePriorities = {},
+			std::vector<std::string> const& extraTrackers = {},
+			bool startImmediately = true);
+		bool AddTorrentFile(
+			std::string const& torrentFilePath,
+			std::string const& savePath,
+			std::vector<int> const& filePriorities = {},
+			std::vector<std::string> const& extraTrackers = {},
+			bool startImmediately = true);
 
 		// Resume torrent from saved state (returns task ID if successful)
 		std::string AddTorrentFromResumeData(std::string const& taskId);

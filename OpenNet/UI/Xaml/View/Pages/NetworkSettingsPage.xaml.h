@@ -24,15 +24,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         void AddSubscriptionButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
         void RemoveSubscriptionButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
         void RefreshTrackersButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void AutoAddTrackersToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void AddPresetTrackerListButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
     private:
         void LoadTrackers();
         void LoadSubscriptions();
+        winrt::fire_and_forget InitializeTrackerManagerAsync();
         winrt::Windows::Foundation::IAsyncAction AddSubscriptionAsync();
+        winrt::Windows::Foundation::IAsyncAction AddPresetSubscriptionAsync();
 
         winrt::OpenNet::ViewModels::NetworkSettingsViewModel m_viewModel{ nullptr };
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_trackerList;
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_subscriptionList;
+        bool m_loadingTrackerSettings{ true };
     };
 }
 namespace winrt::OpenNet::UI::Xaml::View::Pages::factory_implementation

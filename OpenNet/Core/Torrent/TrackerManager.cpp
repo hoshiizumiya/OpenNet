@@ -5,6 +5,7 @@ import winrt.Windows.Data.Json;
 import winrt.Windows.Web.Http;
 import winrt.Windows.Foundation;
 import winrt.Microsoft.Windows.Storage;
+import OpenNet.Core.AppSettingsDatabase;
 import std;
 
 namespace OpenNet::Core::Torrent
@@ -31,15 +32,58 @@ namespace OpenNet::Core::Torrent
 
     winrt::Windows::Foundation::IAsyncAction TrackerManager::InitializeAsync()
     {
+        std::shared_ptr<std::promise<void>> completionSource;
+        std::shared_future<void> completion;
+        bool ownsInitialization = false;
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+            if (m_initialized)
+            {
+                co_return;
+            }
+            if (m_initializing)
+            {
+                completion = m_initializationCompletion;
+            }
+            else
+            {
+                completionSource = std::make_shared<std::promise<void>>();
+                completion = completionSource->get_future().share();
+                m_initializationCompletion = completion;
+                m_initializing = true;
+                ownsInitialization = true;
+            }
+        }
+
+        if (!ownsInitialization)
+        {
+            co_await winrt::resume_background();
+            completion.get();
+            co_return;
+        }
+
         try
         {
             auto localFolder = ApplicationData::Current().LocalFolder();
             m_configPath = std::wstring(localFolder.Path().c_str()) + L"\\trackers.json";
             co_await LoadTrackersAsync();
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+                m_initialized = true;
+                m_initializing = false;
+            }
+            completionSource->set_value();
         }
         catch (...)
         {
-            // Handle initialization errors
+            auto error = std::current_exception();
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+                m_initialized = false;
+                m_initializing = false;
+            }
+            completionSource->set_exception(error);
+            std::rethrow_exception(error);
         }
     }
 
@@ -115,6 +159,25 @@ namespace OpenNet::Core::Torrent
         }
 
         return enabled;
+    }
+
+    bool TrackerManager::AutoAddToNewTorrents() const
+    {
+        auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+        db.Initialize();
+        return db.GetBool(
+            ::OpenNet::Core::AppSettingsDatabase::CAT_TRACKER,
+            "autoAddCustomTrackers").value_or(true);
+    }
+
+    void TrackerManager::AutoAddToNewTorrents(bool value)
+    {
+        auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+        db.Initialize();
+        db.SetBool(
+            ::OpenNet::Core::AppSettingsDatabase::CAT_TRACKER,
+            "autoAddCustomTrackers",
+            value);
     }
 
     winrt::Windows::Foundation::IAsyncAction TrackerManager::SubscribeToTrackerListAsync(

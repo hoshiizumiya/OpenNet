@@ -3,6 +3,8 @@
 
 module OpenNet.Core.P2PManager;
 
+import OpenNet.Core.Torrent.TrackerManager;
+
 using namespace winrt;
 using namespace Windows::Foundation;
 
@@ -185,20 +187,36 @@ namespace OpenNet::Core
 		}
 	}
 
-	IAsyncOperation<bool> P2PManager::AddMagnetAsync(std::string magnetUri, std::string savePath, std::vector<int> const& filePriorities)
+	IAsyncOperation<bool> P2PManager::AddMagnetAsync(
+		std::string magnetUri,
+		std::string savePath,
+		std::vector<int> const& filePriorities,
+		std::vector<std::string> const& extraTrackers,
+		bool startImmediately)
 	{
+		co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
+			.InitializeAsync();
 		co_await EnsureTorrentCoreInitializedAsync();
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
-		co_return m_torrentCore->AddMagnet(magnetUri, savePath, filePriorities);
+		co_return m_torrentCore->AddMagnet(
+			magnetUri, savePath, filePriorities, extraTrackers, startImmediately);
 	}
 
-	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities)
+	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(
+		std::string torrentFilePath,
+		std::string savePath,
+		std::vector<int> const& filePriorities,
+		std::vector<std::string> const& extraTrackers,
+		bool startImmediately)
 	{
+		co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
+			.InitializeAsync();
 		co_await EnsureTorrentCoreInitializedAsync();
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
-		co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities);
+		co_return m_torrentCore->AddTorrentFile(
+			torrentFilePath, savePath, filePriorities, extraTrackers, startImmediately);
 	}
 
 	IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()

@@ -33,7 +33,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		// Button handlers
 		void StartDownloadButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void CancelButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void RetryButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
 		void InitializeWindow();
@@ -45,6 +44,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void ShowError(winrt::hstring const& message);
 		void ShowMetadata(::OpenNet::Core::Torrent::TorrentMetadataInfo const& metadata);
 		void NavigateToGeneralPage();
+		void MergeTrackerList(std::vector<std::string> const& trackers);
+		std::vector<std::string> GetTaskTrackers();
 
 		// Start the actual download with current settings
 		winrt::Windows::Foundation::IAsyncAction StartDownloadAsync();
@@ -60,6 +61,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		bool m_hasError{ false };
 		winrt::hstring m_errorMessage{};
 		bool m_metadataReady{ false };
+		bool m_closing{ false };
+		bool m_downloadStarting{ false };
 
 		// ViewModel
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel m_metadataViewModel{ nullptr };

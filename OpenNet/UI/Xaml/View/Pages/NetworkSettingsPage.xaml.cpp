@@ -21,8 +21,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         m_trackerList = single_threaded_observable_vector<winrt::hstring>();
         m_subscriptionList = single_threaded_observable_vector<winrt::hstring>();
 
+        auto& trackerManager = ::OpenNet::Core::Torrent::TrackerManager::Instance();
+        AutoAddTrackersToggle().IsOn(trackerManager.AutoAddToNewTorrents());
+        m_loadingTrackerSettings = false;
         LoadTrackers();
         LoadSubscriptions();
+        InitializeTrackerManagerAsync();
+    }
+
+    winrt::fire_and_forget NetworkSettingsPage::InitializeTrackerManagerAsync()
+    {
+        auto lifetime = get_strong();
+        try
+        {
+            co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
+                .InitializeAsync();
+            DispatcherQueue().TryEnqueue([this]()
+            {
+                LoadTrackers();
+                LoadSubscriptions();
+            });
+        }
+        catch (...)
+        {
+        }
     }
 
     IObservableVector<winrt::hstring> NetworkSettingsPage::TrackerList() const
@@ -162,6 +184,49 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
     void NetworkSettingsPage::AddSubscriptionButton_Click(IInspectable const&, RoutedEventArgs const&)
     {
         AddSubscriptionAsync();
+    }
+
+    void NetworkSettingsPage::AutoAddTrackersToggle_Toggled(
+        IInspectable const&, RoutedEventArgs const&)
+    {
+        if (m_loadingTrackerSettings)
+        {
+            return;
+        }
+        ::OpenNet::Core::Torrent::TrackerManager::Instance()
+            .AutoAddToNewTorrents(AutoAddTrackersToggle().IsOn());
+    }
+
+    IAsyncAction NetworkSettingsPage::AddPresetSubscriptionAsync()
+    {
+        auto lifetime = get_strong();
+        auto selected = PresetTrackerListComboBox().SelectedItem()
+            .try_as<ComboBoxItem>();
+        if (!selected)
+        {
+            co_return;
+        }
+
+        auto url = unbox_value_or<hstring>(selected.Tag(), L"");
+        auto name = unbox_value_or<hstring>(selected.Content(), L"Tracker list");
+        if (url.empty())
+        {
+            co_return;
+        }
+
+        auto& manager = ::OpenNet::Core::Torrent::TrackerManager::Instance();
+        co_await manager.InitializeAsync();
+        co_await manager.SubscribeToTrackerListAsync(
+            std::wstring{ url.c_str() },
+            std::wstring{ name.c_str() });
+        LoadTrackers();
+        LoadSubscriptions();
+    }
+
+    void NetworkSettingsPage::AddPresetTrackerListButton_Click(
+        IInspectable const&, RoutedEventArgs const&)
+    {
+        AddPresetSubscriptionAsync();
     }
 
     void NetworkSettingsPage::RemoveSubscriptionButton_Click(IInspectable const& sender, RoutedEventArgs const&)

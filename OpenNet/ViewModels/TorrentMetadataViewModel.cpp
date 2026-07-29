@@ -199,6 +199,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_trackers(winrt::single_threaded_observable_vector<winrt::hstring>())
 		, m_rawMetadata(metadata)
 	{
+		m_metadataState = L"Ready";
+		m_metadataStatus = L"Metadata received";
 		m_torrentName = winrt::to_hstring(metadata.name);
 		m_infoHash = winrt::to_hstring(metadata.infoHash);
 		m_totalSize = ::Core::Utils::Misc::friendlyUnitCompact(metadata.totalSize);

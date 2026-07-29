@@ -16,12 +16,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	GuideWindow::GuideWindow()
 	{
+		ExtendsContentIntoTitleBar(true);
 	}
 
 	void GuideWindow::InitializeComponent()
 	{
 		GuideWindowT::InitializeComponent();
-		AppWindow().Resize({ 960, 680 });
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
 		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
@@ -43,9 +43,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		});
 	}
 
-	void GuideWindow::OnGuideCompleted(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Windows::Foundation::IInspectable const&)
+	void GuideWindow::OnGuideCompleted(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)
 	{
 		auto strong = get_strong();
 		winrt::OpenNet::implementation::App::CompleteFirstRun();

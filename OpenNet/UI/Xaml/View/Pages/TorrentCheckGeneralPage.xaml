@@ -6,6 +6,7 @@
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:controls="using:XamlToolkit.WinUI.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
@@ -123,6 +124,41 @@
                     BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="4">
+                    <essential:SwitchPresenter
+                        HorizontalContentAlignment="Stretch"
+                        VerticalContentAlignment="Stretch"
+                        Value="{x:Bind ViewModel.MetadataState, Mode=OneWay}">
+                        <essential:Case Value="Loading">
+                            <StackPanel
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Spacing="12">
+                                <ProgressRing
+                                    Width="48"
+                                    Height="48"
+                                    IsActive="True"
+                                    IsIndeterminate="True" />
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="Downloading magnet metadata" />
+                                <TextBlock
+                                    MaxWidth="520"
+                                    HorizontalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="{x:Bind ViewModel.MetadataStatus, Mode=OneWay}"
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    MaxWidth="520"
+                                    HorizontalAlignment="Center"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="You can configure the save location and trackers now, or add the task immediately. Metadata will continue downloading in the task list."
+                                    TextAlignment="Center"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </essential:Case>
+                        <essential:Case Value="Ready">
                     <Grid RowSpacing="8">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -371,6 +407,8 @@
                             </controls:HeaderedTreeView>
                         </Border>
                     </Grid>
+                        </essential:Case>
+                    </essential:SwitchPresenter>
                 </Border>
             </Grid>
         </Grid>

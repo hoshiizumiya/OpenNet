@@ -48,6 +48,13 @@
                         Content="Refresh"
                         ToolTipService.ToolTip="Refresh all trackers" />
                     <essential:SettingsExpander.Items>
+                        <essential:SettingsCard
+                            Description="Append every enabled custom and subscribed tracker when a new BitTorrent task is first added"
+                            Header="Automatically add custom trackers">
+                            <ToggleSwitch
+                                x:Name="AutoAddTrackersToggle"
+                                Toggled="AutoAddTrackersToggle_Toggled" />
+                        </essential:SettingsCard>
                         <essential:SettingsCard ContentAlignment="Left" Header="Add tracker">
                             <Grid MinWidth="400">
                                 <Grid.ColumnDefinitions>
@@ -157,11 +164,39 @@
                                 </ListView.ItemTemplate>
                             </ListView>
                         </essential:SettingsCard>
-                        <essential:SettingsCard ContentAlignment="Left" Header="Popular tracker lists">
-                            <StackPanel Margin="-12,0,0,0" Spacing="0">
-                                <HyperlinkButton Content="ngosang/trackerslist (Best)" NavigateUri="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_best.txt" />
-                                <HyperlinkButton Content="ngosang/trackerslist (All)" NavigateUri="https://raw.githubusercontent.com/ngosang/trackerslist/master/trackers_all.txt" />
-                            </StackPanel>
+                        <essential:SettingsCard
+                            ContentAlignment="Left"
+                            Description="Choose a maintained XIU2 list and add it as a subscription"
+                            Header="Recommended tracker lists">
+                            <Grid MinWidth="400">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <ComboBox
+                                    x:Name="PresetTrackerListComboBox"
+                                    HorizontalAlignment="Stretch"
+                                    SelectedIndex="0">
+                                    <ComboBoxItem
+                                        Content="精选列表（best.txt）"
+                                        Tag="https://cf.trackerslist.com/best.txt" />
+                                    <ComboBoxItem
+                                        Content="完整列表（all.txt）"
+                                        Tag="https://cf.trackerslist.com/all.txt" />
+                                    <ComboBoxItem
+                                        Content="HTTP(S) 列表（http.txt）"
+                                        Tag="https://cf.trackerslist.com/http.txt" />
+                                    <ComboBoxItem
+                                        Content="无 HTTP 列表（nohttp.txt）"
+                                        Tag="https://cf.trackerslist.com/nohttp.txt" />
+                                </ComboBox>
+                                <Button
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0"
+                                    Click="AddPresetTrackerListButton_Click"
+                                    Content="Subscribe"
+                                    Style="{StaticResource AccentButtonStyle}" />
+                            </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>

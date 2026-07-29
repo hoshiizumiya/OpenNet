@@ -60,6 +60,13 @@ export namespace OpenNet::Core::Torrent
         std::vector<TrackerInfo> GetEnabledTrackers() const;
 
         /// <summary>
+        /// Whether enabled custom/subscribed trackers are appended to new
+        /// BitTorrent tasks. This is enabled by default.
+        /// </summary>
+        bool AutoAddToNewTorrents() const;
+        void AutoAddToNewTorrents(bool value);
+
+        /// <summary>
         /// Subscribe to tracker list (from .txt file URL)
         /// </summary>
         winrt::Windows::Foundation::IAsyncAction SubscribeToTrackerListAsync(
@@ -87,5 +94,8 @@ export namespace OpenNet::Core::Torrent
         std::vector<TrackerInfo> m_trackers;
         std::vector<std::pair<std::wstring, std::wstring>> m_subscriptions;  // id, url pairs
         std::wstring m_configPath;
+        bool m_initialized{ false };
+        bool m_initializing{ false };
+        std::shared_future<void> m_initializationCompletion;
     };
 }

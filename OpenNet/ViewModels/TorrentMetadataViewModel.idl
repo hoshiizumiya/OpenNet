@@ -65,6 +65,8 @@ namespace OpenNet.ViewModels
 		Int32 PieceLength;
 		Int32 NumPieces;
 		Boolean IsPrivate;
+		String MetadataState;
+		String MetadataStatus;
 		
 		// File list (flat list for backward compatibility)
 		Windows.Foundation.Collections.IObservableVector<TorrentFileInfoViewModel> Files{ get; };
