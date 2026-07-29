@@ -1,9 +1,10 @@
-﻿#pragma once
+﻿export module OpenNet.Factory.OperationProgressDialog;
 
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Windows.Foundation;
 
-namespace winrt::OpenNet::UI::Xaml::View::Dialog
+export namespace OpenNet::Factory::ContentDialog
 {
 	/// <summary>
 	/// 文件操作进度对话框

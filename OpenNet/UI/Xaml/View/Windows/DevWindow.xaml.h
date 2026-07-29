@@ -10,6 +10,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		DevWindow();
 
 		void TriggerXamlException_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::fire_and_forget OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	};
 }
 

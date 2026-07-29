@@ -33,14 +33,14 @@
             </ResourceDictionary.MergedDictionaries>
             <ResourceDictionary.ThemeDictionaries>
                 <ResourceDictionary x:Key="Light">
-                    <x:String x:Key="LogoCrowdin">ms-appx:///Resource/GuideLocalization/crowdin-symbol-cDark-64.png</x:String>
+                    <x:String x:Key="LogoCrowdin">ms-appx:///Assets/GuideLocalization/crowdin-symbol-cDark-64.png</x:String>
                 </ResourceDictionary>
                 <ResourceDictionary x:Key="Dark">
-                    <x:String x:Key="LogoCrowdin">ms-appx:///Resource/GuideLocalization/crowdin-symbol-cWhite-64.png</x:String>
+                    <x:String x:Key="LogoCrowdin">ms-appx:///Assets/GuideLocalization/crowdin-symbol-cWhite-64.png</x:String>
                 </ResourceDictionary>
             </ResourceDictionary.ThemeDictionaries>
             <essential:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-            <x:String x:Key="LogoMSTRDI">ms-appx:///Resource/GuideLocalization/MSTRDI-64.png</x:String>
+            <x:String x:Key="LogoMSTRDI">ms-appx:///Assets/GuideLocalization/MSTRDI-64.png</x:String>
 
             <DataTemplate x:Key="LanguageTemplate" x:DataType="om:NameCultureInfoValue">
                 <Grid MinWidth="280" Margin="16">

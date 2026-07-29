@@ -298,7 +298,9 @@
       <DependentUpon>UI\Xaml\View\Dialog\CloseToTrayDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\View\Dialog\OperationProgressDialog.h" />
+    <ClCompile Include="Factory\ContentDialog\OperationProgressDialog.ixx">
+      <FileType>Document</FileType>
+    </ClCompile>
     <ClInclude Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml.h">
       <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
     </ClInclude>
@@ -831,7 +833,7 @@
       <DependentUpon>UI\Xaml\View\Dialog\CloseToTrayDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\View\Dialog\OperationProgressDialog.cpp" />
+    <ClCompile Include="Factory\ContentDialog\OperationProgressDialog.cpp" />
     <ClCompile Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
     </ClCompile>

@@ -1,6 +1,7 @@
-﻿#include "XamlWorkaround.h"
+﻿module;
+#include "XamlWorkaround.h"
 
-#include "OperationProgressDialog.h"
+module OpenNet.Factory.OperationProgressDialog;
 
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml;
@@ -9,31 +10,33 @@ using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 
-namespace winrt::OpenNet::UI::Xaml::View::Dialog
+namespace OpenNet::Factory::ContentDialog
 {
 	OperationProgressDialog::OperationProgressDialog(const winrt::hstring& title, const winrt::hstring& description)
 		: m_title(title), m_description(description)
 	{
 		// 创建对话框主容器
-		m_dialog = ContentDialog();
-		m_dialog.Title(box_value(title));
+		m_dialog = winrt::Microsoft::UI::Xaml::Controls::ContentDialog();
+		m_dialog.Style(winrt::Microsoft::UI::Xaml::Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).try_as<winrt::Microsoft::UI::Xaml::Style>());
+		m_dialog.Title(winrt::box_value(title));
 		m_dialog.CloseButtonText(L"Cancel");
-		m_dialog.DefaultButton(ContentDialogButton::Primary);
+		m_dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 
 		// 创建进度条
-		m_progressBar = ProgressBar();
+		m_progressBar = winrt::Microsoft::UI::Xaml::Controls::ProgressBar();
 		m_progressBar.IsIndeterminate(true);
 		m_progressBar.Height(20);
 		m_progressBar.Margin({ 0, 10, 0, 10 });
 
 		// 创建状态文本
-		m_statusText = TextBlock();
+		m_statusText = winrt::Microsoft::UI::Xaml::Controls::TextBlock();
 		m_statusText.Text(hstring(description));
-		m_statusText.TextWrapping(TextWrapping::Wrap);
+		m_statusText.TextWrapping(winrt::Microsoft::UI::Xaml::TextWrapping::Wrap);
+		m_statusText.TextTrimming(winrt::Microsoft::UI::Xaml::TextTrimming::CharacterEllipsis);
 
 		// 创建主面板
-		auto stackPanel = StackPanel();
-		stackPanel.Orientation(Orientation::Vertical);
+		auto stackPanel = winrt::Microsoft::UI::Xaml::Controls::StackPanel();
+		stackPanel.Orientation(winrt::Microsoft::UI::Xaml::Controls::Orientation::Vertical);
 		stackPanel.Children().Append(m_statusText);
 		stackPanel.Children().Append(m_progressBar);
 
