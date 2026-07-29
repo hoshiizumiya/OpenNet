@@ -12,6 +12,8 @@ namespace OpenNet.UI.Xaml.View
         Int32 StateIndex { get; };
         Int32 StateIndexFromState(UInt32 value);
         String AllCulturesWelcomeText { get; };
+        String WebView2VersionText { get; };
+        String DataFolderPath { get; };
         Windows.Foundation.Collections.IObservableVector<OpenNet.Models.NameCultureInfoValue> Cultures { get; };
         OpenNet.Models.NameCultureInfoValue SelectedCulture;
         Boolean AgreementUseGrid { get; };

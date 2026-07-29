@@ -231,9 +231,9 @@
                                 IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="ViewGuideStepAgreementTermOfService" />
+                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="the project README and usage notice" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -245,9 +245,9 @@
                                 IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="ViewGuideStepAgreementPrivacyPolicy" />
+                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="the privacy notice" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -259,9 +259,9 @@
                                 IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
-                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="ViewGuideStepAgreementIssueReport" />
+                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="the issue reporting guidelines" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -273,9 +273,9 @@
                                 IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
-                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="ViewGuideStepAgreementOpenSourceLicense" />
+                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="the OpenNet open-source license" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -295,9 +295,9 @@
                             <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="ViewGuideStepAgreementTermOfService" />
+                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="the project README and usage notice" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -306,9 +306,9 @@
                             <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="ViewGuideStepAgreementPrivacyPolicy" />
+                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="the privacy notice" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -317,9 +317,9 @@
                             <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
-                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="ViewGuideStepAgreementIssueReport" />
+                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="the issue reporting guidelines" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -328,9 +328,9 @@
                             <CheckBox Margin="0,4,0,0" IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}">
                                 <TextBlock>
                                     <TextBlock.Inlines>
-                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="ViewGuideStepAgreementIHaveReadText" />
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
                                         <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
-                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="ViewGuideStepAgreementOpenSourceLicense" />
+                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="the OpenNet open-source license" />
                                         </Hyperlink>
                                     </TextBlock.Inlines>
                                 </TextBlock>
@@ -375,27 +375,27 @@
                             <FontIcon FontSize="{StaticResource SubtitleTextBlockFontSize}" Glyph="&#xF6A9;" />
                         </StackPanel>
                         <TextBlock>
-                            <Run x:Uid="ViewGuideStepEnvironmentFontDescription1" Text="ViewGuideStepEnvironmentFontDescription1" />
+                            <Run x:Uid="ViewGuideStepEnvironmentFontDescription1" Text="If the icons above are missing or displayed as boxes, visit " />
                             <Hyperlink NavigateUri="https://aka.ms/SegoeFluentIcons">
-                                <Run x:Uid="GuideEnvironmentFontMicrosoftLink" Text="Microsoft" />
+                                <Run Text="Microsoft" />
                             </Hyperlink>
-                            <Run x:Uid="ViewGuideStepEnvironmentFontDescription2" Text="ViewGuideStepEnvironmentFontDescription2" />
+                            <Run x:Uid="ViewGuideStepEnvironmentFontDescription2" Text=" to download and install the font." />
                         </TextBlock>
-                        <TextBlock x:Uid="ViewGuideStepEnvironmentAfterInstallDescription" Text="ViewGuideStepEnvironmentAfterInstallDescription" />
+                        <TextBlock x:Uid="ViewGuideStepEnvironmentAfterInstallDescription" Text="Restart OpenNet after installation to verify that it works." />
                         <TextBlock
                             x:Uid="ViewPageSettingWebview2Header"
                             Margin="1,32,0,5"
                             Style="{StaticResource TitleTextBlockStyle}"
-                            Text="ViewPageSettingWebview2Header" />
-                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{Binding RuntimeOptions.WebView2Version}" />
+                            Text="WebView2 Runtime" />
+                        <TextBlock Style="{StaticResource SubtitleTextBlockStyle}" Text="{x:Bind WebView2VersionText}" />
                         <TextBlock>
-                            <Run x:Uid="ViewGuideStepEnvironmentWebView2Description1" Text="ViewGuideStepEnvironmentWebView2Description1" />
+                            <Run x:Uid="ViewGuideStepEnvironmentWebView2Description1" Text="If no WebView2 Runtime is detected, visit " />
                             <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/p/?LinkId=2124703">
-                                <Run x:Uid="GuideEnvironmentWebViewMicrosoftLink" Text="Microsoft" />
+                                <Run Text="Microsoft" />
                             </Hyperlink>
-                            <Run x:Uid="ViewGuideStepEnvironmentWebView2Description2" Text="ViewGuideStepEnvironmentWebView2Description2" />
+                            <Run x:Uid="ViewGuideStepEnvironmentWebView2Description2" Text=" to download and install it." />
                         </TextBlock>
-                        <TextBlock x:Uid="ViewGuideStepEnvironmentAfterInstallDescription" Text="ViewGuideStepEnvironmentAfterInstallDescription" />
+                        <TextBlock x:Uid="ViewGuideStepEnvironmentAfterInstallDescription" Text="Restart OpenNet after installation to verify that it works." />
                     </StackPanel>
                 </Grid>
             </essential:Case>
@@ -416,16 +416,13 @@
                         <TextBlock
                             x:Uid="ViewGuideStepDataFolderHeader"
                             Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
-                            Text="ViewGuideStepDataFolderHeader" />
+                            Text="OpenNet stores application databases, caches, and runtime data in this folder." />
                         <cwc:SettingsCard
                             x:Uid="ViewPageSettingSetDataFolderHeader"
                             HorizontalAlignment="Stretch"
-                            ActionIcon="{essential:FontIcon Glyph=&#xE76C;}"
-                            ActionIconToolTip="ViewPageSettingStorageSetAction"
-                            Command="{Binding SetDataFolderCommand}"
-                            Description="{Binding RuntimeOptions.DataFolder}"
-                            Header="ViewPageSettingSetDataFolderHeader"
-                            IsClickEnabled="{Binding IsSetDataFolderEnabled}" />
+                            Description="{x:Bind DataFolderPath}"
+                            Header="Data directory"
+                            IsClickEnabled="False" />
                     </StackPanel>
 
                     <TextBlock
@@ -437,7 +434,7 @@
                         HorizontalTextAlignment="Center"
                         Opacity="0.7"
                         Style="{StaticResource CaptionTextBlockStyle}"
-                        Text="ViewGuideStepDataFolderHint" />
+                        Text="The data folder is managed by Windows and is removed when the application is uninstalled." />
                 </Grid>
             </essential:Case>
 
@@ -451,8 +448,7 @@
                         VerticalAlignment="Center"
                         Spacing="12">
                         <FontIcon
-                            x:Uid="GuideWebUIIcon"
-                            FontSize="44"
+                        FontSize="44"
                             Glyph="&#xE774;" />
                         <TextBlock
                             x:Uid="GuideWebUITitle"
@@ -509,7 +505,6 @@
                     VerticalAlignment="Center"
                     Spacing="12">
                     <FontIcon
-                        x:Uid="GuideCommonSettingsIcon"
                         FontSize="44"
                         Glyph="&#xE713;" />
                     <TextBlock
@@ -543,7 +538,6 @@
                     VerticalAlignment="Center"
                     Spacing="12">
                     <FontIcon
-                        x:Uid="GuideCompletedIcon"
                         FontSize="52"
                         Foreground="{ThemeResource SystemFillColorSuccessBrush}"
                         Glyph="&#xE73E;" />
@@ -681,7 +675,6 @@
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B9;}" />
                 </cwc:Segmented>
                 <Button
-                    x:Uid="GuideNextOrCompleteButton"
                     Click="NextOrComplete"
                     Content="{x:Bind ViewModel.NextOrCompleteButtonText, Mode=OneWay}"
                     IsEnabled="{x:Bind ViewModel.IsNextOrCompleteButtonEnabled, Mode=OneWay}"

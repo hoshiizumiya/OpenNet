@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GuideWindowTitle" xml:space="preserve">
-    <value>Benvenuto</value>
+  <data name="ViewModelGuideActionNext" xml:space="preserve">
+    <value>Avanti</value>
+  </data>
+  <data name="ViewModelGuideActionComplete" xml:space="preserve">
+    <value>Completa</value>
+  </data>
+  <data name="CoreWebView2HelperVersionUndetected" xml:space="preserve">
+    <value>Runtime WebView2 non rilevato</value>
+  </data>
+  <data name="ViewGuideStepAgreementConfirmation" xml:space="preserve">
+    <value>Ho letto, compreso e accetto tutte le condizioni sopra indicate.</value>
   </data>
   <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
     <value>Gestito da MSTRDI</value>

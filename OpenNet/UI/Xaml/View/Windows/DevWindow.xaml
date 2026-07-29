@@ -9,10 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ouxv="using:OpenNet.UI.Xaml.View"
     Title="DevWindow"
-    Width="1200"
-    Height="850"
+    Width="550"
+    Height="800"
     MinWidth="450"
     MinHeight="400"
+    MaxWidth="1500"
+    MaxHeight="1000"
     IsAlwaysOnTop="True"
     mc:Ignorable="d">
 

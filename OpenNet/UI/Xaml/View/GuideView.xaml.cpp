@@ -5,9 +5,13 @@
 #endif
 
 import winrt.Windows.Globalization;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.Windows.Globalization;
 import winrt.Microsoft.Windows.AppLifecycle;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.AppRuntime;
+import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.Utils.Message;
 import OpenNet.ViewModels.Guide.GuideState;
 
 using namespace winrt;
@@ -22,6 +26,10 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 
 		auto const current = winrt::Windows::Globalization::ApplicationLanguages::PrimaryLanguageOverride();
 		auto const languages = winrt::Microsoft::Windows::Globalization::ApplicationLanguages::ManifestLanguages();
+		winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceManager
+			resourceManager;
+		auto const resourceMap = resourceManager.MainResourceMap().GetSubtree(
+			L"Resources");
 		for (auto const& tag : languages)
 		{
 			winrt::Windows::Globalization::Language language{ tag };
@@ -44,8 +52,27 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 			item.IsMaintainedByCrowdin(!item.IsMaintainedByMSTRDI());
 			m_cultures.Append(item);
 
+			hstring welcomeText = language.NativeName();
+			try
+			{
+				auto const context = resourceManager.CreateResourceContext();
+				context.QualifierValues().Insert(
+					winrt::Microsoft::Windows::ApplicationModel::Resources::
+						KnownResourceQualifierName::Language(),
+					tag);
+				if (auto const candidate = resourceMap.TryGetValue(
+					L"GuideWindowTitle",
+					context))
+				{
+					welcomeText = candidate.ValueAsString();
+				}
+			}
+			catch (...)
+			{
+				// Keep the native language name as a safe fallback.
+			}
 			if (!m_allCulturesWelcomeText.empty()) m_allCulturesWelcomeText = m_allCulturesWelcomeText + L"+";
-			m_allCulturesWelcomeText = m_allCulturesWelcomeText + language.NativeName();
+			m_allCulturesWelcomeText = m_allCulturesWelcomeText + welcomeText;
 			if ((!current.empty() && current == tag) || (current.empty() && !this->ViewModel().SelectedCulture()))
 			{
 				this->ViewModel().SelectedCulture(item);
@@ -100,6 +127,15 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 	{
 		return m_allCulturesWelcomeText;
 	}
+	hstring GuideView::WebView2VersionText()
+	{
+		return ::OpenNet::Core::AppRuntime::WebView2Version().Version;
+	}
+	hstring GuideView::DataFolderPath()
+	{
+		return hstring{
+			winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW() };
+	}
 	Windows::Foundation::Collections::IObservableVector<OpenNet::Models::NameCultureInfoValue> GuideView::Cultures()
 	{
 		return m_cultures;
@@ -126,9 +162,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 
 	hstring GuideView::AgreementCopyTarget()
 	{
-		return AgreementUseGrid()
-			? L"我已阅读、理解并同意上述条款。"
-			: L"I have read, understood, and agree to the terms above.";
+		return ResourceGetString(L"ViewGuideStepAgreementConfirmation");
 	}
 	bool GuideView::IsTermOfServiceAgreed()
 	{

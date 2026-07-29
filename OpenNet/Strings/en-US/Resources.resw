@@ -1224,6 +1224,105 @@
   <data name="ViewModelGuideActionNext" xml:space="preserve">
     <value>Next Page</value>
   </data>
+  <data name="ViewModelGuideActionComplete" xml:space="preserve">
+    <value>Complete</value>
+  </data>
+  <data name="CoreWebView2HelperVersionUndetected" xml:space="preserve">
+    <value>WebView2 Runtime was not detected</value>
+  </data>
+  <data name="GuideTitleBar.Title" xml:space="preserve">
+    <value>OpenNet Guide</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.Text" xml:space="preserve">
+    <value>I have read and agree to </value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.Text" xml:space="preserve">
+    <value>the project README and usage notice</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.Text" xml:space="preserve">
+    <value>the privacy notice</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.Text" xml:space="preserve">
+    <value>the issue reporting guidelines</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.Text" xml:space="preserve">
+    <value>the OpenNet open-source license</value>
+  </data>
+  <data name="ViewGuideStepAgreementConfirmation" xml:space="preserve">
+    <value>I have read, understood, and agree to all terms above.</value>
+  </data>
+  <data name="GuideEnvironmentSegoeFluentIcons.Text" xml:space="preserve">
+    <value>Segoe Fluent Icons</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.Text" xml:space="preserve">
+    <value>If the icons above are missing or displayed as boxes, visit </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.Text" xml:space="preserve">
+    <value> to download and install the font.</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.Text" xml:space="preserve">
+    <value>Restart OpenNet after installation to verify that it works.</value>
+  </data>
+  <data name="ViewPageSettingWebview2Header.Text" xml:space="preserve">
+    <value>WebView2 Runtime</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.Text" xml:space="preserve">
+    <value>If no WebView2 Runtime is detected, visit </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.Text" xml:space="preserve">
+    <value> to download and install it.</value>
+  </data>
+  <data name="ViewGuideStepDataFolderHeader.Text" xml:space="preserve">
+    <value>OpenNet stores application databases, caches, and runtime data in this folder.</value>
+  </data>
+  <data name="ViewPageSettingSetDataFolderHeader.Header" xml:space="preserve">
+    <value>Data directory</value>
+  </data>
+  <data name="ViewGuideStepDataFolderHint.Text" xml:space="preserve">
+    <value>The data folder is managed by Windows and is removed when the application is uninstalled.</value>
+  </data>
+  <data name="GuideWebUITitle.Text" xml:space="preserve">
+    <value>Initialize qBittorrent Web UI</value>
+  </data>
+  <data name="GuideWebUIDescription.Text" xml:space="preserve">
+    <value>Set the local Web UI account before the service starts. The password must contain at least 6 characters.</value>
+  </data>
+  <data name="GuideWebUIValidation.Title" xml:space="preserve">
+    <value>Web UI settings are incomplete</value>
+  </data>
+  <data name="GuideWebUIValidation.Message" xml:space="preserve">
+    <value>Enter a valid address, port, account and a password of at least 6 characters.</value>
+  </data>
+  <data name="GuideWebUIAddress.Header" xml:space="preserve">
+    <value>Listen address</value>
+  </data>
+  <data name="GuideWebUIPort.Header" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="GuideWebUIUsername.Header" xml:space="preserve">
+    <value>Account</value>
+  </data>
+  <data name="GuideWebUIPassword.Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="GuideWebUIPassword.PlaceholderText" xml:space="preserve">
+    <value>At least 6 characters</value>
+  </data>
+  <data name="GuideCommonSettingsTitle.Text" xml:space="preserve">
+    <value>GUI data refresh</value>
+  </data>
+  <data name="GuideCommonSettingsDescription.Text" xml:space="preserve">
+    <value>Controls how often task files, peers, trackers and status data update. Lower values use more CPU.</value>
+  </data>
+  <data name="GuideGuiRefreshInterval.Header" xml:space="preserve">
+    <value>Refresh interval (milliseconds)</value>
+  </data>
+  <data name="GuideCompletedTitle.Text" xml:space="preserve">
+    <value>OpenNet is ready</value>
+  </data>
+  <data name="GuideCompletedDescription.Text" xml:space="preserve">
+    <value>Your Web UI credentials and GUI refresh interval have been saved. You can reopen this guide later from More.</value>
+  </data>
   <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
     <value>Maintained by MSTRDI</value>
   </data>

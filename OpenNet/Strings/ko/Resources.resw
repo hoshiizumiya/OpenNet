@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GuideWindowTitle" xml:space="preserve">
-    <value>환영합니다</value>
+  <data name="ViewModelGuideActionNext" xml:space="preserve">
+    <value>다음</value>
+  </data>
+  <data name="ViewModelGuideActionComplete" xml:space="preserve">
+    <value>완료</value>
+  </data>
+  <data name="CoreWebView2HelperVersionUndetected" xml:space="preserve">
+    <value>WebView2 런타임이 감지되지 않았습니다</value>
+  </data>
+  <data name="ViewGuideStepAgreementConfirmation" xml:space="preserve">
+    <value>위의 모든 조건을 읽고 이해했으며 이에 동의합니다.</value>
   </data>
   <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
     <value>MSTRDI에서 관리합니다.</value>

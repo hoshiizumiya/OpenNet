@@ -22,6 +22,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		std::int32_t StateIndex();
 		std::int32_t StateIndexFromState(std::uint32_t value);
 		winrt::hstring AllCulturesWelcomeText();
+		winrt::hstring WebView2VersionText();
+		winrt::hstring DataFolderPath();
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::Models::NameCultureInfoValue> Cultures();
 		winrt::OpenNet::Models::NameCultureInfoValue SelectedCulture();
 		void SelectedCulture(winrt::OpenNet::Models::NameCultureInfoValue const& value);

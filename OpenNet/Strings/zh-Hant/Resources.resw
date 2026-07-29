@@ -117,8 +117,107 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="GuideWindowTitle" xml:space="preserve">
-    <value>歡迎使用</value>
+  <data name="ViewModelGuideActionNext" xml:space="preserve">
+    <value>下一步</value>
+  </data>
+  <data name="ViewModelGuideActionComplete" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="CoreWebView2HelperVersionUndetected" xml:space="preserve">
+    <value>未偵測到 WebView2 執行階段</value>
+  </data>
+  <data name="GuideTitleBar.Title" xml:space="preserve">
+    <value>OpenNet 使用精靈</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.Text" xml:space="preserve">
+    <value>我已閱讀並同意</value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.Text" xml:space="preserve">
+    <value>專案說明與使用須知</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.Text" xml:space="preserve">
+    <value>隱私權說明</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.Text" xml:space="preserve">
+    <value>問題回報規範</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.Text" xml:space="preserve">
+    <value>OpenNet 開放原始碼授權條款</value>
+  </data>
+  <data name="ViewGuideStepAgreementConfirmation" xml:space="preserve">
+    <value>我已閱讀、理解並同意上述全部條款。</value>
+  </data>
+  <data name="GuideEnvironmentSegoeFluentIcons.Text" xml:space="preserve">
+    <value>Segoe Fluent Icons 圖示字型</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.Text" xml:space="preserve">
+    <value>如果上方圖示缺失、顯示為亂碼或方框，請前往 </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.Text" xml:space="preserve">
+    <value> 下載並安裝圖示字型。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.Text" xml:space="preserve">
+    <value>安裝完成後請重新啟動 OpenNet，以確認元件是否正常生效。</value>
+  </data>
+  <data name="ViewPageSettingWebview2Header.Text" xml:space="preserve">
+    <value>WebView2 執行階段</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.Text" xml:space="preserve">
+    <value>如果未偵測到 WebView2 執行階段，請前往 </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.Text" xml:space="preserve">
+    <value> 下載並安裝。</value>
+  </data>
+  <data name="ViewGuideStepDataFolderHeader.Text" xml:space="preserve">
+    <value>OpenNet 會在此資料夾中儲存應用程式資料庫、快取和執行資料。</value>
+  </data>
+  <data name="ViewPageSettingSetDataFolderHeader.Header" xml:space="preserve">
+    <value>資料目錄</value>
+  </data>
+  <data name="ViewGuideStepDataFolderHint.Text" xml:space="preserve">
+    <value>資料資料夾由 Windows 管理，並會在解除安裝應用程式時一併刪除。</value>
+  </data>
+  <data name="GuideWebUITitle.Text" xml:space="preserve">
+    <value>初始化 qBittorrent Web UI</value>
+  </data>
+  <data name="GuideWebUIDescription.Text" xml:space="preserve">
+    <value>請在服務啟動前設定本機 Web UI 帳戶。密碼至少需要 6 個字元。</value>
+  </data>
+  <data name="GuideWebUIValidation.Title" xml:space="preserve">
+    <value>Web UI 設定不完整</value>
+  </data>
+  <data name="GuideWebUIValidation.Message" xml:space="preserve">
+    <value>請輸入有效的監聽位址、連接埠、帳戶，以及至少包含 6 個字元的密碼。</value>
+  </data>
+  <data name="GuideWebUIAddress.Header" xml:space="preserve">
+    <value>監聽位址</value>
+  </data>
+  <data name="GuideWebUIPort.Header" xml:space="preserve">
+    <value>連接埠</value>
+  </data>
+  <data name="GuideWebUIUsername.Header" xml:space="preserve">
+    <value>帳戶</value>
+  </data>
+  <data name="GuideWebUIPassword.Header" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="GuideWebUIPassword.PlaceholderText" xml:space="preserve">
+    <value>至少 6 個字元</value>
+  </data>
+  <data name="GuideCommonSettingsTitle.Text" xml:space="preserve">
+    <value>介面資料重新整理</value>
+  </data>
+  <data name="GuideCommonSettingsDescription.Text" xml:space="preserve">
+    <value>控制工作檔案、使用者、Tracker 和狀態資料的重新整理頻率。間隔越短，CPU 使用率越高。</value>
+  </data>
+  <data name="GuideGuiRefreshInterval.Header" xml:space="preserve">
+    <value>重新整理間隔（毫秒）</value>
+  </data>
+  <data name="GuideCompletedTitle.Text" xml:space="preserve">
+    <value>OpenNet 已準備就緒</value>
+  </data>
+  <data name="GuideCompletedDescription.Text" xml:space="preserve">
+    <value>Web UI 認證資訊和介面重新整理間隔已儲存。之後可從「更多」重新開啟本精靈。</value>
   </data>
   <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
     <value>由 MSTRDI 維護</value>

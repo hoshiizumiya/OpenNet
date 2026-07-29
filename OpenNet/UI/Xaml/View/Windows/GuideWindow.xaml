@@ -8,8 +8,6 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ouxv="using:OpenNet.UI.Xaml.View"
-    x:Uid="GuideWindow"
-    Title="GuideWindow"
     MinWidth="1000"
     MinHeight="650"
     MaxWidth="1500"
@@ -30,6 +28,7 @@
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
 
         <TitleBar
+            x:Uid="GuideTitleBar"
             Title="OpenNet Guide"
             IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="False">
@@ -40,7 +39,6 @@
 
         <ouxv:GuideView
             x:Name="GuideContent"
-            x:Uid="GuideContent"
             Grid.Row="1"
             Completed="OnGuideCompleted" />
     </Grid>
