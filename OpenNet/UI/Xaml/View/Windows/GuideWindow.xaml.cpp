@@ -6,7 +6,10 @@
 
 import OpenNet.App;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Setting.LocalSetting;
+import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Microsoft.UI.Windowing;
 
 using namespace winrt;
@@ -24,21 +27,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		GuideWindowT::InitializeComponent();
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
 		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
-		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		database.Initialize();
-		if (database.GetBool("webui_host", "initialized").value_or(false))
+		bool const isFirstRun = !winrt::OpenNet::implementation::App::window;
+		if (!isFirstRun)
 		{
-			GuideContent().ViewModel().State(0);
+			GuideContent().ViewModel().State(static_cast<std::uint32_t>(
+				::OpenNet::ViewModels::Guide::GuideState::Language));
 		}
-		Closed([](auto const&, auto const&)
+		Closed([isFirstRun](auto const&, auto const&)
 		{
-			auto& settings =
-				::OpenNet::Core::AppSettingsDatabase::Instance();
-			settings.Initialize();
-			if (!settings.GetBool(
-				"webui_host", "initialized").value_or(false))
+			auto const state = ::OpenNet::Core::Setting::LocalSetting::Get(
+				::OpenNet::Core::Setting::SettingKeys::GuideState,
+				::OpenNet::ViewModels::Guide::GuideState::Language);
+			if (isFirstRun
+				&& state < ::OpenNet::ViewModels::Guide::GuideState::Completed)
 			{
 				winrt::OpenNet::implementation::App::RequestExit();
+			}
+			else if (!isFirstRun
+				&& state < ::OpenNet::ViewModels::Guide::GuideState::Completed)
+			{
+				// Opening the guide from the running app is only a preview.
+				// Closing it early must not turn the next launch into first run.
+				::OpenNet::Core::Setting::LocalSetting::Set(
+					::OpenNet::Core::Setting::SettingKeys::GuideState,
+					::OpenNet::ViewModels::Guide::GuideState::Completed);
 			}
 		});
 	}

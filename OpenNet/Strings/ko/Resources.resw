@@ -120,4 +120,10 @@
   <data name="GuideWindowTitle" xml:space="preserve">
     <value>환영합니다</value>
   </data>
+  <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
+    <value>MSTRDI에서 관리합니다.</value>
+  </data>
+  <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
+    <value>Crowdin 커뮤니티 구성원이 관리합니다.</value>
+  </data>
 </root>

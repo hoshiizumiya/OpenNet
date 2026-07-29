@@ -77,23 +77,38 @@ namespace OpenNet::Core::Torrent
     TorrentMetadataFetcher::~TorrentMetadataFetcher()
     {
         Cancel();
-        if (m_session)
+        if (auto session = Session())
         {
             try
             {
                 if (m_handle.is_valid())
                 {
-                    m_session->remove_torrent(m_handle, lt::session::delete_files);
+                    session->remove_torrent(m_handle, lt::session::delete_files);
                 }
-                m_session.reset();
+                m_ownedSession.reset();
             }
             catch (...) {}
         }
     }
 
+    lt::session* TorrentMetadataFetcher::Session() const noexcept
+    {
+        return m_sharedSession ? m_sharedSession : m_ownedSession.get();
+    }
+
+    void TorrentMetadataFetcher::UseSharedSession(lt::session* session)
+    {
+        if (m_isFetching.load())
+        {
+            return;
+        }
+        m_ownedSession.reset();
+        m_sharedSession = session;
+    }
+
     bool TorrentMetadataFetcher::InitializeSession()
     {
-        if (m_session) return true;
+        if (Session()) return true;
 
         try
         {
@@ -122,7 +137,7 @@ namespace OpenNet::Core::Torrent
                 "dht.transmissionbt.com:6881,"
                 "dht.libtorrent.org:25401");
 
-            m_session = std::make_unique<lt::session>(pack);
+            m_ownedSession = std::make_unique<lt::session>(pack);
             return true;
         }
         catch (std::exception const& ex)
@@ -218,7 +233,12 @@ namespace OpenNet::Core::Torrent
             atp.flags &= ~lt::torrent_flags::paused;
 
             // Add torrent
-            m_handle = m_session->add_torrent(atp);
+            auto session = Session();
+            if (!session)
+            {
+                throw std::runtime_error("Torrent session is unavailable");
+            }
+            m_handle = session->add_torrent(atp);
 
             if (m_progressCallback)
             {
@@ -237,7 +257,7 @@ namespace OpenNet::Core::Torrent
                     // Clean up before returning
                     if (m_handle.is_valid())
                     {
-                        m_session->remove_torrent(m_handle, lt::session::delete_files);
+                        session->remove_torrent(m_handle, lt::session::delete_files);
                         m_handle = lt::torrent_handle{};
                     }
                     m_isFetching.store(false);
@@ -291,7 +311,7 @@ namespace OpenNet::Core::Torrent
             {
                 if (m_handle.is_valid())
                 {
-                    m_session->remove_torrent(m_handle, lt::session::delete_files);
+                    session->remove_torrent(m_handle, lt::session::delete_files);
                     m_handle = lt::torrent_handle{};
                 }
                 m_isFetching.store(false);
@@ -302,7 +322,7 @@ namespace OpenNet::Core::Torrent
             // Clean up
             if (m_handle.is_valid())
             {
-                m_session->remove_torrent(m_handle, lt::session::delete_files);
+                session->remove_torrent(m_handle, lt::session::delete_files);
                 m_handle = lt::torrent_handle{};
             }
 
@@ -331,10 +351,11 @@ namespace OpenNet::Core::Torrent
 
     void TorrentMetadataFetcher::ProcessAlerts()
     {
-        if (!m_session) return;
+        auto session = Session();
+        if (!session || m_sharedSession) return;
 
         std::vector<lt::alert*> alerts;
-        m_session->pop_alerts(&alerts);
+        session->pop_alerts(&alerts);
 
         for (lt::alert* a : alerts)
         {

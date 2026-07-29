@@ -1275,4 +1275,10 @@
   <data name="ViewModelGuideActionNext" xml:space="preserve">
     <value>下一页</value>
   </data>
+  <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
+    <value>由 MSTRDI 维护</value>
+  </data>
+  <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
+    <value>由 Crowdin 社区成员维护</value>
+  </data>
 </root>

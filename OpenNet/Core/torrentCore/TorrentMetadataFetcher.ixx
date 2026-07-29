@@ -34,6 +34,10 @@ export namespace OpenNet::Core::Torrent
         // Set progress callback
         void SetProgressCallback(MetadataProgressCallback callback);
 
+        // Reuse the application's long-lived libtorrent session. This avoids a
+        // cold DHT table for every metadata preview window.
+        void UseSharedSession(libtorrent::session* session);
+
         // Cancel ongoing fetch operation
         void Cancel();
 
@@ -61,7 +65,9 @@ export namespace OpenNet::Core::Torrent
         // Alert processing
         void ProcessAlerts();
 
-        std::unique_ptr<libtorrent::session> m_session;
+        libtorrent::session* Session() const noexcept;
+        std::unique_ptr<libtorrent::session> m_ownedSession;
+        libtorrent::session* m_sharedSession{ nullptr };
         libtorrent::torrent_handle m_handle;
 
         std::mutex m_mutex;

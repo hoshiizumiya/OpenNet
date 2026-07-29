@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.NetworkSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -49,11 +49,10 @@
                         ToolTipService.ToolTip="Refresh all trackers" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard
+                            x:Uid="ViewSettingsPageAutoAddTrackers"
                             Description="Append every enabled custom and subscribed tracker when a new BitTorrent task is first added"
                             Header="Automatically add custom trackers">
-                            <ToggleSwitch
-                                x:Name="AutoAddTrackersToggle"
-                                Toggled="AutoAddTrackersToggle_Toggled" />
+                            <ToggleSwitch x:Name="AutoAddTrackersToggle" Toggled="AutoAddTrackersToggle_Toggled" />
                         </essential:SettingsCard>
                         <essential:SettingsCard ContentAlignment="Left" Header="Add tracker">
                             <Grid MinWidth="400">
@@ -61,7 +60,10 @@
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="NewTrackerTextBox" PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)" />
+                                <TextBox
+                                    x:Name="NewTrackerTextBox"
+                                    x:Uid="ViewNetworkSettingsPageNewTrackerTextBox"
+                                    PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)" />
                                 <Button
                                     Grid.Column="1"
                                     Margin="8,0,0,0"
@@ -178,15 +180,19 @@
                                     HorizontalAlignment="Stretch"
                                     SelectedIndex="0">
                                     <ComboBoxItem
+                                        x:Uid="ViewNetworkSettingsPageBestItem"
                                         Content="精选列表（best.txt）"
                                         Tag="https://cf.trackerslist.com/best.txt" />
                                     <ComboBoxItem
+                                        x:Uid="ViewNetworkSettingsPageAllItem"
                                         Content="完整列表（all.txt）"
                                         Tag="https://cf.trackerslist.com/all.txt" />
                                     <ComboBoxItem
+                                        x:Uid="ViewNetworkSettingsPageHttpItem"
                                         Content="HTTP(S) 列表（http.txt）"
                                         Tag="https://cf.trackerslist.com/http.txt" />
                                     <ComboBoxItem
+                                        x:Uid="ViewNetworkSettingsPageNoHttpItem"
                                         Content="无 HTTP 列表（nohttp.txt）"
                                         Tag="https://cf.trackerslist.com/nohttp.txt" />
                                 </ComboBox>
@@ -213,6 +219,7 @@
                         Maximum="65535"
                         Minimum="1024"
                         SpinButtonPlacementMode="Compact"
+                        ValueChanged="ListenPortBox_ValueChanged"
                         Value="6881" />
                 </essential:SettingsCard>
 

@@ -120,4 +120,10 @@
   <data name="GuideWindowTitle" xml:space="preserve">
     <value>歡迎使用</value>
   </data>
+  <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
+    <value>由 MSTRDI 維護</value>
+  </data>
+  <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
+    <value>由 Crowdin 社群成員維護</value>
+  </data>
 </root>

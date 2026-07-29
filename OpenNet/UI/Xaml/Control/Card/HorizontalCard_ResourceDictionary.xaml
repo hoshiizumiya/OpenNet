@@ -4,6 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:ouxcc="using:OpenNet.UI.Xaml.Control.Card">
 
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/Card_ResourceDictionary.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
     <Style BasedOn="{StaticResource DefaultHorizontalCardStyle}" TargetType="ouxcc:HorizontalCard" />
 
     <Style x:Key="DefaultHorizontalCardStyle" TargetType="ouxcc:HorizontalCard">

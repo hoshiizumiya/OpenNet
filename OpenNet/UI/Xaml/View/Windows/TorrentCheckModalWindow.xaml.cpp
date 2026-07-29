@@ -115,6 +115,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		try
 		{
+			auto& p2pManager = ::OpenNet::Core::P2PManager::Instance();
+			co_await p2pManager.EnsureTorrentCoreInitializedAsync();
+			if (auto core = p2pManager.TorrentCore())
+			{
+				m_metadataFetcher->UseSharedSession(core->NativeSession());
+			}
+
 			auto& trackerManager =
 				::OpenNet::Core::Torrent::TrackerManager::Instance();
 			co_await trackerManager.InitializeAsync();

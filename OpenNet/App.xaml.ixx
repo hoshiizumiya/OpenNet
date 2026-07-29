@@ -43,6 +43,7 @@ export namespace winrt::OpenNet::implementation
 		static winrt::fire_and_forget InitializeTorrentCoreAsync();
 		static winrt::fire_and_forget InitializeRSSManagerAsync();
 		static winrt::fire_and_forget InitializeWebUIAsync();
+		static void EnsureMainWindow();
 		static void StartMainExperience();
 
 		static inline bool s_isHandlingClose{ false };

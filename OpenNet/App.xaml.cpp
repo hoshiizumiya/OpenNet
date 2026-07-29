@@ -17,9 +17,12 @@ import OpenNet.Core.DownloadManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.RSS.RSSManager;
+import OpenNet.Core.Setting.LocalSetting;
+import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Microsoft.Windows.Storage;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -53,76 +56,12 @@ namespace winrt::OpenNet::implementation
 	/// <param name="e">Details about the launch request and process.</param>
 	void App::OnLaunched([[maybe_unused]] Microsoft::UI::Xaml::LaunchActivatedEventArgs const& e)
 	{
-		// Create main window
-		window = make<MainWindow>();
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
-
-		// Apply saved theme to the window
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
-
-		// Register window closing event - close strategy (hide to tray / ask / exit)
-		window.AppWindow().Closing([](auto const&, winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
-		{
-			// If we are in an intentional exit, allow the window to close
-			if (App::s_isExiting.load())
-				return;
-
-			// If no tray icon was created, allow direct close
-			if (!App::trayIcon)
-				return;
-
-			// Prevent re-entrance: if already showing close dialog, just keep it cancelled
-			if (App::s_isHandlingClose)
-			{
-				args.Cancel(true);
-				return;
-			}
-
-			// Check LocalSettings for a saved preference
-			try
-			{
-				auto values = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings().Values();
-				if (values.HasKey(L"Hide2TrayWhenCloseAsked"))
-				{
-					bool asked = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenCloseAsked"));
-					if (asked)
-					{
-						bool hide = false;
-						if (values.HasKey(L"Hide2TrayWhenClose"))
-							hide = unbox_value<bool>(values.Lookup(L"Hide2TrayWhenClose"));
-
-						if (hide)
-						{
-							// Synchronous: just hide and cancel
-							args.Cancel(true);
-							HideToTray();
-							return;
-						}
-						else
-						{
-							// User chose to exit — cancel close and go async
-							args.Cancel(true);
-							ReallyClose();
-							return;
-						}
-					}
-				}
-			}
-			catch (...)
-			{
-			}
-
-			// First time: need to show dialog — cancel close and go async
-			args.Cancel(true);
-			App::s_isHandlingClose = true;
-			HandleCloseStrategyAsync();
-		});
-
-
-		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		database.Initialize();
-		if (!database.GetBool("webui_host", "initialized").value_or(false))
+		using ::OpenNet::Core::Setting::LocalSetting;
+		using namespace ::OpenNet::Core::Setting;
+		auto const guideState = LocalSetting::Get(
+			SettingKeys::GuideState,
+			::OpenNet::ViewModels::Guide::GuideState::Language);
+		if (guideState < ::OpenNet::ViewModels::Guide::GuideState::Completed)
 		{
 			guideWindow = winrt::make<
 				winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
@@ -147,6 +86,9 @@ namespace winrt::OpenNet::implementation
 
 	void App::CompleteFirstRun()
 	{
+		::OpenNet::Core::Setting::LocalSetting::Set(
+			::OpenNet::Core::Setting::SettingKeys::GuideState,
+			::OpenNet::ViewModels::Guide::GuideState::Completed);
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
 		database.SetBool("webui_host", "initialized", true);
@@ -154,8 +96,74 @@ namespace winrt::OpenNet::implementation
 		guideWindow = nullptr;
 	}
 
+	void App::EnsureMainWindow()
+	{
+		if (window)
+		{
+			return;
+		}
+
+		window = make<MainWindow>();
+		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+
+		window.AppWindow().Closing([](
+			auto const&,
+			winrt::Microsoft::UI::Windowing::AppWindowClosingEventArgs const& args)
+		{
+			if (App::s_isExiting.load())
+			{
+				return;
+			}
+
+			if (!App::trayIcon)
+			{
+				return;
+			}
+
+			if (App::s_isHandlingClose)
+			{
+				args.Cancel(true);
+				return;
+			}
+
+			try
+			{
+				auto values = winrt::Microsoft::Windows::Storage::
+					ApplicationData::GetDefault().LocalSettings().Values();
+				if (values.HasKey(L"Hide2TrayWhenCloseAsked")
+					&& unbox_value<bool>(
+						values.Lookup(L"Hide2TrayWhenCloseAsked")))
+				{
+					bool hide = values.HasKey(L"Hide2TrayWhenClose")
+						&& unbox_value<bool>(
+							values.Lookup(L"Hide2TrayWhenClose"));
+					args.Cancel(true);
+					if (hide)
+					{
+						HideToTray();
+					}
+					else
+					{
+						ReallyClose();
+					}
+					return;
+				}
+			}
+			catch (...)
+			{
+			}
+
+			args.Cancel(true);
+			App::s_isHandlingClose = true;
+			HandleCloseStrategyAsync();
+		});
+	}
+
 	void App::StartMainExperience()
 	{
+		EnsureMainWindow();
 		if (s_mainExperienceStarted.exchange(true))
 		{
 			CreateSetMainWindow();
@@ -193,14 +201,7 @@ namespace winrt::OpenNet::implementation
 		// 检查窗口是否存在
 		if (!window)
 		{
-			// 如果窗口不存在，创建新窗口
-			// 这种情况发生在重新激活时窗口已关闭的情况
-			window = make<MainWindow>();
-			::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
-			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
-
-			// Apply theme to new window
-			::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+			EnsureMainWindow();
 		}
 
 		// 获取窗口句柄

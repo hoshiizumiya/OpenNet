@@ -88,6 +88,11 @@ export namespace OpenNet::Core::Torrent
 			return m_running.load();
 		}
 
+		libtorrent::session* NativeSession() const noexcept
+		{
+			return m_session.get();
+		}
+
 		// Get the task ID for a torrent name
 		std::string GetTaskIdByName(std::string const& name) const;
 

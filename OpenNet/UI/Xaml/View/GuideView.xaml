@@ -27,6 +27,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Effect/TextMorphEffect_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/Card_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Card/HorizontalCard_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/FontStyle_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/SettingsStyle_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/TransitionCollection_ResourceDictionary.xaml" />
@@ -154,7 +155,7 @@
                                     x:Uid="ViewGuideStepLanguageMaintainedByMSTRDI"
                                     Margin="6,0"
                                     VerticalAlignment="Center"
-                                    Text="ViewGuideStepLanguageMaintainedBy" />
+                                    Text="Maintained by MSTRDI" />
                             </ouxcc:HorizontalCard.Right>
                         </ouxcc:HorizontalCard>
                         <ouxcc:HorizontalCard>
@@ -173,7 +174,7 @@
                                     x:Uid="ViewGuideStepLanguageMaintainedByCrowdin"
                                     Margin="6,0"
                                     VerticalAlignment="Center"
-                                    Text="ViewGuideStepLanguageMaintainedByCrowdin" />
+                                    Text="Maintained by Crowdin community members" />
                             </ouxcc:HorizontalCard.Right>
                         </ouxcc:HorizontalCard>
                     </StackPanel>

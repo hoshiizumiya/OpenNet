@@ -26,6 +26,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         void RefreshTrackersButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
         void AutoAddTrackersToggle_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
         void AddPresetTrackerListButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+        void ListenPortBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
 
     private:
         void LoadTrackers();
@@ -38,6 +39,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_trackerList;
         winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_subscriptionList;
         bool m_loadingTrackerSettings{ true };
+        bool m_loadingListenPort{ true };
     };
 }
 namespace winrt::OpenNet::UI::Xaml::View::Pages::factory_implementation

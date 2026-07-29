@@ -28,7 +28,19 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 			auto item = winrt::make<winrt::OpenNet::Models::implementation::NameCultureInfoValue>();
 			item.Name(language.NativeName());
 			item.Value(tag);
-			item.IsMaintainedByMSTRDI(tag == L"zh-CN" || tag == L"zh-Hant");
+			auto const isLanguage = [&tag](wchar_t first, wchar_t second)
+			{
+				auto const matches = [](wchar_t value, wchar_t lower)
+				{
+					return value == lower || value == lower - (L'a' - L'A');
+				};
+				return tag.size() >= 2
+					&& matches(tag[0], first)
+					&& matches(tag[1], second)
+					&& (tag.size() == 2 || tag[2] == L'-');
+			};
+			item.IsMaintainedByMSTRDI(
+				isLanguage(L'z', L'h') || isLanguage(L'e', L'n'));
 			item.IsMaintainedByCrowdin(!item.IsMaintainedByMSTRDI());
 			m_cultures.Append(item);
 

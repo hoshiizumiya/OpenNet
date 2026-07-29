@@ -5,6 +5,8 @@
 #endif
 
 import winrt.Microsoft.UI.Dispatching;
+import OpenNet.Core.P2PManager;
+import OpenNet.Core.TorrentSettings;
 
 using namespace winrt;
 using namespace Microsoft::UI::Xaml;
@@ -24,6 +26,37 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         auto& trackerManager = ::OpenNet::Core::Torrent::TrackerManager::Instance();
         AutoAddTrackersToggle().IsOn(trackerManager.AutoAddToNewTorrents());
         m_loadingTrackerSettings = false;
+
+        auto& torrentSettingsManager =
+            ::OpenNet::Core::TorrentSettingsManager::Instance();
+        torrentSettingsManager.Load();
+        auto torrentSettings = torrentSettingsManager.Get();
+        int listenPort = 0;
+        auto const marker = torrentSettings.listenInterfaces.find("0.0.0.0:");
+        if (marker != std::string::npos)
+        {
+            auto const start = marker + std::string_view{ "0.0.0.0:" }.size();
+            auto const end = torrentSettings.listenInterfaces.find(',', start);
+            try
+            {
+                listenPort = std::stoi(
+                    torrentSettings.listenInterfaces.substr(start, end - start));
+            }
+            catch (...)
+            {
+                listenPort = 0;
+            }
+        }
+        if (listenPort < 1024 || listenPort > 65535)
+        {
+            listenPort = 6881;
+            torrentSettings.listenInterfaces =
+                std::format("0.0.0.0:{0},[::]:{0}", listenPort);
+            torrentSettingsManager.Set(torrentSettings);
+        }
+        ListenPortBox().Value(static_cast<double>(listenPort));
+        m_loadingListenPort = false;
+
         LoadTrackers();
         LoadSubscriptions();
         InitializeTrackerManagerAsync();
@@ -227,6 +260,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
         IInspectable const&, RoutedEventArgs const&)
     {
         AddPresetSubscriptionAsync();
+    }
+
+    void NetworkSettingsPage::ListenPortBox_ValueChanged(
+        NumberBox const&,
+        NumberBoxValueChangedEventArgs const& args)
+    {
+        if (m_loadingListenPort || std::isnan(args.NewValue()))
+        {
+            return;
+        }
+
+        auto const port = static_cast<int>(std::clamp(
+            args.NewValue(), 1024.0, 65535.0));
+        auto& manager = ::OpenNet::Core::TorrentSettingsManager::Instance();
+        manager.Load();
+        auto settings = manager.Get();
+        settings.listenInterfaces =
+            std::format("0.0.0.0:{0},[::]:{0}", port);
+        manager.Set(settings);
+
+        if (auto core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+        {
+            auto pack = core->GetSettings();
+            pack.set_str(
+                libtorrent::settings_pack::listen_interfaces,
+                settings.listenInterfaces);
+            core->ApplySettings(pack);
+        }
     }
 
     void NetworkSettingsPage::RemoveSubscriptionButton_Click(IInspectable const& sender, RoutedEventArgs const&)

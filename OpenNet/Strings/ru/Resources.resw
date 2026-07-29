@@ -124,4 +124,10 @@
   <data name="GuideWindowTitle" xml:space="preserve">
     <value>Добро пожаловать</value>
   </data>
+  <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
+    <value>Поддерживается MSTRDI</value>
+  </data>
+  <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
+    <value>Поддерживается участниками сообщества Crowdin</value>
+  </data>
 </root>

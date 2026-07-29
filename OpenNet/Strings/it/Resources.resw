@@ -120,4 +120,10 @@
   <data name="GuideWindowTitle" xml:space="preserve">
     <value>Benvenuto</value>
   </data>
+  <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
+    <value>Gestito da MSTRDI</value>
+  </data>
+  <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
+    <value>Gestito dai membri della community Crowdin</value>
+  </data>
 </root>
