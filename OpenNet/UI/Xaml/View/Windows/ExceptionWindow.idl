@@ -1,14 +1,14 @@
 ﻿namespace OpenNet.UI.Xaml.View.Windows
 {
 	[default_interface]
-	runtimeclass ExceptionWindow : Microsoft.UI.Xaml.Window
+	runtimeclass ExceptionWindow : WinUI3Package.WindowEx
 	{
-		ExceptionWindow(Guid sentryId, String exception);
+		ExceptionWindow(String sentryId, String exception);
 
 		String TraceId{ get; };
 		String Exception{ get; };
 		String Comment{ get; set; };
 
-		static void Show(Guid sentryId, String exception);
+		static void Show(String sentryId, String exception);
 	}
 }

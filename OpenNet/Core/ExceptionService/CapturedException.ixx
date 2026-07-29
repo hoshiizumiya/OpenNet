@@ -3,26 +3,34 @@
 
 export module OpenNet.Core.ExceptionService.CapturedException;
 
+import OpenNet.Core.ExceptionService.ExceptionFormat;
 import winrt_base;
-import std;
 
 export namespace OpenNet::Core::ExceptionService
 {
 	class CapturedException
 	{
 	public:
-		CapturedException(sentry_uuid_t sentryId, const std::exception& ex)
-			: SentryId(sentryId), stdException(ex)
+		CapturedException(
+			sentry_uuid_t const& sentryId,
+			winrt::hstring const& exception)
+			: m_sentryId(ExceptionFormat::ToHString(sentryId)),
+			m_exception(exception)
 		{
 		}
 
-		CapturedException(sentry_uuid_t sentryId, const winrt::hresult& ex)
-			: SentryId(sentryId), hresultException(ex)
+		winrt::hstring SentryId() const noexcept
 		{
+			return m_sentryId;
 		}
+
+		winrt::hstring Exception() const noexcept
+		{
+			return m_exception;
+		}
+
 	private:
-		const sentry_uuid_t SentryId;
-		const std::exception stdException;
-		const winrt::hresult hresultException;
+		winrt::hstring m_sentryId;
+		winrt::hstring m_exception;
 	};
 }

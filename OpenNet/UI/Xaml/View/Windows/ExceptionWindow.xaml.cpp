@@ -8,9 +8,7 @@
 
 import OpenNet.App;
 import OpenNet.Core.ExceptionService.ExceptionFormat;
-import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
-import winrt.Windows.Graphics;
 import winrt.Microsoft.UI;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Windowing;
@@ -21,68 +19,81 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	ExceptionWindow::ExceptionWindow(winrt::guid const& sentryId, hstring const& exception) :
-		m_sentryId(sentryId),
+	ExceptionWindow::ExceptionWindow(
+		hstring const& sentryId,
+		hstring const& exception)
+		: m_sentryId(sentryId),
 		m_exception(exception),
 		m_comment(L"")
 	{
-		InitializeComponent();
+		ExtendsContentIntoTitleBar(true);
+	}
+
+	void ExceptionWindow::InitializeComponent()
+	{
+		ExceptionWindowT::InitializeComponent();
 		InitializeWindow();
 	}
 
 	void ExceptionWindow::InitializeWindow()
 	{
-		AppWindow().Title(L"OpenNet Exception Report");
-
-		auto titleBar = AppWindow().TitleBar();
-		titleBar.IconShowOptions(winrt::Microsoft::UI::Windowing::IconShowOptions::HideIconAndSystemMenu);
-		ExtendsContentIntoTitleBar(true);
+		AppWindow().Closing([weak = get_weak()](
+			auto&&,
+			winrt::Microsoft::UI::Windowing::
+			AppWindowClosingEventArgs const& args)
+		{
+			if (auto self = weak.get())
+			{
+				if (!self->m_allowClose)
+				{
+					args.Cancel(true);
+					self->CloseWindowAsync();
+				}
+			}
+		});
 
 		Closed([](auto&&, auto&&)
 		{
-			// Close the application on exception window close
+			// The fatal event and optional feedback have been flushed.
 			winrt::OpenNet::implementation::App::RequestExit();
 		});
 
-		AppWindow().Resize(winrt::Windows::Graphics::SizeInt32(800, 400));
-		AppWindow().MoveInZOrderAtTop();
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
-
 		SetTitleBar(ExceptionWindowTitleBar());
-		AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 
-		auto const& ownerWindow = winrt::OpenNet::implementation::App::window;
+		auto const ownerWindow = winrt::OpenNet::implementation::App::window
+			? winrt::OpenNet::implementation::App::window
+			: winrt::OpenNet::implementation::App::guideWindow;
+		bool hasOwner = false;
 		if (ownerWindow)
 		{
-			HWND ownerHwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(ownerWindow);
-			auto ownedWindowId = AppWindow().Id();
-			HWND ownedHwnd = winrt::Microsoft::UI::GetWindowFromWindowId(ownedWindowId);
+			HWND ownerHwnd =
+				::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::
+				GetWindowHandleFromWindow(ownerWindow);
+			HWND ownedHwnd = reinterpret_cast<HWND>(Hwnd());
 
 			if (ownerHwnd && ownedHwnd)
 			{
-				::SetWindowLongPtrW(ownedHwnd, GWLP_HWNDPARENT, reinterpret_cast<LONG_PTR>(ownerHwnd));
+				::SetWindowLongPtrW(
+					ownedHwnd,
+					GWLP_HWNDPARENT,
+					reinterpret_cast<LONG_PTR>(ownerHwnd));
+				hasOwner = true;
 			}
 		}
 
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-
-		if (auto presenter = winrt::Microsoft::UI::Windowing::OverlappedPresenter::CreateForDialog())
+		if (hasOwner)
 		{
-			presenter.IsModal(true);
-			presenter.IsResizable(true);
-			presenter.IsMaximizable(true);
-			AppWindow().SetPresenter(presenter);
+			if (auto presenter = AppWindow().Presenter().try_as<
+				winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
+			{
+				presenter.IsModal(true);
+			}
 		}
-		AppWindow().Show();
 	}
 
 	hstring ExceptionWindow::TraceId()
 	{
-		// Convert GUID to string format
-		char guidStr[37];
-		auto const& sentryUuid = ::OpenNet::Core::ExceptionService::ExceptionFormat::ToSentryUuid(m_sentryId);
-		sentry_uuid_as_string(&sentryUuid, guidStr);
-		return winrt::hstring(std::format(L"trace.id: {}", winrt::to_hstring(guidStr)));
+		return hstring{ std::format(L"trace.id: {}", m_sentryId) };
 	}
 
 	hstring ExceptionWindow::Exception()
@@ -100,49 +111,107 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_comment = value;
 	}
 
-	void ExceptionWindow::ViewWindowExceptionCloseButton_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, RoutedEventArgs const& /*e*/)
+	void ExceptionWindow::ViewWindowExceptionCloseButton_Click(
+		winrt::Windows::Foundation::IInspectable const& /*sender*/,
+		RoutedEventArgs const& /*e*/)
 	{
 		CloseWindowAsync();
 	}
 
 	winrt::fire_and_forget ExceptionWindow::CloseWindowAsync()
 	{
+		if (m_closeStarted.exchange(true))
+		{
+			co_return;
+		}
+
 		auto strong = get_strong();
 		auto dispatcher = DispatcherQueue();
-		// Switch to background thread for Sentry operations
-		co_await winrt::resume_background();
+		ExceptionWindowCloseButton().IsEnabled(false);
 
+		std::string comment;
+		std::string exceptionDetails;
+		sentry_uuid_t sentryUuid = sentry_uuid_nil();
+		bool hasComment = false;
 		try
 		{
-			// Submit feedback if comment is provided
-			if (!m_comment.empty())
+			comment = winrt::to_string(m_comment);
+			exceptionDetails = winrt::to_string(m_exception);
+			hasComment = std::ranges::any_of(
+				m_comment,
+				[](wchar_t value)
 			{
-				auto const& sentryUuid = ::OpenNet::Core::ExceptionService::ExceptionFormat::ToSentryUuid(m_sentryId);
-				sentry_value_t user_feedback = sentry_value_new_feedback(
-					winrt::to_string(m_comment).c_str(), nullptr, nullptr, &sentryUuid);
-				sentry_capture_feedback(user_feedback);
-
-				// Flush events to Sentry
-				sentry_flush(5000); // 5 second timeout
-			}
-
+				return value != L' '
+					&& value != L'\t'
+					&& value != L'\r'
+					&& value != L'\n';
+			});
+			sentryUuid =
+				::OpenNet::Core::ExceptionService::ExceptionFormat::
+				ToSentryUuid(m_sentryId);
 		}
 		catch (...)
 		{
-			// Silently ignore errors during Sentry operations
 		}
 
-		// Switch back to UI thread to close the window
-		dispatcher.TryEnqueue([this]()
+		// sentry_flush blocks, so all Sentry I/O runs off the UI thread.
+		co_await winrt::resume_background();
+
+		if (hasComment)
 		{
-			Close();
-		});
+			auto const associatedEventId =
+				sentry_uuid_is_nil(&sentryUuid)
+				? nullptr
+				: &sentryUuid;
+			sentry_value_t userFeedback = sentry_value_new_feedback(
+				comment.c_str(),
+				nullptr,
+				nullptr,
+				associatedEventId);
+			sentry_hint_t* hint = sentry_hint_new();
+			if (hint && !exceptionDetails.empty())
+			{
+				sentry_hint_attach_bytes(
+					hint,
+					exceptionDetails.data(),
+					exceptionDetails.size(),
+					"exception-details.txt");
+			}
+			if (sentry_scope_t* feedbackScope = sentry_local_scope_new())
+			{
+				sentry_scope_set_tag(
+					feedbackScope,
+					"feedback.source",
+					"ExceptionWindow");
+				sentry_scope_capture_feedback(
+					feedbackScope,
+					userFeedback,
+					hint);
+			}
+			else
+			{
+				sentry_capture_feedback_with_hint(userFeedback, hint);
+			}
+		}
+
+		// Flush even without feedback so the fatal event is sent before exit.
+		sentry_flush(5000);
+
+		if (!dispatcher || !dispatcher.TryEnqueue([strong]()
+		{
+			strong->m_allowClose = true;
+			strong->Close();
+		}))
+		{
+			ExitProcess(EXIT_FAILURE);
+		}
 	}
 
-	void ExceptionWindow::Show(winrt::guid const& sentryId, hstring const& exception)
+	void ExceptionWindow::Show(
+		hstring const& sentryId,
+		hstring const& exception)
 	{
 		auto window = winrt::make<ExceptionWindow>(sentryId, exception);
-		window.AppWindow().Show();
-		window.AppWindow().MoveInZOrderAtTop();
+		window.Activate();
 	}
 }

@@ -157,16 +157,46 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// 初始化 WinRT
 	winrt::init_apartment(winrt::apartment_type::single_threaded);
 
-	std::jthread sentryInitThread([]()
+	std::jthread sentryInitThread([]() noexcept
 	{
 		sentry_options_t* options = sentry_options_new();
-		sentry_options_set_dsn(options, "https://8030af3a7ff2e854f827e44c62f50880@o4510805000454144.ingest.de.sentry.io/4510939441397840");
-		// This is also the default-path. For further information and recommendations:
-		// https://docs.sentry.io/platforms/native/configuration/options/#database_path
-		sentry_options_set_database_path(options, winrt::to_string(winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().TemporaryPath()).c_str());
-		sentry_options_set_release(options, (winrt::to_string(::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetFamilyName()) + "@" + ::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetAppVersion().ToString()).c_str());
-		sentry_options_set_debug(options, 1);
-		sentry_init(options);
+		if (!options)
+		{
+			OutputDebugStringW(L"Failed to allocate Sentry options.\r\n");
+			return;
+		}
+
+		try
+		{
+			sentry_options_set_dsn(options, "https://8030af3a7ff2e854f827e44c62f50880@o4510805000454144.ingest.de.sentry.io/4510939441397840");
+			// Sentry may enumerate and clean this directory, so it must not be
+			// shared with unrelated application cache files.
+			// https://docs.sentry.io/platforms/native/configuration/options/#database_path
+			std::wstring sentryDatabasePath{
+				winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault()
+					.LocalCachePath().c_str()
+			};
+			sentryDatabasePath.append(L"\\Sentry");
+			sentry_options_set_database_pathw(
+				options,
+				sentryDatabasePath.c_str());
+			sentry_options_set_release(options, (winrt::to_string(::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetFamilyName()) + "@" + ::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetAppVersion().ToString()).c_str());
+#if defined _DEBUG
+			sentry_options_set_debug(options, 1);
+#endif
+			int const result = sentry_init(options);
+			options = nullptr; // sentry_init always takes ownership.
+			if (result != 0)
+			{
+				OutputDebugStringW(L"Failed to initialize Sentry.\r\n");
+			}
+		}
+		catch (...)
+		{
+			sentry_options_free(options);
+			OutputDebugStringW(
+				L"An exception occurred while initializing Sentry.\r\n");
+		}
 	});
 
 	// Decide redirection while Sentry initializes in parallel, then always join
