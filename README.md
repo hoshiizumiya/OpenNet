@@ -93,7 +93,14 @@ MVVM framework: @https://github.com/AlexAdasCca
 ## 📈 Development
 ![Alt](https://repobeats.axiom.co/api/embed/94389f8accb0f98aa0a71cbbc5efd10ff6152bc7.svg "Repobeats analytics image")
 
-[![Star History Chart](https://api.star-history.com/image?repos=hoshiizumiya/OpenNet&type=date&legend=top-left)](https://www.star-history.com/?repos=hoshiizumiya%2FOpenNet&type=date&legend=top-left)
+## Star History
+<a href="https://www.star-history.com/?repos=hoshiizumiya%2FOpenNet&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=hoshiizumiya/OpenNet&type=date&theme=dark&legend=top-left&sealed_token=8qJLBt5Sgjh6datJom0AhvyH_QtUHNJSuGq1GCNihQ2ftZAjGs4r9jHYoHHrcAr4thNhwAcVE8FJLDNEYeqmx_m2EvWDF4RTiMItU6No_dbfhtzgd1KWRw" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=hoshiizumiya/OpenNet&type=date&legend=top-left&sealed_token=8qJLBt5Sgjh6datJom0AhvyH_QtUHNJSuGq1GCNihQ2ftZAjGs4r9jHYoHHrcAr4thNhwAcVE8FJLDNEYeqmx_m2EvWDF4RTiMItU6No_dbfhtzgd1KWRw" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=hoshiizumiya/OpenNet&type=date&legend=top-left&sealed_token=8qJLBt5Sgjh6datJom0AhvyH_QtUHNJSuGq1GCNihQ2ftZAjGs4r9jHYoHHrcAr4thNhwAcVE8FJLDNEYeqmx_m2EvWDF4RTiMItU6No_dbfhtzgd1KWRw" />
+ </picture>
+</a>
 
 ## Contribute
 
