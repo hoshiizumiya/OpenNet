@@ -147,8 +147,17 @@
     <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
     <ClCompile Include="Helpers\TemplateControlHelper.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
+    <ClCompile Include="Service\Update\UpdateService.cpp" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
+    <ClCompile Include="UI\Xaml\Control\CheckUpdateControl.cpp">
+      <DependentUpon>UI\Xaml\Control\CheckUpdateControl.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Graph\LiveGraph.cpp">
+      <DependentUpon>UI\Xaml\Control\Graph\LiveGraph.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Web\ServerDomain.ixx" />
     <ClCompile Include="Web\ServerDomainMode.ixx" />
     <ClCompile Include="UI\Xaml\View\ItemsCardPopupView.xaml.cpp">
@@ -157,6 +166,10 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\DevWindow.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\LiveGraphTestWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\LiveGraphTestWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml.cpp">
@@ -235,8 +248,17 @@
       <DependentUpon>UI\Xaml\Control\Card\TitleCard.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\CheckUpdateControl.h">
+      <DependentUpon>UI\Xaml\Control\CheckUpdateControl.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="Service\Update\UpdateService.h" />
     <ClInclude Include="UI\Xaml\Control\Effect\TextMorphEffect.h">
       <DependentUpon>UI\Xaml\Control\Effect\TextMorphEffect.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Graph\LiveGraph.h">
+      <DependentUpon>UI\Xaml\Control\Graph\LiveGraph.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.h">
@@ -375,6 +397,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\DevWindow.xaml.h">
       <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\LiveGraphTestWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\LiveGraphTestWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\ExceptionWindow.xaml.h">
@@ -587,6 +613,8 @@
     <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Graph\LiveGraph_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\Card_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\Color_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Card\HorizontalCard_ResourceDictionary.xaml" />
@@ -656,6 +684,9 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\DevWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\LiveGraphTestWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Windows\ExceptionWindow.xaml">
@@ -1091,7 +1122,11 @@
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\Control\CheckUpdateControl.idl"/>
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl" />
+    <Midl Include="UI\Xaml\Control\Graph\LiveGraph.idl">
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.idl">
       <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1202,6 +1237,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\DevWindow.idl">
       <DependentUpon>UI\Xaml\View\Windows\DevWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\LiveGraphTestWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\LiveGraphTestWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\ExceptionWindow.idl">

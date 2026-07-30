@@ -2,6 +2,7 @@
 #include "ViewModels/PeerDisplayItem.g.h"
 #include "ViewModels/TrackerDisplayItem.g.h"
 #include "ViewModels/FileDisplayItem.g.h"
+#include "ViewModels/RuntimeStatusDisplayItem.g.h"
 
 import OpenNet.ViewModels.ObservableMixin;
 import winrt.Microsoft.UI.Xaml.Data;
@@ -325,6 +326,75 @@ namespace winrt::OpenNet::ViewModels::implementation
 		int32_t m_priorityIndex{};
 		int32_t m_fileIndex{};
 	};
+
+	// ---------------------------------------------------------------
+	// RuntimeStatusDisplayItem
+	// ---------------------------------------------------------------
+	struct RuntimeStatusDisplayItem :
+		RuntimeStatusDisplayItemT<RuntimeStatusDisplayItem>,
+		::OpenNet::ViewModels::ObservableMixin<RuntimeStatusDisplayItem>
+	{
+		using ::OpenNet::ViewModels::ObservableMixin<
+			RuntimeStatusDisplayItem>::SetProperty;
+
+		RuntimeStatusDisplayItem()
+			: m_children(winrt::single_threaded_observable_vector<
+				winrt::OpenNet::ViewModels::RuntimeStatusDisplayItem>())
+		{
+		}
+
+		winrt::hstring Name() const
+		{
+			return m_name;
+		}
+		void Name(winrt::hstring const& value)
+		{
+			SetProperty(m_name, value, L"Name");
+		}
+
+		winrt::hstring Value() const
+		{
+			return m_value;
+		}
+		void Value(winrt::hstring const& value)
+		{
+			SetProperty(m_value, value, L"Value");
+		}
+
+		bool IsExpanded() const
+		{
+			return m_isExpanded;
+		}
+		void IsExpanded(bool value)
+		{
+			SetProperty(m_isExpanded, value, L"IsExpanded");
+		}
+
+		bool IsGroup() const
+		{
+			return m_isGroup;
+		}
+		void IsGroup(bool value)
+		{
+			SetProperty(m_isGroup, value, L"IsGroup");
+		}
+
+		winrt::Windows::Foundation::Collections::IObservableVector<
+			winrt::OpenNet::ViewModels::RuntimeStatusDisplayItem>
+		Children() const
+		{
+			return m_children;
+		}
+
+	private:
+		winrt::hstring m_name;
+		winrt::hstring m_value;
+		bool m_isExpanded{ true };
+		bool m_isGroup{};
+		winrt::Windows::Foundation::Collections::IObservableVector<
+			winrt::OpenNet::ViewModels::RuntimeStatusDisplayItem>
+			m_children{ nullptr };
+	};
 }
 
 namespace winrt::OpenNet::ViewModels::factory_implementation
@@ -336,6 +406,12 @@ namespace winrt::OpenNet::ViewModels::factory_implementation
 	{
 	};
 	struct FileDisplayItem : FileDisplayItemT<FileDisplayItem, implementation::FileDisplayItem>
+	{
+	};
+	struct RuntimeStatusDisplayItem :
+		RuntimeStatusDisplayItemT<
+			RuntimeStatusDisplayItem,
+			implementation::RuntimeStatusDisplayItem>
 	{
 	};
 }

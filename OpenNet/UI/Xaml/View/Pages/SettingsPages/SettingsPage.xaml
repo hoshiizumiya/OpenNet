@@ -9,6 +9,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxc="using:OpenNet.UI.Xaml.Control"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -18,6 +19,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///Styles/SettingsStyles.xaml" />
                 <ResourceDictionary Source="ms-appx:///Styles/CustomThemeBrushes.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/CheckUpdateControl_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
         </ResourceDictionary>
@@ -195,13 +197,14 @@
                     Style="{StaticResource SettingsGroupHeaderStyle}"
                     Text="Version and update" />
 
-                <essential:SettingsExpander
-                    x:Name="VersionCheck"
-                    x:Uid="VersionCheck"
-                    Description="Last check date:">
-                    <essential:SettingsExpander.HeaderIcon>
-                        <FontIcon FontSize="16" Glyph="&#xE895;" />
-                    </essential:SettingsExpander.HeaderIcon>
+                <essential:SettingsExpander x:Name="VersionCheck" x:Uid="VersionCheck">
+                    <essential:SettingsExpander.Header>
+                        <ouxc:CheckUpdateControl
+                            x:Name="UpdateStatusControl"
+                            Click="UpdateStatusControl_Click"
+                            LastUpdateCheckDate="Never"
+                            UpdateAvailableVersion="" />
+                    </essential:SettingsExpander.Header>
                     <Button
                         x:Name="AppUpdateCheckButton"
                         x:Uid="AppUpdateCheckButton"
@@ -222,20 +225,11 @@
                 </essential:SettingsExpander>
 
                 <controls:InfoBar
-                    x:Name="AppLastVersionTip"
-                    x:Uid="AppLastVersionTip"
-                    Title="OpenNet version is the latest"
+                    x:Name="AppUpdateStatusInfoBar"
                     Margin="0,4,0,0"
                     IsClosable="True"
-                    IsOpen="True"
-                    Severity="Informational">
-                    <controls:InfoBar.ActionButton>
-                        <Button
-                            x:Uid="LastestTip"
-                            Click="goGithubButton_Click"
-                            Content="View release notes" />
-                    </controls:InfoBar.ActionButton>
-                </controls:InfoBar>
+                    IsOpen="False"
+                    Severity="Informational" />
 
                 <!--  === GENERAL SECTION ===  -->
                 <TextBlock

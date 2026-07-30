@@ -1,0 +1,30 @@
+﻿namespace OpenNet.UI.Xaml.Control
+{
+    [default_interface]
+    runtimeclass CheckUpdateControl : Microsoft.UI.Xaml.Controls.Control
+    {
+        CheckUpdateControl();
+
+        static Microsoft.UI.Xaml.DependencyProperty IsUpdateAvailableProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty UpdateAvailableTitleProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty UpdateAvailableVersionTitleProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty UpdateAvailableVersionProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty UpdateAvailableIconProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty UpdateNotAvailableTitleProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty LastUpdateCheckTitleProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty LastUpdateCheckDateProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty UpdateNotAvailableIconProperty{ get; };
+
+        Boolean IsUpdateAvailable;
+        Object UpdateAvailableTitle;
+        String UpdateAvailableVersionTitle;
+        String UpdateAvailableVersion;
+        Object UpdateAvailableIcon;
+        Object UpdateNotAvailableTitle;
+        String LastUpdateCheckTitle;
+        String LastUpdateCheckDate;
+        Object UpdateNotAvailableIcon;
+
+        event Windows.Foundation.EventHandler<Microsoft.UI.Xaml.RoutedEventArgs> Click;
+    }
+}

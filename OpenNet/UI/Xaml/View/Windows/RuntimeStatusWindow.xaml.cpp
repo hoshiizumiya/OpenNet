@@ -21,7 +21,6 @@ import winrt.Windows.System.UserProfile;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
-using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Windows::ApplicationModel::DataTransfer;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
@@ -73,11 +72,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	RuntimeStatusWindow::RuntimeStatusWindow()
 	{
+		ExtendsContentIntoTitleBar(true);
 	}
 
 	void RuntimeStatusWindow::InitializeComponent()
 	{
 		RuntimeStatusWindowT::InitializeComponent();
+		SetTitleBar(RuntimeStatusTitleBar());
+		AppWindow().TitleBar().PreferredHeightOption(
+			winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 		AppWindow().Resize({ 920, 760 });
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
 		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
@@ -124,7 +127,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		RefreshIndicator().IsActive(true);
 		m_lastReport = BuildReport();
-		RebuildStatusTree();
+		SyncStatusItems();
 		SYSTEMTIME now{};
 		GetLocalTime(&now);
 		LastUpdatedText().Text(std::format(
@@ -136,51 +139,65 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		RefreshIndicator().IsActive(false);
 	}
 
-	void RuntimeStatusWindow::RebuildStatusTree()
+	winrt::Windows::Foundation::Collections::IObservableVector<
+		winrt::Windows::Foundation::IInspectable>
+		RuntimeStatusWindow::StatusItems() const
 	{
-		auto const roots = StatusTreeView().RootNodes();
-		roots.Clear();
+		return m_statusItems;
+	}
 
-		for (auto const& section : m_statusSections)
+	void RuntimeStatusWindow::SyncStatusItems()
+	{
+		for (std::uint32_t sectionIndex = 0;
+			sectionIndex < m_statusSections.size();
+			++sectionIndex)
 		{
-			TreeViewNode sectionNode;
-			sectionNode.Content(box_value(hstring{ section.title }));
-			sectionNode.IsExpanded(true);
-
-			for (auto const& row : section.rows)
+			auto const& section = m_statusSections[sectionIndex];
+			OpenNet::ViewModels::RuntimeStatusDisplayItem group{ nullptr };
+			if (sectionIndex < m_statusItems.Size())
 			{
-				Grid content;
-				content.Padding(Thickness{ 8, 4, 8, 4 });
-				content.ColumnSpacing(12);
-
-				ColumnDefinition nameColumn;
-				nameColumn.Width(GridLength{ 320, GridUnitType::Pixel });
-				content.ColumnDefinitions().Append(nameColumn);
-
-				ColumnDefinition valueColumn;
-				valueColumn.Width(GridLength{ 1, GridUnitType::Star });
-				content.ColumnDefinitions().Append(valueColumn);
-
-				TextBlock nameText;
-				nameText.Text(row.name);
-				nameText.TextTrimming(TextTrimming::CharacterEllipsis);
-				nameText.VerticalAlignment(VerticalAlignment::Center);
-				content.Children().Append(nameText);
-
-				TextBlock valueText;
-				valueText.Text(row.value);
-				valueText.TextWrapping(TextWrapping::Wrap);
-				valueText.VerticalAlignment(VerticalAlignment::Center);
-				Grid::SetColumn(valueText, 1);
-				content.Children().Append(valueText);
-
-				TreeViewNode rowNode;
-				rowNode.Content(content);
-				sectionNode.Children().Append(rowNode);
+				group = m_statusItems.GetAt(sectionIndex).as<
+					OpenNet::ViewModels::RuntimeStatusDisplayItem>();
 			}
+			else
+			{
+				group = make<
+					OpenNet::ViewModels::implementation::
+						RuntimeStatusDisplayItem>();
+				group.IsExpanded(true);
+				group.IsGroup(true);
+				m_statusItems.Append(group);
+			}
+			group.Name(section.title);
+			group.Value(L"");
 
-			roots.Append(sectionNode);
+			auto const children = group.Children();
+			for (std::uint32_t rowIndex = 0;
+				rowIndex < section.rows.size();
+				++rowIndex)
+			{
+				auto const& row = section.rows[rowIndex];
+				OpenNet::ViewModels::RuntimeStatusDisplayItem item{ nullptr };
+				if (rowIndex < children.Size())
+				{
+					item = children.GetAt(rowIndex);
+				}
+				else
+				{
+					item = make<
+						OpenNet::ViewModels::implementation::
+							RuntimeStatusDisplayItem>();
+					children.Append(item);
+				}
+				item.Name(row.name);
+				item.Value(row.value);
+				item.IsGroup(false);
+			}
+			while (children.Size() > section.rows.size())
+				children.RemoveAtEnd();
 		}
+		while (m_statusItems.Size() > m_statusSections.size())
+			m_statusItems.RemoveAtEnd();
 	}
 
 	hstring RuntimeStatusWindow::BuildReport()

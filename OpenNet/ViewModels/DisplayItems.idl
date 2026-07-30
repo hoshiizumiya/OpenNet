@@ -47,4 +47,15 @@
         Int32 PriorityIndex;
         Int32 FileIndex;
     };
+
+    [default_interface]
+    runtimeclass RuntimeStatusDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        RuntimeStatusDisplayItem();
+        String Name;
+        String Value;
+        Boolean IsExpanded;
+        Boolean IsGroup;
+        Windows.Foundation.Collections.IObservableVector<RuntimeStatusDisplayItem> Children{ get; };
+    };
 }

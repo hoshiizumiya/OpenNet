@@ -5,16 +5,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
-    xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:ouxv="using:OpenNet.UI.Xaml.View"
     Title="DevWindow"
-    Width="550"
-    Height="800"
-    MinWidth="450"
-    MinHeight="400"
-    MaxWidth="1500"
-    MaxHeight="1000"
+    Width="600"
+    Height="520"
+    MinWidth="480"
+    MinHeight="360"
     IsAlwaysOnTop="True"
     mc:Ignorable="d">
 
@@ -30,35 +26,37 @@
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>
 
-    <StackPanel Orientation="Vertical">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
 
         <TitleBar
             Title="Dev Window"
             IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="False"
-            Subtitle="Developer Test">
-            <TitleBar.Resources>
-                <!--
-                    TitleBar.Content uses Center alignment by default. Override to
-                    Stretch so the AutoSuggestBox grows with the title bar.
-                -->
-                <HorizontalAlignment x:Key="TitleBarContentHorizontalAlignment">Stretch</HorizontalAlignment>
-            </TitleBar.Resources>
-        </TitleBar>
+            Subtitle="Developer test entry points" />
 
-        <essential:SettingsCard>
-            <Button
-                Click="TriggerXamlException_Click"
-                Content="Trigger Xaml Exception"
-                Style="{StaticResource AccentButtonStyle}" />
-        </essential:SettingsCard>
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Margin="16" Spacing="10">
+                <essential:SettingsCard Description="Open the isolated static/dynamic Win2D graph test studio." Header="LiveGraph">
+                    <Button
+                        Click="OpenLiveGraphTestWindow_Click"
+                        Content="Open test studio"
+                        Style="{StaticResource AccentButtonStyle}" />
+                </essential:SettingsCard>
 
-        <essential:SettingsCard>
-            <Button
-                Click="OpenOperationProgressDialog_Click"
-                Content="Open Operation Progress Dialog"
-                Style="{StaticResource AccentButtonStyle}" />
-        </essential:SettingsCard>
-    </StackPanel>
+                <essential:SettingsCard Description="Show the operation progress dialog test." Header="Operation dialog">
+                    <Button Click="OpenOperationProgressDialog_Click" Content="Open dialog" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard Description="Intentionally throw a XAML-facing exception." Header="Exception handling">
+                    <Button Click="TriggerXamlException_Click" Content="Trigger exception" />
+                </essential:SettingsCard>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
 </essential:WindowEx>

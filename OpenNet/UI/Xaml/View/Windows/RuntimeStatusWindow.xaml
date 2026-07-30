@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Window
+<essential:WindowEx
     x:Class="OpenNet.UI.Xaml.View.Windows.RuntimeStatusWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -10,22 +10,45 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenNet.ViewModels"
     x:Uid="RuntimeStatusWindow"
+    MinWidth="760"
+    MinHeight="560"
     Title="OpenNet Runtime Status"
+    TitleBarAutoDarkMode="True"
     mc:Ignorable="d">
+
+    <essential:WindowEx.ContextMenu>
+        <essential:ModernStandardWindowContextMenu />
+    </essential:WindowEx.ContextMenu>
 
     <Grid
         x:Name="RootGrid"
-        Padding="16"
-        RowSpacing="12">
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
+            <RowDefinition Height="32" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+
+        <TitleBar
+            x:Name="RuntimeStatusTitleBar"
+            x:Uid="RuntimeStatusTitleBar"
+            IsBackButtonVisible="False"
+            IsPaneToggleButtonVisible="False"
+            Title="OpenNet Runtime Status">
+            <TitleBar.Resources>
+                <HorizontalAlignment x:Key="TitleBarContentHorizontalAlignment">Stretch</HorizontalAlignment>
+            </TitleBar.Resources>
+        </TitleBar>
+
         <CommandBar
             x:Uid="RuntimeStatusCommandBar"
+            Grid.Row="1"
+            Margin="16,8,16,8"
             Background="Transparent"
             DefaultLabelPosition="Right">
             <AppBarButton
@@ -38,26 +61,19 @@
                 Click="CopyButton_Click"
                 Icon="{essential:FontIcon Glyph=&#xE8C8;}"
                 Label="Copy all" />
-            <CommandBar.Content>
-                <StackPanel Orientation="Horizontal" Spacing="8">
-                    <FontIcon Glyph="&#xE9D9;" />
-                    <TextBlock
-                        x:Uid="RuntimeStatusTitle"
-                        VerticalAlignment="Center"
-                        Style="{StaticResource TitleTextBlockStyle}"
-                        Text="OpenNet Runtime Status" />
-                </StackPanel>
-            </CommandBar.Content>
         </CommandBar>
 
         <Border
-            Grid.Row="1"
+            Grid.Row="2"
+            Margin="16,0"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="4">
             <controls:HeaderedTreeView
                 x:Name="StatusTreeView"
                 x:Uid="RuntimeStatusTree"
+                ItemsSource="{x:Bind StatusItems}"
                 SelectionMode="None">
                 <controls:HeaderedTreeView.Header>
                     <Border
@@ -83,11 +99,34 @@
                         </labs:DataTable>
                     </Border>
                 </controls:HeaderedTreeView.Header>
+                <controls:HeaderedTreeView.ItemTemplate>
+                    <DataTemplate x:DataType="vm:RuntimeStatusDisplayItem">
+                        <TreeViewItem
+                            HorizontalContentAlignment="Stretch"
+                            IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                            ItemsSource="{x:Bind Children}">
+                            <labs:DataRow>
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    FontWeight="SemiBold"
+                                    Text="{x:Bind Name, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTipService.ToolTip="{x:Bind Name}" />
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Text="{x:Bind Value, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    ToolTipService.ToolTip="{x:Bind Value}" />
+                            </labs:DataRow>
+                        </TreeViewItem>
+                    </DataTemplate>
+                </controls:HeaderedTreeView.ItemTemplate>
             </controls:HeaderedTreeView>
         </Border>
 
         <StackPanel
-            Grid.Row="2"
+            Grid.Row="3"
+            Margin="16,10,16,14"
             Orientation="Horizontal"
             Spacing="8">
             <ProgressRing
@@ -104,4 +143,4 @@
                 Text="Waiting for first refresh" />
         </StackPanel>
     </Grid>
-</Window>
+</essential:WindowEx>

@@ -1,8 +1,9 @@
 ﻿namespace OpenNet.UI.Xaml.View.Windows
 {
     [default_interface]
-    runtimeclass RuntimeStatusWindow : Microsoft.UI.Xaml.Window
+    runtimeclass RuntimeStatusWindow : WinUI3Package.WindowEx
     {
         RuntimeStatusWindow();
+        Windows.Foundation.Collections.IObservableVector<Object> StatusItems{ get; };
     }
 }

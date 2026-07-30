@@ -20,6 +20,8 @@ export namespace OpenNet::Core::Setting::SettingKeys
 	inline constexpr wchar_t const* AlwaysIsFirstRunAfterUpdate            = L"OpenNet::Application::Update::LastVersion::TreatAsFirstRun";
 	inline constexpr wchar_t const* PendingRefreshAutoStartTaskAfterUpdate = L"OpenNet::Application::Update::StartupTask::PendingRefresh";
 	inline constexpr wchar_t const* OverrideUpdateVersionComparison        = L"OpenNet::Application::Update::VersionComparison::Override";
+	inline constexpr wchar_t const* AutoCheckUpdate                        = L"OpenNet::Application::Update::AutoCheck";
+	inline constexpr wchar_t const* LastUpdateCheckDate                    = L"OpenNet::Application::Update::LastCheckDate";
 																			 
 	// Globalization
 	inline constexpr wchar_t const* FirstDayOfWeek                         = L"OpenNet::Globalization::FirstDayOfWeek";

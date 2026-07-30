@@ -1,0 +1,411 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<essential:WindowEx
+    x:Class="OpenNet.UI.Xaml.View.Windows.LiveGraphTestWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:graph="using:OpenNet.UI.Xaml.Control.Graph"
+    xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="LiveGraph Developer Test"
+    Width="1100"
+    Height="900"
+    MinWidth="780"
+    MinHeight="600"
+    MaxWidth="1800"
+    MaxHeight="1200"
+    IsAlwaysOnTop="True"
+    mc:Ignorable="d">
+
+    <Window.SystemBackdrop>
+        <essential:MicaBackdropWithFallback>
+            <essential:MicaBackdropWithFallback.Fallback>
+                <DesktopAcrylicBackdrop />
+            </essential:MicaBackdropWithFallback.Fallback>
+        </essential:MicaBackdropWithFallback>
+    </Window.SystemBackdrop>
+
+    <essential:WindowEx.ContextMenu>
+        <essential:ModernStandardWindowContextMenu />
+    </essential:WindowEx.ContextMenu>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+
+        <TitleBar
+            Title="LiveGraph test studio"
+            Grid.Row="0"
+            IsBackButtonVisible="False"
+            IsPaneToggleButtonVisible="False"
+            Subtitle="Static and dynamic Win2D graph validation" />
+
+        <ScrollViewer
+            Grid.Row="1"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel
+                MaxWidth="1180"
+                Margin="20,12,20,28"
+                HorizontalAlignment="Stretch"
+                Spacing="14">
+
+                <Grid>
+                    <StackPanel VerticalAlignment="Center">
+                        <TextBlock
+                            FontSize="24"
+                            FontWeight="SemiBold"
+                            Text="LiveGraph interactive test" />
+                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Values are normalized to 0–100%. The dynamic graph emits two synthetic telemetry streams." />
+                    </StackPanel>
+                </Grid>
+
+                <Border
+                    Padding="16"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="18"
+                                    FontWeight="SemiBold"
+                                    Text="Dynamic graph" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Sine-wave CPU load and a secondary network-like signal are appended from Draw." />
+                            </StackPanel>
+                            <Button
+                                Grid.Column="1"
+                                Click="ResetDynamicGraph_Click"
+                                Content="Reset dynamic streams"
+                                Style="{StaticResource AccentButtonStyle}" />
+                        </Grid>
+
+                        <Border
+                            Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                            <graph:LiveGraph
+                                x:Name="DynamicGraph"
+                                Height="290"
+                                BackgroundMode="Cross"
+                                ClearColor="Transparent"
+                                CreateResources="DynamicGraph_CreateResources"
+                                CrossSpacing="32"
+                                DotSpacing="14"
+                                Draw="DynamicGraph_Draw"
+                                HighlightLineBehavior="EachPoint"
+                                HighlightLineUpdated="DynamicGraph_HighlightLineUpdated"
+                                HighlightLineVisibility="Visible"
+                                HorizontalScrollDistance="1">
+                                <graph:LiveGraph.HighlightLineContent>
+                                    <Grid IsHitTestVisible="False">
+                                        <Line
+                                            Opacity="0.55"
+                                            Stroke="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                            StrokeDashArray="3,3"
+                                            StrokeThickness="1"
+                                            X1="0"
+                                            X2="10000" />
+                                        <Border
+                                            Margin="0,-30,10,0"
+                                            Padding="8,3"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                            CornerRadius="4">
+                                            <TextBlock
+                                                x:Name="DynamicHighlightText"
+                                                FontSize="12"
+                                                Text="Highlight waiting…" />
+                                        </Border>
+                                    </Grid>
+                                </graph:LiveGraph.HighlightLineContent>
+                            </graph:LiveGraph>
+                        </Border>
+
+                        <Grid ColumnSpacing="8" RowSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Button Click="GreenBrush_Click" Content="Green" />
+                            <Button
+                                Grid.Column="1"
+                                Click="BlueBrush_Click"
+                                Content="Blue" />
+                            <Button
+                                Grid.Column="2"
+                                Click="RedBrush_Click"
+                                Content="Red" />
+                            <Button
+                                Grid.Column="3"
+                                Click="PurpleBrush_Click"
+                                Content="Purple" />
+                            <Button
+                                Grid.Column="4"
+                                Click="CustomBrush_Click"
+                                Content="Custom sunset" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="16"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="12">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock
+                                    FontSize="18"
+                                    FontWeight="SemiBold"
+                                    Text="Static graph" />
+                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Push a complete normalized point collection with optional curve smoothing." />
+                            </StackPanel>
+                            <Button
+                                Grid.Column="1"
+                                Click="AddStaticLine_Click"
+                                Content="Add line batch" />
+                            <Button
+                                Grid.Column="2"
+                                Click="AddStaticRounded_Click"
+                                Content="Add rounded batch"
+                                Style="{StaticResource AccentButtonStyle}" />
+                        </Grid>
+
+                        <Border
+                            Background="{ThemeResource LayerFillColorDefaultBrush}"
+                            BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="6">
+                            <graph:LiveGraph
+                                x:Name="StaticGraph"
+                                Height="220"
+                                BackgroundMode="Dot"
+                                ClearColor="Transparent"
+                                CreateResources="StaticGraph_CreateResources"
+                                DotSpacing="14"
+                                HighlightLineBehavior="HigherPointAcrossGraphs"
+                                HighlightLineUpdated="StaticGraph_HighlightLineUpdated"
+                                HorizontalScrollDistance="0.6">
+                                <graph:LiveGraph.HighlightLineContent>
+                                    <Grid IsHitTestVisible="False">
+                                        <Line
+                                            Opacity="0.45"
+                                            Stroke="{ThemeResource TextFillColorPrimaryBrush}"
+                                            StrokeThickness="1"
+                                            X1="0"
+                                            X2="10000" />
+                                        <TextBlock
+                                            x:Name="StaticHighlightText"
+                                            Margin="0,-24,10,0"
+                                            HorizontalAlignment="Right"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="Static highlight" />
+                                    </Grid>
+                                </graph:LiveGraph.HighlightLineContent>
+                            </graph:LiveGraph>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Expander Header="Graph properties and brush composition" IsExpanded="True">
+                    <Grid
+                        Margin="12"
+                        ColumnSpacing="16"
+                        RowSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <ComboBox
+                            x:Name="BackgroundModeBox"
+                            Grid.Row="0"
+                            Grid.Column="0"
+                            Header="Background mode"
+                            SelectedIndex="1"
+                            SelectionChanged="BackgroundMode_SelectionChanged">
+                            <ComboBoxItem Content="None" />
+                            <ComboBoxItem Content="Cross" />
+                            <ComboBoxItem Content="Dot" />
+                        </ComboBox>
+
+                        <ComboBox
+                            x:Name="HighlightBehaviorBox"
+                            Grid.Row="0"
+                            Grid.Column="1"
+                            Header="Highlight behavior"
+                            SelectedIndex="4"
+                            SelectionChanged="HighlightBehavior_SelectionChanged">
+                            <ComboBoxItem Content="Higher across graphs" />
+                            <ComboBoxItem Content="Lower across graphs" />
+                            <ComboBoxItem Content="Higher per graph" />
+                            <ComboBoxItem Content="Lower per graph" />
+                            <ComboBoxItem Content="Each point" />
+                        </ComboBox>
+
+                        <NumberBox
+                            x:Name="DotSpacingBox"
+                            Grid.Row="0"
+                            Grid.Column="2"
+                            Header="Dot spacing"
+                            Maximum="80"
+                            Minimum="2"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="GraphSettings_ValueChanged"
+                            Value="14" />
+
+                        <NumberBox
+                            x:Name="CrossSpacingBox"
+                            Grid.Row="0"
+                            Grid.Column="3"
+                            Header="Cross spacing"
+                            Maximum="120"
+                            Minimum="4"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="GraphSettings_ValueChanged"
+                            Value="32" />
+
+                        <NumberBox
+                            x:Name="ScrollDistanceBox"
+                            Grid.Row="1"
+                            Grid.Column="0"
+                            Header="Scroll distance"
+                            Maximum="12"
+                            Minimum="0"
+                            SmallChange="0.1"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="GraphSettings_ValueChanged"
+                            Value="1" />
+
+                        <NumberBox
+                            x:Name="ScrollDurationBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Header="Scroll duration (ms)"
+                            Maximum="5000"
+                            Minimum="16"
+                            SmallChange="50"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="GraphSettings_ValueChanged"
+                            Value="1000" />
+
+                        <NumberBox
+                            x:Name="StrokeWidthBox"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            Header="Stroke width"
+                            Maximum="12"
+                            Minimum="0.5"
+                            SmallChange="0.5"
+                            SpinButtonPlacementMode="Inline"
+                            ValueChanged="BrushAppearance_ValueChanged"
+                            Value="2" />
+
+                        <StackPanel
+                            Grid.Row="1"
+                            Grid.Column="3"
+                            Orientation="Horizontal"
+                            Spacing="12">
+                            <ToggleSwitch
+                                x:Name="ShowHighlightToggle"
+                                Header="Highlight"
+                                IsOn="True"
+                                Toggled="HighlightVisibility_Toggled" />
+                            <ToggleSwitch
+                                x:Name="UseCustomColorsToggle"
+                                Header="Canvas colors"
+                                Toggled="CustomColors_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel
+                            Grid.Row="2"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="4"
+                            Orientation="Horizontal"
+                            Spacing="18">
+                            <ToggleSwitch
+                                x:Name="ShowFillToggle"
+                                Header="Fill"
+                                IsOn="True"
+                                Toggled="BrushAppearance_Toggled" />
+                            <ToggleSwitch
+                                x:Name="ShowBorderToggle"
+                                Header="Border"
+                                IsOn="True"
+                                Toggled="BrushAppearance_Toggled" />
+                            <ToggleSwitch
+                                x:Name="DashedBorderToggle"
+                                Header="Dashed border"
+                                Toggled="BrushAppearance_Toggled" />
+                        </StackPanel>
+                    </Grid>
+                </Expander>
+
+                <Border
+                    Padding="12"
+                    Background="{ThemeResource LayerFillColorDefaultBrush}"
+                    CornerRadius="6">
+                    <Grid ColumnSpacing="20">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock FontWeight="SemiBold" Text="CreateResources" />
+                            <TextBlock
+                                x:Name="ResourceStatusText"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Waiting for Win2D resources…" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock FontWeight="SemiBold" Text="Draw" />
+                            <TextBlock
+                                x:Name="DynamicFrameStatusText"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Waiting for the first frame…" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock FontWeight="SemiBold" Text="HighlightLineUpdated" />
+                            <TextBlock
+                                x:Name="HighlightStatusText"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Waiting for a visible point…" />
+                        </StackPanel>
+                    </Grid>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</essential:WindowEx>

@@ -13,6 +13,8 @@
 
 import OpenNet.Core.Utils.Message;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Setting.LocalSetting;
+import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.UI;
@@ -37,6 +39,22 @@ using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	namespace
+	{
+		winrt::hstring CurrentLocalDateTimeText()
+		{
+			SYSTEMTIME value{};
+			::GetLocalTime(&value);
+			return winrt::hstring{ std::format(
+				L"{:04}-{:02}-{:02} {:02}:{:02}",
+				value.wYear,
+				value.wMonth,
+				value.wDay,
+				value.wHour,
+				value.wMinute) };
+		}
+	}
+
 	// 正确定义类静态成员（不要使用文件作用域的 static 关键字）
 	SettingsPage* SettingsPage::s_current = nullptr;
 
@@ -58,6 +76,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			m_loadAction.Cancel();
 			m_loadAction = nullptr;
+		}
+		if (m_updateCheckAction)
+		{
+			m_updateCheckAction.Cancel();
+			m_updateCheckAction = nullptr;
+		}
+		if (m_updateLaunchAction)
+		{
+			m_updateLaunchAction.Cancel();
+			m_updateLaunchAction = nullptr;
 		}
 		if (s_current == this)
 		{
@@ -124,22 +152,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	void SettingsPage::RestartToApplyLanguage_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		winrt::Microsoft::Windows::AppLifecycle::AppInstance::Restart(L"");
-	}
-
-	::winrt::Windows::Foundation::IAsyncAction SettingsPage::GithubDefaultLaunch()
-	{
-		// Launch the URI.
-		if (co_await ::winrt::Windows::System::Launcher::LaunchUriAsync(m_githubReleaseLinkUri))
-		{
-			// URI launched.
-		}
-		else
-		{
-#ifdef DEBUG
-			OutputDebugStringW(L"Fail to launch GitHub Release Page\n");
-#endif
-
-		}
 	}
 
 	SettingsPage* SettingsPage::Current()
@@ -508,6 +520,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				}
 				m_isStartPageLoading = false;
 			}
+
+			m_isInitializingUpdateSettings = true;
+			bool const autoCheck =
+				::OpenNet::Core::Setting::LocalSetting::Get<bool>(
+					::OpenNet::Core::Setting::SettingKeys::AutoCheckUpdate,
+					true);
+			AutoCheckUpdateCheckbox().IsChecked(autoCheck);
+			UpdateStatusControl().LastUpdateCheckDate(
+				::OpenNet::Core::Setting::LocalSetting::Get<hstring>(
+					::OpenNet::Core::Setting::SettingKeys::LastUpdateCheckDate,
+					L"Never"));
+			m_isInitializingUpdateSettings = false;
+
+			if (autoCheck)
+			{
+				m_updateCheckAction = CheckForUpdatesAsync(false);
+			}
 		}
 		catch (...)
 		{
@@ -517,22 +546,143 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		co_return;
 	}
 
-	void SettingsPage::AppUpdateCheckButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void SettingsPage::AppUpdateCheckButton_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-
+		if (!m_isCheckingForUpdate)
+		{
+			m_updateCheckAction = CheckForUpdatesAsync(true);
+		}
 	}
 
-	void SettingsPage::AutoCheckUpdateCheckbox_Checked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void SettingsPage::UpdateStatusControl_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		m_updateLaunchAction = LaunchAvailableUpdateAsync();
 	}
 
-	void SettingsPage::AutoCheckUpdateCheckbox_Unchecked(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	void SettingsPage::AutoCheckUpdateCheckbox_Checked(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		if (!m_isInitializingUpdateSettings)
+		{
+			::OpenNet::Core::Setting::LocalSetting::Set(
+				::OpenNet::Core::Setting::SettingKeys::AutoCheckUpdate,
+				true);
+		}
 	}
 
-	void SettingsPage::goGithubButton_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	void SettingsPage::AutoCheckUpdateCheckbox_Unchecked(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		// Store the IAsyncAction to prevent unobserved async exception
-		m_githubAction = GithubDefaultLaunch();
+		if (!m_isInitializingUpdateSettings)
+		{
+			::OpenNet::Core::Setting::LocalSetting::Set(
+				::OpenNet::Core::Setting::SettingKeys::AutoCheckUpdate,
+				false);
+		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction SettingsPage::CheckForUpdatesAsync(
+		bool showSuccess)
+	{
+		auto weak = get_weak();
+		m_isCheckingForUpdate = true;
+		AppUpdateCheckButton().IsEnabled(false);
+		AppUpdateCheckButton().Content(box_value(hstring{ L"Checking..." }));
+		AppUpdateStatusInfoBar().IsOpen(false);
+
+		auto result =
+			std::make_shared<::OpenNet::Service::Update::CheckUpdateResult>();
+		co_await m_updateService.CheckUpdateAsync(result);
+
+		auto strong = weak.get();
+		if (!strong)
+		{
+			co_return;
+		}
+
+		m_isCheckingForUpdate = false;
+		AppUpdateCheckButton().IsEnabled(true);
+		AppUpdateCheckButton().Content(box_value(hstring{ L"Check update" }));
+		m_updateResult = result;
+
+		using ::OpenNet::Service::Update::CheckUpdateResultKind;
+		if (result->Kind == CheckUpdateResultKind::UpdateAvailable
+			|| result->Kind == CheckUpdateResultKind::AlreadyUpdated)
+		{
+			auto const checkedAt = CurrentLocalDateTimeText();
+			UpdateStatusControl().LastUpdateCheckDate(checkedAt);
+			::OpenNet::Core::Setting::LocalSetting::Set(
+				::OpenNet::Core::Setting::SettingKeys::LastUpdateCheckDate,
+				checkedAt);
+		}
+
+		switch (result->Kind)
+		{
+			case CheckUpdateResultKind::UpdateAvailable:
+				UpdateStatusControl().IsUpdateAvailable(true);
+				UpdateStatusControl().UpdateAvailableVersion(result->Package.Version);
+				AppUpdateStatusInfoBar().Title(L"An OpenNet update is available");
+				AppUpdateStatusInfoBar().Message(
+					result->Package.ReleaseNotes.empty()
+					? hstring{ L"Select the update card to open the preferred download mirror." }
+				: result->Package.ReleaseNotes);
+				AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Success);
+				AppUpdateStatusInfoBar().IsOpen(true);
+				break;
+
+			case CheckUpdateResultKind::AlreadyUpdated:
+			{
+				UpdateStatusControl().IsUpdateAvailable(false);
+				UpdateStatusControl().UpdateAvailableVersion(L"");
+				UpdateStatusControl().UpdateNotAvailableTitle(
+					box_value(hstring{ L"You're up to date" }));
+				if (showSuccess)
+				{
+					AppUpdateStatusInfoBar().Title(L"OpenNet is up to date");
+					AppUpdateStatusInfoBar().Message(L"No newer release is available.");
+					AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Informational);
+					AppUpdateStatusInfoBar().IsOpen(true);
+				}
+				break;
+			}
+
+			default:
+				UpdateStatusControl().IsUpdateAvailable(false);
+				UpdateStatusControl().UpdateNotAvailableTitle(
+					box_value(hstring{ L"Unable to check for updates" }));
+				AppUpdateStatusInfoBar().Title(L"Update check failed");
+				AppUpdateStatusInfoBar().Message(
+					result->ErrorMessage.empty()
+					? hstring{ L"The update server returned an invalid response." }
+				: result->ErrorMessage);
+				AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Error);
+				AppUpdateStatusInfoBar().IsOpen(true);
+				break;
+		}
+
+		m_updateCheckAction = nullptr;
+	}
+
+	winrt::Windows::Foundation::IAsyncAction SettingsPage::LaunchAvailableUpdateAsync()
+	{
+		if (!m_updateResult)
+		{
+			co_return;
+		}
+
+		if (!co_await m_updateService.TriggerUpdateAsync(*m_updateResult))
+		{
+			AppUpdateStatusInfoBar().Title(L"Unable to open the update");
+			AppUpdateStatusInfoBar().Message(L"No valid update mirror could be launched.");
+			AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Error);
+			AppUpdateStatusInfoBar().IsOpen(true);
+		}
+		m_updateLaunchAction = nullptr;
 	}
 }

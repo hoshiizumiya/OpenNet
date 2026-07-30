@@ -1,0 +1,131 @@
+﻿namespace OpenNet.UI.Xaml.Control.Graph
+{
+    enum HighlightLineBehavior
+    {
+        HigherPointAcrossGraphs = 0,
+        LowerPointAcrossGraphs = 1,
+        HigherPointPerGraph = 2,
+        LowerPointPerGraph = 3,
+        EachPoint = 4
+    };
+
+    enum LiveGraphBackgroundMode
+    {
+        None = 0,
+        Cross = 1,
+        Dot = 2
+    };
+
+    [default_interface]
+    runtimeclass GraphPoint
+    {
+        GraphPoint();
+        GraphPoint(Single graphValue);
+        GraphPoint(Single graphValue, Single space);
+
+        Single Value;
+        Single Space;
+    }
+
+    [default_interface]
+    runtimeclass GraphBrushData
+    {
+        GraphBrushData();
+        GraphBrushData(Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush);
+        GraphBrushData(
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush opacityBrush);
+        GraphBrushData(
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush opacityBrush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush borderBrush);
+        GraphBrushData(
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush opacityBrush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush borderBrush,
+            Single strokeWidth);
+        GraphBrushData(
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush brush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush opacityBrush,
+            Microsoft.Graphics.Canvas.Brushes.ICanvasBrush borderBrush,
+            Single strokeWidth,
+            Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle strokeStyle);
+
+        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush Brush;
+        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush OpacityBrush;
+        Microsoft.Graphics.Canvas.Brushes.ICanvasBrush BorderBrush;
+        Single StrokeWidth;
+        Microsoft.Graphics.Canvas.Geometry.CanvasStrokeStyle StrokeStyle;
+    }
+
+    [default_interface]
+    runtimeclass LiveGraphEventArgs
+    {
+        LiveGraphEventArgs(
+            Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl canvasAnimatedControl,
+            Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs drawEventArgs);
+
+        Microsoft.Graphics.Canvas.UI.Xaml.ICanvasAnimatedControl CanvasAnimatedControl{ get; };
+        Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedDrawEventArgs DrawEventArgs{ get; };
+    }
+
+    [default_interface]
+    runtimeclass LiveGraph : Microsoft.UI.Xaml.Controls.Control
+    {
+        LiveGraph();
+
+        static Microsoft.UI.Xaml.DependencyProperty HighlightLineBehaviorProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty HighlightLineVisibilityProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty BackgroundModeProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty DotSpacingProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty CrossSpacingProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty BackgroundColorProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty ClearColorProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty HorizontalScrollDistanceProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty HorizontalScrollDurationProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty HighlightLineContentProperty{ get; };
+
+        HighlightLineBehavior HighlightLineBehavior;
+        Microsoft.UI.Xaml.Visibility HighlightLineVisibility;
+        LiveGraphBackgroundMode BackgroundMode;
+        Double DotSpacing;
+        Double CrossSpacing;
+        Windows.Foundation.IReference<Windows.UI.Color> BackgroundColor;
+        Windows.Foundation.IReference<Windows.UI.Color> ClearColor;
+        Double HorizontalScrollDistance;
+        Windows.Foundation.TimeSpan HorizontalScrollDuration;
+        Object HighlightLineContent;
+
+        String RegisterGraphBrush(GraphBrushData brushData);
+        void UpdateGraphBrush(String key, GraphBrushData brushData);
+        void ResetDynamicGraph(String key);
+
+        void AddDynamicPoint(String key, GraphPoint point);
+        void AddDynamicPoint(String key, GraphPoint point, Boolean isRounded);
+        void AddStaticPoints(
+            String key,
+            Windows.Foundation.Collections.IIterable<GraphPoint> points);
+        void AddStaticPoints(
+            String key,
+            Windows.Foundation.Collections.IIterable<GraphPoint> points,
+            Boolean isRounded);
+
+        GraphBrushData GetCustomBrush(
+            Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator,
+            Windows.UI.Color[] colors);
+        GraphBrushData GetGreenBrush(
+            Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator);
+        GraphBrushData GetRedBrush(
+            Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator);
+        GraphBrushData GetBlueBrush(
+            Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator);
+        GraphBrushData GetPurpleBrush(
+            Microsoft.Graphics.Canvas.ICanvasResourceCreator resourceCreator);
+
+        Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl GetCanvasAnimatedControl();
+
+        event Windows.Foundation.EventHandler<Single> HighlightLineUpdated;
+        event Windows.Foundation.EventHandler<LiveGraphEventArgs> Draw;
+        event Windows.Foundation.EventHandler<Microsoft.Graphics.Canvas.UI.Xaml.CanvasAnimatedControl> CreateResources;
+    }
+}
