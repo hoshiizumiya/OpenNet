@@ -147,15 +147,26 @@
     <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
     <ClCompile Include="Helpers\TemplateControlHelper.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
+    <ClCompile Include="Service\Notification\InfoBarOptions.cpp">
+      <DependentUpon>Service\Notification\InfoBarOptions.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="Service\Update\UpdateService.cpp" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
+    <ClCompile Include="UI\Xaml\Control\DataTableSortHelper.ixx" />
     <ClCompile Include="UI\Xaml\Control\CheckUpdateControl.cpp">
       <DependentUpon>UI\Xaml\Control\CheckUpdateControl.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\Graph\LiveGraph.cpp">
       <DependentUpon>UI\Xaml\Control\Graph\LiveGraph.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\InfoBarHelper.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\InfoBarTemplateSelector.cpp">
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Web\ServerDomain.ixx" />
@@ -279,6 +290,26 @@
     <ClInclude Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.h">
       <DependentUpon>UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Service\Notification\InfoBarOptions.h">
+      <DependentUpon>Service\Notification\InfoBarOptions.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\InfoBarHelper.h">
+      <DependentUpon>UI\Xaml\Control\InfoBarHelper.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\IpEndpointInput.xaml.h">
+      <DependentUpon>UI\Xaml\Control\IpEndpointInput.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\TaskStatusIndicator.xaml.h">
+      <DependentUpon>UI\Xaml\Control\TaskStatusIndicator.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\InfoBarTemplateSelector.h">
+      <DependentUpon>UI\Xaml\Control\InfoBarTemplateSelector.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\Markup\UInt32Extension.h">
       <DependentUpon>UI\Xaml\Markup\UInt32Extension.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -377,6 +408,14 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskPieceMapPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml.h">
@@ -582,6 +621,10 @@
       <DependentUpon>ViewModels\TasksViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\TaskSpeedGraphSettingsViewModel.h">
+      <DependentUpon>ViewModels\TaskSpeedGraphSettingsViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\RSSViewModel.h">
       <DependentUpon>ViewModels\RSSViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -623,8 +666,17 @@
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml" />
+    <Page Include="UI\Xaml\Control\IpEndpointInput.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\Control\TaskStatusIndicator.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\FontStyle_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\InfoBarOverride.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\Control\Theme\SettingsStyle_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\TransitionCollection_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml" />
@@ -669,6 +721,12 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml">
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml">
@@ -884,6 +942,14 @@
       <DependentUpon>UI\Xaml\View\InfoBarView.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\IpEndpointInput.xaml.cpp">
+      <DependentUpon>UI\Xaml\Control\IpEndpointInput.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\TaskStatusIndicator.xaml.cpp">
+      <DependentUpon>UI\Xaml\Control\TaskStatusIndicator.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.cpp" />
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\SettingsPages\BittorrentSettingsPage.xaml</DependentUpon>
@@ -915,6 +981,14 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskPieceMapPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml.cpp">
@@ -1068,6 +1142,10 @@
       <DependentUpon>ViewModels\TasksViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\TaskSpeedGraphSettingsViewModel.cpp">
+      <DependentUpon>ViewModels\TaskSpeedGraphSettingsViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\RSSViewModel.cpp">
       <DependentUpon>ViewModels\RSSViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1122,7 +1200,7 @@
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="UI\Xaml\Control\CheckUpdateControl.idl"/>
+    <Midl Include="UI\Xaml\Control\CheckUpdateControl.idl" />
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl" />
     <Midl Include="UI\Xaml\Control\Graph\LiveGraph.idl">
       <SubType>Code</SubType>
@@ -1136,6 +1214,26 @@
     </Midl>
     <Midl Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.idl">
       <DependentUpon>UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="Service\Notification\InfoBarOptions.idl">
+      <DependentUpon>Service\Notification\InfoBarOptions.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\InfoBarHelper.idl">
+      <DependentUpon>UI\Xaml\Control\InfoBarHelper.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\IpEndpointInput.idl">
+      <DependentUpon>UI\Xaml\Control\IpEndpointInput.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\TaskStatusIndicator.idl">
+      <DependentUpon>UI\Xaml\Control\TaskStatusIndicator.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\InfoBarTemplateSelector.idl">
+      <DependentUpon>UI\Xaml\Control\InfoBarTemplateSelector.cpp</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\Markup\UInt32Extension.idl">
@@ -1217,6 +1315,17 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskSummaryPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\TaskSummaryPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\TaskSpeedGraphSettingsViewModel.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskPieceMapPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskPieceMapPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskPeersListPage.idl">

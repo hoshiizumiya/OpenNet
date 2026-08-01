@@ -13,6 +13,8 @@
 #include "UI/Xaml/View/Dialog/TorrentMetaDataDownloadDialog.xaml.h"
 #include "UI/Xaml/View/Dialog/HttpDownloadDialog.xaml.h"
 #include "UI/Xaml/View/Pages/TaskSummaryPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskSpeedGraphPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskPieceMapPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
@@ -26,6 +28,7 @@ import OpenNet.Extension.DependencyObjectExtensions;
 import OpenNet.Factory.Window;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.Helpers.ControlLengthHelper;
+import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.OpenNet.UI.Xaml.View.Pages.SettingsPages;
 import winrt.OpenNet.UI.Xaml.View.Windows;
 import winrt.Windows.Foundation;
@@ -129,6 +132,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSummaryPage>(), m_viewModel);
 		}
+		UpdateTaskSortHeaders();
 	}
 
 	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
@@ -643,6 +647,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSummaryPage>(), m_viewModel);
 		}
+		else if (selectedItem == SpeedGraphContent())
+		{
+			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSpeedGraphPage>(), m_viewModel);
+		}
+		else if (selectedItem == PieceMapContent())
+		{
+			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPieceMapPage>(), m_viewModel);
+		}
 		else if (selectedItem == PeersList())
 		{
 			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPeersListPage>(), m_viewModel);
@@ -693,59 +705,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		SortFilteredTasks();
 	}
 
-	void TasksPage::OnSortTaskNameButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-	{
-		if (OpenedChevronAnimatedIcon() != nullptr)
-		{
-			AnimatedIcon::SetState(OpenedChevronAnimatedIcon(), L"PointerOver");
-		}
-
-		if (ClosedChevronAnimatedIcon() != nullptr)
-		{
-			AnimatedIcon::SetState(ClosedChevronAnimatedIcon(), L"PointerOver");
-		}
-	}
-
-	void TasksPage::OnSortTaskNameButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-	{
-		if (OpenedChevronAnimatedIcon() != nullptr)
-		{
-			AnimatedIcon::SetState(OpenedChevronAnimatedIcon(), L"Normal");
-		}
-
-		if (ClosedChevronAnimatedIcon() != nullptr)
-		{
-			AnimatedIcon::SetState(ClosedChevronAnimatedIcon(), L"Normal");
-		}
-	}
-
-	void TasksPage::OnSortTaskSizeButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-	{
-	}
-
-	void TasksPage::OnSortTaskSizeButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-	{
-	}
-
 	void TasksPage::UpdateTaskSortHeaders()
 	{
 		auto update = [this](auto const& button)
 		{
-			auto label = button.Content().try_as<
-				winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-			if (!label) return;
-			std::wstring text{ label.Text() };
-			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
-				(text.back() == L'\u2191' || text.back() == L'\u2193'))
-			{
-				text.resize(text.size() - 2);
-			}
-			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
-			{
-				if (m_sortDirection == 1) text += L" \u2191";
-				else if (m_sortDirection == 2) text += L" \u2193";
-			}
-			label.Text(text);
+			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
+				button, m_sortColumn, m_sortDirection);
 		};
 		update(SortTaskNameButton());
 		update(SortTaskSizeButton());
@@ -823,9 +788,48 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			});
 		}
 
-		filtered.Clear();
-		for (auto const& item : items)
-			filtered.Append(item);
+		// Reorder incrementally so retained rows keep their identity. Clearing the
+		// vector made every row look newly created and defeated RepositionThemeTransition.
+		auto const selectedTask = TasksList()
+			? TasksList().SelectedItem().try_as<
+			winrt::OpenNet::ViewModels::TaskViewModel>()
+			: nullptr;
+		for (std::uint32_t targetIndex = 0;
+			 targetIndex < static_cast<std::uint32_t>(items.size());
+			 ++targetIndex)
+		{
+			if (targetIndex < filtered.Size() &&
+				filtered.GetAt(targetIndex) == items[targetIndex])
+			{
+				continue;
+			}
+
+			std::uint32_t sourceIndex = targetIndex;
+			while (sourceIndex < filtered.Size() &&
+				   filtered.GetAt(sourceIndex) != items[targetIndex])
+			{
+				++sourceIndex;
+			}
+
+			if (sourceIndex < filtered.Size())
+			{
+				auto item = filtered.GetAt(sourceIndex);
+				filtered.RemoveAt(sourceIndex);
+				filtered.InsertAt(targetIndex, item);
+			}
+			else
+			{
+				filtered.InsertAt(targetIndex, items[targetIndex]);
+			}
+		}
+		while (filtered.Size() > items.size())
+		{
+			filtered.RemoveAtEnd();
+		}
+		if (selectedTask && TasksList())
+		{
+			TasksList().SelectedItem(selectedTask);
+		}
 		m_isApplyingSort = false;
 	}
 

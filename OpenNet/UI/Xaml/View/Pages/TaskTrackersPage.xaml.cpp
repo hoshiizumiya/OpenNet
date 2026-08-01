@@ -9,6 +9,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -30,6 +31,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TaskTrackersPageT::InitializeComponent();
 		TrackersListView().ItemsSource(m_trackerItems);
+		UpdateSortHeaders();
 		Loaded([this](auto, auto)
 		{
 			RestoreColumn(ColTrackerTier(), "Trackers.Tier");
@@ -148,21 +150,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		auto update = [this](auto const& button)
 		{
-			auto label = button.Content().try_as<
-				winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-			if (!label) return;
-			std::wstring text{ label.Text() };
-			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
-				(text.back() == L'\u2191' || text.back() == L'\u2193'))
-			{
-				text.resize(text.size() - 2);
-			}
-			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
-			{
-				if (m_sortDirection == 1) text += L" \u2191";
-				else if (m_sortDirection == 2) text += L" \u2193";
-			}
-			label.Text(text);
+			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
+				button, m_sortColumn, m_sortDirection);
 		};
 		update(SortTrackerUrlButton());
 		update(SortTrackerTierButton());
@@ -349,24 +338,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			 ++index)
 		{
 			auto const& tracker = detail.trackers[index];
+			auto const trackerUrl = winrt::to_hstring(tracker.url);
 			winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
-			if (index < m_trackerItems.Size())
+			std::uint32_t existingIndex = index;
+			while (existingIndex < m_trackerItems.Size())
 			{
-				item = m_trackerItems.GetAt(index)
+				auto candidate = m_trackerItems.GetAt(existingIndex)
 					.try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>();
-				if (item && item.URL() != winrt::to_hstring(tracker.url))
-					item = nullptr;
+				if (candidate && candidate.URL() == trackerUrl)
+				{
+					item = candidate;
+					break;
+				}
+				++existingIndex;
 			}
-			if (!item)
+
+			if (item && existingIndex != index)
+			{
+				m_trackerItems.RemoveAt(existingIndex);
+				m_trackerItems.InsertAt(index, item);
+			}
+			else if (!item)
 			{
 				item = winrt::make<
 					winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
-				if (index < m_trackerItems.Size())
-					m_trackerItems.SetAt(index, item);
-				else
-					m_trackerItems.Append(item);
+				m_trackerItems.InsertAt(index, item);
 			}
-			item.URL(winrt::to_hstring(tracker.url));
+			item.URL(trackerUrl);
 			item.Tier(winrt::to_hstring(tracker.tier));
 			item.Peers(winrt::to_hstring(tracker.numPeers));
 			item.Status(winrt::to_hstring(tracker.status));

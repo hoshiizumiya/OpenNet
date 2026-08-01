@@ -1,0 +1,11 @@
+﻿namespace OpenNet.UI.Xaml.Control
+{
+    [default_interface]
+    runtimeclass TaskStatusIndicator : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        TaskStatusIndicator();
+
+        Int32 State;
+        static Microsoft.UI.Xaml.DependencyProperty StateProperty { get; };
+    }
+}

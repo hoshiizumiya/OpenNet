@@ -225,4 +225,31 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>由 Crowdin 社群成員維護</value>
   </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>尚未排序。按一下以遞增排序。</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>目前為遞增排序。按一下以遞減排序。</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>目前為遞減排序。按一下以清除排序。</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>等待中</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>正在下載</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>正在做種</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>已暫停</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
 </root>

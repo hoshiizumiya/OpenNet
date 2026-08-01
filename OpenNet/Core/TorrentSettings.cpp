@@ -366,6 +366,7 @@ namespace OpenNet::Core
 					 lt::alert_category::error |
 					 lt::alert_category::storage |
 					 lt::alert_category::peer |
+					 lt::alert_category::connect |
 					 lt::alert_category::tracker |
 					 lt::alert_category::stats |
 					 lt::alert_category::dht |

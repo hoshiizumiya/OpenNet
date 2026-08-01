@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="OpenNet.UI.Xaml.Control.IpEndpointInput"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid RowSpacing="4">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="132" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBox
+            x:Name="AddressTextBox"
+            x:Uid="IpEndpointInputAddress"
+            MinWidth="220"
+            Header="IP address"
+            PlaceholderText="0.0.0.0 or ::"
+            TextChanged="AddressTextBox_TextChanged" />
+        <NumberBox
+            x:Name="PortNumberBox"
+            x:Uid="IpEndpointInputPort"
+            Grid.Column="1"
+            Margin="8,0,0,0"
+            Header="Port"
+            Maximum="65535"
+            Minimum="0"
+            SpinButtonPlacementMode="Compact"
+            ValueChanged="PortNumberBox_ValueChanged" />
+
+        <StackPanel
+            x:Name="ValidPanel"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Orientation="Horizontal"
+            Spacing="6">
+            <FontIcon
+                FontSize="12"
+                Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                Glyph="&#xE73E;" />
+            <TextBlock
+                x:Name="ValidText"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}" />
+        </StackPanel>
+
+        <StackPanel
+            x:Name="InvalidPanel"
+            Grid.Row="1"
+            Grid.ColumnSpan="2"
+            Orientation="Horizontal"
+            Spacing="6"
+            Visibility="Collapsed">
+            <FontIcon
+                FontSize="12"
+                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                Glyph="&#xEA39;" />
+            <TextBlock
+                x:Name="InvalidText"
+                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                TextWrapping="Wrap" />
+        </StackPanel>
+    </Grid>
+</UserControl>

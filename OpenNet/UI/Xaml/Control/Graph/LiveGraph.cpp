@@ -307,6 +307,25 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				box_value(OneSecond()),
 				PropertyChangedCallback{ &LiveGraph::OnHorizontalScrollChanged } });
 
+		s_highlightLineAnimationDurationProperty = DependencyProperty::Register(
+			L"HighlightLineAnimationDuration",
+			winrt::xaml_typename<TimeSpan>(),
+			ownerType,
+			PropertyMetadata{
+				box_value(std::chrono::duration_cast<TimeSpan>(
+					std::chrono::milliseconds{ 300 })),
+				PropertyChangedCallback{
+					&LiveGraph::OnHighlightLineAnimationDurationChanged } });
+
+		s_historyBufferScreensProperty = DependencyProperty::Register(
+			L"HistoryBufferScreens",
+			winrt::xaml_typename<double>(),
+			ownerType,
+			PropertyMetadata{
+				box_value(1.0),
+				PropertyChangedCallback{
+					&LiveGraph::OnHistoryBufferScreensChanged } });
+
 		s_highlightLineContentProperty = DependencyProperty::Register(
 			L"HighlightLineContent",
 			winrt::xaml_typename<IInspectable>(),
@@ -359,6 +378,16 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 	DependencyProperty LiveGraph::HorizontalScrollDurationProperty()
 	{
 		return s_horizontalScrollDurationProperty;
+	}
+
+	DependencyProperty LiveGraph::HighlightLineAnimationDurationProperty()
+	{
+		return s_highlightLineAnimationDurationProperty;
+	}
+
+	DependencyProperty LiveGraph::HistoryBufferScreensProperty()
+	{
+		return s_historyBufferScreensProperty;
 	}
 
 	DependencyProperty LiveGraph::HighlightLineContentProperty()
@@ -464,6 +493,27 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		SetValue(s_horizontalScrollDurationProperty, box_value(value));
 	}
 
+	TimeSpan LiveGraph::HighlightLineAnimationDuration()
+	{
+		return unbox_value<TimeSpan>(
+			GetValue(s_highlightLineAnimationDurationProperty));
+	}
+
+	void LiveGraph::HighlightLineAnimationDuration(TimeSpan const& value)
+	{
+		SetValue(s_highlightLineAnimationDurationProperty, box_value(value));
+	}
+
+	double LiveGraph::HistoryBufferScreens()
+	{
+		return unbox_value<double>(GetValue(s_historyBufferScreensProperty));
+	}
+
+	void LiveGraph::HistoryBufferScreens(double value)
+	{
+		SetValue(s_historyBufferScreensProperty, box_value(value));
+	}
+
 	IInspectable LiveGraph::HighlightLineContent()
 	{
 		return GetValue(s_highlightLineContentProperty);
@@ -563,6 +613,33 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		DependencyPropertyChangedEventArgs const&)
 	{
 		GetSelf(dependencyObject)->UpdateHorizontalScrollSpeed();
+	}
+
+	void LiveGraph::OnHighlightLineAnimationDurationChanged(
+		DependencyObject const& dependencyObject,
+		DependencyPropertyChangedEventArgs const& args)
+	{
+		auto self = GetSelf(dependencyObject);
+		auto duration = unbox_value<TimeSpan>(args.NewValue());
+		if (duration.count() < 0)
+		{
+			duration = TimeSpan{};
+		}
+		std::scoped_lock lock(self->m_graphMutex);
+		self->m_highlightLineAnimationDuration = duration;
+	}
+
+	void LiveGraph::OnHistoryBufferScreensChanged(
+		DependencyObject const& dependencyObject,
+		DependencyPropertyChangedEventArgs const& args)
+	{
+		auto self = GetSelf(dependencyObject);
+		auto const screens = std::clamp(
+			unbox_value<double>(args.NewValue()),
+			0.0,
+			4.0);
+		std::scoped_lock lock(self->m_graphMutex);
+		self->m_historyBufferScreens = static_cast<float>(screens);
 	}
 
 	void LiveGraph::OnHighlightLineContentChanged(
@@ -1398,13 +1475,24 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		auto const size = sender.Size();
 		auto const width = static_cast<float>(size.Width);
 		auto const height = static_cast<float>(size.Height);
-
+		auto const timing = args.Timing();
+		auto elapsedSeconds = std::chrono::duration<double>(
+			timing.ElapsedTime).count();
+		if (!std::isfinite(elapsedSeconds) || elapsedSeconds < 0.0)
+		{
+			elapsedSeconds = 0.0;
+		}
+		// Do not let a debugger break, device recovery, or a resumed window
+		// advance the graph by an arbitrarily large distance in one frame.
+		elapsedSeconds = std::min(elapsedSeconds, 0.25);
 		std::scoped_lock lock(m_graphMutex);
+		auto const scrollDelta = static_cast<float>(
+			m_horizontalScrollSpeed * elapsedSeconds);
 
-		if (std::isfinite(m_horizontalScrollSpeed))
+		if (std::isfinite(scrollDelta))
 		{
 			m_backgroundScrollPosition +=
-				static_cast<double>(m_horizontalScrollSpeed);
+				static_cast<double>(scrollDelta);
 		}
 		if (!std::isfinite(m_backgroundScrollPosition))
 		{
@@ -1412,7 +1500,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 
 		DrawBackground(drawingSession, width, height);
-		UpdatePolygonsOffset();
+		UpdatePolygonsOffset(scrollDelta, width);
 		DrawUserPolygons(drawingSession, width, height);
 		UpdateHighlightLine();
 	}
@@ -1493,19 +1581,61 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 	}
 
-	void LiveGraph::UpdatePolygonsOffset()
+	void LiveGraph::UpdatePolygonsOffset(float scrollDelta, float canvasWidth)
 	{
+		if (!std::isfinite(scrollDelta))
+		{
+			return;
+		}
 		for (auto iterator = m_polygons.begin(); iterator != m_polygons.end();)
 		{
 			auto const& polygon = *iterator;
-			polygon->OffsetX -= m_horizontalScrollSpeed;
+			polygon->OffsetX -= scrollDelta;
+
+			auto const liveIterator = m_livePolygons.find(polygon->Key);
+			auto const isLive =
+				liveIterator != m_livePolygons.end()
+				&& liveIterator->second == polygon;
+			if (isLive && polygon->Points.size() > 2)
+			{
+				auto const retentionBoundary =
+					-std::max(0.0f, canvasWidth)
+					* m_historyBufferScreens;
+				std::size_t removeCount{};
+				while (removeCount + 2 < polygon->Points.size()
+					   && polygon->Points[removeCount + 1].x
+					   + polygon->OffsetX < retentionBoundary)
+				{
+					++removeCount;
+				}
+				if (polygon->Points.size() > MaxDynamicPointCount)
+				{
+					removeCount = std::max(
+						removeCount,
+						polygon->Points.size() - MaxDynamicPointCount);
+				}
+				if (removeCount > 0)
+				{
+					auto const polygonIndex = static_cast<std::size_t>(
+						std::distance(m_polygons.begin(), iterator));
+					polygon->Points.erase(
+						polygon->Points.begin(),
+						polygon->Points.begin()
+						+ static_cast<std::ptrdiff_t>(removeCount));
+					if (m_currentPolygonIndex == polygonIndex)
+					{
+						m_currentPointIndex =
+							m_currentPointIndex > removeCount
+							? m_currentPointIndex - removeCount
+							: 0;
+					}
+				}
+			}
 
 			if (!polygon->Points.empty() &&
 				polygon->Points.back().x + polygon->OffsetX < 0.0f)
 			{
-				if (auto liveIterator = m_livePolygons.find(polygon->Key);
-					liveIterator != m_livePolygons.end() &&
-					liveIterator->second == polygon)
+				if (isLive)
 				{
 					m_livePolygons.erase(liveIterator);
 				}

@@ -67,15 +67,42 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 				PropertyChangedCallback{ &CheckUpdateControl::OnUpdateNotAvailableIconChanged } });
 	}
 
-	DependencyProperty CheckUpdateControl::IsUpdateAvailableProperty() { return s_isUpdateAvailableProperty; }
-	DependencyProperty CheckUpdateControl::UpdateAvailableTitleProperty() { return s_updateAvailableTitleProperty; }
-	DependencyProperty CheckUpdateControl::UpdateAvailableVersionTitleProperty() { return s_updateAvailableVersionTitleProperty; }
-	DependencyProperty CheckUpdateControl::UpdateAvailableVersionProperty() { return s_updateAvailableVersionProperty; }
-	DependencyProperty CheckUpdateControl::UpdateAvailableIconProperty() { return s_updateAvailableIconProperty; }
-	DependencyProperty CheckUpdateControl::UpdateNotAvailableTitleProperty() { return s_updateNotAvailableTitleProperty; }
-	DependencyProperty CheckUpdateControl::LastUpdateCheckTitleProperty() { return s_lastUpdateCheckTitleProperty; }
-	DependencyProperty CheckUpdateControl::LastUpdateCheckDateProperty() { return s_lastUpdateCheckDateProperty; }
-	DependencyProperty CheckUpdateControl::UpdateNotAvailableIconProperty() { return s_updateNotAvailableIconProperty; }
+	DependencyProperty CheckUpdateControl::IsUpdateAvailableProperty()
+	{
+		return s_isUpdateAvailableProperty;
+	}
+	DependencyProperty CheckUpdateControl::UpdateAvailableTitleProperty()
+	{
+		return s_updateAvailableTitleProperty;
+	}
+	DependencyProperty CheckUpdateControl::UpdateAvailableVersionTitleProperty()
+	{
+		return s_updateAvailableVersionTitleProperty;
+	}
+	DependencyProperty CheckUpdateControl::UpdateAvailableVersionProperty()
+	{
+		return s_updateAvailableVersionProperty;
+	}
+	DependencyProperty CheckUpdateControl::UpdateAvailableIconProperty()
+	{
+		return s_updateAvailableIconProperty;
+	}
+	DependencyProperty CheckUpdateControl::UpdateNotAvailableTitleProperty()
+	{
+		return s_updateNotAvailableTitleProperty;
+	}
+	DependencyProperty CheckUpdateControl::LastUpdateCheckTitleProperty()
+	{
+		return s_lastUpdateCheckTitleProperty;
+	}
+	DependencyProperty CheckUpdateControl::LastUpdateCheckDateProperty()
+	{
+		return s_lastUpdateCheckDateProperty;
+	}
+	DependencyProperty CheckUpdateControl::UpdateNotAvailableIconProperty()
+	{
+		return s_updateNotAvailableIconProperty;
+	}
 
 	bool CheckUpdateControl::IsUpdateAvailable()
 	{
@@ -87,22 +114,70 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 		SetValue(s_isUpdateAvailableProperty, box_value(value));
 	}
 
-	IInspectable CheckUpdateControl::UpdateAvailableTitle() { return GetValue(s_updateAvailableTitleProperty); }
-	void CheckUpdateControl::UpdateAvailableTitle(IInspectable const& value) { SetValue(s_updateAvailableTitleProperty, value); }
-	hstring CheckUpdateControl::UpdateAvailableVersionTitle() { return unbox_value_or<hstring>(GetValue(s_updateAvailableVersionTitleProperty), {}); }
-	void CheckUpdateControl::UpdateAvailableVersionTitle(hstring const& value) { SetValue(s_updateAvailableVersionTitleProperty, box_value(value)); }
-	hstring CheckUpdateControl::UpdateAvailableVersion() { return unbox_value_or<hstring>(GetValue(s_updateAvailableVersionProperty), {}); }
-	void CheckUpdateControl::UpdateAvailableVersion(hstring const& value) { SetValue(s_updateAvailableVersionProperty, box_value(value)); }
-	IInspectable CheckUpdateControl::UpdateAvailableIcon() { return GetValue(s_updateAvailableIconProperty); }
-	void CheckUpdateControl::UpdateAvailableIcon(IInspectable const& value) { SetValue(s_updateAvailableIconProperty, value); }
-	IInspectable CheckUpdateControl::UpdateNotAvailableTitle() { return GetValue(s_updateNotAvailableTitleProperty); }
-	void CheckUpdateControl::UpdateNotAvailableTitle(IInspectable const& value) { SetValue(s_updateNotAvailableTitleProperty, value); }
-	hstring CheckUpdateControl::LastUpdateCheckTitle() { return unbox_value_or<hstring>(GetValue(s_lastUpdateCheckTitleProperty), {}); }
-	void CheckUpdateControl::LastUpdateCheckTitle(hstring const& value) { SetValue(s_lastUpdateCheckTitleProperty, box_value(value)); }
-	hstring CheckUpdateControl::LastUpdateCheckDate() { return unbox_value_or<hstring>(GetValue(s_lastUpdateCheckDateProperty), {}); }
-	void CheckUpdateControl::LastUpdateCheckDate(hstring const& value) { SetValue(s_lastUpdateCheckDateProperty, box_value(value)); }
-	IInspectable CheckUpdateControl::UpdateNotAvailableIcon() { return GetValue(s_updateNotAvailableIconProperty); }
-	void CheckUpdateControl::UpdateNotAvailableIcon(IInspectable const& value) { SetValue(s_updateNotAvailableIconProperty, value); }
+	IInspectable CheckUpdateControl::UpdateAvailableTitle()
+	{
+		return GetValue(s_updateAvailableTitleProperty);
+	}
+	void CheckUpdateControl::UpdateAvailableTitle(IInspectable const& value)
+	{
+		SetValue(s_updateAvailableTitleProperty, value);
+	}
+	hstring CheckUpdateControl::UpdateAvailableVersionTitle()
+	{
+		return unbox_value_or<hstring>(GetValue(s_updateAvailableVersionTitleProperty), {});
+	}
+	void CheckUpdateControl::UpdateAvailableVersionTitle(hstring const& value)
+	{
+		SetValue(s_updateAvailableVersionTitleProperty, box_value(value));
+	}
+	hstring CheckUpdateControl::UpdateAvailableVersion()
+	{
+		return unbox_value_or<hstring>(GetValue(s_updateAvailableVersionProperty), {});
+	}
+	void CheckUpdateControl::UpdateAvailableVersion(hstring const& value)
+	{
+		SetValue(s_updateAvailableVersionProperty, box_value(value));
+	}
+	IInspectable CheckUpdateControl::UpdateAvailableIcon()
+	{
+		return GetValue(s_updateAvailableIconProperty);
+	}
+	void CheckUpdateControl::UpdateAvailableIcon(IInspectable const& value)
+	{
+		SetValue(s_updateAvailableIconProperty, value);
+	}
+	IInspectable CheckUpdateControl::UpdateNotAvailableTitle()
+	{
+		return GetValue(s_updateNotAvailableTitleProperty);
+	}
+	void CheckUpdateControl::UpdateNotAvailableTitle(IInspectable const& value)
+	{
+		SetValue(s_updateNotAvailableTitleProperty, value);
+	}
+	hstring CheckUpdateControl::LastUpdateCheckTitle()
+	{
+		return unbox_value_or<hstring>(GetValue(s_lastUpdateCheckTitleProperty), {});
+	}
+	void CheckUpdateControl::LastUpdateCheckTitle(hstring const& value)
+	{
+		SetValue(s_lastUpdateCheckTitleProperty, box_value(value));
+	}
+	hstring CheckUpdateControl::LastUpdateCheckDate()
+	{
+		return unbox_value_or<hstring>(GetValue(s_lastUpdateCheckDateProperty), {});
+	}
+	void CheckUpdateControl::LastUpdateCheckDate(hstring const& value)
+	{
+		SetValue(s_lastUpdateCheckDateProperty, box_value(value));
+	}
+	IInspectable CheckUpdateControl::UpdateNotAvailableIcon()
+	{
+		return GetValue(s_updateNotAvailableIconProperty);
+	}
+	void CheckUpdateControl::UpdateNotAvailableIcon(IInspectable const& value)
+	{
+		SetValue(s_updateNotAvailableIconProperty, value);
+	}
 
 	event_token CheckUpdateControl::Click(EventHandler<RoutedEventArgs> const& handler)
 	{

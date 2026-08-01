@@ -1,0 +1,12 @@
+﻿import "Service/Notification/InfoBarOptions.idl";
+
+namespace OpenNet.UI.Xaml.Control
+{
+    [default_interface]
+    runtimeclass InfoBarTemplateSelector : Microsoft.UI.Xaml.Controls.DataTemplateSelector
+    {
+        InfoBarTemplateSelector();
+        Microsoft.UI.Xaml.DataTemplate ActionButtonEnabled;
+        Microsoft.UI.Xaml.DataTemplate ActionButtonDisabled;
+    }
+}

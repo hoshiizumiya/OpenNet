@@ -54,7 +54,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 
 		winrt::event_token Click(
 			winrt::Windows::Foundation::EventHandler<
-				winrt::Microsoft::UI::Xaml::RoutedEventArgs> const& handler);
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs> const& handler);
 		void Click(winrt::event_token const& token) noexcept;
 
 		static constexpr wchar_t const* ResourceUri =

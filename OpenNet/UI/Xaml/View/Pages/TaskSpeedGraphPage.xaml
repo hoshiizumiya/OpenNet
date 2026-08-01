@@ -1,0 +1,506 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.TaskSpeedGraphPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:card="using:OpenNet.UI.Xaml.Control.Card"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:graph="using:OpenNet.UI.Xaml.Control.Graph"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
+    NavigationCacheMode="Required"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/SettingsStyle_ResourceDictionary.xaml" />
+    </Page.Resources>
+
+    <Grid Padding="12" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="16">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="2">
+                <TextBlock
+                    x:Uid="TaskSpeedGraph_Title"
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Text="Performance graph" />
+                <TextBlock
+                    x:Uid="TaskSpeedGraph_Subtitle"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Live session and system telemetry"
+                    TextWrapping="Wrap" />
+            </StackPanel>
+            <ComboBox
+                x:Name="MetricSelector"
+                x:Uid="TaskSpeedGraph_MetricSelector"
+                Grid.Column="1"
+                MinWidth="250"
+                Header="Display"
+                SelectedIndex="0"
+                SelectedValuePath="Tag"
+                SelectionChanged="MetricSelector_SelectionChanged">
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_TransferSpeed"
+                    Content="Transfer Speed"
+                    Tag="TransferSpeed" />
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_DiskCache"
+                    Content="Disk Cache"
+                    Tag="DiskCache" />
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_LongTermSeeding"
+                    Content="Long-Term Seeding"
+                    Tag="LongTermSeeding" />
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_CpuOverall"
+                    Content="CPU Usage (Overall)"
+                    Tag="CpuOverall" />
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_CpuLogicalProcessors"
+                    Content="CPU Usage (Logical Processor)"
+                    Tag="CpuLogicalProcessors" />
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_MemoryUsage"
+                    Content="Memory Usage"
+                    Tag="MemoryUsage" />
+                <ComboBoxItem
+                    x:Uid="TaskSpeedGraph_DhtUdp"
+                    Content="DHT over UDP"
+                    Tag="DhtUdp" />
+            </ComboBox>
+            <Button
+                Grid.Column="2"
+                Margin="0,24,0,0"
+                VerticalAlignment="Top"
+                AutomationProperties.Name="Customize graph"
+                ToolTipService.ToolTip="Customize graph">
+                <FontIcon Glyph="&#xE713;" />
+                <Button.Flyout>
+                    <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="BottomEdgeAlignedRight">
+                        <ScrollViewer
+                            Width="480"
+                            MaxHeight="640"
+                            HorizontalScrollBarVisibility="Disabled"
+                            VerticalScrollBarVisibility="Auto">
+                            <StackPanel Spacing="10">
+                                <StackPanel>
+                                    <TextBlock
+                                        FontSize="18"
+                                        FontWeight="SemiBold"
+                                        Text="Graph customization" />
+                                    <TextBlock
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="Changes are applied immediately and saved for the next session."
+                                        TextWrapping="Wrap" />
+                                </StackPanel>
+
+                                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Behavior" />
+
+                                <essential:SettingsExpander Description="Control sampling, movement, curve smoothing, and retained history." Header="Motion and history">
+                                    <essential:SettingsExpander.HeaderIcon>
+                                        <FontIcon Glyph="&#xE823;" />
+                                    </essential:SettingsExpander.HeaderIcon>
+                                    <essential:SettingsExpander.Items>
+                                        <essential:SettingsCard Description="Horizontal distance travelled during each scroll duration." Header="Scroll distance">
+                                            <NumberBox
+                                                Width="150"
+                                                Header="Pixels"
+                                                Maximum="500"
+                                                Minimum="0.1"
+                                                SmallChange="1"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.HorizontalScrollDistance, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Description="Time used to travel the configured distance." Header="Scroll duration">
+                                            <NumberBox
+                                                Width="150"
+                                                Header="Milliseconds"
+                                                Maximum="5000"
+                                                Minimum="1"
+                                                SmallChange="25"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.HorizontalScrollDurationMilliseconds, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Description="Telemetry sampling cadence." Header="Sample interval">
+                                            <NumberBox
+                                                Width="150"
+                                                Header="Milliseconds"
+                                                Maximum="5000"
+                                                Minimum="16"
+                                                SmallChange="25"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.SampleIntervalMilliseconds, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Description="Retain off-screen points so widening the window can reveal recent history." Header="History reserve">
+                                            <NumberBox
+                                                Width="150"
+                                                Header="Screen widths"
+                                                Maximum="4"
+                                                Minimum="0"
+                                                SmallChange="0.25"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.HistoryBufferScreens, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Description="Interpolate adjacent samples with rounded curves." Header="Smooth curves">
+                                            <ToggleSwitch IsOn="{x:Bind Settings.SmoothCurves, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                    </essential:SettingsExpander.Items>
+                                </essential:SettingsExpander>
+
+                                <essential:SettingsExpander Description="Display a moving marker for sampled graph values." Header="Highlight line">
+                                    <essential:SettingsExpander.HeaderIcon>
+                                        <FontIcon Glyph="&#xE7C3;" />
+                                    </essential:SettingsExpander.HeaderIcon>
+                                    <ToggleSwitch IsOn="{x:Bind Settings.HighlightEnabled, Mode=TwoWay}" />
+                                    <essential:SettingsExpander.Items>
+                                        <essential:SettingsCard Header="Point selection">
+                                            <ComboBox Width="210" SelectedIndex="{x:Bind Settings.HighlightBehaviorIndex, Mode=TwoWay}">
+                                                <ComboBoxItem Content="Highest across all series" />
+                                                <ComboBoxItem Content="Lowest across all series" />
+                                                <ComboBoxItem Content="Highest in each series" />
+                                                <ComboBoxItem Content="Lowest in each series" />
+                                                <ComboBoxItem Content="Each point" />
+                                            </ComboBox>
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Header="Animation duration">
+                                            <NumberBox
+                                                Width="150"
+                                                Header="Milliseconds"
+                                                Maximum="2000"
+                                                Minimum="0"
+                                                SmallChange="50"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.HighlightAnimationMilliseconds, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                    </essential:SettingsExpander.Items>
+                                </essential:SettingsExpander>
+
+                                <TextBlock
+                                    Margin="0,6,0,0"
+                                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                                    Text="Appearance" />
+
+                                <essential:SettingsExpander Description="Choose the canvas pattern and spacing." Header="Grid and canvas">
+                                    <essential:SettingsExpander.HeaderIcon>
+                                        <FontIcon Glyph="&#xE80A;" />
+                                    </essential:SettingsExpander.HeaderIcon>
+                                    <essential:SettingsExpander.Items>
+                                        <essential:SettingsCard Header="Background pattern">
+                                            <ComboBox Width="150" SelectedIndex="{x:Bind Settings.BackgroundModeIndex, Mode=TwoWay}">
+                                                <ComboBoxItem Content="None" />
+                                                <ComboBoxItem Content="Cross" />
+                                                <ComboBoxItem Content="Dot" />
+                                            </ComboBox>
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Header="Cross spacing">
+                                            <NumberBox
+                                                Width="150"
+                                                Maximum="200"
+                                                Minimum="2"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.CrossSpacing, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Header="Dot spacing">
+                                            <NumberBox
+                                                Width="150"
+                                                Maximum="200"
+                                                Minimum="2"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.DotSpacing, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Description="Override theme-aware grid and transparent canvas defaults." Header="Custom canvas colors">
+                                            <ToggleSwitch IsOn="{x:Bind Settings.UseCustomCanvasColors, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                    </essential:SettingsExpander.Items>
+                                </essential:SettingsExpander>
+
+                                <essential:SettingsExpander Description="Select the grid and canvas colors used when custom colors are enabled." Header="Canvas colors">
+                                    <essential:SettingsExpander.HeaderIcon>
+                                        <FontIcon Glyph="&#xE790;" />
+                                    </essential:SettingsExpander.HeaderIcon>
+                                    <essential:SettingsExpander.Items>
+                                        <essential:SettingsCard HorizontalContentAlignment="Stretch" ContentAlignment="Left">
+                                            <StackPanel Spacing="12">
+                                                <card:TitleCard
+                                                    Title="Grid color"
+                                                    Padding="12"
+                                                    DividerVisibility="Collapsed">
+                                                    <card:TitleCard.Content>
+                                                        <xtwc:ColorPickerButton HorizontalAlignment="Stretch" SelectedColor="{x:Bind Settings.BackgroundColor, Mode=TwoWay}">
+                                                            <xtwc:ColorPickerButton.ColorPicker>
+                                                                <xtwc:ColorPicker
+                                                                    IsAlphaEnabled="True"
+                                                                    IsColorChannelTextInputVisible="False"
+                                                                    IsColorSliderVisible="False"
+                                                                    IsColorSpectrumVisible="True"
+                                                                    IsHexInputVisible="True"
+                                                                    IsMoreButtonVisible="True" />
+                                                            </xtwc:ColorPickerButton.ColorPicker>
+                                                        </xtwc:ColorPickerButton>
+                                                    </card:TitleCard.Content>
+                                                </card:TitleCard>
+                                                <card:TitleCard
+                                                    Title="Canvas clear color"
+                                                    Padding="12"
+                                                    DividerVisibility="Collapsed">
+                                                    <card:TitleCard.Content>
+                                                        <xtwc:ColorPickerButton HorizontalAlignment="Stretch" SelectedColor="{x:Bind Settings.ClearColor, Mode=TwoWay}">
+                                                            <xtwc:ColorPickerButton.ColorPicker>
+                                                                <xtwc:ColorPicker
+                                                                    IsAlphaEnabled="True"
+                                                                    IsColorChannelTextInputVisible="False"
+                                                                    IsColorSliderVisible="False"
+                                                                    IsColorSpectrumVisible="True"
+                                                                    IsHexInputVisible="True"
+                                                                    IsMoreButtonVisible="True" />
+                                                            </xtwc:ColorPickerButton.ColorPicker>
+                                                        </xtwc:ColorPickerButton>
+                                                    </card:TitleCard.Content>
+                                                </card:TitleCard>
+                                            </StackPanel>
+                                        </essential:SettingsCard>
+                                    </essential:SettingsExpander.Items>
+                                </essential:SettingsExpander>
+
+                                <essential:SettingsExpander Description="Configure the rendered line, border, and gradient area." Header="Series appearance">
+                                    <essential:SettingsExpander.HeaderIcon>
+                                        <FontIcon Glyph="&#xE8D2;" />
+                                    </essential:SettingsExpander.HeaderIcon>
+                                    <essential:SettingsExpander.Items>
+                                        <essential:SettingsCard Header="Stroke width">
+                                            <NumberBox
+                                                Width="150"
+                                                Maximum="12"
+                                                Minimum="0.5"
+                                                SmallChange="0.5"
+                                                SpinButtonPlacementMode="Compact"
+                                                Value="{x:Bind Settings.StrokeWidth, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Header="Gradient fill">
+                                            <ToggleSwitch IsOn="{x:Bind Settings.FillEnabled, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                        <essential:SettingsCard Header="Border line">
+                                            <ToggleSwitch IsOn="{x:Bind Settings.BorderEnabled, Mode=TwoWay}" />
+                                        </essential:SettingsCard>
+                                    </essential:SettingsExpander.Items>
+                                </essential:SettingsExpander>
+
+                                <essential:SettingsCard Description="Reset every graph customization option to its original value." Header="Restore defaults">
+                                    <essential:SettingsCard.HeaderIcon>
+                                        <FontIcon Glyph="&#xE777;" />
+                                    </essential:SettingsCard.HeaderIcon>
+                                    <Button
+                                        Click="ResetGraphSettings_Click"
+                                        Content="Reset"
+                                        Style="{StaticResource AccentButtonStyle}" />
+                                </essential:SettingsCard>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Border
+                Padding="12,8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel>
+                    <essential:SwitchPresenter Value="{Binding SelectedValue, ElementName=MetricSelector, Mode=OneWay}">
+                        <essential:Case Value="TransferSpeed">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_GlobalDownload"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Global download" />
+                        </essential:Case>
+                        <essential:Case Value="DiskCache">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_DiskCacheTitle"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Disk cache" />
+                        </essential:Case>
+                        <essential:Case Value="LongTermSeeding">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_LongTermUpload"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Long-term upload" />
+                        </essential:Case>
+                        <essential:Case Value="CpuOverall">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_OverallCpu"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Overall CPU" />
+                        </essential:Case>
+                        <essential:Case Value="CpuLogicalProcessors">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_AverageCpu"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Average CPU" />
+                        </essential:Case>
+                        <essential:Case Value="MemoryUsage">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_WorkingSet"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="OpenNet working set" />
+                        </essential:Case>
+                        <essential:Case Value="DhtUdp">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_DhtReceive"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="DHT receive" />
+                        </essential:Case>
+                    </essential:SwitchPresenter>
+                    <TextBlock
+                        x:Name="PrimaryMetricValue"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Text="0 B/s" />
+                </StackPanel>
+            </Border>
+            <Border
+                Grid.Column="1"
+                Padding="12,8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel>
+                    <essential:SwitchPresenter Value="{Binding SelectedValue, ElementName=MetricSelector, Mode=OneWay}">
+                        <essential:Case Value="TransferSpeed">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_GlobalUpload"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Global upload" />
+                        </essential:Case>
+                        <essential:Case Value="DiskCache">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_Source"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Source" />
+                        </essential:Case>
+                        <essential:Case Value="LongTermSeeding">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_Scope"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Scope" />
+                        </essential:Case>
+                        <essential:Case Value="CpuOverall">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_Sampling"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Sampling" />
+                        </essential:Case>
+                        <essential:Case Value="CpuLogicalProcessors">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_PeakCpu"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Peak CPU" />
+                        </essential:Case>
+                        <essential:Case Value="MemoryUsage">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_PhysicalMemoryShare"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Physical memory share" />
+                        </essential:Case>
+                        <essential:Case Value="DhtUdp">
+                            <TextBlock
+                                x:Uid="TaskSpeedGraph_DhtSend"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="DHT send" />
+                        </essential:Case>
+                    </essential:SwitchPresenter>
+                    <TextBlock
+                        x:Name="SecondaryMetricValue"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Text="0 B/s" />
+                </StackPanel>
+            </Border>
+            <Border
+                Grid.Column="2"
+                Padding="12,8"
+                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                BorderThickness="1"
+                CornerRadius="8">
+                <StackPanel>
+                    <TextBlock
+                        x:Uid="TaskSpeedGraph_GraphScale"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="Graph scale" />
+                    <TextBlock
+                        x:Name="ScaleMetricValue"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        Text="Auto" />
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <Border
+            Grid.Row="2"
+            MinHeight="180"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <graph:LiveGraph
+                x:Name="PerformanceGraph"
+                BackgroundMode="Cross"
+                ClearColor="Transparent"
+                CreateResources="PerformanceGraph_CreateResources"
+                CrossSpacing="30"
+                Draw="PerformanceGraph_Draw"
+                HighlightLineBehavior="EachPoint"
+                HighlightLineUpdated="PerformanceGraph_HighlightLineUpdated"
+                HighlightLineVisibility="Visible"
+                HorizontalScrollDistance="6"
+                HorizontalScrollDuration="0:0:0.1">
+                <graph:LiveGraph.HighlightLineContent>
+                    <Grid IsHitTestVisible="False">
+                        <Line
+                            Opacity="0.55"
+                            Stroke="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                            StrokeDashArray="3,3"
+                            StrokeThickness="1"
+                            X1="0"
+                            X2="10000" />
+                        <Border
+                            Margin="0,-30,10,0"
+                            Padding="8,3"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                            BorderThickness="1"
+                            CornerRadius="4">
+                            <TextBlock
+                                x:Name="HighlightValueText"
+                                FontSize="12"
+                                Text="—" />
+                        </Border>
+                    </Grid>
+                </graph:LiveGraph.HighlightLineContent>
+            </graph:LiveGraph>
+        </Border>
+    </Grid>
+</Page>

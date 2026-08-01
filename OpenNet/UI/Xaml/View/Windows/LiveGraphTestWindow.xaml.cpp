@@ -114,12 +114,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_secondaryGraphKey = graph.RegisterGraphBrush(m_secondaryBrush);
 		m_drawFrame = 0;
 		m_phase = 0.0f;
+		m_dynamicSampleElapsed = 0.0;
+		m_dynamicStatusElapsed = 0.0;
 		ApplyBrushAppearance();
 	}
 
 	void LiveGraphTestWindow::DynamicGraph_Draw(
 		IInspectable const&,
-		LiveGraphEventArgs const&)
+		LiveGraphEventArgs const& args)
 	{
 		if (m_primaryGraphKey.empty() || m_secondaryGraphKey.empty())
 		{
@@ -127,12 +129,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 
 		++m_drawFrame;
-		if (m_drawFrame % 5 != 0)
+		auto frameSeconds = std::chrono::duration<double>(
+			args.DrawEventArgs().Timing().ElapsedTime).count();
+		if (!std::isfinite(frameSeconds) || frameSeconds < 0.0)
+		{
+			frameSeconds = 0.0;
+		}
+		frameSeconds = std::min(frameSeconds, 0.25);
+		m_dynamicSampleElapsed += frameSeconds;
+		constexpr double SampleIntervalSeconds = 1.0 / 12.0;
+		if (m_dynamicSampleElapsed < SampleIntervalSeconds)
 		{
 			return;
 		}
+		auto const sampleElapsed = m_dynamicSampleElapsed;
+		m_dynamicSampleElapsed = 0.0;
 
-		m_phase += 0.16f;
+		m_phase += static_cast<float>(1.92 * sampleElapsed);
 		auto const cpuValue = ClampPercent(
 			52.0f +
 			32.0f * std::sin(m_phase) +
@@ -141,19 +154,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			35.0f +
 			24.0f * std::sin(m_phase * 0.63f + 1.2f) +
 			18.0f * std::abs(std::sin(m_phase * 1.8f)));
+		auto const pointSpace = static_cast<float>(std::max(
+			0.001,
+			m_dynamicScrollPixelsPerSecond.load(
+				std::memory_order_relaxed) * sampleElapsed));
 
 		auto graph = DynamicGraph();
 		graph.AddDynamicPoint(
 			m_primaryGraphKey,
-			GraphPoint{ cpuValue, 5.0f },
+			GraphPoint{ cpuValue, pointSpace },
 			true);
 		graph.AddDynamicPoint(
 			m_secondaryGraphKey,
-			GraphPoint{ networkValue, 5.0f },
+			GraphPoint{ networkValue, pointSpace },
 			false);
 
-		if (m_drawFrame % 60 == 0)
+		m_dynamicStatusElapsed += sampleElapsed;
+		if (m_dynamicStatusElapsed >= 1.0)
 		{
+			m_dynamicStatusElapsed = 0.0;
 			auto weak = get_weak();
 			DispatcherQueue().TryEnqueue(
 				[weak, frame = m_drawFrame, cpuValue, networkValue]
@@ -517,12 +536,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 		if (!std::isfinite(scrollDistance))
 		{
-			scrollDistance = 1.0;
+			scrollDistance = 60.0;
 		}
 		if (!std::isfinite(durationMilliseconds))
 		{
 			durationMilliseconds = 1000.0;
 		}
+		m_dynamicScrollPixelsPerSecond.store(
+			durationMilliseconds > 0.0
+				? scrollDistance * 1000.0 / durationMilliseconds
+				: 0.0,
+			std::memory_order_relaxed);
 
 		auto const duration = std::chrono::duration_cast<TimeSpan>(
 			std::chrono::milliseconds{

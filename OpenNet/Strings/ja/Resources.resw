@@ -135,4 +135,31 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>Crowdin コミュニティーメンバーによって維持</value>
   </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>未並べ替えです。選択すると昇順になります。</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>昇順です。選択すると降順になります。</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>降順です。選択すると並べ替えを解除します。</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>待機中</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>ダウンロード中</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>シード中</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
 </root>

@@ -139,4 +139,31 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>Поддерживается участниками сообщества Crowdin</value>
   </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>Без сортировки. Нажмите для сортировки по возрастанию.</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>Сортировка по возрастанию. Нажмите для сортировки по убыванию.</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>Сортировка по убыванию. Нажмите для отмены сортировки.</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>Ожидание</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>Загрузка</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>Раздача</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>Приостановлено</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>Завершено</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>Ошибка</value>
+  </data>
 </root>

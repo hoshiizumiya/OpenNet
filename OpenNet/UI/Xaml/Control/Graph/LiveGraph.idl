@@ -83,6 +83,8 @@
         static Microsoft.UI.Xaml.DependencyProperty ClearColorProperty{ get; };
         static Microsoft.UI.Xaml.DependencyProperty HorizontalScrollDistanceProperty{ get; };
         static Microsoft.UI.Xaml.DependencyProperty HorizontalScrollDurationProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty HighlightLineAnimationDurationProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty HistoryBufferScreensProperty{ get; };
         static Microsoft.UI.Xaml.DependencyProperty HighlightLineContentProperty{ get; };
 
         HighlightLineBehavior HighlightLineBehavior;
@@ -94,6 +96,8 @@
         Windows.Foundation.IReference<Windows.UI.Color> ClearColor;
         Double HorizontalScrollDistance;
         Windows.Foundation.TimeSpan HorizontalScrollDuration;
+        Windows.Foundation.TimeSpan HighlightLineAnimationDuration;
+        Double HistoryBufferScreens;
         Object HighlightLineContent;
 
         String RegisterGraphBrush(GraphBrushData brushData);

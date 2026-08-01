@@ -132,6 +132,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		static winrt::Microsoft::UI::Xaml::DependencyProperty ClearColorProperty();
 		static winrt::Microsoft::UI::Xaml::DependencyProperty HorizontalScrollDistanceProperty();
 		static winrt::Microsoft::UI::Xaml::DependencyProperty HorizontalScrollDurationProperty();
+		static winrt::Microsoft::UI::Xaml::DependencyProperty HighlightLineAnimationDurationProperty();
+		static winrt::Microsoft::UI::Xaml::DependencyProperty HistoryBufferScreensProperty();
 		static winrt::Microsoft::UI::Xaml::DependencyProperty HighlightLineContentProperty();
 
 		OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior HighlightLineBehavior();
@@ -164,6 +166,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 		winrt::Windows::Foundation::TimeSpan HorizontalScrollDuration();
 		void HorizontalScrollDuration(winrt::Windows::Foundation::TimeSpan const& value);
+
+		winrt::Windows::Foundation::TimeSpan HighlightLineAnimationDuration();
+		void HighlightLineAnimationDuration(winrt::Windows::Foundation::TimeSpan const& value);
+
+		double HistoryBufferScreens();
+		void HistoryBufferScreens(double value);
 
 		winrt::Windows::Foundation::IInspectable HighlightLineContent();
 		void HighlightLineContent(winrt::Windows::Foundation::IInspectable const& value);
@@ -258,6 +266,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		static void OnHorizontalScrollChanged(
 			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
 			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHighlightLineAnimationDurationChanged(
+			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
+			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHistoryBufferScreensChanged(
+			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
+			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
 		static void OnHighlightLineContentChanged(
 			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
 			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
@@ -297,7 +311,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			winrt::Microsoft::Graphics::Canvas::CanvasDrawingSession const& drawingSession,
 			float width,
 			float height);
-		void UpdatePolygonsOffset();
+		void UpdatePolygonsOffset(float scrollDelta, float canvasWidth);
 
 		static float NormalizeY(float percent, float height);
 		static float CalculateSpeed(
@@ -323,6 +337,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
 			s_horizontalScrollDurationProperty{ nullptr };
 		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
+			s_highlightLineAnimationDurationProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
+			s_historyBufferScreensProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
 			s_highlightLineContentProperty{ nullptr };
 
 		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl m_canvas{ nullptr };
@@ -343,6 +361,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		float m_horizontalScrollSpeed{ 1.0f };
 		float m_crossSpacing{ 30.0f };
 		float m_dotSpacing{ 6.0f };
+		float m_historyBufferScreens{ 1.0f };
 		std::optional<float> m_currentLineY;
 		winrt::Windows::Foundation::TimeSpan m_highlightLineAnimationDuration{
 			std::chrono::duration_cast<winrt::Windows::Foundation::TimeSpan>(
@@ -376,6 +395,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 		constexpr static auto CanvasPartName = L"PART_Canvas";
 		constexpr static auto HostGridPartName = L"PART_HostGrid";
+		constexpr static std::size_t MaxDynamicPointCount = 8192;
 	};
 }
 

@@ -7,6 +7,12 @@ import winrt.Windows.Data.Json;
 import winrt.Windows.System;
 import winrt.Windows.Web.Http;
 
+// windows.h aliases the GDI GetObject API to GetObjectW. That macro also
+// rewrites IJsonValue::GetObject unless it is removed in this translation unit.
+#ifdef GetObject
+#undef GetObject
+#endif
+
 using namespace winrt;
 using namespace winrt::Windows::Data::Json;
 using namespace winrt::Windows::Foundation;

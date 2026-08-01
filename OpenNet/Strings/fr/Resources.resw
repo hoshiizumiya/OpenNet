@@ -135,4 +135,31 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>Maintenu par les membres de la communauté Crowdin</value>
   </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>Non trié. Activez pour trier par ordre croissant.</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>Tri croissant. Activez pour trier par ordre décroissant.</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>Tri décroissant. Activez pour annuler le tri.</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>Téléchargement</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>Partage</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>En pause</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>Échec</value>
+  </data>
 </root>

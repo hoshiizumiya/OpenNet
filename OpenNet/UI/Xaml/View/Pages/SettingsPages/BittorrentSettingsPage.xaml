@@ -39,17 +39,6 @@
                 <!--  Connection  -->
                 <TextBlock x:Uid="BT_Section_Connection" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 
-                <essential:SettingsCard x:Uid="BT_ListenInterfaces">
-                    <essential:SettingsCard.HeaderIcon>
-                        <FontIcon Glyph="&#xE968;" />
-                    </essential:SettingsCard.HeaderIcon>
-                    <TextBox
-                        x:Name="ListenInterfacesTextBox"
-                        MinWidth="260"
-                        LostFocus="OnSettingChanged"
-                        PlaceholderText="0.0.0.0:0,[::]:0" />
-                </essential:SettingsCard>
-
                 <essential:SettingsCard x:Uid="BT_ConnectionsLimit">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE839;" />

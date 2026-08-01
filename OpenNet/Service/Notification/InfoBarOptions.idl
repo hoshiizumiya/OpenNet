@@ -1,0 +1,16 @@
+namespace OpenNet.Service.Notification
+{
+    [default_interface]
+    runtimeclass InfoBarOptions
+    {
+        InfoBarOptions();
+        Microsoft.UI.Xaml.Controls.InfoBarSeverity Severity;
+        String Title;
+        String Message;
+        Object Content;
+        Object ActionButtonContent;
+        Microsoft.UI.Xaml.Input.ICommand ActionButtonCommand;
+        UInt32 MilliSecondsDelay;
+        Boolean IsTextSelectionEnabled { get; };
+    }
+}

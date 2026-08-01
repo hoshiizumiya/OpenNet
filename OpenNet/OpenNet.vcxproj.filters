@@ -61,6 +61,12 @@
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
@@ -154,11 +160,20 @@
     <Page Include="UI\Xaml\Control\Theme\TransitionCollection_ResourceDictionary.xaml">
       <Filter>UI\Xaml\Control\Theme</Filter>
     </Page>
+    <Page Include="UI\Xaml\Control\Theme\InfoBarOverride.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
     <Page Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
     <Page Include="UI\Xaml\View\InfoBarView.xaml">
       <Filter>UI\Xaml\View</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\IpEndpointInput.xaml">
+      <Filter>UI\Xaml\Control</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\TaskStatusIndicator.xaml">
+      <Filter>UI\Xaml\Control</Filter>
     </Page>
     <Page Include="UI\Xaml\View\Windows\DevWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
@@ -228,6 +243,9 @@
     <Midl Include="ViewModels\TasksViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
+    <Midl Include="ViewModels\TaskSpeedGraphSettingsViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
     <Midl Include="Core\DataGraph\ReadableUnitConverterWinRT.idl">
       <Filter>Core\DataGraph</Filter>
     </Midl>
@@ -290,6 +308,28 @@
     <Midl Include="UI\Xaml\Control\Graph\LiveGraph.idl">
       <Filter>UI\Xaml\Control\Graph</Filter>
     </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.idl">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskPieceMapPage.idl">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\CheckUpdateControl.idl" />
+    <Midl Include="Service\Notification\InfoBarOptions.idl">
+      <Filter>Service</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\InfoBarHelper.idl">
+      <Filter>UI\Xaml\Control</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\IpEndpointInput.idl">
+      <Filter>UI\Xaml\Control</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\TaskStatusIndicator.idl">
+      <Filter>UI\Xaml\Control</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\InfoBarTemplateSelector.idl">
+      <Filter>UI\Xaml\Control</Filter>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
@@ -338,6 +378,9 @@
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\TasksViewModel.cpp" />
+    <ClCompile Include="ViewModels\TaskSpeedGraphSettingsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
     <ClCompile Include="mvvm_framework\mvvm_framework_events.cpp">
       <Filter>mvvm_framework</Filter>
     </ClCompile>
@@ -676,10 +719,39 @@
       <Filter>UI\Xaml\Control\Graph</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\CheckUpdateControl.cpp" />
+    <ClCompile Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml.cpp">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml.cpp">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\Notification\InfoBarOptions.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\InfoBarHelper.cpp" />
+    <ClCompile Include="UI\Xaml\Control\IpEndpointInput.xaml.cpp">
+      <Filter>UI\Xaml\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\TaskStatusIndicator.xaml.cpp">
+      <Filter>UI\Xaml\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\DataTableSortHelper.ixx">
+      <Filter>UI\Xaml\Control</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\InfoBarTemplateSelector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Service\Update\UpdateService.h">
       <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\Notification\InfoBarOptions.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\IpEndpointInput.xaml.h">
+      <Filter>UI\Xaml\Control</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\TaskStatusIndicator.xaml.h">
+      <Filter>UI\Xaml\Control</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -730,6 +802,9 @@
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\TasksViewModel.h" />
+    <ClInclude Include="ViewModels\TaskSpeedGraphSettingsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="mvvm_framework\async_command.h">
       <Filter>mvvm_framework</Filter>
@@ -873,6 +948,12 @@
     <ClInclude Include="UI\Xaml\Control\Effect\TextMorphEffect.h" />
     <ClInclude Include="UI\Xaml\Control\Graph\LiveGraph.h">
       <Filter>UI\Xaml\Control\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskSpeedGraphPage.xaml.h">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml.h">
+      <Filter>UI\Xaml\View\Pages</Filter>
     </ClInclude>
     <ClInclude Include="XamlWorkaround.h" />
     <ClInclude Include="Web\WebView2\WebView2Version.h">
@@ -1300,6 +1381,533 @@
     <None Include="Assets\Rules\ipfilter2.txt">
       <Filter>Assets\Rules</Filter>
     </None>
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
     <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
     <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
     <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />

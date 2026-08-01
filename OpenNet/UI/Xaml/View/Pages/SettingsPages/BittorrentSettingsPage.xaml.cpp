@@ -79,7 +79,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
     void BittorrentSettingsPage::PopulateFromSettings(::OpenNet::Core::TorrentSettings const &s)
     {
         // Connection
-        ListenInterfacesTextBox().Text(winrt::to_hstring(s.listenInterfaces));
         ConnectionsLimitNumberBox().Value(s.connectionsLimit);
         EnableIncomingTcpToggle().IsOn(s.enableIncomingTcp);
         EnableOutgoingTcpToggle().IsOn(s.enableOutgoingTcp);
@@ -154,7 +153,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         auto s = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
 
         // Connection
-        s.listenInterfaces = winrt::to_string(ListenInterfacesTextBox().Text());
         s.connectionsLimit = static_cast<int>(ConnectionsLimitNumberBox().Value());
         s.enableIncomingTcp = EnableIncomingTcpToggle().IsOn();
         s.enableOutgoingTcp = EnableOutgoingTcpToggle().IsOn();

@@ -28,6 +28,9 @@ export namespace OpenNet::Core::Torrent
 			int downloadRateKB{};
 			int uploadRateKB{};
 			std::string name;
+			bool isPaused{};
+			bool isFinished{};
+			bool isSeeding{};
 		};
 
 		typedef std::function<void(ProgressEvent const&)> ProgressCallback;
@@ -106,20 +109,47 @@ export namespace OpenNet::Core::Torrent
 		// -----------------------------------------------------------
 		//  Session-level statistics (aggregated across all torrents)
 		// -----------------------------------------------------------
+		struct ListenStatus
+		{
+			int port{};
+			bool isListening{};
+			std::string error;
+		};
+		ListenStatus GetListenStatus() const;
+
 		struct SessionStats
 		{
 			std::int64_t totalDownloadRate{}; // bytes/sec
 			std::int64_t totalUploadRate{};   // bytes/sec
 			std::int64_t totalDownloaded{};   // bytes (session lifetime)
 			std::int64_t totalUploaded{};     // bytes (session lifetime)
+			std::int64_t diskCacheBytes{};    // approximate bytes held by libtorrent disk blocks
+			std::int64_t dhtBytesReceived{};  // DHT/UDP bytes (session lifetime)
+			std::int64_t dhtBytesSent{};      // DHT/UDP bytes (session lifetime)
+			std::int64_t longTermSeedingUploadRate{}; // bytes/sec from finished/seeding torrents
 			int numTorrents{};
+			int numRunningTorrents{};
+			int numPausedTorrents{};
+			int numDownloadingTorrents{};
+			int numMetadataTorrents{};
+			int numSeedingTorrents{};
+			int numCheckingTorrents{};
+			int numErrorTorrents{};
 			int numPeers{};
+			int numSeeds{};
 			int dhtNodes{};
 			int listenPort{};                 // primary listen port (0 if not listening)
 			bool isListening{};
 			std::string listenError;
+
 		};
 		SessionStats GetSessionStats() const;
+
+		// Complete session_stats_alert snapshot for diagnostics. This is kept
+		// separate from SessionStats so normal UI polling does not copy hundreds
+		// of counters when the Runtime Status window is closed.
+		std::unordered_map<std::string, std::int64_t>
+			GetSessionMetrics() const;
 
 		struct PortMappingStatus
 		{
@@ -185,6 +215,12 @@ export namespace OpenNet::Core::Torrent
 			std::string apiHash;
 			std::string savePath;
 			std::string comment;
+			std::string creator;
+			std::int64_t addedTimestamp{};
+			std::int64_t completedTimestamp{};
+			std::int64_t creationTimestamp{};
+			std::int64_t activeTimeSeconds{};
+			std::int64_t seedingTimeSeconds{};
 			int64_t totalSize{};
 			int64_t totalDone{};
 			int64_t totalUploaded{};
@@ -196,6 +232,8 @@ export namespace OpenNet::Core::Torrent
 			int numPeers{};
 			int numSeeds{};
 			int numConnections{};
+			int numComplete{ -1 };
+			int numIncomplete{ -1 };
 			double shareRatio{}; // uploaded / downloaded
 			int state{};         // lt::torrent_status::state_t
 			bool isPaused{};
@@ -203,6 +241,8 @@ export namespace OpenNet::Core::Torrent
 			bool isSequential{};
 			bool isSuperSeeding{};
 			bool firstLastPiecePriority{};
+			bool isPrivate{};
+			bool isPieceAligned{};
 			int queuePosition{};
 			std::vector<TorrentPeerInfo> peers;
 			std::vector<TorrentTrackerInfo> trackers;
@@ -210,6 +250,22 @@ export namespace OpenNet::Core::Torrent
 		};
 
 		TorrentDetailInfo GetTorrentDetail(std::string const& taskId) const;
+
+		struct PeerConnectionEvent
+		{
+			std::string ip;
+			int port{};
+			std::string reason;
+			std::int64_t timestamp{};
+			bool isBan{};
+		};
+
+		// Recent terminal peer states captured from libtorrent alerts. These
+		// are kept separately from peer_info because disconnected peers no
+		// longer appear in a torrent's current peer snapshot.
+		std::vector<PeerConnectionEvent> GetRecentPeerEvents(
+			std::string const& taskId,
+			std::int64_t maxAgeSeconds = 0) const;
 
 		struct TorrentPieceInfo
 		{
@@ -298,6 +354,14 @@ export namespace OpenNet::Core::Torrent
 		void HandleSaveResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert const* alert);
 		void RequestResumeDataForTorrent(libtorrent::torrent_handle const& handle);
 		void EnforceClientFilters();
+		void RecordPeerEvent(
+			libtorrent::torrent_handle const& handle,
+			libtorrent::tcp::endpoint const& endpoint,
+			std::string reason,
+			bool isBan);
+		void ClearPeerEvent(
+			libtorrent::torrent_handle const& handle,
+			libtorrent::tcp::endpoint const& endpoint);
 
 		std::unique_ptr<libtorrent::session> m_session;
 		std::optional<libtorrent::session_proxy> m_sessionProxy;
@@ -315,6 +379,8 @@ export namespace OpenNet::Core::Torrent
 		std::unordered_map<lt::torrent_handle, std::string, std::hash<lt::torrent_handle>> m_handleToTaskId;
 		mutable std::mutex m_torrentMapMutex;
 		TorrentStateManager* m_stateManager{ nullptr };
+		mutable std::mutex m_peerEventMutex;
+		std::unordered_map<std::string, std::deque<PeerConnectionEvent>> m_peerEvents;
 
 		// Cached DHT node count (updated via dht_stats_alert)
 		std::atomic<int> m_cachedDhtNodeCount{ 0 };
@@ -328,9 +394,16 @@ export namespace OpenNet::Core::Torrent
 		mutable std::mutex m_sessionStatsMutex;
 		std::int64_t m_sessionTotalDownload{};
 		std::int64_t m_sessionTotalUpload{};
+		std::int64_t m_sessionDiskBlocksInUse{};
+		std::int64_t m_sessionDhtBytesReceived{};
+		std::int64_t m_sessionDhtBytesSent{};
+		std::unordered_map<std::string, std::int64_t> m_sessionMetricValues;
 		int m_sessionStatsMetricIdxRecvBytes{ -1 };
 		int m_sessionStatsMetricIdxSentBytes{ -1 };
 		int m_sessionStatsMetricIdxDhtNodes{ -1 };
+		int m_sessionStatsMetricIdxDiskBlocksInUse{ -1 };
+		int m_sessionStatsMetricIdxDhtBytesReceived{ -1 };
+		int m_sessionStatsMetricIdxDhtBytesSent{ -1 };
 		bool m_sessionStatsMetricsResolved{ false };
 
 		// Time-gated stats requests to avoid self-excitation in AlertLoop
@@ -338,6 +411,8 @@ export namespace OpenNet::Core::Torrent
 			std::chrono::steady_clock::now() };
 		std::chrono::steady_clock::time_point m_lastStatsRequest{ std::chrono::steady_clock::now() };
 		std::chrono::steady_clock::time_point m_lastClientFilterCheck{
+			std::chrono::steady_clock::now() };
+		std::chrono::steady_clock::time_point m_lastIpFilterMaintenance{
 			std::chrono::steady_clock::now() };
 
 		void ResolveSessionStatsMetricIndices();

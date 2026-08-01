@@ -87,7 +87,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::OpenNet::Models::IPProtocolPriority m_protocolPriority{ winrt::OpenNet::Models::IPProtocolPriority::Auto };
 		winrt::OpenNet::Models::ConnectionProtocol m_preferredProtocol{ winrt::OpenNet::Models::ConnectionProtocol::Auto };
 		bool m_encryptionEnabled{ true };
-		uint16_t m_listenPort{ 10996 };
+		uint16_t m_listenPort{};
 		bool m_firewallEnabled{ false };
 	};
 }

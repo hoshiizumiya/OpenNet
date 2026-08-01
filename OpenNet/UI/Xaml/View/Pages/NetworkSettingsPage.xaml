@@ -3,6 +3,7 @@
     x:Class="OpenNet.UI.Xaml.View.Pages.NetworkSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="using:OpenNet.UI.Xaml.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.Pages"
@@ -210,18 +211,58 @@
                 <!--  Connection Settings Section  -->
                 <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Connection" />
 
-                <essential:SettingsCard Description="Listening port for incoming connections" Header="Listen port">
-                    <essential:SettingsCard.HeaderIcon>
+                <essential:SettingsExpander
+                    Description="Configure the IPv4 and IPv6 endpoints used by libtorrent. Port 0 lets the operating system select an available port."
+                    Header="BitTorrent listen endpoints">
+                    <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE839;" />
-                    </essential:SettingsCard.HeaderIcon>
-                    <NumberBox
-                        x:Name="ListenPortBox"
-                        Maximum="65535"
-                        Minimum="1024"
-                        SpinButtonPlacementMode="Compact"
-                        ValueChanged="ListenPortBox_ValueChanged"
-                        Value="6881" />
-                </essential:SettingsCard>
+                    </essential:SettingsExpander.HeaderIcon>
+                    <TextBlock
+                        x:Name="ActualListenPortText"
+                        VerticalAlignment="Center"
+                        FontWeight="SemiBold"
+                        Text="Not listening" />
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard
+                            ContentAlignment="Left"
+                            Description="Use 0.0.0.0 to listen on every IPv4 interface."
+                            Header="IPv4 endpoint">
+                            <control:IpEndpointInput
+                                x:Name="IPv4ListenEndpoint"
+                                HorizontalAlignment="Stretch"
+                                AllowAutomaticPort="True"
+                                RequiredFamily="IPv4"
+                                ValueChanged="ListenEndpoint_ValueChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard
+                            ContentAlignment="Left"
+                            Description="Use :: to listen on every IPv6 interface."
+                            Header="IPv6 endpoint">
+                            <control:IpEndpointInput
+                                x:Name="IPv6ListenEndpoint"
+                                HorizontalAlignment="Stretch"
+                                Address="::"
+                                AllowAutomaticPort="True"
+                                RequiredFamily="IPv6"
+                                ValueChanged="ListenEndpoint_ValueChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard
+                            ContentAlignment="Left"
+                            Header="Runtime listener">
+                            <StackPanel Spacing="2">
+                                <TextBlock
+                                    x:Name="ActualListenEndpointText"
+                                    FontWeight="SemiBold"
+                                    Text="The BitTorrent engine is not running." />
+                                <TextBlock
+                                    x:Name="ActualListenStatusText"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Style="{StaticResource CaptionTextBlockStyle}"
+                                    TextWrapping="Wrap" />
+                            </StackPanel>
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
 
                 <essential:SettingsCard Description="Distributed Hash Table for decentralized peer discovery" Header="Enable DHT">
                     <ToggleSwitch x:Name="EnableDHTToggle" IsOn="True" />

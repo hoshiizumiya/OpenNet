@@ -43,6 +43,12 @@
                         x:Uid="BanPeerPermanentItem"
                         Click="BanPeerPermanent_Click"
                         Text="Ban IP permanently" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem
+                        x:Name="UnbanPeerItem"
+                        x:Uid="UnbanPeerItem"
+                        Click="UnbanPeer_Click"
+                        Text="Unban IP" />
                 </MenuFlyout>
             </controls:HeaderedTreeView.ContextFlyout>
             <!--  Column Headers  -->
@@ -100,6 +106,12 @@
                                 IsChecked="True"
                                 Tag="Status"
                                 Text="Status" />
+                            <ToggleMenuFlyoutItem
+                                x:Uid="PeerMenu_Reason"
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Reason"
+                                Text="Reason" />
                             <ToggleMenuFlyoutItem
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
@@ -227,6 +239,19 @@
                                     TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColPeerReason" CanResize="True">
+                            <Button
+                                x:Name="SortPeerReasonButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="Reason">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Reason"
+                                    Text="Reason"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProtocol" CanResize="True">
                             <Button
                                 x:Name="SortPeerProtocolButton"
@@ -276,6 +301,12 @@
                         HorizontalContentAlignment="Stretch"
                         IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
                         ItemsSource="{x:Bind Children}">
+                        <muxc:TreeViewItem.Transitions>
+                            <TransitionCollection>
+                                <AddDeleteThemeTransition />
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </muxc:TreeViewItem.Transitions>
                         <labs:DataRow HorizontalAlignment="Left">
                             <TextBlock Text="{x:Bind IP, Mode=OneWay}" />
                             <Grid ColumnSpacing="6">
@@ -304,6 +335,7 @@
                             <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Client, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind PeerStatus, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Reason, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Protocol, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Initiator, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Source, Mode=OneWay}" TextTrimming="CharacterEllipsis" />

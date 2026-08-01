@@ -3,6 +3,7 @@
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"
 #endif
+#include "Core/ClientFilter/ClientFilterManager.h"
 #include "Core/IPFilter/IPFilterManager.h"
 #include "ViewModels/DisplayItems.h"
 
@@ -10,6 +11,8 @@ import OpenNet.Core.P2PManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.UI.Xaml.Control.DataTableSortHelper;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -24,6 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	TaskPeersListPage::TaskPeersListPage()
 	{
 		InitializeComponent();
+		UpdateSortHeaders();
 		this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Required);
 
 		Loaded([this](auto, auto)
@@ -35,6 +39,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			RestoreColumn(ColPeerDownloaded(), "Peers.Downloaded");
 			RestoreColumn(ColPeerClient(), "Peers.Client");
 			RestoreColumn(ColPeerStatus(), "Peers.Status");
+			RestoreColumn(ColPeerReason(), "Peers.Reason");
 			RestoreColumn(ColPeerProtocol(), "Peers.Protocol");
 			RestoreColumn(ColPeerInitiator(), "Peers.Initiator");
 			RestoreColumn(ColPeerSource(), "Peers.Source");
@@ -48,6 +53,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded());
 			SaveColumnWidth("Peers.Client", ColPeerClient());
 			SaveColumnWidth("Peers.Status", ColPeerStatus());
+			SaveColumnWidth("Peers.Reason", ColPeerReason());
 			SaveColumnWidth("Peers.Protocol", ColPeerProtocol());
 			SaveColumnWidth("Peers.Initiator", ColPeerInitiator());
 			SaveColumnWidth("Peers.Source", ColPeerSource());
@@ -162,23 +168,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		auto update = [this](auto const& button)
 		{
-			auto label = button.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-			if (!label)
-			{
-				return;
-			}
-			std::wstring text{ label.Text() };
-			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
-				(text.back() == L'\u2191' || text.back() == L'\u2193'))
-			{
-				text.resize(text.size() - 2);
-			}
-			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
-			{
-				if (m_sortDirection == 1) text += L" \u2191";
-				else if (m_sortDirection == 2) text += L" \u2193";
-			}
-			label.Text(text);
+			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
+				button, m_sortColumn, m_sortDirection);
 		};
 		update(SortPeerIpButton());
 		update(SortPeerLocationButton());
@@ -188,6 +179,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		update(SortPeerDownloadedButton());
 		update(SortPeerClientButton());
 		update(SortPeerStatusButton());
+		update(SortPeerReasonButton());
 		update(SortPeerProtocolButton());
 		update(SortPeerInitiatorButton());
 		update(SortPeerSourceButton());
@@ -209,6 +201,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (column == L"Downloaded") return item.Downloaded();
 			if (column == L"Client") return item.Client();
 			if (column == L"Status") return item.PeerStatus();
+			if (column == L"Reason") return item.Reason();
 			if (column == L"Protocol") return item.Protocol();
 			if (column == L"Initiator") return item.Initiator();
 			return item.Source();
@@ -269,6 +262,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (tag == L"Downloaded") return ColPeerDownloaded();
 		if (tag == L"Client") return ColPeerClient();
 		if (tag == L"Status") return ColPeerStatus();
+		if (tag == L"Reason") return ColPeerReason();
 		if (tag == L"Protocol") return ColPeerProtocol();
 		if (tag == L"Initiator") return ColPeerInitiator();
 		if (tag == L"Source") return ColPeerSource();
@@ -308,7 +302,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
 			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
-			ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
+			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			AutoSizeColumn(column);
 	}
 
@@ -322,7 +316,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
 			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
-			ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
+			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			column.Visibility(Visibility::Visible);
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshPeerList();
@@ -333,10 +327,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_peerItems = nullptr;
 		m_connectedGroup = nullptr;
 		m_connectingGroup = nullptr;
-		m_disconnectedGroup = nullptr;
+		m_disconnectingGroup = nullptr;
+		m_banIpGroup = nullptr;
 		m_lastActivePeers.clear();
-		m_disconnectedPeers.clear();
-		m_bannedPeers.clear();
+		m_disconnectingPeers.clear();
+		m_banIpPeers.clear();
 		if (auto tree = PeersTreeView())
 			tree.ItemsSource(nullptr);
 	}
@@ -363,10 +358,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		m_connectedGroup = makeGroup(L"bt_connected");
 		m_connectingGroup = makeGroup(L"bt_connecting");
-		m_disconnectedGroup = makeGroup(L"disconnected/banned");
+		m_disconnectingGroup = makeGroup(L"disconnecting");
+		m_banIpGroup = makeGroup(L"BanIP");
 		m_peerItems.Append(m_connectedGroup);
 		m_peerItems.Append(m_connectingGroup);
-		m_peerItems.Append(m_disconnectedGroup);
+		m_peerItems.Append(m_disconnectingGroup);
+		m_peerItems.Append(m_banIpGroup);
 		PeersTreeView().ItemsSource(m_peerItems);
 	}
 
@@ -527,6 +524,75 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return parts.empty() ? L"-" : winrt::hstring{ parts };
 	}
 
+	static std::string PeerEndpointKey(std::string const& ip, int port)
+	{
+		return ip + '\n' + std::to_string(port);
+	}
+
+	static winrt::hstring PeerEndpointText(std::string const& ip, int port)
+	{
+		if (ip.find(':') != std::string::npos)
+		{
+			return L"[" + winrt::to_hstring(ip) + L"]:"
+				+ winrt::to_hstring(port);
+		}
+		return winrt::to_hstring(ip) + L":" + winrt::to_hstring(port);
+	}
+
+	static winrt::hstring PeerResource(
+		wchar_t const* key, wchar_t const* fallback)
+	{
+		try
+		{
+			auto value =
+				winrt::Microsoft::Windows::ApplicationModel::Resources::
+				ResourceLoader{}.GetString(key);
+			if (!value.empty())
+				return value;
+		}
+		catch (...)
+		{
+		}
+		return fallback;
+	}
+
+	static winrt::hstring FormatManualBanReason(
+		::OpenNet::Core::IPBanEntry const& ban,
+		std::int64_t now)
+	{
+		std::wstring text{
+			PeerResource(L"PeerReason_Manual", L"User manual ban").c_str() };
+		text += L" \u00b7 ";
+		if (ban.expiresAt == 0)
+		{
+			text += PeerResource(
+				L"PeerReason_Permanent", L"Permanent").c_str();
+			return winrt::hstring{ text };
+		}
+
+		auto const remaining = std::max<std::int64_t>(0, ban.expiresAt - now);
+		text += PeerResource(
+			L"PeerReason_Remaining", L"Remaining").c_str();
+		text += L" ";
+		if (remaining < 60)
+		{
+			text += L"<1m";
+		}
+		else
+		{
+			auto const totalMinutes = (remaining + 59) / 60;
+			auto const hours = totalMinutes / 60;
+			auto const minutes = totalMinutes % 60;
+			if (hours > 0)
+				text += std::to_wstring(hours) + L"h";
+			if (hours > 0 && minutes > 0)
+				text += L" ";
+			if (minutes > 0 || hours == 0)
+				text += std::to_wstring(minutes) + L"m";
+		}
+		return winrt::hstring{ text };
+	}
+
 	void TaskPeersListPage::RefreshPeerList()
 	{
 		auto listView = PeersTreeView();
@@ -585,11 +651,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		EnsurePeerGroups();
 
-		auto updateItem = [this](auto const& peer, auto const& item)
+		auto initializeEndpointItem =
+			[this](std::string const& ip, int port, auto const& item)
 		{
-			auto const ipPort =
-				winrt::to_hstring(peer.ip) + L":" + winrt::to_hstring(peer.port);
-			item.IP(ipPort);
+			item.Address(winrt::to_hstring(ip));
+			item.Port(port);
+			item.IP(PeerEndpointText(ip, port));
+			auto& geo = ::OpenNet::Core::GeoIPManager::Instance();
+			auto const countryCode = geo.LookupCountryCode(ip);
+			auto const country = geo.LookupCountryName(ip);
+			item.CountryCode(winrt::to_hstring(countryCode));
+			item.FlagSvg(BuildFlagSvg(countryCode));
+			item.Location(country.empty() ? L"-" : winrt::to_hstring(country));
+			item.IsGroup(false);
+		};
+		auto updateItem =
+			[&initializeEndpointItem](auto const& peer, auto const& item)
+		{
+			initializeEndpointItem(peer.ip, peer.port, item);
 			item.Client(winrt::to_hstring(peer.client));
 			wchar_t progress[32];
 			swprintf(progress, 32, L"%.1f%%", peer.progress * 100.0);
@@ -598,56 +677,219 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.ULSpeed(FormatSpeed(peer.uploadRateKB));
 			item.Downloaded(FormatBytes(peer.totalDownloaded));
 			item.PeerStatus(FormatPeerStatus(peer.flags));
-			auto& geo = ::OpenNet::Core::GeoIPManager::Instance();
-			auto const countryCode = geo.LookupCountryCode(peer.ip);
-			auto const country = geo.LookupCountryName(peer.ip);
-			item.CountryCode(winrt::to_hstring(countryCode));
-			item.FlagSvg(BuildFlagSvg(countryCode));
-			item.Location(country.empty() ? L"-" : winrt::to_hstring(country));
+			item.Reason(L"");
 			item.ConnectionTime(L"-");
 			item.Protocol(FormatConnectionType(peer.connectionType));
 			item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
 			item.Source(FormatPeerSource(peer.source));
-			item.IsGroup(false);
+		};
+		auto makeEndpointItem =
+			[&initializeEndpointItem](std::string const& ip, int port)
+		{
+			auto item = winrt::make<
+				winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
+			initializeEndpointItem(ip, port, item);
+			item.Client(L"-");
+			item.Progress(L"-");
+			item.DLSpeed(L"-");
+			item.ULSpeed(L"-");
+			item.Downloaded(L"-");
+			item.ConnectionTime(L"-");
+			item.Protocol(L"-");
+			item.Initiator(L"-");
+			item.Source(L"-");
+			return item;
 		};
 
-		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> currentPeers;
+		auto& ipFilter = ::OpenNet::Core::IPFilterManager::Instance();
+		auto const now = std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::system_clock::now().time_since_epoch()).count();
+		auto const activeBans = ipFilter.GetActiveBans(taskId);
+		std::unordered_map<std::string, ::OpenNet::Core::IPBanEntry> bansByIp;
+		for (auto const& ban : activeBans)
+			bansByIp.emplace(ban.ip, ban);
+
+		std::unordered_map<std::string, ::OpenNet::Core::ClientFilterHit>
+			clientHitsByIp;
+		auto& clientFilter =
+			::OpenNet::Core::ClientFilterManager::Instance();
+		for (auto const& hit :
+			 clientFilter.GetRecentHits(500))
+		{
+			clientHitsByIp.emplace(hit.ip, hit);
+		}
+
+		auto previousActive = m_lastActivePeers;
+		auto previousBanPeers = m_banIpPeers;
+		// Rebuild this group from current ban sources on every refresh. This
+		// removes expired/disabled rules without leaving stale BanIP rows.
+		m_banIpPeers.clear();
+		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem>
+			currentPeers;
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connected;
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connecting;
 		for (auto const& peer : detail.peers)
 		{
-			auto const key = peer.ip + ":" + std::to_string(peer.port);
-			auto item = m_lastActivePeers.contains(key)
-				? m_lastActivePeers.at(key)
+			auto const key = PeerEndpointKey(peer.ip, peer.port);
+			auto item = previousActive.contains(key)
+				? previousActive.at(key)
 				: winrt::make<
 				winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
 			updateItem(peer, item);
 			currentPeers.emplace(key, item);
-			m_disconnectedPeers.erase(key);
+			m_disconnectingPeers.erase(key);
+			m_banIpPeers.erase(key);
 
-			if (m_bannedPeers.contains(key))
+			if (!bansByIp.contains(peer.ip))
 			{
-				item.PeerStatus(L"Banned");
-				m_disconnectedPeers[key] = item;
-			}
-			else if (peer.isConnecting)
-			{
-				connecting.push_back(item);
-			}
-			else
-			{
-				connected.push_back(item);
+				if (peer.isConnecting)
+					connecting.push_back(item);
+				else
+					connected.push_back(item);
 			}
 		}
 
-		for (auto const& [key, item] : m_lastActivePeers)
+		for (auto const& [key, item] : previousActive)
 		{
 			if (!currentPeers.contains(key))
 			{
-				if (!m_bannedPeers.contains(key))
-					item.PeerStatus(L"Disconnected");
-				m_disconnectedPeers[key] = item;
+				item.PeerStatus(L"disconnecting");
+				item.Reason(L"connection_closed");
+				m_disconnectingPeers[key] = item;
 			}
+		}
+
+		auto peerEvents =
+			p2p.TorrentCore()->GetRecentPeerEvents(taskId);
+		std::unordered_map<
+			std::string, std::optional<::OpenNet::Core::IPRule>>
+			staticRuleMatches;
+		if (ipFilter.IsEnabled())
+		{
+			std::vector<std::string> addresses;
+			for (auto const& event : peerEvents)
+			{
+				if (event.reason == "ip_filter"
+					&& !staticRuleMatches.contains(event.ip))
+				{
+					staticRuleMatches.emplace(event.ip, std::nullopt);
+					addresses.push_back(event.ip);
+				}
+			}
+			auto matches = ipFilter.FindMatchingRules(addresses);
+			for (std::size_t index = 0; index < addresses.size(); ++index)
+				staticRuleMatches[addresses[index]] = std::move(matches[index]);
+		}
+		for (auto const& event : peerEvents)
+		{
+			auto const key = PeerEndpointKey(event.ip, event.port);
+			// The endpoint has since reconnected. Its current snapshot is more
+			// authoritative than an older terminal event.
+			if (currentPeers.contains(key) && !bansByIp.contains(event.ip))
+				continue;
+
+			auto item = previousActive.contains(key)
+				? previousActive.at(key)
+				: m_disconnectingPeers.contains(key)
+				? m_disconnectingPeers.at(key)
+				: previousBanPeers.contains(key)
+				? previousBanPeers.at(key)
+				: makeEndpointItem(event.ip, event.port);
+			initializeEndpointItem(event.ip, event.port, item);
+
+			auto const clientHit = clientHitsByIp.find(event.ip);
+			auto const activeClientRule =
+				clientFilter.IsEnabled()
+				&& clientHit != clientHitsByIp.end()
+				? clientFilter.MatchClient(clientHit->second.client)
+				: std::optional<::OpenNet::Core::ClientFilterRule>{};
+			auto const hasClientRule = activeClientRule.has_value();
+			auto const ruleMatch = staticRuleMatches.find(event.ip);
+			auto const matchingRule =
+				ruleMatch == staticRuleMatches.end()
+				? std::optional<::OpenNet::Core::IPRule>{}
+			: ruleMatch->second;
+			auto const remainsBanned =
+				event.reason == "anti_leech"
+				|| bansByIp.contains(event.ip)
+				|| hasClientRule
+				|| matchingRule.has_value();
+
+			if (event.isBan && remainsBanned)
+			{
+				item.PeerStatus(L"BanIP");
+				if (event.reason == "anti_leech")
+				{
+					item.Reason(PeerResource(
+						L"PeerReason_AntiLeech", L"Anti-leech ban"));
+				}
+				else if (hasClientRule)
+				{
+					std::wstring reason{
+						PeerResource(
+							L"PeerReason_ClientListMatch",
+							L"Anti-leech client list match").c_str() };
+					if (!activeClientRule->pattern.empty())
+					{
+						reason += L": ";
+						reason += winrt::to_hstring(
+							activeClientRule->pattern).c_str();
+					}
+					item.Reason(winrt::hstring{ reason });
+				}
+				else if (matchingRule)
+				{
+					std::wstring reason{
+						PeerResource(
+							L"PeerReason_ListMatch",
+							L"IP list source match").c_str() };
+					if (!matchingRule->description.empty())
+					{
+						reason += L": ";
+						reason += winrt::to_hstring(
+							matchingRule->description).c_str();
+					}
+					item.Reason(winrt::hstring{ reason });
+				}
+				else
+				{
+					item.Reason(PeerResource(
+						L"PeerReason_IPFilter", L"IP filter match"));
+				}
+				m_disconnectingPeers.erase(key);
+				m_banIpPeers[key] = item;
+			}
+			else
+			{
+				item.PeerStatus(L"disconnecting");
+				item.Reason(winrt::to_hstring(
+					event.isBan ? "ip_filter_released" : event.reason));
+				m_banIpPeers.erase(key);
+				m_disconnectingPeers[key] = item;
+			}
+		}
+
+		// Persistent manual bans are processed last so a subsequent generic
+		// disconnect alert cannot hide their source or remaining duration.
+		for (auto const& ban : activeBans)
+		{
+			auto const key = PeerEndpointKey(ban.ip, ban.port);
+			auto item = currentPeers.contains(key)
+				? currentPeers.at(key)
+				: previousActive.contains(key)
+				? previousActive.at(key)
+				: m_banIpPeers.contains(key)
+				? m_banIpPeers.at(key)
+				: previousBanPeers.contains(key)
+				? previousBanPeers.at(key)
+				: makeEndpointItem(ban.ip, ban.port);
+			initializeEndpointItem(ban.ip, ban.port, item);
+			if (!ban.client.empty())
+				item.Client(winrt::to_hstring(ban.client));
+			item.PeerStatus(L"BanIP");
+			item.Reason(FormatManualBanReason(ban, now));
+			m_disconnectingPeers.erase(key);
+			m_banIpPeers[key] = item;
 		}
 		m_lastActivePeers = std::move(currentPeers);
 
@@ -657,44 +899,72 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				 index < static_cast<std::uint32_t>(values.size());
 				 ++index)
 			{
-				if (index >= target.Size())
-					target.Append(values[index]);
-				else if (target.GetAt(index) != values[index])
-					target.SetAt(index, values[index]);
+				if (index < target.Size() && target.GetAt(index) == values[index])
+				{
+					continue;
+				}
+
+				std::uint32_t sourceIndex = index;
+				while (sourceIndex < target.Size() &&
+					   target.GetAt(sourceIndex) != values[index])
+				{
+					++sourceIndex;
+				}
+				if (sourceIndex < target.Size())
+				{
+					auto item = target.GetAt(sourceIndex);
+					target.RemoveAt(sourceIndex);
+					target.InsertAt(index, item);
+				}
+				else
+				{
+					target.InsertAt(index, values[index]);
+				}
 			}
 			while (target.Size() > values.size())
 				target.RemoveAtEnd();
 		};
-		SortPeerItems(connected);
-		SortPeerItems(connecting);
-		replaceChildren(m_connectedGroup.Children(), connected);
-		replaceChildren(m_connectingGroup.Children(), connecting);
 
-		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> disconnected;
-		disconnected.reserve(m_disconnectedPeers.size());
-		for (auto const& [key, item] : m_disconnectedPeers)
+		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> disconnecting;
+		for (auto const& [key, item] : m_disconnectingPeers)
 		{
 			(void)key;
-			disconnected.push_back(item);
+			disconnecting.push_back(item);
 		}
-		SortPeerItems(disconnected);
-		replaceChildren(m_disconnectedGroup.Children(), disconnected);
+		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> banned;
+		for (auto const& [key, item] : m_banIpPeers)
+		{
+			(void)key;
+			banned.push_back(item);
+		}
+
+		SortPeerItems(connected);
+		SortPeerItems(connecting);
+		SortPeerItems(disconnecting);
+		SortPeerItems(banned);
+		replaceChildren(m_connectedGroup.Children(), connected);
+		replaceChildren(m_connectingGroup.Children(), connecting);
+		replaceChildren(m_disconnectingGroup.Children(), disconnecting);
+		replaceChildren(m_banIpGroup.Children(), banned);
 
 		m_connectedGroup.IP(
 			L"bt_connected (" + winrt::to_hstring(connected.size()) + L")");
 		m_connectingGroup.IP(
 			L"bt_connecting (" + winrt::to_hstring(connecting.size()) + L")");
-		m_disconnectedGroup.IP(
-			L"disconnected/banned (" + winrt::to_hstring(disconnected.size()) + L")");
+		m_disconnectingGroup.IP(
+			L"disconnecting (" + winrt::to_hstring(disconnecting.size()) + L")");
+		m_banIpGroup.IP(
+			L"BanIP (" + winrt::to_hstring(banned.size()) + L")");
 
-		auto const hasAny = !connected.empty() || !connecting.empty() || !disconnected.empty();
+		auto const hasAny = !connected.empty() || !connecting.empty()
+			|| !disconnecting.empty() || !banned.empty();
 		if (emptyText)
 			emptyText.Visibility(hasAny ? Visibility::Collapsed : Visibility::Visible);
 	}
 
 	// ---- Ban peer handlers ----
 
-	void TaskPeersListPage::BanSelectedPeer(winrt::hstring const& description)
+	void TaskPeersListPage::BanSelectedPeer(std::int64_t durationSeconds)
 	{
 		auto listView = PeersTreeView();
 		if (!listView) return;
@@ -703,23 +973,35 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto peer = selected.try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
 		if (!peer || peer.IsGroup()) return;
 
-		auto ipPortStr = winrt::to_string(peer.IP());
-		// Extract IP (strip port)
-		auto colonPos = ipPortStr.rfind(':');
-		std::string ip = (colonPos != std::string::npos) ? ipPortStr.substr(0, colonPos) : ipPortStr;
+		auto const ip = winrt::to_string(peer.Address());
+		auto const port = peer.Port();
+		if (ip.empty())
+			return;
 
 		try
 		{
 			auto& ipFilter = ::OpenNet::Core::IPFilterManager::Instance();
-			ipFilter.AddRule(ip, ip, 1, winrt::to_string(description));
+			auto const taskId = m_viewModel && m_viewModel.SelectedTask()
+				? winrt::to_string(m_viewModel.SelectedTask().TaskId())
+				: std::string{};
+			auto const now = std::chrono::duration_cast<std::chrono::seconds>(
+				std::chrono::system_clock::now().time_since_epoch()).count();
+			auto const expiresAt =
+				durationSeconds > 0 ? now + durationSeconds : 0;
+			auto const id = ipFilter.AddBan(
+				ip,
+				port,
+				taskId,
+				winrt::to_string(peer.Client()),
+				"manual",
+				"user_manual",
+				expiresAt);
+			if (id == 0)
+				throw std::runtime_error("failed to persist IP ban");
 			ipFilter.ApplyToSession();
-
-			auto const key = winrt::to_string(peer.IP());
-			m_bannedPeers.insert(key);
-			peer.PeerStatus(L"Banned");
-			m_disconnectedPeers[key] = peer;
-
-			OutputDebugStringW((L"Banned peer: " + winrt::to_hstring(ip) + L" - " + description + L"\n").c_str());
+			RefreshPeerList();
+			OutputDebugStringW(
+				(L"Banned peer IP: " + winrt::to_hstring(ip) + L"\n").c_str());
 		}
 		catch (...)
 		{
@@ -731,20 +1013,37 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		BanSelectedPeer(L"Banned for 1 hour");
+		BanSelectedPeer(60 * 60);
 	}
 
 	void TaskPeersListPage::BanPeer24h_Click(
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		BanSelectedPeer(L"Banned for 24 hours");
+		BanSelectedPeer(24 * 60 * 60);
 	}
 
 	void TaskPeersListPage::BanPeerPermanent_Click(
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		BanSelectedPeer(L"Banned permanently");
+		BanSelectedPeer(0);
+	}
+
+	void TaskPeersListPage::UnbanPeer_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto const selected = PeersTreeView().SelectedItem();
+		if (!selected)
+			return;
+		auto const peer =
+			selected.try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
+		if (!peer || peer.IsGroup() || peer.Address().empty())
+			return;
+
+		auto& ipFilter = ::OpenNet::Core::IPFilterManager::Instance();
+		if (ipFilter.RemoveBan(winrt::to_string(peer.Address()), "manual"))
+			RefreshPeerList();
 	}
 }

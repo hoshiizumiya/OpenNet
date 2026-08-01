@@ -1,0 +1,35 @@
+﻿namespace OpenNet.UI.Xaml.Control
+{
+    enum IpAddressFamily
+    {
+        Any = 0,
+        IPv4 = 1,
+        IPv6 = 2
+    };
+
+    [default_interface]
+    runtimeclass IpEndpointInput : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        IpEndpointInput();
+
+        String Address;
+        static Microsoft.UI.Xaml.DependencyProperty AddressProperty { get; };
+
+        UInt32 Port;
+        static Microsoft.UI.Xaml.DependencyProperty PortProperty { get; };
+
+        Boolean AllowAutomaticPort;
+        static Microsoft.UI.Xaml.DependencyProperty AllowAutomaticPortProperty { get; };
+
+        IpAddressFamily RequiredFamily;
+        static Microsoft.UI.Xaml.DependencyProperty RequiredFamilyProperty { get; };
+
+        Boolean IsValid { get; };
+        IpAddressFamily AddressFamily { get; };
+        String ValidationMessage { get; };
+        String NormalizedEndpoint { get; };
+
+        Boolean Validate();
+        event Windows.Foundation.EventHandler<Object> ValueChanged;
+    }
+}

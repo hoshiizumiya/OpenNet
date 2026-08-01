@@ -6,6 +6,7 @@
 #endif
 
 #include "WebUIHost.h"
+#include "WebUIControl.h"
 
 #include <Windows.h>
 
@@ -72,6 +73,11 @@ namespace OpenNet::Core::WebUI
 		constexpr std::size_t MaxStaticFile = 10U * 1024U * 1024U;
 		constexpr auto SessionLifetime = std::chrono::hours(1);
 		constexpr std::string_view ApiKeySession = "api-key";
+		std::atomic<std::uint64_t> g_requestCount{};
+		std::atomic<std::uint64_t> g_requestBytes{};
+		std::atomic<std::uint64_t> g_responseBytes{};
+		std::atomic<std::uint64_t> g_activeConnections{};
+		std::atomic<std::uint64_t> g_failedLogins{};
 
 		struct FormPart
 		{
@@ -850,6 +856,12 @@ namespace OpenNet::Core::WebUI
 				: m_socket(std::move(socket))
 				, m_handler(std::move(handler))
 			{
+				g_activeConnections.fetch_add(1, std::memory_order_relaxed);
+			}
+
+			~HttpSession()
+			{
+				g_activeConnections.fetch_sub(1, std::memory_order_relaxed);
 			}
 
 			void Run()
@@ -872,13 +884,17 @@ namespace OpenNet::Core::WebUI
 						&HttpSession::OnRead, shared_from_this()));
 			}
 
-			void OnRead(const beast::error_code& error, std::size_t)
+			void OnRead(
+				const beast::error_code& error,
+				const std::size_t transferred)
 			{
 				if (error == http::error::end_of_stream)
 					return Close();
 				if (error)
 					return;
 
+				g_requestCount.fetch_add(1, std::memory_order_relaxed);
+				g_requestBytes.fetch_add(transferred, std::memory_order_relaxed);
 				m_request = m_parser->release();
 				Response response;
 				try
@@ -904,8 +920,14 @@ namespace OpenNet::Core::WebUI
 				http::async_write(
 					m_socket, *message,
 					[self = shared_from_this(), message, close](
-						const beast::error_code& writeError, std::size_t)
+						const beast::error_code& writeError,
+						const std::size_t transferred)
 				{
+					if (!writeError)
+					{
+						g_responseBytes.fetch_add(
+							transferred, std::memory_order_relaxed);
+					}
 					self->OnWrite(writeError, close);
 				});
 			}
@@ -1325,6 +1347,7 @@ namespace OpenNet::Core::WebUI
 
 		void RegisterLoginFailure(const std::string& client)
 		{
+			g_failedLogins.fetch_add(1, std::memory_order_relaxed);
 			const auto now = std::chrono::steady_clock::now();
 			std::scoped_lock lock(m_loginMutex);
 			auto& failure = m_failedLogins[client];
@@ -5313,5 +5336,16 @@ namespace OpenNet::Core::WebUI
 	bool RestartWebUI()
 	{
 		return WebUIHost::Instance().Restart();
+	}
+
+	WebUIRuntimeStats GetWebUIRuntimeStats() noexcept
+	{
+		return WebUIRuntimeStats{
+			g_requestCount.load(std::memory_order_relaxed),
+			g_requestBytes.load(std::memory_order_relaxed),
+			g_responseBytes.load(std::memory_order_relaxed),
+			g_activeConnections.load(std::memory_order_relaxed),
+			g_failedLogins.load(std::memory_order_relaxed)
+		};
 	}
 }

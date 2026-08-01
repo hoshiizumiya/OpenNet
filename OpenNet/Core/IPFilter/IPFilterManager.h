@@ -31,6 +31,19 @@ namespace OpenNet::Core
 		std::string description;   // original input or user comment
 	};
 
+	struct IPBanEntry
+	{
+		std::int64_t id{};
+		std::string ip;
+		std::int32_t port{};
+		std::string taskId;
+		std::string client;
+		std::string source;
+		std::string reason;
+		std::int64_t createdAt{};
+		std::int64_t expiresAt{}; // 0 means permanent
+	};
+
 	/// Manages IP filter rules stored in SQLite and applies them to
 	/// the libtorrent session via ip_filter.
 	/// Thread-safe singleton.
@@ -65,6 +78,30 @@ namespace OpenNet::Core
 		std::int32_t GetRuleCount() const;
 
 		void ClearAllRules();
+
+		/// Add or replace an address ban from the same source. Timed bans are
+		/// stored separately from imported IP lists so expiry cannot destroy an
+		/// overlapping list rule.
+		std::int64_t AddBan(
+			std::string const& ip,
+			std::int32_t port,
+			std::string const& taskId,
+			std::string const& client,
+			std::string const& source,
+			std::string const& reason,
+			std::int64_t expiresAt = 0);
+		bool RemoveBan(
+			std::string const& ip,
+			std::string const& source = {});
+		std::vector<IPBanEntry> GetActiveBans(
+			std::string const& taskId = {}) const;
+		std::optional<IPBanEntry> FindActiveBan(
+			std::string const& ip) const;
+		std::optional<IPRule> FindMatchingRule(
+			std::string const& ip) const;
+		std::vector<std::optional<IPRule>> FindMatchingRules(
+			std::vector<std::string> const& addresses) const;
+		void MaintainTemporaryBans();
 
 		// ---------------------------------------------------------------
 		//  Parsing helpers
@@ -115,6 +152,8 @@ namespace OpenNet::Core
 
 		void CreateTables();
 		void SeedBundledRules();
+		std::vector<IPBanEntry> GetActiveBansLocked(
+			std::string const& taskId) const;
 
 		mutable std::mutex m_mutex;
 		mutable std::mutex m_clientBlockedMutex;

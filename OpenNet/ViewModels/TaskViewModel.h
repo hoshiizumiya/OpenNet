@@ -127,6 +127,22 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_taskType, v, L"TaskType");
 		}
 
+		winrt::OpenNet::ViewModels::DownloadTaskState State() const
+		{
+			return m_state;
+		}
+		void State(winrt::OpenNet::ViewModels::DownloadTaskState value)
+		{
+			if (SetProperty(m_state, value, L"State"))
+			{
+				RaisePropertyChanged(L"StateValue");
+			}
+		}
+		std::int32_t StateValue() const noexcept
+		{
+			return static_cast<std::int32_t>(m_state);
+		}
+
 		// Task identifier — libtorrent taskId or HTTP recordId
 		winrt::hstring TaskId() const
 		{
@@ -188,6 +204,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_gid;
 		winrt::hstring m_taskId;
 		winrt::OpenNet::ViewModels::DownloadTaskType m_taskType{ winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent };
+		winrt::OpenNet::ViewModels::DownloadTaskState m_state{ winrt::OpenNet::ViewModels::DownloadTaskState::Pending };
 		std::uint64_t m_downloadSpeedKB{ 0 };
 		double m_progressPercent{ 0.0 };
 		int m_lastSavedPercent{ -1 };  // Track last saved 1% boundary for SpeedGraph persistence

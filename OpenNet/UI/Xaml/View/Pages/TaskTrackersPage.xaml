@@ -22,6 +22,12 @@
             x:Name="TrackersListView"
             Grid.Row="1"
             SelectionMode="None">
+            <ListView.ItemContainerTransitions>
+                <TransitionCollection>
+                    <AddDeleteThemeTransition />
+                    <RepositionThemeTransition />
+                </TransitionCollection>
+            </ListView.ItemContainerTransitions>
             <ListView.Header>
                 <Border
                     Padding="8,4,0,4"

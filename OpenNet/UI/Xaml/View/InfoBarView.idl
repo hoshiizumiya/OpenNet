@@ -1,9 +1,11 @@
-﻿namespace OpenNet.UI.Xaml.View
-{
-	[default_interface]
-	runtimeclass InfoBarView : Microsoft.UI.Xaml.Controls.UserControl
-	{
-		InfoBarView();
+import "Service/Notification/InfoBarOptions.idl";
 
-	}
+namespace OpenNet.UI.Xaml.View
+{
+    [default_interface]
+    runtimeclass InfoBarView : Microsoft.UI.Xaml.Controls.UserControl
+    {
+        InfoBarView();
+        Windows.Foundation.Collections.IObservableVector<OpenNet.Service.Notification.InfoBarOptions> InfoBars { get; };
+    }
 }

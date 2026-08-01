@@ -135,4 +135,31 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>Gestito dai membri della community Crowdin</value>
   </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>Non ordinato. Attiva per ordinare in modo crescente.</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>Ordine crescente. Attiva per ordinare in modo decrescente.</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>Ordine decrescente. Attiva per annullare l'ordinamento.</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>In attesa</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>Download in corso</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>Condivisione</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>In pausa</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>Completato</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>Non riuscito</value>
+  </data>
 </root>

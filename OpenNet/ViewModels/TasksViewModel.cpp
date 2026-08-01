@@ -7,6 +7,7 @@
 #include "mvvm_framework/notify_property_changed.h"
 
 import Core.Utils.Misc;
+import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;
@@ -107,6 +108,26 @@ namespace winrt::OpenNet::ViewModels::implementation
 					if (!gid.empty())
 						dlMgr.ResumeHttpDownload(gid);
 				}
+				if (auto dispatcher = self->m_dispatcher)
+				{
+					dispatcher.TryEnqueue([weak, selectedTask, taskType]()
+					{
+						if (auto current = weak.get())
+						{
+							auto const nextState =
+								taskType
+								== winrt::OpenNet::ViewModels::
+								DownloadTaskType::BitTorrent
+								&& selectedTask.ProgressPercent() >= 100.0
+								? winrt::OpenNet::ViewModels::
+								DownloadTaskState::Seeding
+								: winrt::OpenNet::ViewModels::
+								DownloadTaskState::Downloading;
+							selectedTask.State(nextState);
+							current->RebuildFiltered();
+						}
+					});
+				}
 			}
 			else
 			{
@@ -146,6 +167,22 @@ namespace winrt::OpenNet::ViewModels::implementation
 					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
 					if (!gid.empty())
 						dlMgr.PauseHttpDownload(gid);
+				}
+				if (auto dispatcher = self->m_dispatcher)
+				{
+					dispatcher.TryEnqueue([weak, selectedTask]()
+					{
+						if (auto current = weak.get())
+						{
+							selectedTask.State(
+								selectedTask.ProgressPercent() >= 100.0
+								? winrt::OpenNet::ViewModels::
+								DownloadTaskState::Completed
+								: winrt::OpenNet::ViewModels::
+								DownloadTaskState::Paused);
+							current->RebuildFiltered();
+						}
+					});
 				}
 			}
 			co_return;
@@ -419,6 +456,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 					if (task.status == 3) // Completed
 					{
 						vm.Progress(L"100%");
+						vm.ProgressPercent(100.0);
 						vm.DownloadRate(L"0 KB/s");
 					}
 					else if (task.totalSize > 0 && task.downloadedSize > 0)
@@ -427,10 +465,31 @@ namespace winrt::OpenNet::ViewModels::implementation
 						wchar_t buf[32];
 						swprintf(buf, 32, L"%d%%", percent);
 						vm.Progress(buf);
+						vm.ProgressPercent(static_cast<double>(percent));
 					}
 					else
 					{
 						vm.Progress(L"0%");
+						vm.ProgressPercent(0.0);
+					}
+
+					switch (task.status)
+					{
+						case 1:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Downloading);
+							break;
+						case 2:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Paused);
+							break;
+						case 3:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Completed);
+							break;
+						case 4:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Failed);
+							break;
+						default:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Pending);
+							break;
 					}
 
 					// Format size
@@ -482,6 +541,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 					if (rec.status == 3) // Completed
 					{
 						vm.Progress(L"100%");
+						vm.ProgressPercent(100.0);
 						vm.DownloadRate(L"0 KB/s");
 					}
 					else if (rec.totalSize > 0 && rec.completedSize > 0)
@@ -490,10 +550,31 @@ namespace winrt::OpenNet::ViewModels::implementation
 						wchar_t buf[32];
 						swprintf(buf, 32, L"%d%%", pct);
 						vm.Progress(buf);
+						vm.ProgressPercent(static_cast<double>(pct));
 					}
 					else
 					{
 						vm.Progress(L"0%");
+						vm.ProgressPercent(0.0);
+					}
+
+					switch (rec.status)
+					{
+						case 1:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Downloading);
+							break;
+						case 2:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Paused);
+							break;
+						case 3:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Completed);
+							break;
+						case 4:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Failed);
+							break;
+						default:
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Pending);
+							break;
 					}
 
 					// Format size
@@ -615,6 +696,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 				{
 					item.Name(name);
 				}
+				auto const previousState = item.State();
+				auto const nextState = e.isPaused
+					? (e.isFinished
+					   ? winrt::OpenNet::ViewModels::DownloadTaskState::Completed
+					   : winrt::OpenNet::ViewModels::DownloadTaskState::Paused)
+					: ((e.isFinished || e.isSeeding)
+					   ? winrt::OpenNet::ViewModels::DownloadTaskState::Seeding
+					   : winrt::OpenNet::ViewModels::DownloadTaskState::Downloading);
+				item.State(nextState);
 				item.Progress(to_hstring_percent(e.progressPercent));
 				item.DownloadRate(to_hstring_rate(e.downloadRateKB));
 				item.UploadRate(to_hstring_rate(e.uploadRateKB));
@@ -625,7 +715,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 				if (item.Remaining().empty()) item.Remaining(L"-");
 				// Only RebuildFiltered when a brand-new item was created so it
 				// appears in the filtered list. Subsequent ticks skip this.
-				if (isNewItem) self->RebuildFiltered();
+				if (isNewItem || previousState != nextState)
+					self->RebuildFiltered();
 			}
 		});
 	}
@@ -643,7 +734,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 				auto item = self->FindOrCreateItemByTaskId(taskId, hname);
 				if (!hname.empty() && item.Name() != hname)
 					item.Name(hname);
+				item.State(winrt::OpenNet::ViewModels::DownloadTaskState::Completed);
 				item.Progress(L"100%");
+				item.ProgressPercent(100.0);
 				item.DownloadRate(L"0 KB/s");
 				item.Remaining(L"0");
 				self->RebuildFiltered();
@@ -755,6 +848,33 @@ namespace winrt::OpenNet::ViewModels::implementation
 				if (!name.empty() && item.Name() != name)
 					item.Name(name);
 
+				auto const previousState = item.State();
+				auto nextState =
+					winrt::OpenNet::ViewModels::DownloadTaskState::Pending;
+				switch (status)
+				{
+					case ::OpenNet::Core::Aria2::DownloadStatus::Active:
+					case ::OpenNet::Core::Aria2::DownloadStatus::Waiting:
+						nextState =
+							winrt::OpenNet::ViewModels::DownloadTaskState::Downloading;
+						break;
+					case ::OpenNet::Core::Aria2::DownloadStatus::Paused:
+						nextState =
+							winrt::OpenNet::ViewModels::DownloadTaskState::Paused;
+						break;
+					case ::OpenNet::Core::Aria2::DownloadStatus::Complete:
+						nextState =
+							winrt::OpenNet::ViewModels::DownloadTaskState::Completed;
+						break;
+					case ::OpenNet::Core::Aria2::DownloadStatus::Error:
+					case ::OpenNet::Core::Aria2::DownloadStatus::Removed:
+						nextState =
+							winrt::OpenNet::ViewModels::DownloadTaskState::Failed;
+						break;
+					default:
+						break;
+				}
+				item.State(nextState);
 				item.Progress(to_hstring_percent(percent));
 				item.DownloadRate(FormatByteRate(dlSpeed));
 				item.UploadRate(FormatByteRate(ulSpeed));
@@ -782,7 +902,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 				}
 				// Only RebuildFiltered when a brand-new item was created so it
 				// appears in the filtered list. Subsequent ticks skip this.
-				if (isNewItem) self->RebuildFiltered();
+				if (isNewItem || previousState != nextState)
+					self->RebuildFiltered();
 			}
 		});
 	}
@@ -800,7 +921,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				auto item = self->FindOrCreateHttpItem(hgid, hname);
 				if (!item) return; // GID was deleted
+				item.State(winrt::OpenNet::ViewModels::DownloadTaskState::Completed);
 				item.Progress(L"100%");
+				item.ProgressPercent(100.0);
 				item.DownloadRate(L"0 KB/s");
 				item.UploadRate(L"0 KB/s");
 				item.Remaining(L"0");
@@ -822,6 +945,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				auto item = self->FindOrCreateHttpItem(hgid, L"");
 				if (!item) return; // GID was deleted
+				item.State(winrt::OpenNet::ViewModels::DownloadTaskState::Failed);
 				item.DownloadRate(L"Error");
 				self->RebuildFiltered();
 			}
@@ -871,6 +995,18 @@ namespace winrt::OpenNet::ViewModels::implementation
 			std::vector<winrt::OpenNet::ViewModels::TaskViewModel> desired;
 			for (auto const& item : tasks)
 			{
+				auto const state = item.State();
+				bool const completed =
+					item.ProgressPercent() >= 100.0
+					|| state
+					== winrt::OpenNet::ViewModels::DownloadTaskState::Completed
+					|| state
+					== winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
+				bool const active =
+					state
+					== winrt::OpenNet::ViewModels::DownloadTaskState::Downloading
+					|| state
+					== winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
 				bool include = false;
 				if (tag == L"AllTasks")
 				{
@@ -878,15 +1014,31 @@ namespace winrt::OpenNet::ViewModels::implementation
 				}
 				else if (tag == L"Downloading")
 				{
-					include = (item.Progress() != L"100%");
+					include =
+						state
+						== winrt::OpenNet::ViewModels::DownloadTaskState::Downloading;
+				}
+				else if (tag == L"Seeding")
+				{
+					include =
+						state
+						== winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
 				}
 				else if (tag == L"Completed")
 				{
-					include = (item.Progress() == L"100%");
+					include = completed;
 				}
-				else if (tag == L"Failed")
+				else if (tag == L"Uncompleted")
 				{
-					include = (item.Progress() != L"100%" && item.DownloadRate() == L"0 KB/s");
+					include = !completed;
+				}
+				else if (tag == L"Active")
+				{
+					include = active;
+				}
+				else if (tag == L"Inactive")
+				{
+					include = !active;
 				}
 				else
 				{

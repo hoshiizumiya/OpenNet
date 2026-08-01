@@ -9,9 +9,12 @@ import OpenNet.ViewModels.ObservableMixin;
 // the compiler will fail with errors such as "symbol must be a type" or "variable cannot have type void".
 #include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Pages/TaskSummaryPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskSpeedGraphPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskPieceMapPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
+#include "UI/Xaml/Control/TaskStatusIndicator.xaml.h"
 #include "UI/Xaml/View/Pages/TasksPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 
@@ -78,10 +81,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Context menu item handlers
 		void TasksColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void TasksColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void OnSortTaskNameButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void OnSortTaskNameButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void OnSortTaskSizeButtonPointerEntered(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void OnSortTaskSizeButtonPointerExited(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void TasksColumnMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksColumnMenuFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksContextMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);

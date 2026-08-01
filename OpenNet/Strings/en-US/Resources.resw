@@ -222,6 +222,54 @@
   <data name="Task_PeersList.Text" xml:space="preserve">
     <value>PeersList</value>
   </data>
+  <data name="Protocol_IPv4First" xml:space="preserve">
+    <value>IPv4 First</value>
+  </data>
+  <data name="Protocol_IPv6First" xml:space="preserve">
+    <value>IPv6 First</value>
+  </data>
+  <data name="Protocol_IPv4Only" xml:space="preserve">
+    <value>IPv4 Only</value>
+  </data>
+  <data name="Protocol_IPv6Only" xml:space="preserve">
+    <value>IPv6 Only</value>
+  </data>
+  <data name="Protocol_Auto" xml:space="preserve">
+    <value>Auto Select</value>
+  </data>
+  <data name="ConnProtocol_Auto" xml:space="preserve">
+    <value>Auto Select</value>
+  </data>
+  <data name="ConnProtocol_TCP" xml:space="preserve">
+    <value>TCP Protocol</value>
+  </data>
+  <data name="ConnProtocol_UDP" xml:space="preserve">
+    <value>UDP Protocol</value>
+  </data>
+  <data name="ConnProtocol_UTP" xml:space="preserve">
+    <value>uTP Protocol</value>
+  </data>
+  <data name="ConnProtocol_BitTorrent" xml:space="preserve">
+    <value>BitTorrent Protocol</value>
+  </data>
+  <data name="ConnProtocol_DHT" xml:space="preserve">
+    <value>DHT Network</value>
+  </data>
+  <data name="ConnProtocol_WebRTC" xml:space="preserve">
+    <value>WebRTC Protocol</value>
+  </data>
+  <data name="ConnProtocol_HTTP" xml:space="preserve">
+    <value>HTTP Protocol</value>
+  </data>
+  <data name="Enc_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="Enc_Basic" xml:space="preserve">
+    <value>Basic</value>
+  </data>
+  <data name="Enc_Strong" xml:space="preserve">
+    <value>Strong</value>
+  </data>
   <data name="General.Text" xml:space="preserve">
     <value>General</value>
   </data>
@@ -248,12 +296,6 @@
   </data>
   <data name="DfSettingsl.Header" xml:space="preserve">
     <value>Download Flash Settings</value>
-  </data>
-  <data name="Aboutl.Text" xml:space="preserve">
-    <value>About</value>
-  </data>
-  <data name="AbputTl.Text" xml:space="preserve">
-    <value>About</value>
   </data>
   <data name="SoftBackgroundColors.Header" xml:space="preserve">
     <value>Colors</value>
@@ -288,8 +330,20 @@
   <data name="FilterNavViewDownloading.Content" xml:space="preserve">
     <value>Downloading</value>
   </data>
+  <data name="FilterNavViewSeeding.Content" xml:space="preserve">
+    <value>Seeding</value>
+  </data>
   <data name="FilterNavViewCompleted.Content" xml:space="preserve">
     <value>Completed</value>
+  </data>
+  <data name="FilterNavViewUncompleted.Content" xml:space="preserve">
+    <value>Uncompleted</value>
+  </data>
+  <data name="FilterNavViewActive.Content" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="FilterNavViewInactive.Content" xml:space="preserve">
+    <value>Inactive</value>
   </data>
   <data name="FilterNavViewFailed.Content" xml:space="preserve">
     <value>Failed</value>
@@ -1011,11 +1065,20 @@
   <data name="BanPeerPermanentItem.Text" xml:space="preserve">
     <value>Ban permanently</value>
   </data>
+  <data name="UnbanPeerItem.Text" xml:space="preserve">
+    <value>Remove manual IP ban</value>
+  </data>
   <data name="PeerHeader_Location.Text" xml:space="preserve">
     <value>Location</value>
   </data>
   <data name="PeerHeader_PeerStatus.Text" xml:space="preserve">
     <value>Status</value>
+  </data>
+  <data name="PeerHeader_Reason.Text" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>Reason</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
     <value>Protocol</value>
@@ -1025,6 +1088,27 @@
   </data>
   <data name="PeerHeader_Source.Text" xml:space="preserve">
     <value>Source</value>
+  </data>
+  <data name="PeerReason_Manual" xml:space="preserve">
+    <value>User manual ban</value>
+  </data>
+  <data name="PeerReason_Permanent" xml:space="preserve">
+    <value>Permanent</value>
+  </data>
+  <data name="PeerReason_Remaining" xml:space="preserve">
+    <value>Remaining</value>
+  </data>
+  <data name="PeerReason_ListMatch" xml:space="preserve">
+    <value>IP list source match</value>
+  </data>
+  <data name="PeerReason_ClientListMatch" xml:space="preserve">
+    <value>Anti-leech client list match</value>
+  </data>
+  <data name="PeerReason_AntiLeech" xml:space="preserve">
+    <value>Anti-leech ban</value>
+  </data>
+  <data name="PeerReason_IPFilter" xml:space="preserve">
+    <value>IP filter match</value>
   </data>
   <data name="NavItem_NatTools.Content" xml:space="preserve">
     <value>NAT Tools</value>
@@ -1328,5 +1412,53 @@
   </data>
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>Maintained by Crowdin community members</value>
+  </data>
+  <data name="RuntimeStatusWindow.Title" xml:space="preserve">
+    <value>OpenNet Runtime Status</value>
+  </data>
+  <data name="RuntimeStatusTitleBar.Title" xml:space="preserve">
+    <value>OpenNet Runtime Status</value>
+  </data>
+  <data name="RuntimeStatusRefreshButton.Label" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="RuntimeStatusCopyButton.Label" xml:space="preserve">
+    <value>Copy all</value>
+  </data>
+  <data name="RuntimeStatusItemColumn.Text" xml:space="preserve">
+    <value>Status item</value>
+  </data>
+  <data name="RuntimeStatusValueColumn.Text" xml:space="preserve">
+    <value>Current value</value>
+  </data>
+  <data name="RuntimeStatusLastUpdated.Text" xml:space="preserve">
+    <value>Waiting for first refresh</value>
+  </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>Not sorted. Activate to sort ascending.</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>Sorted ascending. Activate to sort descending.</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>Sorted descending. Activate to clear sorting.</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>Seeding</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>Failed</value>
   </data>
 </root>

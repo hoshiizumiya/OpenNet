@@ -100,6 +100,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		GraphBrushData m_staticBrush{ nullptr };
 		std::uint64_t m_drawFrame{};
 		float m_phase{};
+		double m_dynamicSampleElapsed{};
+		double m_dynamicStatusElapsed{};
+		std::atomic<double> m_dynamicScrollPixelsPerSecond{ 60.0 };
 	};
 }
 

@@ -31,6 +31,24 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_ip, v, L"IP");
 		}
 
+		winrt::hstring Address() const
+		{
+			return m_address;
+		}
+		void Address(winrt::hstring const& v)
+		{
+			SetProperty(m_address, v, L"Address");
+		}
+
+		std::int32_t Port() const
+		{
+			return m_port;
+		}
+		void Port(std::int32_t v)
+		{
+			SetProperty(m_port, v, L"Port");
+		}
+
 		winrt::hstring Client() const
 		{
 			return m_client;
@@ -83,6 +101,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void PeerStatus(winrt::hstring const& v)
 		{
 			SetProperty(m_peerStatus, v, L"PeerStatus");
+		}
+
+		winrt::hstring Reason() const
+		{
+			return m_reason;
+		}
+		void Reason(winrt::hstring const& v)
+		{
+			SetProperty(m_reason, v, L"Reason");
 		}
 
 		winrt::hstring Location() const
@@ -174,12 +201,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	private:
 		winrt::hstring m_ip;
+		winrt::hstring m_address;
+		std::int32_t m_port{};
 		winrt::hstring m_client;
 		winrt::hstring m_progress;
 		winrt::hstring m_dlSpeed;
 		winrt::hstring m_ulSpeed;
 		winrt::hstring m_downloaded;
 		winrt::hstring m_peerStatus;
+		winrt::hstring m_reason;
 		winrt::hstring m_location;
 		winrt::hstring m_countryCode;
 		winrt::hstring m_flagSvg;

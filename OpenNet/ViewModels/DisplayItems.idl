@@ -7,12 +7,15 @@
     {
         PeerDisplayItem();
         String IP;
+        String Address;
+        Int32 Port;
         String Client;
         String Progress;
         String DLSpeed;
         String ULSpeed;
         String Downloaded;
         String PeerStatus;
+        String Reason;
         String Location;
         String CountryCode;
         String FlagSvg;

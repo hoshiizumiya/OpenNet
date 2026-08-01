@@ -1,21 +1,515 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.TaskSummaryPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
+    NavigationCacheMode="Required"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Style x:Key="SectionCardStyle" TargetType="Border">
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+        </Style>
+        <Style x:Key="MetricCaptionStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style x:Key="MetricValueStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+    </Page.Resources>
 
-    <!--  下载进度图 / Download Progress Graph  -->
-    <Grid Padding="8">
-        <speedgraph:SpeedGraph
-            x:Name="TaskSpeedGraph"
-            HorizontalAlignment="Stretch"
-            VerticalAlignment="Stretch"
-            SizeChanged="TaskSpeedGraph_SizeChanged" />
-    </Grid>
+    <ScrollViewer HorizontalScrollMode="Disabled">
+        <StackPanel Padding="12" Spacing="10">
+            <Border Style="{StaticResource SectionCardStyle}">
+                <Grid RowSpacing="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Grid ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock
+                                x:Name="TaskNameText"
+                                FontSize="18"
+                                FontWeight="SemiBold"
+                                Text="No task selected"
+                                TextTrimming="CharacterEllipsis" />
+                            <TextBlock
+                                x:Name="TaskPathText"
+                                Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                Text="—"
+                                TextTrimming="CharacterEllipsis" />
+                        </StackPanel>
+                        <Border
+                            Grid.Column="1"
+                            Padding="10,4"
+                            Background="{ThemeResource AccentFillColorSecondaryBrush}"
+                            CornerRadius="12">
+                            <TextBlock
+                                x:Name="TaskStatusText"
+                                FontWeight="SemiBold"
+                                Text="Idle" />
+                        </Border>
+                    </Grid>
+                    <Grid Grid.Row="1" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <ProgressBar
+                            x:Name="TaskProgress"
+                            Height="8"
+                            VerticalAlignment="Center"
+                            Maximum="100" />
+                        <TextBlock
+                            x:Name="TaskProgressText"
+                            Grid.Column="1"
+                            FontWeight="SemiBold"
+                            Text="0%" />
+                    </Grid>
+                    <Grid Grid.Row="2" ColumnSpacing="16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="3">
+                            <Grid>
+                                <TextBlock Text="Downloaded pieces" />
+                                <TextBlock
+                                    x:Name="DownloadedPiecesText"
+                                    HorizontalAlignment="Right"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="0 / 0" />
+                            </Grid>
+                            <ProgressBar
+                                x:Name="DownloadedPiecesProgress"
+                                Height="5"
+                                Maximum="100" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="3">
+                            <Grid>
+                                <TextBlock Text="Available pieces" />
+                                <TextBlock
+                                    x:Name="AvailablePiecesText"
+                                    HorizontalAlignment="Right"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="0 / 0" />
+                            </Grid>
+                            <ProgressBar
+                                x:Name="AvailablePiecesProgress"
+                                Height="5"
+                                Maximum="100" />
+                        </StackPanel>
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <Border Style="{StaticResource SectionCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock FontWeight="SemiBold" Text="Transfer" />
+                    <Grid ColumnSpacing="18" RowSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Time elapsed" />
+                            <TextBlock
+                                x:Name="TimeElapsedText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Downloaded" />
+                            <TextBlock
+                                x:Name="DownloadedText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Download speed" />
+                            <TextBlock
+                                x:Name="DownloadSpeedText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Download limit" />
+                            <TextBlock
+                                x:Name="DownloadLimitText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Seeding time" />
+                            <TextBlock
+                                x:Name="SeedingTimeText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="1">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Uploaded" />
+                            <TextBlock
+                                x:Name="UploadedText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="2">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload speed" />
+                            <TextBlock
+                                x:Name="UploadSpeedText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Row="1" Grid.Column="3">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload limit" />
+                            <TextBlock
+                                x:Name="UploadLimitText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                    </Grid>
+                    <Grid ColumnSpacing="18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Seeds" />
+                            <TextBlock
+                                x:Name="SeedsText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Peers" />
+                            <TextBlock
+                                x:Name="PeersText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Connections" />
+                            <TextBlock
+                                x:Name="ConnectionsText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="3">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Share ratio" />
+                            <TextBlock
+                                x:Name="ShareRatioText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SectionCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock FontWeight="SemiBold" Text="Long-Term Seeding" />
+                    <Grid ColumnSpacing="18">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload size" />
+                            <TextBlock
+                                x:Name="LongTermUploadSizeText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload speed" />
+                            <TextBlock
+                                x:Name="LongTermUploadSpeedText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Share ratio" />
+                            <TextBlock
+                                x:Name="LongTermShareRatioText"
+                                Style="{StaticResource MetricValueStyle}"
+                                Text="—" />
+                        </StackPanel>
+                    </Grid>
+                </StackPanel>
+            </Border>
+
+            <Border Style="{StaticResource SectionCardStyle}">
+                <StackPanel Spacing="8">
+                    <TextBlock FontWeight="SemiBold" Text="General" />
+                    <Grid ColumnSpacing="24" RowSpacing="7">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Spacing="7">
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Task name" />
+                                <TextBlock
+                                    x:Name="GeneralTaskNameText"
+                                    Grid.Column="1"
+                                    Text="—"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Save path" />
+                                <TextBlock
+                                    x:Name="SavePathText"
+                                    Grid.Column="1"
+                                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                                    Text="—"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Task size" />
+                                <TextBlock
+                                    x:Name="TaskSizeText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Info hash v1" />
+                                <TextBlock
+                                    x:Name="InfoHashV1Text"
+                                    Grid.Column="1"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Text="N/A"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Info hash v2" />
+                                <TextBlock
+                                    x:Name="InfoHashV2Text"
+                                    Grid.Column="1"
+                                    FontFamily="Consolas"
+                                    FontSize="12"
+                                    Text="N/A"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Piece hashes" />
+                                <TextBlock
+                                    x:Name="PieceHashesText"
+                                    Grid.Column="1"
+                                    Text="N/A" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Added on" />
+                                <TextBlock
+                                    x:Name="AddedOnText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Finished on" />
+                                <TextBlock
+                                    x:Name="FinishedOnText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="110" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Publisher" />
+                                <TextBlock
+                                    x:Name="PublisherText"
+                                    Grid.Column="1"
+                                    Text="N/A"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Spacing="7">
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Tags" />
+                                <TextBlock
+                                    x:Name="TagsText"
+                                    Grid.Column="1"
+                                    Text="None"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Remaining size" />
+                                <TextBlock
+                                    x:Name="RemainingSizeText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Pieces" />
+                                <TextBlock
+                                    x:Name="PiecesText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Number of files" />
+                                <TextBlock
+                                    x:Name="NumberOfFilesText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="File alignment" />
+                                <TextBlock
+                                    x:Name="FileAlignmentText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Queue position" />
+                                <TextBlock
+                                    x:Name="QueuePositionText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Created by" />
+                                <TextBlock
+                                    x:Name="CreatedByText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Created on" />
+                                <TextBlock
+                                    x:Name="CreatedOnText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Private torrent" />
+                                <TextBlock
+                                    x:Name="PrivateTorrentText"
+                                    Grid.Column="1"
+                                    Text="—" />
+                            </Grid>
+                            <Grid ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Flags" />
+                                <TextBlock
+                                    x:Name="TaskFlagsText"
+                                    Grid.Column="1"
+                                    Text="—"
+                                    TextWrapping="Wrap" />
+                            </Grid>
+                        </StackPanel>
+                    </Grid>
+                    <Grid ColumnSpacing="8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="110" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Description" />
+                        <TextBlock
+                            x:Name="DescriptionText"
+                            Grid.Column="1"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="—"
+                            TextWrapping="Wrap" />
+                    </Grid>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
 </Page>

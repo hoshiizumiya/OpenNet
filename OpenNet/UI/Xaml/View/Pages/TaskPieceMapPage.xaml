@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Page
+    x:Class="OpenNet.UI.Xaml.View.Pages.TaskPieceMapPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Padding="12" RowSpacing="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="2">
+                <TextBlock
+                    FontSize="18"
+                    FontWeight="SemiBold"
+                    Text="Piece map" />
+                <TextBlock
+                    x:Name="PieceMapSubtitle"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Select a BitTorrent task to inspect its pieces." />
+            </StackPanel>
+            <Button
+                Grid.Column="1"
+                Click="RefreshButton_Click"
+                Content="Refresh"
+                Style="{StaticResource SubtleButtonStyle}" />
+        </Grid>
+
+        <Grid Grid.Row="1" ColumnSpacing="12">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <StackPanel Spacing="4">
+                <Grid>
+                    <TextBlock Text="Downloaded pieces" />
+                    <TextBlock
+                        x:Name="DownloadedPiecesText"
+                        HorizontalAlignment="Right"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="0 / 0" />
+                </Grid>
+                <ProgressBar
+                    x:Name="DownloadedPiecesProgress"
+                    Maximum="100"
+                    Minimum="0"
+                    Value="0" />
+            </StackPanel>
+            <StackPanel Grid.Column="1" Spacing="4">
+                <Grid>
+                    <TextBlock Text="Available pieces" />
+                    <TextBlock
+                        x:Name="AvailablePiecesText"
+                        HorizontalAlignment="Right"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        Text="0 / 0" />
+                </Grid>
+                <ProgressBar
+                    x:Name="AvailablePiecesProgress"
+                    Maximum="100"
+                    Minimum="0"
+                    Value="0" />
+            </StackPanel>
+            <StackPanel
+                Grid.Column="2"
+                MinWidth="150"
+                VerticalAlignment="Bottom">
+                <TextBlock
+                    x:Name="PieceSizeText"
+                    HorizontalAlignment="Right"
+                    Text="Piece size: —" />
+                <TextBlock
+                    x:Name="WebSeedCountText"
+                    HorizontalAlignment="Right"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Web seeds: 0" />
+            </StackPanel>
+        </Grid>
+
+        <Border
+            Grid.Row="2"
+            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="8">
+            <GridView
+                x:Name="PieceGrid"
+                Padding="8"
+                IsItemClickEnabled="False"
+                SelectionMode="None">
+                <GridView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal" />
+                    </ItemsPanelTemplate>
+                </GridView.ItemsPanel>
+            </GridView>
+        </Border>
+
+        <StackPanel
+            Grid.Row="3"
+            HorizontalAlignment="Left"
+            Orientation="Horizontal"
+            Spacing="18">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Border
+                    Width="14"
+                    Height="14"
+                    Background="{ThemeResource ControlFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="2" />
+                <TextBlock Text="Empty" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Border
+                    Width="14"
+                    Height="14"
+                    Background="#D72F9A"
+                    CornerRadius="2" />
+                <TextBlock Text="Downloading" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Border
+                    Width="14"
+                    Height="14"
+                    Background="#1683D8"
+                    CornerRadius="2" />
+                <TextBlock Text="Finished" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Border
+                    Width="14"
+                    Height="14"
+                    Background="#696969"
+                    CornerRadius="2">
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        FontSize="11"
+                        Text="×" />
+                </Border>
+                <TextBlock Text="Disabled" />
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+                <Border
+                    Width="14"
+                    Height="14"
+                    Background="#F2C811"
+                    CornerRadius="2" />
+                <TextBlock Text="Unchecked" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</Page>

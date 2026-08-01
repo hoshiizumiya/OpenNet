@@ -78,7 +78,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		// usable from the moment the window opens.
 		m_metadataViewModel =
 			winrt::make<winrt::OpenNet::ViewModels::implementation::
-				TorrentMetadataViewModel>();
+			TorrentMetadataViewModel>();
 		m_metadataViewModel.MetadataState(L"Loading");
 		m_metadataViewModel.MetadataStatus(L"Connecting to peers...");
 		m_metadataViewModel.TorrentName(L"Magnet download");
@@ -298,7 +298,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			const std::wstring_view& defaultPath =
 				winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW()
-					.GetResults();
+				.GetResults();
 			if (!defaultPath.empty())
 			{
 				m_metadataViewModel.SavePath(defaultPath);
@@ -580,7 +580,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			{
 				frame.Navigate(
 					winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::
-						TorrentCheckGeneralPage>(),
+					TorrentCheckGeneralPage>(),
 					m_metadataViewModel);
 			}
 		}

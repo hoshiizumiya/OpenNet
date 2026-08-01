@@ -1,0 +1,11 @@
+import "ViewModels/TaskSpeedGraphSettingsViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages
+{
+    [default_interface]
+    runtimeclass TaskSpeedGraphPage : Microsoft.UI.Xaml.Controls.Page
+    {
+        TaskSpeedGraphPage();
+        OpenNet.ViewModels.TaskSpeedGraphSettingsViewModel Settings { get; };
+    }
+}

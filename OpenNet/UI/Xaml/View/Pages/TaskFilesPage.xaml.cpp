@@ -10,6 +10,7 @@ import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -52,6 +53,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TaskFilesPageT::InitializeComponent();
 		FilesListView().ItemsSource(m_fileItems);
+		UpdateSortHeaders();
 		Loaded([this](auto, auto)
 		{
 			using namespace ::OpenNet::Helpers;
@@ -173,21 +175,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		auto update = [this](auto const& button)
 		{
-			auto label = button.Content().try_as<
-				winrt::Microsoft::UI::Xaml::Controls::TextBlock>();
-			if (!label) return;
-			std::wstring text{ label.Text() };
-			if (text.size() >= 2 && text[text.size() - 2] == L' ' &&
-				(text.back() == L'\u2191' || text.back() == L'\u2193'))
-			{
-				text.resize(text.size() - 2);
-			}
-			if (m_sortColumn == winrt::unbox_value<winrt::hstring>(button.Tag()))
-			{
-				if (m_sortDirection == 1) text += L" \u2191";
-				else if (m_sortDirection == 2) text += L" \u2193";
-			}
-			label.Text(text);
+			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
+				button, m_sortColumn, m_sortDirection);
 		};
 		update(SortFileNameButton());
 		update(SortFileSizeButton());
@@ -379,23 +368,29 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			auto const& file = detail.files[index];
 			winrt::OpenNet::ViewModels::FileDisplayItem item{ nullptr };
-			if (index < m_fileItems.Size())
+			std::uint32_t existingIndex = index;
+			while (existingIndex < m_fileItems.Size())
 			{
-				item = m_fileItems.GetAt(index)
+				auto candidate = m_fileItems.GetAt(existingIndex)
 					.try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
-				if (item && item.FileIndex() != file.fileIndex)
+				if (candidate && candidate.FileIndex() == file.fileIndex)
 				{
-					item = nullptr;
+					item = candidate;
+					break;
 				}
+				++existingIndex;
 			}
-			if (!item)
+
+			if (item && existingIndex != index)
+			{
+				m_fileItems.RemoveAt(existingIndex);
+				m_fileItems.InsertAt(index, item);
+			}
+			else if (!item)
 			{
 				item = winrt::make<
 					winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
-				if (index < m_fileItems.Size())
-					m_fileItems.SetAt(index, item);
-				else
-					m_fileItems.Append(item);
+				m_fileItems.InsertAt(index, item);
 			}
 			item.Path(winrt::to_hstring(file.path));
 			item.Size(::Core::Utils::Misc::friendlyUnit(file.size));

@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<UserControl
+    x:Class="OpenNet.UI.Xaml.Control.TaskStatusIndicator"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="28"
+    Height="28"
+    IsTabStop="False"
+    mc:Ignorable="d">
+
+    <Grid
+        x:Name="StatusSurface"
+        Width="24"
+        Height="24"
+        HorizontalAlignment="Center"
+        VerticalAlignment="Center">
+        <ProgressRing
+            x:Name="ActivityRing"
+            Width="22"
+            Height="22"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsActive="False"
+            IsIndeterminate="True"
+            Visibility="Collapsed" />
+        <FontIcon
+            x:Name="StatusGlyph"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="10" />
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="TaskStates">
+                <VisualState x:Name="Pending">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Visible" />
+                        <Setter Target="ActivityRing.IsActive" Value="True" />
+                        <Setter Target="ActivityRing.Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xE823;" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Downloading">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Visible" />
+                        <Setter Target="ActivityRing.IsActive" Value="True" />
+                        <Setter Target="ActivityRing.Foreground" Value="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource AccentTextFillColorPrimaryBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xE896;" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Seeding">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Visible" />
+                        <Setter Target="ActivityRing.IsActive" Value="True" />
+                        <Setter Target="ActivityRing.Foreground" Value="{ThemeResource SystemFillColorSuccessBrush}" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource SystemFillColorSuccessBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xE898;" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Paused">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Collapsed" />
+                        <Setter Target="ActivityRing.IsActive" Value="False" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xE769;" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Completed">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Collapsed" />
+                        <Setter Target="ActivityRing.IsActive" Value="False" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource SystemFillColorSuccessBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xE73E;" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Failed">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Collapsed" />
+                        <Setter Target="ActivityRing.IsActive" Value="False" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xEA39;" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</UserControl>

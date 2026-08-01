@@ -108,7 +108,7 @@
                             <labs:DataRow>
                                 <TextBlock
                                     VerticalAlignment="Center"
-                                    FontWeight="SemiBold"
+                                    FontWeight="Normal"
                                     Text="{x:Bind Name, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
                                     ToolTipService.ToolTip="{x:Bind Name}" />

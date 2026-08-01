@@ -2,51 +2,63 @@
 
 namespace OpenNet.ViewModels
 {
-	// Download source type
-	enum DownloadTaskType
-	{
-		BitTorrent = 0,
-		Http = 1,
-	};
+    // Download source type
+    enum DownloadTaskType
+    {
+        BitTorrent = 0,
+        Http = 1,
+    };
 
-	[default_interface]
-	runtimeclass TaskViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-	{
-		// Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
-		TaskViewModel();
+    enum DownloadTaskState
+    {
+        Pending = 0,
+        Downloading = 1,
+        Seeding = 2,
+        Paused = 3,
+        Completed = 4,
+        Failed = 5,
+    };
 
-	// Item properties used by TasksPage ListView DataTemplate
-		String Name;
-		String Size;
-		String Progress;
-		String DownloadSize;
-		String UploadSize;
-		String TotalDownloadSize;
-		String TotalUploadSize;
-		String DownloadRate;
-		String UploadRate;
-		String Remaining;
-		String AddDate;
+    [default_interface]
+    runtimeclass TaskViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        // Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
+        TaskViewModel();
 
-		// Download task type (BitTorrent or Http)
-		DownloadTaskType TaskType;
+    // Item properties used by TasksPage ListView DataTemplate
+        String Name;
+        String Size;
+        String Progress;
+        String DownloadSize;
+        String UploadSize;
+        String TotalDownloadSize;
+        String TotalUploadSize;
+        String DownloadRate;
+        String UploadRate;
+        String Remaining;
+        String AddDate;
 
-		// Task identifier — libtorrent taskId or HTTP recordId
-		String TaskId;
+        // Download task type (BitTorrent or Http)
+        DownloadTaskType TaskType;
+        DownloadTaskState State;
+        Int32 StateValue { get; };
 
-		// Aria2 GID (only for HTTP tasks)
-		String Gid;
+        // Task identifier — libtorrent taskId or HTTP recordId
+        String TaskId;
 
-		// Download speed in KB/s (numeric value for SpeedGraph)
-		UInt64 DownloadSpeedKB;
+        // Aria2 GID (only for HTTP tasks)
+        String Gid;
 
-		// Progress percent as numeric value (0-100) for SpeedGraph
-		Double ProgressPercent;
+        // Download speed in KB/s (numeric value for SpeedGraph)
+        UInt64 DownloadSpeedKB;
 
-		// PointCollection for the speed graph visualization
-		Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };
+        // Progress percent as numeric value (0-100) for SpeedGraph
+        Double ProgressPercent;
 
-		// Call to update speed graph with new data point
-		void UpdateSpeedGraph(Double percent, UInt64 speedKB);
-	};
+        // PointCollection for the speed graph visualization
+        Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };
+
+        // Call to update speed graph with new data point
+        void UpdateSpeedGraph(Double percent, UInt64 speedKB);
+    };
 }

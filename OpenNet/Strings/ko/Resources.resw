@@ -135,4 +135,31 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>Crowdin 커뮤니티 구성원이 관리합니다.</value>
   </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>정렬되지 않음. 오름차순으로 정렬하려면 선택하세요.</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>오름차순 정렬. 내림차순으로 정렬하려면 선택하세요.</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>내림차순 정렬. 정렬을 해제하려면 선택하세요.</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>대기 중</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>다운로드 중</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>배포 중</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>일시 중지됨</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>완료됨</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>실패</value>
+  </data>
 </root>

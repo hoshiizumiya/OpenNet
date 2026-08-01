@@ -1,11 +1,58 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <UserControl
     x:Class="OpenNet.UI.Xaml.View.InfoBarView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:control="using:OpenNet.UI.Xaml.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:notification="using:OpenNet.Service.Notification"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/InfoBarOverride.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <DataTemplate
+                x:Key="InfoBarTemplate"
+                x:DataType="notification:InfoBarOptions">
+                <InfoBar
+                    Title="{x:Bind Title, Mode=OneTime}"
+                    control:InfoBarHelper.IsTextSelectionEnabled="{x:Bind IsTextSelectionEnabled, Mode=OneTime}"
+                    Closed="OnInfoBarClosed"
+                    Content="{x:Bind Content, Mode=OneTime}"
+                    IsOpen="True"
+                    Message="{x:Bind Message, Mode=OneTime}"
+                    Severity="{x:Bind Severity, Mode=OneTime}" />
+            </DataTemplate>
+
+            <DataTemplate
+                x:Key="InfoBarWithActionButtonTemplate"
+                x:DataType="notification:InfoBarOptions">
+                <InfoBar
+                    Title="{x:Bind Title, Mode=OneTime}"
+                    control:InfoBarHelper.IsTextSelectionEnabled="{x:Bind IsTextSelectionEnabled, Mode=OneTime}"
+                    Closed="OnInfoBarClosed"
+                    Content="{x:Bind Content, Mode=OneTime}"
+                    IsOpen="True"
+                    Message="{x:Bind Message, Mode=OneTime}"
+                    Severity="{x:Bind Severity, Mode=OneTime}">
+                    <InfoBar.ActionButton>
+                        <Button
+                            Command="{x:Bind ActionButtonCommand, Mode=OneTime}"
+                            Content="{x:Bind ActionButtonContent, Mode=OneTime}" />
+                    </InfoBar.ActionButton>
+                </InfoBar>
+            </DataTemplate>
+
+            <control:InfoBarTemplateSelector
+                x:Key="InfoBarTemplateSelector"
+                ActionButtonDisabled="{StaticResource InfoBarTemplate}"
+                ActionButtonEnabled="{StaticResource InfoBarWithActionButtonTemplate}" />
+        </ResourceDictionary>
+    </UserControl.Resources>
 
     <Grid
         x:Name="VisibilityRoot"
@@ -16,11 +63,20 @@
         <Border
             x:Name="ShowButtonBorder"
             Background="{ThemeResource SystemControlAcrylicElementBrush}"
+            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+            BorderThickness="1"
             CornerRadius="{ThemeResource ControlCornerRadius}"
             Visibility="Collapsed">
-            <Button x:Uid="InfoBarShowButton" Click="OnShowButtonClick">
+            <Button
+                x:Uid="InfoBarShowButton"
+                Click="OnShowButtonClick"
+                Style="{StaticResource SubtleButtonStyle}">
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBlock x:Uid="InfoBarShowButtonText" Text="Notifications" />
+                    <FontIcon FontSize="16" Glyph="&#xEA8F;" />
+                    <TextBlock
+                        x:Uid="InfoBarShowButtonText"
+                        VerticalAlignment="Center"
+                        Text="Notifications" />
                     <InfoBadge
                         x:Name="NotificationCountBadge"
                         Style="{ThemeResource CriticalValueInfoBadgeStyle}"
@@ -31,16 +87,20 @@
 
         <Border
             x:Name="InfoBarItemsBorder"
-            Width="440"
-            MaxHeight="520"
+            Width="460"
+            MaxHeight="560"
             Padding="12"
             Background="{ThemeResource SystemControlAcrylicElementBrush}"
-            CornerRadius="{ThemeResource OverlayCornerRadius}">
+            BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
+            BorderThickness="1"
+            CornerRadius="{ThemeResource OverlayCornerRadius}"
+            Visibility="Collapsed">
             <Grid RowSpacing="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
+
                 <Grid ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
@@ -54,30 +114,42 @@
                     <StackPanel
                         Grid.Column="1"
                         Orientation="Horizontal"
-                        Spacing="6">
+                        Spacing="4">
                         <Button
                             x:Uid="InfoBarClearAllButton"
                             Click="OnClearAllButtonClick"
-                            Content="Clear all" />
+                            Style="{StaticResource SubtleButtonStyle}"
+                            ToolTipService.ToolTip="Clear all">
+                            <FontIcon FontSize="14" Glyph="&#xE74D;" />
+                        </Button>
                         <Button
                             x:Uid="InfoBarCollapseButton"
                             Click="OnCollapseButtonClick"
-                            Content="Collapse" />
+                            Style="{StaticResource SubtleButtonStyle}"
+                            ToolTipService.ToolTip="Collapse">
+                            <FontIcon FontSize="14" Glyph="&#xE70E;" />
+                        </Button>
                     </StackPanel>
                 </Grid>
-                <ScrollViewer
-                    Grid.Row="1"
-                    HorizontalScrollBarVisibility="Disabled"
-                    VerticalScrollBarVisibility="Auto">
-                    <StackPanel x:Name="InfoBarItemsPanel" Spacing="8">
-                        <StackPanel.ChildrenTransitions>
+
+                <ScrollView Grid.Row="1">
+                    <ItemsControl
+                        x:Name="InfoBarItemsControl"
+                        ItemTemplateSelector="{StaticResource InfoBarTemplateSelector}"
+                        ItemsSource="{x:Bind InfoBars, Mode=OneWay}">
+                        <ItemsControl.ItemContainerTransitions>
                             <TransitionCollection>
                                 <AddDeleteThemeTransition />
                                 <RepositionThemeTransition />
                             </TransitionCollection>
-                        </StackPanel.ChildrenTransitions>
-                    </StackPanel>
-                </ScrollViewer>
+                        </ItemsControl.ItemContainerTransitions>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="8" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollView>
             </Grid>
         </Border>
     </Grid>

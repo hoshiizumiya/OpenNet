@@ -28,6 +28,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			std::wstring title;
 			std::vector<StatusRow> rows;
+			bool initiallyExpanded{ true };
 		};
 
 		void RefreshReport();
@@ -44,6 +45,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		std::uint64_t m_previousKernelTime{};
 		std::uint64_t m_previousUserTime{};
 		std::uint64_t m_previousWallTime{};
+		std::uint64_t m_previousMetricWallTime{};
+		std::unordered_map<std::string, std::int64_t> m_previousMetrics;
 	};
 }
 

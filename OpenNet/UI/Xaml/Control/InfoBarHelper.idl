@@ -1,0 +1,12 @@
+﻿namespace OpenNet.UI.Xaml.Control
+{
+    [bindable]
+    [default_interface]
+    runtimeclass InfoBarHelper : Microsoft.UI.Xaml.DependencyObject
+    {
+        InfoBarHelper();
+        static Microsoft.UI.Xaml.DependencyProperty IsTextSelectionEnabledProperty{ get; };
+        static Boolean GetIsTextSelectionEnabled(Microsoft.UI.Xaml.DependencyObject obj);
+        static void SetIsTextSelectionEnabled(Microsoft.UI.Xaml.DependencyObject obj, Boolean enabled);
+    }
+}

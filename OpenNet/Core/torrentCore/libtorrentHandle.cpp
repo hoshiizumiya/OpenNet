@@ -12,7 +12,10 @@
 #include <libtorrent/write_resume_data.hpp>
 #include <libtorrent/read_resume_data.hpp>
 #include <libtorrent/peer_info.hpp>
+#include <libtorrent/close_reason.hpp>
+#include <libtorrent/error_code.hpp>
 #include "Core/ClientFilter/ClientFilterManager.h"
+#include "Core/IPFilter/IPFilterManager.h"
 #include <libtorrent/session_stats.hpp>
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/socket_io.hpp>
@@ -61,6 +64,75 @@ namespace OpenNet::Core::Torrent
 				}
 			}
 			return unique;
+		}
+
+		bool IsLibtorrentError(
+			lt::error_code const& error,
+			lt::errors::error_code_enum value)
+		{
+			return error
+				&& error.category() == lt::libtorrent_category()
+				&& error.value() == static_cast<int>(value);
+		}
+
+		std::string PeerDisconnectReason(
+			lt::peer_disconnected_alert const& alert)
+		{
+			if (alert.reason == lt::close_reason_t::upload_to_upload
+				|| IsLibtorrentError(
+					alert.error, lt::errors::upload_upload_connection)
+				|| IsLibtorrentError(alert.error, lt::errors::torrent_finished))
+			{
+				return "both_finished";
+			}
+			if (alert.reason == lt::close_reason_t::blocked
+				|| IsLibtorrentError(
+					alert.error, lt::errors::banned_by_ip_filter))
+			{
+				return "ip_filter";
+			}
+			if (IsLibtorrentError(alert.error, lt::errors::peer_banned)
+				|| IsLibtorrentError(
+					alert.error, lt::errors::too_many_corrupt_pieces))
+			{
+				return "anti_leech";
+			}
+			if (alert.error)
+				return alert.error.message();
+
+			switch (alert.reason)
+			{
+			case lt::close_reason_t::duplicate_peer_id:
+				return "duplicate_peer_id";
+			case lt::close_reason_t::torrent_removed:
+				return "torrent_removed";
+			case lt::close_reason_t::no_memory:
+				return "no_memory";
+			case lt::close_reason_t::port_blocked:
+				return "port_blocked";
+			case lt::close_reason_t::not_interested_upload_only:
+				return "not_interested_upload_only";
+			case lt::close_reason_t::timeout:
+				return "timeout";
+			case lt::close_reason_t::timed_out_interest:
+				return "timed_out_interest";
+			case lt::close_reason_t::timed_out_activity:
+				return "timed_out_activity";
+			case lt::close_reason_t::timed_out_handshake:
+				return "timed_out_handshake";
+			case lt::close_reason_t::timed_out_request:
+				return "timed_out_request";
+			case lt::close_reason_t::protocol_blocked:
+				return "protocol_blocked";
+			case lt::close_reason_t::peer_churn:
+				return "peer_churn";
+			case lt::close_reason_t::too_many_connections:
+				return "too_many_connections";
+			case lt::close_reason_t::too_many_files:
+				return "too_many_files";
+			default:
+				return "connection_closed";
+			}
 		}
 
 		void ApplyTrackers(
@@ -650,6 +722,10 @@ namespace OpenNet::Core::Torrent
 			m_handleToTaskId.erase(handle);
 			m_taskIdToHandle.erase(it);
 		}
+		{
+			std::lock_guard lock(m_peerEventMutex);
+			m_peerEvents.erase(taskId);
+		}
 
 		if (m_session && handle.is_valid())
 		{
@@ -797,6 +873,13 @@ namespace OpenNet::Core::Torrent
 						EnforceClientFilters();
 						m_lastClientFilterCheck = now;
 					}
+					if (now - m_lastIpFilterMaintenance
+						>= std::chrono::seconds(5))
+					{
+						::OpenNet::Core::IPFilterManager::Instance()
+							.MaintainTemporaryBans();
+						m_lastIpFilterMaintenance = now;
+					}
 				}
 			}
 			catch (const std::exception& ex)
@@ -863,11 +946,132 @@ namespace OpenNet::Core::Torrent
 		filter.EvaluatePeers(observations);
 	}
 
+	void LibtorrentHandle::RecordPeerEvent(
+		lt::torrent_handle const& handle,
+		lt::tcp::endpoint const& endpoint,
+		std::string reason,
+		bool isBan)
+	{
+		if (endpoint.address().is_unspecified())
+			return;
+
+		std::string taskId;
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			auto const found = m_handleToTaskId.find(handle);
+			if (found == m_handleToTaskId.end())
+				return;
+			taskId = found->second;
+		}
+
+		PeerConnectionEvent event;
+		event.ip = endpoint.address().to_string();
+		event.port = endpoint.port();
+		event.reason = std::move(reason);
+		event.timestamp = std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::system_clock::now().time_since_epoch()).count();
+		event.isBan = isBan;
+
+		std::lock_guard lock(m_peerEventMutex);
+		auto& events = m_peerEvents[taskId];
+		auto const existing = std::find_if(
+			events.begin(), events.end(),
+			[&](auto const& current)
+			{
+				return current.ip == event.ip && current.port == event.port;
+			});
+		if (existing != events.end())
+		{
+			// A ban alert is commonly followed by a generic disconnect alert.
+			// Keep the stronger terminal state instead of downgrading it.
+			if (existing->isBan && !event.isBan)
+				return;
+			events.erase(existing);
+		}
+		events.push_front(std::move(event));
+		while (events.size() > 256)
+			events.pop_back();
+	}
+
+	void LibtorrentHandle::ClearPeerEvent(
+		lt::torrent_handle const& handle,
+		lt::tcp::endpoint const& endpoint)
+	{
+		std::string taskId;
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			auto const found = m_handleToTaskId.find(handle);
+			if (found == m_handleToTaskId.end())
+				return;
+			taskId = found->second;
+		}
+
+		auto const ip = endpoint.address().to_string();
+		auto const port = endpoint.port();
+		std::lock_guard lock(m_peerEventMutex);
+		auto const found = m_peerEvents.find(taskId);
+		if (found == m_peerEvents.end())
+			return;
+		std::erase_if(
+			found->second,
+			[&](auto const& event)
+			{
+				return event.ip == ip && event.port == port;
+			});
+	}
+
 	void LibtorrentHandle::DispatchAlerts(std::vector<lt::alert*> const& alerts)
 	{
 		for (lt::alert* a : alerts)
 		{
-			if (auto st = lt::alert_cast<lt::state_update_alert>(a))
+			if (auto connected = lt::alert_cast<lt::peer_connect_alert>(a))
+			{
+				ClearPeerEvent(connected->handle, connected->endpoint);
+			}
+			else if (auto ban = lt::alert_cast<lt::peer_ban_alert>(a))
+			{
+				RecordPeerEvent(
+					ban->handle, ban->endpoint, "anti_leech", true);
+			}
+			else if (auto disconnected =
+				lt::alert_cast<lt::peer_disconnected_alert>(a))
+			{
+				auto reason = PeerDisconnectReason(*disconnected);
+				auto const isBan =
+					reason == "ip_filter" || reason == "anti_leech";
+				RecordPeerEvent(
+					disconnected->handle,
+					disconnected->endpoint,
+					std::move(reason),
+					isBan);
+			}
+			else if (auto peerError =
+				lt::alert_cast<lt::peer_error_alert>(a))
+			{
+				auto reason = peerError->error
+					? peerError->error.message()
+					: std::string{ "peer_error" };
+				auto const isBan =
+					IsLibtorrentError(
+						peerError->error, lt::errors::banned_by_ip_filter)
+					|| IsLibtorrentError(
+						peerError->error, lt::errors::peer_banned)
+					|| IsLibtorrentError(
+						peerError->error, lt::errors::too_many_corrupt_pieces);
+				if (isBan)
+				{
+					reason = IsLibtorrentError(
+						peerError->error, lt::errors::banned_by_ip_filter)
+						? "ip_filter"
+						: "anti_leech";
+				}
+				RecordPeerEvent(
+					peerError->handle,
+					peerError->endpoint,
+					std::move(reason),
+					isBan);
+			}
+			else if (auto st = lt::alert_cast<lt::state_update_alert>(a))
 			{
 				ProgressCallback progressCbCopy;
 				{
@@ -899,6 +1103,11 @@ namespace OpenNet::Core::Torrent
 						evt.downloadRateKB = static_cast<int>(s.download_rate / 1000);
 						evt.uploadRateKB = static_cast<int>(s.upload_rate / 1000);
 						evt.name = s.name;
+						evt.isPaused =
+							(s.flags & lt::torrent_flags::paused)
+							!= lt::torrent_flags_t{};
+						evt.isFinished = s.is_finished;
+						evt.isSeeding = s.is_seeding;
 						progressCbCopy(evt);
 
 						// Update progress in database
@@ -1114,13 +1323,31 @@ namespace OpenNet::Core::Torrent
 				}
 
 				auto const& counters = ssa->counters();
+				auto const metrics = lt::session_stats_metrics();
 				std::lock_guard lkStats(m_sessionStatsMutex);
+				if (m_sessionMetricValues.empty())
+					m_sessionMetricValues.reserve(metrics.size());
+				for (auto const& metric : metrics)
+				{
+					if (metric.value_index >= 0
+						&& metric.value_index < static_cast<int>(counters.size()))
+					{
+						m_sessionMetricValues[metric.name] =
+							counters[metric.value_index];
+					}
+				}
 				if (m_sessionStatsMetricIdxRecvBytes >= 0)
 					m_sessionTotalDownload = counters[m_sessionStatsMetricIdxRecvBytes];
 				if (m_sessionStatsMetricIdxSentBytes >= 0)
 					m_sessionTotalUpload = counters[m_sessionStatsMetricIdxSentBytes];
 				if (m_sessionStatsMetricIdxDhtNodes >= 0)
 					m_cachedDhtNodeCount.store(static_cast<int>(counters[m_sessionStatsMetricIdxDhtNodes]));
+				if (m_sessionStatsMetricIdxDiskBlocksInUse >= 0)
+					m_sessionDiskBlocksInUse = counters[m_sessionStatsMetricIdxDiskBlocksInUse];
+				if (m_sessionStatsMetricIdxDhtBytesReceived >= 0)
+					m_sessionDhtBytesReceived = counters[m_sessionStatsMetricIdxDhtBytesReceived];
+				if (m_sessionStatsMetricIdxDhtBytesSent >= 0)
+					m_sessionDhtBytesSent = counters[m_sessionStatsMetricIdxDhtBytesSent];
 			}
 		}
 	}
@@ -1136,6 +1363,12 @@ namespace OpenNet::Core::Torrent
 				m_sessionStatsMetricIdxSentBytes = m.value_index;
 			else if (m.name == std::string("dht.dht_nodes"))
 				m_sessionStatsMetricIdxDhtNodes = m.value_index;
+			else if (m.name == std::string("disk.disk_blocks_in_use"))
+				m_sessionStatsMetricIdxDiskBlocksInUse = m.value_index;
+			else if (m.name == std::string("dht.dht_bytes_in"))
+				m_sessionStatsMetricIdxDhtBytesReceived = m.value_index;
+			else if (m.name == std::string("dht.dht_bytes_out"))
+				m_sessionStatsMetricIdxDhtBytesSent = m.value_index;
 		}
 		m_sessionStatsMetricsResolved = true;
 	}
@@ -1210,6 +1443,34 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
+	LibtorrentHandle::ListenStatus LibtorrentHandle::GetListenStatus() const
+	{
+		ListenStatus status{};
+		if (!m_session)
+		{
+			return status;
+		}
+
+		try
+		{
+			status.isListening = m_session->is_listening();
+			status.port = status.isListening
+				? static_cast<int>(m_session->listen_port())
+				: 0;
+		}
+		catch (...)
+		{
+			status.isListening = false;
+			status.port = 0;
+		}
+
+		{
+			std::lock_guard lock(m_listenStateMutex);
+			status.error = m_lastListenError;
+		}
+		return status;
+	}
+
 	void LibtorrentHandle::SetIpFilter(lt::ip_filter const& filter)
 	{
 		if (m_session)
@@ -1271,29 +1532,55 @@ namespace OpenNet::Core::Torrent
 				stats.totalDownloaded += st.total_done;
 				stats.totalUploaded += st.total_upload;
 				stats.numPeers += st.num_peers;
+				stats.numSeeds += st.num_seeds;
+				if ((st.flags & lt::torrent_flags::paused)
+					!= lt::torrent_flags_t{})
+				{
+					++stats.numPausedTorrents;
+				}
+				else
+				{
+					++stats.numRunningTorrents;
+				}
+
+				switch (st.state)
+				{
+				case lt::torrent_status::downloading_metadata:
+					++stats.numMetadataTorrents;
+					++stats.numDownloadingTorrents;
+					break;
+				case lt::torrent_status::downloading:
+					++stats.numDownloadingTorrents;
+					break;
+				case lt::torrent_status::finished:
+				case lt::torrent_status::seeding:
+					++stats.numSeedingTorrents;
+					break;
+				case lt::torrent_status::checking_files:
+				case lt::torrent_status::checking_resume_data:
+					++stats.numCheckingTorrents;
+					break;
+				default:
+					break;
+				}
+				if (st.errc)
+					++stats.numErrorTorrents;
+				if (st.state == lt::torrent_status::finished
+					|| st.state == lt::torrent_status::seeding)
+				{
+					stats.longTermSeedingUploadRate += st.upload_rate;
+				}
 			}
 
 			// DHT nodes — use the cached value from dht_stats_alert / session_stats_alert
 			stats.dhtNodes = m_cachedDhtNodeCount.load();
 
-			// Only expose the port that libtorrent actually opened. The configured
-			// listen_interfaces value is not proof that bind/listen succeeded.
-			try
-			{
-				stats.isListening = m_session->is_listening();
-				stats.listenPort = stats.isListening
-					? static_cast<int>(m_session->listen_port())
-					: 0;
-			}
-			catch (...)
-			{
-				stats.isListening = false;
-				stats.listenPort = 0;
-			}
-			{
-				std::lock_guard lock(m_listenStateMutex);
-				stats.listenError = m_lastListenError;
-			}
+			// Only expose the socket libtorrent actually opened. Reading this
+			// through the lightweight status API keeps every UI consumer aligned.
+			auto const listenStatus = GetListenStatus();
+			stats.isListening = listenStatus.isListening;
+			stats.listenPort = listenStatus.port;
+			stats.listenError = listenStatus.error;
 
 			// Session-level totals from session_stats_alert (more accurate than per-torrent sums)
 			{
@@ -1302,6 +1589,10 @@ namespace OpenNet::Core::Torrent
 					stats.totalDownloaded = m_sessionTotalDownload;
 				if (m_sessionTotalUpload > 0)
 					stats.totalUploaded = m_sessionTotalUpload;
+				// Libtorrent's disk block metric counts 16 KiB blocks.
+				stats.diskCacheBytes = m_sessionDiskBlocksInUse * 16 * 1024;
+				stats.dhtBytesReceived = m_sessionDhtBytesReceived;
+				stats.dhtBytesSent = m_sessionDhtBytesSent;
 			}
 		}
 		catch (...)
@@ -1311,9 +1602,41 @@ namespace OpenNet::Core::Torrent
 		return stats;
 	}
 
+	std::unordered_map<std::string, std::int64_t>
+		LibtorrentHandle::GetSessionMetrics() const
+	{
+		std::lock_guard lock(m_sessionStatsMutex);
+		return m_sessionMetricValues;
+	}
+
 	// ---------------------------------------------------------------
 	//  Per-torrent detail
 	// ---------------------------------------------------------------
+	std::vector<LibtorrentHandle::PeerConnectionEvent>
+		LibtorrentHandle::GetRecentPeerEvents(
+			std::string const& taskId,
+			std::int64_t maxAgeSeconds) const
+	{
+		std::vector<PeerConnectionEvent> result;
+		auto const cutoff = maxAgeSeconds > 0
+			? std::chrono::duration_cast<std::chrono::seconds>(
+				std::chrono::system_clock::now().time_since_epoch()).count()
+				- maxAgeSeconds
+			: 0;
+
+		std::lock_guard lock(m_peerEventMutex);
+		auto const found = m_peerEvents.find(taskId);
+		if (found == m_peerEvents.end())
+			return result;
+		result.reserve(found->second.size());
+		for (auto const& event : found->second)
+		{
+			if (cutoff == 0 || event.timestamp >= cutoff)
+				result.push_back(event);
+		}
+		return result;
+	}
+
 	LibtorrentHandle::TorrentDetailInfo LibtorrentHandle::GetTorrentDetail(
 		std::string const& taskId) const
 	{
@@ -1346,7 +1669,15 @@ namespace OpenNet::Core::Torrent
 			info.numPeers = st.num_peers;
 			info.numSeeds = st.num_seeds;
 			info.numConnections = st.num_connections;
+			info.numComplete = st.num_complete;
+			info.numIncomplete = st.num_incomplete;
 			info.state = static_cast<int>(st.state);
+			info.addedTimestamp =
+				static_cast<std::int64_t>(st.added_time);
+			info.completedTimestamp =
+				static_cast<std::int64_t>(st.completed_time);
+			info.activeTimeSeconds = st.active_duration.count();
+			info.seedingTimeSeconds = st.seeding_duration.count();
 			info.isPaused = (st.flags & lt::torrent_flags::paused) != lt::torrent_flags_t{};
 			info.isAutoManaged =
 				bool(st.flags & lt::torrent_flags::auto_managed);
@@ -1388,6 +1719,9 @@ namespace OpenNet::Core::Torrent
 			if (auto ti = handle.torrent_file())
 			{
 				info.comment = ti->comment();
+				info.creator = ti->creator();
+				info.creationTimestamp = static_cast<std::int64_t>(ti->creation_date());
+				info.isPrivate = ti->priv();
 			}
 
 			// Peers
@@ -1472,6 +1806,16 @@ namespace OpenNet::Core::Torrent
 				auto fileProgress = handle.file_progress(lt::torrent_handle::piece_granularity);
 				auto filePriorities = handle.get_file_priorities();
 				int numFiles = fs.num_files();
+				info.isPieceAligned = info.pieceSize > 0;
+				for (int i = 0; i < numFiles && info.isPieceAligned; ++i)
+				{
+					auto const fileIndex = lt::file_index_t{ i };
+					if (!fs.pad_file_at(fileIndex)
+						&& fs.file_offset(fileIndex) % info.pieceSize != 0)
+					{
+						info.isPieceAligned = false;
+					}
+				}
 
 				info.files.reserve(numFiles);
 				for (int i = 0; i < numFiles; ++i)
@@ -1531,6 +1875,7 @@ namespace OpenNet::Core::Torrent
 				static_cast<std::size_t>(pieceCount), 0);
 			const auto status =
 				handle.status(lt::torrent_handle::query_pieces);
+			const auto priorities = handle.get_piece_priorities();
 			for (int index = 0;
 				 index < pieceCount
 				 && index < status.pieces.size();
@@ -1538,6 +1883,12 @@ namespace OpenNet::Core::Torrent
 			{
 				if (status.pieces[lt::piece_index_t{ index }])
 					result.states[static_cast<std::size_t>(index)] = 2;
+				else if (index < static_cast<int>(priorities.size())
+					&& static_cast<std::uint8_t>(priorities[
+						static_cast<std::size_t>(index)]) == 0)
+					result.states[static_cast<std::size_t>(index)] = 3;
+				else if (status.state == lt::torrent_status::checking_files)
+					result.states[static_cast<std::size_t>(index)] = 4;
 			}
 
 			std::vector<lt::peer_info> peers;

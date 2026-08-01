@@ -108,7 +108,8 @@
                                 HighlightLineBehavior="EachPoint"
                                 HighlightLineUpdated="DynamicGraph_HighlightLineUpdated"
                                 HighlightLineVisibility="Visible"
-                                HorizontalScrollDistance="1">
+                                HorizontalScrollDistance="60"
+                                HorizontalScrollDuration="0:0:1">
                                 <graph:LiveGraph.HighlightLineContent>
                                     <Grid IsHitTestVisible="False">
                                         <Line
@@ -209,7 +210,8 @@
                                 DotSpacing="14"
                                 HighlightLineBehavior="HigherPointAcrossGraphs"
                                 HighlightLineUpdated="StaticGraph_HighlightLineUpdated"
-                                HorizontalScrollDistance="0.6">
+                                HorizontalScrollDistance="60"
+                                HorizontalScrollDuration="0:0:1">
                                 <graph:LiveGraph.HighlightLineContent>
                                     <Grid IsHitTestVisible="False">
                                         <Line
@@ -300,13 +302,13 @@
                             x:Name="ScrollDistanceBox"
                             Grid.Row="1"
                             Grid.Column="0"
-                            Header="Scroll distance"
-                            Maximum="12"
+                            Header="Scroll distance (px)"
+                            Maximum="500"
                             Minimum="0"
-                            SmallChange="0.1"
+                            SmallChange="5"
                             SpinButtonPlacementMode="Inline"
                             ValueChanged="GraphSettings_ValueChanged"
-                            Value="1" />
+                            Value="60" />
 
                         <NumberBox
                             x:Name="ScrollDurationBox"

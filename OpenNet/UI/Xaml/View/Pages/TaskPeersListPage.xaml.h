@@ -38,6 +38,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void BanPeer1h_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void BanPeer24h_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void BanPeerPermanent_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void UnbanPeer_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -58,10 +59,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_peerItems{ nullptr };
 		winrt::OpenNet::ViewModels::PeerDisplayItem m_connectedGroup{ nullptr };
 		winrt::OpenNet::ViewModels::PeerDisplayItem m_connectingGroup{ nullptr };
-		winrt::OpenNet::ViewModels::PeerDisplayItem m_disconnectedGroup{ nullptr };
+		winrt::OpenNet::ViewModels::PeerDisplayItem m_disconnectingGroup{ nullptr };
+		winrt::OpenNet::ViewModels::PeerDisplayItem m_banIpGroup{ nullptr };
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_lastActivePeers;
-		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_disconnectedPeers;
-		std::unordered_set<std::string> m_bannedPeers;
+		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_disconnectingPeers;
+		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_banIpPeers;
 		std::string m_flagSprite;
 		std::unordered_map<std::string, winrt::hstring> m_flagSvgCache;
 		winrt::hstring m_sortColumn;
@@ -77,7 +79,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void RefreshPeerList();
 		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender,
 								winrt::Windows::Foundation::IInspectable const& args);
-		void BanSelectedPeer(winrt::hstring const& description);
+		void BanSelectedPeer(std::int64_t durationSeconds);
 		void ResetPeerGroups();
 		void EnsurePeerGroups();
 		winrt::hstring BuildFlagSvg(std::string countryCode);

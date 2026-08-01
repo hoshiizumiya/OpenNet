@@ -1,0 +1,31 @@
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass TaskSpeedGraphSettingsViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TaskSpeedGraphSettingsViewModel();
+
+        Int32 BackgroundModeIndex;
+        Double DotSpacing;
+        Double CrossSpacing;
+        Double HorizontalScrollDistance;
+        Double HorizontalScrollDurationMilliseconds;
+        Double SampleIntervalMilliseconds;
+        Boolean SmoothCurves;
+        Boolean HighlightEnabled;
+        Int32 HighlightBehaviorIndex;
+        Double HighlightAnimationMilliseconds;
+        Double HistoryBufferScreens;
+        Boolean UseCustomCanvasColors;
+        Windows.UI.Color BackgroundColor;
+        Windows.UI.Color ClearColor;
+        Double StrokeWidth;
+        Boolean FillEnabled;
+        Boolean BorderEnabled;
+
+        void Initialize();
+        void LoadSettings();
+        void SaveSettings();
+        void ResetDefaults();
+    };
+}

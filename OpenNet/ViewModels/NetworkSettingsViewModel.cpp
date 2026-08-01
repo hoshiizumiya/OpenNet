@@ -15,7 +15,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_protocolPriority(Models::IPProtocolPriority::Auto)
 		, m_preferredProtocol(Models::ConnectionProtocol::Auto)
 		, m_encryptionEnabled(true)
-		, m_listenPort(10996)
+		, m_listenPort(0)
 		, m_firewallEnabled(false)
 	{
 	}
