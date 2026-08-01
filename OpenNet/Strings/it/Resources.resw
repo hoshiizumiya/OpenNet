@@ -223,52 +223,52 @@
     <value>用户</value>
   </data>
   <data name="Protocol_IPv4First" xml:space="preserve">
-    <value>IPv4优先 / IPv4 First</value>
+    <value>IPv4优先</value>
   </data>
   <data name="Protocol_IPv6First" xml:space="preserve">
-    <value>IPv6优先 / IPv6 First</value>
+    <value>IPv6优先</value>
   </data>
   <data name="Protocol_IPv4Only" xml:space="preserve">
-    <value>仅IPv4 / IPv4 Only</value>
+    <value>仅IPv4</value>
   </data>
   <data name="Protocol_IPv6Only" xml:space="preserve">
-    <value>仅IPv6 / IPv6 Only</value>
+    <value>仅IPv6</value>
   </data>
   <data name="Protocol_Auto" xml:space="preserve">
-    <value>自动选择 / Auto Select</value>
+    <value>自动选择</value>
   </data>
   <data name="ConnProtocol_Auto" xml:space="preserve">
-    <value>自动选择 / Auto Select</value>
+    <value>自动选择</value>
   </data>
   <data name="ConnProtocol_TCP" xml:space="preserve">
-    <value>TCP协议 / TCP Protocol</value>
+    <value>TCP协议</value>
   </data>
   <data name="ConnProtocol_UDP" xml:space="preserve">
-    <value>UDP协议 / UDP Protocol</value>
+    <value>UDP协议</value>
   </data>
   <data name="ConnProtocol_UTP" xml:space="preserve">
-    <value>uTP协议 / uTP Protocol</value>
+    <value>uTP协议</value>
   </data>
   <data name="ConnProtocol_BitTorrent" xml:space="preserve">
-    <value>BitTorrent协议 / BitTorrent Protocol</value>
+    <value>BitTorrent协议</value>
   </data>
   <data name="ConnProtocol_DHT" xml:space="preserve">
-    <value>DHT网络 / DHT Network</value>
+    <value>DHT网络</value>
   </data>
   <data name="ConnProtocol_WebRTC" xml:space="preserve">
-    <value>WebRTC协议 / WebRTC Protocol</value>
+    <value>WebRTC协议</value>
   </data>
   <data name="ConnProtocol_HTTP" xml:space="preserve">
-    <value>HTTP协议 / HTTP Protocol</value>
+    <value>HTTP协议</value>
   </data>
   <data name="Enc_None" xml:space="preserve">
-    <value>无加密 / None</value>
+    <value>无加密</value>
   </data>
   <data name="Enc_Basic" xml:space="preserve">
-    <value>基础加密 / Basic</value>
+    <value>基础加密</value>
   </data>
   <data name="Enc_Strong" xml:space="preserve">
-    <value>强加密 / Strong</value>
+    <value>强加密</value>
   </data>
   <data name="General.Text" xml:space="preserve">
     <value>常规</value>
@@ -296,12 +296,6 @@
   </data>
   <data name="DfSettingsl.Header" xml:space="preserve">
     <value>下载闪存设置</value>
-  </data>
-  <data name="Aboutl.Text" xml:space="preserve">
-    <value>关于</value>
-  </data>
-  <data name="AbputTl.Text" xml:space="preserve">
-    <value>关于</value>
   </data>
   <data name="SoftBackgroundColors.Header" xml:space="preserve">
     <value>颜色</value>
@@ -336,8 +330,20 @@
   <data name="FilterNavViewDownloading.Content" xml:space="preserve">
     <value>正在下载</value>
   </data>
+  <data name="FilterNavViewSeeding.Content" xml:space="preserve">
+    <value>正在做种</value>
+  </data>
   <data name="FilterNavViewCompleted.Content" xml:space="preserve">
     <value>已完成</value>
+  </data>
+  <data name="FilterNavViewUncompleted.Content" xml:space="preserve">
+    <value>未完成</value>
+  </data>
+  <data name="FilterNavViewActive.Content" xml:space="preserve">
+    <value>运行中</value>
+  </data>
+  <data name="FilterNavViewInactive.Content" xml:space="preserve">
+    <value>已停止</value>
   </data>
   <data name="FilterNavViewFailed.Content" xml:space="preserve">
     <value>已失败</value>
@@ -1059,11 +1065,20 @@
   <data name="BanPeerPermanentItem.Text" xml:space="preserve">
     <value>永久封禁</value>
   </data>
+  <data name="UnbanPeerItem.Text" xml:space="preserve">
+    <value>解除手动 IP 封禁</value>
+  </data>
   <data name="PeerHeader_Location.Text" xml:space="preserve">
     <value>位置</value>
   </data>
   <data name="PeerHeader_PeerStatus.Text" xml:space="preserve">
     <value>状态</value>
+  </data>
+  <data name="PeerHeader_Reason.Text" xml:space="preserve">
+    <value>原因</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>原因</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
     <value>协议</value>
@@ -1073,6 +1088,27 @@
   </data>
   <data name="PeerHeader_Source.Text" xml:space="preserve">
     <value>来源</value>
+  </data>
+  <data name="PeerReason_Manual" xml:space="preserve">
+    <value>用户手动封禁</value>
+  </data>
+  <data name="PeerReason_Permanent" xml:space="preserve">
+    <value>永久</value>
+  </data>
+  <data name="PeerReason_Remaining" xml:space="preserve">
+    <value>剩余</value>
+  </data>
+  <data name="PeerReason_ListMatch" xml:space="preserve">
+    <value>列表源匹配</value>
+  </data>
+  <data name="PeerReason_ClientListMatch" xml:space="preserve">
+    <value>anti吸血客户端列表匹配</value>
+  </data>
+  <data name="PeerReason_AntiLeech" xml:space="preserve">
+    <value>anti吸血封禁</value>
+  </data>
+  <data name="PeerReason_IPFilter" xml:space="preserve">
+    <value>IP 过滤器匹配</value>
   </data>
   <data name="NavItem_NatTools.Content" xml:space="preserve">
     <value>NAT 工具</value>
@@ -1376,5 +1412,53 @@
   </data>
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>由 Crowdin 社区成员维护</value>
+  </data>
+  <data name="RuntimeStatusWindow.Title" xml:space="preserve">
+    <value>OpenNet 运行状态</value>
+  </data>
+  <data name="RuntimeStatusTitleBar.Title" xml:space="preserve">
+    <value>OpenNet 运行状态</value>
+  </data>
+  <data name="RuntimeStatusRefreshButton.Label" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="RuntimeStatusCopyButton.Label" xml:space="preserve">
+    <value>复制全部</value>
+  </data>
+  <data name="RuntimeStatusItemColumn.Text" xml:space="preserve">
+    <value>状态项目</value>
+  </data>
+  <data name="RuntimeStatusValueColumn.Text" xml:space="preserve">
+    <value>当前值</value>
+  </data>
+  <data name="RuntimeStatusLastUpdated.Text" xml:space="preserve">
+    <value>正在等待首次刷新</value>
+  </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>尚未排序。单击后按升序排列。</value>
+  </data>
+  <data name="DataTableSortAscendingHint" xml:space="preserve">
+    <value>当前为升序。单击后按降序排列。</value>
+  </data>
+  <data name="DataTableSortDescendingHint" xml:space="preserve">
+    <value>当前为降序。单击后取消排序。</value>
+  </data>
+  <data name="TaskStatusPending" xml:space="preserve">
+    <value>等待中</value>
+  </data>
+  <data name="TaskStatusDownloading" xml:space="preserve">
+    <value>正在下载</value>
+  </data>
+  <data name="TaskStatusSeeding" xml:space="preserve">
+    <value>正在做种</value>
+  </data>
+  <data name="TaskStatusPaused" xml:space="preserve">
+    <value>已暂停</value>
+  </data>
+  <data name="TaskStatusCompleted" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="TaskStatusFailed" xml:space="preserve">
+    <value>失败</value>
   </data>
 </root>
