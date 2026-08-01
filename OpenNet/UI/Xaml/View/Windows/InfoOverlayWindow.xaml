@@ -1,9 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<Window
+<essential:WindowEx
     x:Class="OpenNet.UI.Xaml.View.Windows.InfoOverlayWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="InfoOverlayWindow"
@@ -54,4 +55,4 @@
             Opacity="0.65"
             Text="DHT: 0 nodes" />
     </Grid>
-</Window>
+</essential:WindowEx>

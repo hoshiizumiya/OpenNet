@@ -478,6 +478,7 @@
                 <graph:LiveGraph.HighlightLineContent>
                     <Grid IsHitTestVisible="False">
                         <Line
+                            VerticalAlignment="Top"
                             Opacity="0.55"
                             Stroke="{ThemeResource AccentTextFillColorPrimaryBrush}"
                             StrokeDashArray="3,3"
@@ -488,7 +489,7 @@
                             Margin="0,-30,10,0"
                             Padding="8,3"
                             HorizontalAlignment="Right"
-                            VerticalAlignment="Center"
+                            VerticalAlignment="Top"
                             Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                             BorderThickness="1"

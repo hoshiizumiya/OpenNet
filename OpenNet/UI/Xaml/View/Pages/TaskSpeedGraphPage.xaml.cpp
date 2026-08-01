@@ -85,7 +85,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		m_settings = winrt::make<
 			winrt::OpenNet::ViewModels::implementation::
-				TaskSpeedGraphSettingsViewModel>();
+			TaskSpeedGraphSettingsViewModel>();
 		m_settings.Initialize();
 		InitializeComponent();
 		m_isInitialized = true;
@@ -93,13 +93,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			[weak = get_weak()](
 				IInspectable const& sender,
 				winrt::Microsoft::UI::Xaml::Data::
-					PropertyChangedEventArgs const& args)
+				PropertyChangedEventArgs const& args)
+		{
+			if (auto self = weak.get())
 			{
-				if (auto self = weak.get())
-				{
-					self->OnSettingsPropertyChanged(sender, args);
-				}
-			});
+				self->OnSettingsPropertyChanged(sender, args);
+			}
+		});
 		ApplyGraphSettings();
 		if (auto const selector = MetricSelector();
 			selector && selector.SelectedIndex() >= 0)
@@ -224,6 +224,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_dynamicScale.store(nextScale, std::memory_order_relaxed);
 			maximum = nextScale;
 		}
+		m_highlightScale.store(maximum, std::memory_order_relaxed);
 
 		{
 			std::scoped_lock lock(m_graphStateMutex);
@@ -241,7 +242,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					GraphPoint{
 						NormalizeValue(samples[index], maximum),
 						pointSpace },
-					m_smoothCurves.load(std::memory_order_relaxed));
+						m_smoothCurves.load(std::memory_order_relaxed));
 			}
 		}
 
@@ -277,8 +278,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			100.0f - (value * 100.0f / height),
 			0.0f,
 			100.0f);
+		auto const mode = m_mode.load(std::memory_order_relaxed);
+		if (mode == MetricMode::CpuOverall
+			|| mode == MetricMode::CpuLogicalProcessors
+			|| mode == MetricMode::MemoryUsage)
+		{
+			HighlightValueText().Text(
+				hstring{ std::format(L"{:.1f}%", percentage) });
+			return;
+		}
+
+		auto const actualValue =
+			static_cast<double>(percentage) / 100.0
+			* m_highlightScale.load(std::memory_order_relaxed);
 		HighlightValueText().Text(
-			hstring{ std::format(L"{:.1f}%", percentage) });
+			mode == MetricMode::DiskCache
+			? FormatBytes(actualValue)
+			: FormatRate(actualValue));
 	}
 
 	void TaskSpeedGraphPage::ResetGraphSettings_Click(
@@ -303,9 +319,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::memory_order_relaxed);
 		m_graphScrollPixelsPerSecond.store(
 			scrollDurationSeconds > 0.0
-				? m_settings.HorizontalScrollDistance()
-					/ scrollDurationSeconds
-				: 0.0,
+			? m_settings.HorizontalScrollDistance()
+			/ scrollDurationSeconds
+			: 0.0,
 			std::memory_order_relaxed);
 		m_graphStrokeWidth.store(
 			static_cast<float>(m_settings.StrokeWidth()),
@@ -334,8 +350,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::clamp(m_settings.HighlightBehaviorIndex(), 0, 4)));
 		graph.HighlightLineVisibility(
 			m_settings.HighlightEnabled()
-				? winrt::Microsoft::UI::Xaml::Visibility::Visible
-				: winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+			? winrt::Microsoft::UI::Xaml::Visibility::Visible
+			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 		graph.HighlightLineAnimationDuration(
 			std::chrono::duration_cast<TimeSpan>(std::chrono::milliseconds{
 				static_cast<std::int64_t>(

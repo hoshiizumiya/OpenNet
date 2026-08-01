@@ -1,7 +1,7 @@
 ﻿namespace OpenNet.UI.Xaml.View.Windows
 {
     [default_interface]
-    runtimeclass InfoOverlayWindow : Microsoft.UI.Xaml.Window
+    runtimeclass InfoOverlayWindow : WinUI3Package.WindowEx
     {
         InfoOverlayWindow();
 

@@ -89,6 +89,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		double m_lastDhtReceivedRate{};
 		double m_lastDhtSentRate{};
 		std::atomic<double> m_dynamicScale{ 1024.0 };
+		std::atomic<double> m_highlightScale{ 100.0 };
 		std::atomic<double> m_sampleElapsedSeconds{};
 		std::atomic<double> m_graphSampleIntervalSeconds{ 0.1 };
 		std::atomic<double> m_graphScrollPixelsPerSecond{ 60.0 };

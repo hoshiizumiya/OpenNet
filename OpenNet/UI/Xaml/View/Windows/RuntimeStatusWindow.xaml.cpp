@@ -162,7 +162,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 			std::vector<std::wstring> volumes;
 			for (auto root = buffer.data(); *root;
-				root += std::wcslen(root) + 1)
+				 root += std::wcslen(root) + 1)
 			{
 				auto const type = GetDriveTypeW(root);
 				if (type != DRIVE_FIXED && type != DRIVE_REMOVABLE)
@@ -262,8 +262,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				if (length == 0 || !GetLogicalProcessorInformationEx(
 					RelationProcessorCore,
 					reinterpret_cast<
-						PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(
-							buffer.data()),
+					PSYSTEM_LOGICAL_PROCESSOR_INFORMATION_EX>(
+						buffer.data()),
 					&length))
 					return std::uint32_t{};
 				std::uint32_t cores = 0;
@@ -406,8 +406,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void RuntimeStatusWindow::SyncStatusItems()
 	{
 		for (std::uint32_t sectionIndex = 0;
-			sectionIndex < m_statusSections.size();
-			++sectionIndex)
+			 sectionIndex < m_statusSections.size();
+			 ++sectionIndex)
 		{
 			auto const& section = m_statusSections[sectionIndex];
 			OpenNet::ViewModels::RuntimeStatusDisplayItem group{ nullptr };
@@ -420,7 +420,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			{
 				group = make<
 					OpenNet::ViewModels::implementation::
-						RuntimeStatusDisplayItem>();
+					RuntimeStatusDisplayItem>();
 				group.IsExpanded(section.initiallyExpanded);
 				group.IsGroup(true);
 				m_statusItems.Append(group);
@@ -431,8 +431,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 			auto const children = group.Children();
 			for (std::uint32_t rowIndex = 0;
-				rowIndex < section.rows.size();
-				++rowIndex)
+				 rowIndex < section.rows.size();
+				 ++rowIndex)
 			{
 				auto const& row = section.rows[rowIndex];
 				OpenNet::ViewModels::RuntimeStatusDisplayItem item{ nullptr };
@@ -444,7 +444,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				{
 					item = make<
 						OpenNet::ViewModels::implementation::
-							RuntimeStatusDisplayItem>();
+						RuntimeStatusDisplayItem>();
 					children.Append(item);
 				}
 				item.Name(row.name);
@@ -606,7 +606,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		double const metricInterval = m_previousMetricWallTime > 0
 			&& wallValue > m_previousMetricWallTime
 			? static_cast<double>(wallValue - m_previousMetricWallTime)
-				/ 10'000'000.0
+			/ 10'000'000.0
 			: 0.0;
 		auto metricRate = [this, &metric, metricInterval](
 			std::string_view name) -> std::uint64_t
@@ -728,7 +728,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				/ L"Torrents";
 			std::error_code error;
 			for (std::filesystem::directory_iterator it(folder, error), end;
-				!error && it != end; it.increment(error))
+				 !error && it != end; it.increment(error))
 			{
 				if (it->is_regular_file(error)
 					&& it->path().extension() == L".torrent")
@@ -750,15 +750,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			std::format(
 				L"{}; {} persisted rules",
 				::OpenNet::Core::IPFilterManager::Instance().IsEnabled()
-					? L"Enabled"
-					: L"Disabled",
+				? L"Enabled"
+				: L"Disabled",
 				::OpenNet::Core::IPFilterManager::Instance().GetRuleCount()));
 		row(
 			L"BitTorrent core",
 			::OpenNet::Core::P2PManager::Instance()
-				.IsTorrentCoreInitialized()
-				? L"Initialized"
-				: L"Not initialized");
+			.IsTorrentCoreInitialized()
+			? L"Initialized"
+			: L"Not initialized");
 		row(
 			L"HTTP core",
 			aria2Available ? L"Aria2 available" : L"Aria2 unavailable");
@@ -785,8 +785,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				to_hstring(database.GetString(
 					"webui_host", "username").value_or("admin")).c_str(),
 				database.GetBool("webui_host", "initialized").value_or(false)
-					? L"initialized"
-					: L"requires first-run initialization"));
+				? L"initialized"
+				: L"requires first-run initialization"));
 		row(
 			L"Web UI activity",
 			std::format(
@@ -854,8 +854,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		row(
 			L"WAN IPv6",
 			networkAddresses.ipv6.empty()
-				? L"No IPv6 address observed"
-				: L"See LAN IPv6 (globally routable/link-local scope is OS supplied)");
+			? L"No IPv6 address observed"
+			: L"See LAN IPv6 (globally routable/link-local scope is OS supplied)");
 		row(
 			L"BT TCP listen port",
 			stats.isListening
@@ -865,16 +865,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		row(
 			L"Incoming peer connectivity",
 			metric("net.has_incoming_connections") != 0
-				? L"Observed"
-				: L"Not observed in this session");
+			? L"Observed"
+			: L"Not observed in this session");
 		row(
 			L"BT TCP firewall/router state IPv4",
 			mapping.tcpExternalPort > 0
-				? std::format(
-					L"Mapped to {} via {}",
-					mapping.tcpExternalPort,
-					to_hstring(mapping.tcpMechanism).c_str())
-				: L"No confirmed external mapping");
+			? std::format(
+				L"Mapped to {} via {}",
+				mapping.tcpExternalPort,
+				to_hstring(mapping.tcpMechanism).c_str())
+			: L"No confirmed external mapping");
 		row(
 			L"BT TCP firewall/router state IPv6",
 			L"Direct IPv6 reachability; no NAT mapping is required");
@@ -906,8 +906,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		row(
 			L"LSD port",
 			torrentSettings.enableLsd
-				? L"6771/UDP (enabled)"
-				: L"Disabled");
+			? L"6771/UDP (enabled)"
+			: L"Disabled");
 		row(L"Windows Firewall state", GetFirewallState());
 		row(
 			L"UPnP NAT mapping",
@@ -920,11 +920,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			std::format(
 				L"TCP: {}; UDP: {}",
 				mapping.tcpMechanism.empty()
-					? L"none confirmed"
-					: to_hstring(mapping.tcpMechanism).c_str(),
+				? L"none confirmed"
+				: to_hstring(mapping.tcpMechanism).c_str(),
 				mapping.udpMechanism.empty()
-					? L"none confirmed"
-					: to_hstring(mapping.udpMechanism).c_str()));
+				? L"none confirmed"
+				: to_hstring(mapping.udpMechanism).c_str()));
 		row(
 			L"TCP / UDP mapped ports",
 			std::format(
@@ -1280,15 +1280,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			std::format(
 				L"External address {}; mapped TCP/UDP {} / {}",
 				mapping.externalAddress.empty()
-					? L"not observed"
-					: to_hstring(mapping.externalAddress).c_str(),
+				? L"not observed"
+				: to_hstring(mapping.externalAddress).c_str(),
 				mapping.tcpExternalPort,
 				mapping.udpExternalPort));
 		row(
 			L"IP detection",
 			metric("net.has_incoming_connections") != 0
-				? L"Incoming connectivity observed"
-				: L"No incoming connectivity observed");
+			? L"Incoming connectivity observed"
+			: L"No incoming connectivity observed");
 		row(
 			L"DNS failure domain counts",
 			L"Resolver details are not part of libtorrent's public statistics API");

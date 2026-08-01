@@ -117,13 +117,14 @@
                                             Stroke="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                             StrokeDashArray="3,3"
                                             StrokeThickness="1"
+                                            VerticalAlignment="Top"
                                             X1="0"
                                             X2="10000" />
                                         <Border
                                             Margin="0,-30,10,0"
                                             Padding="8,3"
                                             HorizontalAlignment="Right"
-                                            VerticalAlignment="Center"
+                                            VerticalAlignment="Top"
                                             Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                                             CornerRadius="4">
                                             <TextBlock
@@ -218,12 +219,14 @@
                                             Opacity="0.45"
                                             Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                             StrokeThickness="1"
+                                            VerticalAlignment="Top"
                                             X1="0"
                                             X2="10000" />
                                         <TextBlock
                                             x:Name="StaticHighlightText"
                                             Margin="0,-24,10,0"
                                             HorizontalAlignment="Right"
+                                            VerticalAlignment="Top"
                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                             Text="Static highlight" />
                                     </Grid>

@@ -11,10 +11,9 @@
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:OpenNet.ViewModels"
-    x:Uid="RuntimeStatusWindow"
+    Title="OpenNet Runtime Status"
     MinWidth="760"
     MinHeight="560"
-    Title="OpenNet Runtime Status"
     TitleBarAutoDarkMode="True"
     mc:Ignorable="d">
 
@@ -22,9 +21,7 @@
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>
 
-    <Grid
-        x:Name="RootGrid"
-        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid x:Name="RootGrid" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition Height="Auto" />
@@ -37,9 +34,9 @@
         <TitleBar
             x:Name="RuntimeStatusTitleBar"
             x:Uid="RuntimeStatusTitleBar"
+            Title="OpenNet Runtime Status"
             IsBackButtonVisible="False"
-            IsPaneToggleButtonVisible="False"
-            Title="OpenNet Runtime Status">
+            IsPaneToggleButtonVisible="False">
             <TitleBar.Resources>
                 <HorizontalAlignment x:Key="TitleBarContentHorizontalAlignment">Stretch</HorizontalAlignment>
             </TitleBar.Resources>

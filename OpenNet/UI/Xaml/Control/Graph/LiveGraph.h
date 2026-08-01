@@ -13,6 +13,7 @@ import winrt.Microsoft.Graphics.Canvas.Brushes;
 import winrt.Microsoft.Graphics.Canvas.Geometry;
 import winrt.Microsoft.Graphics.Canvas.UI;
 import winrt.Microsoft.Graphics.Canvas.UI.Xaml;
+import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Composition;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -238,6 +239,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			std::vector<winrt::Windows::Foundation::Numerics::float2> Points;
 			float OffsetX{};
 			float CurrentY{};
+			std::uint64_t Revision{};
 			winrt::hstring Key;
 			bool IsRounded{};
 		};
@@ -363,6 +365,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		float m_dotSpacing{ 6.0f };
 		float m_historyBufferScreens{ 1.0f };
 		std::optional<float> m_currentLineY;
+		std::uint64_t m_lastHighlightedRevision{};
 		winrt::Windows::Foundation::TimeSpan m_highlightLineAnimationDuration{
 			std::chrono::duration_cast<winrt::Windows::Foundation::TimeSpan>(
 				std::chrono::milliseconds{ 300 }) };

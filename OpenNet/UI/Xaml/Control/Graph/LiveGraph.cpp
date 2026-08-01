@@ -536,6 +536,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		self->m_currentPolygonIndex = 0;
 		self->m_currentPointIndex = 0;
 		self->m_currentLineY.reset();
+		self->m_lastHighlightedRevision = 0;
 	}
 
 	void LiveGraph::OnHighlightLineVisibilityChanged(
@@ -546,6 +547,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		std::scoped_lock lock(self->m_graphMutex);
 		self->m_highlightLineVisibility =
 			unbox_value<winrt::Microsoft::UI::Xaml::Visibility>(args.NewValue());
+		if (self->m_highlightLineVisibility == Visibility::Visible)
+		{
+			// Force the current value to be published again after the overlay is
+			// re-enabled, even when its Y coordinate did not change while hidden.
+			self->m_currentLineY.reset();
+			self->m_lastHighlightedRevision = 0;
+		}
 	}
 
 	void LiveGraph::OnBackgroundModeChanged(
@@ -799,6 +807,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		m_currentPolygonIndex = 0;
 		m_currentPointIndex = 0;
 		m_currentLineY.reset();
+		m_lastHighlightedRevision = 0;
 	}
 
 	void LiveGraph::OnUnloaded(IInspectable const&, RoutedEventArgs const&)
@@ -878,28 +887,40 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			hasWidthChange ? newWidth - oldWidth : 0.0f;
 		auto const scaleY =
 			hasHeightChange ? newHeight / oldHeight : 1.0f;
-		std::scoped_lock lock(m_graphMutex);
-
-		for (auto const& polygon : m_polygons)
+		std::optional<float> resizedLineY;
 		{
-			// Point X coordinates are created relative to the canvas width that
-			// existed when the graph was populated. Keep the entire polygon
-			// anchored to the new right edge when the control width changes.
-			polygon->OffsetX += widthDelta;
+			std::scoped_lock lock(m_graphMutex);
 
-			if (hasHeightChange)
+			for (auto const& polygon : m_polygons)
 			{
-				for (auto& point : polygon->Points)
+				// Point X coordinates are created relative to the canvas width that
+				// existed when the graph was populated. Keep the entire polygon
+				// anchored to the new right edge when the control width changes.
+				polygon->OffsetX += widthDelta;
+
+				if (hasHeightChange)
 				{
-					point.y *= scaleY;
+					for (auto& point : polygon->Points)
+					{
+						point.y *= scaleY;
+					}
+					polygon->CurrentY *= scaleY;
 				}
-				polygon->CurrentY *= scaleY;
+			}
+
+			if (hasHeightChange && m_currentLineY)
+			{
+				*m_currentLineY *= scaleY;
+				resizedLineY = *m_currentLineY;
 			}
 		}
 
-		if (hasHeightChange && m_currentLineY)
+		// The composition visual is independent from the Win2D points. Resize it
+		// explicitly or the horizontal line stays at its pre-resize pixel Y.
+		if (resizedLineY)
 		{
-			*m_currentLineY *= scaleY;
+			m_highlightLineUpdated(*this, *resizedLineY);
+			MoveHostGridWithAnimation(*resizedLineY);
 		}
 	}
 
@@ -987,11 +1008,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 		auto const startX =
 			polygon->Points.empty()
-			? canvasWidth + 10.0f
+			? canvasWidth
 			: polygon->Points.back().x + point.Space();
 		auto const y = NormalizeY(point.Value(), height);
 
 		polygon->CurrentY = y;
+		++polygon->Revision;
 		polygon->Points.push_back({ startX, y });
 
 		// The original per-point cursor reaches one-past-the-end while waiting
@@ -1186,6 +1208,22 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			});
 		};
 
+		auto publishLine = [&queueLineUpdate, this](float y, bool force = false)
+		{
+			if (!std::isfinite(y))
+			{
+				return;
+			}
+
+			auto const height = static_cast<float>(m_canvas.Size().Height);
+			y = std::clamp(y, 0.0f, std::max(0.0f, height));
+			if (force || !m_currentLineY || std::abs(*m_currentLineY - y) > 0.01f)
+			{
+				m_currentLineY = y;
+				queueLineUpdate(y);
+			}
+		};
+
 		switch (m_highlightLineBehavior)
 		{
 			case OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
@@ -1193,7 +1231,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				case OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
 				LowerPointAcrossGraphs:
 				{
-					auto targetLineY = m_currentLineY;
+					std::optional<float> targetLineY;
 
 					for (auto const& polygon : m_polygons)
 					{
@@ -1228,10 +1266,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 						}
 					}
 
-					if (targetLineY && targetLineY != m_currentLineY)
+					if (targetLineY)
 					{
-						m_currentLineY = targetLineY;
-						queueLineUpdate(*targetLineY);
+						publishLine(*targetLineY);
 					}
 					break;
 				}
@@ -1241,85 +1278,109 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 					case OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
 					LowerPointPerGraph:
 					{
-						if (m_currentPolygonIndex >= m_polygons.size())
+						while (m_currentPolygonIndex < m_polygons.size())
 						{
-							return;
-						}
+							auto const& polygon = m_polygons[m_currentPolygonIndex];
+							while (m_currentPointIndex < polygon->Points.size()
+								   && polygon->Points[m_currentPointIndex].x
+								   + polygon->OffsetX < 0.0f)
+							{
+								++m_currentPointIndex;
+							}
 
-						auto polygon = m_polygons[m_currentPolygonIndex];
-						if (m_currentPointIndex >= polygon->Points.size())
-						{
-							++m_currentPolygonIndex;
-							m_currentPointIndex = 0;
-							m_currentLineY.reset();
-							if (m_currentPolygonIndex >= m_polygons.size())
+							if (m_currentPointIndex >= polygon->Points.size())
+							{
+								++m_currentPolygonIndex;
+								m_currentPointIndex = 0;
+								m_currentLineY.reset();
+								continue;
+							}
+
+							auto const& point = polygon->Points[m_currentPointIndex];
+							if (point.x + polygon->OffsetX > canvasWidth)
 							{
 								return;
 							}
-							polygon = m_polygons[m_currentPolygonIndex];
-						}
 
-						if (polygon->Points.empty())
-						{
-							return;
-						}
-
-						auto const& point = polygon->Points[m_currentPointIndex];
-						auto const screenX = point.x + polygon->OffsetX;
-						if (screenX >= 0.0f && screenX <= canvasWidth)
-						{
 							auto const targetY = point.y;
 							auto const shouldMove =
 								!m_currentLineY ||
 								(m_highlightLineBehavior ==
 								 OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
-								 HigherPointPerGraph &&
-								 targetY < *m_currentLineY) ||
+								 HigherPointPerGraph && targetY < *m_currentLineY) ||
 								(m_highlightLineBehavior ==
 								 OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
-								 LowerPointPerGraph &&
-								 targetY > *m_currentLineY);
-
+								 LowerPointPerGraph && targetY > *m_currentLineY);
 							if (shouldMove)
 							{
-								m_currentLineY = targetY;
-								queueLineUpdate(targetY);
+								publishLine(targetY);
 							}
 							++m_currentPointIndex;
+							return;
 						}
 						break;
 					}
 
 					case OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::EachPoint:
 					{
-						if (m_currentPolygonIndex >= m_polygons.size())
+						// A dynamic graph represents a live value. Follow the newest visible
+						// point of the primary live series instead of replaying old points
+						// from every series through one global cursor.
+						for (auto const& polygon : m_polygons)
 						{
+							auto const live = m_livePolygons.find(polygon->Key);
+							if (live == m_livePolygons.end() || live->second != polygon)
+							{
+								continue;
+							}
+
+							for (auto point = polygon->Points.rbegin();
+								 point != polygon->Points.rend(); ++point)
+							{
+								auto const screenX = point->x + polygon->OffsetX;
+								if (screenX >= 0.0f && screenX <= canvasWidth)
+								{
+									if (m_lastHighlightedRevision != polygon->Revision)
+									{
+										m_lastHighlightedRevision = polygon->Revision;
+										// Publish every new sample even if adaptive scaling leaves
+										// it at the same normalized Y coordinate. Its real value
+										// and formatted unit may still have changed.
+										publishLine(point->y, true);
+									}
+									return;
+								}
+							}
 							return;
 						}
 
-						auto polygon = m_polygons[m_currentPolygonIndex];
-						if (m_currentPointIndex >= polygon->Points.size())
+						// Static graphs still advance point-by-point. Skip points already
+						// left of the viewport so pruning or resizing cannot stall the line.
+						while (m_currentPolygonIndex < m_polygons.size())
 						{
-							++m_currentPolygonIndex;
-							m_currentPointIndex = 0;
-							if (m_currentPolygonIndex >= m_polygons.size())
+							auto const& polygon = m_polygons[m_currentPolygonIndex];
+							while (m_currentPointIndex < polygon->Points.size()
+								   && polygon->Points[m_currentPointIndex].x
+								   + polygon->OffsetX < 0.0f)
+							{
+								++m_currentPointIndex;
+							}
+
+							if (m_currentPointIndex >= polygon->Points.size())
+							{
+								++m_currentPolygonIndex;
+								m_currentPointIndex = 0;
+								continue;
+							}
+
+							auto const& point = polygon->Points[m_currentPointIndex];
+							if (point.x + polygon->OffsetX > canvasWidth)
 							{
 								return;
 							}
-							polygon = m_polygons[m_currentPolygonIndex];
-						}
-
-						if (polygon->Points.empty())
-						{
-							return;
-						}
-
-						auto const& point = polygon->Points[m_currentPointIndex];
-						auto const screenX = point.x + polygon->OffsetX;
-						if (screenX >= 0.0f && screenX <= canvasWidth)
-						{
-							queueLineUpdate(point.y);
+							publishLine(point.y);
 							++m_currentPointIndex;
+							return;
 						}
 						break;
 					}
@@ -1328,10 +1389,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 	void LiveGraph::MoveHostGridWithAnimation(float y)
 	{
-		if (!m_compositor || !m_gridVisual)
+		if (!m_compositor || !m_gridVisual || !m_canvas)
 		{
 			return;
 		}
+		y = std::clamp(
+			y,
+			0.0f,
+			std::max(0.0f, static_cast<float>(m_canvas.Size().Height)));
 
 		auto animation = m_compositor.CreateScalarKeyFrameAnimation();
 		auto easing = m_compositor.CreateCubicBezierEasingFunction(
@@ -1644,6 +1709,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				m_currentPolygonIndex = 0;
 				m_currentPointIndex = 0;
 				m_currentLineY.reset();
+				m_lastHighlightedRevision = 0;
 			}
 			else
 			{
