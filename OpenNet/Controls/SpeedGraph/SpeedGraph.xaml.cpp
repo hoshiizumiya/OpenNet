@@ -16,131 +16,154 @@ using namespace Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 {
-    winrt::Microsoft::UI::Xaml::Media::PointCollection SpeedGraph::Points()
-    {
-        return m_graphData.Points();
-    }
+	winrt::Microsoft::UI::Xaml::Media::PointCollection SpeedGraph::Points()
+	{
+		return m_graphData.Points();
+	}
 
-    void SpeedGraph::SetSpeed(double percent, uint64_t speed)
-    {
-        auto const [newScaleRatio, needAnimation] = m_graphData.SetSpeed(percent, speed);
+	void SpeedGraph::SetSpeed(double percent, uint64_t speed)
+	{
+		m_pendingPercent = percent;
+		m_pendingSpeed = speed;
+		m_hasPendingSample = true;
+		auto const actualSize = ActualSize();
+		if (actualSize.x <= 0.0f || actualSize.y <= 0.0f)
+		{
+			return;
+		}
+		m_graphData.NewSize(winrt::Windows::Foundation::Size{ actualSize.x, actualSize.y });
 
-        if (newScaleRatio != 1.0f)
-            resizeGraphPoint(newScaleRatio);
+		auto const [newScaleRatio, needAnimation] = m_graphData.SetSpeed(percent, speed);
 
-        if (needAnimation)
-        {
-            AverageSpeedText().Text(ReadableUnitConverter::Speed::ToString<wchar_t>(speed).data());
-            makeAnimation();
-        }
+		if (newScaleRatio != 1.0f)
+			resizeGraphPoint(newScaleRatio);
 
-        if (!m_hasData)
-        {
-            GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
-            SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
-            //m_graphData.NewSize(ActualSize());
-            m_hasData = true;
-        }
-    }
-    void SpeedGraph::resizeGraphPoint(float ratio)
-    {
-        m_graphData.SetRatio(ratio);
-        ScaleDownAnimation().To(m_graphData.GetRatio());
-        ScaleDown().Begin();
-    }
+		if (needAnimation)
+		{
+			AverageSpeedText().Text(ReadableUnitConverter::Speed::ToString<wchar_t>(speed).data());
+			makeAnimation();
+		}
 
-    void SpeedGraph::makeAnimation(float y)
-    {
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard speedLineAndTextAnimation;
+		auto const hasRenderablePoints = m_graphData.Points().Size() >= 2;
+		if (!m_hasData && hasRenderablePoints)
+		{
+			GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+			SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+			//m_graphData.NewSize(ActualSize());
+			m_hasData = true;
+		}
+	}
+	void SpeedGraph::resizeGraphPoint(float ratio)
+	{
+		m_graphData.SetRatio(ratio);
+		ScaleDownAnimation().To(m_graphData.GetRatio());
+		ScaleDown().Begin();
+	}
 
-        winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation lineTranslate;
-        winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation textTranslate;
+	void SpeedGraph::makeAnimation(float y)
+	{
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard speedLineAndTextAnimation;
 
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(lineTranslate, LineTranslate());
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(lineTranslate, L"Y");
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(textTranslate, TextTranslate());
-        winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(textTranslate, L"Y");
+		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation lineTranslate;
+		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation textTranslate;
 
-        lineTranslate.Duration(speedLineAndTextAnimationDuration);
-        textTranslate.Duration(speedLineAndTextAnimationDuration);
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(lineTranslate, LineTranslate());
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(lineTranslate, L"Y");
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTarget(textTranslate, TextTranslate());
+		winrt::Microsoft::UI::Xaml::Media::Animation::Storyboard::SetTargetProperty(textTranslate, L"Y");
 
-        winrt::Microsoft::UI::Xaml::Media::Animation::ExponentialEase ease;
-        ease.Exponent(7);
-        ease.EasingMode(winrt::Microsoft::UI::Xaml::Media::Animation::EasingMode::EaseOut);
-        lineTranslate.EasingFunction(ease);
-        textTranslate.EasingFunction(ease);
+		lineTranslate.Duration(speedLineAndTextAnimationDuration);
+		textTranslate.Duration(speedLineAndTextAnimationDuration);
+
+		winrt::Microsoft::UI::Xaml::Media::Animation::ExponentialEase ease;
+		ease.Exponent(7);
+		ease.EasingMode(winrt::Microsoft::UI::Xaml::Media::Animation::EasingMode::EaseOut);
+		lineTranslate.EasingFunction(ease);
+		textTranslate.EasingFunction(ease);
 
 
-        lineTranslate.To(y);
-        textTranslate.To(y);
-        speedLineAndTextAnimation.Children().ReplaceAll({ lineTranslate, textTranslate });
-        speedLineAndTextAnimation.Begin();
-    }
+		lineTranslate.To(y);
+		textTranslate.To(y);
+		speedLineAndTextAnimation.Children().ReplaceAll({ lineTranslate, textTranslate });
+		speedLineAndTextAnimation.Begin();
+	}
 
-    void SpeedGraph::makeAnimation()
-    {
-        auto const p = m_graphData.GetLastPoint();
-        auto const y = m_graphData.Height() - ((m_graphData.Height() - p.Y) * m_graphData.GetRatio());
-        makeAnimation(y);
-    }
+	void SpeedGraph::makeAnimation()
+	{
+		auto const p = m_graphData.GetLastPoint();
+		auto const y = m_graphData.Height() - ((m_graphData.Height() - p.Y) * m_graphData.GetRatio());
+		makeAnimation(y);
+	}
 
-    void SpeedGraph::CanvasControl_Draw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args)
-    {
-        auto drawingSession = args.DrawingSession();
+	void SpeedGraph::CanvasControl_Draw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasDrawEventArgs const& args)
+	{
+		auto drawingSession = args.DrawingSession();
 
-        auto const width = sender.ActualWidth();
-        auto const height = sender.ActualHeight();
-        auto const color = ActualTheme() == winrt::Microsoft::UI::Xaml::ElementTheme::Light ?
-            winrt::Windows::UI::ColorHelper::FromArgb(32, 0, 0, 0) :
-            winrt::Windows::UI::ColorHelper::FromArgb(32, 255, 255, 255);
+		auto const width = sender.ActualWidth();
+		auto const height = sender.ActualHeight();
+		auto const color = ActualTheme() == winrt::Microsoft::UI::Xaml::ElementTheme::Light ?
+			winrt::Windows::UI::ColorHelper::FromArgb(32, 0, 0, 0) :
+			winrt::Windows::UI::ColorHelper::FromArgb(32, 255, 255, 255);
 
-        for (int i = 0; i < width; i += BackgroundCircleDistance)
-        {
-            for (int j = 0; j < height; j += BackgroundCircleDistance)
-            {
-                drawingSession.FillCircle(i, j, 1, color);
-            }
-        }
-    }
+		for (int i = 0; i < width; i += BackgroundCircleDistance)
+		{
+			for (int j = 0; j < height; j += BackgroundCircleDistance)
+			{
+				drawingSession.FillCircle(i, j, 1, color);
+			}
+		}
+	}
 
-    void SpeedGraph::CanvasControl_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const&)
-    {
-        sender.as<winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>().Invalidate();
-    }
+	void SpeedGraph::CanvasControl_ActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const&)
+	{
+		sender.as<winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasControl>().Invalidate();
+	}
 
-    void SpeedGraph::Pause()
-    {
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Pause", false);
-    }
+	void SpeedGraph::Pause()
+	{
+		winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Pause", false);
+	}
 
-    void SpeedGraph::Error()
-    {
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
-    }
+	void SpeedGraph::Error()
+	{
+		winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Error", false);
+	}
 
-    void SpeedGraph::Reset()
-    {
-        // Reset the graph data to initial state
-        m_graphData.Reset();
-        m_hasData = false;
-        
-        // Reset the size for the new data
-        m_graphData.NewSize(ActualSize());
-        
-        // Update visual state to show "no data" text
-        GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
-        SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
-        
-        // Go back to normal visual state
-        winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Normal", false);
-    }
+	void SpeedGraph::Reset()
+	{
+		// Reset the graph data to initial state
+		m_graphData.Reset();
+		m_hasData = false;
+		m_hasPendingSample = false;
 
-    void winrt::OpenNet::Controls::SpeedGraph::implementation::SpeedGraph::UserControl_SizeChanged(
-        winrt::Windows::Foundation::IInspectable const&,
-        winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
-    {
-        m_graphData.NewSize(e.NewSize());
-    }
+		// Reset the size for the new data
+		auto const actualSize = ActualSize();
+		m_graphData.NewSize(winrt::Windows::Foundation::Size{ actualSize.x, actualSize.y });
+
+		// Update visual state to show "no data" text
+		GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+		SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+
+		// Go back to normal visual state
+		winrt::Microsoft::UI::Xaml::VisualStateManager::GoToState(*this, L"Normal", false);
+	}
+
+	void winrt::OpenNet::Controls::SpeedGraph::implementation::SpeedGraph::UserControl_SizeChanged(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
+	{
+		m_graphData.Resize(e.NewSize());
+		if (!m_hasData && m_hasPendingSample)
+		{
+			auto const percent = m_pendingPercent;
+			auto const speed = m_pendingSpeed;
+			SetSpeed(percent, speed);
+		}
+		else if (m_hasData)
+		{
+			makeAnimation();
+		}
+	}
 
 
 }

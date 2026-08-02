@@ -70,13 +70,13 @@ namespace OpenNet::Core
 	void SpeedGraphDatabase::CreateTables()
 	{
 		const char* sql = R"(
-            CREATE TABLE IF NOT EXISTS speed_graph (
-                task_id  TEXT    NOT NULL,
-                percent  INTEGER NOT NULL,
-                speed_kb INTEGER NOT NULL,
-                PRIMARY KEY (task_id, percent)
-            );
-        )";
+			CREATE TABLE IF NOT EXISTS speed_graph (
+				task_id  TEXT    NOT NULL,
+				percent  INTEGER NOT NULL,
+				speed_kb INTEGER NOT NULL,
+				PRIMARY KEY (task_id, percent)
+			);
+		)";
 
 		char* errMsg = nullptr;
 		int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);

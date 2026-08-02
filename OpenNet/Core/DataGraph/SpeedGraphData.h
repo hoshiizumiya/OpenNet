@@ -61,6 +61,28 @@ public:
 		m_graphSize = size;
 	}
 
+	void Resize(winrt::Windows::Foundation::Size size)
+	{
+		if (size.Width <= 0.0f || size.Height <= 0.0f)
+		{
+			return;
+		}
+		if (m_graphSize.Width > 0.0f && m_graphSize.Height > 0.0f
+			&& m_points)
+		{
+			auto const scaleX = size.Width / m_graphSize.Width;
+			auto const scaleY = size.Height / m_graphSize.Height;
+			for (std::uint32_t index = 0; index < m_points.Size(); ++index)
+			{
+				auto point = m_points.GetAt(index);
+				point.X *= scaleX;
+				point.Y *= scaleY;
+				m_points.SetAt(index, point);
+			}
+		}
+		m_graphSize = size;
+	}
+
 	[[nodiscard]] winrt::Windows::Foundation::Point GetLastPoint() const
 	{
 		return m_points.GetAt(m_points.Size() - 2);

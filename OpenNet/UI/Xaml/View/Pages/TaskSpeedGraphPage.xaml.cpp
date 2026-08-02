@@ -146,6 +146,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_mode.store(
 			static_cast<MetricMode>(selector.SelectedIndex()),
 			std::memory_order_relaxed);
+		ApplyGraphSettings();
 		m_dynamicScale.store(1024.0, std::memory_order_relaxed);
 		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
 		{
@@ -175,10 +176,48 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RecreateGraphStreams(canvas);
 	}
 
+	void TaskSpeedGraphPage::Page_Loaded(
+		IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		ApplyGraphSettings();
+		if (!m_rebuildOnLoaded.exchange(false, std::memory_order_acq_rel))
+		{
+			return;
+		}
+		auto const graph = PerformanceGraph();
+		auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
+		if (canvas)
+		{
+			// The page is navigation-cached, but LiveGraph releases its Win2D
+			// brushes on Unloaded. Recreate them whenever the cached page returns.
+			RecreateGraphStreams(canvas);
+		}
+		else
+		{
+			m_rebuildOnLoaded.store(true, std::memory_order_release);
+		}
+	}
+
+	void TaskSpeedGraphPage::Page_Unloaded(
+		IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		m_graphActive.store(false, std::memory_order_release);
+		m_rebuildOnLoaded.store(true, std::memory_order_release);
+		UploadHighlightOverlay().Visibility(
+			winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+	}
+
 	void TaskSpeedGraphPage::PerformanceGraph_Draw(
 		IInspectable const&,
 		LiveGraphEventArgs const& args)
 	{
+		if (!m_graphActive.load(std::memory_order_acquire))
+		{
+			return;
+		}
+
 		auto frameSeconds = std::chrono::duration<double>(
 			args.DrawEventArgs().Timing().ElapsedTime).count();
 		if (!std::isfinite(frameSeconds) || frameSeconds < 0.0)
@@ -260,6 +299,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			scaleText = FormatRate(maximum);
 		}
 		QueueMetricText(displayValues, scaleText);
+		if (mode == MetricMode::TransferSpeed && samples.size() > 1)
+		{
+			QueueUploadHighlight(samples[1], maximum);
+		}
 	}
 
 	void TaskSpeedGraphPage::PerformanceGraph_HighlightLineUpdated(
@@ -291,10 +334,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const actualValue =
 			static_cast<double>(percentage) / 100.0
 			* m_highlightScale.load(std::memory_order_relaxed);
-		HighlightValueText().Text(
-			mode == MetricMode::DiskCache
+		auto text = mode == MetricMode::DiskCache
 			? FormatBytes(actualValue)
-			: FormatRate(actualValue));
+			: FormatRate(actualValue);
+		if (mode == MetricMode::TransferSpeed)
+		{
+			text = hstring{ L"↓ " } + text;
+		}
+		HighlightValueText().Text(text);
 	}
 
 	void TaskSpeedGraphPage::ResetGraphSettings_Click(
@@ -352,6 +399,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_settings.HighlightEnabled()
 			? winrt::Microsoft::UI::Xaml::Visibility::Visible
 			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+		if (!m_settings.HighlightEnabled()
+			|| m_mode.load(std::memory_order_relaxed) != MetricMode::TransferSpeed)
+		{
+			UploadHighlightOverlay().Visibility(
+				winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+		}
 		graph.HighlightLineAnimationDuration(
 			std::chrono::duration_cast<TimeSpan>(std::chrono::milliseconds{
 				static_cast<std::int64_t>(
@@ -418,6 +471,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			return;
 		}
+		m_graphActive.store(false, std::memory_order_release);
 
 		std::scoped_lock lock(m_graphStateMutex);
 		auto graph = PerformanceGraph();
@@ -474,6 +528,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_brushes.push_back(brush);
 		}
 		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
+		m_rebuildOnLoaded.store(false, std::memory_order_release);
+		m_graphActive.store(true, std::memory_order_release);
 	}
 
 	void TaskSpeedGraphPage::DisposeBrushes() noexcept
@@ -756,6 +812,47 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				self->SecondaryMetricValue().Text(
 					values.size() > 1 ? values[1] : hstring{ L"—" });
 				self->ScaleMetricValue().Text(scaleText);
+			}
+		});
+	}
+
+	void TaskSpeedGraphPage::QueueUploadHighlight(
+		double value,
+		double maximum)
+	{
+		if (!std::isfinite(value) || !std::isfinite(maximum) || maximum <= 0.0)
+		{
+			return;
+		}
+
+		auto weak = get_weak();
+		DispatcherQueue().TryEnqueue([weak, value, maximum]
+		{
+			if (auto self = weak.get())
+			{
+				if (!self->m_settings.HighlightEnabled()
+					|| self->m_mode.load(std::memory_order_relaxed)
+					!= MetricMode::TransferSpeed)
+				{
+					self->UploadHighlightOverlay().Visibility(
+						winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+					return;
+				}
+
+				auto const graph = self->PerformanceGraph();
+				auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
+				auto const height = canvas ? canvas.Size().Height : 0.0f;
+				if (height <= 0.0f)
+				{
+					return;
+				}
+
+				auto const normalized = std::clamp(value / maximum, 0.0, 1.0);
+				self->UploadHighlightTransform().Y(height * (1.0 - normalized));
+				self->UploadHighlightValueText().Text(
+					hstring{ L"↑ " } + TaskSpeedGraphPage::FormatRate(value));
+				self->UploadHighlightOverlay().Visibility(
+					winrt::Microsoft::UI::Xaml::Visibility::Visible);
 			}
 		});
 	}

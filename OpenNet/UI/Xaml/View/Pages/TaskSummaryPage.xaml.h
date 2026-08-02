@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Pages/TaskSummaryPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 
@@ -33,6 +34,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::event_token m_vmPropertyChangedToken{};
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerTickToken{};
+		winrt::hstring m_graphTaskId;
 	};
 }
 

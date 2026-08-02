@@ -20,21 +20,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		winrt::OpenNet::ViewModels::TaskSpeedGraphSettingsViewModel Settings() const;
 
-		void MetricSelector_SelectionChanged(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&);
-		void PerformanceGraph_CreateResources(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
-		void PerformanceGraph_Draw(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs const& args);
-		void PerformanceGraph_HighlightLineUpdated(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			float value);
-		void ResetGraphSettings_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void MetricSelector_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&);
+		void PerformanceGraph_CreateResources(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
+		void PerformanceGraph_Draw(winrt::Windows::Foundation::IInspectable const& sender, winrt::OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs const& args);
+		void PerformanceGraph_HighlightLineUpdated(winrt::Windows::Foundation::IInspectable const& sender, float value);
+		void ResetGraphSettings_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void Page_Unloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
 		enum class MetricMode
@@ -70,6 +62,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void QueueMetricText(
 			std::vector<winrt::hstring> const& values,
 			winrt::hstring const& scaleText);
+		void QueueUploadHighlight(double value, double maximum);
 		static winrt::hstring FormatBytes(double value);
 		static winrt::hstring FormatRate(double value);
 
@@ -97,6 +90,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::atomic_bool m_smoothCurves{ true };
 		std::atomic_bool m_fillEnabled{ true };
 		std::atomic_bool m_borderEnabled{ true };
+		std::atomic_bool m_graphActive{};
+		std::atomic_bool m_rebuildOnLoaded{};
 	};
 }
 

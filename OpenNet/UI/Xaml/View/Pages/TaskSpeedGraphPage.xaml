@@ -9,7 +9,9 @@
     xmlns:graph="using:OpenNet.UI.Xaml.Control.Graph"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
+    Loaded="Page_Loaded"
     NavigationCacheMode="Required"
+    Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -463,45 +465,82 @@
             BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="8">
-            <graph:LiveGraph
-                x:Name="PerformanceGraph"
-                BackgroundMode="Cross"
-                ClearColor="Transparent"
-                CreateResources="PerformanceGraph_CreateResources"
-                CrossSpacing="30"
-                Draw="PerformanceGraph_Draw"
-                HighlightLineBehavior="EachPoint"
-                HighlightLineUpdated="PerformanceGraph_HighlightLineUpdated"
-                HighlightLineVisibility="Visible"
-                HorizontalScrollDistance="6"
-                HorizontalScrollDuration="0:0:0.1">
-                <graph:LiveGraph.HighlightLineContent>
-                    <Grid IsHitTestVisible="False">
-                        <Line
-                            VerticalAlignment="Top"
-                            Opacity="0.55"
-                            Stroke="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                            StrokeDashArray="3,3"
-                            StrokeThickness="1"
-                            X1="0"
-                            X2="10000" />
-                        <Border
-                            Margin="0,-30,10,0"
-                            Padding="8,3"
-                            HorizontalAlignment="Right"
-                            VerticalAlignment="Top"
-                            Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="4">
-                            <TextBlock
-                                x:Name="HighlightValueText"
-                                FontSize="12"
-                                Text="—" />
-                        </Border>
-                    </Grid>
-                </graph:LiveGraph.HighlightLineContent>
-            </graph:LiveGraph>
+            <Grid>
+                <graph:LiveGraph
+                    x:Name="PerformanceGraph"
+                    BackgroundMode="Cross"
+                    ClearColor="Transparent"
+                    CreateResources="PerformanceGraph_CreateResources"
+                    CrossSpacing="30"
+                    Draw="PerformanceGraph_Draw"
+                    HighlightLineBehavior="EachPoint"
+                    HighlightLineUpdated="PerformanceGraph_HighlightLineUpdated"
+                    HighlightLineVisibility="Visible"
+                    HorizontalScrollDistance="6"
+                    HorizontalScrollDuration="0:0:0.1">
+                    <graph:LiveGraph.HighlightLineContent>
+                        <Grid IsHitTestVisible="False">
+                            <Line
+                                VerticalAlignment="Top"
+                                Opacity="0.65"
+                                Stroke="#FF26A65B"
+                                StrokeDashArray="3,3"
+                                StrokeThickness="1"
+                                X1="0"
+                                X2="10000" />
+                            <Border
+                                Margin="0,-30,10,0"
+                                Padding="8,3"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Top"
+                                Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="4">
+                                <TextBlock
+                                    x:Name="HighlightValueText"
+                                    FontSize="12"
+                                    Text="—" />
+                            </Border>
+                        </Grid>
+                    </graph:LiveGraph.HighlightLineContent>
+                </graph:LiveGraph>
+
+                <!--
+                    LiveGraph has one movable highlight presenter. Transfer Speed
+                    needs a second overlay for the simultaneous upload series.
+                -->
+                <Grid
+                    x:Name="UploadHighlightOverlay"
+                    IsHitTestVisible="False"
+                    Visibility="Collapsed">
+                    <Grid.RenderTransform>
+                        <TranslateTransform x:Name="UploadHighlightTransform" />
+                    </Grid.RenderTransform>
+                    <Line
+                        VerticalAlignment="Top"
+                        Opacity="0.65"
+                        Stroke="#FF0078D4"
+                        StrokeDashArray="3,3"
+                        StrokeThickness="1"
+                        X1="0"
+                        X2="10000" />
+                    <Border
+                        Margin="10,-30,0,0"
+                        Padding="8,3"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
+                        BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                        BorderThickness="1"
+                        CornerRadius="4">
+                        <TextBlock
+                            x:Name="UploadHighlightValueText"
+                            FontSize="12"
+                            Text="↑ —" />
+                    </Border>
+                </Grid>
+            </Grid>
         </Border>
     </Grid>
 </Page>

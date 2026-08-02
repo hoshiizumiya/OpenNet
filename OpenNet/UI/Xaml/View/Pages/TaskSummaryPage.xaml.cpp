@@ -77,8 +77,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
 		if (!task)
 		{
+			if (!m_graphTaskId.empty())
+			{
+				TaskSpeedGraph().Reset();
+				m_graphTaskId = {};
+			}
 			ResetSummary();
 			return;
+		}
+		if (m_graphTaskId != task.TaskId())
+		{
+			TaskSpeedGraph().Reset();
+			m_graphTaskId = task.TaskId();
 		}
 
 		ResetSummary();
@@ -96,6 +106,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
+			TaskSpeedGraph().SetSpeed(
+				task.ProgressPercent(),
+				task.DownloadSpeedKB() * 1024);
 			TaskPathText().Text(L"HTTP download");
 			SavePathText().Text(L"—");
 			TaskStatusText().Text(task.ProgressPercent() >= 100.0 ? L"Finished" : L"Downloading");
@@ -109,6 +122,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (!core)
 		{
+			TaskSpeedGraph().SetSpeed(
+				task.ProgressPercent(),
+				task.DownloadSpeedKB() * 1024);
 			TaskStatusText().Text(L"Engine unavailable");
 			return;
 		}
@@ -117,6 +133,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const detail = core->GetTorrentDetail(taskId);
 		auto const pieces = core->GetTorrentPieceInfo(taskId);
 		auto const progress = detail.progressPpm / 10000.0;
+		TaskSpeedGraph().SetSpeed(
+			progress,
+			detail.downloadRate > 0
+			? static_cast<std::uint64_t>(detail.downloadRate)
+			: std::uint64_t{});
 
 		TaskNameText().Text(to_hstring(detail.name));
 		GeneralTaskNameText().Text(to_hstring(detail.name));

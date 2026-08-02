@@ -1409,12 +1409,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 	void LiveGraph::DrawUserPolygons(
 		CanvasDrawingSession const& drawingSession,
-		float,
+		float width,
 		float height)
 	{
 		for (auto const& polygon : m_polygons)
 		{
-			if (polygon->Points.size() < 2)
+			if (polygon->Points.empty())
 			{
 				continue;
 			}
@@ -1467,7 +1467,17 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				}
 			}
 
-			auto const endX = polygon->Points.back().x + polygon->OffsetX;
+			auto endX = polygon->Points.back().x + polygon->OffsetX;
+			auto const live = m_livePolygons.find(polygon->Key);
+			auto const isLive =
+				live != m_livePolygons.end() && live->second == polygon;
+			if (isLive && endX < width)
+			{
+				// Hold the latest live value to the right edge between samples.
+				// Otherwise a blank strip grows until the next point arrives.
+				endX = width;
+				pathBuilder.AddLine({ endX, polygon->Points.back().y });
+			}
 			pathBuilder.AddLine({ endX, height });
 			pathBuilder.EndFigure(CanvasFigureLoop::Open);
 
