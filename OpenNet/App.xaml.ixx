@@ -43,11 +43,15 @@ export namespace winrt::OpenNet::implementation
 		static winrt::fire_and_forget InitializeTorrentCoreAsync();
 		static winrt::fire_and_forget InitializeRSSManagerAsync();
 		static winrt::fire_and_forget InitializeWebUIAsync();
+		static void StartIPFilterSubscriptionUpdates();
+		static void StopIPFilterSubscriptionUpdates();
 		static void EnsureMainWindow();
 		static void StartMainExperience();
 
 		static inline bool s_isHandlingClose{ false };
 		static inline std::atomic_bool s_enginesShutdown{ false };
 		static inline std::atomic_bool s_mainExperienceStarted{ false };
+		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer
+			s_ipFilterSubscriptionTimer{ nullptr };
 	};
 }

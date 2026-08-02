@@ -19,6 +19,7 @@
 #include <libtorrent/session_stats.hpp>
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/socket_io.hpp>
+#include <libtorrent/time.hpp>
 #include <boost/asio/ip/address.hpp>
 
 module OpenNet.Core.torrentCore.LibtorrentHandle;
@@ -37,6 +38,51 @@ namespace OpenNet::Core::Torrent
 {
 	namespace
 	{
+		std::optional<int> NextTrackerAnnounceSeconds(
+			lt::torrent_handle const& handle,
+			std::string_view const url)
+		{
+			try
+			{
+				auto const now = lt::time_point_cast<lt::seconds32>(
+					lt::clock_type::now());
+				std::optional<int> result;
+				for (auto const& tracker : handle.trackers())
+				{
+					if (tracker.url != url) continue;
+					for (auto const& endpoint : tracker.endpoints)
+					{
+						for (auto const& hash : endpoint.info_hashes)
+						{
+							if (hash.next_announce == (lt::time_point32::min)()
+								|| hash.next_announce == (lt::time_point32::max)())
+								continue;
+							auto const remaining = static_cast<int>(std::max<
+																	std::int64_t>(0, lt::total_seconds(
+																		hash.next_announce - now)));
+							result = result
+								? std::min(*result, remaining)
+								: remaining;
+						}
+					}
+				}
+				return result;
+			}
+			catch (...)
+			{
+				return std::nullopt;
+			}
+		}
+
+		std::string FormatTrackerInterval(int seconds)
+		{
+			auto const hours = seconds / 3600;
+			seconds %= 3600;
+			auto const minutes = seconds / 60;
+			seconds %= 60;
+			return std::format("{}:{:02}:{:02}", hours, minutes, seconds);
+		}
+
 		std::vector<std::string> TrackersForNewTask(
 			std::vector<std::string> const& taskTrackers)
 		{
@@ -102,36 +148,36 @@ namespace OpenNet::Core::Torrent
 
 			switch (alert.reason)
 			{
-			case lt::close_reason_t::duplicate_peer_id:
-				return "duplicate_peer_id";
-			case lt::close_reason_t::torrent_removed:
-				return "torrent_removed";
-			case lt::close_reason_t::no_memory:
-				return "no_memory";
-			case lt::close_reason_t::port_blocked:
-				return "port_blocked";
-			case lt::close_reason_t::not_interested_upload_only:
-				return "not_interested_upload_only";
-			case lt::close_reason_t::timeout:
-				return "timeout";
-			case lt::close_reason_t::timed_out_interest:
-				return "timed_out_interest";
-			case lt::close_reason_t::timed_out_activity:
-				return "timed_out_activity";
-			case lt::close_reason_t::timed_out_handshake:
-				return "timed_out_handshake";
-			case lt::close_reason_t::timed_out_request:
-				return "timed_out_request";
-			case lt::close_reason_t::protocol_blocked:
-				return "protocol_blocked";
-			case lt::close_reason_t::peer_churn:
-				return "peer_churn";
-			case lt::close_reason_t::too_many_connections:
-				return "too_many_connections";
-			case lt::close_reason_t::too_many_files:
-				return "too_many_files";
-			default:
-				return "connection_closed";
+				case lt::close_reason_t::duplicate_peer_id:
+					return "duplicate_peer_id";
+				case lt::close_reason_t::torrent_removed:
+					return "torrent_removed";
+				case lt::close_reason_t::no_memory:
+					return "no_memory";
+				case lt::close_reason_t::port_blocked:
+					return "port_blocked";
+				case lt::close_reason_t::not_interested_upload_only:
+					return "not_interested_upload_only";
+				case lt::close_reason_t::timeout:
+					return "timeout";
+				case lt::close_reason_t::timed_out_interest:
+					return "timed_out_interest";
+				case lt::close_reason_t::timed_out_activity:
+					return "timed_out_activity";
+				case lt::close_reason_t::timed_out_handshake:
+					return "timed_out_handshake";
+				case lt::close_reason_t::timed_out_request:
+					return "timed_out_request";
+				case lt::close_reason_t::protocol_blocked:
+					return "protocol_blocked";
+				case lt::close_reason_t::peer_churn:
+					return "peer_churn";
+				case lt::close_reason_t::too_many_connections:
+					return "too_many_connections";
+				case lt::close_reason_t::too_many_files:
+					return "too_many_files";
+				default:
+					return "connection_closed";
 			}
 		}
 
@@ -726,6 +772,10 @@ namespace OpenNet::Core::Torrent
 			std::lock_guard lock(m_peerEventMutex);
 			m_peerEvents.erase(taskId);
 		}
+		{
+			std::lock_guard lock(m_trackerLogMutex);
+			m_trackerLogs.erase(taskId);
+		}
 
 		if (m_session && handle.is_valid())
 		{
@@ -977,9 +1027,9 @@ namespace OpenNet::Core::Torrent
 		auto const existing = std::find_if(
 			events.begin(), events.end(),
 			[&](auto const& current)
-			{
-				return current.ip == event.ip && current.port == event.port;
-			});
+		{
+			return current.ip == event.ip && current.port == event.port;
+		});
 		if (existing != events.end())
 		{
 			// A ban alert is commonly followed by a generic disconnect alert.
@@ -1015,9 +1065,40 @@ namespace OpenNet::Core::Torrent
 		std::erase_if(
 			found->second,
 			[&](auto const& event)
-			{
-				return event.ip == ip && event.port == port;
-			});
+		{
+			return event.ip == ip && event.port == port;
+		});
+	}
+
+	void LibtorrentHandle::RecordTrackerLog(
+		lt::torrent_handle const& handle,
+		std::string const& trackerUrl,
+		std::string content,
+		bool const isError)
+	{
+		if (trackerUrl.empty() || content.empty())
+			return;
+
+		std::string taskId;
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			auto const found = m_handleToTaskId.find(handle);
+			if (found == m_handleToTaskId.end())
+				return;
+			taskId = found->second;
+		}
+
+		TrackerLogEntry entry;
+		entry.timestamp = std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::system_clock::now().time_since_epoch()).count();
+		entry.content = std::move(content);
+		entry.isError = isError;
+
+		std::lock_guard lock(m_trackerLogMutex);
+		auto& entries = m_trackerLogs[taskId][trackerUrl];
+		entries.push_back(std::move(entry));
+		while (entries.size() > 500)
+			entries.pop_front();
 	}
 
 	void LibtorrentHandle::DispatchAlerts(std::vector<lt::alert*> const& alerts)
@@ -1034,7 +1115,7 @@ namespace OpenNet::Core::Torrent
 					ban->handle, ban->endpoint, "anti_leech", true);
 			}
 			else if (auto disconnected =
-				lt::alert_cast<lt::peer_disconnected_alert>(a))
+					 lt::alert_cast<lt::peer_disconnected_alert>(a))
 			{
 				auto reason = PeerDisconnectReason(*disconnected);
 				auto const isBan =
@@ -1046,7 +1127,7 @@ namespace OpenNet::Core::Torrent
 					isBan);
 			}
 			else if (auto peerError =
-				lt::alert_cast<lt::peer_error_alert>(a))
+					 lt::alert_cast<lt::peer_error_alert>(a))
 			{
 				auto reason = peerError->error
 					? peerError->error.message()
@@ -1070,6 +1151,87 @@ namespace OpenNet::Core::Torrent
 					peerError->endpoint,
 					std::move(reason),
 					isBan);
+			}
+			else if (auto trackerError =
+					 lt::alert_cast<lt::tracker_error_alert>(a))
+			{
+				auto content = std::string{ "Tracker connection error: " };
+				if (trackerError->error)
+					content += trackerError->error.message();
+				if (auto const reason = trackerError->failure_reason();
+					reason && *reason)
+				{
+					if (trackerError->error)
+						content += " - ";
+					content += reason;
+				}
+				RecordTrackerLog(
+					trackerError->handle,
+					trackerError->tracker_url(),
+					std::move(content), true);
+			}
+			else if (auto warning =
+					 lt::alert_cast<lt::tracker_warning_alert>(a))
+			{
+				RecordTrackerLog(
+					warning->handle,
+					warning->tracker_url(),
+					std::string{ "Tracker warning: " }
+				+ warning->warning_message(), true);
+			}
+			else if (auto scrape =
+					 lt::alert_cast<lt::scrape_reply_alert>(a))
+			{
+				RecordTrackerLog(
+					scrape->handle,
+					scrape->tracker_url(),
+					"Tracker returned info: complete = "
+					+ std::to_string(scrape->complete)
+					+ ", incomplete = "
+					+ std::to_string(scrape->incomplete));
+			}
+			else if (auto scrapeFailed =
+					 lt::alert_cast<lt::scrape_failed_alert>(a))
+			{
+				auto content = std::string{ "Tracker scrape error: " };
+				if (scrapeFailed->error)
+					content += scrapeFailed->error.message();
+				else if (auto const message = scrapeFailed->error_message())
+					content += message;
+				RecordTrackerLog(
+					scrapeFailed->handle,
+					scrapeFailed->tracker_url(),
+					std::move(content), true);
+			}
+			else if (auto reply =
+					 lt::alert_cast<lt::tracker_reply_alert>(a))
+			{
+				auto const trackerUrl = std::string{ reply->tracker_url() };
+				RecordTrackerLog(
+					reply->handle,
+					trackerUrl,
+					"Logged in; Tracker returned "
+					+ std::to_string(reply->num_peers) + " peers");
+				if (auto const remaining = NextTrackerAnnounceSeconds(
+					reply->handle, trackerUrl))
+				{
+					RecordTrackerLog(
+						reply->handle, trackerUrl,
+						"Schedule next announce in "
+						+ FormatTrackerInterval(*remaining));
+				}
+			}
+			else if (auto announce =
+					 lt::alert_cast<lt::tracker_announce_alert>(a))
+			{
+				RecordTrackerLog(
+					announce->handle,
+					announce->tracker_url(),
+					std::string{ "Announce " } + announce->tracker_url());
+				RecordTrackerLog(
+					announce->handle,
+					announce->tracker_url(),
+					"Start connecting...");
 			}
 			else if (auto st = lt::alert_cast<lt::state_update_alert>(a))
 			{
@@ -1295,7 +1457,7 @@ namespace OpenNet::Core::Torrent
 									settingsDb.GetBool(
 										::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
 										"saveTorrentCopyToDownloadDirectory")
-										.value_or(false));
+									.value_or(false));
 							}
 						}
 					}
@@ -1545,23 +1707,23 @@ namespace OpenNet::Core::Torrent
 
 				switch (st.state)
 				{
-				case lt::torrent_status::downloading_metadata:
-					++stats.numMetadataTorrents;
-					++stats.numDownloadingTorrents;
-					break;
-				case lt::torrent_status::downloading:
-					++stats.numDownloadingTorrents;
-					break;
-				case lt::torrent_status::finished:
-				case lt::torrent_status::seeding:
-					++stats.numSeedingTorrents;
-					break;
-				case lt::torrent_status::checking_files:
-				case lt::torrent_status::checking_resume_data:
-					++stats.numCheckingTorrents;
-					break;
-				default:
-					break;
+					case lt::torrent_status::downloading_metadata:
+						++stats.numMetadataTorrents;
+						++stats.numDownloadingTorrents;
+						break;
+					case lt::torrent_status::downloading:
+						++stats.numDownloadingTorrents;
+						break;
+					case lt::torrent_status::finished:
+					case lt::torrent_status::seeding:
+						++stats.numSeedingTorrents;
+						break;
+					case lt::torrent_status::checking_files:
+					case lt::torrent_status::checking_resume_data:
+						++stats.numCheckingTorrents;
+						break;
+					default:
+						break;
 				}
 				if (st.errc)
 					++stats.numErrorTorrents;
@@ -1621,7 +1783,7 @@ namespace OpenNet::Core::Torrent
 		auto const cutoff = maxAgeSeconds > 0
 			? std::chrono::duration_cast<std::chrono::seconds>(
 				std::chrono::system_clock::now().time_since_epoch()).count()
-				- maxAgeSeconds
+			- maxAgeSeconds
 			: 0;
 
 		std::lock_guard lock(m_peerEventMutex);
@@ -1757,34 +1919,68 @@ namespace OpenNet::Core::Torrent
 				TorrentTrackerInfo ti;
 				ti.url = t.url;
 				ti.tier = t.tier;
+				ti.status = "not contacted";
+				bool contacted = false;
+				bool updating = false;
+				bool failed = false;
+				auto const now = lt::time_point_cast<lt::seconds32>(
+					lt::clock_type::now());
 
-				// Determine tracker status from endpoints
-				if (!t.endpoints.empty())
+				// A tracker can have several listen endpoints and both v1/v2
+				// info-hashes. Aggregate every active state instead of reading
+				// only the first slot (which is often an unused v1 entry).
+				for (auto const& endpoint : t.endpoints)
 				{
-					auto const& ep = t.endpoints.front();
-					if (!ep.info_hashes.empty())
+					for (auto const& ih : endpoint.info_hashes)
 					{
-						auto const& ih = ep.info_hashes.front();
-						ti.numPeers = ih.scrape_complete + ih.scrape_incomplete;
-						if (ih.fails > 0)
+						ti.retries = std::max(
+							ti.retries, static_cast<int>(ih.fails));
+						updating = updating || ih.updating;
+						failed = failed || ih.fails > 0 || bool(ih.last_error);
+						contacted = contacted || ih.start_sent || ih.complete_sent
+							|| ih.updating || ih.fails > 0 || bool(ih.last_error)
+							|| !ih.message.empty() || ih.scrape_complete >= 0
+							|| ih.scrape_incomplete >= 0;
+
+						if (ih.scrape_complete >= 0)
+							ti.seeders = std::max(ti.seeders, ih.scrape_complete);
+						if (ih.scrape_incomplete >= 0)
+							ti.leechers = std::max(ti.leechers, ih.scrape_incomplete);
+						if (ih.scrape_downloaded >= 0)
+							ti.downloaded = std::max(
+								ti.downloaded, ih.scrape_downloaded);
+
+						if (ih.next_announce != (lt::time_point32::min)()
+							&& ih.next_announce != (lt::time_point32::max)())
 						{
-							ti.status = "error";
-							ti.message = ih.message;
+							auto const remaining = static_cast<int>(std::max<
+																	std::int64_t>(0, lt::total_seconds(
+																		ih.next_announce - now)));
+							if (ti.nextAnnounceSeconds < 0)
+								ti.nextAnnounceSeconds = remaining;
+							else
+								ti.nextAnnounceSeconds = std::min(
+									ti.nextAnnounceSeconds, remaining);
 						}
-						else if (ih.updating)
+
+						if (ti.message.empty())
 						{
-							ti.status = "updating";
-						}
-						else
-						{
-							ti.status = "working";
+							if (ih.last_error)
+								ti.message = ih.last_error.message();
+							else if (!ih.message.empty())
+								ti.message = ih.message;
 						}
 					}
 				}
-				else
-				{
-					ti.status = "not contacted";
-				}
+
+				if (ti.seeders >= 0 && ti.leechers >= 0)
+					ti.numPeers = ti.seeders + ti.leechers;
+				if (updating)
+					ti.status = "updating";
+				else if (failed)
+					ti.status = "error";
+				else if (contacted)
+					ti.status = "working";
 
 				info.trackers.push_back(std::move(ti));
 			}
@@ -1884,8 +2080,8 @@ namespace OpenNet::Core::Torrent
 				if (status.pieces[lt::piece_index_t{ index }])
 					result.states[static_cast<std::size_t>(index)] = 2;
 				else if (index < static_cast<int>(priorities.size())
-					&& static_cast<std::uint8_t>(priorities[
-						static_cast<std::size_t>(index)]) == 0)
+						 && static_cast<std::uint8_t>(priorities[
+							 static_cast<std::size_t>(index)]) == 0)
 					result.states[static_cast<std::size_t>(index)] = 3;
 				else if (status.state == lt::torrent_status::checking_files)
 					result.states[static_cast<std::size_t>(index)] = 4;
@@ -1973,6 +2169,84 @@ namespace OpenNet::Core::Torrent
 			it->second.force_reannounce();
 	}
 
+	void LibtorrentHandle::ForceReannounceTracker(
+		std::string const& taskId,
+		std::string const& trackerUrl)
+	{
+		std::lock_guard lock(m_torrentMapMutex);
+		auto const found = m_taskIdToHandle.find(taskId);
+		if (found == m_taskIdToHandle.end() || !found->second.is_valid())
+			return;
+
+		auto const trackers = found->second.trackers();
+		for (std::size_t index = 0; index < trackers.size(); ++index)
+		{
+			if (trackers[index].url != trackerUrl)
+				continue;
+			found->second.force_reannounce(
+				0, static_cast<int>(index),
+				lt::torrent_handle::ignore_min_interval);
+			found->second.scrape_tracker(static_cast<int>(index));
+			return;
+		}
+	}
+
+	std::vector<LibtorrentHandle::TrackerLogEntry>
+		LibtorrentHandle::GetTrackerLog(
+			std::string const& taskId,
+			std::string const& trackerUrl) const
+	{
+		std::lock_guard lock(m_trackerLogMutex);
+		auto const task = m_trackerLogs.find(taskId);
+		if (task == m_trackerLogs.end())
+			return {};
+		auto const tracker = task->second.find(trackerUrl);
+		if (tracker == task->second.end())
+			return {};
+		return std::vector<TrackerLogEntry>(
+			tracker->second.begin(), tracker->second.end());
+	}
+
+	std::optional<LibtorrentHandle::TrackerLogEntry>
+		LibtorrentHandle::GetLatestTrackerLog(
+			std::string const& taskId,
+			std::string const& trackerUrl) const
+	{
+		std::lock_guard lock(m_trackerLogMutex);
+		auto const task = m_trackerLogs.find(taskId);
+		if (task == m_trackerLogs.end())
+			return std::nullopt;
+		auto const tracker = task->second.find(trackerUrl);
+		if (tracker == task->second.end() || tracker->second.empty())
+			return std::nullopt;
+		return tracker->second.back();
+	}
+
+	void LibtorrentHandle::ClearTrackerLog(
+		std::string const& taskId,
+		std::string const& trackerUrl)
+	{
+		std::lock_guard lock(m_trackerLogMutex);
+		auto const task = m_trackerLogs.find(taskId);
+		if (task == m_trackerLogs.end())
+			return;
+		task->second.erase(trackerUrl);
+		if (task->second.empty())
+			m_trackerLogs.erase(task);
+	}
+
+	void LibtorrentHandle::ClearTrackerLogs(std::string const& taskId)
+	{
+		std::lock_guard lock(m_trackerLogMutex);
+		m_trackerLogs.erase(taskId);
+	}
+
+	void LibtorrentHandle::ClearAllTrackerLogs()
+	{
+		std::lock_guard lock(m_trackerLogMutex);
+		m_trackerLogs.clear();
+	}
+
 	int LibtorrentHandle::GetTorrentDownloadLimit(
 		std::string const& taskId) const
 	{
@@ -2027,6 +2301,7 @@ namespace OpenNet::Core::Torrent
 			if (!url.empty())
 				item->second.add_tracker(lt::announce_entry(url));
 		}
+		RequestResumeDataForTorrent(item->second);
 	}
 
 	void LibtorrentHandle::EditTracker(
@@ -2055,6 +2330,7 @@ namespace OpenNet::Core::Torrent
 				: existingTier;
 		}
 		item->second.replace_trackers(trackers);
+		RequestResumeDataForTorrent(item->second);
 	}
 
 	void LibtorrentHandle::RemoveTrackers(
@@ -2076,6 +2352,7 @@ namespace OpenNet::Core::Torrent
 			return removed.contains(tracker.url);
 		});
 		item->second.replace_trackers(trackers);
+		RequestResumeDataForTorrent(item->second);
 	}
 
 	void LibtorrentHandle::AddWebSeeds(

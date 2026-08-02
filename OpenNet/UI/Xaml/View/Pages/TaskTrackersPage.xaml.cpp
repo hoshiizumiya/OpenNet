@@ -5,15 +5,19 @@ import winrt.XamlToolkit.Labs.WinUI;
 #include "UI/Xaml/View/Pages/TaskTrackersPage.g.cpp"
 #endif
 #include "ViewModels/DisplayItems.h"
+#include "../Windows/TrackerLogWindow.xaml.h"
 
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
+import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
+import winrt.Windows.Globalization.DateTimeFormatting;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -21,6 +25,49 @@ using namespace ::OpenNet::Helpers;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
+	namespace
+	{
+		winrt::hstring FormatOptionalNumber(int const value)
+		{
+			return value < 0 ? L"—" : winrt::to_hstring(value);
+		}
+
+		winrt::hstring FormatRemaining(int seconds)
+		{
+			if (seconds < 0)
+				return L"—";
+			auto const hours = seconds / 3600;
+			seconds %= 3600;
+			auto const minutes = seconds / 60;
+			seconds %= 60;
+			if (hours > 0)
+				return winrt::to_hstring(std::format("{}:{:02}:{:02}",
+													 hours, minutes, seconds));
+			return winrt::to_hstring(std::format("{}:{:02}", minutes, seconds));
+		}
+
+		std::string Trim(std::string value)
+		{
+			auto const notSpace = [](unsigned char c)
+			{
+				return !std::isspace(c);
+			};
+			value.erase(value.begin(), std::find_if(value.begin(), value.end(), notSpace));
+			value.erase(std::find_if(value.rbegin(), value.rend(), notSpace).base(), value.end());
+			return value;
+		}
+
+		winrt::hstring FormatLogStatus(
+			std::int64_t const timestamp, std::string const& content)
+		{
+			auto const formatter = winrt::Windows::Globalization::
+				DateTimeFormatting::DateTimeFormatter{ L"shortdate longtime" };
+			return formatter.Format(winrt::clock::from_time_t(
+				static_cast<std::time_t>(timestamp)))
+				+ L": " + winrt::to_hstring(content);
+		}
+	}
+
 	TaskTrackersPage::TaskTrackersPage()
 	{
 		m_trackerItems = winrt::single_threaded_observable_vector<
@@ -34,17 +81,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		UpdateSortHeaders();
 		Loaded([this](auto, auto)
 		{
-			RestoreColumn(ColTrackerTier(), "Trackers.Tier");
-			RestoreColumn(ColTrackerPeers(), "Trackers.Peers");
+			RestoreColumn(ColTrackerURL(), "Trackers.URL");
+			RestoreColumn(ColTrackerRetries(), "Trackers.Retries");
+			RestoreColumn(ColTrackerTimeRemaining(), "Trackers.TimeRemaining");
+			RestoreColumn(ColTrackerSeeders(), "Trackers.Seeders");
+			RestoreColumn(ColTrackerLeechers(), "Trackers.Leechers");
+			RestoreColumn(ColTrackerDownloaded(), "Trackers.Downloaded");
 			RestoreColumn(ColTrackerStatus(), "Trackers.Status");
-			RestoreColumn(ColTrackerMessage(), "Trackers.Message");
 		});
 		Unloaded([this](auto, auto)
 		{
-			SaveColumnWidth("Trackers.Tier", ColTrackerTier());
-			SaveColumnWidth("Trackers.Peers", ColTrackerPeers());
+			SaveColumnWidth("Trackers.URL", ColTrackerURL());
+			SaveColumnWidth("Trackers.Retries", ColTrackerRetries());
+			SaveColumnWidth("Trackers.TimeRemaining", ColTrackerTimeRemaining());
+			SaveColumnWidth("Trackers.Seeders", ColTrackerSeeders());
+			SaveColumnWidth("Trackers.Leechers", ColTrackerLeechers());
+			SaveColumnWidth("Trackers.Downloaded", ColTrackerDownloaded());
 			SaveColumnWidth("Trackers.Status", ColTrackerStatus());
-			SaveColumnWidth("Trackers.Message", ColTrackerMessage());
 		});
 	}
 
@@ -154,15 +207,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				button, m_sortColumn, m_sortDirection);
 		};
 		update(SortTrackerUrlButton());
-		update(SortTrackerTierButton());
-		update(SortTrackerPeersButton());
+		update(SortTrackerRetriesButton());
+		update(SortTrackerTimeRemainingButton());
+		update(SortTrackerSeedersButton());
+		update(SortTrackerLeechersButton());
+		update(SortTrackerDownloadedButton());
 		update(SortTrackerStatusButton());
-		update(SortTrackerMessageButton());
 	}
 
-	void TaskTrackersPage::ColumnHeader_RightTapped(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	void TaskTrackersPage::ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
 	{
 		m_contextColumn = nullptr;
 		auto source = args.OriginalSource().try_as<DependencyObject>();
@@ -177,9 +230,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskTrackersPage::ColumnMenu_Opening(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Windows::Foundation::IInspectable const&)
+	void TaskTrackersPage::ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const&)
 	{
 		AutoSizeSelectedColumnItem().IsEnabled(m_contextColumn != nullptr);
 		if (auto menu = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>())
@@ -196,14 +247,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::XamlToolkit::Labs::WinUI::DataColumn TaskTrackersPage::ColumnForTag(
-		winrt::hstring const& tag)
+	winrt::XamlToolkit::Labs::WinUI::DataColumn TaskTrackersPage::ColumnForTag(winrt::hstring const& tag)
 	{
 		if (tag == L"URL") return ColTrackerURL();
-		if (tag == L"Tier") return ColTrackerTier();
-		if (tag == L"Peers") return ColTrackerPeers();
+		if (tag == L"Log") return ColTrackerLog();
+		if (tag == L"Retries") return ColTrackerRetries();
+		if (tag == L"TimeRemaining") return ColTrackerTimeRemaining();
+		if (tag == L"Seeders") return ColTrackerSeeders();
+		if (tag == L"Leechers") return ColTrackerLeechers();
+		if (tag == L"Downloaded") return ColTrackerDownloaded();
 		if (tag == L"Status") return ColTrackerStatus();
-		if (tag == L"Message") return ColTrackerMessage();
 		return nullptr;
 	}
 
@@ -217,8 +270,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			column.Visibility(toggle.IsChecked() ? Visibility::Visible : Visibility::Collapsed);
 	}
 
-	void TaskTrackersPage::AutoSizeColumn(
-		winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
+	void TaskTrackersPage::AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
 	{
 		if (!column) return;
 		column.DesiredWidth(GridLengthHelper::Auto());
@@ -226,48 +278,340 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TrackersListView().InvalidateMeasure();
 	}
 
-	void TaskTrackersPage::AutoSizeSelectedColumn_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskTrackersPage::AutoSizeSelectedColumn_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		AutoSizeColumn(m_contextColumn);
 	}
 
-	void TaskTrackersPage::AutoSizeAllColumns_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskTrackersPage::AutoSizeAllColumns_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		for (auto const& column : std::array{
-			ColTrackerURL(), ColTrackerTier(), ColTrackerPeers(),
-			ColTrackerStatus(), ColTrackerMessage() })
+			ColTrackerURL(), ColTrackerLog(), ColTrackerRetries(),
+			ColTrackerTimeRemaining(), ColTrackerSeeders(),
+			ColTrackerLeechers(), ColTrackerDownloaded(), ColTrackerStatus() })
 			AutoSizeColumn(column);
 	}
 
-	void TaskTrackersPage::ResetColumns_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	void TaskTrackersPage::ResetColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
 	{
 		m_sortColumn = {};
 		m_sortDirection = 0;
 		UpdateSortHeaders();
 		for (auto const& column : std::array{
-			ColTrackerURL(), ColTrackerTier(), ColTrackerPeers(),
-			ColTrackerStatus(), ColTrackerMessage() })
+			ColTrackerURL(), ColTrackerLog(), ColTrackerRetries(),
+			ColTrackerTimeRemaining(), ColTrackerSeeders(),
+			ColTrackerLeechers(), ColTrackerDownloaded(), ColTrackerStatus() })
 			column.Visibility(Visibility::Visible);
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshTrackerList();
 	}
 
+	bool TaskTrackersPage::TryGetTaskContext(std::string& taskId, winrt::hstring& taskName) const
+	{
+		if (!m_viewModel || !m_viewModel.SelectedTask()
+			|| m_viewModel.SelectedTask().TaskType()
+			!= winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+			return false;
+		taskId = winrt::to_string(m_viewModel.SelectedTask().TaskId());
+		taskName = m_viewModel.SelectedTask().Name();
+		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
+		return !taskId.empty() && p2p.IsTorrentCoreInitialized()
+			&& p2p.TorrentCore();
+	}
+
+	winrt::hstring TaskTrackersPage::SelectedTrackerUrl()
+	{
+		if (auto item = TrackersListView().SelectedItem().try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>())
+		{
+			return item.URL();
+		}
+		return {};
+	}
+
+	void TaskTrackersPage::TrackerRow_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const&)
+	{
+		if (auto element = sender.try_as<FrameworkElement>())
+		{
+			if (auto item = element.DataContext().try_as<
+				winrt::OpenNet::ViewModels::TrackerDisplayItem>())
+				TrackersListView().SelectedItem(item);
+		}
+	}
+
+	void TaskTrackersPage::TrackerMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const&)
+	{
+		auto const hasSelection = !SelectedTrackerUrl().empty();
+		if (auto menu = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>())
+		{
+			for (auto const& entry : menu.Items())
+			{
+				if (auto item = entry.try_as<
+					winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>())
+				{
+					auto const text = item.Text();
+					if (text == L"Update tracker" || text == L"Remove tracker"
+						|| text == L"View log" || text == L"Clear log")
+						item.IsEnabled(hasSelection);
+				}
+			}
+		}
+	}
+
+	void TaskTrackersPage::OpenTrackerLog(winrt::hstring const& trackerUrl)
+	{
+		std::string taskId;
+		winrt::hstring taskName;
+		if (trackerUrl.empty() || !TryGetTaskContext(taskId, taskName))
+			return;
+		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::
+			implementation::TrackerLogWindow>(
+				winrt::to_hstring(taskId), taskName, trackerUrl);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+		window.Activate();
+	}
+
+	void TaskTrackersPage::TrackerLogButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>())
+		{
+			if (auto item = button.Tag().try_as<
+				winrt::OpenNet::ViewModels::TrackerDisplayItem>())
+			{
+				TrackersListView().SelectedItem(item);
+				OpenTrackerLog(item.URL());
+			}
+		}
+	}
+
+	void TaskTrackersPage::ViewLog_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		OpenTrackerLog(SelectedTrackerUrl());
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TaskTrackersPage::EditTrackers_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		std::string taskId;
+		winrt::hstring taskName;
+		if (!TryGetTaskContext(taskId, taskName))
+			co_return;
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		auto const detail = core->GetTorrentDetail(taskId);
+		winrt::Microsoft::UI::Xaml::Controls::TextBox editor;
+		editor.AcceptsReturn(true);
+		editor.TextWrapping(winrt::Microsoft::UI::Xaml::TextWrapping::NoWrap);
+		editor.MinWidth(560);
+		editor.MinHeight(260);
+		editor.PlaceholderText(L"One HTTP, HTTPS or UDP tracker URL per line");
+		winrt::hstring existingText;
+		for (auto const& tracker : detail.trackers)
+		{
+			if (!existingText.empty()) existingText = existingText + L"\r\n";
+			existingText = existingText + winrt::to_hstring(tracker.url);
+		}
+		editor.Text(existingText);
+
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(L"Edit trackers"));
+		dialog.Content(editor);
+		dialog.PrimaryButtonText(L"Save");
+		dialog.CloseButtonText(L"Cancel");
+		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
+		if (co_await dialog.ShowAsync()
+			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+			co_return;
+
+		std::vector<std::string> requested;
+		std::unordered_set<std::string> unique;
+		std::istringstream lines(winrt::to_string(editor.Text()));
+		std::string line;
+		winrt::hstring invalid;
+		while (std::getline(lines, line))
+		{
+			line = Trim(std::move(line));
+			if (line.empty()) continue;
+			try
+			{
+				winrt::Windows::Foundation::Uri uri{ winrt::to_hstring(line) };
+				auto const scheme = uri.SchemeName();
+				if (scheme != L"http" && scheme != L"https" && scheme != L"udp")
+					invalid = winrt::to_hstring(line);
+			}
+			catch (...)
+			{
+				invalid = winrt::to_hstring(line);
+			}
+			if (!invalid.empty()) break;
+			if (unique.insert(line).second)
+				requested.push_back(line);
+		}
+
+		if (!invalid.empty())
+		{
+			winrt::Microsoft::UI::Xaml::Controls::ContentDialog error;
+			error.XamlRoot(XamlRoot());
+			error.Title(winrt::box_value(L"Invalid tracker URL"));
+			error.Content(winrt::box_value(invalid));
+			error.CloseButtonText(L"Close");
+			co_await error.ShowAsync();
+			co_return;
+		}
+
+		std::unordered_set<std::string> current;
+		for (auto const& tracker : detail.trackers) current.insert(tracker.url);
+		std::vector<std::string> removed;
+		for (auto const& value : current)
+			if (!unique.contains(value)) removed.push_back(value);
+		std::vector<std::string> added;
+		for (auto const& value : requested)
+			if (!current.contains(value)) added.push_back(value);
+		if (!removed.empty())
+		{
+			core->RemoveTrackers(taskId, removed);
+			for (auto const& value : removed)
+				core->ClearTrackerLog(taskId, value);
+		}
+		if (!added.empty()) core->AddTrackers(taskId, added);
+		RefreshTrackerList();
+	}
+
+	void TaskTrackersPage::UpdateTracker_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		std::string taskId;
+		winrt::hstring taskName;
+		auto const url = SelectedTrackerUrl();
+		if (url.empty() || !TryGetTaskContext(taskId, taskName)) return;
+		::OpenNet::Core::P2PManager::Instance().TorrentCore()->
+			ForceReannounceTracker(taskId, winrt::to_string(url));
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TaskTrackersPage::RemoveTracker_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		std::string taskId;
+		winrt::hstring taskName;
+		auto const url = SelectedTrackerUrl();
+		if (url.empty() || !TryGetTaskContext(taskId, taskName)) co_return;
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(L"Remove tracker?"));
+		dialog.Content(winrt::box_value(url));
+		dialog.PrimaryButtonText(L"Remove");
+		dialog.CloseButtonText(L"Cancel");
+		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Close);
+		if (co_await dialog.ShowAsync()
+			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+			co_return;
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		core->RemoveTrackers(taskId, { winrt::to_string(url) });
+		core->ClearTrackerLog(taskId, winrt::to_string(url));
+		RefreshTrackerList();
+	}
+
+	void TaskTrackersPage::ClearTrackerLog_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		std::string taskId;
+		winrt::hstring taskName;
+		auto const url = SelectedTrackerUrl();
+		if (url.empty() || !TryGetTaskContext(taskId, taskName)) return;
+		::OpenNet::Core::P2PManager::Instance().TorrentCore()->
+			ClearTrackerLog(taskId, winrt::to_string(url));
+		RefreshTrackerList();
+	}
+
+	void TaskTrackersPage::ClearTaskTrackerLogs_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		std::string taskId;
+		winrt::hstring taskName;
+		if (!TryGetTaskContext(taskId, taskName)) return;
+		::OpenNet::Core::P2PManager::Instance().TorrentCore()->
+			ClearTrackerLogs(taskId);
+		RefreshTrackerList();
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TaskTrackersPage::ClearAllTrackerLogs_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		std::string taskId;
+		winrt::hstring taskName;
+		if (!TryGetTaskContext(taskId, taskName)) co_return;
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(L"Clear all tracker logs?"));
+		dialog.Content(winrt::box_value(
+			L"This clears in-memory tracker logs for every task."));
+		dialog.PrimaryButtonText(L"Clear all");
+		dialog.CloseButtonText(L"Cancel");
+		if (co_await dialog.ShowAsync()
+			== winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+		{
+			::OpenNet::Core::P2PManager::Instance().TorrentCore()->
+				ClearAllTrackerLogs();
+			RefreshTrackerList();
+		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TaskTrackersPage::RemoveUnreachableTrackers_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		std::string taskId;
+		winrt::hstring taskName;
+		if (!TryGetTaskContext(taskId, taskName)) co_return;
+		winrt::Microsoft::UI::Xaml::Controls::StackPanel content;
+		content.Spacing(10);
+		winrt::Microsoft::UI::Xaml::Controls::TextBlock prompt;
+		prompt.Text(L"Remove all trackers that have reached the number of retries:");
+		prompt.TextWrapping(TextWrapping::Wrap);
+		winrt::Microsoft::UI::Xaml::Controls::NumberBox retries;
+		retries.Minimum(1);
+		retries.Maximum(255);
+		retries.Value(3);
+		retries.ValidationMode(
+			winrt::Microsoft::UI::Xaml::Controls::NumberBoxValidationMode::
+			InvalidInputOverwritten);
+		retries.SpinButtonPlacementMode(
+			winrt::Microsoft::UI::Xaml::Controls::NumberBoxSpinButtonPlacementMode::Compact);
+		content.Children().Append(prompt);
+		content.Children().Append(retries);
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(L"Remove unreachable trackers"));
+		dialog.Content(content);
+		dialog.PrimaryButtonText(L"Remove");
+		dialog.CloseButtonText(L"Cancel");
+		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
+		if (co_await dialog.ShowAsync()
+			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+			co_return;
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		auto const detail = core->GetTorrentDetail(taskId);
+		auto const rawThreshold = retries.Value();
+		if (std::isnan(rawThreshold)) co_return;
+		auto const threshold = std::clamp(
+			static_cast<int>(std::round(rawThreshold)), 1, 255);
+		std::vector<std::string> removed;
+		for (auto const& tracker : detail.trackers)
+			if (tracker.retries >= threshold) removed.push_back(tracker.url);
+		if (!removed.empty())
+		{
+			core->RemoveTrackers(taskId, removed);
+			for (auto const& tracker : removed)
+				core->ClearTrackerLog(taskId, tracker);
+			RefreshTrackerList();
+		}
+	}
+
 	void TaskTrackersPage::RefreshTrackerList()
 	{
 		auto listView = TrackersListView();
-		auto emptyText = EmptyStateText();
+		auto emptyPanel = EmptyStatePanel();
 		if (!listView) return;
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
 			m_trackerItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
 
@@ -277,7 +621,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			m_trackerItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
 
@@ -285,7 +629,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (taskId.empty())
 		{
 			m_trackerItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
 
@@ -293,7 +637,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
 		{
 			m_trackerItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
 
@@ -302,7 +646,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (detail.trackers.empty())
 		{
 			m_trackerItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
+			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
 
@@ -316,18 +660,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				auto ascending = [&]()
 				{
 					if (column == L"URL") return left.url < right.url;
-					if (column == L"Tier") return left.tier < right.tier;
-					if (column == L"Peers") return left.numPeers < right.numPeers;
-					if (column == L"Status") return left.status < right.status;
-					return left.message < right.message;
+					if (column == L"Retries") return left.retries < right.retries;
+					if (column == L"TimeRemaining") return left.nextAnnounceSeconds < right.nextAnnounceSeconds;
+					if (column == L"Seeders") return left.seeders < right.seeders;
+					if (column == L"Leechers") return left.leechers < right.leechers;
+					if (column == L"Downloaded") return left.downloaded < right.downloaded;
+					return left.status < right.status;
 				};
 				auto descending = [&]()
 				{
 					if (column == L"URL") return right.url < left.url;
-					if (column == L"Tier") return right.tier < left.tier;
-					if (column == L"Peers") return right.numPeers < left.numPeers;
-					if (column == L"Status") return right.status < left.status;
-					return right.message < left.message;
+					if (column == L"Retries") return right.retries < left.retries;
+					if (column == L"TimeRemaining") return right.nextAnnounceSeconds < left.nextAnnounceSeconds;
+					if (column == L"Seeders") return right.seeders < left.seeders;
+					if (column == L"Leechers") return right.leechers < left.leechers;
+					if (column == L"Downloaded") return right.downloaded < left.downloaded;
+					return right.status < left.status;
 				};
 				return direction == 1 ? ascending() : descending();
 			});
@@ -367,12 +715,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.URL(trackerUrl);
 			item.Tier(winrt::to_hstring(tracker.tier));
 			item.Peers(winrt::to_hstring(tracker.numPeers));
-			item.Status(winrt::to_hstring(tracker.status));
+			item.Retries(winrt::to_hstring(tracker.retries));
+			item.TimeRemaining(FormatRemaining(tracker.nextAnnounceSeconds));
+			item.Seeders(FormatOptionalNumber(tracker.seeders));
+			item.Leechers(FormatOptionalNumber(tracker.leechers));
+			item.Downloaded(FormatOptionalNumber(tracker.downloaded));
+			auto const latest = p2p.TorrentCore()->GetLatestTrackerLog(
+				taskId, tracker.url);
+			if (latest)
+				item.Status(FormatLogStatus(
+					latest->timestamp, latest->content));
+			else if (!tracker.message.empty())
+				item.Status(winrt::to_hstring(tracker.message));
+			else
+				item.Status(winrt::to_hstring(tracker.status));
 			item.Message(winrt::to_hstring(tracker.message));
 		}
 		while (m_trackerItems.Size() > detail.trackers.size())
 			m_trackerItems.RemoveAtEnd();
 
-		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
+		if (emptyPanel) emptyPanel.Visibility(Visibility::Collapsed);
 	}
 }

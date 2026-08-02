@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "ViewModels/PeerDisplayItem.g.h"
 #include "ViewModels/TrackerDisplayItem.g.h"
+#include "ViewModels/TrackerLogDisplayItem.g.h"
 #include "ViewModels/FileDisplayItem.g.h"
 #include "ViewModels/RuntimeStatusDisplayItem.g.h"
 
@@ -259,6 +260,51 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_peers, v, L"Peers");
 		}
 
+		winrt::hstring Retries() const
+		{
+			return m_retries;
+		}
+		void Retries(winrt::hstring const& v)
+		{
+			SetProperty(m_retries, v, L"Retries");
+		}
+
+		winrt::hstring TimeRemaining() const
+		{
+			return m_timeRemaining;
+		}
+		void TimeRemaining(winrt::hstring const& v)
+		{
+			SetProperty(m_timeRemaining, v, L"TimeRemaining");
+		}
+
+		winrt::hstring Seeders() const
+		{
+			return m_seeders;
+		}
+		void Seeders(winrt::hstring const& v)
+		{
+			SetProperty(m_seeders, v, L"Seeders");
+		}
+
+		winrt::hstring Leechers() const
+		{
+			return m_leechers;
+		}
+		void Leechers(winrt::hstring const& v)
+		{
+			SetProperty(m_leechers, v, L"Leechers");
+		}
+
+		winrt::hstring Downloaded() const
+		{
+			return m_downloaded;
+		}
+		void Downloaded(winrt::hstring const& v)
+		{
+			SetProperty(m_downloaded, v, L"Downloaded");
+		}
+
 		winrt::hstring Status() const
 		{
 			return m_status;
@@ -281,6 +327,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_url;
 		winrt::hstring m_tier;
 		winrt::hstring m_peers;
+		winrt::hstring m_retries;
+		winrt::hstring m_timeRemaining;
+		winrt::hstring m_seeders;
+		winrt::hstring m_leechers;
+		winrt::hstring m_downloaded;
 		winrt::hstring m_status;
 		winrt::hstring m_message;
 	};
@@ -357,6 +408,43 @@ namespace winrt::OpenNet::ViewModels::implementation
 		int32_t m_fileIndex{};
 	};
 
+	struct TrackerLogDisplayItem : TrackerLogDisplayItemT<TrackerLogDisplayItem>,
+		::OpenNet::ViewModels::ObservableMixin<TrackerLogDisplayItem>
+	{
+		using ::OpenNet::ViewModels::ObservableMixin<TrackerLogDisplayItem>::SetProperty;
+		TrackerLogDisplayItem() = default;
+
+		winrt::hstring Time() const
+		{
+			return m_time;
+		}
+		void Time(winrt::hstring const& value)
+		{
+			SetProperty(m_time, value, L"Time");
+		}
+		winrt::hstring Content() const
+		{
+			return m_content;
+		}
+		void Content(winrt::hstring const& value)
+		{
+			SetProperty(m_content, value, L"Content");
+		}
+		bool IsError() const
+		{
+			return m_isError;
+		}
+		void IsError(bool const value)
+		{
+			SetProperty(m_isError, value, L"IsError");
+		}
+
+	private:
+		winrt::hstring m_time;
+		winrt::hstring m_content;
+		bool m_isError{};
+	};
+
 	// ---------------------------------------------------------------
 	// RuntimeStatusDisplayItem
 	// ---------------------------------------------------------------
@@ -369,7 +457,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		RuntimeStatusDisplayItem()
 			: m_children(winrt::single_threaded_observable_vector<
-				winrt::OpenNet::ViewModels::RuntimeStatusDisplayItem>())
+						 winrt::OpenNet::ViewModels::RuntimeStatusDisplayItem>())
 		{
 		}
 
@@ -411,7 +499,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		winrt::Windows::Foundation::Collections::IObservableVector<
 			winrt::OpenNet::ViewModels::RuntimeStatusDisplayItem>
-		Children() const
+			Children() const
 		{
 			return m_children;
 		}
@@ -438,10 +526,14 @@ namespace winrt::OpenNet::ViewModels::factory_implementation
 	struct FileDisplayItem : FileDisplayItemT<FileDisplayItem, implementation::FileDisplayItem>
 	{
 	};
+	struct TrackerLogDisplayItem : TrackerLogDisplayItemT<
+		TrackerLogDisplayItem, implementation::TrackerLogDisplayItem>
+	{
+	};
 	struct RuntimeStatusDisplayItem :
 		RuntimeStatusDisplayItemT<
-			RuntimeStatusDisplayItem,
-			implementation::RuntimeStatusDisplayItem>
+		RuntimeStatusDisplayItem,
+		implementation::RuntimeStatusDisplayItem>
 	{
 	};
 }

@@ -90,11 +90,7 @@
                 <FontIcon Glyph="&#xE713;" />
                 <Button.Flyout>
                     <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="BottomEdgeAlignedRight">
-                        <ScrollViewer
-                            Width="480"
-                            MaxHeight="640"
-                            HorizontalScrollBarVisibility="Disabled"
-                            VerticalScrollBarVisibility="Auto">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                             <StackPanel Spacing="10">
                                 <StackPanel>
                                     <TextBlock

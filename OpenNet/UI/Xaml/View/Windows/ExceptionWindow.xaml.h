@@ -39,9 +39,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::factory_implementation
 {
-	struct ExceptionWindow : ExceptionWindowT<
-		ExceptionWindow,
-		implementation::ExceptionWindow>
+	struct ExceptionWindow : ExceptionWindowT<ExceptionWindow, implementation::ExceptionWindow>
 	{
 	};
 }

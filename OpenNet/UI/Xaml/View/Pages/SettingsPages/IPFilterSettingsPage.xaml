@@ -109,6 +109,135 @@
                     </StackPanel>
                 </essential:SettingsCard>
 
+                <!--  Subscription sources  -->
+                <TextBlock x:Uid="IPF_Section_Subscriptions" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
+
+                <essential:SettingsExpander
+                    x:Name="SubscriptionExpander"
+                    x:Uid="IPF_Subscriptions"
+                    IsExpanded="True">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE895;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <ProgressRing
+                            x:Name="SubscriptionUpdateProgress"
+                            Width="20"
+                            Height="20"
+                            IsActive="False"
+                            Visibility="Collapsed" />
+                        <Button
+                            x:Name="UpdateSubscriptionsButton"
+                            x:Uid="IPF_UpdateSubscriptionsNow"
+                            Click="OnUpdateSubscriptionsClick">
+                            <FontIcon Glyph="&#xE72C;" />
+                        </Button>
+                    </StackPanel>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard x:Uid="IPF_SubscriptionAutoUpdate">
+                            <ToggleSwitch x:Name="SubscriptionAutoUpdateToggle" Toggled="OnSubscriptionAutoUpdateToggled" />
+                        </essential:SettingsCard>
+
+                        <essential:SettingsCard x:Uid="IPF_SubscriptionAdd">
+                            <Grid MinWidth="520" ColumnSpacing="8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox
+                                    x:Name="SubscriptionUrlTextBox"
+                                    x:Uid="IPF_SubscriptionUrl"
+                                    MinHeight="72"
+                                    HorizontalAlignment="Stretch"
+                                    AcceptsReturn="True"
+                                    TextWrapping="Wrap" />
+                                <Button
+                                    x:Uid="IPF_AddSubscription"
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center"
+                                    Click="OnAddSubscriptionClick" />
+                            </Grid>
+                        </essential:SettingsCard>
+
+                        <essential:SettingsCard x:Uid="IPF_SubscriptionSources">
+                            <Grid MinWidth="520" RowSpacing="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="220" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <ListView
+                                    x:Name="SubscriptionList"
+                                    SelectionChanged="OnSubscriptionSelectionChanged"
+                                    SelectionMode="Single">
+                                    <ListView.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock
+                                                IsTextSelectionEnabled="True"
+                                                Text="{Binding}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="WrapWholeWords"
+                                                ToolTipService.ToolTip="{Binding}" />
+                                        </DataTemplate>
+                                    </ListView.ItemTemplate>
+                                </ListView>
+                                <StackPanel
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Right"
+                                    Orientation="Horizontal"
+                                    Spacing="8">
+                                    <Button
+                                        x:Name="EditSubscriptionButton"
+                                        x:Uid="IPF_EditSubscription"
+                                        Click="OnEditSubscriptionClick"
+                                        IsEnabled="False" />
+                                    <Button
+                                        x:Name="DeleteSubscriptionButton"
+                                        x:Uid="IPF_DeleteSubscription"
+                                        Click="OnDeleteSubscriptionClick"
+                                        IsEnabled="False" />
+                                </StackPanel>
+                            </Grid>
+                        </essential:SettingsCard>
+
+                        <essential:SettingsCard x:Uid="IPF_SubscriptionMode">
+                            <StackPanel Spacing="4">
+                                <RadioButton
+                                    x:Name="SubscriptionMergeRadio"
+                                    x:Uid="IPF_SubscriptionMerge"
+                                    Checked="OnSubscriptionModeChanged"
+                                    GroupName="IPFilterSubscriptionMode" />
+                                <RadioButton
+                                    x:Name="SubscriptionReplaceRadio"
+                                    x:Uid="IPF_SubscriptionReplace"
+                                    Checked="OnSubscriptionModeChanged"
+                                    GroupName="IPFilterSubscriptionMode" />
+                            </StackPanel>
+                        </essential:SettingsCard>
+
+                        <essential:SettingsCard x:Uid="IPF_SubscriptionInterval">
+                            <NumberBox
+                                x:Name="SubscriptionIntervalNumberBox"
+                                Width="160"
+                                HorizontalAlignment="Right"
+                                LargeChange="6"
+                                Maximum="168"
+                                Minimum="1"
+                                SmallChange="1"
+                                SpinButtonPlacementMode="Inline"
+                                ValueChanged="OnSubscriptionIntervalChanged" />
+                        </essential:SettingsCard>
+
+                        <essential:SettingsCard x:Uid="IPF_SubscriptionLastResult">
+                            <TextBlock
+                                x:Name="SubscriptionLastResultText"
+                                MaxWidth="560"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                IsTextSelectionEnabled="True"
+                                TextWrapping="Wrap" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
                 <!--  Manage Rules  -->
                 <TextBlock x:Uid="IPF_Section_Manage" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 

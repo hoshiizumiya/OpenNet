@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+    [default_interface]
+    runtimeclass TrackerLogWindow : WinUI3Package.WindowEx
+    {
+        TrackerLogWindow();
+    }
+}

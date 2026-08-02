@@ -103,25 +103,25 @@ namespace OpenNet::Core::Torrent
 		if (!m_db) return false;
 
 		const char* createTasksTable = R"(
-            CREATE TABLE IF NOT EXISTS tasks (
-                task_id TEXT PRIMARY KEY,
-                magnet_uri TEXT NOT NULL,
-                save_path TEXT NOT NULL,
-                name TEXT,
-                added_timestamp INTEGER NOT NULL,
-                total_size INTEGER DEFAULT 0,
-                downloaded_size INTEGER DEFAULT 0,
-                status INTEGER DEFAULT 0,
-                resume_data BLOB
-            );
-        )";
+			CREATE TABLE IF NOT EXISTS tasks (
+				task_id TEXT PRIMARY KEY,
+				magnet_uri TEXT NOT NULL,
+				save_path TEXT NOT NULL,
+				name TEXT,
+				added_timestamp INTEGER NOT NULL,
+				total_size INTEGER DEFAULT 0,
+				downloaded_size INTEGER DEFAULT 0,
+				status INTEGER DEFAULT 0,
+				resume_data BLOB
+			);
+		)";
 
 		const char* createSessionTable = R"(
-            CREATE TABLE IF NOT EXISTS session_state (
-                id INTEGER PRIMARY KEY CHECK (id = 1),
-                state_data BLOB
-            );
-        )";
+			CREATE TABLE IF NOT EXISTS session_state (
+				id INTEGER PRIMARY KEY CHECK (id = 1),
+				state_data BLOB
+			);
+		)";
 
 		char* errMsg = nullptr;
 		int rc = sqlite3_exec(static_cast<sqlite3*>(m_db), createTasksTable, nullptr, nullptr, &errMsg);
@@ -142,17 +142,17 @@ namespace OpenNet::Core::Torrent
 		sqlite3_exec(
 			static_cast<sqlite3*>(m_db),
 			R"(
-                DELETE FROM tasks
-                WHERE COALESCE(name, '') = ''
-                  AND magnet_uri <> ''
-                  AND EXISTS (
-                      SELECT 1
-                      FROM tasks AS named
-                      WHERE named.task_id <> tasks.task_id
-                        AND named.magnet_uri = tasks.magnet_uri
-                        AND COALESCE(named.name, '') <> ''
-                  );
-            )",
+				DELETE FROM tasks
+				WHERE COALESCE(name, '') = ''
+				  AND magnet_uri <> ''
+				  AND EXISTS (
+					  SELECT 1
+					  FROM tasks AS named
+					  WHERE named.task_id <> tasks.task_id
+						AND named.magnet_uri = tasks.magnet_uri
+						AND COALESCE(named.name, '') <> ''
+				  );
+			)",
 			nullptr,
 			nullptr,
 			nullptr);
@@ -193,8 +193,8 @@ namespace OpenNet::Core::Torrent
 			std::vector<char> buf = lt::write_session_params_buf(params, lt::session::save_dht_state);
 
 			const char* sql = R"(
-                INSERT OR REPLACE INTO session_state (id, state_data) VALUES (1, ?);
-            )";
+				INSERT OR REPLACE INTO session_state (id, state_data) VALUES (1, ?);
+			)";
 
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
@@ -353,10 +353,10 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			const char* sql = R"(
-                INSERT OR REPLACE INTO tasks 
-                (task_id, magnet_uri, save_path, name, added_timestamp, total_size, downloaded_size, status, resume_data)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-            )";
+				INSERT OR REPLACE INTO tasks 
+				(task_id, magnet_uri, save_path, name, added_timestamp, total_size, downloaded_size, status, resume_data)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+			)";
 
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
@@ -401,10 +401,10 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			const char* sql = R"(
-                SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
-                       total_size, downloaded_size, status, resume_data 
-                FROM tasks WHERE task_id = ?;
-            )";
+				SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
+					   total_size, downloaded_size, status, resume_data 
+				FROM tasks WHERE task_id = ?;
+			)";
 
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
@@ -464,10 +464,10 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			const char* sql = R"(
-                SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
-                       total_size, downloaded_size, status, resume_data 
-                FROM tasks ORDER BY added_timestamp DESC;
-            )";
+				SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
+					   total_size, downloaded_size, status, resume_data 
+				FROM tasks ORDER BY added_timestamp DESC;
+			)";
 
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
@@ -621,6 +621,38 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
+	bool TorrentStateManager::UpdateTaskSavePath(
+		std::string const& taskId,
+		std::string const& savePath)
+	{
+		std::lock_guard lk(m_dbMutex);
+		if (!m_db) return false;
+
+		try
+		{
+			constexpr char sql[] =
+				"UPDATE tasks SET save_path = ? WHERE task_id = ?;";
+			sqlite3_stmt* statement = nullptr;
+			int result = sqlite3_prepare_v2(
+				static_cast<sqlite3*>(m_db), sql, -1, &statement, nullptr);
+			if (result != SQLITE_OK) return false;
+
+			sqlite3_bind_text(
+				statement, 1, savePath.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(
+				statement, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+			result = sqlite3_step(statement);
+			sqlite3_finalize(statement);
+			return result == SQLITE_DONE;
+		}
+		catch (std::exception const& ex)
+		{
+			OutputDebugStringA((
+				"UpdateTaskSavePath error: " + std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
+	}
+
 	bool TorrentStateManager::ExportToFile(std::wstring const& filePath)
 	{
 		// Don't hold lock while doing I/O - load data first, then write
@@ -633,10 +665,10 @@ namespace OpenNet::Core::Torrent
 
 			// Inline query to avoid recursive locking
 			const char* sql = R"(
-                SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
-                       total_size, downloaded_size, status, resume_data 
-                FROM tasks ORDER BY added_timestamp DESC;
-            )";
+				SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
+					   total_size, downloaded_size, status, resume_data 
+				FROM tasks ORDER BY added_timestamp DESC;
+			)";
 
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);

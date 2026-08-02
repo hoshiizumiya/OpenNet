@@ -169,14 +169,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				nullptr,
 				transitionInfo);
 		}
-		else if (tag == L"network" || tag == L"tracker")
+		else if (tag == L"tracker")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>(),
 				nullptr,
 				transitionInfo);
 		}
-		else if (tag == L"bittorrent" || tag == L"advanced")
+		else if (tag == L"bittorrent" || tag == L"advanced" || tag == L"network")
 		{
 			SettingsFrame().Navigate(
 				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::BittorrentSettingsPage>(),

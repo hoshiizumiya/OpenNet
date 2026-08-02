@@ -9,7 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="InfoOverlayWindow"
     Title="InfoOverlayWindow"
+    IsAlwaysOnTop="True"
     mc:Ignorable="d">
+
+    <essential:WindowEx.ContextMenu>
+        <essential:ModernStandardWindowContextMenu />
+    </essential:WindowEx.ContextMenu>
 
     <Grid
         x:Name="OverlayRoot"

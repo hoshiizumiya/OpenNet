@@ -190,8 +190,20 @@ export namespace OpenNet::Core::Torrent
 			std::string url;
 			int tier{};
 			int numPeers{};
+			int retries{};
+			int nextAnnounceSeconds{ -1 };
+			int seeders{ -1 };
+			int leechers{ -1 };
+			int downloaded{ -1 };
 			std::string status; // "working", "updating", "error", "not contacted"
 			std::string message;
+		};
+
+		struct TrackerLogEntry
+		{
+			std::int64_t timestamp{};
+			std::string content;
+			bool isError{};
 		};
 
 		struct TorrentFileEntry
@@ -286,6 +298,20 @@ export namespace OpenNet::Core::Torrent
 
 		// Force an immediate tracker announce
 		void ForceReannounce(std::string const& taskId);
+		void ForceReannounceTracker(
+			std::string const& taskId,
+			std::string const& trackerUrl);
+		std::vector<TrackerLogEntry> GetTrackerLog(
+			std::string const& taskId,
+			std::string const& trackerUrl) const;
+		std::optional<TrackerLogEntry> GetLatestTrackerLog(
+			std::string const& taskId,
+			std::string const& trackerUrl) const;
+		void ClearTrackerLog(
+			std::string const& taskId,
+			std::string const& trackerUrl);
+		void ClearTrackerLogs(std::string const& taskId);
+		void ClearAllTrackerLogs();
 
 		// Per-torrent transfer limits (bytes/sec, 0 = unlimited)
 		int GetTorrentDownloadLimit(std::string const& taskId) const;
@@ -362,6 +388,11 @@ export namespace OpenNet::Core::Torrent
 		void ClearPeerEvent(
 			libtorrent::torrent_handle const& handle,
 			libtorrent::tcp::endpoint const& endpoint);
+		void RecordTrackerLog(
+			libtorrent::torrent_handle const& handle,
+			std::string const& trackerUrl,
+			std::string content,
+			bool isError = false);
 
 		std::unique_ptr<libtorrent::session> m_session;
 		std::optional<libtorrent::session_proxy> m_sessionProxy;
@@ -381,6 +412,10 @@ export namespace OpenNet::Core::Torrent
 		TorrentStateManager* m_stateManager{ nullptr };
 		mutable std::mutex m_peerEventMutex;
 		std::unordered_map<std::string, std::deque<PeerConnectionEvent>> m_peerEvents;
+		mutable std::mutex m_trackerLogMutex;
+		std::unordered_map<std::string,
+			std::unordered_map<std::string, std::deque<TrackerLogEntry>>>
+			m_trackerLogs;
 
 		// Cached DHT node count (updated via dht_stats_alert)
 		std::atomic<int> m_cachedDhtNodeCount{ 0 };

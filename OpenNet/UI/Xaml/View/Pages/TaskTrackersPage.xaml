@@ -12,16 +12,22 @@
     mc:Ignorable="d">
 
     <Grid Padding="0,8,0,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <!--  Tracker list  -->
-        <ListView
-            x:Name="TrackersListView"
-            Grid.Row="1"
-            SelectionMode="None">
+        <ListView x:Name="TrackersListView" SelectionMode="Single">
+            <ListView.ContextFlyout>
+                <MenuFlyout Opening="TrackerMenu_Opening">
+                    <MenuFlyoutItem Click="EditTrackers_Click" Text="Edit trackers..." />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Click="UpdateTracker_Click" Text="Update tracker" />
+                    <MenuFlyoutItem Click="RemoveTracker_Click" Text="Remove tracker" />
+                    <MenuFlyoutItem Click="ViewLog_Click" Text="View log" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Click="ClearTrackerLog_Click" Text="Clear log" />
+                    <MenuFlyoutItem Click="ClearTaskTrackerLogs_Click" Text="Clear log in all trackers" />
+                    <MenuFlyoutItem Click="ClearAllTrackerLogs_Click" Text="Clear log in trackers of all tasks" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem Click="RemoveUnreachableTrackers_Click" Text="Remove all unreachable trackers..." />
+                </MenuFlyout>
+            </ListView.ContextFlyout>
             <ListView.ItemContainerTransitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
@@ -40,33 +46,48 @@
                                 x:Name="AutoSizeSelectedColumnItem"
                                 Click="AutoSizeSelectedColumn_Click"
                                 Text="Auto Size Selected Column's Width to Fit" />
-                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
+                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto size all columns" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="URL"
-                                Text="URL" />
+                                Text="Tracker URL" />
                             <ToggleMenuFlyoutItem
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
-                                Tag="Tier"
-                                Text="Tier" />
+                                Tag="Log"
+                                Text="Log" />
                             <ToggleMenuFlyoutItem
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
-                                Tag="Peers"
-                                Text="Peers" />
+                                Tag="Retries"
+                                Text="Retries" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="TimeRemaining"
+                                Text="Time remaining" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Seeders"
+                                Text="Seeders" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Leechers"
+                                Text="Leechers" />
+                            <ToggleMenuFlyoutItem
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Downloaded"
+                                Text="Downloaded" />
                             <ToggleMenuFlyoutItem
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Status"
                                 Text="Status" />
-                            <ToggleMenuFlyoutItem
-                                Click="ColumnVisibility_Click"
-                                IsChecked="True"
-                                Tag="Message"
-                                Text="Message" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem Click="ResetColumns_Click" Text="Reset Columns and Sorting" />
                         </MenuFlyout>
@@ -82,36 +103,67 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="URL">
-                                <TextBlock
-                                    x:Uid="TrackerHeader_URL"
-                                    Text="URL"
-                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="Tracker URL" TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
-                        <labs:DataColumn x:Name="ColTrackerTier" CanResize="True">
+                        <labs:DataColumn x:Name="ColTrackerLog" DesiredWidth="48">
                             <Button
-                                x:Name="SortTrackerTierButton"
+                                x:Name="SortTrackerLogButton"
+                                FontWeight="SemiBold"
+                                IsEnabled="False"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="Log">
+                                <TextBlock Text="Log" />
+                            </Button>
+                        </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColTrackerRetries" CanResize="True">
+                            <Button
+                                x:Name="SortTrackerRetriesButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Tier">
-                                <TextBlock
-                                    x:Uid="TrackerHeader_Tier"
-                                    Text="Tier"
-                                    TextTrimming="CharacterEllipsis" />
+                                Tag="Retries">
+                                <TextBlock Text="Retries" TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
-                        <labs:DataColumn x:Name="ColTrackerPeers" CanResize="True">
+                        <labs:DataColumn x:Name="ColTrackerTimeRemaining" CanResize="True">
                             <Button
-                                x:Name="SortTrackerPeersButton"
+                                x:Name="SortTrackerTimeRemainingButton"
                                 Click="ColumnHeader_Click"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Peers">
-                                <TextBlock
-                                    x:Uid="TrackerHeader_Peers"
-                                    Text="Peers"
-                                    TextTrimming="CharacterEllipsis" />
+                                Tag="TimeRemaining">
+                                <TextBlock Text="Time remaining" TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColTrackerSeeders" CanResize="True">
+                            <Button
+                                x:Name="SortTrackerSeedersButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="Seeders">
+                                <TextBlock Text="Seeders" TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColTrackerLeechers" CanResize="True">
+                            <Button
+                                x:Name="SortTrackerLeechersButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="Leechers">
+                                <TextBlock Text="Leechers" TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColTrackerDownloaded" CanResize="True">
+                            <Button
+                                x:Name="SortTrackerDownloadedButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="Downloaded">
+                                <TextBlock Text="Downloaded" TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerStatus" CanResize="True">
@@ -121,23 +173,7 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
-                                <TextBlock
-                                    x:Uid="TrackerHeader_Status"
-                                    Text="Status"
-                                    TextTrimming="CharacterEllipsis" />
-                            </Button>
-                        </labs:DataColumn>
-                        <labs:DataColumn x:Name="ColTrackerMessage" CanResize="True">
-                            <Button
-                                x:Name="SortTrackerMessageButton"
-                                Click="ColumnHeader_Click"
-                                FontWeight="SemiBold"
-                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Message">
-                                <TextBlock
-                                    x:Uid="TrackerHeader_Message"
-                                    Text="Message"
-                                    TextTrimming="CharacterEllipsis" />
+                                <TextBlock Text="Status" TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                     </labs:DataTable>
@@ -145,26 +181,50 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackerDisplayItem">
-                    <labs:DataRow HorizontalAlignment="Left">
-                        <TextBlock Text="{x:Bind URL, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Tier, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Peers, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Status, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Message, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                    <labs:DataRow HorizontalAlignment="Left" RightTapped="TrackerRow_RightTapped">
+                        <TextBlock
+                            Text="{x:Bind URL, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind URL, Mode=OneWay}" />
+                        <Button
+                            Padding="8,2"
+                            Click="TrackerLogButton_Click"
+                            Style="{StaticResource SubtleButtonStyle}"
+                            Tag="{x:Bind}">
+                            <FontIcon FontSize="14" Glyph="&#xE946;" />
+                        </Button>
+                        <TextBlock Text="{x:Bind Retries, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind TimeRemaining, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Seeders, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Leechers, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                        <TextBlock
+                            Text="{x:Bind Status, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            ToolTipService.ToolTip="{x:Bind Status, Mode=OneWay}" />
                     </labs:DataRow>
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
 
-        <!--  Empty state  -->
-        <TextBlock
-            x:Name="EmptyStateText"
-            x:Uid="TrackersList_EmptyState"
-            Grid.Row="1"
+        <StackPanel
+            x:Name="EmptyStatePanel"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
-            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-            Text="No trackers"
-            Visibility="Collapsed" />
+            Spacing="8"
+            Visibility="Collapsed">
+            <FontIcon
+                HorizontalAlignment="Center"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Glyph="&#xE774;" />
+            <TextBlock
+                x:Name="EmptyStateText"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="No trackers" />
+            <Button
+                HorizontalAlignment="Center"
+                Click="EditTrackers_Click"
+                Content="Add trackers" />
+        </StackPanel>
     </Grid>
 </Page>

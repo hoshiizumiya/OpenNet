@@ -35,6 +35,11 @@
         String URL;
         String Tier;
         String Peers;
+        String Retries;
+        String TimeRemaining;
+        String Seeders;
+        String Leechers;
+        String Downloaded;
         String Status;
         String Message;
     };
@@ -49,6 +54,15 @@
         String Done;
         Int32 PriorityIndex;
         Int32 FileIndex;
+    };
+
+    [default_interface]
+    runtimeclass TrackerLogDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TrackerLogDisplayItem();
+        String Time;
+        String Content;
+        Boolean IsError;
     };
 
     [default_interface]

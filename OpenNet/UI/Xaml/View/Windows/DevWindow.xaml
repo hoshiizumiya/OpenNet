@@ -7,8 +7,6 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="DevWindow"
-    Width="600"
-    Height="520"
     MinWidth="480"
     MinHeight="360"
     IsAlwaysOnTop="True"

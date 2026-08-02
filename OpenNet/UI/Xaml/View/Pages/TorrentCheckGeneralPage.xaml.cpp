@@ -139,6 +139,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				{
 					selectedSizeText.Text(m_viewModel.SelectedSize());
 				}
+				TorrentInfoHashText().Text(m_viewModel.InfoHash());
+				TorrentCreatorText().Text(m_viewModel.Creator());
+				TorrentCreationDateText().Text(m_viewModel.CreationDate());
+				TorrentPieceInfoText().Text(
+					winrt::to_hstring(m_viewModel.NumPieces()) + L" pieces × " +
+					winrt::to_hstring(m_viewModel.PieceLength()) + L" bytes" +
+					(m_viewModel.IsPrivate() ? L" · Private" : L""));
+				TorrentCommentText().Text(m_viewModel.Comment());
 				if (auto savePathBox = TorrentCheckGeneralPageSavePath())
 				{
 					if (m_viewModel.SavePath().empty())

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 import winrt.WinUI3Package;
 
@@ -10,15 +10,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		DevWindow();
 
-		void OpenLiveGraphTestWindow_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void TriggerXamlException_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		winrt::fire_and_forget OpenOperationProgressDialog_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OpenLiveGraphTestWindow_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void TriggerXamlException_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::fire_and_forget OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 	};
 }
 

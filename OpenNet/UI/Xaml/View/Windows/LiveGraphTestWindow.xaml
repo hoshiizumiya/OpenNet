@@ -113,11 +113,11 @@
                                 <graph:LiveGraph.HighlightLineContent>
                                     <Grid IsHitTestVisible="False">
                                         <Line
+                                            VerticalAlignment="Top"
                                             Opacity="0.55"
                                             Stroke="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                             StrokeDashArray="3,3"
                                             StrokeThickness="1"
-                                            VerticalAlignment="Top"
                                             X1="0"
                                             X2="10000" />
                                         <Border
@@ -216,10 +216,10 @@
                                 <graph:LiveGraph.HighlightLineContent>
                                     <Grid IsHitTestVisible="False">
                                         <Line
+                                            VerticalAlignment="Top"
                                             Opacity="0.45"
                                             Stroke="{ThemeResource TextFillColorPrimaryBrush}"
                                             StrokeThickness="1"
-                                            VerticalAlignment="Top"
                                             X1="0"
                                             X2="10000" />
                                         <TextBlock

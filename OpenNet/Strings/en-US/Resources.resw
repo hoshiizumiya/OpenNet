@@ -285,12 +285,6 @@
   <data name="SoftLanguage.Description" xml:space="preserve">
     <value>Set the application language.</value>
   </data>
-  <data name="SpSwttingsl.Text" xml:space="preserve">
-    <value>Serial Port Settings</value>
-  </data>
-  <data name="SpSettings_Text.Text" xml:space="preserve">
-    <value>Serial Port Settings</value>
-  </data>
   <data name="DowFlashl.Text" xml:space="preserve">
     <value>Download Flash Settings</value>
   </data>
@@ -1053,6 +1047,150 @@
   <data name="IPF_DeleteRuleBtn.Content" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="IPF_Section_Subscriptions.Text" xml:space="preserve">
+    <value>Subscriptions</value>
+  </data>
+  <data name="IPF_Subscriptions.Header" xml:space="preserve">
+    <value>IP filter subscriptions</value>
+  </data>
+  <data name="IPF_Subscriptions.Description" xml:space="preserve">
+    <value>Download and maintain IP rules from HTTP or HTTPS sources</value>
+  </data>
+  <data name="IPF_UpdateSubscriptionsNow.Content" xml:space="preserve">
+    <value>Update now</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Header" xml:space="preserve">
+    <value>Automatic updates</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Description" xml:space="preserve">
+    <value>Check enabled sources in the background at the configured interval</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Header" xml:space="preserve">
+    <value>Add source</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Description" xml:space="preserve">
+    <value>Enter a direct link to a plain-text IP filter list</value>
+  </data>
+  <data name="IPF_SubscriptionUrl.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/ipfilter.txt</value>
+  </data>
+  <data name="IPF_AddSubscription.Content" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Header" xml:space="preserve">
+    <value>Subscribed sources</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Description" xml:space="preserve">
+    <value>Enabled state and the latest result are shown for each source</value>
+  </data>
+  <data name="IPF_EditSubscription.Content" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="IPF_DeleteSubscription.Content" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Header" xml:space="preserve">
+    <value>Update behavior</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Description" xml:space="preserve">
+    <value>Choose how downloaded rules are applied to the current database</value>
+  </data>
+  <data name="IPF_SubscriptionMerge.Content" xml:space="preserve">
+    <value>Merge into existing IP address list</value>
+  </data>
+  <data name="IPF_SubscriptionReplace.Content" xml:space="preserve">
+    <value>Replace existing IP address list</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Header" xml:space="preserve">
+    <value>Update interval (hours)</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Description" xml:space="preserve">
+    <value>Allowed range: 1–168 hours</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Header" xml:space="preserve">
+    <value>Last update result</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Description" xml:space="preserve">
+    <value>The latest automatic or manual subscription update</value>
+  </data>
+  <data name="IPF_Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="IPF_NeverUpdated" xml:space="preserve">
+    <value>Not updated yet</value>
+  </data>
+  <data name="IPF_SourceSuccess" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="IPF_SourceFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
+  <data name="IPF_Rules" xml:space="preserve">
+    <value>rules</value>
+  </data>
+  <data name="IPF_NotifyTitle" xml:space="preserve">
+    <value>IP filter subscriptions</value>
+  </data>
+  <data name="IPF_NoEnabledSubscriptions" xml:space="preserve">
+    <value>No enabled subscription sources.</value>
+  </data>
+  <data name="IPF_UpdateSummarySuccess" xml:space="preserve">
+    <value>Updated sources</value>
+  </data>
+  <data name="IPF_UpdateSummaryRules" xml:space="preserve">
+    <value>valid rules</value>
+  </data>
+  <data name="IPF_UpdateSummaryImported" xml:space="preserve">
+    <value>database changes</value>
+  </data>
+  <data name="IPF_UpdateSummaryFailed" xml:space="preserve">
+    <value>failed</value>
+  </data>
+  <data name="IPF_UpdateAllFailed" xml:space="preserve">
+    <value>All subscription updates failed.</value>
+  </data>
+  <data name="IPF_ReplacementSkipped" xml:space="preserve">
+    <value>replacement skipped to preserve existing rules</value>
+  </data>
+  <data name="IPF_UpdateUnexpectedError" xml:space="preserve">
+    <value>The subscription update failed unexpectedly.</value>
+  </data>
+  <data name="IPF_InvalidSubscriptionUrl" xml:space="preserve">
+    <value>Enter a valid HTTP or HTTPS URL.</value>
+  </data>
+  <data name="IPF_DuplicateSubscription" xml:space="preserve">
+    <value>This subscription already exists.</value>
+  </data>
+  <data name="IPF_SubscriptionAdded" xml:space="preserve">
+    <value>Subscription sources added</value>
+  </data>
+  <data name="IPF_InvalidOrDuplicateSubscriptions" xml:space="preserve">
+    <value>No new valid subscription URLs were found.</value>
+  </data>
+  <data name="IPF_Skipped" xml:space="preserve">
+    <value>skipped</value>
+  </data>
+  <data name="IPF_SourceEnabled" xml:space="preserve">
+    <value>Enable this source</value>
+  </data>
+  <data name="IPF_EditSubscriptionTitle" xml:space="preserve">
+    <value>Edit subscription</value>
+  </data>
+  <data name="IPF_Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="IPF_Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="IPF_SubscriptionUpdateFailed" xml:space="preserve">
+    <value>The subscription could not be saved.</value>
+  </data>
+  <data name="IPF_DeleteSubscriptionTitle" xml:space="preserve">
+    <value>Delete subscription</value>
+  </data>
+  <data name="IPF_Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="RenameTaskMenuItem.Text" xml:space="preserve">
     <value>Rename</value>
   </data>
@@ -1460,5 +1598,104 @@
   </data>
   <data name="TaskStatusFailed" xml:space="preserve">
     <value>Failed</value>
+  </data>
+  <data name="TasksContextStart.Text" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="TasksContextStop.Text" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="TasksContextPreview.Text" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="TasksContextUpdateTracker.Text" xml:space="preserve">
+    <value>Update Tracker</value>
+  </data>
+  <data name="TasksContextSuperSeed.Text" xml:space="preserve">
+    <value>Super Seed Mode</value>
+  </data>
+  <data name="TasksContextSequential.Text" xml:space="preserve">
+    <value>Sequential Download Mode</value>
+  </data>
+  <data name="TasksContextOpenFile.Text" xml:space="preserve">
+    <value>Open File</value>
+  </data>
+  <data name="TasksContextHashCheck.Text" xml:space="preserve">
+    <value>Manual Hash Check</value>
+  </data>
+  <data name="TasksContextSaveTorrent.Text" xml:space="preserve">
+    <value>Save Torrent as...</value>
+  </data>
+  <data name="TasksContextSubmitSnapshots.Text" xml:space="preserve">
+    <value>Submit Snapshots</value>
+  </data>
+  <data name="TasksContextDelete.Text" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="TasksContextCleanUp.Text" xml:space="preserve">
+    <value>Clean Up</value>
+  </data>
+  <data name="TasksContextMoveFiles.Text" xml:space="preserve">
+    <value>Files Move To</value>
+  </data>
+  <data name="TasksContextChooseFolder.Text" xml:space="preserve">
+    <value>Choose folder...</value>
+  </data>
+  <data name="TasksContextTags.Text" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="TasksContextNoTags.Text" xml:space="preserve">
+    <value>No tags configured</value>
+  </data>
+  <data name="TasksContextSendTo.Text" xml:space="preserve">
+    <value>Send to</value>
+  </data>
+  <data name="TasksContextDefaultApplication.Text" xml:space="preserve">
+    <value>Default application</value>
+  </data>
+  <data name="TasksContextSearchOnline.Text" xml:space="preserve">
+    <value>Search Online</value>
+  </data>
+  <data name="TasksContextCopyMagnet.Text" xml:space="preserve">
+    <value>Copy Magnet URI  (Ctrl+C)</value>
+  </data>
+  <data name="TasksContextCopy.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="TasksContextCopyName.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TasksContextCopyHash.Text" xml:space="preserve">
+    <value>Info hash</value>
+  </data>
+  <data name="TasksContextCopyPath.Text" xml:space="preserve">
+    <value>Save path</value>
+  </data>
+  <data name="TasksContextDiskUsage.Text" xml:space="preserve">
+    <value>Disk Usage Info...</value>
+  </data>
+  <data name="TorrentDetailsExpander.Header" xml:space="preserve">
+    <value>Torrent details</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.Text" xml:space="preserve">
+    <value>Info hash:</value>
+  </data>
+  <data name="TorrentDetailsCreator.Text" xml:space="preserve">
+    <value>Created by:</value>
+  </data>
+  <data name="TorrentDetailsCreatedOn.Text" xml:space="preserve">
+    <value>Created on:</value>
+  </data>
+  <data name="TorrentDetailsPieces.Text" xml:space="preserve">
+    <value>Pieces:</value>
+  </data>
+  <data name="TorrentDetailsComment.Text" xml:space="preserve">
+    <value>Comment:</value>
+  </data>
+  <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>Open Directory</value>
+  </data>
+  <data name="PropertiesMenuItem.Text" xml:space="preserve">
+    <value>Properties...</value>
   </data>
 </root>

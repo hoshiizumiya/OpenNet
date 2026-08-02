@@ -209,9 +209,13 @@
                 </essential:SettingsExpander>
 
                 <!--  Connection Settings Section  -->
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Connection" />
+                <TextBlock
+                    x:Uid="ViewPageNetworkSettingsPageConnectionSettingsHeader"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="Connection" />
 
                 <essential:SettingsExpander
+                    x:Uid="ViewPageNetworkSettingsPageConnectionSettings"
                     Description="Configure the IPv4 and IPv6 endpoints used by libtorrent. Port 0 lets the operating system select an available port."
                     Header="BitTorrent listen endpoints">
                     <essential:SettingsExpander.HeaderIcon>
@@ -247,11 +251,13 @@
                                 ValueChanged="ListenEndpoint_ValueChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard
+                            x:Uid="ViewPageNetworkSettingsPageRuntimeListener"
                             ContentAlignment="Left"
                             Header="Runtime listener">
                             <StackPanel Spacing="2">
                                 <TextBlock
                                     x:Name="ActualListenEndpointText"
+                                    x:Uid="ViewPageNetworkSettingsPageRuntimeListenerEndpoint"
                                     FontWeight="SemiBold"
                                     Text="The BitTorrent engine is not running." />
                                 <TextBlock

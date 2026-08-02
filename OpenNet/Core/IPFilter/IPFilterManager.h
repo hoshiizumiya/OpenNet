@@ -44,6 +44,17 @@ namespace OpenNet::Core
 		std::int64_t expiresAt{}; // 0 means permanent
 	};
 
+	struct IPFilterSubscription
+	{
+		std::int64_t id{};
+		std::string url;
+		bool enabled{ true };
+		std::int64_t lastUpdated{};
+		std::string lastStatus;
+		std::int32_t ruleCount{};
+		std::string lastError;
+	};
+
 	/// Manages IP filter rules stored in SQLite and applies them to
 	/// the libtorrent session via ip_filter.
 	/// Thread-safe singleton.
@@ -78,6 +89,32 @@ namespace OpenNet::Core
 		std::int32_t GetRuleCount() const;
 
 		void ClearAllRules();
+
+		// Subscription sources and their update metadata.
+		std::int64_t AddSubscription(std::string const& url);
+		bool UpdateSubscription(
+			std::int64_t id, std::string const& url, bool enabled);
+		void RemoveSubscription(std::int64_t id);
+		void SetSubscriptionEnabled(std::int64_t id, bool enabled);
+		std::vector<IPFilterSubscription> GetSubscriptions() const;
+		void SetSubscriptionUpdateResult(
+			std::int64_t id,
+			std::int64_t updatedAt,
+			bool succeeded,
+			std::int32_t ruleCount,
+			std::string const& error);
+
+		bool SubscriptionAutoUpdateEnabled() const;
+		void SubscriptionAutoUpdateEnabled(bool value);
+		bool SubscriptionReplaceExisting() const;
+		void SubscriptionReplaceExisting(bool value);
+		std::int32_t SubscriptionUpdateIntervalHours() const;
+		void SubscriptionUpdateIntervalHours(std::int32_t value);
+		std::int64_t SubscriptionLastUpdate() const;
+		std::string SubscriptionLastResult() const;
+		void SetSubscriptionLastResult(
+			std::int64_t updatedAt, std::string const& result);
+		bool IsSubscriptionUpdateDue(std::int64_t now) const;
 
 		/// Add or replace an address ban from the same source. Timed bans are
 		/// stored separately from imported IP lists so expiry cannot destroy an
@@ -121,7 +158,9 @@ namespace OpenNet::Core
 		/// Import rules from multi-line text (one entry per line).
 		/// Lines starting with '#' or ';' are treated as comments.
 		/// Returns the number of rules successfully imported.
-		std::int32_t ImportFromText(std::string const& text);
+		std::int32_t ImportFromText(
+			std::string const& text, bool replaceExisting = false);
+		static std::int32_t CountRulesInText(std::string const& text);
 
 		// ---------------------------------------------------------------
 		//  Session integration

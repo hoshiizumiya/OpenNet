@@ -6,6 +6,7 @@
 
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.P2PManager;
+import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Windows.Graphics;
 
@@ -17,15 +18,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	InfoOverlayWindow::InfoOverlayWindow()
 	{
 		InitializeComponent();
-		AppWindow().Resize(winrt::Windows::Graphics::SizeInt32{ 300, 132 });
+		ExtendsContentIntoTitleBar(true);
 		if (auto presenter = AppWindow().Presenter()
 			.try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
 		{
-			presenter.IsAlwaysOnTop(true);
 			presenter.IsMaximizable(false);
 			presenter.IsMinimizable(false);
 			presenter.IsResizable(false);
 		}
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
 
 		Closed([this](auto const&, auto const&)
 		{
@@ -34,12 +35,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				m_refreshTimer.Stop();
 				m_refreshTimer = nullptr;
 			}
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
 		});
 	}
 
-	void InfoOverlayWindow::OverlayRoot_Loaded(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void InfoOverlayWindow::OverlayRoot_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (!m_refreshTimer)
 		{

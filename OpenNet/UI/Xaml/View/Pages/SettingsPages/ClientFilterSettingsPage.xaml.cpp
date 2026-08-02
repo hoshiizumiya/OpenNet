@@ -445,6 +445,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(L"Edit Client Filter Rule"));
 		dialog.Content(editor);
 		dialog.PrimaryButtonText(L"Save");
@@ -495,6 +496,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(L"Delete Client Filter Rule"));
 		dialog.Content(winrt::box_value(
 			winrt::hstring{ L"Delete this rule?\n\n" } +
@@ -531,6 +533,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		ContentDialog optionsDialog;
 		optionsDialog.XamlRoot(XamlRoot());
+		optionsDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		optionsDialog.Title(winrt::box_value(L"Import Client Filter Rules"));
 		optionsDialog.Content(options);
 		optionsDialog.PrimaryButtonText(L"Choose File");
@@ -636,6 +639,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto strong = get_strong();
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(L"Clear Client Filter Rules"));
 		dialog.Content(winrt::box_value(
 			L"Remove every client filter rule? This cannot be undone."));

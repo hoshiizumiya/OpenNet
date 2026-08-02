@@ -29,6 +29,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		SetTitleBar(NATDetectorWindowTitleBar());
 		ExtendsContentIntoTitleBar(true);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
 		DirectoryUriBox().Text(m_detector.TraversalDirectoryUri());
 
 		auto& manager = ::OpenNet::Core::P2PManager::Instance();
@@ -58,6 +59,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			AppWindow().SetPresenter(presenter);
 		}
 		UpdateLibtorrentState();
+		Closed([this](auto const&, auto const&)
+		{
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+		});
 	}
 
 	void NATDetectorWindow::UpdateLibtorrentState()

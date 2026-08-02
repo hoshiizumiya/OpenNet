@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<essential:WindowEx
+    x:Class="OpenNet.UI.Xaml.View.Windows.TrackerLogWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:labs="using:XamlToolkit.Labs.WinUI"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:OpenNet.ViewModels"
+    Width="1000"
+    Height="600"
+    MinWidth="480"
+    MinHeight="360"
+    mc:Ignorable="d">
+
+    <essential:WindowEx.ContextMenu>
+        <essential:ModernStandardWindowContextMenu />
+    </essential:WindowEx.ContextMenu>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TitleBar x:Name="WindowTitleBar" Title="Tracker log" />
+
+        <Grid
+            Grid.Row="1"
+            Padding="16,10,16,12"
+            ColumnSpacing="12"
+            RowSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Text="Task name" />
+            <TextBlock
+                x:Name="TaskNameText"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                TextTrimming="CharacterEllipsis" />
+            <ToggleSwitch
+                x:Name="AlwaysOnTopToggle"
+                Grid.RowSpan="2"
+                Grid.Column="2"
+                VerticalAlignment="Center"
+                Header="Always on top"
+                Toggled="AlwaysOnTopToggle_Toggled" />
+
+            <TextBlock
+                Grid.Row="1"
+                VerticalAlignment="Center"
+                FontWeight="SemiBold"
+                Text="Tracker URL" />
+            <TextBlock
+                x:Name="TrackerUrlText"
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                IsTextSelectionEnabled="True"
+                TextTrimming="CharacterEllipsis" />
+        </Grid>
+
+        <ListView
+            x:Name="LogListView"
+            Grid.Row="2"
+            SelectionMode="None">
+            <ListView.Header>
+                <Border Padding="12,6" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
+                    <labs:DataTable ColumnSpacing="16">
+                        <labs:DataColumn DesiredWidth="190">
+                            <TextBlock FontWeight="SemiBold" Text="Time" />
+                        </labs:DataColumn>
+                        <labs:DataColumn DesiredWidth="*">
+                            <TextBlock FontWeight="SemiBold" Text="Content" />
+                        </labs:DataColumn>
+                    </labs:DataTable>
+                </Border>
+            </ListView.Header>
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="vm:TrackerLogDisplayItem">
+                    <labs:DataRow HorizontalAlignment="Stretch">
+                        <TextBlock
+                            Margin="12,4,0,4"
+                            Text="{x:Bind Time, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis" />
+                        <Grid Margin="0,4,12,4" ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <essential:SwitchPresenter Value="{x:Bind IsError, Mode=OneWay}">
+                                <essential:Case>
+                                    <essential:Case.Value>
+                                        <x:Boolean>True</x:Boolean>
+                                    </essential:Case.Value>
+                                    <FontIcon
+                                        FontSize="12"
+                                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                        Glyph="&#xEA39;" />
+                                </essential:Case>
+                                <essential:Case>
+                                    <essential:Case.Value>
+                                        <x:Boolean>False</x:Boolean>
+                                    </essential:Case.Value>
+                                    <FontIcon
+                                        FontSize="12"
+                                        Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                                        Glyph="&#xE73E;" />
+                                </essential:Case>
+                            </essential:SwitchPresenter>
+                            <TextBlock
+                                Grid.Column="1"
+                                Text="{x:Bind Content, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis"
+                                ToolTipService.ToolTip="{x:Bind Content, Mode=OneWay}" />
+                        </Grid>
+                    </labs:DataRow>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+
+        <TextBlock
+            x:Name="EmptyLogText"
+            Grid.Row="2"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+            Text="No tracker log entries yet" />
+    </Grid>
+</essential:WindowEx>

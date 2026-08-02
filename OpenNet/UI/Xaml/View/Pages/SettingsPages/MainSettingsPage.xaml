@@ -101,16 +101,6 @@
             </NavigationViewItem>
 
             <NavigationViewItem
-                x:Name="SerialPortNavItem"
-                x:Uid="SettingsSerialPortNavItem"
-                Content="Serial Port"
-                Tag="serialport">
-                <NavigationViewItem.Icon>
-                    <FontIcon Glyph="&#xE8CB;" />
-                </NavigationViewItem.Icon>
-            </NavigationViewItem>
-
-            <NavigationViewItem
                 x:Name="DownloadBehaviorNavItem"
                 x:Uid="SettingsDownloadNavItem"
                 Content="DownloadBehavior"
@@ -120,7 +110,7 @@
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
-            <NavigationViewItem
+            <!--<NavigationViewItem
                 x:Name="RSSNavItem"
                 x:Uid="SettingsRSSNavItem"
                 Content="RSS"
@@ -128,7 +118,7 @@
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE71A;" />
                 </NavigationViewItem.Icon>
-            </NavigationViewItem>
+            </NavigationViewItem>-->
 
             <NavigationViewItem
                 x:Name="WebUINavItem"
@@ -150,7 +140,7 @@
                 </NavigationViewItem.Icon>
             </NavigationViewItem>
 
-            <NavigationViewItem
+            <!--<NavigationViewItem
                 x:Name="AdvancedNavItem"
                 x:Uid="SettingsAdvancedNavItem"
                 Content="Advanced"
@@ -158,7 +148,7 @@
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE90F;" />
                 </NavigationViewItem.Icon>
-            </NavigationViewItem>
+            </NavigationViewItem>-->
 
             <NavigationViewItemSeparator />
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.g.h"
+#include "ViewModels/TaskViewModel.h"
 #include "ViewModels/TorrentMetadataViewModel.h"
 
 import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
@@ -13,6 +14,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		TorrentCheckModalWindow();
 		TorrentCheckModalWindow(winrt::hstring const& torrentLink);
+		TorrentCheckModalWindow(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task);
 
 		// Properties for XAML binding
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel MetadataViewModel() const { return m_metadataViewModel; }
@@ -36,6 +39,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	private:
 		void InitializeWindow();
+		void LoadExistingTask(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task);
 		void StartParseMetadata();
 		winrt::Windows::Foundation::IAsyncAction ParseTorrentMetadataAsync();
 
@@ -63,6 +68,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		bool m_metadataReady{ false };
 		bool m_closing{ false };
 		bool m_downloadStarting{ false };
+		bool m_existingTaskMode{ false };
 
 		// ViewModel
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel m_metadataViewModel{ nullptr };

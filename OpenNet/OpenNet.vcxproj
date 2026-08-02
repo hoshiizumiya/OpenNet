@@ -466,6 +466,10 @@
       <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\TrackerLogWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="Core\CryptoManager.h" />
     <ClInclude Include="Core\DataGraph\ReadableUnitConverter.h" />
     <ClInclude Include="Core\DataGraph\ReadableUnitConverterWinRT.h" />
@@ -765,6 +769,9 @@
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainWindow.xaml" />
     <Page Include="UI\Xaml\View\Pages\ContactsPage.xaml">
       <SubType>Designer</SubType>
@@ -1021,6 +1028,10 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\TrackerLogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp" />
@@ -1374,6 +1385,10 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.idl">
       <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Windows\TrackerLogWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\TrackerLogWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="Core\DataGraph\ReadableUnitConverterWinRT.idl" />

@@ -10,6 +10,9 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.Resources>
+            <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind}" />
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />

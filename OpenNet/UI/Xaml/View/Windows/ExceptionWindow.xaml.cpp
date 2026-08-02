@@ -52,12 +52,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			}
 		});
 
-		Closed([](auto&&, auto&&)
+		Closed([this](auto&&, auto&&)
 		{
+			this->get_strong();
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
 			// The fatal event and optional feedback have been flushed.
 			winrt::OpenNet::implementation::App::RequestExit();
 		});
 
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
 		SetTitleBar(ExceptionWindowTitleBar());
 
 		auto const ownerWindow = winrt::OpenNet::implementation::App::window

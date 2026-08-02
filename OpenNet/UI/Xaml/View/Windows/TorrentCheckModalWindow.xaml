@@ -72,9 +72,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <StackPanel Margin="0,0,0,12" Spacing="4">
-                    <TextBlock
-                        FontWeight="SemiBold"
-                        Text="Tracker list for this task" />
+                    <TextBlock FontWeight="SemiBold" Text="Tracker list for this task" />
                     <TextBlock
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="One tracker URL per line. Trackers already present in the magnet or .torrent file and enabled custom trackers are merged automatically."
@@ -88,8 +86,7 @@
                     PlaceholderText="https://tracker.example.com/announce"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    TextWrapping="NoWrap"
-                    />
+                    TextWrapping="NoWrap" />
                 <TextBlock
                     Grid.Row="2"
                     Margin="0,8,0,0"
@@ -101,6 +98,7 @@
 
         <!--  Bottom Action Bar  -->
         <Grid
+            x:Name="ActionBar"
             Grid.Row="3"
             Padding="16,8"
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
@@ -111,6 +109,7 @@
             </Grid.ColumnDefinitions>
 
             <StackPanel
+                x:Name="DownloadOptionsPanel"
                 Grid.Column="0"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
@@ -120,9 +119,7 @@
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
                     Content="Start immediately"
                     IsChecked="True" />
-                <CheckBox
-                    x:Name="SaveTorrentCopyCheckBox"
-                    Content="Save a .torrent copy to the download folder" />
+                <CheckBox x:Name="SaveTorrentCopyCheckBox" Content="Save a .torrent copy to the download folder" />
             </StackPanel>
 
             <StackPanel

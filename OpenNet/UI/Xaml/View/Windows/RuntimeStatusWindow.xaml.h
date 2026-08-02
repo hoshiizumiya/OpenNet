@@ -13,9 +13,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void InitializeComponent();
 		void RefreshButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		void CopyButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
-		winrt::Windows::Foundation::Collections::IObservableVector<
-			winrt::Windows::Foundation::IInspectable>
-			StatusItems() const;
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> StatusItems() const;
 
 	private:
 		struct StatusRow
@@ -35,11 +33,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void SyncStatusItems();
 		winrt::hstring BuildReport();
 		winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_refreshTimer{ nullptr };
-		winrt::Windows::Foundation::Collections::IObservableVector<
-			winrt::Windows::Foundation::IInspectable>
-			m_statusItems{
-				winrt::single_threaded_observable_vector<
-					winrt::Windows::Foundation::IInspectable>() };
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_statusItems{ winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>() };
 		std::vector<StatusSection> m_statusSections;
 		winrt::hstring m_lastReport;
 		std::uint64_t m_previousKernelTime{};
@@ -52,7 +46,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::factory_implementation
 {
-	struct RuntimeStatusWindow : RuntimeStatusWindowT<		RuntimeStatusWindow, implementation::RuntimeStatusWindow>
+	struct RuntimeStatusWindow : RuntimeStatusWindowT<RuntimeStatusWindow, implementation::RuntimeStatusWindow>
 	{
 	};
 }

@@ -9,6 +9,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Setting.LocalSetting;
 import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.WindowHelper;
 import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Microsoft.UI.Windowing;
 
@@ -20,6 +21,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	GuideWindow::GuideWindow()
 	{
 		ExtendsContentIntoTitleBar(true);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		Closed([this](auto const&, auto const&)
+		{
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+		});
 	}
 
 	void GuideWindow::InitializeComponent()

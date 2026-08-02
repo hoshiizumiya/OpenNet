@@ -508,24 +508,155 @@
                     <ListView.ContextFlyout>
                         <MenuFlyout Opening="TasksContextMenuFlyout_Opening">
                             <MenuFlyoutItem
-                                x:Name="RenameTaskMenuItem"
-                                x:Uid="RenameTaskMenuItem"
-                                Click="RenameTaskMenuItem_ClickAsync"
-                                Icon="{essential:FontIcon Glyph=&#xE8AC;}"
-                                Text="Rename" />
+                                x:Name="StartTaskMenuItem"
+                                x:Uid="TasksContextStart"
+                                Click="StartTaskMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE768;}"
+                                Text="Start" />
                             <MenuFlyoutItem
-                                x:Name="MoveTaskMenuItem"
-                                x:Uid="MoveTaskMenuItem"
-                                Click="MoveTaskMenuItem_Click"
-                                Icon="{essential:FontIcon Glyph=&#xE8DE;}"
-                                Text="Move to..." />
+                                x:Name="StopTaskMenuItem"
+                                x:Uid="TasksContextStop"
+                                Click="StopTaskMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE769;}"
+                                Text="Stop" />
+                            <MenuFlyoutItem
+                                x:Name="PreviewTaskMenuItem"
+                                x:Uid="TasksContextPreview"
+                                Click="PreviewTaskMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE8B1;}"
+                                Text="Preview" />
+                            <MenuFlyoutItem
+                                x:Name="UpdateTrackerMenuItem"
+                                x:Uid="TasksContextUpdateTracker"
+                                Click="UpdateTrackerMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE895;}"
+                                Text="Update Tracker" />
+                            <ToggleMenuFlyoutItem
+                                x:Name="SuperSeedModeMenuItem"
+                                x:Uid="TasksContextSuperSeed"
+                                Click="SuperSeedModeMenuItem_Click"
+                                Text="Super Seed Mode" />
+                            <ToggleMenuFlyoutItem
+                                x:Name="SequentialDownloadMenuItem"
+                                x:Uid="TasksContextSequential"
+                                Click="SequentialDownloadMenuItem_Click"
+                                Text="Sequential Download Mode" />
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem
+                                x:Name="OpenTaskFileMenuItem"
+                                x:Uid="TasksContextOpenFile"
+                                Click="OpenTaskFileMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE7C3;}"
+                                Text="Open File" />
                             <MenuFlyoutItem
                                 x:Name="OpenTaskLocationMenuItem"
                                 x:Uid="OpenTaskLocationMenuItem"
                                 Click="OpenTaskLocationMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE8E5;}"
-                                Text="Open Location" />
+                                Text="Open Directory" />
+                            <MenuFlyoutItem
+                                x:Name="ManualHashCheckMenuItem"
+                                x:Uid="TasksContextHashCheck"
+                                Click="ManualHashCheckMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE9D5;}"
+                                Text="Manual Hash Check" />
+                            <MenuFlyoutItem
+                                x:Name="SaveTorrentAsMenuItem"
+                                x:Uid="TasksContextSaveTorrent"
+                                Click="SaveTorrentAsMenuItem_ClickAsync"
+                                Icon="{essential:FontIcon Glyph=&#xE74E;}"
+                                Text="Save Torrent as..." />
+                            <MenuFlyoutItem
+                                x:Uid="TasksContextSubmitSnapshots"
+                                IsEnabled="False"
+                                Text="Submit Snapshots" />
+                            <MenuFlyoutItem
+                                x:Name="DeleteTaskMenuItem"
+                                x:Uid="TasksContextDelete"
+                                Click="DeleteTaskMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE74D;}"
+                                Text="Delete" />
+                            <MenuFlyoutItem
+                                x:Uid="TasksContextCleanUp"
+                                IsEnabled="False"
+                                Text="Clean Up" />
                             <MenuFlyoutSeparator />
+                            <MenuFlyoutSubItem
+                                x:Name="MoveTaskMenuItem"
+                                x:Uid="TasksContextMoveFiles"
+                                Icon="{essential:FontIcon Glyph=&#xE8DE;}"
+                                Text="Files Move To">
+                                <MenuFlyoutItem
+                                    x:Uid="TasksContextChooseFolder"
+                                    Click="MoveTaskMenuItem_Click"
+                                    Text="Choose folder..." />
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutSubItem
+                                x:Name="TagsMenuItem"
+                                x:Uid="TasksContextTags"
+                                Text="Tags">
+                                <MenuFlyoutItem
+                                    x:Uid="TasksContextNoTags"
+                                    IsEnabled="False"
+                                    Text="No tags configured" />
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutItem
+                                x:Name="RenameTaskMenuItem"
+                                x:Uid="RenameTaskMenuItem"
+                                Click="RenameTaskMenuItem_ClickAsync"
+                                Icon="{essential:FontIcon Glyph=&#xE8AC;}"
+                                Text="Rename..." />
+                            <MenuFlyoutSubItem
+                                x:Name="SendToMenuItem"
+                                x:Uid="TasksContextSendTo"
+                                Text="Send to">
+                                <MenuFlyoutItem
+                                    x:Name="SendToDefaultApplicationMenuItem"
+                                    x:Uid="TasksContextDefaultApplication"
+                                    Click="OpenTaskFileMenuItem_Click"
+                                    Text="Default application" />
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutSeparator />
+                            <MenuFlyoutItem
+                                x:Name="SearchOnlineMenuItem"
+                                x:Uid="TasksContextSearchOnline"
+                                Click="SearchOnlineMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE721;}"
+                                Text="Search Online" />
+                            <MenuFlyoutItem
+                                x:Name="CopyMagnetUriMenuItem"
+                                x:Uid="TasksContextCopyMagnet"
+                                Click="CopyMagnetUriMenuItem_Click"
+                                Icon="{essential:FontIcon Glyph=&#xE8C8;}"
+                                Text="Copy Magnet URI  (Ctrl+C)">
+                                <MenuFlyoutItem.KeyboardAccelerators>
+                                    <KeyboardAccelerator Key="C" Modifiers="Control" />
+                                </MenuFlyoutItem.KeyboardAccelerators>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutSubItem
+                                x:Name="CopyTaskMenuItem"
+                                x:Uid="TasksContextCopy"
+                                Text="Copy">
+                                <MenuFlyoutItem
+                                    x:Uid="TasksContextCopyName"
+                                    Click="CopyTaskNameMenuItem_Click"
+                                    Text="Name" />
+                                <MenuFlyoutItem
+                                    x:Name="CopyTaskHashMenuItem"
+                                    x:Uid="TasksContextCopyHash"
+                                    Click="CopyTaskHashMenuItem_Click"
+                                    Text="Info hash" />
+                                <MenuFlyoutItem
+                                    x:Uid="TasksContextCopyPath"
+                                    Click="CopyTaskPathMenuItem_Click"
+                                    Text="Save path" />
+                            </MenuFlyoutSubItem>
+                            <MenuFlyoutItem
+                                x:Name="DiskUsageInfoMenuItem"
+                                x:Uid="TasksContextDiskUsage"
+                                Click="DiskUsageInfoMenuItem_ClickAsync"
+                                Icon="{essential:FontIcon Glyph=&#xEDA2;}"
+                                Text="Disk Usage Info..." />
                             <MenuFlyoutItem
                                 x:Name="PropertiesMenuItem"
                                 x:Uid="PropertiesMenuItem"

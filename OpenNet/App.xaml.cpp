@@ -7,6 +7,7 @@
 #include "UI/Xaml/View/Windows/DevWindow.xaml.h"
 #include "UI/Xaml/View/Windows/GuideWindow.xaml.h"
 #include "UI/Xaml/View/InfoBarView.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
 #include "UI/Xaml/Control/Effect/TextMorphEffect.h"
 
 module OpenNet.App;
@@ -181,6 +182,7 @@ namespace winrt::OpenNet::implementation
 		InitializeTorrentCoreAsync();
 		InitializeRSSManagerAsync();
 		InitializeWebUIAsync();
+		StartIPFilterSubscriptionUpdates();
 
 #if _DEBUG
 		auto devWindow = winrt::make<
@@ -189,6 +191,36 @@ namespace winrt::OpenNet::implementation
 #endif
 
 		HandleActivation(AppInstance::GetCurrent().GetActivatedEventArgs());
+	}
+
+	void App::StartIPFilterSubscriptionUpdates()
+	{
+		using SubscriptionPage = winrt::OpenNet::UI::Xaml::View::Pages::
+			SettingsPages::implementation::IPFilterSettingsPage;
+		(void)SubscriptionPage::RunSubscriptionUpdateAsync(false, true);
+
+		if (s_ipFilterSubscriptionTimer)
+			return;
+		auto dispatcher =
+			Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+		if (!dispatcher)
+			return;
+		s_ipFilterSubscriptionTimer = dispatcher.CreateTimer();
+		s_ipFilterSubscriptionTimer.IsRepeating(true);
+		s_ipFilterSubscriptionTimer.Interval(std::chrono::minutes(15));
+		s_ipFilterSubscriptionTimer.Tick([](auto const&, auto const&)
+		{
+			(void)SubscriptionPage::RunSubscriptionUpdateAsync(false, true);
+		});
+		s_ipFilterSubscriptionTimer.Start();
+	}
+
+	void App::StopIPFilterSubscriptionUpdates()
+	{
+		if (!s_ipFilterSubscriptionTimer)
+			return;
+		s_ipFilterSubscriptionTimer.Stop();
+		s_ipFilterSubscriptionTimer = nullptr;
 	}
 
 	bool App::CreateSetMainWindow()
@@ -406,6 +438,7 @@ namespace winrt::OpenNet::implementation
 		}
 
 		auto dispatcher = Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+		StopIPFilterSubscriptionUpdates();
 
 		// Remove the native notification icon before engine shutdown. This also
 		// prevents late tray callbacks from trying to show an AppWindow which is

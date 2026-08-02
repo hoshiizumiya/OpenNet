@@ -24,14 +24,19 @@ import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.torrentCore.LibtorrentHandle;
+import OpenNet.Core.torrentCore.TorrentStateManager;
 import OpenNet.Extension.DependencyObjectExtensions;
 import OpenNet.Factory.Window;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.Helpers.ControlLengthHelper;
+import OpenNet.Helpers.WindowHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.OpenNet.UI.Xaml.View.Pages.SettingsPages;
 import winrt.OpenNet.UI.Xaml.View.Windows;
+import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Windows.Foundation;
+import winrt.Windows.System;
 import winrt.Windows.UI.Xaml.Navigation;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml;
@@ -58,6 +63,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	namespace
 	{
+		using TorrentDetailInfo =
+			::OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo;
+
 		hstring GetTaskPersistenceKey(winrt::OpenNet::ViewModels::TaskViewModel const& item)
 		{
 			if (!item)
@@ -76,6 +84,207 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 
 			return item.Name();
+		}
+
+		bool IsBitTorrentTask(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		{
+			return task && task.TaskType() ==
+				winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent;
+		}
+
+		std::optional<TorrentDetailInfo> GetTorrentDetail(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		{
+			if (!IsBitTorrentTask(task))
+			{
+				return std::nullopt;
+			}
+
+			auto const taskId = winrt::to_string(task.TaskId());
+			auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+			if (!core || taskId.empty())
+			{
+				return std::nullopt;
+			}
+
+			auto detail = core->GetTorrentDetail(taskId);
+			if (detail.name.empty() && detail.infoHash.empty() &&
+				detail.savePath.empty() && detail.files.empty())
+			{
+				return std::nullopt;
+			}
+			return detail;
+		}
+
+		std::optional<::OpenNet::Core::Torrent::TaskMetadata> GetTaskMetadata(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		{
+			if (!IsBitTorrentTask(task))
+			{
+				return std::nullopt;
+			}
+			auto* manager = ::OpenNet::Core::P2PManager::Instance().StateManager();
+			if (!manager)
+			{
+				return std::nullopt;
+			}
+			return manager->LoadTaskMetadata(winrt::to_string(task.TaskId()));
+		}
+
+		std::filesystem::path GetTaskSavePath(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task,
+			std::optional<TorrentDetailInfo> const& detail)
+		{
+			if (task && task.TaskType() ==
+				winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+			{
+				auto const record =
+					::OpenNet::Core::HttpStateManager::Instance().FindByRecordId(
+						winrt::to_string(task.TaskId()));
+				if (record && !record->savePath.empty())
+				{
+					return std::filesystem::path{
+						winrt::to_hstring(record->savePath).c_str() };
+				}
+				return {};
+			}
+			if (detail && !detail->savePath.empty())
+			{
+				return std::filesystem::path{ winrt::to_hstring(detail->savePath).c_str() };
+			}
+			if (auto metadata = GetTaskMetadata(task); metadata && !metadata->savePath.empty())
+			{
+				return std::filesystem::path{ winrt::to_hstring(metadata->savePath).c_str() };
+			}
+			return {};
+		}
+
+		std::filesystem::path GetTaskSavePath(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		{
+			return GetTaskSavePath(task, GetTorrentDetail(task));
+		}
+
+		std::filesystem::path GetTaskFilePath(
+			TorrentDetailInfo const& detail,
+			bool preview)
+		{
+			auto const isPreviewable = [](std::filesystem::path const& path)
+			{
+				auto extension = path.extension().wstring();
+				std::ranges::transform(
+					extension, extension.begin(),
+					[](wchar_t value)
+				{
+					return static_cast<wchar_t>(::towlower(value));
+				});
+				static constexpr std::array<std::wstring_view, 13> extensions{
+					L".mp4", L".mkv", L".avi", L".mov", L".wmv",
+					L".webm", L".mp3", L".flac", L".wav", L".aac",
+					L".ogg", L".jpg", L".png"
+				};
+				return std::ranges::find(extensions, extension) != extensions.end();
+			};
+
+			for (auto const& file : detail.files)
+			{
+				if (file.priority <= 0 ||
+					(preview ? file.bytesCompleted <= 0
+					 : file.bytesCompleted < file.size))
+				{
+					continue;
+				}
+				auto relativePath = std::filesystem::path{
+					winrt::to_hstring(file.path).c_str() };
+				if (preview && !isPreviewable(relativePath))
+				{
+					continue;
+				}
+				auto path = std::filesystem::path{
+					winrt::to_hstring(detail.savePath).c_str() } / relativePath;
+				std::error_code error;
+				if (std::filesystem::exists(path, error) && !error)
+				{
+					return path;
+				}
+			}
+			return {};
+		}
+
+		std::filesystem::path GetTaskFilePath(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task,
+			bool preview)
+		{
+			auto const detail = GetTorrentDetail(task);
+			return detail ? GetTaskFilePath(*detail, preview)
+				: std::filesystem::path{};
+		}
+
+		void CopyTextToClipboard(winrt::hstring const& text)
+		{
+			if (text.empty())
+			{
+				return;
+			}
+			winrt::Windows::ApplicationModel::DataTransfer::DataPackage package;
+			package.SetText(text);
+			winrt::Windows::ApplicationModel::DataTransfer::Clipboard::SetContent(package);
+		}
+
+		winrt::hstring GetMagnetUri(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task,
+			std::optional<TorrentDetailInfo> const& detail)
+		{
+			if (auto metadata = GetTaskMetadata(task); metadata && !metadata->magnetUri.empty())
+			{
+				return winrt::to_hstring(metadata->magnetUri);
+			}
+			if (detail && !detail->infoHash.empty())
+			{
+				auto const name = winrt::Windows::Foundation::Uri::EscapeComponent(
+					winrt::to_hstring(detail->name));
+				return L"magnet:?xt=urn:btih:" + winrt::to_hstring(detail->infoHash) +
+					L"&dn=" + name;
+			}
+			return {};
+		}
+
+		winrt::hstring GetMagnetUri(
+			winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		{
+			return GetMagnetUri(task, GetTorrentDetail(task));
+		}
+
+		bool OpenShellPath(std::filesystem::path const& path)
+		{
+			std::error_code error;
+			if (path.empty() || !std::filesystem::exists(path, error) || error)
+			{
+				return false;
+			}
+			return reinterpret_cast<std::intptr_t>(ShellExecuteW(
+				nullptr, L"open", path.c_str(), nullptr, nullptr, SW_SHOW)) > 32;
+		}
+
+		winrt::hstring FormatByteCount(std::uint64_t value)
+		{
+			static constexpr std::array<std::wstring_view, 5> units{
+				L"B", L"KB", L"MB", L"GB", L"TB" };
+			double displayValue = static_cast<double>(value);
+			std::size_t unit{};
+			while (displayValue >= 1024.0 && unit + 1 < units.size())
+			{
+				displayValue /= 1024.0;
+				++unit;
+			}
+			if (unit == 0)
+			{
+				return winrt::hstring{ std::format(
+					L"{:.0f} {}", displayValue, units[unit]) };
+			}
+			return winrt::hstring{ std::format(
+				L"{:.2f} {}", displayValue, units[unit]) };
 		}
 	}
 
@@ -280,6 +489,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();
 			dialog.XamlRoot(this->XamlRoot());
+			dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 
 			auto result = co_await dialog.ShowAsync();
 
@@ -853,14 +1063,56 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Windows::Foundation::IInspectable const&)
 	{
-		auto const hasSelection = m_viewModel && m_viewModel.SelectedTask();
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		auto const hasSelection = static_cast<bool>(task);
+		auto const isBitTorrent = IsBitTorrentTask(task);
+		auto const detail = GetTorrentDetail(task);
+		auto const state = hasSelection
+			? task.State()
+			: winrt::OpenNet::ViewModels::DownloadTaskState::Pending;
+		auto const isActive = state ==
+			winrt::OpenNet::ViewModels::DownloadTaskState::Downloading ||
+			state == winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
+		auto const hasFile = detail && !GetTaskFilePath(*detail, false).empty();
+		auto const hasPreview = detail && !GetTaskFilePath(*detail, true).empty();
+		auto const magnetUri = GetMagnetUri(task, detail);
+		auto const savePath = GetTaskSavePath(task, detail);
+
+		StartTaskMenuItem().IsEnabled(hasSelection && !isActive);
+		StopTaskMenuItem().IsEnabled(hasSelection && isActive);
+		PreviewTaskMenuItem().IsEnabled(isBitTorrent && hasPreview);
+		UpdateTrackerMenuItem().IsEnabled(isBitTorrent && detail.has_value());
+		SuperSeedModeMenuItem().IsEnabled(
+			isBitTorrent && detail.has_value() && task.ProgressPercent() >= 100.0);
+		SuperSeedModeMenuItem().IsChecked(
+			detail.has_value() && detail->isSuperSeeding);
+		SequentialDownloadMenuItem().IsEnabled(
+			isBitTorrent && detail.has_value() && task.ProgressPercent() < 100.0);
+		SequentialDownloadMenuItem().IsChecked(
+			detail.has_value() && detail->isSequential);
+		OpenTaskFileMenuItem().IsEnabled(isBitTorrent && hasFile);
+		ManualHashCheckMenuItem().IsEnabled(isBitTorrent && detail.has_value());
+		SaveTorrentAsMenuItem().IsEnabled(
+			isBitTorrent && detail.has_value() && !detail->files.empty());
+		DeleteTaskMenuItem().IsEnabled(hasSelection);
 		RenameTaskMenuItem().IsEnabled(hasSelection);
-		// The current picker-only implementation does not move payload data or
-		// update either download backend's persisted save path. Keep it
-		// unavailable instead of presenting a command that reports false success.
-		MoveTaskMenuItem().IsEnabled(false);
-		OpenTaskLocationMenuItem().IsEnabled(hasSelection);
-		PropertiesMenuItem().IsEnabled(hasSelection);
+		MoveTaskMenuItem().IsEnabled(isBitTorrent && detail.has_value());
+		TagsMenuItem().IsEnabled(hasSelection);
+		OpenTaskLocationMenuItem().IsEnabled(
+			hasSelection && !savePath.empty());
+		SearchOnlineMenuItem().IsEnabled(hasSelection);
+		CopyMagnetUriMenuItem().IsEnabled(
+			isBitTorrent && !magnetUri.empty());
+		CopyTaskHashMenuItem().IsEnabled(
+			isBitTorrent && detail.has_value() && !detail->infoHash.empty());
+		DiskUsageInfoMenuItem().IsEnabled(
+			hasSelection && !savePath.empty());
+		SendToMenuItem().IsEnabled(isBitTorrent && hasFile);
+		SendToDefaultApplicationMenuItem().IsEnabled(isBitTorrent && hasFile);
+		CopyTaskMenuItem().IsEnabled(hasSelection);
+		PropertiesMenuItem().IsEnabled(isBitTorrent);
 	}
 
 	void TasksPage::TasksColumnAutoSizeSelectedWidth_Click(
@@ -908,6 +1160,177 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		UpdateTaskSortHeaders();
 		SortFilteredTasks();
 		AutoSizeAllTaskColumns();
+	}
+
+	void TasksPage::StartTaskMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel && m_viewModel.SelectedTask())
+		{
+			auto command = m_viewModel.StartCommand();
+			if (command && command.CanExecute(nullptr))
+			{
+				command.Execute(nullptr);
+			}
+		}
+	}
+
+	void TasksPage::StopTaskMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel && m_viewModel.SelectedTask())
+		{
+			auto command = m_viewModel.PauseCommand();
+			if (command && command.CanExecute(nullptr))
+			{
+				command.Execute(nullptr);
+			}
+		}
+	}
+
+	void TasksPage::PreviewTaskMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel)
+		{
+			OpenShellPath(GetTaskFilePath(m_viewModel.SelectedTask(), true));
+		}
+	}
+
+	void TasksPage::UpdateTrackerMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		if (IsBitTorrentTask(task))
+		{
+			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+			{
+				core->ForceReannounce(winrt::to_string(task.TaskId()));
+			}
+		}
+	}
+
+	void TasksPage::SuperSeedModeMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		auto const item = sender.try_as<ToggleMenuFlyoutItem>();
+		if (IsBitTorrentTask(task) && item)
+		{
+			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+			{
+				core->SetSuperSeeding(
+					winrt::to_string(task.TaskId()), item.IsChecked());
+			}
+		}
+	}
+
+	void TasksPage::SequentialDownloadMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		if (IsBitTorrentTask(task))
+		{
+			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+			{
+				core->ToggleSequentialDownload(winrt::to_string(task.TaskId()));
+			}
+		}
+	}
+
+	void TasksPage::OpenTaskFileMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel)
+		{
+			OpenShellPath(GetTaskFilePath(m_viewModel.SelectedTask(), false));
+		}
+	}
+
+	void TasksPage::ManualHashCheckMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		if (IsBitTorrentTask(task))
+		{
+			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+			{
+				core->ForceRecheck(winrt::to_string(task.TaskId()));
+			}
+		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction
+		TasksPage::SaveTorrentAsMenuItem_ClickAsync(
+			winrt::Windows::Foundation::IInspectable const&,
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		if (!IsBitTorrentTask(task))
+		{
+			co_return;
+		}
+
+		FileSavePicker picker(XamlRoot().ContentIslandEnvironment().AppWindowId());
+		picker.SuggestedStartLocation(PickerLocationId::Downloads);
+		picker.SuggestedFileName(task.Name() + L".torrent");
+		picker.DefaultFileExtension(L".torrent");
+		auto fileTypes = winrt::single_threaded_vector<hstring>();
+		fileTypes.Append(L".torrent");
+		picker.FileTypeChoices().Insert(L"BitTorrent file", fileTypes);
+		auto file = co_await picker.PickSaveFileAsync();
+		if (!file)
+		{
+			co_return;
+		}
+
+		auto const taskId = winrt::to_string(task.TaskId());
+		auto const filePath = std::filesystem::path{ file.Path().c_str() };
+		co_await winrt::resume_background();
+		if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+		{
+			auto const content = core->ExportTorrentFile(taskId);
+			if (!content.empty())
+			{
+				std::ofstream output(filePath, std::ios::binary | std::ios::trunc);
+				output.write(
+					reinterpret_cast<char const*>(content.data()),
+					static_cast<std::streamsize>(content.size()));
+			}
+		}
+	}
+
+	void TasksPage::DeleteTaskMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel && m_viewModel.SelectedTask())
+		{
+			auto command = m_viewModel.DeleteCommand();
+			if (command && command.CanExecute(nullptr))
+			{
+				command.Execute(nullptr);
+			}
+		}
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::RenameTaskMenuItem_ClickAsync(
@@ -1006,10 +1429,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::PerformMoveTaskAsync()
 	{
+		auto lifetime = get_strong();
 		try
 		{
 			auto selectedTask = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
-			if (!selectedTask)
+			if (!IsBitTorrentTask(selectedTask))
 			{
 				co_return;
 			}
@@ -1025,33 +1449,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				co_return; // 用户取消
 			}
 
-			auto newPath = winrt::to_string(selectedFolder.Path());
-			OutputDebugStringW((L"PerformMoveTaskAsync: Selected path: " + std::wstring(selectedFolder.Path().c_str()) + L"\n").c_str());
-
-			// TODO: Step 2: 获取当前任务的下载路径
-			// std::string currentPath = m_currentSubscribedTask.GetDownloadPath();
-
-			// TODO: Step 3: 验证磁盘空间
-			// auto requiredSpace = FileOperation::GetDirectorySize(currentPath);
-			// auto availableSpace = FileOperation::GetAvailableSpace(newPath);
-			// if (availableSpace < requiredSpace) { 显示错误; co_return; }
-
-			// Step 4: 执行移动操作（带进度回调）
-			auto progressCallback = [this](size_t current, size_t total)
+			auto const newPath = winrt::to_string(selectedFolder.Path());
+			auto const taskId = winrt::to_string(selectedTask.TaskId());
+			co_await winrt::resume_background();
+			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
 			{
-				OutputDebugStringW(std::format(L"Move progress: {}/{}\n", current, total).c_str());
-				// TODO: 更新进度条UI
-			};
-
-			// TODO: bool success = FileOperation::MoveDirectory(currentPath, newPath, progressCallback);
-
-			// Step 5: 更新数据库和UI
-			// if (success) {
-			//   database.UpdateTaskPath(taskId, newPath);
-			//   viewModel.RefreshTask(taskId);
-			// }
-
-			OutputDebugStringW((L"Move task completed to: " + std::wstring(newPath.begin(), newPath.end()) + L"\n").c_str());
+				core->MoveStorage(taskId, newPath);
+				if (auto* state =
+					::OpenNet::Core::P2PManager::Instance().StateManager())
+				{
+					state->UpdateTaskSavePath(taskId, newPath);
+				}
+			}
 		}
 		catch (const std::exception& ex)
 		{
@@ -1067,82 +1476,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
 	{
-		if (!m_viewModel || !m_viewModel.SelectedTask())
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		if (!task)
 		{
 			return;
 		}
 
 		try
 		{
-			auto selectedTask = m_viewModel.SelectedTask();
-			std::wstring taskPath;
-
-			// 根据任务类型获取下载路径
-			auto taskType = selectedTask.TaskType();
-			auto taskId = winrt::to_string(selectedTask.TaskId());
-
-			if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
-			{
-				// BT任务：从 P2PManager 的 StateManager 获取元数据
-				auto& p2pMgr = ::OpenNet::Core::P2PManager::Instance();
-				auto stateMgr = p2pMgr.StateManager();
-				if (stateMgr)
-				{
-					auto metadata = stateMgr->LoadTaskMetadata(taskId);
-					if (metadata && !metadata->savePath.empty())
-					{
-						// 将 std::string 转换为 std::wstring
-						int size = MultiByteToWideChar(CP_UTF8, 0, metadata->savePath.c_str(), -1, nullptr, 0);
-						if (size > 0)
-						{
-							taskPath.resize(size - 1);
-							MultiByteToWideChar(CP_UTF8, 0, metadata->savePath.c_str(), -1, &taskPath[0], size);
-						}
-					}
-				}
-			}
-			else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
-			{
-				// HTTP任务：从 HttpStateManager 获取记录
-				auto& httpMgr = ::OpenNet::Core::HttpStateManager::Instance();
-				auto record = httpMgr.FindByRecordId(taskId);
-				if (record && !record->savePath.empty())
-				{
-					// 将 std::string 转换为 std::wstring
-					int size = MultiByteToWideChar(CP_UTF8, 0, record->savePath.c_str(), -1, nullptr, 0);
-					if (size > 0)
-					{
-						taskPath.resize(size - 1);
-						MultiByteToWideChar(CP_UTF8, 0, record->savePath.c_str(), -1, &taskPath[0], size);
-					}
-				}
-			}
-
-			// 如果未能获取路径，使用 AppData 作为后备
-			if (taskPath.empty())
-			{
-				OutputDebugStringW(L"Failed to get task path, using AppData as fallback\n");
-				taskPath = ::winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW();
-			}
-
-			// 验证路径存在
-			if (!::winrt::OpenNet::Core::IO::FileSystem::DirectoryExists(taskPath))
-			{
-				OutputDebugStringW(L"Task path does not exist\n");
-				return;
-			}
-
-			// 打开文件浏览器
-			HINSTANCE result = ShellExecuteW(nullptr, L"open", L"explorer.exe", taskPath.c_str(), nullptr, SW_SHOW);
-
-			if ((intptr_t)result <= 32)
-			{
-				OutputDebugStringW(L"Failed to open file explorer\n");
-			}
-			else
-			{
-				OutputDebugStringW((L"Opened location: " + taskPath + L"\n").c_str());
-			}
+			OpenShellPath(GetTaskSavePath(task));
 		}
 		catch (const std::exception& ex)
 		{
@@ -1152,6 +1496,121 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			OutputDebugStringW(L"Unknown error opening task location\n");
 		}
+	}
+
+	winrt::fire_and_forget TasksPage::SearchOnlineMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		if (!task)
+		{
+			co_return;
+		}
+		try
+		{
+			auto const query =
+				winrt::Windows::Foundation::Uri::EscapeComponent(task.Name());
+			co_await winrt::Windows::System::Launcher::LaunchUriAsync(
+				winrt::Windows::Foundation::Uri{
+					L"https://www.google.com/search?q=" + query });
+		}
+		catch (...)
+		{
+		}
+	}
+
+	void TasksPage::CopyMagnetUriMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel)
+		{
+			CopyTextToClipboard(GetMagnetUri(m_viewModel.SelectedTask()));
+		}
+	}
+
+	void TasksPage::CopyTaskNameMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel && m_viewModel.SelectedTask())
+		{
+			CopyTextToClipboard(m_viewModel.SelectedTask().Name());
+		}
+	}
+
+	void TasksPage::CopyTaskHashMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel)
+		{
+			if (auto detail = GetTorrentDetail(m_viewModel.SelectedTask()))
+			{
+				CopyTextToClipboard(winrt::to_hstring(detail->infoHash));
+			}
+		}
+	}
+
+	void TasksPage::CopyTaskPathMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_viewModel)
+		{
+			auto const path = GetTaskSavePath(m_viewModel.SelectedTask());
+			if (!path.empty())
+			{
+				CopyTextToClipboard(winrt::hstring{ path.c_str() });
+			}
+		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction
+		TasksPage::DiskUsageInfoMenuItem_ClickAsync(
+			winrt::Windows::Foundation::IInspectable const&,
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		auto const task = m_viewModel
+			? m_viewModel.SelectedTask()
+			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
+		auto const path = GetTaskSavePath(task);
+		if (!task || path.empty())
+		{
+			co_return;
+		}
+
+		ULARGE_INTEGER available{};
+		ULARGE_INTEGER total{};
+		ULARGE_INTEGER free{};
+		if (!GetDiskFreeSpaceExW(
+			path.c_str(), &available, &total, &free))
+		{
+			co_return;
+		}
+
+		auto const used = total.QuadPart - free.QuadPart;
+		TextBlock details;
+		details.IsTextSelectionEnabled(true);
+		details.TextWrapping(TextWrapping::Wrap);
+		details.Text(
+			L"Location: " + winrt::hstring{ path.c_str() } + L"\n" +
+			L"Task size: " + task.Size() + L"\n" +
+			L"Used on volume: " + FormatByteCount(used) + L"\n" +
+			L"Free on volume: " + FormatByteCount(free.QuadPart) + L"\n" +
+			L"Total capacity: " + FormatByteCount(total.QuadPart));
+
+		ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(box_value(L"Disk Usage Information"));
+		dialog.Content(details);
+		dialog.CloseButtonText(L"Close");
+		co_await dialog.ShowAsync();
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::PropertiesMenuItem_Click(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
@@ -1169,52 +1628,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		try
 		{
 			auto task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
-			if (!task)
+			if (!IsBitTorrentTask(task))
 			{
 				co_return;
 			}
-
-			auto const taskType = task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent
-				? L"BitTorrent"
-				: L"HTTP";
-
-			TextBlock details;
-			details.IsTextSelectionEnabled(true);
-			details.TextWrapping(TextWrapping::Wrap);
-			details.Text(winrt::hstring{ std::format(
-				L"Type: {}\n"
-				L"Task ID: {}\n"
-				L"GID: {}\n"
-				L"Size: {}\n"
-				L"Progress: {}\n"
-				L"Downloaded: {}\n"
-				L"Uploaded: {}\n"
-				L"Download rate: {}\n"
-				L"Upload rate: {}\n"
-				L"Remaining: {}\n"
-				L"Added: {}",
-				taskType,
-				std::wstring_view{ task.TaskId() },
-				std::wstring_view{ task.Gid() },
-				std::wstring_view{ task.Size() },
-				std::wstring_view{ task.Progress() },
-				std::wstring_view{ task.DownloadSize() },
-				std::wstring_view{ task.UploadSize() },
-				std::wstring_view{ task.DownloadRate() },
-				std::wstring_view{ task.UploadRate() },
-				std::wstring_view{ task.Remaining() },
-				std::wstring_view{ task.AddDate() }) });
-
-			ScrollViewer contentScroller;
-			contentScroller.MaxHeight(480.0);
-			contentScroller.Content(details);
-
-			ContentDialog dialog;
-			dialog.XamlRoot(XamlRoot());
-			dialog.Title(box_value(task.Name()));
-			dialog.Content(contentScroller);
-			dialog.CloseButtonText(L"Close");
-			co_await dialog.ShowAsync();
+			auto propertiesWindow = winrt::make<
+				winrt::OpenNet::UI::Xaml::View::Windows::implementation::
+				TorrentCheckModalWindow>(task);
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
+				propertiesWindow);
+			propertiesWindow.Activate();
 		}
 		catch (const std::exception& ex)
 		{

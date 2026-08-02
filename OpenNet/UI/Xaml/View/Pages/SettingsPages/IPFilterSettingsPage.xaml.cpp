@@ -1,18 +1,23 @@
-﻿#include "XamlWorkaround.h"
+﻿#include <time.h>
+
+#include "XamlWorkaround.h"
 #include "IPFilterSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp"
 #endif
 
 #include "Core/IPFilter/IPFilterManager.h"
+#include "UI/Xaml/View/InfoBarView.xaml.h"
 
 import OpenNet.Core.IO.FileSystem;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Content;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.Windows.Storage.Pickers;
 import winrt.Windows.Storage;
 import winrt.Windows.System;
+import winrt.Windows.Web.Http;
 import winrtplus_coroutine;
 
 using namespace winrt;
@@ -26,6 +31,60 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	namespace
 	{
 		constexpr std::size_t MaxVisibleRules = 1000;
+		constexpr std::size_t MaxSubscriptionBytes = 64 * 1024 * 1024;
+		constexpr std::size_t MaxCombinedSubscriptionBytes = 128 * 1024 * 1024;
+
+		winrt::hstring ResourceText(
+			wchar_t const* key, wchar_t const* fallback)
+		{
+			try
+			{
+				auto value = winrt::Microsoft::Windows::ApplicationModel::
+					Resources::ResourceLoader{}.GetString(key);
+				if (!value.empty())
+					return value;
+			}
+			catch (...)
+			{
+			}
+			return fallback;
+		}
+
+		winrt::hstring FormatTimestamp(std::int64_t timestamp)
+		{
+			if (timestamp <= 0)
+				return ResourceText(L"IPF_Never", L"Never");
+			auto const value = static_cast<std::time_t>(timestamp);
+			std::tm local{};
+			localtime_s(&local, &value);
+			wchar_t buffer[64]{};
+			wcsftime(buffer, std::size(buffer), L"%Y-%m-%d %H:%M:%S", &local);
+			return buffer;
+		}
+
+		bool IsHttpSubscriptionUrl(winrt::hstring const& value)
+		{
+			try
+			{
+				winrt::Windows::Foundation::Uri uri{ value };
+				auto const scheme = uri.SchemeName();
+				return (scheme == L"http" || scheme == L"https")
+					&& !uri.Host().empty();
+			}
+			catch (...)
+			{
+				return false;
+			}
+		}
+
+		struct SubscriptionUpdateGuard
+		{
+			std::atomic_bool& value;
+			~SubscriptionUpdateGuard()
+			{
+				value.store(false);
+			}
+		};
 
 		std::filesystem::path RulesFolderPath()
 		{
@@ -77,6 +136,178 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
+	winrt::Windows::Foundation::IAsyncAction
+		IPFilterSettingsPage::RunSubscriptionUpdateAsync(
+			bool force, bool notify)
+	{
+		if (s_subscriptionUpdateRunning.exchange(true))
+			co_return;
+		SubscriptionUpdateGuard guard{ s_subscriptionUpdateRunning };
+
+		auto& manager = ::OpenNet::Core::IPFilterManager::Instance();
+		manager.Initialize();
+		auto const now = std::chrono::duration_cast<std::chrono::seconds>(
+			std::chrono::system_clock::now().time_since_epoch()).count();
+		if (!force && !manager.IsSubscriptionUpdateDue(now))
+			co_return;
+
+		auto subscriptions = manager.GetSubscriptions();
+		std::erase_if(subscriptions, [](auto const& item)
+		{
+			return !item.enabled;
+		});
+		if (subscriptions.empty())
+		{
+			if (force && notify)
+			{
+				winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+					ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"),
+					ResourceText(L"IPF_NoEnabledSubscriptions", L"No enabled subscription sources."),
+					InfoBarSeverity::Warning,
+					6000);
+			}
+			co_return;
+		}
+
+		std::string combinedContent;
+		std::int32_t succeeded = 0;
+		std::int32_t failed = 0;
+		std::int32_t downloadedRules = 0;
+		winrt::Windows::Web::Http::HttpClient client;
+
+		for (auto const& subscription : subscriptions)
+		{
+			try
+			{
+				auto const url = winrt::to_hstring(subscription.url);
+				if (!IsHttpSubscriptionUrl(url))
+					throw std::invalid_argument("Only HTTP and HTTPS URLs are supported");
+
+				auto const response = co_await client.GetAsync(
+					winrt::Windows::Foundation::Uri{ url });
+				if (!response.IsSuccessStatusCode())
+				{
+					throw std::runtime_error(
+						"HTTP " + std::to_string(
+							static_cast<int>(response.StatusCode())));
+				}
+				auto const body = co_await response.Content().ReadAsStringAsync();
+				if (body.size() > MaxSubscriptionBytes)
+					throw std::length_error("The subscription response exceeds 64 MiB");
+				co_await winrt::resume_background();
+				auto content = winrt::to_string(body);
+				auto const count =
+					::OpenNet::Core::IPFilterManager::CountRulesInText(content);
+				if (count <= 0)
+					throw std::runtime_error("The response contains no valid IP rules");
+				if (combinedContent.size() + content.size()
+					> MaxCombinedSubscriptionBytes)
+				{
+					throw std::length_error(
+						"The combined subscription data exceeds 128 MiB");
+				}
+
+				if (!combinedContent.empty())
+					combinedContent.push_back('\n');
+				combinedContent += "# OpenNet-Source: ";
+				combinedContent += subscription.url;
+				combinedContent.push_back('\n');
+				combinedContent += content;
+				downloadedRules += count;
+				++succeeded;
+				manager.SetSubscriptionUpdateResult(
+					subscription.id, now, true, count, "");
+			}
+			catch (winrt::hresult_error const& error)
+			{
+				++failed;
+				manager.SetSubscriptionUpdateResult(
+					subscription.id,
+					now,
+					false,
+					0,
+					winrt::to_string(error.message()));
+			}
+			catch (std::exception const& error)
+			{
+				++failed;
+				manager.SetSubscriptionUpdateResult(
+					subscription.id, now, false, 0, error.what());
+			}
+			catch (...)
+			{
+				++failed;
+				manager.SetSubscriptionUpdateResult(
+					subscription.id, now, false, 0, "Unknown download error");
+			}
+		}
+
+		std::int32_t imported = 0;
+		co_await winrt::resume_background();
+		auto const replaceExisting = manager.SubscriptionReplaceExisting();
+		auto const replacementSkipped =
+			replaceExisting && succeeded > 0 && failed > 0;
+		if (succeeded > 0 && !replacementSkipped)
+		{
+			imported = manager.ImportFromText(
+				combinedContent, replaceExisting);
+			manager.ApplyToSession();
+		}
+
+		std::wstring summary;
+		if (succeeded > 0)
+		{
+			summary = ResourceText(
+				L"IPF_UpdateSummarySuccess", L"Updated sources").c_str();
+			summary += L" " + std::to_wstring(succeeded) + L"/" +
+				std::to_wstring(subscriptions.size());
+			summary += L" · ";
+			summary += ResourceText(
+				L"IPF_UpdateSummaryRules", L"valid rules").c_str();
+			summary += L" " + std::to_wstring(downloadedRules);
+			summary += L" · ";
+			summary += ResourceText(
+				L"IPF_UpdateSummaryImported", L"database changes").c_str();
+			summary += L" " + std::to_wstring(imported);
+			if (failed > 0)
+			{
+				summary += L" · ";
+				summary += ResourceText(
+					L"IPF_UpdateSummaryFailed", L"failed").c_str();
+				summary += L" " + std::to_wstring(failed);
+			}
+			if (replacementSkipped)
+			{
+				summary += L" · ";
+				summary += ResourceText(
+					L"IPF_ReplacementSkipped",
+					L"replacement skipped to preserve existing rules").c_str();
+			}
+		}
+		else
+		{
+			summary = ResourceText(
+				L"IPF_UpdateAllFailed", L"All subscription updates failed.").c_str();
+		}
+
+		manager.SetSubscriptionLastResult(
+			now, winrt::to_string(winrt::hstring{ summary }));
+
+		if (notify)
+		{
+			auto const severity = succeeded == 0
+				? InfoBarSeverity::Error
+				: failed > 0
+				? InfoBarSeverity::Warning
+				: InfoBarSeverity::Success;
+			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+				ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"),
+				winrt::hstring{ summary },
+				severity,
+				succeeded == 0 ? 0 : 8000);
+		}
+	}
+
 	IPFilterSettingsPage::IPFilterSettingsPage()
 	{
 		InitializeComponent();
@@ -106,6 +337,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		EnableFilterToggle().IsOn(enabled);
 		m_allRules = std::move(rules);
 		RebuildRuleItems();
+		LoadSubscriptionState();
 		m_loading = false;
 	}
 
@@ -157,6 +389,269 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			winrt::to_hstring(m_allRules.size()) + L")");
 		EditSelectedRuleButton().IsEnabled(false);
 		DeleteSelectedRuleButton().IsEnabled(false);
+	}
+
+	void IPFilterSettingsPage::LoadSubscriptionState()
+	{
+		auto& manager = ::OpenNet::Core::IPFilterManager::Instance();
+		auto const wasLoading = m_loading;
+		m_loading = true;
+		m_subscriptions = manager.GetSubscriptions();
+		SubscriptionAutoUpdateToggle().IsOn(
+			manager.SubscriptionAutoUpdateEnabled());
+		auto const replace = manager.SubscriptionReplaceExisting();
+		SubscriptionMergeRadio().IsChecked(!replace);
+		SubscriptionReplaceRadio().IsChecked(replace);
+		SubscriptionIntervalNumberBox().Value(
+			manager.SubscriptionUpdateIntervalHours());
+
+		auto const lastUpdate = manager.SubscriptionLastUpdate();
+		auto const lastResult = manager.SubscriptionLastResult();
+		std::wstring status = FormatTimestamp(lastUpdate).c_str();
+		if (!lastResult.empty())
+		{
+			status += L" · ";
+			status += winrt::to_hstring(lastResult).c_str();
+		}
+		SubscriptionLastResultText().Text(winrt::hstring{ status });
+		RebuildSubscriptionItems();
+		m_loading = wasLoading;
+	}
+
+	void IPFilterSettingsPage::RebuildSubscriptionItems()
+	{
+		auto items = winrt::single_threaded_observable_vector<IInspectable>();
+		for (auto const& subscription : m_subscriptions)
+		{
+			std::wstring line = subscription.enabled ? L"● " : L"○ ";
+			line += winrt::to_hstring(subscription.url).c_str();
+			line += L"\n";
+			if (subscription.lastUpdated <= 0)
+			{
+				line += ResourceText(L"IPF_NeverUpdated", L"Not updated yet").c_str();
+			}
+			else if (subscription.lastStatus == "success")
+			{
+				line += ResourceText(L"IPF_SourceSuccess", L"Success").c_str();
+				line += L" · " + std::to_wstring(subscription.ruleCount) + L" ";
+				line += ResourceText(L"IPF_Rules", L"rules").c_str();
+				line += L" · " + std::wstring{ FormatTimestamp(
+					subscription.lastUpdated).c_str() };
+			}
+			else
+			{
+				line += ResourceText(L"IPF_SourceFailed", L"Failed").c_str();
+				if (!subscription.lastError.empty())
+				{
+					line += L" · ";
+					line += winrt::to_hstring(subscription.lastError).c_str();
+				}
+			}
+			items.Append(winrt::box_value(winrt::hstring{ line }));
+		}
+		m_subscriptionItems = items;
+		SubscriptionList().ItemsSource(m_subscriptionItems);
+		EditSubscriptionButton().IsEnabled(false);
+		DeleteSubscriptionButton().IsEnabled(false);
+	}
+
+	void IPFilterSettingsPage::SetSubscriptionBusy(bool value)
+	{
+		UpdateSubscriptionsButton().IsEnabled(!value);
+		SubscriptionUpdateProgress().IsActive(value);
+		SubscriptionUpdateProgress().Visibility(
+			value ? Visibility::Visible : Visibility::Collapsed);
+	}
+
+	std::optional<::OpenNet::Core::IPFilterSubscription>
+		IPFilterSettingsPage::SelectedSubscription()
+	{
+		auto const index = SubscriptionList().SelectedIndex();
+		if (index < 0 || static_cast<std::size_t>(index) >= m_subscriptions.size())
+			return std::nullopt;
+		return m_subscriptions[static_cast<std::size_t>(index)];
+	}
+
+	void IPFilterSettingsPage::OnSubscriptionAutoUpdateToggled(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_loading)
+			return;
+		::OpenNet::Core::IPFilterManager::Instance().
+			SubscriptionAutoUpdateEnabled(SubscriptionAutoUpdateToggle().IsOn());
+	}
+
+	void IPFilterSettingsPage::OnSubscriptionModeChanged(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_loading)
+			return;
+		auto const checked = SubscriptionReplaceRadio().IsChecked();
+		::OpenNet::Core::IPFilterManager::Instance().
+			SubscriptionReplaceExisting(checked && checked.Value());
+	}
+
+	void IPFilterSettingsPage::OnSubscriptionIntervalChanged(
+		IInspectable const&, NumberBoxValueChangedEventArgs const& args)
+	{
+		if (m_loading || !std::isfinite(args.NewValue()))
+			return;
+		::OpenNet::Core::IPFilterManager::Instance().
+			SubscriptionUpdateIntervalHours(
+				static_cast<std::int32_t>(std::round(args.NewValue())));
+	}
+
+	void IPFilterSettingsPage::OnAddSubscriptionClick(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		std::istringstream stream(
+			winrt::to_string(SubscriptionUrlTextBox().Text()));
+		std::string line;
+		std::int32_t added = 0;
+		std::int32_t rejected = 0;
+		auto& manager = ::OpenNet::Core::IPFilterManager::Instance();
+		while (std::getline(stream, line))
+		{
+			line = TrimCopy(std::move(line));
+			if (line.empty())
+				continue;
+			if (!IsHttpSubscriptionUrl(winrt::to_hstring(line)))
+			{
+				++rejected;
+				continue;
+			}
+			if (manager.AddSubscription(line) > 0)
+				++added;
+			else
+				++rejected;
+		}
+		if (added == 0)
+		{
+			ShowStatus(
+				ResourceText(
+					L"IPF_InvalidOrDuplicateSubscriptions",
+					L"No new valid subscription URLs were found."),
+				InfoBarSeverity::Warning);
+			return;
+		}
+		SubscriptionUrlTextBox().Text(L"");
+		LoadSubscriptionState();
+		std::wstring result = ResourceText(
+			L"IPF_SubscriptionAdded", L"Subscription sources added").c_str();
+		result += L": " + std::to_wstring(added);
+		if (rejected > 0)
+		{
+			result += L" · " + std::to_wstring(rejected) + L" ";
+			result += ResourceText(L"IPF_Skipped", L"skipped").c_str();
+		}
+		ShowStatus(winrt::hstring{ result }, InfoBarSeverity::Success);
+	}
+
+	void IPFilterSettingsPage::OnSubscriptionSelectionChanged(
+		IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		auto const selected = SelectedSubscription().has_value();
+		EditSubscriptionButton().IsEnabled(selected);
+		DeleteSubscriptionButton().IsEnabled(selected);
+	}
+
+	winrt::fire_and_forget IPFilterSettingsPage::OnEditSubscriptionClick(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		auto strong = get_strong();
+		auto selected = SelectedSubscription();
+		if (!selected)
+			co_return;
+
+		TextBox urlBox;
+		urlBox.Text(winrt::to_hstring(selected->url));
+		urlBox.MinWidth(480);
+		CheckBox enabledBox;
+		enabledBox.Content(winrt::box_value(
+			ResourceText(L"IPF_SourceEnabled", L"Enable this source")));
+		enabledBox.IsChecked(selected->enabled);
+		StackPanel content;
+		content.Spacing(10);
+		content.Children().Append(urlBox);
+		content.Children().Append(enabledBox);
+
+		ContentDialog dialog;
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(
+			ResourceText(L"IPF_EditSubscriptionTitle", L"Edit subscription")));
+		dialog.Content(content);
+		dialog.PrimaryButtonText(ResourceText(L"IPF_Save", L"Save"));
+		dialog.CloseButtonText(ResourceText(L"IPF_Cancel", L"Cancel"));
+		dialog.DefaultButton(ContentDialogButton::Primary);
+		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
+			co_return;
+		if (!IsHttpSubscriptionUrl(urlBox.Text()))
+		{
+			ShowStatus(
+				ResourceText(L"IPF_InvalidSubscriptionUrl", L"Enter a valid HTTP or HTTPS URL."),
+				InfoBarSeverity::Warning);
+			co_return;
+		}
+		auto const checked = enabledBox.IsChecked();
+		if (!::OpenNet::Core::IPFilterManager::Instance().UpdateSubscription(
+			selected->id,
+			winrt::to_string(urlBox.Text()),
+			checked && checked.Value()))
+		{
+			ShowStatus(
+				ResourceText(L"IPF_SubscriptionUpdateFailed", L"The subscription could not be saved."),
+				InfoBarSeverity::Warning);
+			co_return;
+		}
+		LoadSubscriptionState();
+	}
+
+	winrt::fire_and_forget IPFilterSettingsPage::OnDeleteSubscriptionClick(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		auto strong = get_strong();
+		auto selected = SelectedSubscription();
+		if (!selected)
+			co_return;
+
+		ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(
+			ResourceText(L"IPF_DeleteSubscriptionTitle", L"Delete subscription")));
+		dialog.Content(winrt::box_value(winrt::to_hstring(selected->url)));
+		dialog.PrimaryButtonText(ResourceText(L"IPF_Delete", L"Delete"));
+		dialog.CloseButtonText(ResourceText(L"IPF_Cancel", L"Cancel"));
+		dialog.DefaultButton(ContentDialogButton::Close);
+		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
+			co_return;
+		::OpenNet::Core::IPFilterManager::Instance().RemoveSubscription(
+			selected->id);
+		LoadSubscriptionState();
+	}
+
+	winrt::fire_and_forget IPFilterSettingsPage::OnUpdateSubscriptionsClick(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		auto strong = get_strong();
+		SetSubscriptionBusy(true);
+		try
+		{
+			co_await RunSubscriptionUpdateAsync(true, true);
+			LoadSubscriptionState();
+			RefreshRules();
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			ShowStatus(error.message(), InfoBarSeverity::Error);
+		}
+		catch (...)
+		{
+			ShowStatus(
+				ResourceText(L"IPF_UpdateUnexpectedError", L"The subscription update failed unexpectedly."),
+				InfoBarSeverity::Error);
+		}
+		SetSubscriptionBusy(false);
 	}
 
 	void IPFilterSettingsPage::ShowStatus(winrt::hstring const& message, InfoBarSeverity severity)

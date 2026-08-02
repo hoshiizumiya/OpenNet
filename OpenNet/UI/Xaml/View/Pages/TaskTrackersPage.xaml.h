@@ -21,6 +21,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void AutoSizeAllColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnVisibility_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ResetColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void TrackerRow_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
+		void TrackerMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void TrackerLogButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction EditTrackers_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void UpdateTracker_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction RemoveTracker_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void ViewLog_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void ClearTrackerLog_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void ClearTaskTrackerLogs_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction ClearAllTrackerLogs_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction RemoveUnreachableTrackers_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
@@ -40,6 +51,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void UpdateSortHeaders();
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
+		bool TryGetTaskContext(std::string& taskId, winrt::hstring& taskName) const;
+		winrt::hstring SelectedTrackerUrl();
+		void OpenTrackerLog(winrt::hstring const& trackerUrl);
 	};
 }
 

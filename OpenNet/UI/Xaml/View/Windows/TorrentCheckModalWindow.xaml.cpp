@@ -46,6 +46,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		InitializeWindow();
 	}
 
+	TorrentCheckModalWindow::TorrentCheckModalWindow(
+		winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		: m_existingTaskMode(true)
+	{
+		InitializeComponent();
+		InitializeWindow();
+		LoadExistingTask(task);
+	}
+
 	void TorrentCheckModalWindow::InitializeWindow()
 	{
 		// AppWindow().Resize(winrt::Windows::Graphics::SizeInt32(1500, 1800));
@@ -94,6 +103,79 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		SaveTorrentCopyCheckBox().IsChecked(settingsDb.GetBool(
 			::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
 			"saveTorrentCopyToDownloadDirectory").value_or(false));
+	}
+
+	void TorrentCheckModalWindow::LoadExistingTask(
+		winrt::OpenNet::ViewModels::TaskViewModel const& task)
+	{
+		if (!task || task.TaskType() !=
+			winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+		{
+			ShowError(L"The selected item is not a BitTorrent task.");
+			return;
+		}
+
+		TorrentCheckModalWindowTitleBar().Title(task.Name());
+		TorrentCheckModalWindowTitleBar().Subtitle(
+			L"Torrent properties · " + task.Progress() +
+			L" · ↓ " + task.DownloadRate() + L" · ↑ " + task.UploadRate());
+		DownloadOptionsPanel().Visibility(Visibility::Collapsed);
+		StartDownloadButton().Visibility(Visibility::Collapsed);
+		CloseButton().Content(box_value(L"Close"));
+		TrackerListTextBox().IsReadOnly(true);
+
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		if (!core)
+		{
+			ShowError(L"The BitTorrent engine is not available.");
+			return;
+		}
+
+		auto const taskId = winrt::to_string(task.TaskId());
+		auto const detail = core->GetTorrentDetail(taskId);
+		if (detail.name.empty() && detail.infoHash.empty() && detail.files.empty())
+		{
+			ShowError(L"Torrent metadata is not available for this task.");
+			return;
+		}
+
+		::OpenNet::Core::Torrent::TorrentMetadataInfo metadata;
+		metadata.infoHash = detail.infoHash;
+		metadata.name = detail.name.empty()
+			? winrt::to_string(task.Name())
+			: detail.name;
+		metadata.comment = detail.comment;
+		metadata.creator = detail.creator;
+		metadata.totalSize = detail.totalSize;
+		metadata.creationDate = detail.creationTimestamp;
+		metadata.pieceLength = detail.pieceSize;
+		metadata.numPieces = detail.piecesNum;
+		metadata.isPrivate = detail.isPrivate;
+
+		metadata.files.reserve(detail.files.size());
+		for (auto const& source : detail.files)
+		{
+			::OpenNet::Core::Torrent::TorrentFileInfo file;
+			file.path = source.path;
+			file.size = source.size;
+			file.priority = source.priority;
+			file.selected = source.priority > 0;
+			file.fileIndex = source.fileIndex;
+			metadata.files.push_back(std::move(file));
+		}
+
+		metadata.trackers.reserve(detail.trackers.size());
+		for (auto const& tracker : detail.trackers)
+		{
+			if (!tracker.url.empty())
+			{
+				metadata.trackers.push_back(tracker.url);
+			}
+		}
+		ShowMetadata(metadata);
+		m_metadataViewModel.SavePath(winrt::to_hstring(detail.savePath));
+		m_metadataViewModel.MetadataStatus(L"Current task metadata");
+		NavigateToGeneralPage();
 	}
 
 	void TorrentCheckModalWindow::StartParseMetadata()
@@ -594,7 +676,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void TorrentCheckModalWindow::TorrentCreateGrid_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		NavigateToGeneralPage();
-		StartParseMetadata();
+		if (!m_existingTaskMode)
+		{
+			StartParseMetadata();
+		}
 	}
 
 	void TorrentCheckModalWindow::RootGridXamlRoot_Changed(winrt::Microsoft::UI::Xaml::XamlRoot, winrt::Microsoft::UI::Xaml::XamlRootChangedEventArgs)

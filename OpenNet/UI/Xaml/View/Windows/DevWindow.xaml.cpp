@@ -21,6 +21,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		InitializeComponent();
 		ExtendsContentIntoTitleBar(true);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		Closed([this](auto const&, auto const&)
+		{
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+		});
 	}
 
 	void DevWindow::OpenLiveGraphTestWindow_Click(

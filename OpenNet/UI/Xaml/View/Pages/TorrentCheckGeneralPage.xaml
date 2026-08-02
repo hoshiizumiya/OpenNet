@@ -159,254 +159,322 @@
                             </StackPanel>
                         </essential:Case>
                         <essential:Case Value="Ready">
-                    <Grid RowSpacing="8">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="Auto" />
-                            <RowDefinition Height="*" />
-                        </Grid.RowDefinitions>
-                        <TextBlock
-                            x:Uid="TorrentCheckGeneralPage_TorrentContentTitle"
-                            FontWeight="SemiBold"
-                            Text="Torrent Content" />
+                            <Grid RowSpacing="8">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="*" />
+                                </Grid.RowDefinitions>
+                                <TextBlock
+                                    x:Uid="TorrentCheckGeneralPage_TorrentContentTitle"
+                                    FontWeight="SemiBold"
+                                    Text="Torrent Content" />
 
-                        <!--  Torrent Info Summary  -->
-                        <Grid
-                            Grid.Row="1"
-                            ColumnSpacing="8"
-                            RowSpacing="4">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                                <!--  Torrent Info Summary  -->
+                                <Grid
+                                    Grid.Row="1"
+                                    ColumnSpacing="8"
+                                    RowSpacing="4">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
 
-                            <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentNameLabel" Text="Name:" />
-                            <TextBlock
-                                x:Name="TorrentNameText"
-                                Grid.Column="1"
-                                Text=""
-                                TextTrimming="CharacterEllipsis" />
+                                    <TextBlock x:Uid="TorrentCheckGeneralPage_TorrentNameLabel" Text="Name:" />
+                                    <TextBlock
+                                        x:Name="TorrentNameText"
+                                        Grid.Column="1"
+                                        Text=""
+                                        TextTrimming="CharacterEllipsis" />
 
-                            <TextBlock
-                                x:Uid="TorrentCheckGeneralPage_TorrentSizeLabel"
-                                Grid.Row="1"
-                                Text="Total Size:" />
-                            <TextBlock
-                                x:Name="TorrentSizeText"
-                                Grid.Row="1"
-                                Grid.Column="1"
-                                Text="" />
+                                    <TextBlock
+                                        x:Uid="TorrentCheckGeneralPage_TorrentSizeLabel"
+                                        Grid.Row="1"
+                                        Text="Total Size:" />
+                                    <TextBlock
+                                        x:Name="TorrentSizeText"
+                                        Grid.Row="1"
+                                        Grid.Column="1"
+                                        Text="" />
 
-                            <TextBlock
-                                x:Uid="TorrentCheckGeneralPage_SelectedSizeLabel"
-                                Grid.Row="2"
-                                Text="Selected:" />
-                            <TextBlock
-                                x:Name="SelectedSizeText"
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Text="" />
-                        </Grid>
-
-                        <!--  Disk Space Info  -->
-                        <Border
-                            Grid.Row="2"
-                            Padding="12"
-                            Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                            BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="4">
-                            <Grid ColumnSpacing="12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="Auto" />
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                <!--  HardDrive Icon  -->
-                                <FontIcon
-                                    Grid.Column="0"
-                                    HorizontalAlignment="Left"
-                                    VerticalAlignment="Center"
-                                    FontSize="20"
-                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                    Glyph="&#xEDA2;" />
-                                <!--  Progress Bar showing disk usage - fixed width container  -->
-                                <Grid Grid.Column="1" MinWidth="200">
-                                    <ProgressBar
-                                        x:Name="DiskSpaceProgressBar"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Center"
-                                        IsIndeterminate="False"
-                                        Maximum="100"
-                                        ShowError="False"
-                                        ShowPaused="False"
-                                        Value="0" />
+                                    <TextBlock
+                                        x:Uid="TorrentCheckGeneralPage_SelectedSizeLabel"
+                                        Grid.Row="2"
+                                        Text="Selected:" />
+                                    <TextBlock
+                                        x:Name="SelectedSizeText"
+                                        Grid.Row="2"
+                                        Grid.Column="1"
+                                        Text="" />
                                 </Grid>
-                                <!--  Space info  -->
-                                <StackPanel
-                                    Grid.Column="2"
-                                    HorizontalAlignment="Right"
-                                    VerticalAlignment="Center"
-                                    Orientation="Horizontal"
-                                    Spacing="16">
-                                    <!--  Required space  -->
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <TextBlock
-                                            x:Uid="TorrentCheckGeneralPage_DiskSpaceRequired"
-                                            VerticalAlignment="Center"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="Required:" />
-                                        <TextBlock
-                                            x:Name="DiskSpaceText"
-                                            MinWidth="80"
-                                            VerticalAlignment="Center"
-                                            FontWeight="SemiBold"
-                                            Text="--" />
-                                    </StackPanel>
-                                    <!--  Free space  -->
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <TextBlock
-                                            x:Uid="TorrentCheckGeneralPage_DiskSpaceFree"
-                                            VerticalAlignment="Center"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="Free:" />
-                                        <TextBlock
-                                            x:Name="FreeSpaceText"
-                                            MinWidth="80"
-                                            VerticalAlignment="Center"
-                                            FontWeight="SemiBold"
-                                            Text="--" />
-                                    </StackPanel>
-                                    <!--  Total space  -->
-                                    <StackPanel Orientation="Horizontal" Spacing="4">
-                                        <TextBlock
-                                            x:Uid="TorrentCheckGeneralPage_DiskSpaceTotal"
-                                            VerticalAlignment="Center"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="Total:" />
-                                        <TextBlock
-                                            x:Name="TotalSpaceText"
-                                            MinWidth="80"
-                                            VerticalAlignment="Center"
-                                            FontWeight="SemiBold"
-                                            Text="--" />
-                                    </StackPanel>
-                                </StackPanel>
-                            </Grid>
-                        </Border>
 
-                        <!--  File List using HeaderedTreeView with DataTable  -->
-                        <Border
-                            Grid.Row="3"
-                            Padding="0"
-                            BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
-                            BorderThickness="1"
-                            CornerRadius="2">
-                            <controls:HeaderedTreeView
-                                x:Name="TorrentFileTreeView"
-                                ItemsSource="{x:Bind ViewModel.FileTree}"
-                                SelectionMode="None">
-                                <controls:HeaderedTreeView.Header>
-                                    <Border
-                                        Padding="8,4,0,4"
-                                        Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
-                                        CornerRadius="4">
-                                        <interactivity:Interaction.Behaviors>
-                                            <behaviors:StickyHeaderBehavior />
-                                        </interactivity:Interaction.Behaviors>
-                                        <labs:DataTable ColumnSpacing="8">
-                                            <!--  File Name column - Star width (fills remaining space)  -->
-                                            <labs:DataColumn
-                                                x:Name="ColCheckFileName"
-                                                CanResize="True"
-                                                DesiredWidth="*">
+                                <!--  Disk Space Info  -->
+                                <Border
+                                    Grid.Row="2"
+                                    Padding="12"
+                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="4">
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <!--  HardDrive Icon  -->
+                                        <FontIcon
+                                            Grid.Column="0"
+                                            HorizontalAlignment="Left"
+                                            VerticalAlignment="Center"
+                                            FontSize="20"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Glyph="&#xEDA2;" />
+                                        <!--  Progress Bar showing disk usage - fixed width container  -->
+                                        <Grid Grid.Column="1" MinWidth="200">
+                                            <ProgressBar
+                                                x:Name="DiskSpaceProgressBar"
+                                                HorizontalAlignment="Stretch"
+                                                VerticalAlignment="Center"
+                                                IsIndeterminate="False"
+                                                Maximum="100"
+                                                ShowError="False"
+                                                ShowPaused="False"
+                                                Value="0" />
+                                        </Grid>
+                                        <!--  Space info  -->
+                                        <StackPanel
+                                            Grid.Column="2"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Orientation="Horizontal"
+                                            Spacing="16">
+                                            <!--  Required space  -->
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
                                                 <TextBlock
-                                                    x:Uid="TorrentCheckGeneralPage_ListHeader_FileName"
-                                                    FontWeight="SemiBold"
-                                                    Text="File Name" />
-                                            </labs:DataColumn>
-                                            <!--  Size column  -->
-                                            <labs:DataColumn
-                                                x:Name="ColCheckSize"
-                                                CanResize="True"
-                                                DesiredWidth="160">
+                                                    x:Uid="TorrentCheckGeneralPage_DiskSpaceRequired"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="Required:" />
                                                 <TextBlock
-                                                    x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
+                                                    x:Name="DiskSpaceText"
+                                                    MinWidth="80"
+                                                    VerticalAlignment="Center"
                                                     FontWeight="SemiBold"
-                                                    Text="Size" />
-                                            </labs:DataColumn>
-                                            <!--  Priority column  -->
-                                            <labs:DataColumn
-                                                x:Name="ColCheckPriority"
-                                                CanResize="True"
-                                                DesiredWidth="160">
+                                                    Text="--" />
+                                            </StackPanel>
+                                            <!--  Free space  -->
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
                                                 <TextBlock
-                                                    x:Uid="TorrentCheckGeneralPage_ListHeader_Priority"
+                                                    x:Uid="TorrentCheckGeneralPage_DiskSpaceFree"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="Free:" />
+                                                <TextBlock
+                                                    x:Name="FreeSpaceText"
+                                                    MinWidth="80"
+                                                    VerticalAlignment="Center"
                                                     FontWeight="SemiBold"
-                                                    Text="Priority" />
-                                            </labs:DataColumn>
-                                        </labs:DataTable>
-                                    </Border>
-                                </controls:HeaderedTreeView.Header>
-                                <controls:HeaderedTreeView.ItemTemplate>
-                                    <DataTemplate x:DataType="vm:TorrentFileNodeViewModel">
-                                        <muxc:TreeViewItem
-                                            HorizontalContentAlignment="Stretch"
-                                            AllowDrop="False"
-                                            CanDrag="False"
-                                            IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
-                                            ItemsSource="{x:Bind Children}">
-                                            <labs:DataRow CanDrag="False">
-                                                <!--  File name with icon  -->
-                                                <Grid ColumnSpacing="8">
-                                                    <Grid.ColumnDefinitions>
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="Auto" />
-                                                        <ColumnDefinition Width="*" />
-                                                    </Grid.ColumnDefinitions>
-                                                    <!--  Checkbox for selection  -->
-                                                    <CheckBox
-                                                        Width="Auto"
-                                                        MinWidth="0"
-                                                        Click="FileCheckBox_Click"
-                                                        IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
-                                                    <FontIcon
-                                                        x:Name="TorrentMDFileTypePreviewFontIcon"
-                                                        Grid.Column="1"
-                                                        VerticalAlignment="Center"
-                                                        FontFamily="{x:Bind NodeFontFamily}"
-                                                        FontSize="16"
-                                                        Glyph="{x:Bind NodeGlyph}" />
-                                                    <TextBlock
-                                                        Grid.Column="2"
-                                                        VerticalAlignment="Center"
-                                                        Text="{x:Bind Name}"
-                                                        TextTrimming="CharacterEllipsis"
-                                                        ToolTipService.ToolTip="{x:Bind FullPath}" />
-                                                </Grid>
-                                                <!--  Size  -->
-                                                <TextBlock VerticalAlignment="Center" Text="{x:Bind SizeText}" />
-                                                <!--  Priority  -->
-                                                <TextBlock VerticalAlignment="Center" Text="{x:Bind PriorityText}" />
+                                                    Text="--" />
+                                            </StackPanel>
+                                            <!--  Total space  -->
+                                            <StackPanel Orientation="Horizontal" Spacing="4">
+                                                <TextBlock
+                                                    x:Uid="TorrentCheckGeneralPage_DiskSpaceTotal"
+                                                    VerticalAlignment="Center"
+                                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                    Text="Total:" />
+                                                <TextBlock
+                                                    x:Name="TotalSpaceText"
+                                                    MinWidth="80"
+                                                    VerticalAlignment="Center"
+                                                    FontWeight="SemiBold"
+                                                    Text="--" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
 
-                                            </labs:DataRow>
-                                        </muxc:TreeViewItem>
-                                    </DataTemplate>
-                                </controls:HeaderedTreeView.ItemTemplate>
-                                <!--<controls:HeaderedTreeView.ItemContainerStyle>
+                                <Expander
+                                    x:Uid="TorrentDetailsExpander"
+                                    Grid.Row="3"
+                                    HorizontalAlignment="Stretch"
+                                    Header="Torrent details">
+                                    <Grid
+                                        Padding="12,8"
+                                        ColumnSpacing="12"
+                                        RowSpacing="6">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                            <RowDefinition Height="Auto" />
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock x:Uid="TorrentDetailsInfoHash" Text="Info hash:" />
+                                        <TextBlock
+                                            x:Name="TorrentInfoHashText"
+                                            Grid.Column="1"
+                                            FontFamily="Consolas"
+                                            IsTextSelectionEnabled="True"
+                                            TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            x:Uid="TorrentDetailsCreator"
+                                            Grid.Row="1"
+                                            Text="Created by:" />
+                                        <TextBlock
+                                            x:Name="TorrentCreatorText"
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            IsTextSelectionEnabled="True" />
+                                        <TextBlock
+                                            x:Uid="TorrentDetailsCreatedOn"
+                                            Grid.Row="2"
+                                            Text="Created on:" />
+                                        <TextBlock
+                                            x:Name="TorrentCreationDateText"
+                                            Grid.Row="2"
+                                            Grid.Column="1"
+                                            IsTextSelectionEnabled="True" />
+                                        <TextBlock
+                                            x:Uid="TorrentDetailsPieces"
+                                            Grid.Row="3"
+                                            Text="Pieces:" />
+                                        <TextBlock
+                                            x:Name="TorrentPieceInfoText"
+                                            Grid.Row="3"
+                                            Grid.Column="1"
+                                            IsTextSelectionEnabled="True" />
+                                        <TextBlock
+                                            x:Uid="TorrentDetailsComment"
+                                            Grid.Row="4"
+                                            Text="Comment:" />
+                                        <TextBlock
+                                            x:Name="TorrentCommentText"
+                                            Grid.Row="4"
+                                            Grid.Column="1"
+                                            IsTextSelectionEnabled="True"
+                                            TextWrapping="Wrap" />
+                                    </Grid>
+                                </Expander>
+
+                                <!--  File List using HeaderedTreeView with DataTable  -->
+                                <Border
+                                    Grid.Row="4"
+                                    Padding="0"
+                                    BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="2">
+                                    <controls:HeaderedTreeView
+                                        x:Name="TorrentFileTreeView"
+                                        ItemsSource="{x:Bind ViewModel.FileTree}"
+                                        SelectionMode="None">
+                                        <controls:HeaderedTreeView.Header>
+                                            <Border
+                                                Padding="8,4,0,4"
+                                                Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+                                                CornerRadius="4">
+                                                <interactivity:Interaction.Behaviors>
+                                                    <behaviors:StickyHeaderBehavior />
+                                                </interactivity:Interaction.Behaviors>
+                                                <labs:DataTable ColumnSpacing="8">
+                                                    <!--  File Name column - Star width (fills remaining space)  -->
+                                                    <labs:DataColumn
+                                                        x:Name="ColCheckFileName"
+                                                        CanResize="True"
+                                                        DesiredWidth="*">
+                                                        <TextBlock
+                                                            x:Uid="TorrentCheckGeneralPage_ListHeader_FileName"
+                                                            FontWeight="SemiBold"
+                                                            Text="File Name" />
+                                                    </labs:DataColumn>
+                                                    <!--  Size column  -->
+                                                    <labs:DataColumn
+                                                        x:Name="ColCheckSize"
+                                                        CanResize="True"
+                                                        DesiredWidth="160">
+                                                        <TextBlock
+                                                            x:Uid="TorrentCheckGeneralPage_ListHeader_Size"
+                                                            FontWeight="SemiBold"
+                                                            Text="Size" />
+                                                    </labs:DataColumn>
+                                                    <!--  Priority column  -->
+                                                    <labs:DataColumn
+                                                        x:Name="ColCheckPriority"
+                                                        CanResize="True"
+                                                        DesiredWidth="160">
+                                                        <TextBlock
+                                                            x:Uid="TorrentCheckGeneralPage_ListHeader_Priority"
+                                                            FontWeight="SemiBold"
+                                                            Text="Priority" />
+                                                    </labs:DataColumn>
+                                                </labs:DataTable>
+                                            </Border>
+                                        </controls:HeaderedTreeView.Header>
+                                        <controls:HeaderedTreeView.ItemTemplate>
+                                            <DataTemplate x:DataType="vm:TorrentFileNodeViewModel">
+                                                <muxc:TreeViewItem
+                                                    HorizontalContentAlignment="Stretch"
+                                                    AllowDrop="False"
+                                                    CanDrag="False"
+                                                    IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
+                                                    ItemsSource="{x:Bind Children}">
+                                                    <labs:DataRow CanDrag="False">
+                                                        <!--  File name with icon  -->
+                                                        <Grid ColumnSpacing="8">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="Auto" />
+                                                                <ColumnDefinition Width="*" />
+                                                            </Grid.ColumnDefinitions>
+                                                            <!--  Checkbox for selection  -->
+                                                            <CheckBox
+                                                                Width="Auto"
+                                                                MinWidth="0"
+                                                                Click="FileCheckBox_Click"
+                                                                IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                                                            <FontIcon
+                                                                x:Name="TorrentMDFileTypePreviewFontIcon"
+                                                                Grid.Column="1"
+                                                                VerticalAlignment="Center"
+                                                                FontFamily="{x:Bind NodeFontFamily}"
+                                                                FontSize="16"
+                                                                Glyph="{x:Bind NodeGlyph}" />
+                                                            <TextBlock
+                                                                Grid.Column="2"
+                                                                VerticalAlignment="Center"
+                                                                Text="{x:Bind Name}"
+                                                                TextTrimming="CharacterEllipsis"
+                                                                ToolTipService.ToolTip="{x:Bind FullPath}" />
+                                                        </Grid>
+                                                        <!--  Size  -->
+                                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind SizeText}" />
+                                                        <!--  Priority  -->
+                                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind PriorityText}" />
+
+                                                    </labs:DataRow>
+                                                </muxc:TreeViewItem>
+                                            </DataTemplate>
+                                        </controls:HeaderedTreeView.ItemTemplate>
+                                        <!--<controls:HeaderedTreeView.ItemContainerStyle>
                                     <Style BasedOn="{StaticResource DefaultListViewItemStyle}" TargetType="ListViewItem">
                                         <Setter Property="HorizontalContentAlignment" Value="Left" />
                                     </Style>
                                 </controls:HeaderedTreeView.ItemContainerStyle>-->
-                            </controls:HeaderedTreeView>
-                        </Border>
-                    </Grid>
+                                    </controls:HeaderedTreeView>
+                                </Border>
+                            </Grid>
                         </essential:Case>
                     </essential:SwitchPresenter>
                 </Border>
