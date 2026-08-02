@@ -285,12 +285,6 @@
   <data name="SoftLanguage.Description" xml:space="preserve">
     <value>设置应用的显示语言，默认情况下和Windows的首选项语言一致</value>
   </data>
-  <data name="SpSwttingsl.Text" xml:space="preserve">
-    <value>串口设置</value>
-  </data>
-  <data name="SpSettings_Text.Text" xml:space="preserve">
-    <value>串口设置</value>
-  </data>
   <data name="DowFlashl.Text" xml:space="preserve">
     <value>下载闪存设置</value>
   </data>
@@ -1053,6 +1047,150 @@
   <data name="IPF_DeleteRuleBtn.Content" xml:space="preserve">
     <value>删除</value>
   </data>
+  <data name="IPF_Section_Subscriptions.Text" xml:space="preserve">
+    <value>订阅</value>
+  </data>
+  <data name="IPF_Subscriptions.Header" xml:space="preserve">
+    <value>IP 过滤列表订阅</value>
+  </data>
+  <data name="IPF_Subscriptions.Description" xml:space="preserve">
+    <value>从 HTTP 或 HTTPS 来源下载并维护 IP 过滤规则</value>
+  </data>
+  <data name="IPF_UpdateSubscriptionsNow.Content" xml:space="preserve">
+    <value>立即更新</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Header" xml:space="preserve">
+    <value>自动更新</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Description" xml:space="preserve">
+    <value>按照设定间隔在后台检查已启用的订阅源</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Header" xml:space="preserve">
+    <value>添加订阅源</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Description" xml:space="preserve">
+    <value>输入纯文本 IP 过滤列表的直接链接</value>
+  </data>
+  <data name="IPF_SubscriptionUrl.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/ipfilter.txt</value>
+  </data>
+  <data name="IPF_AddSubscription.Content" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Header" xml:space="preserve">
+    <value>已订阅的来源</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Description" xml:space="preserve">
+    <value>显示每个来源的启用状态和最近更新结果</value>
+  </data>
+  <data name="IPF_EditSubscription.Content" xml:space="preserve">
+    <value>编辑</value>
+  </data>
+  <data name="IPF_DeleteSubscription.Content" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Header" xml:space="preserve">
+    <value>更新方式</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Description" xml:space="preserve">
+    <value>选择下载的规则如何应用到当前数据库</value>
+  </data>
+  <data name="IPF_SubscriptionMerge.Content" xml:space="preserve">
+    <value>合并到现有 IP 地址列表</value>
+  </data>
+  <data name="IPF_SubscriptionReplace.Content" xml:space="preserve">
+    <value>替换现有 IP 地址列表</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Header" xml:space="preserve">
+    <value>更新间隔（小时）</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Description" xml:space="preserve">
+    <value>允许范围：1–168 小时</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Header" xml:space="preserve">
+    <value>最近更新结果</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Description" xml:space="preserve">
+    <value>最近一次自动或手动订阅更新</value>
+  </data>
+  <data name="IPF_Never" xml:space="preserve">
+    <value>从未</value>
+  </data>
+  <data name="IPF_NeverUpdated" xml:space="preserve">
+    <value>尚未更新</value>
+  </data>
+  <data name="IPF_SourceSuccess" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="IPF_SourceFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="IPF_Rules" xml:space="preserve">
+    <value>条规则</value>
+  </data>
+  <data name="IPF_NotifyTitle" xml:space="preserve">
+    <value>IP 过滤列表订阅</value>
+  </data>
+  <data name="IPF_NoEnabledSubscriptions" xml:space="preserve">
+    <value>没有已启用的订阅源。</value>
+  </data>
+  <data name="IPF_UpdateSummarySuccess" xml:space="preserve">
+    <value>已更新来源</value>
+  </data>
+  <data name="IPF_UpdateSummaryRules" xml:space="preserve">
+    <value>有效规则</value>
+  </data>
+  <data name="IPF_UpdateSummaryImported" xml:space="preserve">
+    <value>数据库变更</value>
+  </data>
+  <data name="IPF_UpdateSummaryFailed" xml:space="preserve">
+    <value>失败</value>
+  </data>
+  <data name="IPF_UpdateAllFailed" xml:space="preserve">
+    <value>所有订阅源均更新失败。</value>
+  </data>
+  <data name="IPF_ReplacementSkipped" xml:space="preserve">
+    <value>为保留现有规则，已跳过替换</value>
+  </data>
+  <data name="IPF_UpdateUnexpectedError" xml:space="preserve">
+    <value>订阅更新遇到意外错误。</value>
+  </data>
+  <data name="IPF_InvalidSubscriptionUrl" xml:space="preserve">
+    <value>请输入有效的 HTTP 或 HTTPS 地址。</value>
+  </data>
+  <data name="IPF_DuplicateSubscription" xml:space="preserve">
+    <value>该订阅源已存在。</value>
+  </data>
+  <data name="IPF_SubscriptionAdded" xml:space="preserve">
+    <value>已添加订阅源</value>
+  </data>
+  <data name="IPF_InvalidOrDuplicateSubscriptions" xml:space="preserve">
+    <value>未找到新的有效订阅地址。</value>
+  </data>
+  <data name="IPF_Skipped" xml:space="preserve">
+    <value>已跳过</value>
+  </data>
+  <data name="IPF_SourceEnabled" xml:space="preserve">
+    <value>启用此订阅源</value>
+  </data>
+  <data name="IPF_EditSubscriptionTitle" xml:space="preserve">
+    <value>编辑订阅源</value>
+  </data>
+  <data name="IPF_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="IPF_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="IPF_SubscriptionUpdateFailed" xml:space="preserve">
+    <value>无法保存该订阅源。</value>
+  </data>
+  <data name="IPF_DeleteSubscriptionTitle" xml:space="preserve">
+    <value>删除订阅源</value>
+  </data>
+  <data name="IPF_Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
   <data name="RenameTaskMenuItem.Text" xml:space="preserve">
     <value>重命名</value>
   </data>
@@ -1460,5 +1598,104 @@
   </data>
   <data name="TaskStatusFailed" xml:space="preserve">
     <value>失败</value>
+  </data>
+  <data name="TasksContextStart.Text" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="TasksContextStop.Text" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="TasksContextPreview.Text" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="TasksContextUpdateTracker.Text" xml:space="preserve">
+    <value>更新 Tracker</value>
+  </data>
+  <data name="TasksContextSuperSeed.Text" xml:space="preserve">
+    <value>超级做种模式</value>
+  </data>
+  <data name="TasksContextSequential.Text" xml:space="preserve">
+    <value>顺序下载模式</value>
+  </data>
+  <data name="TasksContextOpenFile.Text" xml:space="preserve">
+    <value>打开文件</value>
+  </data>
+  <data name="TasksContextHashCheck.Text" xml:space="preserve">
+    <value>手动哈希校验</value>
+  </data>
+  <data name="TasksContextSaveTorrent.Text" xml:space="preserve">
+    <value>种子另存为...</value>
+  </data>
+  <data name="TasksContextSubmitSnapshots.Text" xml:space="preserve">
+    <value>提交快照</value>
+  </data>
+  <data name="TasksContextDelete.Text" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="TasksContextCleanUp.Text" xml:space="preserve">
+    <value>清理</value>
+  </data>
+  <data name="TasksContextMoveFiles.Text" xml:space="preserve">
+    <value>移动文件到</value>
+  </data>
+  <data name="TasksContextChooseFolder.Text" xml:space="preserve">
+    <value>选择文件夹...</value>
+  </data>
+  <data name="TasksContextTags.Text" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="TasksContextNoTags.Text" xml:space="preserve">
+    <value>未配置标签</value>
+  </data>
+  <data name="TasksContextSendTo.Text" xml:space="preserve">
+    <value>发送到</value>
+  </data>
+  <data name="TasksContextDefaultApplication.Text" xml:space="preserve">
+    <value>默认应用</value>
+  </data>
+  <data name="TasksContextSearchOnline.Text" xml:space="preserve">
+    <value>在线搜索</value>
+  </data>
+  <data name="TasksContextCopyMagnet.Text" xml:space="preserve">
+    <value>复制磁力链接  (Ctrl+C)</value>
+  </data>
+  <data name="TasksContextCopy.Text" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="TasksContextCopyName.Text" xml:space="preserve">
+    <value>名称</value>
+  </data>
+  <data name="TasksContextCopyHash.Text" xml:space="preserve">
+    <value>信息哈希</value>
+  </data>
+  <data name="TasksContextCopyPath.Text" xml:space="preserve">
+    <value>保存路径</value>
+  </data>
+  <data name="TasksContextDiskUsage.Text" xml:space="preserve">
+    <value>磁盘占用信息...</value>
+  </data>
+  <data name="TorrentDetailsExpander.Header" xml:space="preserve">
+    <value>种子详情</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.Text" xml:space="preserve">
+    <value>信息哈希：</value>
+  </data>
+  <data name="TorrentDetailsCreator.Text" xml:space="preserve">
+    <value>创建者：</value>
+  </data>
+  <data name="TorrentDetailsCreatedOn.Text" xml:space="preserve">
+    <value>创建时间：</value>
+  </data>
+  <data name="TorrentDetailsPieces.Text" xml:space="preserve">
+    <value>分块：</value>
+  </data>
+  <data name="TorrentDetailsComment.Text" xml:space="preserve">
+    <value>备注：</value>
+  </data>
+  <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>打开目录</value>
+  </data>
+  <data name="PropertiesMenuItem.Text" xml:space="preserve">
+    <value>属性...</value>
   </data>
 </root>
