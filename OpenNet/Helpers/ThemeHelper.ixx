@@ -2,17 +2,16 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import std;
+import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Composition.SystemBackdrops;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Media;
-import winrt.Microsoft.UI.Xaml.Media.Imaging;
 import winrt.Windows.UI;
 import winrt.Windows.UI.ViewManagement;
 import winrt.WinUI3Package;
 
 using namespace winrt::Microsoft::UI::Composition::SystemBackdrops;
 using namespace winrt::Microsoft::UI::Xaml::Media;
-using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
 
 export namespace OpenNet::Helpers
 {
@@ -60,6 +59,26 @@ export namespace OpenNet::Helpers
 			auto const tintOpacity = static_cast<float>(std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintOpacityKey).value_or(0.8), 0.0, 1.0));
 			auto const enableWhenInactive = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropEnableWhenInactiveKey).value_or(true);
 
+			// Essentials custom backdrops own composition controllers. Detach
+			// them first and let their target release on the next dispatcher turn
+			// before attaching a native WinUI backdrop.
+			auto const current = window.SystemBackdrop();
+			auto const leavingCustomBackdrop =
+				(backgroundType == 1 || backgroundType == 3)
+				&& (current.try_as<winrt::WinUI3Package::CustomMicaBackdrop>()
+					|| current.try_as<winrt::WinUI3Package::CustomAcrylicBackdrop>());
+			if (leavingCustomBackdrop)
+			{
+				window.SystemBackdrop(nullptr);
+				if (auto dispatcher = window.DispatcherQueue())
+				{
+					if (dispatcher.TryEnqueue([window]
+					{
+						ThemeHelper::ApplyBackdropFromSettings(window);
+					})) return;
+				}
+			}
+
 			switch (backgroundType)
 			{
 				case 1:  // Native Mica
@@ -103,22 +122,8 @@ export namespace OpenNet::Helpers
 						return;
 					}
 
-					auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
-					switch (acrylicType)
-					{
-						case 1:
-							acrylic.Kind(DesktopAcrylicKind::Base);
-							break;
-						case 2:
-							acrylic.Kind(DesktopAcrylicKind::Thin);
-							break;
-						case 0:
-						default:
-							acrylic.Kind(DesktopAcrylicKind::Default);
-							break;
-					}
-					acrylic.EnableWhenInactive(enableWhenInactive);
-					window.SystemBackdrop(acrylic);
+					window.SystemBackdrop(
+						winrt::Microsoft::UI::Xaml::Media::DesktopAcrylicBackdrop{});
 					return;
 				}
 				case 4:  // Custom Acrylic (no fallback logic)
@@ -172,35 +177,11 @@ export namespace OpenNet::Helpers
 			auto panel = window.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::Panel>();
 			if (!panel) return;
 
-			auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-			auto imagePath = db.GetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image").value_or(L"");
-			if (imagePath.empty())
-			{
+			// Remove an ImageBrush left by older builds. MainWindow now owns a
+			// dedicated XAML Image/MediaPlayerElement presentation layer.
+			if (panel.Background().try_as<
+				winrt::Microsoft::UI::Xaml::Media::ImageBrush>())
 				panel.Background(nullptr);
-				return;
-			}
-
-			// Construct a file URI without depending on Shlwapi's UrlCreateFromPathW.
-			// generic_wstring() normalizes Windows separators to URI separators.
-			std::filesystem::path const path{ imagePath };
-			std::wstring imageUri = L"file:///" + path.lexically_normal().generic_wstring();
-
-			auto stretchIndex = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_stretch", 3)), 0, 3);
-			auto opacity = std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_opacity").value_or(20.0), 0.0, 100.0) / 100.0;
-
-			try
-			{
-				auto bitmap = BitmapImage{};
-				bitmap.UriSource(winrt::Windows::Foundation::Uri{ imageUri });
-				auto brush = ImageBrush{};
-				brush.ImageSource(bitmap);
-				brush.Stretch(StretchFromIndex(stretchIndex));
-				brush.Opacity(opacity);
-				panel.Background(brush);
-			}
-			catch (...)
-			{
-			}
 		}
 
 		static void ApplyWindowAppearanceFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)

@@ -151,6 +151,7 @@
       <DependentUpon>Service\Notification\InfoBarOptions.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Service\Background\BackgroundMediaService.cpp" />
     <ClCompile Include="Service\Update\UpdateService.cpp" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
@@ -204,6 +205,8 @@
     <ClInclude Include="Core\ClientFilter\ClientFilterManager.h" />
     <ClInclude Include="Core\IPFilter\IPFilterManager.h" />
     <ClInclude Include="Core\WebUI\WebUIHost.h" />
+    <ClInclude Include="Service\Background\BackgroundMediaService.h" />
+    <ClInclude Include="Service\Background\IBackgroundMediaService.h" />
     <ClInclude Include="Core\WebUI\WebUIControl.h" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.ixx" />
     <ClInclude Include="Core\DataGraph\SpeedGraphDatabase.h" />

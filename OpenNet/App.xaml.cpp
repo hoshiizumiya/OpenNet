@@ -105,7 +105,6 @@ namespace winrt::OpenNet::implementation
 		}
 
 		window = make<MainWindow>();
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 
@@ -187,6 +186,7 @@ namespace winrt::OpenNet::implementation
 #if _DEBUG
 		auto devWindow = winrt::make<
 			winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(devWindow);
 		devWindow.Activate();
 #endif
 

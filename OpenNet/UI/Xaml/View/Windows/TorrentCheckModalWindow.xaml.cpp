@@ -35,14 +35,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	TorrentCheckModalWindow::TorrentCheckModalWindow()
 	{
-		InitializeComponent();
 		InitializeWindow();
 	}
 
 	TorrentCheckModalWindow::TorrentCheckModalWindow(winrt::hstring const& torrentLink)
 		: m_torrentLink(torrentLink)
 	{
-		InitializeComponent();
 		InitializeWindow();
 	}
 
@@ -50,7 +48,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		winrt::OpenNet::ViewModels::TaskViewModel const& task)
 		: m_existingTaskMode(true)
 	{
-		InitializeComponent();
 		InitializeWindow();
 		LoadExistingTask(task);
 	}

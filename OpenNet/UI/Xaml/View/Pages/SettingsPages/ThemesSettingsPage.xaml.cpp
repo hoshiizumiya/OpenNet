@@ -9,58 +9,24 @@
 #include "MainSettingsPage.xaml.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
 #include "FontCustomizePage.xaml.h"
+#include "Service/Background/BackgroundMediaService.h"
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
-import winrt.WinUI3Package;
-import winrt.Microsoft.Windows.Storage.Pickers;
-import winrt.Microsoft.UI;
+import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Content;
-import winrt.Microsoft.UI.Composition.SystemBackdrops;
-import winrt.Microsoft.UI.Xaml.Media;
-import winrt.Microsoft.UI.Xaml.Media.Imaging;
+import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::Microsoft::UI::Xaml::Controls::Primitives;
-using namespace winrt::Microsoft::UI::Xaml::Media;
-using namespace winrt::Microsoft::UI::Xaml::Media::Imaging;
-using namespace winrt::Microsoft::UI::Composition::SystemBackdrops;
 using namespace winrt::Microsoft::UI::Xaml::Media::Animation;
 
 namespace
 {
-	constexpr auto kBackdropFallbackColorKey       = "backdrop_fallback_color";
-	constexpr auto kBackdropTintColorKey           = "backdrop_tint_color";
-	constexpr auto kBackdropLuminosityOpacityKey   = "backdrop_luminosity_opacity";
-	constexpr auto kBackdropTintOpacityKey         = "backdrop_tint_opacity";
-	constexpr auto kBackdropEnableWhenInactiveKey  = "backdrop_enable_when_inactive";
 	constexpr auto kBackdropUseFallbackKey         = "backdrop_use_fallback";
-
-	winrt::Microsoft::UI::Xaml::Media::Stretch StretchFromIndex(int index)
-	{
-		switch (index)
-		{
-			case 1: return winrt::Microsoft::UI::Xaml::Media::Stretch::Fill;
-			case 2: return winrt::Microsoft::UI::Xaml::Media::Stretch::Uniform;
-			case 3: return winrt::Microsoft::UI::Xaml::Media::Stretch::UniformToFill;
-			case 0:
-			default:
-				return winrt::Microsoft::UI::Xaml::Media::Stretch::None;
-		}
-	}
-
-	winrt::Windows::UI::Color ColorFromArgb(int64_t argb)
-	{
-		auto const value = static_cast<std::uint32_t>(argb);
-		return winrt::Windows::UI::Color{
-			static_cast<uint8_t>((value >> 24) & 0xFF),
-			static_cast<uint8_t>((value >> 16) & 0xFF),
-			static_cast<uint8_t>((value >> 8) & 0xFF),
-			static_cast<uint8_t>(value & 0xFF)
-		};
-	}
 }
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
@@ -78,77 +44,43 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		m_isInitializing = true;
 
 		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 1);
+		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 4);
 		auto const micaType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "mica_type", 1)), 0, 1);
 		auto const acrylicType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "acrylic_type", 0)), 0, 2);
-		auto const imageStretch = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_stretch", 3)), 0, 3);
-		auto const imageOpacity = std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_opacity").value_or(20.0), 0.0, 100.0);
 		auto const useFallback = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropUseFallbackKey).value_or(true);
+		auto const mediaOptions = ::OpenNet::Service::Background::
+			GetBackgroundMediaService().LoadOptions();
 
 		BackgroundComboBox().SelectedIndex(backgroundType);
 		MicaTypeComboBox().SelectedIndex(micaType);
 		AcrylicTypeComboBox().SelectedIndex(acrylicType);
-		ImageStretchComboBox().SelectedIndex(imageStretch);
-		ImageOpacitySlider().Value(imageOpacity);
+		ImageStretchComboBox().SelectedIndex(mediaOptions.ImageStretch);
+		ImageOpacitySlider().Value(mediaOptions.ImageOpacity);
 		BackdropFallbackSwitch().IsOn(useFallback);
-
-		auto imagePath = db.GetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image").value_or(L"");
-		ImagePathText().Text(imagePath);
+		ImageModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.ImageMode));
+		VideoModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.VideoMode));
+		VideoStretchComboBox().SelectedIndex(mediaOptions.VideoStretch);
+		VideoOpacitySlider().Value(mediaOptions.VideoOpacity);
+		VideoMutedSwitch().IsOn(mediaOptions.VideoMuted);
+		VideoLoopingSwitch().IsOn(mediaOptions.VideoLooping);
+		BackgroundRotationMinutesBox().Value(
+			static_cast<double>(mediaOptions.RotationMinutes));
+		ImagePathText().Text(mediaOptions.ImagePath);
+		VideoPathText().Text(mediaOptions.VideoPath);
 
 		UpdateBackdropCardState();
+		UpdateMediaCardState();
 		m_isInitializing = false;
-	}
-
-	void ThemesSettingsPage::SyncSelectionWithCurrentBackdrop()
-	{
-		auto window = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowForElement(*this);
-		if (!window)
-		{
-			return;
-		}
-
-		auto const backdrop = window.SystemBackdrop();
-		if (!backdrop)
-		{
-			BackgroundComboBox().SelectedIndex(0);
-			return;
-		}
-
-		if (auto mica = backdrop.try_as<winrt::WinUI3Package::CustomMicaBackdrop>())
-		{
-			BackgroundComboBox().SelectedIndex(1);
-			MicaTypeComboBox().SelectedIndex(mica.Kind() == MicaKind::BaseAlt ? 1 : 0);
-			return;
-		}
-
-		if (auto acrylic = backdrop.try_as<winrt::WinUI3Package::CustomAcrylicBackdrop>())
-		{
-			BackgroundComboBox().SelectedIndex(2);
-			switch (acrylic.Kind())
-			{
-				case DesktopAcrylicKind::Base:
-					AcrylicTypeComboBox().SelectedIndex(1);
-					break;
-				case DesktopAcrylicKind::Thin:
-					AcrylicTypeComboBox().SelectedIndex(2);
-					break;
-				case DesktopAcrylicKind::Default:
-				default:
-					AcrylicTypeComboBox().SelectedIndex(0);
-					break;
-			}
-		}
 	}
 
 	void ThemesSettingsPage::UpdateBackdropCardState()
 	{
 		auto const backgroundType = static_cast<int>(BackgroundComboBox().SelectedIndex());
 
-		// AcrylicTypeCard enabled only for native Acrylic (index 3)
-		AcrylicTypeCard().IsEnabled(backgroundType == 3);
-
-		// MicaTypeCard enabled only for native Mica (index 1)
+		// The type selectors only describe options exposed by the native backdrop.
+		// Custom backdrops are configured on the Colors Style page instead.
 		MicaTypeCard().IsEnabled(backgroundType == 1);
+		AcrylicTypeCard().IsEnabled(backgroundType == 4);
 
 		// BackdropFallbackSwitch enabled only for native Mica (index 1)
 		BackdropFallbackSwitch().IsEnabled(backgroundType == 1);
@@ -158,187 +90,84 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		SoftBackground().IsEnabled(isCustomMode);
 	}
 
+	void ThemesSettingsPage::UpdateMediaCardState()
+	{
+		auto const imageEnabled = ImageModeComboBox().SelectedIndex() > 0;
+		auto const videoEnabled = VideoModeComboBox().SelectedIndex() > 0;
+		ImageSourceCard().IsEnabled(imageEnabled);
+		ClearImageCard().IsEnabled(imageEnabled && !ImagePathText().Text().empty());
+		ImageStretchCard().IsEnabled(imageEnabled);
+		ImageOpacityCard().IsEnabled(imageEnabled);
+		VideoSourceCard().IsEnabled(videoEnabled);
+		ClearVideoCard().IsEnabled(videoEnabled && !VideoPathText().Text().empty());
+		VideoMutedCard().IsEnabled(videoEnabled);
+		VideoLoopingCard().IsEnabled(videoEnabled);
+		VideoStretchCard().IsEnabled(videoEnabled);
+		VideoOpacityCard().IsEnabled(videoEnabled);
+		BackgroundRotationCard().IsEnabled(
+			ImageModeComboBox().SelectedIndex() == 2
+			|| VideoModeComboBox().SelectedIndex() == 2);
+	}
+
+	void ThemesSettingsPage::PersistMediaOptions()
+	{
+		using namespace ::OpenNet::Service::Background;
+
+		// ValueChanged and SelectionChanged may be raised by LoadComponent while
+		// later x:Name fields are still null. Persisting is only meaningful once the
+		// complete media-settings surface is connected.
+		auto const imageMode = ImageModeComboBox();
+		auto const videoMode = VideoModeComboBox();
+		auto const imagePath = ImagePathText();
+		auto const videoPath = VideoPathText();
+		auto const imageStretch = ImageStretchComboBox();
+		auto const videoStretch = VideoStretchComboBox();
+		auto const imageOpacity = ImageOpacitySlider();
+		auto const videoOpacity = VideoOpacitySlider();
+		auto const videoMuted = VideoMutedSwitch();
+		auto const videoLooping = VideoLoopingSwitch();
+		auto const rotationMinutes = BackgroundRotationMinutesBox();
+
+		if (!imageMode || !videoMode || !imagePath || !videoPath
+			|| !imageStretch || !videoStretch || !imageOpacity || !videoOpacity
+			|| !videoMuted || !videoLooping || !rotationMinutes)
+		{
+			return;
+		}
+
+		BackgroundMediaOptions options;
+		options.ImageMode = static_cast<BackgroundSourceMode>(std::clamp(
+			imageMode.SelectedIndex(), 0, 2));
+		options.VideoMode = static_cast<BackgroundSourceMode>(std::clamp(
+			videoMode.SelectedIndex(), 0, 2));
+		options.ImagePath = imagePath.Text();
+		options.VideoPath = videoPath.Text();
+		options.ImageStretch = std::clamp(imageStretch.SelectedIndex(), 0, 3);
+		options.VideoStretch = std::clamp(videoStretch.SelectedIndex(), 0, 3);
+		options.ImageOpacity = imageOpacity.Value();
+		options.VideoOpacity = videoOpacity.Value();
+		options.VideoMuted = videoMuted.IsOn();
+		options.VideoLooping = videoLooping.IsOn();
+		options.RotationMinutes = std::isnan(rotationMinutes.Value())
+			? 5
+			: static_cast<std::int64_t>(std::round(
+				rotationMinutes.Value()));
+		GetBackgroundMediaService().SaveOptions(options);
+	}
+
 	void ThemesSettingsPage::ApplyBackdropFromSelection()
 	{
-		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		auto const backgroundType = static_cast<int>(BackgroundComboBox().SelectedIndex());
-		auto const micaType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "mica_type", 1)), 0, 1);
-		auto const acrylicType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "acrylic_type", 0)), 0, 2);
-		auto const useFallback = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropUseFallbackKey).value_or(true);
-
-		auto const fallbackColor = ColorFromArgb(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropFallbackColorKey).value_or(0xFF202020));
-		auto const tintColor = ColorFromArgb(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintColorKey).value_or(0xFF202020));
-		auto const luminosityOpacity = static_cast<float>(std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropLuminosityOpacityKey).value_or(0.8), 0.0, 1.0));
-		auto const tintOpacity = static_cast<float>(std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintOpacityKey).value_or(0.8), 0.0, 1.0));
-		auto const enableWhenInactive = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropEnableWhenInactiveKey).value_or(true);
-
-		auto applyToWindow = [&](winrt::Microsoft::UI::Xaml::Window const& window)
+		for (auto const& window :
+			 ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::ActiveWindows())
 		{
-			if (!window) return;
-
-			switch (backgroundType)
-			{
-				case 1:  // Native Mica
-				{
-					if (MicaController::IsSupported())
-					{
-						auto mica = winrt::WinUI3Package::CustomMicaBackdrop{};
-						mica.Kind(micaType == 1 ? MicaKind::BaseAlt : MicaKind::Base);
-						mica.FallbackColor(fallbackColor);
-						mica.TintColor(tintColor);
-						mica.LuminosityOpacity(luminosityOpacity);
-						mica.TintOpacity(tintOpacity);
-						mica.EnableWhenInactive(enableWhenInactive);
-						window.SystemBackdrop(mica);
-						return;
-					}
-
-					if (useFallback) // TenMica
-					{
-						window.SystemBackdrop(winrt::WinUI3Package::MicaBackdropWithFallback{});
-						return;
-					}
-
-					window.SystemBackdrop(nullptr);
-					return;
-				}
-				case 2:  // Custom Mica (no fallback logic)
-				{
-					auto mica = winrt::WinUI3Package::CustomMicaBackdrop{};
-					mica.Kind(micaType == 1 ? MicaKind::BaseAlt : MicaKind::Base);
-					mica.FallbackColor(fallbackColor);
-					mica.TintColor(tintColor);
-					mica.LuminosityOpacity(luminosityOpacity);
-					mica.TintOpacity(tintOpacity);
-					mica.EnableWhenInactive(enableWhenInactive);
-					window.SystemBackdrop(mica);
-					return;
-				}
-				case 3:  // Native Acrylic
-				{
-					if (!DesktopAcrylicController::IsSupported())
-					{
-						window.SystemBackdrop(nullptr);
-						return;
-					}
-
-					auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
-					switch (acrylicType)
-					{
-						case 1:
-							acrylic.Kind(DesktopAcrylicKind::Base);
-							break;
-						case 2:
-							acrylic.Kind(DesktopAcrylicKind::Thin);
-							break;
-						case 0:
-						default:
-							acrylic.Kind(DesktopAcrylicKind::Default);
-							break;
-					}
-
-					acrylic.FallbackColor(fallbackColor);
-					acrylic.TintColor(tintColor);
-					acrylic.LuminosityOpacity(luminosityOpacity);
-					acrylic.TintOpacity(tintOpacity);
-					acrylic.EnableWhenInactive(enableWhenInactive);
-					window.SystemBackdrop(acrylic);
-					return;
-				}
-				case 4:  // Custom Acrylic (no fallback logic)
-				{
-					auto acrylic = winrt::WinUI3Package::CustomAcrylicBackdrop{};
-					switch (acrylicType)
-					{
-						case 1:
-							acrylic.Kind(DesktopAcrylicKind::Base);
-							break;
-						case 2:
-							acrylic.Kind(DesktopAcrylicKind::Thin);
-							break;
-						case 0:
-						default:
-							acrylic.Kind(DesktopAcrylicKind::Default);
-							break;
-					}
-
-					acrylic.FallbackColor(fallbackColor);
-					acrylic.TintColor(tintColor);
-					acrylic.LuminosityOpacity(luminosityOpacity);
-					acrylic.TintOpacity(tintOpacity);
-					acrylic.EnableWhenInactive(enableWhenInactive);
-					window.SystemBackdrop(acrylic);
-					return;
-				}
-				case 0:
-				default:
-					window.SystemBackdrop(nullptr);
-					return;
-			}
-		};
-
-		for (auto const& window : ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::ActiveWindows())
-		{
-			applyToWindow(window);
+			::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
 		}
 	}
 
 	void ThemesSettingsPage::ApplyImageBackgroundFromSettings()
 	{
-		auto& windows = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::ActiveWindows();
-		for (auto const& window : windows)
-		{
-			if (!window)
-			{
-				continue;
-			}
-
-			auto panel = window.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::Panel>();
-			if (!panel)
-			{
-				continue;
-			}
-
-			auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-			auto imagePath = db.GetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image").value_or(L"");
-			if (imagePath.empty())
-			{
-				panel.Background(nullptr);
-				continue;
-			}
-
-			constexpr DWORD kMaxUrlLen = 2083;
-			WCHAR encodedUrl[kMaxUrlLen]{};
-			DWORD urlLen = kMaxUrlLen;
-			std::wstring imageUri;
-			if (SUCCEEDED(UrlCreateFromPathW(imagePath.c_str(), encodedUrl, &urlLen, 0)))
-			{
-				imageUri = encodedUrl;
-			}
-			else
-			{
-				imageUri = L"file:///" + imagePath;
-				std::replace(imageUri.begin(), imageUri.end(), L'\\', L'/');
-			}
-
-			auto stretchIndex = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_stretch", 3)), 0, 3);
-			auto opacity = std::clamp(db.GetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "image_opacity").value_or(20.0), 0.0, 100.0) / 100.0;
-
-			try
-			{
-				auto bitmap = BitmapImage{};
-				bitmap.UriSource(winrt::Windows::Foundation::Uri{ imageUri });
-
-				auto brush = ImageBrush{};
-				brush.ImageSource(bitmap);
-				brush.Stretch(StretchFromIndex(stretchIndex));
-				brush.Opacity(opacity);
-				panel.Background(brush);
-			}
-			catch (...)
-			{
-			}
-		}
+		::OpenNet::Service::Background::GetBackgroundMediaService().
+			NotifyOptionsChanged();
 	}
 
 	void ThemesSettingsPage::BackgroundComboBox_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
@@ -381,67 +210,128 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	winrt::Windows::Foundation::IAsyncAction ThemesSettingsPage::SetImageButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		auto picker = winrt::Microsoft::Windows::Storage::Pickers::FileOpenPicker(this->XamlRoot().ContentIslandEnvironment().AppWindowId());
-		picker.SuggestedStartLocation(winrt::Microsoft::Windows::Storage::Pickers::PickerLocationId::PicturesLibrary);
-		picker.FileTypeFilter().Append(L".png");
-		picker.FileTypeFilter().Append(L".jpg");
-		picker.FileTypeFilter().Append(L".bmp");
-		picker.FileTypeFilter().Append(L".jpeg");
-
-		auto result = co_await picker.PickSingleFileAsync();
-		std::wstring_view result_path;
-		if (!result)
-		{
-			co_return;
-		}
-		else
-		{
-			result_path = result.Path();
-		}
-
-		try
-		{
-			auto file = co_await Windows::Storage::StorageFile::GetFileFromPathAsync(result_path);
-
-			if (file && file.IsAvailable() && (file.FileType() == L".png" || file.FileType() == L".jpg" || file.FileType() == L".bmp" || file.FileType() == L".jpeg"))
-			{
-				auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-				db.SetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image", file.Path());
-				ImagePathText().Text(result_path);
-				ApplyImageBackgroundFromSettings();
-			}
-		}
-		catch (hresult_error)
-		{
-			co_return;
-		}
+		auto lifetime = get_strong();
+		using namespace ::OpenNet::Service::Background;
+		auto const mode = static_cast<BackgroundSourceMode>(
+			ImageModeComboBox().SelectedIndex());
+		if (mode == BackgroundSourceMode::None) co_return;
+		auto path = co_await GetBackgroundMediaService().PickSourceAsync(
+			XamlRoot().ContentIslandEnvironment().AppWindowId(),
+			BackgroundSourceKind::Image,
+			mode);
+		if (path.empty()) co_return;
+		ImagePathText().Text(path);
+		PersistMediaOptions();
+		UpdateMediaCardState();
+		ApplyImageBackgroundFromSettings();
 	}
 
 	void ThemesSettingsPage::ClearImageButton_Click(IInspectable const&, RoutedEventArgs const&)
 	{
-		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		db.SetStringW(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_image", L"");
 		ImagePathText().Text(L"");
+		PersistMediaOptions();
+		UpdateMediaCardState();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::ImageModeComboBox_SelectionChanged(
+		IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		PersistMediaOptions();
+		UpdateMediaCardState();
 		ApplyImageBackgroundFromSettings();
 	}
 
 	void ThemesSettingsPage::ImageStretchComboBox_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		if (m_isInitializing) return;
-		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(
-			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
-			"image_stretch",
-			static_cast<int>(ImageStretchComboBox().SelectedIndex()));
+		PersistMediaOptions();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::BackgroundRotationMinutesBox_ValueChanged(
+		NumberBox const& sender, NumberBoxValueChangedEventArgs const&)
+	{
+		if (m_isInitializing || std::isnan(sender.Value())) return;
+		PersistMediaOptions();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	winrt::Windows::Foundation::IAsyncAction
+		ThemesSettingsPage::SetVideoButton_Click(
+			IInspectable const&, RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		using namespace ::OpenNet::Service::Background;
+		auto const mode = static_cast<BackgroundSourceMode>(
+			VideoModeComboBox().SelectedIndex());
+		if (mode == BackgroundSourceMode::None) co_return;
+		auto path = co_await GetBackgroundMediaService().PickSourceAsync(
+			XamlRoot().ContentIslandEnvironment().AppWindowId(),
+			BackgroundSourceKind::Video,
+			mode);
+		if (path.empty()) co_return;
+		VideoPathText().Text(path);
+		PersistMediaOptions();
+		UpdateMediaCardState();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::ClearVideoButton_Click(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		VideoPathText().Text(L"");
+		PersistMediaOptions();
+		UpdateMediaCardState();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::VideoModeComboBox_SelectionChanged(
+		IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		PersistMediaOptions();
+		UpdateMediaCardState();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::VideoMutedSwitch_Toggled(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		PersistMediaOptions();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::VideoLoopingSwitch_Toggled(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		PersistMediaOptions();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::VideoStretchComboBox_SelectionChanged(
+		IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		PersistMediaOptions();
+		ApplyImageBackgroundFromSettings();
+	}
+
+	void ThemesSettingsPage::VideoOpacitySlider_ValueChanged(
+		IInspectable const&, RangeBaseValueChangedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
 	}
 
 	void ThemesSettingsPage::ImageOpacitySlider_ValueChanged(IInspectable const&, RangeBaseValueChangedEventArgs const&)
 	{
 		if (m_isInitializing) return;
-		::OpenNet::Core::AppSettingsDatabase::Instance().SetDouble(
-			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
-			"image_opacity",
-			ImageOpacitySlider().Value());
+		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
 	}
 

@@ -6,6 +6,7 @@
 
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 
+import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.AppSettingsDatabase;
 import winrt.Microsoft.UI.Xaml.Controls;
 
@@ -22,15 +23,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Defer UI initialization to Loaded event per C++/WinRT guidelines
 		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
+		{
+			try
 			{
-				try
-				{
-					auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
-					int maxItems = static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "max_items_per_feed", 100));
-					MaxItemsPerFeedBox().Value(static_cast<double>(maxItems));
-				}
-				catch (...) {}
-			});
+				auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+				int maxItems = static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "max_items_per_feed", 100));
+				MaxItemsPerFeedBox().Value(static_cast<double>(maxItems));
+			}
+			catch (...)
+			{
+			}
+		});
 	}
 
 	void RSSPage::AddFeedButton_Click(::winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -99,6 +102,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			// Create a shared_ptr to keep the window alive during async operations
 			auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(torrentLink);
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(*checkWindow);
 			checkWindow->Activate();
 			// The window manages its own lifetime - it will close when user closes it or operations complete
 		}
@@ -212,7 +216,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	void RSSPage::MaxItemsPerFeedBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& /*sender*/,
-		winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
+												  winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
 	{
 		auto newVal = args.NewValue();
 		// NaN means the user cleared the box

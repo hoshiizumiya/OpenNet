@@ -14,6 +14,7 @@
 #include "UI/Xaml/View/Pages/NatToolsPage.xaml.h"
 #include "UI/Xaml/View/Windows/NATDetectorWindow.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
+#include "Service/Background/BackgroundMediaService.h"
 
 import winrt.Microsoft.Windows.Storage;
 
@@ -27,6 +28,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	MainView::MainView()
 	{
 		InitializeComponent();
+		m_backgroundTimer = DispatcherTimer{};
+		m_backgroundTimer.Interval(std::chrono::minutes(5));
+		m_backgroundTimerToken = m_backgroundTimer.Tick(
+			[weak = get_weak()](auto&&, auto&&)
+		{
+			if (auto self = weak.get())
+				self->RefreshBackgroundMediaAsync(true);
+		});
+		m_backgroundOptionsChangedToken =
+			::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(
+				[weak = get_weak()](auto&&, auto&&)
+		{
+			if (auto self = weak.get())
+				self->RefreshBackgroundMediaAsync(false);
+		});
 
 		winrt::weak_ref<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView> weakThis = get_weak();
 		Loaded([weakThis](winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
@@ -37,6 +53,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				return;
 			}
 			self->m_isUnloaded = false;
+			self->m_backgroundPlaybackActive = true;
+			self->m_backgroundTimer.Start();
+			self->RefreshBackgroundMediaAsync(false);
 		});
 		Unloaded([weakThis](winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 		{
@@ -46,6 +65,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				return;
 			}
 			self->m_isUnloaded = true;
+			self->m_backgroundPlaybackActive = false;
+			self->m_backgroundTimer.Stop();
+			self->StopBackgroundMedia();
 		});
 
 		m_viewModel = winrt::OpenNet::ViewModels::MainViewModel();
@@ -72,6 +94,69 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			else if (startTag == L"settings") openSettingsPage();
 			else openTasksPage();
 		}
+	}
+
+	MainView::~MainView()
+	{
+		::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(
+			m_backgroundOptionsChangedToken);
+		::OpenNet::Service::Background::GetBackgroundMediaService().Reset(
+			BackgroundImagePresenter(), BackgroundVideoPresenter());
+		if (m_backgroundTimer)
+		{
+			m_backgroundTimer.Stop();
+			m_backgroundTimer.Tick(m_backgroundTimerToken);
+		}
+	}
+
+	void MainView::AttachBackgroundPresenters(Image const& image, MediaPlayerElement const& video)
+	{
+		m_backgroundImagePresenter = image;
+		m_backgroundVideoPresenter = video;
+	}
+
+	Image MainView::BackgroundImagePresenter() const
+	{
+		return m_backgroundImagePresenter;
+	}
+
+	MediaPlayerElement MainView::BackgroundVideoPresenter() const
+	{
+		return m_backgroundVideoPresenter;
+	}
+
+	void MainView::SetBackgroundPlaybackActive(bool const active)
+	{
+		if (active == m_backgroundPlaybackActive) return;
+		m_backgroundPlaybackActive = active;
+		if (active)
+		{
+			m_backgroundTimer.Start();
+			RefreshBackgroundMediaAsync(false);
+		}
+		else
+		{
+			// Match the reference behavior: release the decoder while the main
+			// window is hidden/minimized instead of burning CPU in the tray.
+			m_backgroundTimer.Stop();
+			StopBackgroundMedia();
+		}
+	}
+
+	void MainView::StopBackgroundMedia()
+	{
+		::OpenNet::Service::Background::GetBackgroundMediaService().Suspend(
+			BackgroundVideoPresenter());
+	}
+
+	winrt::Windows::Foundation::IAsyncAction MainView::RefreshBackgroundMediaAsync(bool const advance)
+	{
+		auto lifetime = get_strong();
+		if (m_isUnloaded || !m_backgroundPlaybackActive) co_return;
+		auto& service = ::OpenNet::Service::Background::GetBackgroundMediaService();
+		m_backgroundTimer.Interval(service.RotationInterval());
+		co_await service.RefreshAsync(
+			BackgroundImagePresenter(), BackgroundVideoPresenter(), advance);
 	}
 
 	winrt::OpenNet::ViewModels::MainViewModel MainView::ViewModel()

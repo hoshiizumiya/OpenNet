@@ -1698,4 +1698,97 @@
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
     <value>Properties...</value>
   </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Header" xml:space="preserve">
+    <value>Image background</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
+    <value>Show a local image behind the main content</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.Content" xml:space="preserve">
+    <value>Single image</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.Content" xml:space="preserve">
+    <value>Local folder</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Header" xml:space="preserve">
+    <value>Background image source</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Description" xml:space="preserve">
+    <value>Choose a single image or a folder containing images</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Header" xml:space="preserve">
+    <value>Clear image background</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Description" xml:space="preserve">
+    <value>Clear the configured image source</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Header" xml:space="preserve">
+    <value>Rotation interval</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Description" xml:space="preserve">
+    <value>How often a new file is selected when a local folder is used</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationMinutesBox.Header" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Header" xml:space="preserve">
+    <value>Video background</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Description" xml:space="preserve">
+    <value>Play a local video behind the main content</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.Content" xml:space="preserve">
+    <value>Single video</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.Content" xml:space="preserve">
+    <value>Local folder</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Header" xml:space="preserve">
+    <value>Background video source</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Description" xml:space="preserve">
+    <value>Choose a video or a folder containing videos</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Header" xml:space="preserve">
+    <value>Clear video background</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Description" xml:space="preserve">
+    <value>Stop playback and clear the configured video source</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoMutedCard.Header" xml:space="preserve">
+    <value>Mute background video</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoLoopingCard.Header" xml:space="preserve">
+    <value>Loop video</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Header" xml:space="preserve">
+    <value>Video stretch mode</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Description" xml:space="preserve">
+    <value>How the video fills the window</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.Content" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>Uniform</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>Uniform to fill</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
+    <value>Video opacity</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
+    <value>Video opacity above the image and backdrop layers</value>
+  </data>
 </root>

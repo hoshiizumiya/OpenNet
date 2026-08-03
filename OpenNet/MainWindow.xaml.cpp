@@ -38,6 +38,9 @@ namespace winrt::OpenNet::implementation
 	MainWindow::MainWindow()
 	{
 		InitializeComponent();
+		winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::
+			MainView>(MainContentView())->AttachBackgroundPresenters(
+				BackgroundImagePresenter(), BackgroundVideoPresenter());
 		SetTitleBar(AppTitleBar());
 		InitWindowStyle(*this);
 
@@ -54,12 +57,24 @@ namespace winrt::OpenNet::implementation
 			{
 			}
 		});
+		m_appWindowChangedToken = AppWindow().Changed(
+			[this](auto const&, auto const&)
+			{
+				UpdateBackgroundPlaybackState();
+			});
 
 		Closed([this](auto&&, auto&&)
 		{
 			try
 			{
 				MainContentView().CanGoBackChanged(m_canGoBackChangedToken);
+			}
+			catch (...)
+			{
+			}
+			try
+			{
+				AppWindow().Changed(m_appWindowChangedToken);
 			}
 			catch (...)
 			{
@@ -81,6 +96,25 @@ namespace winrt::OpenNet::implementation
 				OutputDebugStringA("MainWindow: ViewModel shutdown error\n");
 			}
 		});
+	}
+
+	void MainWindow::UpdateBackgroundPlaybackState()
+	{
+		try
+		{
+			auto const appWindow = AppWindow();
+			bool active = appWindow.IsVisible();
+			if (auto presenter = appWindow.Presenter().try_as<OverlappedPresenter>())
+				active = active
+					&& presenter.State() != OverlappedPresenterState::Minimized;
+
+			auto mainView = winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::
+				implementation::MainView>(MainContentView());
+			mainView->SetBackgroundPlaybackActive(active);
+		}
+		catch (...)
+		{
+		}
 	}
 
 	void MainWindow::InvertAppThemeButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)

@@ -14,7 +14,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
 	CloseToTrayDialog::CloseToTrayDialog()
 	{
-		InitializeComponent();
 		this->Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		RequestedTheme(::OpenNet::Helpers::ThemeHelper::RootTheme());
 	}

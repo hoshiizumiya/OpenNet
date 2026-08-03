@@ -14,6 +14,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	struct MainView : MainViewT<MainView>
 	{
 		MainView();
+		~MainView();
+		winrt::Windows::Foundation::IAsyncAction RefreshBackgroundMediaAsync(bool advance);
+		void SetBackgroundPlaybackActive(bool active);
+		void AttachBackgroundPresenters(winrt::Microsoft::UI::Xaml::Controls::Image const& image, winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement const& video);
 
 		// ViewModel
 		winrt::OpenNet::ViewModels::MainViewModel ViewModel();
@@ -54,9 +58,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	private:
 		void UpdateNavigationSelection(winrt::hstring const& tag);
+		void StopBackgroundMedia();
+		winrt::Microsoft::UI::Xaml::Controls::Image BackgroundImagePresenter() const;
+		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement BackgroundVideoPresenter() const;
 
 		winrt::OpenNet::ViewModels::MainViewModel m_viewModel{ nullptr };
 		winrt::event<winrt::Windows::Foundation::EventHandler<bool>> m_canGoBackChanged;
+		winrt::Microsoft::UI::Xaml::DispatcherTimer m_backgroundTimer{ nullptr };
+		winrt::event_token m_backgroundTimerToken{};
+		winrt::event_token m_backgroundOptionsChangedToken{};
+		winrt::Microsoft::UI::Xaml::Controls::Image m_backgroundImagePresenter{ nullptr };
+		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement m_backgroundVideoPresenter{ nullptr };
+		bool m_backgroundPlaybackActive{ true };
 		bool m_isUnloaded{ false };
 	};
 }

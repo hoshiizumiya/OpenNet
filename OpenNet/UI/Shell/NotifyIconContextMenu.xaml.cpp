@@ -514,9 +514,10 @@ namespace winrt::OpenNet::UI::Shell::implementation
 				}
 				if (winrt::OpenNet::implementation::App::CreateSetMainWindow())
 				{
-					auto checkWindow = winrt::make_self<
-						winrt::OpenNet::UI::Xaml::View::Windows::implementation::
-							TorrentCheckModalWindow>(text);
+					auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::
+						TorrentCheckModalWindow>(text);
+					::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
+						*checkWindow);
 					checkWindow->Activate();
 				}
 			}
@@ -580,6 +581,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 						L"Tray.FloatingWindowEnabled", false);
 				}
 			});
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(floating);
 			floating.Activate();
 		}
 		else if (!enabled && m_floatingWindow)

@@ -489,7 +489,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::TorrentMetaDataDownloadDialog>();
 			dialog.XamlRoot(this->XamlRoot());
-			dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 
 			auto result = co_await dialog.ShowAsync();
 
@@ -671,6 +670,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::ViewTasksPagePortTestAppBarButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
 	{
 		auto window = winrt::OpenNet::UI::Xaml::View::Windows::NATDetectorWindow();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 
@@ -685,6 +685,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::PortTestKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
 	{
 		auto window = winrt::OpenNet::UI::Xaml::View::Windows::NATDetectorWindow();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 		args.Handled(true);
 	}
@@ -719,6 +720,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			// Create a shared_ptr to keep the window alive during async operations
 			auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(torrentLink);
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(*checkWindow);
 			checkWindow->Activate();
 			// The window manages its own lifetime - it will close when user closes it or operations complete
 		}

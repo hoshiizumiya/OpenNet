@@ -13,6 +13,7 @@ module OpenNet.Helpers.WindowHelper;
 
 import OpenNet.App;
 import OpenNet.Core.Utils.Message;
+import OpenNet.Helpers.ThemeHelper;
 
 using namespace OpenNet::Core::Utils::Message;
 using namespace winrt;
@@ -26,26 +27,44 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 	Window WindowHelper::CreateHostWindow()
 	{
 		Window newWindow = Window();
-
-		m_activeWindows.push_back(newWindow);
-
-		auto appWindow = GetAppWindow(newWindow);
-
-		newWindow.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const&)
-		{
-			auto closedWindow = sender.try_as<Window>();
-			auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
-			m_activeWindows.erase(it, m_activeWindows.end());
-		});
-
+		TrackWindow(newWindow);
 		return newWindow;
 	}
 
 	void WindowHelper::TrackWindow(Window const& window)
 	{
-		m_activeWindows.push_back(window);
+		if (!window)
+		{
+			return;
+		}
 
-		auto appWindow = GetAppWindow(window);
+		// Window creation is spread across several feature areas. Make tracking the
+		// single point that restores both theme and backdrop settings, and tolerate
+		// callers that track a specialized window more than once.
+		if (std::find(m_activeWindows.begin(), m_activeWindows.end(), window)
+			!= m_activeWindows.end())
+		{
+			return;
+		}
+
+		m_activeWindows.push_back(window);
+		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+
+		window.Activated([](IInspectable const& sender, WindowActivatedEventArgs const& args)
+		{
+			if (args.WindowActivationState() == WindowActivationState::Deactivated)
+			{
+				return;
+			}
+			if (auto activatedWindow = sender.try_as<Window>())
+			{
+				// Content may be assigned after TrackWindow (for factory-created
+				// windows), so synchronize its requested theme on activation. The
+				// backdrop is already applied at registration and on setting changes.
+				::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(activatedWindow);
+			}
+		});
 
 		window.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const& /*args*/)
 		{

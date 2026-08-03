@@ -64,8 +64,8 @@
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundAcrylic" Content="Acrylic" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundCustomAcrylic" Content="Custom Acrylic" />
                 </ComboBox>
-                <!--  Acrylic  -->
                 <essential:SettingsExpander.Items>
+                    <!--  Acrylic  -->
                     <essential:SettingsCard
                         x:Name="AcrylicTypeCard"
                         x:Uid="ViewThemesSettingsPageAcrylicTypeCard"
@@ -121,8 +121,7 @@
                         Click="NavigateToThemeSettingBackdropCustomizePageButton_Click"
                         Description="Choose your accent color and personalize it"
                         Header="Colors Style"
-                        IsClickEnabled="True"
-                        IsEnabled="{x:Bind essential:Convert.ReverseBool(BackdropFallbackSwitch.IsOn), Mode=OneWay}">
+                        IsClickEnabled="True">
                         <essential:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE790;" />
                         </essential:SettingsCard.HeaderIcon>
@@ -133,6 +132,7 @@
 
             <!--  图片背景  -->
             <essential:SettingsExpander
+                x:Name="ImageBackgroundExpander"
                 x:Uid="ViewThemesSettingsPageImageBackgroundExpander"
                 Description="在背景层添加自定义图片"
                 Header="图片背景"
@@ -143,25 +143,41 @@
                         FontSize="16"
                         Glyph="&#xee71;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <TextBlock x:Name="ImagePathText" Foreground="LightGray" />
+                <ComboBox
+                    x:Name="ImageModeComboBox"
+                    MinWidth="150"
+                    essential:ComboBoxHelper.AcrylicWorkaround="True"
+                    SelectionChanged="ImageModeComboBox_SelectionChanged">
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageImageModeNone" Content="None" />
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageImageModeSingle" Content="Single image" />
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageImageModeFolder" Content="Local folder" />
+                </ComboBox>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard
+                        x:Name="ImageSourceCard"
                         x:Uid="ViewThemesSettingsPageSetImageCard"
                         ActionIcon="&#xE8A7;"
                         Click="SetImageButton_Click"
-                        Description="从电脑中导入一张图片作为背景"
-                        Header="导入背景"
+                        Description="Choose a single image or a folder containing images"
+                        Header="Background image source"
                         IsActionIconVisible="True"
-                        IsClickEnabled="True" />
+                        IsClickEnabled="True">
+                        <TextBlock
+                            x:Name="ImagePathText"
+                            MaxWidth="360"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            TextTrimming="CharacterEllipsis" />
+                    </essential:SettingsCard>
                     <essential:SettingsCard
+                        x:Name="ClearImageCard"
                         x:Uid="ViewThemesSettingsPageClearImageCard"
                         Click="ClearImageButton_Click"
                         Description="清除已经设置的图片背景"
                         Header="清除背景"
                         IsActionIconVisible="True"
-                        IsClickEnabled="True"
-                        IsEnabled="{x:Bind essential:Convert.StringToBool(ImagePathText.Text), Mode=OneWay}" />
+                        IsClickEnabled="True" />
                     <essential:SettingsCard
+                        x:Name="ImageStretchCard"
                         x:Uid="ViewThemesSettingsPageImageStretchCard"
                         Description="背景中图片大小的设置方式"
                         Header="图片拉伸模式"
@@ -180,6 +196,7 @@
                         </ComboBox>
                     </essential:SettingsCard>
                     <essential:SettingsCard
+                        x:Name="ImageOpacityCard"
                         x:Uid="ViewThemesSettingsPageImageOpacityCard"
                         Description="图片在背景中的透明度，会覆盖窗口色"
                         Header="透明度"
@@ -196,6 +213,113 @@
                                 ValueChanged="ImageOpacitySlider_ValueChanged"
                                 Value="20" />
                         </StackPanel>
+                    </essential:SettingsCard>
+                    <essential:SettingsCard
+                        x:Name="BackgroundRotationCard"
+                        x:Uid="ViewThemesSettingsPageBackgroundRotationCard"
+                        Description="How often a new file is selected when a local folder is used"
+                        Header="Rotation interval"
+                        IsClickEnabled="False">
+                        <NumberBox
+                            x:Name="BackgroundRotationMinutesBox"
+                            x:Uid="ViewThemesSettingsPageBackgroundRotationMinutesBox"
+                            Width="140"
+                            Header="Minutes"
+                            Maximum="1440"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Compact"
+                            ValueChanged="BackgroundRotationMinutesBox_ValueChanged" />
+                    </essential:SettingsCard>
+                </essential:SettingsExpander.Items>
+            </essential:SettingsExpander>
+
+            <!--  视频背景  -->
+            <essential:SettingsExpander
+                x:Name="VideoBackgroundExpander"
+                x:Uid="ViewThemesSettingsPageVideoBackgroundExpander"
+                Description="Play a local video behind the main content"
+                Header="Video background"
+                IsExpanded="False">
+                <essential:SettingsExpander.HeaderIcon>
+                    <FontIcon Glyph="&#xE714;" />
+                </essential:SettingsExpander.HeaderIcon>
+                <ComboBox
+                    x:Name="VideoModeComboBox"
+                    MinWidth="150"
+                    essential:ComboBoxHelper.AcrylicWorkaround="True"
+                    SelectionChanged="VideoModeComboBox_SelectionChanged">
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageVideoModeNone" Content="None" />
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageVideoModeSingle" Content="Single video" />
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageVideoModeFolder" Content="Local folder" />
+                </ComboBox>
+                <essential:SettingsExpander.Items>
+                    <essential:SettingsCard
+                        x:Name="VideoSourceCard"
+                        x:Uid="ViewThemesSettingsPageVideoSourceCard"
+                        ActionIcon="&#xE8A7;"
+                        Click="SetVideoButton_Click"
+                        Description="Choose a video or a folder containing videos"
+                        Header="Background video source"
+                        IsActionIconVisible="True"
+                        IsClickEnabled="True">
+                        <TextBlock
+                            x:Name="VideoPathText"
+                            MaxWidth="360"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            TextTrimming="CharacterEllipsis" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard
+                        x:Name="ClearVideoCard"
+                        x:Uid="ViewThemesSettingsPageClearVideoCard"
+                        Click="ClearVideoButton_Click"
+                        Description="Stop playback and clear the configured video source"
+                        Header="Clear video background"
+                        IsActionIconVisible="True"
+                        IsClickEnabled="True" />
+                    <essential:SettingsCard
+                        x:Name="VideoMutedCard"
+                        x:Uid="ViewThemesSettingsPageVideoMutedCard"
+                        Header="Mute background video"
+                        HeaderIcon="{essential:FontIcon Glyph=&#xE8D6;}">
+                        <ToggleSwitch x:Name="VideoMutedSwitch" Toggled="VideoMutedSwitch_Toggled" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard
+                        x:Name="VideoLoopingCard"
+                        x:Uid="ViewThemesSettingsPageVideoLoopingCard"
+                        Header="Loop video"
+                        HeaderIcon="{essential:FontIcon Glyph=&#xE8ED;}">
+                        <ToggleSwitch x:Name="VideoLoopingSwitch" Toggled="VideoLoopingSwitch_Toggled" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard
+                        x:Name="VideoStretchCard"
+                        x:Uid="ViewThemesSettingsPageVideoStretchCard"
+                        Description="How the video fills the window"
+                        Header="Video stretch mode"
+                        IsClickEnabled="False">
+                        <ComboBox
+                            x:Name="VideoStretchComboBox"
+                            MinWidth="150"
+                            essential:ComboBoxHelper.AcrylicWorkaround="True"
+                            SelectionChanged="VideoStretchComboBox_SelectionChanged">
+                            <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxNone" Content="None" />
+                            <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxFill" Content="Fill" />
+                            <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxUniform" Content="Uniform" />
+                            <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill" Content="Uniform To Fill" />
+                        </ComboBox>
+                    </essential:SettingsCard>
+                    <essential:SettingsCard
+                        x:Name="VideoOpacityCard"
+                        x:Uid="ViewThemesSettingsPageVideoOpacityCard"
+                        Description="Video opacity above the image/backdrop layer"
+                        Header="Video opacity"
+                        IsClickEnabled="False">
+                        <Slider
+                            x:Name="VideoOpacitySlider"
+                            Width="300"
+                            essential:SliderHelper.AcrylicWorkaround="True"
+                            Maximum="100"
+                            Minimum="0"
+                            ValueChanged="VideoOpacitySlider_ValueChanged" />
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>

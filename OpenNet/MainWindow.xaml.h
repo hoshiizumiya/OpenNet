@@ -30,8 +30,10 @@ namespace winrt::OpenNet::implementation
 		Microsoft::UI::Xaml::Visibility IsDebug();
 	private:
 		void InitWindowStyle(winrt::Microsoft::UI::Xaml::Window const& window);
+		void UpdateBackgroundPlaybackState();
 		void RootGridXamlRoot_Changed(winrt::Microsoft::UI::Xaml::XamlRoot sender, winrt::Microsoft::UI::Xaml::XamlRootChangedEventArgs args);
 		winrt::event_token m_canGoBackChangedToken{};
+		winrt::event_token m_appWindowChangedToken{};
 	};
 }
 

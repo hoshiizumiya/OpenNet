@@ -215,6 +215,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		hstring const& exception)
 	{
 		auto window = winrt::make<ExceptionWindow>(sentryId, exception);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 }

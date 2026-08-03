@@ -25,6 +25,37 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <!--  Full-window background presentation layer.  -->
+        <Image
+            x:Name="BackgroundImagePresenter"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            IsHitTestVisible="False"
+            Opacity="0"
+            Stretch="UniformToFill"
+            UseLayoutRounding="False">
+            <Image.OpacityTransition>
+                <ScalarTransition Duration="0:0:0.35" />
+            </Image.OpacityTransition>
+        </Image>
+
+        <MediaPlayerElement
+            x:Name="BackgroundVideoPresenter"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Stretch"
+            AreTransportControlsEnabled="False"
+            AutoPlay="True"
+            IsHitTestVisible="False"
+            Opacity="0"
+            Stretch="UniformToFill"
+            UseLayoutRounding="False">
+            <MediaPlayerElement.OpacityTransition>
+                <ScalarTransition Duration="0:0:0.35" />
+            </MediaPlayerElement.OpacityTransition>
+        </MediaPlayerElement>
+
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
 
         <!--  标题栏 / Title Bar  -->
