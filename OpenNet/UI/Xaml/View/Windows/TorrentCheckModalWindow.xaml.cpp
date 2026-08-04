@@ -46,10 +46,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	TorrentCheckModalWindow::TorrentCheckModalWindow(
 		winrt::OpenNet::ViewModels::TaskViewModel const& task)
-		: m_existingTaskMode(true)
+		: m_existingTaskMode(true), m_taskViewModel(task)
 	{
 		InitializeWindow();
-		LoadExistingTask(task);
 	}
 
 	void TorrentCheckModalWindow::InitializeWindow()
@@ -88,18 +87,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel.MetadataState(L"Loading");
 		m_metadataViewModel.MetadataStatus(L"Connecting to peers...");
 		m_metadataViewModel.TorrentName(L"Magnet download");
-		auto const defaultPath =
-			winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
+		auto const defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
 		if (!defaultPath.empty())
 		{
 			m_metadataViewModel.SavePath(defaultPath);
 		}
 
-		auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		settingsDb.Initialize();
-		SaveTorrentCopyCheckBox().IsChecked(settingsDb.GetBool(
-			::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
-			"saveTorrentCopyToDownloadDirectory").value_or(false));
 	}
 
 	void TorrentCheckModalWindow::LoadExistingTask(
@@ -672,6 +665,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void TorrentCheckModalWindow::TorrentCreateGrid_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		LoadExistingTask(m_taskViewModel);
+
+		auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		settingsDb.Initialize();
+		SaveTorrentCopyCheckBox().IsChecked(settingsDb.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+			"saveTorrentCopyToDownloadDirectory").value_or(false));
+
 		NavigateToGeneralPage();
 		if (!m_existingTaskMode)
 		{

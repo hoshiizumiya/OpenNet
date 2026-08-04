@@ -1558,9 +1558,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::CopyTaskPathMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::CopyTaskPathMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel)
 		{
@@ -1572,10 +1570,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		TasksPage::DiskUsageInfoMenuItem_ClickAsync(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::DiskUsageInfoMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto lifetime = get_strong();
 		auto const task = m_viewModel
@@ -1609,6 +1604,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Microsoft::UI::Xaml::Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).try_as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(box_value(L"Disk Usage Information"));
 		dialog.Content(details);
 		dialog.CloseButtonText(L"Close");

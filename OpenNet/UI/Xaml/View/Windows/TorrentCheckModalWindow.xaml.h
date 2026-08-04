@@ -70,6 +70,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		bool m_downloadStarting{ false };
 		bool m_existingTaskMode{ false };
 
+		// Task data TaskViewModel
+		winrt::OpenNet::ViewModels::TaskViewModel m_taskViewModel{ nullptr };
+
 		// ViewModel
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel m_metadataViewModel{ nullptr };
 
