@@ -1698,4 +1698,97 @@
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
     <value>属性...</value>
   </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Header" xml:space="preserve">
+    <value>图片背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
+    <value>在主界面内容后显示本地图片</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.Content" xml:space="preserve">
+    <value>单张图片</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.Content" xml:space="preserve">
+    <value>本地文件夹</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Header" xml:space="preserve">
+    <value>背景图片来源</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Description" xml:space="preserve">
+    <value>选择一张图片或包含图片的文件夹</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Header" xml:space="preserve">
+    <value>清除图片背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Description" xml:space="preserve">
+    <value>清除当前配置的图片来源</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Header" xml:space="preserve">
+    <value>轮换间隔</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Description" xml:space="preserve">
+    <value>使用本地文件夹时选择新文件的时间间隔</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationMinutesBox.Header" xml:space="preserve">
+    <value>分钟</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Header" xml:space="preserve">
+    <value>视频背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Description" xml:space="preserve">
+    <value>在主界面内容后播放本地视频</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.Content" xml:space="preserve">
+    <value>单个视频</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.Content" xml:space="preserve">
+    <value>本地文件夹</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Header" xml:space="preserve">
+    <value>背景视频来源</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Description" xml:space="preserve">
+    <value>选择一个视频或包含视频的文件夹</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Header" xml:space="preserve">
+    <value>清除视频背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Description" xml:space="preserve">
+    <value>停止播放并清除当前配置的视频来源</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoMutedCard.Header" xml:space="preserve">
+    <value>背景视频静音</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoLoopingCard.Header" xml:space="preserve">
+    <value>循环播放视频</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Header" xml:space="preserve">
+    <value>视频拉伸模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Description" xml:space="preserve">
+    <value>视频填充窗口的方式</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.Content" xml:space="preserve">
+    <value>填充</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>等比缩放</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>等比填充</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
+    <value>视频不透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
+    <value>视频层在图片与系统背景之上的不透明度</value>
+  </data>
 </root>
