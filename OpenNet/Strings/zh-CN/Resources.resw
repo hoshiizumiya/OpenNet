@@ -1791,4 +1791,10 @@
   <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
     <value>视频层在图片与系统背景之上的不透明度</value>
   </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Header" xml:space="preserve">
+    <value>应用到其他窗口</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
+    <value>将所选背景效果与相关背景资源应用到辅助窗口</value>
+  </data>
 </root>
