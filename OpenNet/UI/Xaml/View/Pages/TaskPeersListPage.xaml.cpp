@@ -318,6 +318,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			column.Visibility(Visibility::Visible);
+		PeerLocationColumnToggle().IsChecked(true);
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshPeerList();
 	}

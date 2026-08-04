@@ -277,6 +277,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& column : std::array{
 			ColFileName(), ColFileSize(), ColFileProgress(), ColFileDone(), ColFilePriority() })
 			column.Visibility(Visibility::Visible);
+		FileProgressColumnToggle().IsChecked(true);
+		FilePriorityColumnToggle().IsChecked(true);
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshFileList();
 	}

@@ -67,6 +67,7 @@
                             <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
+                                x:Name="PeerLocationColumnToggle"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="IP"
@@ -316,6 +317,7 @@
                                 </Grid.ColumnDefinitions>
                                 <Image
                                     x:Name="PeerFlagImage"
+                                    x:Load="{x:Bind PeerLocationColumnToggle.IsChecked, Mode=OneWay}"
                                     Width="18"
                                     Height="14"
                                     VerticalAlignment="Center">

@@ -302,6 +302,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ColTrackerTimeRemaining(), ColTrackerSeeders(),
 			ColTrackerLeechers(), ColTrackerDownloaded(), ColTrackerStatus() })
 			column.Visibility(Visibility::Visible);
+		TrackerLogColumnToggle().IsChecked(true);
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshTrackerList();
 	}

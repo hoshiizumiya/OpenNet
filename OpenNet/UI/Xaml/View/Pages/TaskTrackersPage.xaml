@@ -49,6 +49,7 @@
                             <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto size all columns" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
+                                x:Name="TrackerLogColumnToggle"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="URL"
@@ -186,13 +187,16 @@
                             Text="{x:Bind URL, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"
                             ToolTipService.ToolTip="{x:Bind URL, Mode=OneWay}" />
-                        <Button
-                            Padding="8,2"
-                            Click="TrackerLogButton_Click"
-                            Style="{StaticResource SubtleButtonStyle}"
-                            Tag="{x:Bind}">
-                            <FontIcon FontSize="14" Glyph="&#xE946;" />
-                        </Button>
+                        <Grid>
+                            <Button
+                                x:Load="{x:Bind TrackerLogColumnToggle.IsChecked, Mode=OneWay}"
+                                Padding="8,2"
+                                Click="TrackerLogButton_Click"
+                                Style="{StaticResource SubtleButtonStyle}"
+                                Tag="{x:Bind}">
+                                <FontIcon FontSize="14" Glyph="&#xE946;" />
+                            </Button>
+                        </Grid>
                         <TextBlock Text="{x:Bind Retries, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <TextBlock Text="{x:Bind TimeRemaining, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <TextBlock Text="{x:Bind Seeders, Mode=OneWay}" TextTrimming="CharacterEllipsis" />

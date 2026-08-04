@@ -43,11 +43,13 @@
                             <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
+                                x:Name="FileProgressColumnToggle"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Path"
                                 Text="File" />
                             <ToggleMenuFlyoutItem
+                                x:Name="FilePriorityColumnToggle"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Size"
@@ -151,23 +153,30 @@
                             TextTrimming="CharacterEllipsis"
                             ToolTipService.ToolTip="{x:Bind Path, Mode=OneWay}" />
                         <TextBlock Text="{x:Bind Size, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <ProgressBar
-                            Margin="4,0"
-                            VerticalAlignment="Center"
-                            Maximum="100"
-                            Value="{x:Bind ProgressValue, Mode=OneWay}" />
+                        <!--  Keep a stable DataRow child so column indices do not shift when content unloads.  -->
+                        <Grid>
+                            <ProgressBar
+                                x:Load="{x:Bind FileProgressColumnToggle.IsChecked, Mode=OneWay}"
+                                Margin="4,0"
+                                VerticalAlignment="Center"
+                                Maximum="100"
+                                Value="{x:Bind ProgressValue, Mode=OneWay}" />
+                        </Grid>
                         <TextBlock Text="{x:Bind Done, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <ComboBox
-                            MinWidth="80"
-                            HorizontalAlignment="Stretch"
-                            SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
-                            SelectionChanged="FilePriority_SelectionChanged"
-                            Tag="{x:Bind FileIndex}">
-                            <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
-                            <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
-                            <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
-                            <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
-                        </ComboBox>
+                        <Grid>
+                            <ComboBox
+                                x:Load="{x:Bind FilePriorityColumnToggle.IsChecked, Mode=OneWay}"
+                                MinWidth="80"
+                                HorizontalAlignment="Stretch"
+                                SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
+                                SelectionChanged="FilePriority_SelectionChanged"
+                                Tag="{x:Bind FileIndex}">
+                                <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
+                                <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
+                                <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
+                                <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
+                            </ComboBox>
+                        </Grid>
                     </labs:DataRow>
                 </DataTemplate>
             </ListView.ItemTemplate>
