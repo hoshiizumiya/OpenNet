@@ -16,6 +16,7 @@
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 #include "Service/Background/BackgroundMediaService.h"
 
+import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.Windows.Storage;
 
 using namespace winrt;
@@ -38,6 +39,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 		m_backgroundOptionsChangedToken =
 			::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(
+				[weak = get_weak()](auto&&, auto&&)
+		{
+			if (auto self = weak.get())
+				self->RefreshBackgroundMediaAsync(false);
+		});
+		m_backgroundPresentersChangedToken =
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::
+			BackgroundPresentersChanged(
 				[weak = get_weak()](auto&&, auto&&)
 		{
 			if (auto self = weak.get())
@@ -100,6 +109,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(
 			m_backgroundOptionsChangedToken);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::
+			BackgroundPresentersChanged(m_backgroundPresentersChangedToken);
 		::OpenNet::Service::Background::GetBackgroundMediaService().Reset(
 			BackgroundImagePresenter(), BackgroundVideoPresenter());
 		if (m_backgroundTimer)
@@ -152,11 +163,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	winrt::Windows::Foundation::IAsyncAction MainView::RefreshBackgroundMediaAsync(bool const advance)
 	{
 		auto lifetime = get_strong();
-		if (m_isUnloaded || !m_backgroundPlaybackActive) co_return;
+		if (m_isUnloaded) co_return;
 		auto& service = ::OpenNet::Service::Background::GetBackgroundMediaService();
 		m_backgroundTimer.Interval(service.RotationInterval());
-		co_await service.RefreshAsync(
-			BackgroundImagePresenter(), BackgroundVideoPresenter(), advance);
+		if (m_backgroundPlaybackActive)
+		{
+			co_await service.RefreshAsync(
+				BackgroundImagePresenter(), BackgroundVideoPresenter(), advance);
+		}
+		for (auto const& presenters : ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::SecondaryBackgroundPresenters())
+		{
+			co_await service.RefreshAsync(
+				presenters.ImagePresenter, presenters.VideoPresenter, advance);
+		}
 	}
 
 	winrt::OpenNet::ViewModels::MainViewModel MainView::ViewModel()

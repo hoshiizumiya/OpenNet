@@ -65,6 +65,19 @@
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundCustomAcrylic" Content="Custom Acrylic" />
                 </ComboBox>
                 <essential:SettingsExpander.Items>
+                    <essential:SettingsCard
+                        x:Uid="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard"
+                        Description="Apply the selected backdrop to auxiliary windows"
+                        Header="Apply to other windows"
+                        IsClickEnabled="False">
+                        <essential:SettingsCard.HeaderIcon>
+                            <FontIcon Glyph="&#xE737;" />
+                        </essential:SettingsCard.HeaderIcon>
+                        <ToggleSwitch
+                            x:Name="ApplyBackgroundToSecondaryWindowsSwitch"
+                            IsOn="True"
+                            Toggled="ApplyBackgroundToSecondaryWindowsSwitch_Toggled" />
+                    </essential:SettingsCard>
                     <!--  Acrylic  -->
                     <essential:SettingsCard
                         x:Name="AcrylicTypeCard"

@@ -7,17 +7,28 @@
 
 export module OpenNet.Helpers.WindowHelper;
 
+import std;
 import winrt.Windows.Storage;
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Metadata;
+import winrt.Windows.Media.Core;
+import winrt.Windows.Media.Playback;
 import winrt.Microsoft.UI;
+import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Content;         // for ContentIslandEnvironment 
 import winrt.Microsoft.UI.Xaml;
+import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Windowing;
 import winrtplus.Microsoft.UI.Interop;     // GetWindowIdFromWindow, don't use `microsoft.ui.interop.h` directly
 
 export namespace OpenNet::Helpers::WinUIWindowHelper
 {
+	struct WindowBackgroundPresenters
+	{
+		winrt::Microsoft::UI::Xaml::Controls::Image ImagePresenter{ nullptr };
+		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement VideoPresenter{ nullptr };
+	};
+
 	struct WindowHelper
 	{
 		// 获取 HWND
@@ -70,6 +81,12 @@ export namespace OpenNet::Helpers::WinUIWindowHelper
 		static void SetWindowMinSize(winrt::Microsoft::UI::Xaml::Window const& window, double const& width, double const& height);
 		static winrt::Microsoft::UI::Xaml::Window CreateHostWindow();
 		static void TrackWindow(winrt::Microsoft::UI::Xaml::Window const& window);
+		static void RefreshWindowAppearances();
+		static std::vector<WindowBackgroundPresenters> SecondaryBackgroundPresenters();
+		static winrt::event_token BackgroundPresentersChanged(
+			winrt::Windows::Foundation::EventHandler<
+				winrt::Windows::Foundation::IInspectable> const& handler);
+		static void BackgroundPresentersChanged(winrt::event_token const& token) noexcept;
 		static winrt::Microsoft::UI::Xaml::Window GetWindowForElement(winrt::Microsoft::UI::Xaml::UIElement const& element);
 		static HWND GetNativeWindowHandleForElement(winrt::Microsoft::UI::Xaml::UIElement const& element);
 		static double GetRasterizationScaleForElement(winrt::Microsoft::UI::Xaml::UIElement const& element);
@@ -77,6 +94,8 @@ export namespace OpenNet::Helpers::WinUIWindowHelper
 		static void ShowMainWindow();
 	private:
 		static inline std::vector<winrt::Microsoft::UI::Xaml::Window> m_activeWindows;
+		static inline winrt::event<winrt::Windows::Foundation::EventHandler<
+			winrt::Windows::Foundation::IInspectable>> m_backgroundPresentersChanged;
 	};
 
 	struct PlacementRestoration

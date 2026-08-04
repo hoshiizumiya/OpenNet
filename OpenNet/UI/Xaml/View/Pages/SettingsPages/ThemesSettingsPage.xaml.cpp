@@ -48,6 +48,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const micaType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "mica_type", 1)), 0, 1);
 		auto const acrylicType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "acrylic_type", 0)), 0, 2);
 		auto const useFallback = db.GetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropUseFallbackKey).value_or(true);
+		auto const applyBackgroundToSecondaryWindows = db.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
+			::OpenNet::Helpers::kApplyBackgroundToSecondaryWindowsKey)
+			.value_or(true);
 		auto const mediaOptions = ::OpenNet::Service::Background::
 			GetBackgroundMediaService().LoadOptions();
 
@@ -57,6 +61,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ImageStretchComboBox().SelectedIndex(mediaOptions.ImageStretch);
 		ImageOpacitySlider().Value(mediaOptions.ImageOpacity);
 		BackdropFallbackSwitch().IsOn(useFallback);
+		ApplyBackgroundToSecondaryWindowsSwitch().IsOn(applyBackgroundToSecondaryWindows);
 		ImageModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.ImageMode));
 		VideoModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.VideoMode));
 		VideoStretchComboBox().SelectedIndex(mediaOptions.VideoStretch);
@@ -157,11 +162,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::ApplyBackdropFromSelection()
 	{
-		for (auto const& window :
-			 ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::ActiveWindows())
-		{
-			::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
-		}
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::RefreshWindowAppearances();
 	}
 
 	void ThemesSettingsPage::ApplyImageBackgroundFromSettings()
@@ -205,6 +206,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		if (m_isInitializing) return;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropUseFallbackKey, BackdropFallbackSwitch().IsOn());
+		ApplyBackdropFromSelection();
+	}
+
+	void ThemesSettingsPage::ApplyBackgroundToSecondaryWindowsSwitch_Toggled(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
+			::OpenNet::Helpers::kApplyBackgroundToSecondaryWindowsKey,
+			ApplyBackgroundToSecondaryWindowsSwitch().IsOn());
 		ApplyBackdropFromSelection();
 	}
 

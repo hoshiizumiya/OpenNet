@@ -1791,4 +1791,10 @@
   <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
     <value>Video opacity above the image and backdrop layers</value>
   </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Header" xml:space="preserve">
+    <value>Apply to other windows</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
+    <value>Apply the selected backdrop and background resources to auxiliary windows</value>
+  </data>
 </root>

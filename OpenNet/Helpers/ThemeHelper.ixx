@@ -21,6 +21,7 @@ export namespace OpenNet::Helpers
 	constexpr auto kBackdropTintOpacityKey         = "backdrop_tint_opacity";
 	constexpr auto kBackdropEnableWhenInactiveKey  = "backdrop_enable_when_inactive";
 	constexpr auto kBackdropUseFallbackKey         = "backdrop_use_fallback";
+	constexpr auto kApplyBackgroundToSecondaryWindowsKey = "apply_background_to_secondary_windows";
 
 	/// <summary>
 	/// Helper class for managing application theme

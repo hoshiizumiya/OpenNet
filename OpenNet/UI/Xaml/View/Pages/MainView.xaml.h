@@ -67,6 +67,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_backgroundTimer{ nullptr };
 		winrt::event_token m_backgroundTimerToken{};
 		winrt::event_token m_backgroundOptionsChangedToken{};
+		winrt::event_token m_backgroundPresentersChangedToken{};
 		winrt::Microsoft::UI::Xaml::Controls::Image m_backgroundImagePresenter{ nullptr };
 		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement m_backgroundVideoPresenter{ nullptr };
 		bool m_backgroundPlaybackActive{ true };

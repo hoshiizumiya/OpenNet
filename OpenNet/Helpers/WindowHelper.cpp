@@ -12,8 +12,13 @@
 module OpenNet.Helpers.WindowHelper;
 
 import OpenNet.App;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.ThemeHelper;
+import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Windows.Media.Core;
+import winrt.Windows.Media.Playback;
 
 using namespace OpenNet::Core::Utils::Message;
 using namespace winrt;
@@ -21,6 +26,181 @@ using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Windowing;
+
+namespace
+{
+	using Brush = winrt::Microsoft::UI::Xaml::Media::Brush;
+	using Image = winrt::Microsoft::UI::Xaml::Controls::Image;
+	using MediaPlayerElement =
+		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement;
+
+	struct SecondaryWindowVisualState
+	{
+		Brush OriginalRootBackground{ nullptr };
+		Image ImagePresenter{ nullptr };
+		MediaPlayerElement VideoPresenter{ nullptr };
+		bool Enabled{};
+	};
+
+	std::unordered_map<HWND, SecondaryWindowVisualState>
+		g_secondaryWindowVisualStates;
+
+	bool IsSecondaryWindow(Window const& window)
+	{
+		auto const& mainWindow = winrt::OpenNet::implementation::App::window;
+		return mainWindow && window != mainWindow;
+	}
+
+	bool ApplyWindowAppearancePolicy(Window const& window, bool const refreshBackdrop)
+	{
+		if (!window)
+		{
+			return false;
+		}
+
+		auto const isSecondary = IsSecondaryWindow(window);
+		auto const applyToSecondary =
+			::OpenNet::Core::AppSettingsDatabase::Instance().GetBool(
+				::OpenNet::Core::AppSettingsDatabase::CAT_UI,
+				::OpenNet::Helpers::kApplyBackgroundToSecondaryWindowsKey)
+			.value_or(true);
+
+		if (refreshBackdrop)
+		{
+			if (!isSecondary || applyToSecondary)
+			{
+				::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
+			}
+			else
+			{
+				window.SystemBackdrop(nullptr);
+			}
+		}
+
+		if (!isSecondary)
+		{
+			return false;
+		}
+
+		auto content = window.Content();
+		auto root = content.try_as<winrt::Microsoft::UI::Xaml::Controls::Panel>();
+		if (!root && applyToSecondary && content)
+		{
+			// Factory windows can host a Page directly. Wrap non-Panel content in a
+			// Grid so it receives the same two presentation layers as MainWindow.
+			root = winrt::Microsoft::UI::Xaml::Controls::Grid{};
+			window.Content(nullptr);
+			root.Children().Append(content);
+			window.Content(root);
+		}
+		if (!root)
+		{
+			return false;
+		}
+
+		HWND hwnd{};
+		try
+		{
+			hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::
+				GetWindowHandleFromWindow(window);
+		}
+		catch (...)
+		{
+			return false;
+		}
+		if (!hwnd)
+		{
+			return false;
+		}
+
+		auto [visual, inserted] = g_secondaryWindowVisualStates.try_emplace(hwnd);
+		if (inserted)
+		{
+			visual->second.OriginalRootBackground = root.Background();
+		}
+
+		auto& state = visual->second;
+		bool presenterAdded{};
+		if (applyToSecondary && (!state.ImagePresenter || !state.VideoPresenter))
+		{
+			state.ImagePresenter = Image{};
+			state.ImagePresenter.HorizontalAlignment(HorizontalAlignment::Stretch);
+			state.ImagePresenter.VerticalAlignment(VerticalAlignment::Stretch);
+			state.ImagePresenter.IsHitTestVisible(false);
+			state.ImagePresenter.Opacity(0);
+			state.ImagePresenter.UseLayoutRounding(false);
+			state.ImagePresenter.Stretch(
+				winrt::Microsoft::UI::Xaml::Media::Stretch::UniformToFill);
+
+			state.VideoPresenter = MediaPlayerElement{};
+			state.VideoPresenter.HorizontalAlignment(HorizontalAlignment::Stretch);
+			state.VideoPresenter.VerticalAlignment(VerticalAlignment::Stretch);
+			state.VideoPresenter.AreTransportControlsEnabled(false);
+			state.VideoPresenter.AutoPlay(true);
+			state.VideoPresenter.IsHitTestVisible(false);
+			state.VideoPresenter.Opacity(0);
+			state.VideoPresenter.UseLayoutRounding(false);
+			state.VideoPresenter.Stretch(
+				winrt::Microsoft::UI::Xaml::Media::Stretch::UniformToFill);
+
+			winrt::Microsoft::UI::Xaml::Controls::Grid::SetRowSpan(
+				state.ImagePresenter, 1000);
+			winrt::Microsoft::UI::Xaml::Controls::Grid::SetColumnSpan(
+				state.ImagePresenter, 1000);
+			winrt::Microsoft::UI::Xaml::Controls::Grid::SetRowSpan(
+				state.VideoPresenter, 1000);
+			winrt::Microsoft::UI::Xaml::Controls::Grid::SetColumnSpan(
+				state.VideoPresenter, 1000);
+
+			root.Children().InsertAt(0, state.ImagePresenter);
+			root.Children().InsertAt(1, state.VideoPresenter);
+			presenterAdded = true;
+		}
+
+		state.Enabled = applyToSecondary;
+		if (state.ImagePresenter) state.ImagePresenter.Visibility(
+			applyToSecondary ? Visibility::Visible : Visibility::Collapsed);
+		if (state.VideoPresenter) state.VideoPresenter.Visibility(
+			applyToSecondary ? Visibility::Visible : Visibility::Collapsed);
+		if (!applyToSecondary && state.ImagePresenter && state.VideoPresenter)
+		{
+			try
+			{
+				state.ImagePresenter.Opacity(0);
+				state.ImagePresenter.Source(nullptr);
+				if (auto player = state.VideoPresenter.MediaPlayer())
+				{
+					player.Pause();
+					player.Source(nullptr);
+				}
+				state.VideoPresenter.Source(nullptr);
+				state.VideoPresenter.SetMediaPlayer(nullptr);
+				state.VideoPresenter.Opacity(0);
+			}
+			catch (...)
+			{
+			}
+		}
+
+		auto const backgroundType = std::clamp(static_cast<int>(
+			::OpenNet::Core::AppSettingsDatabase::Instance().GetInt(
+				::OpenNet::Core::AppSettingsDatabase::CAT_UI,
+				"background_type", 1)), 0, 4);
+
+		// Opaque root brushes hide Mica/Acrylic. Preserve each original brush so
+		// disabling this option or selecting Static restores the XAML appearance.
+		if (applyToSecondary && backgroundType != 0)
+		{
+			root.Background(nullptr);
+		}
+		else
+		{
+			root.Background(state.OriginalRootBackground);
+		}
+
+		return presenterAdded;
+	}
+}
 
 namespace OpenNet::Helpers::WinUIWindowHelper
 {
@@ -48,8 +228,12 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		}
 
 		m_activeWindows.push_back(window);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
+		auto const presenterAdded = ApplyWindowAppearancePolicy(window, true);
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+		if (presenterAdded)
+		{
+			m_backgroundPresentersChanged(nullptr, nullptr);
+		}
 
 		window.Activated([](IInspectable const& sender, WindowActivatedEventArgs const& args)
 		{
@@ -60,21 +244,94 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 			if (auto activatedWindow = sender.try_as<Window>())
 			{
 				// Content may be assigned after TrackWindow (for factory-created
-				// windows), so synchronize its requested theme on activation. The
-				// backdrop is already applied at registration and on setting changes.
+				// windows), so apply root transparency and theme after activation.
+				if (ApplyWindowAppearancePolicy(activatedWindow, false))
+				{
+					WindowHelper::m_backgroundPresentersChanged(nullptr, nullptr);
+				}
 				::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(activatedWindow);
 			}
 		});
 
-		window.Closed([](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const& /*args*/)
+		HWND trackedHwnd{};
+		try
+		{
+			trackedHwnd = GetWindowHandleFromWindow(window);
+		}
+		catch (...)
+		{
+		}
+
+		window.Closed([trackedHwnd](winrt::Windows::Foundation::IInspectable const& sender, WindowEventArgs const& /*args*/)
 		{
 			auto closedWindow = sender.try_as<Window>();
 			if (closedWindow)
 			{
+				if (trackedHwnd)
+				{
+					auto const visual = g_secondaryWindowVisualStates.find(trackedHwnd);
+					if (visual != g_secondaryWindowVisualStates.end())
+					{
+						try
+						{
+							visual->second.ImagePresenter.Source(nullptr);
+							if (auto player = visual->second.VideoPresenter.MediaPlayer())
+							{
+								player.Pause();
+								player.Source(nullptr);
+							}
+							visual->second.VideoPresenter.Source(nullptr);
+							visual->second.VideoPresenter.SetMediaPlayer(nullptr);
+						}
+						catch (...)
+						{
+						}
+						g_secondaryWindowVisualStates.erase(visual);
+					}
+				}
 				auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);
 				m_activeWindows.erase(it, m_activeWindows.end());
+				WindowHelper::m_backgroundPresentersChanged(nullptr, nullptr);
 			}
 		});
+	}
+
+	void WindowHelper::RefreshWindowAppearances()
+	{
+		for (auto const& window : m_activeWindows)
+		{
+			ApplyWindowAppearancePolicy(window, true);
+			::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+		}
+		m_backgroundPresentersChanged(nullptr, nullptr);
+	}
+
+	std::vector<WindowBackgroundPresenters>
+		WindowHelper::SecondaryBackgroundPresenters()
+	{
+		std::vector<WindowBackgroundPresenters> presenters;
+		presenters.reserve(g_secondaryWindowVisualStates.size());
+		for (auto const& [hwnd, state] : g_secondaryWindowVisualStates)
+		{
+			if (state.Enabled && state.ImagePresenter && state.VideoPresenter)
+			{
+				presenters.push_back({ state.ImagePresenter, state.VideoPresenter });
+			}
+		}
+		return presenters;
+	}
+
+	winrt::event_token WindowHelper::BackgroundPresentersChanged(
+		winrt::Windows::Foundation::EventHandler<
+		winrt::Windows::Foundation::IInspectable> const& handler)
+	{
+		return m_backgroundPresentersChanged.add(handler);
+	}
+
+	void WindowHelper::BackgroundPresentersChanged(
+		winrt::event_token const& token) noexcept
+	{
+		m_backgroundPresentersChanged.remove(token);
 	}
 
 	Window WindowHelper::GetWindowForElement(UIElement const& element)

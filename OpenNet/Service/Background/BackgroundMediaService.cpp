@@ -269,14 +269,26 @@ namespace
 			if (!imagePresenter || !videoPresenter) co_return;
 			auto const dispatcher = imagePresenter.DispatcherQueue();
 			if (!dispatcher) co_return;
+			auto const presenterKey = reinterpret_cast<void*>(
+				winrt::get_abi(videoPresenter));
+			for (auto state = m_presenterStates.begin();
+				 state != m_presenterStates.end();)
+			{
+				if (!state->second.VideoPresenter.get())
+					state = m_presenterStates.erase(state);
+				else
+					++state;
+			}
 
 			auto const options = LoadOptions();
 			std::wstring const imagePath{ options.ImagePath };
 			std::wstring const videoPath{ options.VideoPath };
 
-			auto const version = ++m_refreshVersion;
-			auto const currentImage = m_currentImagePath;
-			auto const currentVideo = m_currentVideoPath;
+			auto& initialState = m_presenterStates[presenterKey];
+			initialState.VideoPresenter = winrt::make_weak(videoPresenter);
+			auto const version = ++initialState.RefreshVersion;
+			auto const currentImage = initialState.CurrentImagePath;
+			auto const currentVideo = initialState.CurrentVideoPath;
 			co_await winrt::resume_background();
 			static std::unordered_set<std::wstring> const imageExtensions{
 				L".bmp", L".gif", L".ico", L".jpg", L".jpeg",
@@ -288,17 +300,30 @@ namespace
 			auto resolvedVideo = ResolveBackgroundPath(
 				options.VideoMode, videoPath, currentVideo, advance, videoExtensions);
 			co_await winrtplus::resume_foreground(dispatcher);
-			if (version != m_refreshVersion) co_return;
+			auto stateIterator = m_presenterStates.find(presenterKey);
+			if (stateIterator == m_presenterStates.end()
+				|| version != stateIterator->second.RefreshVersion) co_return;
+			auto* state = &stateIterator->second;
 
-			auto const imageChanged = resolvedImage != m_currentImagePath;
-			auto const videoChanged = resolvedVideo != m_currentVideoPath;
+			auto const imageChanged = resolvedImage != state->CurrentImagePath
+				|| (!resolvedImage.empty() && !imagePresenter.Source());
+			auto const videoChanged = resolvedVideo != state->CurrentVideoPath
+				|| (!resolvedVideo.empty() && !videoPresenter.Source());
 			if (imageChanged || videoChanged)
 			{
-				if (imageChanged) imagePresenter.Opacity(0);
-				if (videoChanged) videoPresenter.Opacity(0);
-				co_await winrt::resume_after(std::chrono::milliseconds(350));
-				co_await winrtplus::resume_foreground(dispatcher);
-				if (version != m_refreshVersion) co_return;
+				auto const fadeImage = imageChanged && imagePresenter.Source();
+				auto const fadeVideo = videoChanged && videoPresenter.Source();
+				if (fadeImage) imagePresenter.Opacity(0);
+				if (fadeVideo) videoPresenter.Opacity(0);
+				if (fadeImage || fadeVideo)
+				{
+					co_await winrt::resume_after(std::chrono::milliseconds(350));
+					co_await winrtplus::resume_foreground(dispatcher);
+					stateIterator = m_presenterStates.find(presenterKey);
+					if (stateIterator == m_presenterStates.end()
+						|| version != stateIterator->second.RefreshVersion) co_return;
+					state = &stateIterator->second;
+				}
 			}
 
 			imagePresenter.Stretch(StretchFromIndex(options.ImageStretch));
@@ -306,18 +331,19 @@ namespace
 			{
 				imagePresenter.Opacity(0);
 				imagePresenter.Source(nullptr);
-				m_currentImagePath.clear();
+				state->CurrentImagePath.clear();
 			}
 			else
 			{
 				try
 				{
-					if (resolvedImage != m_currentImagePath)
+					if (resolvedImage != state->CurrentImagePath
+						|| !imagePresenter.Source())
 					{
 						auto bitmap = winrt::Microsoft::UI::Xaml::Media::Imaging::BitmapImage{};
 						bitmap.UriSource(FileUri(resolvedImage));
 						imagePresenter.Source(bitmap);
-						m_currentImagePath = std::move(resolvedImage);
+						state->CurrentImagePath = std::move(resolvedImage);
 					}
 					imagePresenter.Opacity(options.ImageOpacity / 100.0);
 				}
@@ -325,7 +351,7 @@ namespace
 				{
 					imagePresenter.Opacity(0);
 					imagePresenter.Source(nullptr);
-					m_currentImagePath.clear();
+					state->CurrentImagePath.clear();
 				}
 			}
 
@@ -333,17 +359,19 @@ namespace
 			if (resolvedVideo.empty())
 			{
 				StopVideo(videoPresenter);
+				state->CurrentVideoPath.clear();
 			}
 			else
 			{
 				try
 				{
-					if (resolvedVideo != m_currentVideoPath)
+					if (resolvedVideo != state->CurrentVideoPath
+						|| !videoPresenter.Source())
 					{
 						if (auto player = videoPresenter.MediaPlayer()) player.Pause();
 						videoPresenter.Source(winrt::Windows::Media::Core::MediaSource::
 											  CreateFromUri(FileUri(resolvedVideo)));
-						m_currentVideoPath = std::move(resolvedVideo);
+						state->CurrentVideoPath = std::move(resolvedVideo);
 					}
 					if (auto player = videoPresenter.MediaPlayer())
 					{
@@ -356,13 +384,21 @@ namespace
 				catch (...)
 				{
 					StopVideo(videoPresenter);
+					state->CurrentVideoPath.clear();
 				}
 			}
 		}
 
 		void Suspend(MediaPlayerElement const& videoPresenter) noexcept override
 		{
-			++m_refreshVersion;
+			auto const presenterKey = reinterpret_cast<void*>(
+				winrt::get_abi(videoPresenter));
+			if (auto state = m_presenterStates.find(presenterKey);
+				state != m_presenterStates.end())
+			{
+				++state->second.RefreshVersion;
+				state->second.CurrentVideoPath.clear();
+			}
 			StopVideo(videoPresenter);
 		}
 
@@ -370,7 +406,9 @@ namespace
 			Image const& imagePresenter,
 			MediaPlayerElement const& videoPresenter) noexcept override
 		{
-			++m_refreshVersion;
+			auto const presenterKey = reinterpret_cast<void*>(
+				winrt::get_abi(videoPresenter));
+			m_presenterStates.erase(presenterKey);
 			try
 			{
 				if (imagePresenter)
@@ -382,11 +420,18 @@ namespace
 			catch (...)
 			{
 			}
-			m_currentImagePath.clear();
 			StopVideo(videoPresenter);
 		}
 
 	private:
+		struct PresenterState
+		{
+			std::wstring CurrentImagePath;
+			std::wstring CurrentVideoPath;
+			std::uint64_t RefreshVersion{};
+			winrt::weak_ref<MediaPlayerElement> VideoPresenter;
+		};
+
 		void StopVideo(MediaPlayerElement const& presenter) noexcept
 		{
 			try
@@ -406,12 +451,9 @@ namespace
 			catch (...)
 			{
 			}
-			m_currentVideoPath.clear();
 		}
 
-		std::wstring m_currentImagePath;
-		std::wstring m_currentVideoPath;
-		std::uint64_t m_refreshVersion{};
+		std::unordered_map<void*, PresenterState> m_presenterStates;
 		mutable std::optional<::OpenNet::Service::Background::BackgroundMediaOptions>
 			m_cachedOptions;
 		winrt::event<winrt::Windows::Foundation::EventHandler<
