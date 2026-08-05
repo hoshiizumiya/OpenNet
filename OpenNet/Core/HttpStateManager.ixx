@@ -26,6 +26,7 @@ export namespace OpenNet::Core
         std::string fileName;           // File name (may be auto-detected)
         std::string name;               // Display name
         std::int64_t     addedTimestamp{};   // When the task was added (epoch seconds)
+        std::int64_t     completedTimestamp{}; // When the task completed (epoch seconds)
         std::int64_t     totalSize{};        // Total size in bytes
         std::int64_t     completedSize{};    // Downloaded size in bytes
         int         status{};           // 0=pending, 1=downloading, 2=paused, 3=completed, 4=failed

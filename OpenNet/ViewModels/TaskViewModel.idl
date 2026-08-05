@@ -37,6 +37,10 @@ namespace OpenNet.ViewModels
         String UploadRate;
         String Remaining;
         String AddDate;
+        String CompletedDate;
+        String ShareRatio;
+        String Seeds;
+        String Peers;
 
         // Download task type (BitTorrent or Http)
         DownloadTaskType TaskType;

@@ -45,6 +45,10 @@ namespace OpenNet.ViewModels
 		Boolean IsColULRateLoad;
 		Boolean IsColRemainingLoad;
 		Boolean IsColAddDateLoad;
+		Boolean IsColCompletedDateLoad;
+		Boolean IsColShareRatioLoad;
+		Boolean IsColSeedsLoad;
+		Boolean IsColPeersLoad;
 
 	}
 }

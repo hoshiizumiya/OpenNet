@@ -436,6 +436,74 @@
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
+                                <xtlw:DataColumn
+                                    x:Name="ColCompletedDate"
+                                    CanResize="True"
+                                    Tag="CompletedDate"
+                                    Visibility="{x:Bind ViewModel.IsColCompletedDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Button
+                                        x:Name="SortTaskCompletedDateButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
+                                        FontWeight="SemiBold"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                        Tag="CompletedDate">
+                                        <TextBlock Text="Completed Date" TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
+                                    x:Name="ColShareRatio"
+                                    CanResize="True"
+                                    Tag="ShareRatio"
+                                    Visibility="{x:Bind ViewModel.IsColShareRatioLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Button
+                                        x:Name="SortTaskShareRatioButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
+                                        FontWeight="SemiBold"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                        Tag="ShareRatio">
+                                        <TextBlock Text="Share Ratio" TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
+                                    x:Name="ColSeeds"
+                                    CanResize="True"
+                                    Tag="Seeds"
+                                    Visibility="{x:Bind ViewModel.IsColSeedsLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Button
+                                        x:Name="SortTaskSeedsButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
+                                        FontWeight="SemiBold"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                        Tag="Seeds">
+                                        <TextBlock Text="Seeds" TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                </xtlw:DataColumn>
+                                <xtlw:DataColumn
+                                    x:Name="ColPeers"
+                                    CanResize="True"
+                                    Tag="Peers"
+                                    Visibility="{x:Bind ViewModel.IsColPeersLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    <Button
+                                        x:Name="SortTaskPeersButton"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch"
+                                        HorizontalContentAlignment="Right"
+                                        Click="TasksColumnHeader_Click"
+                                        FontWeight="SemiBold"
+                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                        Tag="Peers">
+                                        <TextBlock Text="Peers" TextTrimming="CharacterEllipsis" />
+                                    </Button>
+                                </xtlw:DataColumn>
                             </xtlw:DataTable>
                             <muxc:Border.ContextFlyout>
                                 <MenuFlyout Closed="TasksColumnMenuFlyout_Closed" Opening="TasksColumnMenuFlyout_Opening">
@@ -454,47 +522,88 @@
                                         x:Uid="Header_TaskName"
                                         IsChecked="True"
                                         IsEnabled="False"
+                                        Tag="Name"
                                         Text="Name" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_Size"
-                                        IsChecked="{x:Bind ViewModel.IsColSizeLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay}"
+                                        Tag="Size"
                                         Text="Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_Progress"
-                                        IsChecked="{x:Bind ViewModel.IsColProgressLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay}"
+                                        Tag="Progress"
                                         Text="Progress" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_DownloadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay}"
+                                        Tag="DownloadSize"
                                         Text="Download Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_UploadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay}"
+                                        Tag="UploadSize"
                                         Text="Upload Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_TotalDownloadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay}"
+                                        Tag="TotalDownloadSize"
                                         Text="Total Download Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_TotalUploadSize"
-                                        IsChecked="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay}"
+                                        Tag="TotalUploadSize"
                                         Text="Total Upload Size" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_DLRate"
-                                        IsChecked="{x:Bind ViewModel.IsColDLRateLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay}"
+                                        Tag="DLRate"
                                         Text="Download Rate" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_ULRate"
-                                        IsChecked="{x:Bind ViewModel.IsColULRateLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay}"
+                                        Tag="ULRate"
                                         Text="Upload Rate" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_Remaining"
-                                        IsChecked="{x:Bind ViewModel.IsColRemainingLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay}"
+                                        Tag="Remaining"
                                         Text="Remaining" />
                                     <ToggleMenuFlyoutItem
                                         x:Uid="Header_AddDate"
-                                        IsChecked="{x:Bind ViewModel.IsColAddDateLoad, Mode=TwoWay}"
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay}"
+                                        Tag="AddDate"
                                         Text="Add Date" />
+                                    <ToggleMenuFlyoutItem
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColCompletedDateLoad, Mode=OneWay}"
+                                        Tag="CompletedDate"
+                                        Text="Completed Date" />
+                                    <ToggleMenuFlyoutItem
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColShareRatioLoad, Mode=OneWay}"
+                                        Tag="ShareRatio"
+                                        Text="Share Ratio" />
+                                    <ToggleMenuFlyoutItem
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColSeedsLoad, Mode=OneWay}"
+                                        Tag="Seeds"
+                                        Text="Seeds" />
+                                    <ToggleMenuFlyoutItem
+                                        Click="TasksColumnVisibility_Click"
+                                        IsChecked="{x:Bind ViewModel.IsColPeersLoad, Mode=OneWay}"
+                                        Tag="Peers"
+                                        Text="Peers" />
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         x:Uid="ViewPageTasksColumnDisplayItemsReset"
@@ -673,7 +782,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vm:TaskViewModel">
                             <!--  We set HorizontalAlignment to Left here as we're not stretching our content with a star column  -->
-                            <xtlw:DataRow HorizontalAlignment="Left">
+                            <xtlw:DataRow HorizontalAlignment="Left" Loaded="TaskDataRow_Loaded">
                                 <Grid ColumnSpacing="4">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />
@@ -760,6 +869,32 @@
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColAddDate.Visibility, Mode=OneWay}" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Text="{x:Bind CompletedDate, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColCompletedDate.Visibility, Mode=OneWay}" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Text="{x:Bind ShareRatio, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    Visibility="{x:Bind ColShareRatio.Visibility, Mode=OneWay}" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Text="{x:Bind Seeds, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    ToolTipService.ToolTip="Connected seeds (all known seeds)"
+                                    Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}" />
+                                <TextBlock
+                                    HorizontalAlignment="Right"
+                                    Text="{x:Bind Peers, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap"
+                                    ToolTipService.ToolTip="Connected peers (all known peers)"
+                                    Visibility="{x:Bind ColPeers.Visibility, Mode=OneWay}" />
                             </xtlw:DataRow>
                         </DataTemplate>
                     </ListView.ItemTemplate>

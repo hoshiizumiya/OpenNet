@@ -27,6 +27,17 @@ export namespace OpenNet::Core::Torrent
 			int progressPercent{};
 			int downloadRateKB{};
 			int uploadRateKB{};
+			std::int64_t totalSize{};
+			std::int64_t downloadedSize{};
+			std::int64_t sessionDownloaded{};
+			std::int64_t sessionUploaded{};
+			std::int64_t allTimeDownloaded{};
+			std::int64_t allTimeUploaded{};
+			std::int64_t completedTimestamp{};
+			int connectedPeers{};
+			int connectedSeeds{};
+			int knownPeers{ -1 };
+			int knownSeeds{ -1 };
 			std::string name;
 			bool isPaused{};
 			bool isFinished{};
@@ -236,6 +247,10 @@ export namespace OpenNet::Core::Torrent
 			int64_t totalSize{};
 			int64_t totalDone{};
 			int64_t totalUploaded{};
+			int64_t sessionDownloaded{};
+			int64_t sessionUploaded{};
+			int64_t allTimeDownloaded{};
+			int64_t allTimeUploaded{};
 			int pieceSize{};
 			int piecesNum{};
 			int downloadRate{};
@@ -246,7 +261,7 @@ export namespace OpenNet::Core::Torrent
 			int numConnections{};
 			int numComplete{ -1 };
 			int numIncomplete{ -1 };
-			double shareRatio{}; // uploaded / downloaded
+			double shareRatio{}; // all-time uploaded / all-time downloaded
 			int state{};         // lt::torrent_status::state_t
 			bool isPaused{};
 			bool isAutoManaged{};

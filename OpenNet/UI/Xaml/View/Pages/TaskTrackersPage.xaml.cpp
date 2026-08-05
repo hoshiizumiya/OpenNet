@@ -10,6 +10,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -267,7 +268,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto toggle = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>();
 		if (!toggle || !toggle.Tag()) return;
 		if (auto column = ColumnForTag(winrt::unbox_value<winrt::hstring>(toggle.Tag())))
+		{
 			column.Visibility(toggle.IsChecked() ? Visibility::Visible : Visibility::Collapsed);
+			SynchronizeTrackerRows();
+		}
 	}
 
 	void TaskTrackersPage::AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
@@ -302,8 +306,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ColTrackerTimeRemaining(), ColTrackerSeeders(),
 			ColTrackerLeechers(), ColTrackerDownloaded(), ColTrackerStatus() })
 			column.Visibility(Visibility::Visible);
+		SynchronizeTrackerRows();
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshTrackerList();
+	}
+
+	void TaskTrackersPage::TrackerDataRow_Loaded(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		std::array const columns{
+			ColTrackerURL(), ColTrackerLog(), ColTrackerRetries(),
+			ColTrackerTimeRemaining(), ColTrackerSeeders(), ColTrackerLeechers(),
+			ColTrackerDownloaded(), ColTrackerStatus() };
+		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
+			sender.try_as<winrt::XamlToolkit::Labs::WinUI::DataRow>(),
+			columns.data(), static_cast<unsigned int>(columns.size()));
+	}
+
+	void TaskTrackersPage::SynchronizeTrackerRows()
+	{
+		std::array const columns{
+			ColTrackerURL(), ColTrackerLog(), ColTrackerRetries(),
+			ColTrackerTimeRemaining(), ColTrackerSeeders(), ColTrackerLeechers(),
+			ColTrackerDownloaded(), ColTrackerStatus() };
+		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRealizedRows(
+			TrackersListView(), columns.data(), static_cast<unsigned int>(columns.size()));
+		TrackersListView().InvalidateMeasure();
 	}
 
 	bool TaskTrackersPage::TryGetTaskContext(std::string& taskId, winrt::hstring& taskName) const

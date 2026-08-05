@@ -11,6 +11,7 @@ import OpenNet.Core.P2PManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -276,7 +277,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto toggle = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>();
 		if (!toggle || !toggle.Tag()) return;
 		if (auto column = ColumnForTag(winrt::unbox_value<winrt::hstring>(toggle.Tag())))
+		{
 			column.Visibility(toggle.IsChecked() ? Visibility::Visible : Visibility::Collapsed);
+			SynchronizePeerRows();
+		}
 	}
 
 	void TaskPeersListPage::AutoSizeColumn(
@@ -318,8 +322,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			column.Visibility(Visibility::Visible);
+		SynchronizePeerRows();
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshPeerList();
+	}
+
+	void TaskPeersListPage::PeerDataRow_Loaded(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		std::array const columns{
+			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() };
+		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
+			sender.try_as<winrt::XamlToolkit::Labs::WinUI::DataRow>(),
+			columns.data(), static_cast<unsigned int>(columns.size()));
+	}
+
+	void TaskPeersListPage::SynchronizePeerRows()
+	{
+		std::array const columns{
+			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() };
+		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRealizedRows(
+			PeersTreeView(), columns.data(), static_cast<unsigned int>(columns.size()));
+		PeersTreeView().InvalidateMeasure();
 	}
 
 	void TaskPeersListPage::ResetPeerGroups()

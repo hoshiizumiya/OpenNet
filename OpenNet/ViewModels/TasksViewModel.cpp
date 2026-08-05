@@ -28,12 +28,34 @@ using namespace std::string_literals;
 namespace winrt::OpenNet::ViewModels::implementation
 {
 	using namespace ::Core::Utils::Misc;
+	static winrt::hstring FormatByteSize(std::uint64_t bytes);
+	static winrt::hstring FormatRatio(std::uint64_t uploaded, std::uint64_t downloaded);
+	static winrt::hstring FormatConnectedKnown(int connected, int known);
 	// Tip: All constructions will do in winrt::make<>().
 	TasksViewModel::TasksViewModel()
 	{
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 		m_tasks = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TaskViewModel>();
 		m_filteredTasks = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TaskViewModel>();
+
+		// Keep the notification backing fields aligned with persisted values.
+		// Reading LocalSetting directly from the getters left these fields at
+		// their defaults, so the first menu click could be treated as unchanged.
+		m_isColNameLoad = LocalSetting::Get(IsColumnNameLoadKey, true);
+		m_isColSizeLoad = LocalSetting::Get(IsColumnSizeLoadKey, true);
+		m_isColProgressLoad = LocalSetting::Get(IsColumnProgressLoadKey, true);
+		m_isColDownloadSizeLoad = LocalSetting::Get(IsColumnDownloadSizeLoadKey, true);
+		m_isColUploadSizeLoad = LocalSetting::Get(IsColumnUploadSizeLoadKey, true);
+		m_isColumnTotalDownloadSizeLoad = LocalSetting::Get(IsColumnTotalDownloadSizeLoadKey, true);
+		m_isColumnTotalUploadSizeLoad = LocalSetting::Get(IsColumnTotalUploadSizeLoadKey, true);
+		m_isColDLRateLoad = LocalSetting::Get(IsColumnDLRateLoadKey, true);
+		m_isColULRateLoad = LocalSetting::Get(IsColumnULRateLoadKey, true);
+		m_isColRemainingLoad = LocalSetting::Get(IsColumnRemainingLoadKey, true);
+		m_isColAddDateLoad = LocalSetting::Get(IsColumnAddDateLoadKey, true);
+		m_isColCompletedDateLoad = LocalSetting::Get(IsColumnCompletedDateLoadKey, true);
+		m_isColShareRatioLoad = LocalSetting::Get(IsColumnShareRatioLoadKey, true);
+		m_isColSeedsLoad = LocalSetting::Get(IsColumnSeedsLoadKey, true);
+		m_isColPeersLoad = LocalSetting::Get(IsColumnPeersLoadKey, true);
 
 		// NewCommand: Shows the dropdown menu (no action here, menu items use their own commands)
 		m_newCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
@@ -436,8 +458,18 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return;
 
 		auto tasks = ::OpenNet::Core::P2PManager::Instance().GetAllTasks();
+		std::unordered_map<std::string,
+			::OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo> details;
+		if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+		{
+			for (auto const& task : tasks)
+			{
+				details.emplace(task.taskId, core->GetTorrentDetail(task.taskId));
+			}
+		}
 
-		dispatcher.TryEnqueue([weak = get_weak(), tasks = std::move(tasks)]()
+		dispatcher.TryEnqueue([weak = get_weak(), tasks = std::move(tasks),
+			details = std::move(details)]()
 		{
 			if (auto self = weak.get())
 			{
@@ -511,6 +543,40 @@ namespace winrt::OpenNet::ViewModels::implementation
 					else
 					{
 						vm.Size(L"-");
+					}
+
+					auto const detailIt = details.find(task.taskId);
+					if (detailIt != details.end())
+					{
+						auto const& detail = detailIt->second;
+						vm.DownloadSize(friendlyUnit(detail.sessionDownloaded));
+						vm.UploadSize(friendlyUnit(detail.sessionUploaded));
+						auto const totalDownloaded = (std::max)(
+							detail.allTimeDownloaded, detail.totalDone);
+						vm.TotalDownloadSize(friendlyUnit(totalDownloaded));
+						vm.TotalUploadSize(friendlyUnit(detail.allTimeUploaded));
+						vm.ShareRatio(FormatRatio(
+							static_cast<std::uint64_t>((std::max)(std::int64_t{}, detail.allTimeUploaded)),
+							static_cast<std::uint64_t>((std::max)(std::int64_t{}, totalDownloaded))));
+						vm.Seeds(FormatConnectedKnown(detail.numSeeds, detail.numComplete));
+						vm.Peers(FormatConnectedKnown(
+							(std::max)(0, detail.numPeers - detail.numSeeds),
+							detail.numIncomplete));
+						if (detail.completedTimestamp > 0)
+							vm.CompletedDate(FormatTimestamp(detail.completedTimestamp));
+						else
+							vm.CompletedDate(L"-");
+					}
+					else
+					{
+						vm.DownloadSize(L"-");
+						vm.TotalDownloadSize(friendlyUnit(task.downloadedSize));
+						vm.UploadSize(L"-");
+						vm.TotalUploadSize(L"-");
+						vm.ShareRatio(L"0.00");
+						vm.Seeds(L"-");
+						vm.Peers(L"-");
+						vm.CompletedDate(L"-");
 					}
 				}
 				self->RebuildFiltered();
@@ -595,6 +661,18 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						vm.Size(L"-");
 					}
+					vm.DownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
+						std::int64_t{}, rec.completedSize))));
+					vm.TotalDownloadSize(vm.DownloadSize());
+					vm.UploadSize(L"-");
+					vm.TotalUploadSize(L"-");
+					vm.ShareRatio(L"0.00");
+					vm.Seeds(L"-");
+					vm.Peers(L"-");
+					if (rec.completedTimestamp > 0)
+						vm.CompletedDate(FormatTimestamp(rec.completedTimestamp));
+					else
+						vm.CompletedDate(L"-");
 				}
 				self->RebuildFiltered();
 			}
@@ -679,6 +757,22 @@ namespace winrt::OpenNet::ViewModels::implementation
 		return winrt::hstring{ buf };
 	}
 
+	static winrt::hstring FormatRatio(
+		std::uint64_t uploaded, std::uint64_t downloaded)
+	{
+		if (downloaded == 0)
+			return uploaded == 0 ? L"0.00" : L"∞";
+		return winrt::hstring{ std::format(
+			L"{:.2f}", static_cast<double>(uploaded) / downloaded) };
+	}
+
+	static winrt::hstring FormatConnectedKnown(int connected, int known)
+	{
+		return known >= 0
+			? winrt::hstring{ std::format(L"{} ({})", (std::max)(0, connected), known) }
+			: winrt::hstring{ std::format(L"{} (-)", (std::max)(0, connected)) };
+	}
+
 	void TasksViewModel::OnProgress(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
 	{
 		auto dispatcher = m_dispatcher;
@@ -708,11 +802,42 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.Progress(to_hstring_percent(e.progressPercent));
 				item.DownloadRate(to_hstring_rate(e.downloadRateKB));
 				item.UploadRate(to_hstring_rate(e.uploadRateKB));
+				item.Size(FormatByteSize(static_cast<std::uint64_t>((std::max)(
+					std::int64_t{}, e.totalSize))));
+				item.DownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
+					std::int64_t{}, e.sessionDownloaded))));
+				item.UploadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
+					std::int64_t{}, e.sessionUploaded))));
+				auto const allTimeDownloaded = (std::max)(
+					e.allTimeDownloaded, e.downloadedSize);
+				item.TotalDownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
+					std::int64_t{}, allTimeDownloaded))));
+				item.TotalUploadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
+					std::int64_t{}, e.allTimeUploaded))));
+				item.ShareRatio(FormatRatio(
+					static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.allTimeUploaded)),
+					static_cast<std::uint64_t>((std::max)(std::int64_t{}, allTimeDownloaded))));
+				item.Seeds(FormatConnectedKnown(e.connectedSeeds, e.knownSeeds));
+				item.Peers(FormatConnectedKnown(
+					(std::max)(0, e.connectedPeers - e.connectedSeeds), e.knownPeers));
+				if (e.completedTimestamp > 0)
+					item.CompletedDate(FormatTimestamp(e.completedTimestamp));
+				else if (item.CompletedDate().empty())
+					item.CompletedDate(L"-");
 				item.DownloadSpeedKB(static_cast<uint64_t>(e.downloadRateKB));
 				item.ProgressPercent(static_cast<double>(e.progressPercent));
 				item.UpdateSpeedGraph(static_cast<double>(e.progressPercent), static_cast<uint64_t>(e.downloadRateKB));
-				if (item.Size().empty()) item.Size(L"-");
-				if (item.Remaining().empty()) item.Remaining(L"-");
+				if (e.downloadRateKB > 0 && e.totalSize > e.downloadedSize)
+				{
+					auto const seconds = static_cast<std::uint64_t>(
+						(e.totalSize - e.downloadedSize) /
+						(static_cast<std::int64_t>(e.downloadRateKB) * 1000));
+					item.Remaining(winrt::hstring{ std::format(L"{}m {}s", seconds / 60, seconds % 60) });
+				}
+				else
+				{
+					item.Remaining(e.isFinished ? L"0" : L"-");
+				}
 				// Only RebuildFiltered when a brand-new item was created so it
 				// appears in the filtered list. Subsequent ticks skip this.
 				if (isNewItem || previousState != nextState)
@@ -739,6 +864,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.ProgressPercent(100.0);
 				item.DownloadRate(L"0 KB/s");
 				item.Remaining(L"0");
+				auto const now = std::chrono::duration_cast<std::chrono::seconds>(
+					std::chrono::system_clock::now().time_since_epoch()).count();
+				item.CompletedDate(FormatTimestamp(now));
 				self->RebuildFiltered();
 			}
 		});
@@ -879,6 +1007,20 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.DownloadRate(FormatByteRate(dlSpeed));
 				item.UploadRate(FormatByteRate(ulSpeed));
 				item.Size(FormatByteSize(totalLen));
+				item.DownloadSize(FormatByteSize(completedLen));
+				item.TotalDownloadSize(FormatByteSize(completedLen));
+				item.UploadSize(FormatByteSize(0));
+				item.TotalUploadSize(FormatByteSize(0));
+				item.ShareRatio(L"0.00");
+				item.Seeds(L"-");
+				item.Peers(L"-");
+				if (nextState == winrt::OpenNet::ViewModels::DownloadTaskState::Completed &&
+					(item.CompletedDate().empty() || item.CompletedDate() == L"-"))
+				{
+					auto const now = std::chrono::duration_cast<std::chrono::seconds>(
+						std::chrono::system_clock::now().time_since_epoch()).count();
+					item.CompletedDate(FormatTimestamp(now));
+				}
 				item.DownloadSpeedKB(dlSpeed / 1024);
 				item.ProgressPercent(static_cast<double>(percent));
 				item.UpdateSpeedGraph(static_cast<double>(percent), dlSpeed / 1024);
@@ -927,6 +1069,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.DownloadRate(L"0 KB/s");
 				item.UploadRate(L"0 KB/s");
 				item.Remaining(L"0");
+				auto const now = std::chrono::duration_cast<std::chrono::seconds>(
+					std::chrono::system_clock::now().time_since_epoch()).count();
+				item.CompletedDate(FormatTimestamp(now));
 				self->RebuildFiltered();
 			}
 		});
@@ -1099,7 +1244,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColNameLoad()
 	{
-		return LocalSetting::Get(IsColumnNameLoadKey, true);
+		return m_isColNameLoad;
 	}
 	void TasksViewModel::IsColNameLoad(bool value)
 	{
@@ -1109,7 +1254,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColSizeLoad()
 	{
-		return LocalSetting::Get(IsColumnSizeLoadKey, true);
+		return m_isColSizeLoad;
 	}
 	void TasksViewModel::IsColSizeLoad(bool value)
 	{
@@ -1119,7 +1264,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColProgressLoad()
 	{
-		return LocalSetting::Get(IsColumnProgressLoadKey, true);
+		return m_isColProgressLoad;
 	}
 	void TasksViewModel::IsColProgressLoad(bool value)
 	{
@@ -1129,7 +1274,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColDownloadSizeLoad()
 	{
-		return LocalSetting::Get(IsColumnDownloadSizeLoadKey, true);
+		return m_isColDownloadSizeLoad;
 	}
 	void TasksViewModel::IsColDownloadSizeLoad(bool value)
 	{
@@ -1139,7 +1284,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColUploadSizeLoad()
 	{
-		return LocalSetting::Get(IsColumnUploadSizeLoadKey, true);
+		return m_isColUploadSizeLoad;
 	}
 	void TasksViewModel::IsColUploadSizeLoad(bool value)
 	{
@@ -1149,7 +1294,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColumnTotalDownloadSizeLoad()
 	{
-		return LocalSetting::Get(IsColumnTotalDownloadSizeLoadKey, true);
+		return m_isColumnTotalDownloadSizeLoad;
 	}
 	void TasksViewModel::IsColumnTotalDownloadSizeLoad(bool value)
 	{
@@ -1159,7 +1304,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColumnTotalUploadSizeLoad()
 	{
-		return LocalSetting::Get(IsColumnTotalUploadSizeLoadKey, true);
+		return m_isColumnTotalUploadSizeLoad;
 	}
 	void TasksViewModel::IsColumnTotalUploadSizeLoad(bool value)
 	{
@@ -1169,7 +1314,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColDLRateLoad()
 	{
-		return LocalSetting::Get(IsColumnDLRateLoadKey, true);
+		return m_isColDLRateLoad;
 	}
 	void TasksViewModel::IsColDLRateLoad(bool value)
 	{
@@ -1179,7 +1324,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColULRateLoad()
 	{
-		return LocalSetting::Get(IsColumnULRateLoadKey, true);
+		return m_isColULRateLoad;
 	}
 	void TasksViewModel::IsColULRateLoad(bool value)
 	{
@@ -1189,7 +1334,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColRemainingLoad()
 	{
-		return LocalSetting::Get(IsColumnRemainingLoadKey, true);
+		return m_isColRemainingLoad;
 	}
 	void TasksViewModel::IsColRemainingLoad(bool value)
 	{
@@ -1199,12 +1344,52 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	bool TasksViewModel::IsColAddDateLoad()
 	{
-		return LocalSetting::Get(IsColumnAddDateLoadKey, true);
+		return m_isColAddDateLoad;
 	}
 	void TasksViewModel::IsColAddDateLoad(bool value)
 	{
 		SetProperty(m_isColAddDateLoad, value, NAME_OF(TasksViewModel, IsColAddDateLoad));
 		LocalSetting::Set(IsColumnAddDateLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColCompletedDateLoad()
+	{
+		return m_isColCompletedDateLoad;
+	}
+	void TasksViewModel::IsColCompletedDateLoad(bool value)
+	{
+		SetProperty(m_isColCompletedDateLoad, value, NAME_OF(TasksViewModel, IsColCompletedDateLoad));
+		LocalSetting::Set(IsColumnCompletedDateLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColShareRatioLoad()
+	{
+		return m_isColShareRatioLoad;
+	}
+	void TasksViewModel::IsColShareRatioLoad(bool value)
+	{
+		SetProperty(m_isColShareRatioLoad, value, NAME_OF(TasksViewModel, IsColShareRatioLoad));
+		LocalSetting::Set(IsColumnShareRatioLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColSeedsLoad()
+	{
+		return m_isColSeedsLoad;
+	}
+	void TasksViewModel::IsColSeedsLoad(bool value)
+	{
+		SetProperty(m_isColSeedsLoad, value, NAME_OF(TasksViewModel, IsColSeedsLoad));
+		LocalSetting::Set(IsColumnSeedsLoadKey, value);
+	}
+
+	bool TasksViewModel::IsColPeersLoad()
+	{
+		return m_isColPeersLoad;
+	}
+	void TasksViewModel::IsColPeersLoad(bool value)
+	{
+		SetProperty(m_isColPeersLoad, value, NAME_OF(TasksViewModel, IsColPeersLoad));
+		LocalSetting::Set(IsColumnPeersLoadKey, value);
 	}
 
 }

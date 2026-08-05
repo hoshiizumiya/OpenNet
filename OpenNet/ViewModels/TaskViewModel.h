@@ -117,6 +117,42 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_addDate, v, L"AddDate");
 		}
 
+		winrt::hstring CompletedDate() const
+		{
+			return m_completedDate;
+		}
+		void CompletedDate(winrt::hstring const& v)
+		{
+			SetProperty(m_completedDate, v, L"CompletedDate");
+		}
+
+		winrt::hstring ShareRatio() const
+		{
+			return m_shareRatio;
+		}
+		void ShareRatio(winrt::hstring const& v)
+		{
+			SetProperty(m_shareRatio, v, L"ShareRatio");
+		}
+
+		winrt::hstring Seeds() const
+		{
+			return m_seeds;
+		}
+		void Seeds(winrt::hstring const& v)
+		{
+			SetProperty(m_seeds, v, L"Seeds");
+		}
+
+		winrt::hstring Peers() const
+		{
+			return m_peers;
+		}
+		void Peers(winrt::hstring const& v)
+		{
+			SetProperty(m_peers, v, L"Peers");
+		}
+
 		// Download task type
 		winrt::OpenNet::ViewModels::DownloadTaskType TaskType() const
 		{
@@ -201,6 +237,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_totalUploadSize;
 		winrt::hstring m_remaining;
 		winrt::hstring m_addDate;
+		winrt::hstring m_completedDate;
+		winrt::hstring m_shareRatio;
+		winrt::hstring m_seeds;
+		winrt::hstring m_peers;
 		winrt::hstring m_gid;
 		winrt::hstring m_taskId;
 		winrt::OpenNet::ViewModels::DownloadTaskType m_taskType{ winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent };

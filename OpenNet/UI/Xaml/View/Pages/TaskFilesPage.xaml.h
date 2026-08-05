@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.XamlToolkit.Labs.WinUI;
+import std;
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 
@@ -24,6 +25,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void AutoSizeAllColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnVisibility_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ResetColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void FileDataRow_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void FilesListView_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
+		void FilesListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& args);
+		void FileContextMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void OpenFile_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void PlayFile_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OpenFileLocation_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::Windows::Foundation::IAsyncAction RenameFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
@@ -48,6 +57,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void UpdateSortHeaders();
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
+		void SynchronizeFileRows();
+
+		struct SelectedFileContext
+		{
+			std::string taskId;
+			int fileIndex{};
+			std::filesystem::path relativePath;
+			std::filesystem::path fullPath;
+		};
+		std::optional<SelectedFileContext> GetSelectedFileContext();
+		bool LaunchSelectedFile(wchar_t const* verb);
 	};
 }
 

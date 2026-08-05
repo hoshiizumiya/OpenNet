@@ -181,7 +181,10 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackerDisplayItem">
-                    <labs:DataRow HorizontalAlignment="Left" RightTapped="TrackerRow_RightTapped">
+                    <labs:DataRow
+                        HorizontalAlignment="Left"
+                        Loaded="TrackerDataRow_Loaded"
+                        RightTapped="TrackerRow_RightTapped">
                         <TextBlock
                             Text="{x:Bind URL, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"

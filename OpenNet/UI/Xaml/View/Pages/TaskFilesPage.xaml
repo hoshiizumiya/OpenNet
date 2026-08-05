@@ -21,13 +21,36 @@
         <ListView
             x:Name="FilesListView"
             Grid.Row="1"
-            SelectionMode="None">
+            DoubleTapped="FilesListView_DoubleTapped"
+            RightTapped="FilesListView_RightTapped"
+            SelectionMode="Single">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection>
                     <AddDeleteThemeTransition />
                     <RepositionThemeTransition />
                 </TransitionCollection>
             </ListView.ItemContainerTransitions>
+            <ListView.ContextFlyout>
+                <MenuFlyout Opening="FileContextMenu_Opening">
+                    <MenuFlyoutItem
+                        x:Name="OpenFileMenuItem"
+                        Click="OpenFile_Click"
+                        Text="Open File" />
+                    <MenuFlyoutItem
+                        x:Name="PlayFileMenuItem"
+                        Click="PlayFile_Click"
+                        Text="Play File" />
+                    <MenuFlyoutItem
+                        x:Name="OpenFileLocationMenuItem"
+                        Click="OpenFileLocation_Click"
+                        Text="Open File Location" />
+                    <MenuFlyoutSeparator />
+                    <MenuFlyoutItem
+                        x:Name="RenameFileMenuItem"
+                        Click="RenameFile_ClickAsync"
+                        Text="Rename..." />
+                </MenuFlyout>
+            </ListView.ContextFlyout>
             <ListView.Header>
                 <Border
                     Padding="8,4,0,4"
@@ -145,7 +168,7 @@
             </ListView.Header>
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:FileDisplayItem">
-                    <labs:DataRow HorizontalAlignment="Left">
+                    <labs:DataRow HorizontalAlignment="Left" Loaded="FileDataRow_Loaded">
                         <TextBlock
                             Text="{x:Bind Path, Mode=OneWay}"
                             TextTrimming="CharacterEllipsis"

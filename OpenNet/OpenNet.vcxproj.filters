@@ -741,6 +741,9 @@
     <ClCompile Include="UI\Xaml\Control\TaskStatusIndicator.xaml.cpp">
       <Filter>UI\Xaml\Control</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\DataTableColumnVisibilityHelper.ixx">
+      <Filter>UI\Xaml\Control</Filter>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\Control\DataTableSortHelper.ixx">
       <Filter>UI\Xaml\Control</Filter>
     </ClCompile>

@@ -98,7 +98,8 @@ namespace OpenNet::Core
                 total_size      INTEGER NOT NULL DEFAULT 0,
                 completed_size  INTEGER NOT NULL DEFAULT 0,
                 status          INTEGER NOT NULL DEFAULT 0,
-                last_gid        TEXT NOT NULL DEFAULT ''
+                last_gid        TEXT NOT NULL DEFAULT '',
+                completed_timestamp INTEGER NOT NULL DEFAULT 0
             );
             CREATE INDEX IF NOT EXISTS idx_http_gid ON http_downloads(last_gid);
         )";
@@ -108,6 +109,17 @@ namespace OpenNet::Core
         if (rc != SQLITE_OK)
         {
             OutputDebugStringA(("HttpStateManager: CreateTables error: " + std::string(errMsg ? errMsg : "unknown") + "\n").c_str());
+            sqlite3_free(errMsg);
+        }
+
+        // Existing databases predate the completion timestamp column.
+        errMsg = nullptr;
+        rc = sqlite3_exec(m_db,
+            "ALTER TABLE http_downloads ADD COLUMN completed_timestamp INTEGER NOT NULL DEFAULT 0;",
+            nullptr, nullptr, &errMsg);
+        if (rc != SQLITE_OK && errMsg)
+        {
+            // SQLITE_ERROR is expected when the column already exists.
             sqlite3_free(errMsg);
         }
     }
@@ -205,7 +217,7 @@ namespace OpenNet::Core
         if (!m_db) return std::nullopt;
 
         // status: 0=pending, 1=downloading, 2=paused → active
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid "
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp "
                           "FROM http_downloads WHERE url = ? AND status < 3 LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
@@ -229,6 +241,7 @@ namespace OpenNet::Core
             rec.completedSize  = sqlite3_column_int64(stmt, 7);
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = safeText(9);
+            rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
             result = std::move(rec);
         }
 
@@ -330,11 +343,17 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return;
 
-        const char* sql = "UPDATE http_downloads SET status = ? WHERE record_id = ?;";
+        const char* sql = "UPDATE http_downloads SET status = ?, "
+            "completed_timestamp = CASE WHEN ? = 3 AND completed_timestamp = 0 THEN ? ELSE completed_timestamp END "
+            "WHERE record_id = ?;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_int(stmt, 1, status);
-        sqlite3_bind_text(stmt, 2, recordId.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int(stmt, 2, status);
+        auto const completedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
+            std::chrono::system_clock::now().time_since_epoch()).count();
+        sqlite3_bind_int64(stmt, 3, completedTimestamp);
+        sqlite3_bind_text(stmt, 4, recordId.c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_step(stmt);
         sqlite3_finalize(stmt);
     }
@@ -360,7 +379,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return std::nullopt;
 
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid FROM http_downloads WHERE last_gid = ? LIMIT 1;";
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp FROM http_downloads WHERE last_gid = ? LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_text(stmt, 1, gid.c_str(), -1, SQLITE_TRANSIENT);
@@ -379,6 +398,7 @@ namespace OpenNet::Core
             rec.completedSize  = sqlite3_column_int64(stmt, 7);
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+            rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
             result = std::move(rec);
         }
 
@@ -391,7 +411,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return std::nullopt;
 
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid FROM http_downloads WHERE record_id = ? LIMIT 1;";
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp FROM http_downloads WHERE record_id = ? LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_text(stmt, 1, recordId.c_str(), -1, SQLITE_TRANSIENT);
@@ -410,6 +430,7 @@ namespace OpenNet::Core
             rec.completedSize  = sqlite3_column_int64(stmt, 7);
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+            rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
             result = std::move(rec);
         }
 
@@ -422,7 +443,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return {};
 
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid FROM http_downloads ORDER BY added_timestamp DESC;";
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp FROM http_downloads ORDER BY added_timestamp DESC;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
 
@@ -444,6 +465,7 @@ namespace OpenNet::Core
             rec.completedSize  = sqlite3_column_int64(stmt, 7);
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = safeText(9);
+            rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
             records.push_back(std::move(rec));
         }
 

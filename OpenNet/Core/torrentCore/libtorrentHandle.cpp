@@ -1264,6 +1264,19 @@ namespace OpenNet::Core::Torrent
 						evt.progressPercent = static_cast<int>(s.progress_ppm / 10000); // 1e6 -> %
 						evt.downloadRateKB = static_cast<int>(s.download_rate / 1000);
 						evt.uploadRateKB = static_cast<int>(s.upload_rate / 1000);
+						evt.totalSize = s.total_wanted;
+						evt.downloadedSize = s.total_wanted_done;
+						evt.sessionDownloaded = s.total_download;
+						evt.sessionUploaded = s.total_upload;
+						evt.allTimeDownloaded = s.all_time_download;
+						evt.allTimeUploaded = s.all_time_upload;
+						evt.completedTimestamp =
+							static_cast<std::int64_t>(s.completed_time);
+						evt.connectedPeers = s.num_peers;
+						evt.connectedSeeds = s.num_seeds;
+						evt.knownPeers = (std::max)(
+							s.num_incomplete, (std::max)(0, s.list_peers - s.list_seeds));
+						evt.knownSeeds = (std::max)(s.num_complete, s.list_seeds);
 						evt.name = s.name;
 						evt.isPaused =
 							(s.flags & lt::torrent_flags::paused)
@@ -1825,14 +1838,19 @@ namespace OpenNet::Core::Torrent
 			info.totalSize = st.total_wanted;
 			info.totalDone = st.total_done;
 			info.totalUploaded = st.total_upload;
+			info.sessionDownloaded = st.total_download;
+			info.sessionUploaded = st.total_upload;
+			info.allTimeDownloaded = st.all_time_download;
+			info.allTimeUploaded = st.all_time_upload;
 			info.downloadRate = st.download_rate;
 			info.uploadRate = st.upload_rate;
 			info.progressPpm = static_cast<int>(st.progress_ppm);
 			info.numPeers = st.num_peers;
 			info.numSeeds = st.num_seeds;
 			info.numConnections = st.num_connections;
-			info.numComplete = st.num_complete;
-			info.numIncomplete = st.num_incomplete;
+			info.numComplete = (std::max)(st.num_complete, st.list_seeds);
+			info.numIncomplete = (std::max)(
+				st.num_incomplete, (std::max)(0, st.list_peers - st.list_seeds));
 			info.state = static_cast<int>(st.state);
 			info.addedTimestamp =
 				static_cast<std::int64_t>(st.added_time);
@@ -1850,8 +1868,9 @@ namespace OpenNet::Core::Torrent
 			info.queuePosition =
 				static_cast<int>(handle.queue_position());
 
-			if (st.total_done > 0)
-				info.shareRatio = static_cast<double>(st.total_upload) / st.total_done;
+			if (st.all_time_download > 0)
+				info.shareRatio = static_cast<double>(st.all_time_upload) /
+					st.all_time_download;
 
 			// qBittorrent uses a stable 160-bit TorrentID. For v2 torrents,
 			// libtorrent's get_best() returns the truncated v2 hash; hybrid

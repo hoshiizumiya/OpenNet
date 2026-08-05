@@ -9,6 +9,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 {
 	TaskViewModel::TaskViewModel()
 	{
+		m_size = L"-";
+		m_downloadSize = L"-";
+		m_uploadSize = L"-";
+		m_totalDownloadSize = L"-";
+		m_totalUploadSize = L"-";
+		m_remaining = L"-";
+		m_completedDate = L"-";
+		m_shareRatio = L"0.00";
+		m_seeds = L"-";
+		m_peers = L"-";
 		// Initialize the speed graph data with a valid PointCollection
 		// WinRT PointCollection defaults to nullptr; must be explicitly created
 		m_speedGraphData.Points(); // Force initialization

@@ -155,6 +155,7 @@
     <ClCompile Include="Service\Update\UpdateService.cpp" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
+    <ClCompile Include="UI\Xaml\Control\DataTableColumnVisibilityHelper.ixx" />
     <ClCompile Include="UI\Xaml\Control\DataTableSortHelper.ixx" />
     <ClCompile Include="UI\Xaml\Control\CheckUpdateControl.cpp">
       <DependentUpon>UI\Xaml\Control\CheckUpdateControl.idl</DependentUpon>

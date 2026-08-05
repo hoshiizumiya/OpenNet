@@ -121,6 +121,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void IsColRemainingLoad(bool value);
 		bool IsColAddDateLoad();
 		void IsColAddDateLoad(bool value);
+		bool IsColCompletedDateLoad();
+		void IsColCompletedDateLoad(bool value);
+		bool IsColShareRatioLoad();
+		void IsColShareRatioLoad(bool value);
+		bool IsColSeedsLoad();
+		void IsColSeedsLoad(bool value);
+		bool IsColPeersLoad();
+		void IsColPeersLoad(bool value);
 
 	private:
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
@@ -175,6 +183,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		bool m_isColULRateLoad{ true };
 		bool m_isColRemainingLoad{ true };
 		bool m_isColAddDateLoad{ true };
+		bool m_isColCompletedDateLoad{ true };
+		bool m_isColShareRatioLoad{ true };
+		bool m_isColSeedsLoad{ true };
+		bool m_isColPeersLoad{ true };
 	};
 }
 

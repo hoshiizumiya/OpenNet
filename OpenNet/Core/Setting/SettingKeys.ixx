@@ -104,5 +104,9 @@ export namespace OpenNet::Core::Setting::SettingKeys
 	inline constexpr wchar_t const* IsColumnULRateLoadKey            = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnULRateLoad";
 	inline constexpr wchar_t const* IsColumnRemainingLoadKey         = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnRemainingLoad";
 	inline constexpr wchar_t const* IsColumnAddDateLoadKey           = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnAddDateLoad";
+	inline constexpr wchar_t const* IsColumnCompletedDateLoadKey     = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnCompletedDateLoad";
+	inline constexpr wchar_t const* IsColumnShareRatioLoadKey        = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnShareRatioLoad";
+	inline constexpr wchar_t const* IsColumnSeedsLoadKey             = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnSeedsLoad";
+	inline constexpr wchar_t const* IsColumnPeersLoadKey             = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnPeersLoad";
 
 }

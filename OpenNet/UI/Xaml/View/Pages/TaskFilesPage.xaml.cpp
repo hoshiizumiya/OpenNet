@@ -1,5 +1,6 @@
 ﻿#include "XamlWorkaround.h"
 #include "TaskFilesPage.xaml.h"
+#include <shellapi.h>
 #if __has_include("UI/Xaml/View/Pages/TaskFilesPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.cpp"
 #endif
@@ -10,6 +11,7 @@ import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ColumnWidthHelper;
+import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
@@ -239,7 +241,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto toggle = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>();
 		if (!toggle || !toggle.Tag()) return;
 		if (auto column = ColumnForTag(winrt::unbox_value<winrt::hstring>(toggle.Tag())))
+		{
 			column.Visibility(toggle.IsChecked() ? Visibility::Visible : Visibility::Collapsed);
+			SynchronizeFileRows();
+		}
 	}
 
 	void TaskFilesPage::AutoSizeColumn(
@@ -277,8 +282,29 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& column : std::array{
 			ColFileName(), ColFileSize(), ColFileProgress(), ColFileDone(), ColFilePriority() })
 			column.Visibility(Visibility::Visible);
+		SynchronizeFileRows();
 		AutoSizeAllColumns_Click(sender, args);
 		RefreshFileList();
+	}
+
+	void TaskFilesPage::FileDataRow_Loaded(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		std::array const columns{
+			ColFileName(), ColFileSize(), ColFileProgress(), ColFileDone(), ColFilePriority() };
+		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
+			sender.try_as<winrt::XamlToolkit::Labs::WinUI::DataRow>(),
+			columns.data(), static_cast<unsigned int>(columns.size()));
+	}
+
+	void TaskFilesPage::SynchronizeFileRows()
+	{
+		std::array const columns{
+			ColFileName(), ColFileSize(), ColFileProgress(), ColFileDone(), ColFilePriority() };
+		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRealizedRows(
+			FilesListView(), columns.data(), static_cast<unsigned int>(columns.size()));
+		FilesListView().InvalidateMeasure();
 	}
 
 	void TaskFilesPage::RefreshFileList()
@@ -409,6 +435,162 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
 
 		m_isRefreshing = false;
+	}
+
+	std::optional<TaskFilesPage::SelectedFileContext>
+		TaskFilesPage::GetSelectedFileContext()
+	{
+		if (!m_viewModel || !m_viewModel.SelectedTask()) return std::nullopt;
+		auto const item = FilesListView().SelectedItem().try_as<
+			winrt::OpenNet::ViewModels::FileDisplayItem>();
+		if (!item) return std::nullopt;
+
+		auto const taskId = winrt::to_string(m_viewModel.SelectedTask().TaskId());
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		if (!core || taskId.empty()) return std::nullopt;
+		auto const detail = core->GetTorrentDetail(taskId);
+		for (auto const& file : detail.files)
+		{
+			if (file.fileIndex != item.FileIndex()) continue;
+			auto const relativePath = std::filesystem::path{
+				winrt::to_hstring(file.path).c_str() };
+			return SelectedFileContext{
+				taskId,
+				file.fileIndex,
+				relativePath,
+				std::filesystem::path{ winrt::to_hstring(detail.savePath).c_str() } /
+					relativePath };
+		}
+		return std::nullopt;
+	}
+
+	bool TaskFilesPage::LaunchSelectedFile(wchar_t const* verb)
+	{
+		auto const context = GetSelectedFileContext();
+		if (!context) return false;
+		std::error_code error;
+		if (!std::filesystem::is_regular_file(context->fullPath, error) || error)
+			return false;
+		return reinterpret_cast<std::intptr_t>(ShellExecuteW(
+			nullptr, verb, context->fullPath.c_str(), nullptr, nullptr, SW_SHOW)) > 32;
+	}
+
+	void TaskFilesPage::FilesListView_RightTapped(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	{
+		auto const list = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ListView>();
+		auto source = args.OriginalSource().try_as<DependencyObject>();
+		while (list && source)
+		{
+			if (auto const container = source.try_as<
+				winrt::Microsoft::UI::Xaml::Controls::ListViewItem>())
+			{
+				list.SelectedItem(container.Content());
+				break;
+			}
+			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
+		}
+	}
+
+	void TaskFilesPage::FilesListView_DoubleTapped(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& args)
+	{
+		auto const list = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ListView>();
+		auto source = args.OriginalSource().try_as<DependencyObject>();
+		while (list && source)
+		{
+			if (auto const container = source.try_as<
+				winrt::Microsoft::UI::Xaml::Controls::ListViewItem>())
+			{
+				list.SelectedItem(container.Content());
+				break;
+			}
+			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
+		}
+		LaunchSelectedFile(L"open");
+	}
+
+	void TaskFilesPage::FileContextMenu_Opening(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Windows::Foundation::IInspectable const&)
+	{
+		auto const context = GetSelectedFileContext();
+		std::error_code error;
+		auto const exists = context &&
+			std::filesystem::is_regular_file(context->fullPath, error) && !error;
+		OpenFileMenuItem().IsEnabled(exists);
+		PlayFileMenuItem().IsEnabled(exists);
+		OpenFileLocationMenuItem().IsEnabled(context.has_value());
+		RenameFileMenuItem().IsEnabled(context.has_value());
+	}
+
+	void TaskFilesPage::OpenFile_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		LaunchSelectedFile(L"open");
+	}
+
+	void TaskFilesPage::PlayFile_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (!LaunchSelectedFile(L"play"))
+			LaunchSelectedFile(L"open");
+	}
+
+	void TaskFilesPage::OpenFileLocation_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto const context = GetSelectedFileContext();
+		if (!context) return;
+		std::wstring arguments = L"/select,\"" + context->fullPath.wstring() + L"\"";
+		ShellExecuteW(nullptr, L"open", L"explorer.exe", arguments.c_str(), nullptr, SW_SHOW);
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TaskFilesPage::RenameFile_ClickAsync(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		auto const context = GetSelectedFileContext();
+		if (!context) co_return;
+
+		winrt::Microsoft::UI::Xaml::Controls::TextBox input;
+		input.Text(context->relativePath.filename().wstring());
+		input.SelectAll();
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(winrt::box_value(L"Rename file"));
+		dialog.Content(input);
+		dialog.PrimaryButtonText(L"Rename");
+		dialog.CloseButtonText(L"Cancel");
+		dialog.DefaultButton(
+			winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
+		if (co_await dialog.ShowAsync() !=
+			winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
+		{
+			co_return;
+		}
+
+		auto const newName = std::wstring{ input.Text() };
+		if (newName.empty() || newName == context->relativePath.filename().wstring() ||
+			newName.find_first_of(L"\\/:*?\"<>|") != std::wstring::npos)
+		{
+			co_return;
+		}
+
+		auto const newRelativePath = context->relativePath.parent_path() / newName;
+		if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+		{
+			core->RenameFile(
+				context->taskId,
+				context->fileIndex,
+				winrt::to_string(winrt::hstring{ newRelativePath.wstring() }));
+		}
 	}
 
 	void TaskFilesPage::FilePriority_SelectionChanged(
