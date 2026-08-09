@@ -593,7 +593,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto weak = get_weak();
 		m_isCheckingForUpdate = true;
 		AppUpdateCheckButton().IsEnabled(false);
-		AppUpdateCheckButton().Content(box_value(hstring{ L"Checking..." }));
+		AppUpdateCheckButton().Content(box_value(ResourceGetString(L"ViewSettingsPageCheckingForUpdates")));
 		AppUpdateStatusInfoBar().IsOpen(false);
 
 		auto result =
@@ -608,7 +608,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		m_isCheckingForUpdate = false;
 		AppUpdateCheckButton().IsEnabled(true);
-		AppUpdateCheckButton().Content(box_value(hstring{ L"Check update" }));
+		AppUpdateCheckButton().Content(box_value(ResourceGetString(L"ViewSettingsPageCheckUpdate")));
 		m_updateResult = result;
 
 		using ::OpenNet::Service::Update::CheckUpdateResultKind;
@@ -627,7 +627,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			case CheckUpdateResultKind::UpdateAvailable:
 				UpdateStatusControl().IsUpdateAvailable(true);
 				UpdateStatusControl().UpdateAvailableVersion(result->Package.Version);
-				AppUpdateStatusInfoBar().Title(L"An OpenNet update is available");
+				AppUpdateStatusInfoBar().Title(ResourceGetString(L"ViewSettingsPageUpdateAvailable"));
 				AppUpdateStatusInfoBar().Message(
 					result->Package.ReleaseNotes.empty()
 					? hstring{ L"Select the update card to open the preferred download mirror." }
@@ -641,11 +641,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				UpdateStatusControl().IsUpdateAvailable(false);
 				UpdateStatusControl().UpdateAvailableVersion(L"");
 				UpdateStatusControl().UpdateNotAvailableTitle(
-					box_value(hstring{ L"You're up to date" }));
+					box_value(ResourceGetString(L"ViewSettingsPageUpToDate")));
 				if (showSuccess)
 				{
-					AppUpdateStatusInfoBar().Title(L"OpenNet is up to date");
-					AppUpdateStatusInfoBar().Message(L"No newer release is available.");
+					AppUpdateStatusInfoBar().Title(ResourceGetString(L"ViewSettingsPageUpToDate"));
+					AppUpdateStatusInfoBar().Message(ResourceGetString(L"ViewSettingsPageNoNewerRelease"));
 					AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Informational);
 					AppUpdateStatusInfoBar().IsOpen(true);
 				}
@@ -655,12 +655,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			default:
 				UpdateStatusControl().IsUpdateAvailable(false);
 				UpdateStatusControl().UpdateNotAvailableTitle(
-					box_value(hstring{ L"Unable to check for updates" }));
-				AppUpdateStatusInfoBar().Title(L"Update check failed");
+					box_value(ResourceGetString(L"ViewSettingsPageUnableToCheckUpdates")));
+				AppUpdateStatusInfoBar().Title(ResourceGetString(L"ViewSettingsPageUpdateCheckFailed"));
 				AppUpdateStatusInfoBar().Message(
 					result->ErrorMessage.empty()
-					? hstring{ L"The update server returned an invalid response." }
-				: result->ErrorMessage);
+					? ResourceGetString(L"ViewSettingsPageInvalidUpdateResponse")
+					: result->ErrorMessage);
 				AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Error);
 				AppUpdateStatusInfoBar().IsOpen(true);
 				break;
@@ -678,8 +678,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		if (!co_await m_updateService.TriggerUpdateAsync(*m_updateResult))
 		{
-			AppUpdateStatusInfoBar().Title(L"Unable to open the update");
-			AppUpdateStatusInfoBar().Message(L"No valid update mirror could be launched.");
+			AppUpdateStatusInfoBar().Title(ResourceGetString(L"ViewSettingsPageUnableToOpenUpdate"));
+			AppUpdateStatusInfoBar().Message(ResourceGetString(L"ViewSettingsPageNoValidUpdateMirror"));
 			AppUpdateStatusInfoBar().Severity(InfoBarSeverity::Error);
 			AppUpdateStatusInfoBar().IsOpen(true);
 		}

@@ -34,6 +34,7 @@
             </essential:SettingsCard>-->
 
             <TextBlock
+                x:Uid="ViewThemesSettingsPageTextBlock"
                 Padding="10"
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                 Text="Appearance" />
@@ -237,6 +238,7 @@
                             x:Name="BackgroundRotationMinutesBox"
                             x:Uid="ViewThemesSettingsPageBackgroundRotationMinutesBox"
                             Width="140"
+                            AutomationProperties.AutomationId="ViewThemesSettingsPageBackgroundRotationMinutesBox"
                             Header="Minutes"
                             Maximum="1440"
                             Minimum="1"
@@ -337,7 +339,10 @@
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>
 
-            <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Font" />
+            <TextBlock
+                x:Uid="ViewThemesSettingsPageTextBlock"
+                Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                Text="Font" />
 
             <essential:SettingsCard
                 x:Name="FontSetting"

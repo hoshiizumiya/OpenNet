@@ -145,6 +145,7 @@
     <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
     <ClCompile Include="Factory\Window\WindowFactory.ixx" />
     <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
+    <ClCompile Include="Helpers\TabViewStateHelper.ixx" />
     <ClCompile Include="Helpers\TemplateControlHelper.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
     <ClCompile Include="Service\Notification\InfoBarOptions.cpp">
@@ -1625,15 +1626,27 @@
     <PRIResource Include="Strings\en-US\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
-    <PRIResource Include="Strings\fr\Resources.resw" />
-    <PRIResource Include="Strings\it\Resources.resw" />
-    <PRIResource Include="Strings\ja\Resources.resw" />
-    <PRIResource Include="Strings\ko\Resources.resw" />
-    <PRIResource Include="Strings\ru\Resources.resw" />
+    <PRIResource Include="Strings\fr\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\it\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ja\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ko\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\ru\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <PRIResource Include="Strings\zh-CN\Resources.resw">
       <SubType>Designer</SubType>
     </PRIResource>
-    <PRIResource Include="Strings\zh-Hant\Resources.resw" />
+    <PRIResource Include="Strings\zh-Hant\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Resource.rc" />

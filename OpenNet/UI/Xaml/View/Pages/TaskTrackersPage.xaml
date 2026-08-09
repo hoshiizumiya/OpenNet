@@ -15,17 +15,49 @@
         <ListView x:Name="TrackersListView" SelectionMode="Single">
             <ListView.ContextFlyout>
                 <MenuFlyout Opening="TrackerMenu_Opening">
-                    <MenuFlyoutItem Click="EditTrackers_Click" Text="Edit trackers..." />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText1"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText1"
+                        Click="EditTrackers_Click"
+                        Text="Edit trackers..." />
                     <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Click="UpdateTracker_Click" Text="Update tracker" />
-                    <MenuFlyoutItem Click="RemoveTracker_Click" Text="Remove tracker" />
-                    <MenuFlyoutItem Click="ViewLog_Click" Text="View log" />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText2"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText2"
+                        Click="UpdateTracker_Click"
+                        Text="Update tracker" />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText3"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText3"
+                        Click="RemoveTracker_Click"
+                        Text="Remove tracker" />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText4"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText4"
+                        Click="ViewLog_Click"
+                        Text="View log" />
                     <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Click="ClearTrackerLog_Click" Text="Clear log" />
-                    <MenuFlyoutItem Click="ClearTaskTrackerLogs_Click" Text="Clear log in all trackers" />
-                    <MenuFlyoutItem Click="ClearAllTrackerLogs_Click" Text="Clear log in trackers of all tasks" />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText5"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText5"
+                        Click="ClearTrackerLog_Click"
+                        Text="Clear log" />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText6"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText6"
+                        Click="ClearTaskTrackerLogs_Click"
+                        Text="Clear log in all trackers" />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText7"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText7"
+                        Click="ClearAllTrackerLogs_Click"
+                        Text="Clear log in trackers of all tasks" />
                     <MenuFlyoutSeparator />
-                    <MenuFlyoutItem Click="RemoveUnreachableTrackers_Click" Text="Remove all unreachable trackers..." />
+                    <MenuFlyoutItem
+                        x:Uid="ViewTaskTrackersPageText8"
+                        AutomationProperties.AutomationId="ViewTaskTrackersPageText8"
+                        Click="RemoveUnreachableTrackers_Click"
+                        Text="Remove all unreachable trackers..." />
                 </MenuFlyout>
             </ListView.ContextFlyout>
             <ListView.ItemContainerTransitions>
@@ -44,52 +76,70 @@
                         <MenuFlyout Opening="ColumnMenu_Opening">
                             <MenuFlyoutItem
                                 x:Name="AutoSizeSelectedColumnItem"
+                                x:Uid="ViewTaskTrackersPageText9"
+                                AutomationProperties.AutomationId="ViewTaskTrackersPageText9"
                                 Click="AutoSizeSelectedColumn_Click"
                                 Text="Auto Size Selected Column's Width to Fit" />
-                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto size all columns" />
+                            <MenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText10"
+                                AutomationProperties.AutomationId="ViewTaskTrackersPageText10"
+                                Click="AutoSizeAllColumns_Click"
+                                Text="Auto size all columns" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText11"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="URL"
                                 Text="Tracker URL" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText12"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Log"
                                 Text="Log" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText13"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Retries"
                                 Text="Retries" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText14"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="TimeRemaining"
                                 Text="Time remaining" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText15"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Seeders"
                                 Text="Seeders" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText16"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Leechers"
                                 Text="Leechers" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText17"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Downloaded"
                                 Text="Downloaded" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText18"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Status"
                                 Text="Status" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Click="ResetColumns_Click" Text="Reset Columns and Sorting" />
+                            <MenuFlyoutItem
+                                x:Uid="ViewTaskTrackersPageText19"
+                                AutomationProperties.AutomationId="ViewTaskTrackersPageText19"
+                                Click="ResetColumns_Click"
+                                Text="Reset Columns and Sorting" />
                         </MenuFlyout>
                     </Border.ContextFlyout>
                     <interactivity:Interaction.Behaviors>
@@ -103,7 +153,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="URL">
-                                <TextBlock Text="Tracker URL" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText11"
+                                    Text="Tracker URL"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerLog" DesiredWidth="48">
@@ -113,7 +166,7 @@
                                 IsEnabled="False"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Log">
-                                <TextBlock Text="Log" />
+                                <TextBlock x:Uid="ViewTaskTrackersPageText12" Text="Log" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerRetries" CanResize="True">
@@ -123,7 +176,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Retries">
-                                <TextBlock Text="Retries" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText13"
+                                    Text="Retries"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerTimeRemaining" CanResize="True">
@@ -133,7 +189,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="TimeRemaining">
-                                <TextBlock Text="Time remaining" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText14"
+                                    Text="Time remaining"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerSeeders" CanResize="True">
@@ -143,7 +202,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Seeders">
-                                <TextBlock Text="Seeders" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText15"
+                                    Text="Seeders"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerLeechers" CanResize="True">
@@ -153,7 +215,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Leechers">
-                                <TextBlock Text="Leechers" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText16"
+                                    Text="Leechers"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerDownloaded" CanResize="True">
@@ -163,7 +228,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
-                                <TextBlock Text="Downloaded" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText17"
+                                    Text="Downloaded"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerStatus" CanResize="True">
@@ -173,7 +241,10 @@
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
-                                <TextBlock Text="Status" TextTrimming="CharacterEllipsis" />
+                                <TextBlock
+                                    x:Uid="ViewTaskTrackersPageText18"
+                                    Text="Status"
+                                    TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
                     </labs:DataTable>
@@ -222,10 +293,13 @@
                 Glyph="&#xE774;" />
             <TextBlock
                 x:Name="EmptyStateText"
+                x:Uid="ViewTaskTrackersPageText28"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Text="No trackers" />
             <Button
+                x:Uid="ViewTaskTrackersPageText29"
                 HorizontalAlignment="Center"
+                AutomationProperties.AutomationId="ViewTaskTrackersPageText29"
                 Click="EditTrackers_Click"
                 Content="Add trackers" />
         </StackPanel>

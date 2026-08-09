@@ -31,22 +31,26 @@
                     <MenuFlyoutItem
                         x:Name="BanPeer1hItem"
                         x:Uid="BanPeer1hItem"
+                        AutomationProperties.AutomationId="BanPeer1hItem"
                         Click="BanPeer1h_Click"
                         Text="Ban IP for 1 hour" />
                     <MenuFlyoutItem
                         x:Name="BanPeer24hItem"
                         x:Uid="BanPeer24hItem"
+                        AutomationProperties.AutomationId="BanPeer24hItem"
                         Click="BanPeer24h_Click"
                         Text="Ban IP for 24 hours" />
                     <MenuFlyoutItem
                         x:Name="BanPeerPermanentItem"
                         x:Uid="BanPeerPermanentItem"
+                        AutomationProperties.AutomationId="BanPeerPermanentItem"
                         Click="BanPeerPermanent_Click"
                         Text="Ban IP permanently" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
                         x:Name="UnbanPeerItem"
                         x:Uid="UnbanPeerItem"
+                        AutomationProperties.AutomationId="UnbanPeerItem"
                         Click="UnbanPeer_Click"
                         Text="Unban IP" />
                 </MenuFlyout>
@@ -62,46 +66,58 @@
                         <MenuFlyout Opening="ColumnMenu_Opening">
                             <MenuFlyoutItem
                                 x:Name="AutoSizeSelectedColumnItem"
+                                x:Uid="ViewTaskPeersListPageMenuItem"
                                 Click="AutoSizeSelectedColumn_Click"
                                 Text="Auto Size Selected Column's Width to Fit" />
-                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
+                            <MenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageMenuItem"
+                                Click="AutoSizeAllColumns_Click"
+                                Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="IP"
                                 Text="IP" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Location"
                                 Text="Location" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Progress"
                                 Text="Progress" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="DLSpeed"
                                 Text="DL Speed" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="ULSpeed"
                                 Text="UL Speed" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Downloaded"
                                 Text="Downloaded" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Client"
                                 Text="Client" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Status"
@@ -113,22 +129,28 @@
                                 Tag="Reason"
                                 Text="Reason" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Protocol"
                                 Text="Protocol" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Initiator"
                                 Text="Initiator" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Source"
                                 Text="Source" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Click="ResetColumns_Click" Text="Reset Columns and Sorting" />
+                            <MenuFlyoutItem
+                                x:Uid="ViewTaskPeersListPageMenuItem"
+                                Click="ResetColumns_Click"
+                                Text="Reset Columns and Sorting" />
                         </MenuFlyout>
                     </Border.ContextFlyout>
                     <interactivity:Interaction.Behaviors>

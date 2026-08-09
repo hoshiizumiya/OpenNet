@@ -29,6 +29,7 @@
             x:Uid="HttpDownloadDialogUrlBox"
             MinHeight="80"
             AcceptsReturn="False"
+            AutomationProperties.AutomationId="HttpDownloadDialogUrlBox"
             Header="URL"
             PlaceholderText="https://example.com/file.zip"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
@@ -40,6 +41,7 @@
             <Button
                 x:Name="PasteUrlButton"
                 x:Uid="HttpDownloadDialogPasteButton"
+                AutomationProperties.AutomationId="HttpDownloadDialogPasteButton"
                 Click="PasteUrlButton_Click">
                 <Button.Content>
                     <StackPanel Orientation="Horizontal" Spacing="6">
@@ -69,6 +71,7 @@
                 x:Name="SaveDirBox"
                 x:Uid="HttpDownloadDialogSaveDirBox"
                 Grid.Column="0"
+                AutomationProperties.AutomationId="HttpDownloadDialogSaveDirBox"
                 Header="Save to"
                 IsReadOnly="True"
                 PlaceholderText="Default download directory" />
@@ -78,6 +81,7 @@
                 Grid.Column="1"
                 Margin="8,0,0,0"
                 VerticalAlignment="Bottom"
+                AutomationProperties.AutomationId="HttpDownloadDialogBrowseButton"
                 Click="BrowseDirButton_Click"
                 Content="Browse..." />
         </Grid>
@@ -86,6 +90,7 @@
         <TextBox
             x:Name="FileNameBox"
             x:Uid="HttpDownloadDialogFileNameBox"
+            AutomationProperties.AutomationId="HttpDownloadDialogFileNameBox"
             Header="File name (optional)"
             PlaceholderText="Leave empty to auto-detect" />
 

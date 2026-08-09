@@ -216,10 +216,10 @@
   <data name="Header_AddDate.Text" xml:space="preserve">
     <value>Add Date</value>
   </data>
-  <data name="Task_SummaryContent.Text" xml:space="preserve">
+  <data name="Task_SummaryContent.Header" xml:space="preserve">
     <value>Summary</value>
   </data>
-  <data name="Task_PeersList.Text" xml:space="preserve">
+  <data name="Task_PeersList.Header" xml:space="preserve">
     <value>PeersList</value>
   </data>
   <data name="Protocol_IPv4First" xml:space="preserve">
@@ -260,9 +260,6 @@
   </data>
   <data name="ConnProtocol_HTTP" xml:space="preserve">
     <value>HTTP Protocol</value>
-  </data>
-  <data name="Enc_None" xml:space="preserve">
-    <value>None</value>
   </data>
   <data name="Enc_Basic" xml:space="preserve">
     <value>Basic</value>
@@ -756,9 +753,6 @@
   <data name="BT_ProxyType.Description" xml:space="preserve">
     <value>Select proxy protocol for BitTorrent traffic</value>
   </data>
-  <data name="BT_Proxy_None.Content" xml:space="preserve">
-    <value>None</value>
-  </data>
   <data name="BT_Proxy_Socks4.Content" xml:space="preserve">
     <value>SOCKS4</value>
   </data>
@@ -903,7 +897,7 @@
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>No peers connected</value>
   </data>
-  <data name="Task_TrackersList.Text" xml:space="preserve">
+  <data name="Task_TrackersList.Header" xml:space="preserve">
     <value>Trackers</value>
   </data>
   <data name="TrackerHeader_URL.Text" xml:space="preserve">
@@ -924,7 +918,7 @@
   <data name="TrackersList_EmptyState.Text" xml:space="preserve">
     <value>No trackers</value>
   </data>
-  <data name="Task_FilesList.Text" xml:space="preserve">
+  <data name="Task_FilesList.Header" xml:space="preserve">
     <value>Files</value>
   </data>
   <data name="FileHeader_Path.Text" xml:space="preserve">
@@ -941,18 +935,6 @@
   </data>
   <data name="FileHeader_Priority.Text" xml:space="preserve">
     <value>Priority</value>
-  </data>
-  <data name="FilePriority_Skip.Content" xml:space="preserve">
-    <value>Skip</value>
-  </data>
-  <data name="FilePriority_Low.Content" xml:space="preserve">
-    <value>Low</value>
-  </data>
-  <data name="FilePriority_Normal.Content" xml:space="preserve">
-    <value>Normal</value>
-  </data>
-  <data name="FilePriority_High.Content" xml:space="preserve">
-    <value>High</value>
   </data>
   <data name="FilesList_EmptyState.Text" xml:space="preserve">
     <value>No file information available</value>
@@ -1132,7 +1114,7 @@
     <value>IP filter subscriptions</value>
   </data>
   <data name="IPF_NoEnabledSubscriptions" xml:space="preserve">
-    <value>No enabled subscription sources.</value>
+    <value>No enabled subscription sources</value>
   </data>
   <data name="IPF_UpdateSummarySuccess" xml:space="preserve">
     <value>Updated sources</value>
@@ -1149,9 +1131,6 @@
   <data name="IPF_UpdateAllFailed" xml:space="preserve">
     <value>All subscription updates failed.</value>
   </data>
-  <data name="IPF_ReplacementSkipped" xml:space="preserve">
-    <value>replacement skipped to preserve existing rules</value>
-  </data>
   <data name="IPF_UpdateUnexpectedError" xml:space="preserve">
     <value>The subscription update failed unexpectedly.</value>
   </data>
@@ -1166,9 +1145,6 @@
   </data>
   <data name="IPF_InvalidOrDuplicateSubscriptions" xml:space="preserve">
     <value>No new valid subscription URLs were found.</value>
-  </data>
-  <data name="IPF_Skipped" xml:space="preserve">
-    <value>skipped</value>
   </data>
   <data name="IPF_SourceEnabled" xml:space="preserve">
     <value>Enable this source</value>
@@ -1572,9 +1548,6 @@
   <data name="RuntimeStatusLastUpdated.Text" xml:space="preserve">
     <value>Waiting for first refresh</value>
   </data>
-  <data name="DataTableSortNoneHint" xml:space="preserve">
-    <value>Not sorted. Activate to sort ascending.</value>
-  </data>
   <data name="DataTableSortAscendingHint" xml:space="preserve">
     <value>Sorted ascending. Activate to sort descending.</value>
   </data>
@@ -1704,9 +1677,6 @@
   <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
     <value>Show a local image behind the main content</value>
   </data>
-  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
-    <value>None</value>
-  </data>
   <data name="ViewThemesSettingsPageImageModeSingle.Content" xml:space="preserve">
     <value>Single image</value>
   </data>
@@ -1740,9 +1710,6 @@
   <data name="ViewThemesSettingsPageVideoBackgroundExpander.Description" xml:space="preserve">
     <value>Play a local video behind the main content</value>
   </data>
-  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
-    <value>None</value>
-  </data>
   <data name="ViewThemesSettingsPageVideoModeSingle.Content" xml:space="preserve">
     <value>Single video</value>
   </data>
@@ -1773,6 +1740,1482 @@
   <data name="ViewThemesSettingsPageVideoStretchCard.Description" xml:space="preserve">
     <value>How the video fills the window</value>
   </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
+    <value>Video opacity</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
+    <value>Video opacity above the image and backdrop layers</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Header" xml:space="preserve">
+    <value>Apply to other windows</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
+    <value>Apply the selected backdrop and background resources to auxiliary windows</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadTitle" xml:space="preserve">
+    <value>HTTP/FTP Batch Download</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadPlaceholder" xml:space="preserve">
+    <value>Enter one HTTP, HTTPS, or FTP URL per line</value>
+  </data>
+  <data name="OperationProgressDialogCompleted" xml:space="preserve">
+    <value>✓ Operation completed successfully</value>
+  </data>
+  <data name="OperationProgressDialogFailed" xml:space="preserve">
+    <value>✗ Operation failed</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.Text" xml:space="preserve">
+    <value>Open OpenNet</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.Text" xml:space="preserve">
+    <value>Start Downloading All</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.Text" xml:space="preserve">
+    <value>Start Uploading All</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.Text" xml:space="preserve">
+    <value>Stop All Tasks</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.Text" xml:space="preserve">
+    <value>Suspend All Active Tasks</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.Text" xml:space="preserve">
+    <value>Resume Last Suspended Tasks</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.Text" xml:space="preserve">
+    <value>Download Limit</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText14.Text" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText16.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText17.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText18.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.Text" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.Text" xml:space="preserve">
+    <value>Upload Limit</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.Text" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.Text" xml:space="preserve">
+    <value>Enable Scheduler</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.Text" xml:space="preserve">
+    <value>Open Torrent File ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.Text" xml:space="preserve">
+    <value>Add Torrent from URL ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.Text" xml:space="preserve">
+    <value>HTTP/FTP Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.Text" xml:space="preserve">
+    <value>HTTP/FTP Batch Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.Text" xml:space="preserve">
+    <value>Capture Clipboard URL</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.Text" xml:space="preserve">
+    <value>Tray Balloon</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.Text" xml:space="preserve">
+    <value>Floating Window</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.Text" xml:space="preserve">
+    <value>Floating Window settings</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.Text" xml:space="preserve">
+    <value>Options ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.Text" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Description" xml:space="preserve">
+    <value>Transfer files securely across your P2P network</value>
+  </data>
+  <data name="ControlHeaderCarouselText2.Header" xml:space="preserve">
+    <value>File Transfer</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Description" xml:space="preserve">
+    <value>Discover and connect to peers on your local network</value>
+  </data>
+  <data name="ControlHeaderCarouselText4.Header" xml:space="preserve">
+    <value>Network Discovery</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Description" xml:space="preserve">
+    <value>Chat with peers in real-time over secure channels</value>
+  </data>
+  <data name="ControlHeaderCarouselText6.Header" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Description" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices</value>
+  </data>
+  <data name="ControlHeaderCarouselText8.Header" xml:space="preserve">
+    <value>VPN Tunnel</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Description" xml:space="preserve">
+    <value>Share folders and storage with your network peers</value>
+  </data>
+  <data name="ControlHeaderCarouselText10.Header" xml:space="preserve">
+    <value>Shared Storage</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Description" xml:space="preserve">
+    <value>Monitor network bandwidth and performance in real-time</value>
+  </data>
+  <data name="ControlHeaderCarouselText12.Header" xml:space="preserve">
+    <value>Bandwidth Monitor</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.Text" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.Text" xml:space="preserve">
+    <value>Peer-to-peer networking made simple.</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.Text" xml:space="preserve">
+    <value>Securely connect, share, and communicate.</value>
+  </data>
+  <data name="ViewHomePageText1.Text" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="ViewHomePageText2.Text" xml:space="preserve">
+    <value>Discover how OpenNet helps you build peer-to-peer connections</value>
+  </data>
+  <data name="ViewHomePageText3.Text" xml:space="preserve">
+    <value>Secure File Transfer</value>
+  </data>
+  <data name="ViewHomePageText4.Text" xml:space="preserve">
+    <value>Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed.</value>
+  </data>
+  <data name="ViewHomePageText5.Text" xml:space="preserve">
+    <value>Start transferring</value>
+  </data>
+  <data name="ViewHomePageText6.Text" xml:space="preserve">
+    <value>Auto Discovery</value>
+  </data>
+  <data name="ViewHomePageText7.Text" xml:space="preserve">
+    <value>Automatically find available peers on your local network</value>
+  </data>
+  <data name="ViewHomePageText8.Text" xml:space="preserve">
+    <value>Scan network</value>
+  </data>
+  <data name="ViewHomePageText9.Text" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ViewHomePageText10.Text" xml:space="preserve">
+    <value>Communicate with peers using encrypted messaging channels</value>
+  </data>
+  <data name="ViewHomePageText11.Text" xml:space="preserve">
+    <value>VPN &amp;amp;amp; Tunneling</value>
+  </data>
+  <data name="ViewHomePageText12.Text" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices for private networking across the internet</value>
+  </data>
+  <data name="ViewHomePageText13.Text" xml:space="preserve">
+    <value>Open-source</value>
+  </data>
+  <data name="ViewHomePageText14.Text" xml:space="preserve">
+    <value>OpenNet is open-source. Contributions, issues, and feature requests are welcome.</value>
+  </data>
+  <data name="ViewHomePageText15.Text" xml:space="preserve">
+    <value>OpenNet repository</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.Content" xml:space="preserve">
+    <value>Static</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.Content" xml:space="preserve">
+    <value>Custom Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.Content" xml:space="preserve">
+    <value>Custom Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.Content" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.Content" xml:space="preserve">
+    <value>Thin</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.Content" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.Content" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.Text" xml:space="preserve">
+    <value>Piece map</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.Text" xml:space="preserve">
+    <value>Select a BitTorrent task to inspect its pieces.</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.Content" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.Text" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.Text" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.Text" xml:space="preserve">
+    <value>Piece size: —</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.Text" xml:space="preserve">
+    <value>Web seeds: 0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.Text" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.Text" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.Text" xml:space="preserve">
+    <value>Unchecked</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.Text" xml:space="preserve">
+    <value>No task selected</value>
+  </data>
+  <data name="ViewTaskSummaryPageText80.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.Text" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.Text" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.Text" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.Text" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.Text" xml:space="preserve">
+    <value>Download progress and speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.Text" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
+    <value>Time elapsed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
+    <value>Download speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.Text" xml:space="preserve">
+    <value>Download limit</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.Text" xml:space="preserve">
+    <value>Seeding time</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.Text" xml:space="preserve">
+    <value>Uploaded</value>
+  </data>
+  <data name="ViewTaskSummaryPageText36.Text" xml:space="preserve">
+    <value>Upload speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.Text" xml:space="preserve">
+    <value>Upload limit</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.Text" xml:space="preserve">
+    <value>Seeds</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.Text" xml:space="preserve">
+    <value>Peers</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.Text" xml:space="preserve">
+    <value>Connections</value>
+  </data>
+  <data name="ViewTaskSummaryPageText38.Text" xml:space="preserve">
+    <value>Share ratio</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.Text" xml:space="preserve">
+    <value>Long-Term Seeding</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.Text" xml:space="preserve">
+    <value>Upload size</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.Text" xml:space="preserve">
+    <value>Task name</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.Text" xml:space="preserve">
+    <value>Save path</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.Text" xml:space="preserve">
+    <value>Task size</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.Text" xml:space="preserve">
+    <value>Info hash v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText58.Text" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.Text" xml:space="preserve">
+    <value>Info hash v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.Text" xml:space="preserve">
+    <value>Piece hashes</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.Text" xml:space="preserve">
+    <value>Added on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.Text" xml:space="preserve">
+    <value>Finished on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.Text" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.Text" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.Text" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.Text" xml:space="preserve">
+    <value>Remaining size</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.Text" xml:space="preserve">
+    <value>Pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.Text" xml:space="preserve">
+    <value>Number of files</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.Text" xml:space="preserve">
+    <value>File alignment</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.Text" xml:space="preserve">
+    <value>Queue position</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.Text" xml:space="preserve">
+    <value>Created by</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.Text" xml:space="preserve">
+    <value>Created on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.Text" xml:space="preserve">
+    <value>Private torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.Text" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.Text" xml:space="preserve">
+    <value>Edit trackers...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.Text" xml:space="preserve">
+    <value>Update tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.Text" xml:space="preserve">
+    <value>Remove tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.Text" xml:space="preserve">
+    <value>View log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.Text" xml:space="preserve">
+    <value>Clear log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.Text" xml:space="preserve">
+    <value>Clear log in all trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.Text" xml:space="preserve">
+    <value>Clear log in trackers of all tasks</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
+    <value>Remove all unreachable trackers...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
+    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
+    <value>Auto size all columns</value>
+  </data>
+  <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText21.Text" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText22.Text" xml:space="preserve">
+    <value>Retries</value>
+  </data>
+  <data name="ViewTaskTrackersPageText23.Text" xml:space="preserve">
+    <value>Time remaining</value>
+  </data>
+  <data name="ViewTaskTrackersPageText24.Text" xml:space="preserve">
+    <value>Seeders</value>
+  </data>
+  <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
+    <value>Leechers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+    <value>Reset Columns and Sorting</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
+    <value>No trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.Content" xml:space="preserve">
+    <value>Add trackers</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.Text" xml:space="preserve">
+    <value>NAT and port detection</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.Text" xml:space="preserve">
+    <value>Traversal directory</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.Header" xml:space="preserve">
+    <value>Listen port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.Text" xml:space="preserve">
+    <value>NAT behavior uses a temporary UDP socket. Port reachability is tested against libtorrent&amp;apos;s existing TCP/uTP listener.</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.Text" xml:space="preserve">
+    <value>Address and NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.Text" xml:space="preserve">
+    <value>Local IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText46.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.Text" xml:space="preserve">
+    <value>Public IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.Text" xml:space="preserve">
+    <value>Mapping behavior</value>
+  </data>
+  <data name="ViewNATDetectorWindowText24.Text" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.Text" xml:space="preserve">
+    <value>Filtering behavior</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.Text" xml:space="preserve">
+    <value>Legacy label</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.Text" xml:space="preserve">
+    <value>Listening port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.Text" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText28.Text" xml:space="preserve">
+    <value>Not tested</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.Text" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.Text" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.Text" xml:space="preserve">
+    <value>Mapped port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.Text" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.Text" xml:space="preserve">
+    <value>Probe evidence</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.Text" xml:space="preserve">
+    <value>RFC 5780 mapping observations</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.Text" xml:space="preserve">
+    <value>Server 1 / primary</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.Text" xml:space="preserve">
+    <value>Server 1 / other port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.Text" xml:space="preserve">
+    <value>Other IPv4 / server 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.Text" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.Text" xml:space="preserve">
+    <value>Public IP:port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.Text" xml:space="preserve">
+    <value>Latency</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.Text" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.Content" xml:space="preserve">
+    <value>Start detection</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.Text" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.Text" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.Text" xml:space="preserve">
+    <value>Download Order</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.Text" xml:space="preserve">
+    <value>Task name</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.Header" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.Text" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.Text" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.Text" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.Text" xml:space="preserve">
+    <value>No tracker log entries yet</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.Text" xml:space="preserve">
+    <value>Upload speed</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.Text" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.Text" xml:space="preserve">
+    <value>Leechers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.Text" xml:space="preserve">
+    <value>Retries</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.Text" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
+    <value>Not tested</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.Text" xml:space="preserve">
+    <value>Seeders</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.Text" xml:space="preserve">
+    <value>Time remaining</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.Text" xml:space="preserve">
+    <value>Share ratio</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.Text" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.Text" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.Text" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open OpenNet</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Start Downloading All</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Start Uploading All</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Stop All Tasks</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Suspend All Active Tasks</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Resume Last Suspended Tasks</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download Limit</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Upload Limit</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Enable Scheduler</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open Torrent File ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Add Torrent from URL ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP Batch Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Capture Clipboard URL</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tray Balloon</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Floating Window</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Floating Window settings</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Options ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Transfer files securely across your P2P network</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Discover and connect to peers on your local network</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Chat with peers in real-time over secure channels</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Share folders and storage with your network peers</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Monitor network bandwidth and performance in real-time</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peer-to-peer networking made simple.</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Securely connect, share, and communicate.</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>I have read and agree to </value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>the project README and usage notice</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>the privacy notice</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>the issue reporting guidelines</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>the OpenNet open-source license</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>If the icons above are missing or displayed as boxes, visit </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> to download and install the font.</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Restart OpenNet after installation to verify that it works.</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>If no WebView2 Runtime is detected, visit </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> to download and install it.</value>
+  </data>
+  <data name="ViewHomePageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="ViewHomePageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Discover how OpenNet helps you build peer-to-peer connections</value>
+  </data>
+  <data name="ViewHomePageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Secure File Transfer</value>
+  </data>
+  <data name="ViewHomePageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed.</value>
+  </data>
+  <data name="ViewHomePageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Start transferring</value>
+  </data>
+  <data name="ViewHomePageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Discovery</value>
+  </data>
+  <data name="ViewHomePageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Automatically find available peers on your local network</value>
+  </data>
+  <data name="ViewHomePageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Scan network</value>
+  </data>
+  <data name="ViewHomePageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Communicate with peers using encrypted messaging channels</value>
+  </data>
+  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>VPN &amp;amp;amp; Tunneling</value>
+  </data>
+  <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices for private networking across the internet</value>
+  </data>
+  <data name="ViewHomePageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open-source</value>
+  </data>
+  <data name="ViewHomePageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet is open-source. Contributions, issues, and feature requests are welcome.</value>
+  </data>
+  <data name="ViewHomePageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet repository</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT Type: </value>
+  </data>
+  <data name="NatTools_PublicIPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Public IP: </value>
+  </data>
+  <data name="NatTools_UPnPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP: </value>
+  </data>
+  <data name="NatTools_PortResultLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Result: </value>
+  </data>
+  <data name="RSSItemsLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>items</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Static</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Custom Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Custom Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Thin</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Single image</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Local folder</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Single video</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Local folder</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Piece map</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Select a BitTorrent task to inspect its pieces.</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Piece size: —</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Web seeds: 0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Unchecked</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>No task selected</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download progress and speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Time elapsed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download limit</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Seeding time</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Uploaded</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Upload speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Upload limit</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Seeds</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peers</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Connections</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Share ratio</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Long-Term Seeding</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Upload size</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Task name</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Save path</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Task size</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Info hash v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Info hash v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Piece hashes</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Added on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Finished on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Remaining size</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Number of files</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>File alignment</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Queue position</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Created by</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Created on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Private torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Edit trackers...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Update tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Remove tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>View log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear log in all trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear log in trackers of all tasks</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Remove all unreachable trackers...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto size all columns</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Retries</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Time remaining</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Seeders</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Leechers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Reset Columns and Sorting</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>No trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Add trackers</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentNameLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Info hash:</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT and port detection</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Traversal directory</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Listen port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT behavior uses a temporary UDP socket. Port reachability is tested against libtorrent&amp;apos;s existing TCP/uTP listener.</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Address and NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Local IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Public IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Mapping behavior</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Filtering behavior</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Legacy label</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Listening port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Not tested</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Mapped port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Probe evidence</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>RFC 5780 mapping observations</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Server 1 / primary</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Server 1 / other port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Other IPv4 / server 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Public IP:port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Latency</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Start detection</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download Order</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Task name</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>No tracker log entries yet</value>
+  </data>
+  <data name="trayIcon.ToolTip" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Header" xml:space="preserve">
+    <value>File Transfer</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Header" xml:space="preserve">
+    <value>Network Discovery</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Header" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Header" xml:space="preserve">
+    <value>VPN Tunnel</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Header" xml:space="preserve">
+    <value>Shared Storage</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Header" xml:space="preserve">
+    <value>Bandwidth Monitor</value>
+  </data>
+  <data name="IpEndpointInputAddress.Header" xml:space="preserve">
+    <value>IP address</value>
+  </data>
+  <data name="IpEndpointInputAddress.PlaceholderText" xml:space="preserve">
+    <value>0.0.0.0 or ::</value>
+  </data>
+  <data name="IpEndpointInputPort.Header" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="GuideWebUIUsername.PlaceholderText" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="InfoBarShowButtonText.Text" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="InfoBarPanelTitle.Text" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="MoreToolsHeader.Text" xml:space="preserve">
+    <value>OpenNet tools</value>
+  </data>
+  <data name="MoreRuntimeStatusTitle.Text" xml:space="preserve">
+    <value>Complete runtime status</value>
+  </data>
+  <data name="MoreRuntimeStatusDescription.Text" xml:space="preserve">
+    <value>Engine, network, transfer, CPU, memory, disk and queues</value>
+  </data>
+  <data name="MoreNatDetectionTitle.Text" xml:space="preserve">
+    <value>NAT and port detection</value>
+  </data>
+  <data name="MoreNatDetectionDescription.Text" xml:space="preserve">
+    <value>STUN observations and libtorrent port mapping</value>
+  </data>
+  <data name="MoreGuideTitle.Text" xml:space="preserve">
+    <value>Setup guide</value>
+  </data>
+  <data name="MoreGuideDescription.Text" xml:space="preserve">
+    <value>Reopen Web UI credentials and GUI setup</value>
+  </data>
+  <data name="MoreWebUIStatus.Text" xml:space="preserve">
+    <value>Checking Web UI…</value>
+  </data>
+  <data name="MoreCopyWebUIAddress.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="MoreOpenWebUIButton.Content" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="NavItem_More.Content" xml:space="preserve">
+    <value>More</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Description" xml:space="preserve">
+    <value>Append every enabled custom and subscribed tracker when a new BitTorrent task is first added</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Header" xml:space="preserve">
+    <value>Automatically add custom trackers</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNewTrackerTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter tracker URL (e.g., tracker.example.com:6969)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageBestItem.Content" xml:space="preserve">
+    <value>精选列表（best.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageAllItem.Content" xml:space="preserve">
+    <value>完整列表（all.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageHttpItem.Content" xml:space="preserve">
+    <value>HTTP(S) 列表（http.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoHttpItem.Content" xml:space="preserve">
+    <value>无 HTTP 列表（nohttp.txt）</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettingsHeader.Text" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Description" xml:space="preserve">
+    <value>Configure the IPv4 and IPv6 endpoints used by libtorrent. Port 0 lets the operating system select an available port.</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Header" xml:space="preserve">
+    <value>BitTorrent listen endpoints</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListener.Header" xml:space="preserve">
+    <value>Runtime listener</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListenerEndpoint.Text" xml:space="preserve">
+    <value>The BitTorrent engine is not running.</value>
+  </data>
+  <data name="RSSMaxItemsLabel.Text" xml:space="preserve">
+    <value>Max items per feed:</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Description" xml:space="preserve">
+    <value>List of Producers / Special Thanks</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Header" xml:space="preserve">
+    <value>Developers</value>
+  </data>
+  <data name="SettingsGeneralNavItem.Content" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="SettingsBitTorrentNavItem.Content" xml:space="preserve">
+    <value>BitTorrent</value>
+  </data>
+  <data name="SettingsNetworkNavItem.Content" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="SettingsTrackerNavItem.Content" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="SettingsIPFilterNavItem.Content" xml:space="preserve">
+    <value>IP Filter</value>
+  </data>
+  <data name="SettingsDownloadNavItem.Content" xml:space="preserve">
+    <value>DownloadBehavior</value>
+  </data>
+  <data name="SettingsWebUINavItem.Content" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="SettingsAboutNavItem.Content" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="SettingsPersonalizeTitle.Text" xml:space="preserve">
+    <value>Personalize your device</value>
+  </data>
+  <data name="SettingsPersonalizeDescription.Text" xml:space="preserve">
+    <value>Make OpenNet your own with custom themes and backgrounds</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>Version and update</value>
+  </data>
+  <data name="AppUpdateCheckButton.Content" xml:space="preserve">
+    <value>Check update</value>
+  </data>
+  <data name="AutoCheckUpdateCheckbox.Content" xml:space="preserve">
+    <value>Automatically check for updates</value>
+  </data>
+  <data name="SettingsAppThemeCard.Description" xml:space="preserve">
+    <value>Select which app theme to display</value>
+  </data>
+  <data name="SettingsAppThemeCard.Header" xml:space="preserve">
+    <value>App theme</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Description" xml:space="preserve">
+    <value>Applies to task files, trackers, peers and runtime status. Lower values can increase CPU usage.</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Header" xml:space="preserve">
+    <value>GUI data refresh interval</value>
+  </data>
+  <data name="GuiRefreshIntervalBox.Header" xml:space="preserve">
+    <value>Milliseconds</value>
+  </data>
+  <data name="RestartToApplyLanguageButton.Content" xml:space="preserve">
+    <value>Restart now</value>
+  </data>
+  <data name="ViewThemeSettingLuminosityOpacitySlider.Header" xml:space="preserve">
+    <value>LuminosityOpacity</value>
+  </data>
+  <data name="ViewThemeSettingTintOpacitySlider.Header" xml:space="preserve">
+    <value>TintOpacity</value>
+  </data>
+  <data name="ViewThemeSettingEnableAcrylicSwitch.Header" xml:space="preserve">
+    <value>Enable acrylic when window is inactive</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Description" xml:space="preserve">
+    <value>应用的背景类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Header" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundMica.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Description" xml:space="preserve">
+    <value>背景的亚克力效果模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Header" xml:space="preserve">
+    <value>亚克力类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Description" xml:space="preserve">
+    <value>背景的 Mica 效果模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Header" xml:space="preserve">
+    <value>Mica 类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Description" xml:space="preserve">
+    <value>Enable fallback when Mica is unavailable (Win10)</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Header" xml:space="preserve">
+    <value>Mica error fallback</value>
+  </data>
+  <data name="SoftBackgroundColors.Description" xml:space="preserve">
+    <value>Choose your accent color and personalize it</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Description" xml:space="preserve">
+    <value>背景中图片大小的设置方式</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Header" xml:space="preserve">
+    <value>图片拉伸模式</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.Content" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>Uniform</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>Uniform to fill</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Description" xml:space="preserve">
+    <value>图片在背景中的透明度，会覆盖窗口色</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Header" xml:space="preserve">
+    <value>透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
   <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
     <value>None</value>
   </data>
@@ -1785,16 +3228,1171 @@
   <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
     <value>Uniform to fill</value>
   </data>
-  <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
-    <value>Video opacity</value>
+  <data name="ViewThemesSettingsPageFontSetting.Description" xml:space="preserve">
+    <value>Font size</value>
   </data>
-  <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
-    <value>Video opacity above the image and backdrop layers</value>
+  <data name="ViewThemesSettingsPageFontSetting.Header" xml:space="preserve">
+    <value>Font Setting</value>
   </data>
-  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Header" xml:space="preserve">
-    <value>Apply to other windows</value>
+  <data name="WebUISettingsTitle.Text" xml:space="preserve">
+    <value>Web UI</value>
   </data>
-  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
-    <value>Apply the selected backdrop and background resources to auxiliary windows</value>
+  <data name="WebUISettingsDescription.Text" xml:space="preserve">
+    <value>Use the bundled qBittorrent WebUI from a browser or any qBittorrent Web API compatible client.</value>
+  </data>
+  <data name="WebUISettingsConnectionHeader.Text" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Description" xml:space="preserve">
+    <value>The IP address accepted by the embedded HTTP server.</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Header" xml:space="preserve">
+    <value>Listen address</value>
+  </data>
+  <data name="WebUISettingsPortCard.Description" xml:space="preserve">
+    <value>Restarting the Web UI applies a new port immediately.</value>
+  </data>
+  <data name="WebUISettingsPortCard.Header" xml:space="preserve">
+    <value>Port</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Description" xml:space="preserve">
+    <value>Language code used by WebUI, for example en or zh_CN.</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Header" xml:space="preserve">
+    <value>Locale</value>
+  </data>
+  <data name="WebUISettingsLocale.PlaceholderText" xml:space="preserve">
+    <value>en</value>
+  </data>
+  <data name="WebUISettingsAuthenticationHeader.Text" xml:space="preserve">
+    <value>Authentication</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Description" xml:space="preserve">
+    <value>At least 3 characters; a colon is not allowed.</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Header" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Description" xml:space="preserve">
+    <value>At least 6 characters. Existing browser sessions are cleared when settings are applied.</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Header" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Description" xml:space="preserve">
+    <value>Optional bearer token for API clients. Treat it like a password.</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Header" xml:space="preserve">
+    <value>API key</value>
+  </data>
+  <data name="WebUISettingsGenerateApiKey.Content" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="WebUISettingsCopyApiKey.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="WebUISettingsClearApiKey.Content" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="WebUISettingsSave.Content" xml:space="preserve">
+    <value>Save and restart Web UI</value>
+  </data>
+  <data name="WebUISettingsOpen.Content" xml:space="preserve">
+    <value>Open Web UI</value>
+  </data>
+  <data name="FilePriority_Skip.Content" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="FilePriority_Low.Content" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="FilePriority_Normal.Content" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="FilePriority_High.Content" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="TaskSpeedGraph_Title.Text" xml:space="preserve">
+    <value>Performance graph</value>
+  </data>
+  <data name="TaskSpeedGraph_Subtitle.Text" xml:space="preserve">
+    <value>Live session and system telemetry</value>
+  </data>
+  <data name="TaskSpeedGraph_MetricSelector.Header" xml:space="preserve">
+    <value>Display</value>
+  </data>
+  <data name="TaskSpeedGraph_TransferSpeed.Content" xml:space="preserve">
+    <value>Transfer Speed</value>
+  </data>
+  <data name="TaskSpeedGraph_DiskCache.Content" xml:space="preserve">
+    <value>Disk Cache</value>
+  </data>
+  <data name="TaskSpeedGraph_LongTermSeeding.Content" xml:space="preserve">
+    <value>Long-Term Seeding</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuOverall.Content" xml:space="preserve">
+    <value>CPU Usage (Overall)</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuLogicalProcessors.Content" xml:space="preserve">
+    <value>CPU Usage (Logical Processor)</value>
+  </data>
+  <data name="TaskSpeedGraph_MemoryUsage.Content" xml:space="preserve">
+    <value>Memory Usage</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtUdp.Content" xml:space="preserve">
+    <value>DHT over UDP</value>
+  </data>
+  <data name="TaskViewTaskSpeedGraphPageGlobalDownload.Text" xml:space="preserve">
+    <value>Global download</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDiskCacheTitle.Text" xml:space="preserve">
+    <value>Disk cache</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageLongTermUpload.Text" xml:space="preserve">
+    <value>Long-term upload</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageOverallCpu.Text" xml:space="preserve">
+    <value>Overall CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAverageCpu.Text" xml:space="preserve">
+    <value>Average CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageWorkingSet.Text" xml:space="preserve">
+    <value>OpenNet working set</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDhtReceive.Text" xml:space="preserve">
+    <value>DHT receive</value>
+  </data>
+  <data name="TaskSpeedGraph_GlobalUpload.Text" xml:space="preserve">
+    <value>Global upload</value>
+  </data>
+  <data name="TaskSpeedGraph_Source.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="TaskSpeedGraph_Scope.Text" xml:space="preserve">
+    <value>Scope</value>
+  </data>
+  <data name="TaskSpeedGraph_Sampling.Text" xml:space="preserve">
+    <value>Sampling</value>
+  </data>
+  <data name="TaskSpeedGraph_PeakCpu.Text" xml:space="preserve">
+    <value>Peak CPU</value>
+  </data>
+  <data name="TaskSpeedGraph_PhysicalMemoryShare.Text" xml:space="preserve">
+    <value>Physical memory share</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtSend.Text" xml:space="preserve">
+    <value>DHT send</value>
+  </data>
+  <data name="TaskSpeedGraph_GraphScale.Text" xml:space="preserve">
+    <value>Graph scale</value>
+  </data>
+  <data name="TaskNewFromUrlButton.Text" xml:space="preserve">
+    <value>From Magnet Link</value>
+  </data>
+  <data name="TaskNewFromFileButton.Text" xml:space="preserve">
+    <value>From Bittorrent File</value>
+  </data>
+  <data name="TaskNewFromHttpButton.Text" xml:space="preserve">
+    <value>HTTP Download</value>
+  </data>
+  <data name="Header_DownloadSize.Text" xml:space="preserve">
+    <value>Download Size</value>
+  </data>
+  <data name="Header_UploadSize.Text" xml:space="preserve">
+    <value>Upload Size</value>
+  </data>
+  <data name="Header_TotalDownloadSize.Text" xml:space="preserve">
+    <value>Total Download Size</value>
+  </data>
+  <data name="Header_TotalUploadSize.Text" xml:space="preserve">
+    <value>Total Upload Size</value>
+  </data>
+  <data name="Header_ULRate.Text" xml:space="preserve">
+    <value>Upload Rate</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
+    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
+    <value>Auto Size All Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
+    <value>Reset To Default Display Items</value>
+  </data>
+  <data name="ViewWindowExceptionHeader.Text" xml:space="preserve">
+    <value>An unrecoverable fatal error has occurred</value>
+  </data>
+  <data name="ViewExceptionWindowStacktraceHeader.Header" xml:space="preserve">
+    <value>Exception Details</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Description" xml:space="preserve">
+    <value>Clear, step-by-step descriptions will help us locate the issue faster</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Header" xml:space="preserve">
+    <value>What actions did you perform before the crash occurred?</value>
+  </data>
+  <data name="ViewWindowExceptionClose.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox.Content" xml:space="preserve">
+    <value>Start immediately</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartDownloadButton.Content" xml:space="preserve">
+    <value>Start Download</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowCloseButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Enc_None" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="BT_Proxy_None.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="IPF_ReplacementSkipped" xml:space="preserve">
+    <value>replacement skipped to preserve existing rules</value>
+  </data>
+  <data name="IPF_Skipped" xml:space="preserve">
+    <value>skipped</value>
+  </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>Not sorted. Activate to sort ascending</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Uniform</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Uniform to fill</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Uniform</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Uniform to fill</value>
+  </data>
+  <data name="FilePriority_Skip.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="FilePriority_Low.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="FilePriority_Normal.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="FilePriority_High.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="ViewMainWindowButton.Content" xml:space="preserve">
+    <value>[Dev] Invert Theme</value>
+  </data>
+  <data name="ViewGuideViewRun.Text" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+    <value>DHT</value>
+  </data>
+  <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
+    <value>Port is blocked. Please check your router or firewall settings.</value>
+  </data>
+  <data name="ViewNatToolsPageRun.Text" xml:space="preserve">
+    <value>Connected Peers: </value>
+  </data>
+  <data name="ViewNatToolsPageTextBlock.Text" xml:space="preserve">
+    <value>Mapping Consistent</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>Not listening</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>Subscribe to tracker lists from URLs (.txt format)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>Tracker Subscriptions</value>
+  </data>
+  <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
+    <value>Subscribe</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>Enable Local Peer Discovery (LSD)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>Subscription URL (e.g., https://example.com/trackers.txt)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>Discover peers on the local network</value>
+  </data>
+  <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
+    <value>Go to the repro</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Description" xml:space="preserve">
+    <value>OpenNet for WinUI3</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Header" xml:space="preserve">
+    <value>OpenNet in Open-source</value>
+  </data>
+  <data name="ViewAboutPageSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEssential Build SDK version</value>
+  </data>
+  <data name="ViewAboutPageHyperlinkButton.Content" xml:space="preserve">
+    <value>Join the project on Github</value>
+  </data>
+  <data name="ViewAboutPageRun.Text" xml:space="preserve">
+    <value>Last commit: </value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>Downloads folder</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>Advanced libtorrent</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>Client identification string sent to peers</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>Move Completed Path</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>Default behavior for new downloads</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>Download Defaults</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>1.2.3.4
+10.0.0.0/8
+192.168.1.0-192.168.1.255
+2400:1a00::/32</value>
+  </data>
+  <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
+    <value>Reset Columns and Sorting</value>
+  </data>
+  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
+    <value>Reset Columns and Sorting</value>
+  </data>
+  <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlock.Text" xml:space="preserve">
+    <value>↑ —</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Description" xml:space="preserve">
+    <value>Configure the rendered line, border, and gradient area</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Header" xml:space="preserve">
+    <value>Series appearance</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Description" xml:space="preserve">
+    <value>Reset every graph customization option to its original value.</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Header" xml:space="preserve">
+    <value>Restore defaults</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetButton.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxTimeUnit.Text" xml:space="preserve">
+    <value>Milliseconds</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemDot.Content" xml:space="preserve">
+    <value>Dot</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>Customize graph style</value>
+  </data>
+  <data name="ViewTasksPageAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="ViewTasksPageToggleMenuItem.Text" xml:space="preserve">
+    <value>Peers</value>
+  </data>
+  <data name="ViewTorrentCheckGeneralPageTextBlock.Text" xml:space="preserve">
+    <value>You can configure the save location and trackers now, or add the task immediately. Metadata will continue downloading in the task list.</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Description" xml:space="preserve">
+    <value>Intentionally throw a XAML-facing exception</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Header" xml:space="preserve">
+    <value>Exception handling</value>
+  </data>
+  <data name="ViewDevWindowButton.Content" xml:space="preserve">
+    <value>Trigger exception</value>
+  </data>
+  <data name="ViewInfoOverlayWindowTextBlock.Text" xml:space="preserve">
+    <value>DHT: 0 nodes</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowTextBlock.Text" xml:space="preserve">
+    <value>Waiting for a visible point…</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowButton.Content" xml:space="preserve">
+    <value>Add rounded batch</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowExpander.Header" xml:space="preserve">
+    <value>Graph properties and brush composition</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBox.Header" xml:space="preserve">
+    <value>Highlight behavior</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBoxItem.Content" xml:space="preserve">
+    <value>Each point</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceStrokeSettingsCard.Header" xml:space="preserve">
+    <value>Stroke width</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowToggleSwitch.Header" xml:space="preserve">
+    <value>Dashed border</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectorBarItem.Text" xml:space="preserve">
+    <value>Trackers</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowTextBlock.Text" xml:space="preserve">
+    <value>The app-wide custom tracker switch and subscriptions are managed in Network settings.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowCheckBoxText1.Content" xml:space="preserve">
+    <value>Save a .torrent copy to the download folder</value>
+  </data>
+  <data name="ViewNatToolsPageNACoreNotRunning" xml:space="preserve">
+    <value>N/A (core not running)</value>
+  </data>
+  <data name="ViewNatToolsPageNA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewNatToolsPageDetecting" xml:space="preserve">
+    <value>Detecting...</value>
+  </data>
+  <data name="ViewNatToolsPage" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="ViewNatToolsPageTesting" xml:space="preserve">
+    <value>Testing...</value>
+  </data>
+  <data name="ViewNatToolsPageYesConsistentMappingAcrossAllServers" xml:space="preserve">
+    <value>Yes - consistent mapping across all servers</value>
+  </data>
+  <data name="ViewNatToolsPageFullConeEIM" xml:space="preserve">
+    <value>Full Cone (EIM)</value>
+  </data>
+  <data name="ViewNatToolsPageNoSameIPButDifferentPorts" xml:space="preserve">
+    <value>No - same IP but different ports</value>
+  </data>
+  <data name="ViewNatToolsPagePortRestrictedSymmetric" xml:space="preserve">
+    <value>Port Restricted / Symmetric</value>
+  </data>
+  <data name="ViewNatToolsPageNoDifferentIPPortPerDestination" xml:space="preserve">
+    <value>No - different IP:Port per destination</value>
+  </data>
+  <data name="ViewNatToolsPageSymmetric" xml:space="preserve">
+    <value>Symmetric</value>
+  </data>
+  <data name="ViewNatToolsPagePartialOnlyOneServerResponded" xml:space="preserve">
+    <value>Partial - only one server responded</value>
+  </data>
+  <data name="ViewNatToolsPageUnknownPartialResults" xml:space="preserve">
+    <value>Unknown (partial results)</value>
+  </data>
+  <data name="ViewNatToolsPageFailedNoSTUNResponses" xml:space="preserve">
+    <value>Failed - no STUN responses</value>
+  </data>
+  <data name="ViewNatToolsPageUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="ViewNatToolsPageError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ViewNatToolsPageInvalidPortNumber" xml:space="preserve">
+    <value>Invalid port number</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNReportsYourExternalPortMatchesTheLocalPortPeersShouldBeAbleToConnectToYouDirectly" xml:space="preserve">
+    <value>STUN reports your external port matches the local port. Peers should be able to connect to you directly.</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNMappedPortDiffersFromLocalPortOrNoResponseReceivedYourNATMayBeRewritingThePortConsiderEnablingUpnpOrSettingUpPortForwarding" xml:space="preserve">
+    <value>STUN mapped port differs from local port, or no response received. Your NAT may be rewriting the port. Consider enabling UPnP or setting up port forwarding.</value>
+  </data>
+  <data name="ViewNatToolsPageErrorTestingPort" xml:space="preserve">
+    <value>Error testing port</value>
+  </data>
+  <data name="ViewNatToolsPageCouldNotCompleteTheSTUNBasedPortTestCheckYourNetworkConnection" xml:space="preserve">
+    <value>Could not complete the STUN-based port test. Check your network connection.</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeHttpDownload" xml:space="preserve">
+    <value>HTTP download</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeEngineUnavailable" xml:space="preserve">
+    <value>Engine unavailable</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNoTaskSelected" xml:space="preserve">
+    <value>No task selected</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime0" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime00" xml:space="preserve">
+    <value>0 / 0</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewRuntimeStatusWindowReportCopied" xml:space="preserve">
+    <value>Report copied to clipboard</value>
+  </data>
+  <data name="ViewTaskFilesPageRenameFileTitle" xml:space="preserve">
+    <value>Rename file</value>
+  </data>
+  <data name="CommonRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="CommonSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="CommonClearAll" xml:space="preserve">
+    <value>Clear all</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerUrlPlaceholder" xml:space="preserve">
+    <value>One HTTP, HTTPS or UDP tracker URL per line</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersTitle" xml:space="preserve">
+    <value>Edit trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageInvalidTrackerUrlTitle" xml:space="preserve">
+    <value>Invalid tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerTitle" xml:space="preserve">
+    <value>Remove tracker?</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllLogsTitle" xml:space="preserve">
+    <value>Clear all tracker logs?</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePrompt" xml:space="preserve">
+    <value>Remove all trackers that have reached the number of retries:</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTitle" xml:space="preserve">
+    <value>Remove unreachable trackers</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedTitle" xml:space="preserve">
+    <value>Remove Feed</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationPrefix" xml:space="preserve">
+    <value>Are you sure you want to remove "</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationSuffix" xml:space="preserve">
+    <value>"?</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnterClientNameHint" xml:space="preserve">
+    <value>Enter a peer client name to test.</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageNoMatchingRule" xml:space="preserve">
+    <value>No enabled rule matches this client</value>
+  </data>
+  <data name="ViewClientFilterSettingsPagePatternLabel" xml:space="preserve">
+    <value>Pattern</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageMatchTypeLabel" xml:space="preserve">
+    <value>Match type</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageCaseSensitive" xml:space="preserve">
+    <value>Case sensitive</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>Edit Client Filter Rule</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>Delete Client Filter Rule</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageImportRulesTitle" xml:space="preserve">
+    <value>Import Client Filter Rules</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageChooseFile" xml:space="preserve">
+    <value>Choose File</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageClearRulesTitle" xml:space="preserve">
+    <value>Clear Client Filter Rules</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
+    <value>Multiple Files Selected</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedPrompt" xml:space="preserve">
+    <value>You picked multiple files. What do you want to do next?</value>
+  </data>
+  <data name="ViewTasksPageCheckInNewWindows" xml:space="preserve">
+    <value>Check in new windows</value>
+  </data>
+  <data name="ViewTasksPageAddToList" xml:space="preserve">
+    <value>Add to list</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableTitle" xml:space="preserve">
+    <value>HTTP Download Unavailable</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableMessage" xml:space="preserve">
+    <value>The aria2 download engine is not available. Please ensure aria2c.exe is present alongside the application.</value>
+  </data>
+  <data name="ViewTasksPageRenamePlaceholder" xml:space="preserve">
+    <value>Enter new name</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageInformationTitle" xml:space="preserve">
+    <value>Disk Usage Information</value>
+  </data>
+  <data name="CommonOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ViewSettingsPageCheckingForUpdates" xml:space="preserve">
+    <value>Checking...</value>
+  </data>
+  <data name="ViewSettingsPageCheckUpdate" xml:space="preserve">
+    <value>Check update</value>
+  </data>
+  <data name="ViewSettingsPageUpdateAvailable" xml:space="preserve">
+    <value>An OpenNet update is available</value>
+  </data>
+  <data name="ViewSettingsPageUpToDate" xml:space="preserve">
+    <value>OpenNet is up to date</value>
+  </data>
+  <data name="ViewSettingsPageUpdateCheckFailed" xml:space="preserve">
+    <value>Update check failed</value>
+  </data>
+  <data name="ViewSettingsPageUnableToOpenUpdate" xml:space="preserve">
+    <value>Unable to open the update</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEntryLabel" xml:space="preserve">
+    <value>IP address, CIDR block, or range</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDescriptionOptional" xml:space="preserve">
+    <value>Description (optional)</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>Edit IP Filter Rule</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>Delete IP Filter Rule</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesTitle" xml:space="preserve">
+    <value>Clear All Rules</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesMessage" xml:space="preserve">
+    <value>Are you sure you want to remove all IP filter rules? This action cannot be undone.</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageLocation" xml:space="preserve">
+    <value>Location:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTaskSize" xml:space="preserve">
+    <value>Task size:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageUsedOnVolume" xml:space="preserve">
+    <value>Used on volume:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageFreeOnVolume" xml:space="preserve">
+    <value>Free on volume:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTotalCapacity" xml:space="preserve">
+    <value>Total capacity:</value>
+  </data>
+  <data name="CommonEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="CommonDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="CommonDetecting" xml:space="preserve">
+    <value>Detecting…</value>
+  </data>
+  <data name="CommonTesting" xml:space="preserve">
+    <value>Testing…</value>
+  </data>
+  <data name="ViewNATDetectorWindowEngineNotRunning" xml:space="preserve">
+    <value>Engine not running</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForRouterResponse" xml:space="preserve">
+    <value>Waiting for router response</value>
+  </data>
+  <data name="ViewNATDetectorWindowReceived" xml:space="preserve">
+    <value>Received</value>
+  </data>
+  <data name="ViewNATDetectorWindowNotReceived" xml:space="preserve">
+    <value>Not received</value>
+  </data>
+  <data name="ViewNATDetectorWindowStartEngineBeforeTesting" xml:space="preserve">
+    <value>Start the BitTorrent engine before testing its port.</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectingNAT" xml:space="preserve">
+    <value>Detecting NAT behavior and inbound reachability…</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForTraversalServer" xml:space="preserve">
+    <value>Waiting for traversal server…</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionComplete" xml:space="preserve">
+    <value>Detection complete</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionIncomplete" xml:space="preserve">
+    <value>Detection incomplete</value>
+  </data>
+  <data name="ViewNetworkSettingsPageInvalidEndpointBeforeUpdate" xml:space="preserve">
+    <value>Fix the invalid endpoint before the listener is updated.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageApplyingEndpointConfiguration" xml:space="preserve">
+    <value>Applying the endpoint configuration…</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSaved" xml:space="preserve">
+    <value>Saved. The endpoints will be applied when BitTorrent starts.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotRunning" xml:space="preserve">
+    <value>Not running</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEngineNotRunning" xml:space="preserve">
+    <value>The BitTorrent engine is not running.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSavedForStartup" xml:space="preserve">
+    <value>The configured endpoints are saved and will be used at startup.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotSaved" xml:space="preserve">
+    <value>The edited endpoint is invalid and has not been saved.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotListening" xml:space="preserve">
+    <value>Not listening</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoListeningSocket" xml:space="preserve">
+    <value>libtorrent has not opened a listening socket.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotApplied" xml:space="preserve">
+    <value>The edited endpoint is invalid and has not been applied.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageWaitingForListener" xml:space="preserve">
+    <value>Waiting for the listener to become available.</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogInvalidLinkFormat" xml:space="preserve">
+    <value>Incorrect link format. Please check your clipboard first (Win + V).</value>
+  </data>
+  <data name="ViewTaskPieceMapPageBitTorrentOnly" xml:space="preserve">
+    <value>Piece information is available for BitTorrent tasks.</value>
+  </data>
+  <data name="ViewTaskPieceMapPageMetadataPending" xml:space="preserve">
+    <value>Metadata has not been received yet.</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieceSize" xml:space="preserve">
+    <value>Piece size:</value>
+  </data>
+  <data name="ViewTaskPieceMapPageWebSeeds" xml:space="preserve">
+    <value>Web seeds:</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieces" xml:space="preserve">
+    <value>pieces</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicResourcesReady" xml:space="preserve">
+    <value>Dynamic resources ready; two graph keys registered.</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowAllResourcesReady" xml:space="preserve">
+    <value>Dynamic and static Win2D resources are ready.</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowFrame" xml:space="preserve">
+    <value>Frame</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowCPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowNetwork" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicHighlightY" xml:space="preserve">
+    <value>Dynamic highlight Y:</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowStaticY" xml:space="preserve">
+    <value>Static Y:</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicStreamsReset" xml:space="preserve">
+    <value>Dynamic streams reset.</value>
+  </data>
+  <data name="AppBitTorrentEngine" xml:space="preserve">
+    <value>BitTorrent engine</value>
+  </data>
+  <data name="AppLibtorrentInitialized" xml:space="preserve">
+    <value>libtorrent initialized successfully.</value>
+  </data>
+  <data name="AppBitTorrentEngineFailed" xml:space="preserve">
+    <value>BitTorrent engine failed</value>
+  </data>
+  <data name="AppLibtorrentInitializationUnknownError" xml:space="preserve">
+    <value>An unknown error occurred while initializing libtorrent.</value>
+  </data>
+  <data name="AppRSSServiceFailed" xml:space="preserve">
+    <value>RSS service failed</value>
+  </data>
+  <data name="AppRSSBackgroundUpdatesFailed" xml:space="preserve">
+    <value>RSS background updates could not be started.</value>
+  </data>
+  <data name="AppWebUIFailed" xml:space="preserve">
+    <value>Web UI failed</value>
+  </data>
+  <data name="AppWebUIStartFailed" xml:space="preserve">
+    <value>The local qBittorrent-compatible Web UI could not be started.</value>
+  </data>
+  <data name="AppWebUI" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="AppWebUIRunning" xml:space="preserve">
+    <value>The qBittorrent-compatible Web UI is running.</value>
+  </data>
+  <data name="AppWebUIUnknownStartError" xml:space="preserve">
+    <value>An unknown error occurred while starting the Web UI.</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>URL error</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>Please enter a valid feed URL.</value>
+  </data>
+  <data name="ViewNATDetectorWindowDiagnosticInfoBar.Title" xml:space="preserve">
+    <value>Detection note</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageGridColorCard.Title" xml:space="preserve">
+    <value>Grid color</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasClearColorCard.Title" xml:space="preserve">
+    <value>Canvas clear color</value>
+  </data>
+  <data name="CommonUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingDirect" xml:space="preserve">
+    <value>Direct / no address translation</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingEndpointIndependent" xml:space="preserve">
+    <value>Endpoint-independent mapping</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressDependent" xml:space="preserve">
+    <value>Address-dependent mapping</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressAndPortDependent" xml:space="preserve">
+    <value>Address-and-port-dependent mapping</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringEndpointIndependent" xml:space="preserve">
+    <value>Endpoint-independent filtering</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressDependent" xml:space="preserve">
+    <value>Address-dependent filtering</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressAndPortDependent" xml:space="preserve">
+    <value>Address-and-port-dependent filtering</value>
+  </data>
+  <data name="CoreNetworkDetectorNATOpenInternet" xml:space="preserve">
+    <value>Open Internet</value>
+  </data>
+  <data name="CoreNetworkDetectorNATFullCone" xml:space="preserve">
+    <value>Full cone NAT (compatibility label)</value>
+  </data>
+  <data name="CoreNetworkDetectorNATRestrictedCone" xml:space="preserve">
+    <value>Restricted cone NAT (compatibility label)</value>
+  </data>
+  <data name="CoreNetworkDetectorNATPortRestrictedCone" xml:space="preserve">
+    <value>Port-restricted cone NAT (compatibility label)</value>
+  </data>
+  <data name="CoreNetworkDetectorNATSymmetric" xml:space="preserve">
+    <value>Symmetric NAT (compatibility label)</value>
+  </data>
+  <data name="ModelNetworkInfoStatusDisconnected" xml:space="preserve">
+    <value>Disconnected</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnecting" xml:space="preserve">
+    <value>Connecting</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="ModelNetworkInfoStatusLimited" xml:space="preserve">
+    <value>Limited connection</value>
+  </data>
+  <data name="ModelNetworkInfoStatusNoInternet" xml:space="preserve">
+    <value>No Internet</value>
+  </data>
+  <data name="ModelNetworkInfoNATBlocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="ModelTransferInfoStatusInitializing" xml:space="preserve">
+    <value>Initializing</value>
+  </data>
+  <data name="ModelTransferInfoStatusTransferring" xml:space="preserve">
+    <value>Transferring</value>
+  </data>
+  <data name="ModelTransferInfoStatusCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="ModelTransferInfoStatusVerifying" xml:space="preserve">
+    <value>Verifying</value>
+  </data>
+  <data name="ViewSettingsPageNoNewerRelease" xml:space="preserve">
+    <value>No newer release is available.</value>
+  </data>
+  <data name="ViewSettingsPageUnableToCheckUpdates" xml:space="preserve">
+    <value>Unable to check for updates</value>
+  </data>
+  <data name="ViewSettingsPageInvalidUpdateResponse" xml:space="preserve">
+    <value>The update server returned an invalid response.</value>
+  </data>
+  <data name="ViewSettingsPageNoValidUpdateMirror" xml:space="preserve">
+    <value>No valid update mirror could be launched</value>
+  </data>
+  <data name="ViewRSSViewModelAddingFeed" xml:space="preserve">
+    <value>Adding feed…</value>
+  </data>
+  <data name="ViewRSSViewModelFetchingFeed" xml:space="preserve">
+    <value>Fetching feed content…</value>
+  </data>
+  <data name="ViewRSSViewModelFailedToAddFeed" xml:space="preserve">
+    <value>Failed to add feed</value>
+  </data>
+  <data name="ViewRSSViewModelFeedRemoved" xml:space="preserve">
+    <value>Feed removed</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingFeed" xml:space="preserve">
+    <value>Refreshing feed…</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingAllFeeds" xml:space="preserve">
+    <value>Refreshing all feeds…</value>
+  </data>
+  <data name="ViewRSSViewModelFeedSettingsUpdated" xml:space="preserve">
+    <value>Feed settings updated</value>
+  </data>
+  <data name="ViewRSSViewModelFeedUpdated" xml:space="preserve">
+    <value>Feed updated</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectedItemNotBitTorrent" xml:space="preserve">
+    <value>The selected item is not a BitTorrent task.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowEngineUnavailable" xml:space="preserve">
+    <value>The BitTorrent engine is not available.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataUnavailable" xml:space="preserve">
+    <value>Torrent metadata is not available for this task.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidLinkOrPath" xml:space="preserve">
+    <value>Invalid torrent link or file path.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataFetchError" xml:space="preserve">
+    <value>Metadata fetch error:</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowUnknownMetadataFetchError" xml:space="preserve">
+    <value>Unknown error during metadata fetch.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidTorrentSource" xml:space="preserve">
+    <value>Invalid torrent source: not a magnet link or torrent file.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowFailedToStartDownload" xml:space="preserve">
+    <value>Failed to start download.</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowStartDownloadError" xml:space="preserve">
+    <value>Error starting download:</value>
+  </data>
+  <data name="ViewRSSViewModelDownloadStarted" xml:space="preserve">
+    <value>Download started:</value>
+  </data>
+  <data name="ViewRSSViewModelNewItem" xml:space="preserve">
+    <value>New item:</value>
+  </data>
+  <data name="ViewRSSViewModelError" xml:space="preserve">
+    <value>Error:</value>
+  </data>
+  <data name="CommonYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="CommonNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogMagnetBox.PlaceholderText" xml:space="preserve">
+    <value>magnet:?xt=...</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
+    <value>Piece Map</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>Speed Graph</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>TabView Width Mode</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>Equal Width</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
+    <value>Each tab has the same width</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>Size To Content</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
+    <value>Each tab adjusts its width to the content within the tab</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>Compact</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
+    <value>Unselected tabs collapse to show only their icon. The selected tab adjusts to display the content within the tab</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>Graph customization</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>Changes are applied immediately and saved for the next session</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>Behavior</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>Pixels</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>History reserve</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>Retain off-screen points so widening the window can reveal recent history</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>Screen widths</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>Smooth curves</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>Interpolate adjacent samples with rounded curves</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>Highlight line</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>Display a moving marker for sampled graph values</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Highest across all series</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>Lowest in each series</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Lowest across all series</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>Highest in each series</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>Cross</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>Animation duration</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>Each point</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>Grid and canvas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>Choose the canvas pattern and spacing</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>Background pattern</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Cross spacing</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Dot spacing</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>Custom canvas colors</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>Override theme-aware grid and transparent canvas defaults</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>Canvas colors</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>Select the grid and canvas colors used when custom colors are enabled</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>Control sampling, movement, curve smoothing, and retained history</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>Motion and history</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>Gradient fill</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>Border line</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>Scroll distance</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>Horizontal distance travelled during each scroll duration</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>Scroll duration</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>Time used to travel the configured distance</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>Sample interval</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>Telemetry sampling cadence</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>Completed Date</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>Share Ratio</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock" xml:space="preserve">
+    <value>Seeds/Peers[all]</value>
   </data>
 </root>

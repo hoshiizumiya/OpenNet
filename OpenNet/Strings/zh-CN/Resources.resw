@@ -216,23 +216,23 @@
   <data name="Header_AddDate.Text" xml:space="preserve">
     <value>添加日期</value>
   </data>
-  <data name="Task_SummaryContent.Text" xml:space="preserve">
+  <data name="Task_SummaryContent.Header" xml:space="preserve">
     <value>概览</value>
   </data>
-  <data name="Task_PeersList.Text" xml:space="preserve">
+  <data name="Task_PeersList.Header" xml:space="preserve">
     <value>用户</value>
   </data>
   <data name="Protocol_IPv4First" xml:space="preserve">
-    <value>IPv4优先</value>
+    <value>IPv4 优先</value>
   </data>
   <data name="Protocol_IPv6First" xml:space="preserve">
-    <value>IPv6优先</value>
+    <value>IPv6 优先</value>
   </data>
   <data name="Protocol_IPv4Only" xml:space="preserve">
     <value>仅IPv4</value>
   </data>
   <data name="Protocol_IPv6Only" xml:space="preserve">
-    <value>仅IPv6</value>
+    <value>仅 IPv6</value>
   </data>
   <data name="Protocol_Auto" xml:space="preserve">
     <value>自动选择</value>
@@ -244,7 +244,7 @@
     <value>TCP协议</value>
   </data>
   <data name="ConnProtocol_UDP" xml:space="preserve">
-    <value>UDP协议</value>
+    <value>UDP 协议</value>
   </data>
   <data name="ConnProtocol_UTP" xml:space="preserve">
     <value>uTP协议</value>
@@ -260,9 +260,6 @@
   </data>
   <data name="ConnProtocol_HTTP" xml:space="preserve">
     <value>HTTP协议</value>
-  </data>
-  <data name="Enc_None" xml:space="preserve">
-    <value>无加密</value>
   </data>
   <data name="Enc_Basic" xml:space="preserve">
     <value>基础加密</value>
@@ -613,7 +610,7 @@
     <value>NAT-PMP 端口映射</value>
   </data>
   <data name="BT_Section_Tracker.Text" xml:space="preserve">
-    <value>Tracker</value>
+    <value>追踪器</value>
   </data>
   <data name="BT_AnnounceAllTiers.Header" xml:space="preserve">
     <value>向所有层级通告</value>
@@ -756,9 +753,6 @@
   <data name="BT_ProxyType.Description" xml:space="preserve">
     <value>选择 BitTorrent 流量的代理协议</value>
   </data>
-  <data name="BT_Proxy_None.Content" xml:space="preserve">
-    <value>无</value>
-  </data>
   <data name="BT_Proxy_Socks4.Content" xml:space="preserve">
     <value>SOCKS4</value>
   </data>
@@ -853,7 +847,7 @@
     <value>取消</value>
   </data>
   <data name="HttpDownloadDialogUrlBox.Header" xml:space="preserve">
-    <value>URL</value>
+    <value>链接地址</value>
   </data>
   <data name="HttpDownloadDialogUrlBox.PlaceholderText" xml:space="preserve">
     <value>https://example.com/file.zip</value>
@@ -903,8 +897,8 @@
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>当前无已连接节点</value>
   </data>
-  <data name="Task_TrackersList.Text" xml:space="preserve">
-    <value>Tracker</value>
+  <data name="Task_TrackersList.Header" xml:space="preserve">
+    <value>追踪器</value>
   </data>
   <data name="TrackerHeader_URL.Text" xml:space="preserve">
     <value>URL</value>
@@ -924,7 +918,7 @@
   <data name="TrackersList_EmptyState.Text" xml:space="preserve">
     <value>暂无 Tracker 信息</value>
   </data>
-  <data name="Task_FilesList.Text" xml:space="preserve">
+  <data name="Task_FilesList.Header" xml:space="preserve">
     <value>文件</value>
   </data>
   <data name="FileHeader_Path.Text" xml:space="preserve">
@@ -941,18 +935,6 @@
   </data>
   <data name="FileHeader_Priority.Text" xml:space="preserve">
     <value>优先级</value>
-  </data>
-  <data name="FilePriority_Skip.Content" xml:space="preserve">
-    <value>跳过</value>
-  </data>
-  <data name="FilePriority_Low.Content" xml:space="preserve">
-    <value>低</value>
-  </data>
-  <data name="FilePriority_Normal.Content" xml:space="preserve">
-    <value>普通</value>
-  </data>
-  <data name="FilePriority_High.Content" xml:space="preserve">
-    <value>高</value>
   </data>
   <data name="FilesList_EmptyState.Text" xml:space="preserve">
     <value>暂无文件信息</value>
@@ -1132,7 +1114,7 @@
     <value>IP 过滤列表订阅</value>
   </data>
   <data name="IPF_NoEnabledSubscriptions" xml:space="preserve">
-    <value>没有已启用的订阅源。</value>
+    <value>没有已启用的订阅源</value>
   </data>
   <data name="IPF_UpdateSummarySuccess" xml:space="preserve">
     <value>已更新来源</value>
@@ -1149,9 +1131,6 @@
   <data name="IPF_UpdateAllFailed" xml:space="preserve">
     <value>所有订阅源均更新失败。</value>
   </data>
-  <data name="IPF_ReplacementSkipped" xml:space="preserve">
-    <value>为保留现有规则，已跳过替换</value>
-  </data>
   <data name="IPF_UpdateUnexpectedError" xml:space="preserve">
     <value>订阅更新遇到意外错误。</value>
   </data>
@@ -1166,9 +1145,6 @@
   </data>
   <data name="IPF_InvalidOrDuplicateSubscriptions" xml:space="preserve">
     <value>未找到新的有效订阅地址。</value>
-  </data>
-  <data name="IPF_Skipped" xml:space="preserve">
-    <value>已跳过</value>
   </data>
   <data name="IPF_SourceEnabled" xml:space="preserve">
     <value>启用此订阅源</value>
@@ -1240,10 +1216,10 @@
     <value>列表源匹配</value>
   </data>
   <data name="PeerReason_ClientListMatch" xml:space="preserve">
-    <value>anti吸血客户端列表匹配</value>
+    <value>反吸血客户端列表匹配</value>
   </data>
   <data name="PeerReason_AntiLeech" xml:space="preserve">
-    <value>anti吸血封禁</value>
+    <value>反吸血封禁</value>
   </data>
   <data name="PeerReason_IPFilter" xml:space="preserve">
     <value>IP 过滤器匹配</value>
@@ -1501,7 +1477,7 @@
     <value>数据目录</value>
   </data>
   <data name="ViewGuideStepDataFolderHint.Text" xml:space="preserve">
-    <value>数据文件夹由 Windows 管理，并会在卸载应用时一同删除。</value>
+    <value>数据文件夹由 Windows 管理，并会在卸载应用时一同删除</value>
   </data>
   <data name="GuideWebUITitle.Text" xml:space="preserve">
     <value>初始化 qBittorrent Web UI</value>
@@ -1571,9 +1547,6 @@
   </data>
   <data name="RuntimeStatusLastUpdated.Text" xml:space="preserve">
     <value>正在等待首次刷新</value>
-  </data>
-  <data name="DataTableSortNoneHint" xml:space="preserve">
-    <value>尚未排序。单击后按升序排列。</value>
   </data>
   <data name="DataTableSortAscendingHint" xml:space="preserve">
     <value>当前为升序。单击后按降序排列。</value>
@@ -1704,9 +1677,6 @@
   <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
     <value>在主界面内容后显示本地图片</value>
   </data>
-  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
-    <value>无</value>
-  </data>
   <data name="ViewThemesSettingsPageImageModeSingle.Content" xml:space="preserve">
     <value>单张图片</value>
   </data>
@@ -1740,9 +1710,6 @@
   <data name="ViewThemesSettingsPageVideoBackgroundExpander.Description" xml:space="preserve">
     <value>在主界面内容后播放本地视频</value>
   </data>
-  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
-    <value>无</value>
-  </data>
   <data name="ViewThemesSettingsPageVideoModeSingle.Content" xml:space="preserve">
     <value>单个视频</value>
   </data>
@@ -1773,18 +1740,6 @@
   <data name="ViewThemesSettingsPageVideoStretchCard.Description" xml:space="preserve">
     <value>视频填充窗口的方式</value>
   </data>
-  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
-    <value>无</value>
-  </data>
-  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.Content" xml:space="preserve">
-    <value>填充</value>
-  </data>
-  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.Content" xml:space="preserve">
-    <value>等比缩放</value>
-  </data>
-  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
-    <value>等比填充</value>
-  </data>
   <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
     <value>视频不透明度</value>
   </data>
@@ -1796,5 +1751,2648 @@
   </data>
   <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
     <value>将所选背景效果与相关背景资源应用到辅助窗口</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadTitle" xml:space="preserve">
+    <value>HTTP/FTP 批量下载</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadPlaceholder" xml:space="preserve">
+    <value>每行输入一个 HTTP、HTTPS 或 FTP URL</value>
+  </data>
+  <data name="OperationProgressDialogCompleted" xml:space="preserve">
+    <value>✓ 操作成功完成</value>
+  </data>
+  <data name="OperationProgressDialogFailed" xml:space="preserve">
+    <value>✗ 操作失败</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.Text" xml:space="preserve">
+    <value>Open OpenNet</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.Text" xml:space="preserve">
+    <value>开始所有下载</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.Text" xml:space="preserve">
+    <value>开始所有上传</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.Text" xml:space="preserve">
+    <value>停止所有任务</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.Text" xml:space="preserve">
+    <value>暂停所有活动任务</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.Text" xml:space="preserve">
+    <value>恢复上次暂停的任务</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.Text" xml:space="preserve">
+    <value>Download Limit</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText14.Text" xml:space="preserve">
+    <value>不限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText16.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText17.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText18.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.Text" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.Text" xml:space="preserve">
+    <value>上传限制</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.Text" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.Text" xml:space="preserve">
+    <value>Enable Scheduler</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.Text" xml:space="preserve">
+    <value>Open Torrent File ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.Text" xml:space="preserve">
+    <value>Add Torrent from URL ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.Text" xml:space="preserve">
+    <value>HTTP/FTP Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.Text" xml:space="preserve">
+    <value>HTTP/FTP Batch Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.Text" xml:space="preserve">
+    <value>Capture Clipboard URL</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.Text" xml:space="preserve">
+    <value>Tray Balloon</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.Text" xml:space="preserve">
+    <value>Floating Window</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.Text" xml:space="preserve">
+    <value>Floating Window settings</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.Text" xml:space="preserve">
+    <value>Options ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.Text" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Description" xml:space="preserve">
+    <value>Transfer files securely across your P2P network</value>
+  </data>
+  <data name="ControlHeaderCarouselText2.Header" xml:space="preserve">
+    <value>File Transfer</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Description" xml:space="preserve">
+    <value>Discover and connect to peers on your local network</value>
+  </data>
+  <data name="ControlHeaderCarouselText4.Header" xml:space="preserve">
+    <value>网络发现</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Description" xml:space="preserve">
+    <value>Chat with peers in real-time over secure channels</value>
+  </data>
+  <data name="ControlHeaderCarouselText6.Header" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Description" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices</value>
+  </data>
+  <data name="ControlHeaderCarouselText8.Header" xml:space="preserve">
+    <value>VPN Tunnel</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Description" xml:space="preserve">
+    <value>Share folders and storage with your network peers</value>
+  </data>
+  <data name="ControlHeaderCarouselText10.Header" xml:space="preserve">
+    <value>Shared Storage</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Description" xml:space="preserve">
+    <value>Monitor network bandwidth and performance in real-time</value>
+  </data>
+  <data name="ControlHeaderCarouselText12.Header" xml:space="preserve">
+    <value>Bandwidth Monitor</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.Text" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.Text" xml:space="preserve">
+    <value>Peer-to-peer networking made simple.</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.Text" xml:space="preserve">
+    <value>Securely connect, share, and communicate.</value>
+  </data>
+  <data name="ViewHomePageText1.Text" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="ViewHomePageText2.Text" xml:space="preserve">
+    <value>Discover how OpenNet helps you build peer-to-peer connections</value>
+  </data>
+  <data name="ViewHomePageText3.Text" xml:space="preserve">
+    <value>Secure File Transfer</value>
+  </data>
+  <data name="ViewHomePageText4.Text" xml:space="preserve">
+    <value>Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed.</value>
+  </data>
+  <data name="ViewHomePageText5.Text" xml:space="preserve">
+    <value>开始传输</value>
+  </data>
+  <data name="ViewHomePageText6.Text" xml:space="preserve">
+    <value>Auto Discovery</value>
+  </data>
+  <data name="ViewHomePageText7.Text" xml:space="preserve">
+    <value>Automatically find available peers on your local network</value>
+  </data>
+  <data name="ViewHomePageText8.Text" xml:space="preserve">
+    <value>Scan network</value>
+  </data>
+  <data name="ViewHomePageText9.Text" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ViewHomePageText10.Text" xml:space="preserve">
+    <value>Communicate with peers using encrypted messaging channels</value>
+  </data>
+  <data name="ViewHomePageText11.Text" xml:space="preserve">
+    <value>VPN &amp;amp;amp; Tunneling</value>
+  </data>
+  <data name="ViewHomePageText12.Text" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices for private networking across the internet</value>
+  </data>
+  <data name="ViewHomePageText13.Text" xml:space="preserve">
+    <value>Open-source</value>
+  </data>
+  <data name="ViewHomePageText14.Text" xml:space="preserve">
+    <value>OpenNet is open-source. Contributions, issues, and feature requests are welcome.</value>
+  </data>
+  <data name="ViewHomePageText15.Text" xml:space="preserve">
+    <value>OpenNet repository</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.Content" xml:space="preserve">
+    <value>Custom Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.Content" xml:space="preserve">
+    <value>Custom Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.Content" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.Content" xml:space="preserve">
+    <value>薄板材质</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.Content" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.Content" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.Text" xml:space="preserve">
+    <value>分块图</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.Text" xml:space="preserve">
+    <value>Select a BitTorrent task to inspect its pieces.</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.Content" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.Text" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.Text" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.Text" xml:space="preserve">
+    <value>Piece size: —</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.Text" xml:space="preserve">
+    <value>Web seeds: 0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.Text" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.Text" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.Text" xml:space="preserve">
+    <value>未检查</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.Text" xml:space="preserve">
+    <value>没有选中的任务</value>
+  </data>
+  <data name="ViewTaskSummaryPageText80.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.Text" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.Text" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.Text" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.Text" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.Text" xml:space="preserve">
+    <value>Download progress and speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.Text" xml:space="preserve">
+    <value>传输</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
+    <value>已用时间</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
+    <value>Download speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.Text" xml:space="preserve">
+    <value>Download limit</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.Text" xml:space="preserve">
+    <value>做种时间</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.Text" xml:space="preserve">
+    <value>已上传</value>
+  </data>
+  <data name="ViewTaskSummaryPageText36.Text" xml:space="preserve">
+    <value>上传速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.Text" xml:space="preserve">
+    <value>上传限制</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.Text" xml:space="preserve">
+    <value>做种</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.Text" xml:space="preserve">
+    <value>用户</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.Text" xml:space="preserve">
+    <value>Connections</value>
+  </data>
+  <data name="ViewTaskSummaryPageText38.Text" xml:space="preserve">
+    <value>分享率</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.Text" xml:space="preserve">
+    <value>Long-Term Seeding</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.Text" xml:space="preserve">
+    <value>上传大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.Text" xml:space="preserve">
+    <value>任务名称</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.Text" xml:space="preserve">
+    <value>保存路径</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.Text" xml:space="preserve">
+    <value>任务大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.Text" xml:space="preserve">
+    <value>Info hash v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText58.Text" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.Text" xml:space="preserve">
+    <value>Info hash v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.Text" xml:space="preserve">
+    <value>Piece hashes</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.Text" xml:space="preserve">
+    <value>Added on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.Text" xml:space="preserve">
+    <value>Finished on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.Text" xml:space="preserve">
+    <value>发布者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.Text" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.Text" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.Text" xml:space="preserve">
+    <value>剩余大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.Text" xml:space="preserve">
+    <value>分块</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.Text" xml:space="preserve">
+    <value>文件数量</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.Text" xml:space="preserve">
+    <value>File alignment</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.Text" xml:space="preserve">
+    <value>队列位置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.Text" xml:space="preserve">
+    <value>Created by</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.Text" xml:space="preserve">
+    <value>Created on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.Text" xml:space="preserve">
+    <value>私人 Torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.Text" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.Text" xml:space="preserve">
+    <value>Edit trackers...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.Text" xml:space="preserve">
+    <value>更新 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.Text" xml:space="preserve">
+    <value>删除 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.Text" xml:space="preserve">
+    <value>查看日志</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.Text" xml:space="preserve">
+    <value>Clear log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.Text" xml:space="preserve">
+    <value>Clear log in all trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.Text" xml:space="preserve">
+    <value>Clear log in trackers of all tasks</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
+    <value>移除所有无法连接的跟踪器...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
+    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
+    <value>Auto size all columns</value>
+  </data>
+  <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
+    <value>Tracker 链接</value>
+  </data>
+  <data name="ViewTaskTrackersPageText21.Text" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="ViewTaskTrackersPageText22.Text" xml:space="preserve">
+    <value>重试次数</value>
+  </data>
+  <data name="ViewTaskTrackersPageText23.Text" xml:space="preserve">
+    <value>剩余时间</value>
+  </data>
+  <data name="ViewTaskTrackersPageText24.Text" xml:space="preserve">
+    <value>做种者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
+    <value>下载者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+    <value>重置列与排序状态</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
+    <value>没有 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.Content" xml:space="preserve">
+    <value>Add trackers</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.Text" xml:space="preserve">
+    <value>NAT and port detection</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.Text" xml:space="preserve">
+    <value>Traversal directory</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.Header" xml:space="preserve">
+    <value>监听端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.Text" xml:space="preserve">
+    <value>NAT behavior uses a temporary UDP socket. Port reachability is tested against libtorrent&amp;apos;s existing TCP/uTP listener.</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.Text" xml:space="preserve">
+    <value>Address and NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.Text" xml:space="preserve">
+    <value>本地 IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText46.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.Text" xml:space="preserve">
+    <value>IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.Text" xml:space="preserve">
+    <value>映射行为</value>
+  </data>
+  <data name="ViewNATDetectorWindowText24.Text" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.Text" xml:space="preserve">
+    <value>Filtering behavior</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.Text" xml:space="preserve">
+    <value>Legacy label</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.Text" xml:space="preserve">
+    <value>监听中的端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.Text" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText28.Text" xml:space="preserve">
+    <value>未测试</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.Text" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.Text" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.Text" xml:space="preserve">
+    <value>映射端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.Text" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.Text" xml:space="preserve">
+    <value>Probe evidence</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.Text" xml:space="preserve">
+    <value>RFC 5780 mapping observations</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.Text" xml:space="preserve">
+    <value>Server 1 / primary</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.Text" xml:space="preserve">
+    <value>Server 1 / other port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.Text" xml:space="preserve">
+    <value>Other IPv4 / server 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.Text" xml:space="preserve">
+    <value>结果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.Text" xml:space="preserve">
+    <value>公网 IP:端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.Text" xml:space="preserve">
+    <value>延迟</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.Text" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.Content" xml:space="preserve">
+    <value>开始检测</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.Text" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.Text" xml:space="preserve">
+    <value>发布者</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.Text" xml:space="preserve">
+    <value>Download Order</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.Text" xml:space="preserve">
+    <value>任务名称</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.Header" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.Text" xml:space="preserve">
+    <value>Tracker 链接</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.Text" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.Text" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.Text" xml:space="preserve">
+    <value>暂无 tracker 日志记录</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.Text" xml:space="preserve">
+    <value>上传速度</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.Text" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.Text" xml:space="preserve">
+    <value>下载者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.Text" xml:space="preserve">
+    <value>重试次数</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.Text" xml:space="preserve">
+    <value>Tracker 链接</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
+    <value>未测试</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.Text" xml:space="preserve">
+    <value>做种者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.Text" xml:space="preserve">
+    <value>剩余时间</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.Text" xml:space="preserve">
+    <value>分享率</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.Text" xml:space="preserve">
+    <value>不限</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.Text" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.Text" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open OpenNet</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>开始所有下载</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>开始所有上传</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>停止所有任务</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>暂停所有活动任务</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>恢复上次暂停的任务</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download Limit</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>不限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上传限制</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Enable Scheduler</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open Torrent File ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Add Torrent from URL ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP Batch Download ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Capture Clipboard URL</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tray Balloon</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Floating Window</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Floating Window settings</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Options ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Transfer files securely across your P2P network</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Discover and connect to peers on your local network</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Chat with peers in real-time over secure channels</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Share folders and storage with your network peers</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Monitor network bandwidth and performance in real-time</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peer-to-peer networking made simple.</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Securely connect, share, and communicate.</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>我已阅读并同意</value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>项目说明与使用须知</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>隐私说明</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>问题报告规范</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet 开源许可证</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>如果上方图标缺失、显示为乱码或方框，请前往 </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> 下载并安装图标字体。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安装完成后请重启 OpenNet，以确认组件是否正常生效。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>如果未检测到 WebView2 运行时，请前往 </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> 下载并安装。</value>
+  </data>
+  <data name="ViewHomePageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="ViewHomePageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Discover how OpenNet helps you build peer-to-peer connections</value>
+  </data>
+  <data name="ViewHomePageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Secure File Transfer</value>
+  </data>
+  <data name="ViewHomePageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed.</value>
+  </data>
+  <data name="ViewHomePageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>开始传输</value>
+  </data>
+  <data name="ViewHomePageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Discovery</value>
+  </data>
+  <data name="ViewHomePageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Automatically find available peers on your local network</value>
+  </data>
+  <data name="ViewHomePageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Scan network</value>
+  </data>
+  <data name="ViewHomePageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Communicate with peers using encrypted messaging channels</value>
+  </data>
+  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>VPN &amp;amp;amp; Tunneling</value>
+  </data>
+  <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Create secure encrypted tunnels between devices for private networking across the internet</value>
+  </data>
+  <data name="ViewHomePageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Open-source</value>
+  </data>
+  <data name="ViewHomePageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet is open-source. Contributions, issues, and feature requests are welcome.</value>
+  </data>
+  <data name="ViewHomePageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet repository</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT 类型：</value>
+  </data>
+  <data name="NatTools_PublicIPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>公网 IP：</value>
+  </data>
+  <data name="NatTools_UPnPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP：</value>
+  </data>
+  <data name="NatTools_PortResultLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>结果：</value>
+  </data>
+  <data name="RSSItemsLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>项</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Custom Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Custom Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>薄板材质</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Base</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Alt</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>单张图片</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>本地文件夹</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>单个视频</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>本地文件夹</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分块图</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Select a BitTorrent task to inspect its pieces.</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>刷新</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Piece size: —</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Web seeds: 0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloading</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Finished</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未检查</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>没有选中的任务</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Available pieces</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download progress and speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>传输</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已用时间</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download speed</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download limit</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>做种时间</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已上传</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上传速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上传限制</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>做种</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>用户</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Connections</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分享率</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Long-Term Seeding</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上传大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>任务名称</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>保存路径</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>任务大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Info hash v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Info hash v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Piece hashes</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Added on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Finished on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>发布者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>标签</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>剩余大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分块</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>文件数量</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>File alignment</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>队列位置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Created by</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Created on</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>私人 Torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Flags</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Edit trackers...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>更新 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>删除 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>查看日志</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear log</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear log in all trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Clear log in trackers of all tasks</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>移除所有无法连接的跟踪器...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto size all columns</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tracker 链接</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>重试次数</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>剩余时间</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>做种者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下载者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>重置列与排序状态</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>没有 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Add trackers</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentNameLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>名称:</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>信息哈希：</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT and port detection</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Traversal directory</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>监听端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT behavior uses a temporary UDP socket. Port reachability is tested against libtorrent&amp;apos;s existing TCP/uTP listener.</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Address and NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>本地 IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>映射行为</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Filtering behavior</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Legacy label</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>监听中的端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未测试</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>映射端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Probe evidence</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>RFC 5780 mapping observations</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Server 1 / primary</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Server 1 / other port</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Other IPv4 / server 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>结果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>公网 IP:端口</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>延迟</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>开始检测</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Advanced</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>发布者</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Download Order</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>任务名称</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Always on top</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tracker 链接</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>时间</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Content</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>暂无 tracker 日志记录</value>
+  </data>
+  <data name="trayIcon.ToolTip" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Header" xml:space="preserve">
+    <value>File Transfer</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Header" xml:space="preserve">
+    <value>网络发现</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Header" xml:space="preserve">
+    <value>Peer Chat</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Header" xml:space="preserve">
+    <value>VPN Tunnel</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Header" xml:space="preserve">
+    <value>Shared Storage</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Header" xml:space="preserve">
+    <value>Bandwidth Monitor</value>
+  </data>
+  <data name="IpEndpointInputAddress.Header" xml:space="preserve">
+    <value>IP 地址</value>
+  </data>
+  <data name="IpEndpointInputAddress.PlaceholderText" xml:space="preserve">
+    <value>0.0.0.0 or ::</value>
+  </data>
+  <data name="IpEndpointInputPort.Header" xml:space="preserve">
+    <value>端口</value>
+  </data>
+  <data name="GuideWebUIUsername.PlaceholderText" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="InfoBarShowButtonText.Text" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="InfoBarPanelTitle.Text" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="MoreToolsHeader.Text" xml:space="preserve">
+    <value>OpenNet工具</value>
+  </data>
+  <data name="MoreRuntimeStatusTitle.Text" xml:space="preserve">
+    <value>完整的运行时状态</value>
+  </data>
+  <data name="MoreRuntimeStatusDescription.Text" xml:space="preserve">
+    <value>引擎、网络、传输、CPU、内存、磁盘和队列</value>
+  </data>
+  <data name="MoreNatDetectionTitle.Text" xml:space="preserve">
+    <value>网络地址转换（NAT）和端口检测</value>
+  </data>
+  <data name="MoreNatDetectionDescription.Text" xml:space="preserve">
+    <value>STUN观测与libtorrent端口映射</value>
+  </data>
+  <data name="MoreGuideTitle.Text" xml:space="preserve">
+    <value>设置指南</value>
+  </data>
+  <data name="MoreGuideDescription.Text" xml:space="preserve">
+    <value>重新打开Web UI凭据和GUI设置</value>
+  </data>
+  <data name="MoreWebUIStatus.Text" xml:space="preserve">
+    <value>正在检查Web用户界面…</value>
+  </data>
+  <data name="MoreCopyWebUIAddress.Content" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="MoreOpenWebUIButton.Content" xml:space="preserve">
+    <value>打开</value>
+  </data>
+  <data name="NavItem_More.Content" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Description" xml:space="preserve">
+    <value>Append every enabled custom and subscribed tracker when a new BitTorrent task is first added</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Header" xml:space="preserve">
+    <value>Automatically add custom trackers</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNewTrackerTextBox.PlaceholderText" xml:space="preserve">
+    <value>Enter tracker URL (e.g., tracker.example.com:6969)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageBestItem.Content" xml:space="preserve">
+    <value>精选列表（best.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageAllItem.Content" xml:space="preserve">
+    <value>完整列表（all.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageHttpItem.Content" xml:space="preserve">
+    <value>HTTP(S) 列表（http.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoHttpItem.Content" xml:space="preserve">
+    <value>无 HTTP 列表（nohttp.txt）</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettingsHeader.Text" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Description" xml:space="preserve">
+    <value>Configure the IPv4 and IPv6 endpoints used by libtorrent. Port 0 lets the operating system select an available port.</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Header" xml:space="preserve">
+    <value>BitTorrent listen endpoints</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListener.Header" xml:space="preserve">
+    <value>Runtime listener</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListenerEndpoint.Text" xml:space="preserve">
+    <value>BitTorrent 引擎未运行</value>
+  </data>
+  <data name="RSSMaxItemsLabel.Text" xml:space="preserve">
+    <value>每个源的最大条目数：</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Description" xml:space="preserve">
+    <value>制片人名单/特别鸣谢</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Header" xml:space="preserve">
+    <value>开发者</value>
+  </data>
+  <data name="SettingsGeneralNavItem.Content" xml:space="preserve">
+    <value>常规</value>
+  </data>
+  <data name="SettingsBitTorrentNavItem.Content" xml:space="preserve">
+    <value>比特种子</value>
+  </data>
+  <data name="SettingsNetworkNavItem.Content" xml:space="preserve">
+    <value>网络</value>
+  </data>
+  <data name="SettingsTrackerNavItem.Content" xml:space="preserve">
+    <value>追踪器</value>
+  </data>
+  <data name="SettingsIPFilterNavItem.Content" xml:space="preserve">
+    <value>IP 过滤</value>
+  </data>
+  <data name="SettingsDownloadNavItem.Content" xml:space="preserve">
+    <value>下载行为</value>
+  </data>
+  <data name="SettingsWebUINavItem.Content" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="SettingsAboutNavItem.Content" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="SettingsPersonalizeTitle.Text" xml:space="preserve">
+    <value>个性化你的设备</value>
+  </data>
+  <data name="SettingsPersonalizeDescription.Text" xml:space="preserve">
+    <value>应用你自己的个性化主题和背景</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>版本和更新</value>
+  </data>
+  <data name="AppUpdateCheckButton.Content" xml:space="preserve">
+    <value>Check update</value>
+  </data>
+  <data name="AutoCheckUpdateCheckbox.Content" xml:space="preserve">
+    <value>Automatically check for updates</value>
+  </data>
+  <data name="SettingsAppThemeCard.Description" xml:space="preserve">
+    <value>选择应用展示的主题</value>
+  </data>
+  <data name="SettingsAppThemeCard.Header" xml:space="preserve">
+    <value>应用主题</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Description" xml:space="preserve">
+    <value>应用于任务、追踪器、对等节点和运行状态。较低的间隔值会提高处理器占用</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Header" xml:space="preserve">
+    <value>用户界面数据刷新间隔</value>
+  </data>
+  <data name="GuiRefreshIntervalBox.Header" xml:space="preserve">
+    <value>毫秒</value>
+  </data>
+  <data name="RestartToApplyLanguageButton.Content" xml:space="preserve">
+    <value>立即重新启动</value>
+  </data>
+  <data name="ViewThemeSettingLuminosityOpacitySlider.Header" xml:space="preserve">
+    <value>亮度不透明度</value>
+  </data>
+  <data name="ViewThemeSettingTintOpacitySlider.Header" xml:space="preserve">
+    <value>色调不透明度</value>
+  </data>
+  <data name="ViewThemeSettingEnableAcrylicSwitch.Header" xml:space="preserve">
+    <value>Enable acrylic when window is inactive</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Description" xml:space="preserve">
+    <value>应用的背景类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Header" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundMica.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Description" xml:space="preserve">
+    <value>背景的亚克力效果模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Header" xml:space="preserve">
+    <value>亚克力类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Description" xml:space="preserve">
+    <value>背景的 Mica 效果模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Header" xml:space="preserve">
+    <value>Mica 类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Description" xml:space="preserve">
+    <value>Enable fallback when Mica is unavailable (Win10)</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Header" xml:space="preserve">
+    <value>Mica error fallback</value>
+  </data>
+  <data name="SoftBackgroundColors.Description" xml:space="preserve">
+    <value>选择你的主色调并进行个性化设置</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Description" xml:space="preserve">
+    <value>背景中图片大小的设置方式</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Header" xml:space="preserve">
+    <value>图片拉伸模式</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.Content" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>等比例缩放</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>等比例填充</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Description" xml:space="preserve">
+    <value>图片在背景中的透明度，会覆盖窗口色</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Header" xml:space="preserve">
+    <value>透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.Content" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>等比例缩放</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>等比例填充</value>
+  </data>
+  <data name="ViewThemesSettingsPageFontSetting.Description" xml:space="preserve">
+    <value>Font size</value>
+  </data>
+  <data name="ViewThemesSettingsPageFontSetting.Header" xml:space="preserve">
+    <value>Font Setting</value>
+  </data>
+  <data name="WebUISettingsTitle.Text" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="WebUISettingsDescription.Text" xml:space="preserve">
+    <value>Use the bundled qBittorrent WebUI from a browser or any qBittorrent Web API compatible client.</value>
+  </data>
+  <data name="WebUISettingsConnectionHeader.Text" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Description" xml:space="preserve">
+    <value>embedded HTTP 服务器所接受的IP地址</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Header" xml:space="preserve">
+    <value>监听地址</value>
+  </data>
+  <data name="WebUISettingsPortCard.Description" xml:space="preserve">
+    <value>重新启动 Web UI 后将立即应用新的端口</value>
+  </data>
+  <data name="WebUISettingsPortCard.Header" xml:space="preserve">
+    <value>端口</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Description" xml:space="preserve">
+    <value>WebUI 使用的语言代码，示例 en 或 zh_CN.</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Header" xml:space="preserve">
+    <value>地区设置</value>
+  </data>
+  <data name="WebUISettingsLocale.PlaceholderText" xml:space="preserve">
+    <value>en</value>
+  </data>
+  <data name="WebUISettingsAuthenticationHeader.Text" xml:space="preserve">
+    <value>Authentication</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Description" xml:space="preserve">
+    <value>At least 3 characters; a colon is not allowed.</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Header" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Description" xml:space="preserve">
+    <value>At least 6 characters. Existing browser sessions are cleared when settings are applied.</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Header" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Description" xml:space="preserve">
+    <value>Optional bearer token for API clients. Treat it like a password.</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Header" xml:space="preserve">
+    <value>API key</value>
+  </data>
+  <data name="WebUISettingsGenerateApiKey.Content" xml:space="preserve">
+    <value>Generate</value>
+  </data>
+  <data name="WebUISettingsCopyApiKey.Content" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="WebUISettingsClearApiKey.Content" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="WebUISettingsSave.Content" xml:space="preserve">
+    <value>保存并重启 Web UI</value>
+  </data>
+  <data name="WebUISettingsOpen.Content" xml:space="preserve">
+    <value>Open Web UI</value>
+  </data>
+  <data name="FilePriority_Skip.Content" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="FilePriority_Low.Content" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.Content" xml:space="preserve">
+    <value>普通</value>
+  </data>
+  <data name="FilePriority_High.Content" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="TaskSpeedGraph_Title.Text" xml:space="preserve">
+    <value>性能图表</value>
+  </data>
+  <data name="TaskSpeedGraph_Subtitle.Text" xml:space="preserve">
+    <value>Live session and system telemetry</value>
+  </data>
+  <data name="TaskSpeedGraph_MetricSelector.Header" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="TaskSpeedGraph_TransferSpeed.Content" xml:space="preserve">
+    <value>传输速度</value>
+  </data>
+  <data name="TaskSpeedGraph_DiskCache.Content" xml:space="preserve">
+    <value>磁盘缓存</value>
+  </data>
+  <data name="TaskSpeedGraph_LongTermSeeding.Content" xml:space="preserve">
+    <value>Long-Term Seeding</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuOverall.Content" xml:space="preserve">
+    <value>CPU Usage (Overall)</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuLogicalProcessors.Content" xml:space="preserve">
+    <value>CPU Usage (Logical Processor)</value>
+  </data>
+  <data name="TaskSpeedGraph_MemoryUsage.Content" xml:space="preserve">
+    <value>运行内存使用量</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtUdp.Content" xml:space="preserve">
+    <value>DHT over UDP</value>
+  </data>
+  <data name="TaskViewTaskSpeedGraphPageGlobalDownload.Text" xml:space="preserve">
+    <value>全局下载速度</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDiskCacheTitle.Text" xml:space="preserve">
+    <value>磁盘缓存</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageLongTermUpload.Text" xml:space="preserve">
+    <value>Long-term upload</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageOverallCpu.Text" xml:space="preserve">
+    <value>Overall CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAverageCpu.Text" xml:space="preserve">
+    <value>Average CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageWorkingSet.Text" xml:space="preserve">
+    <value>OpenNet working set</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDhtReceive.Text" xml:space="preserve">
+    <value>DHT receive</value>
+  </data>
+  <data name="TaskSpeedGraph_GlobalUpload.Text" xml:space="preserve">
+    <value>Global upload</value>
+  </data>
+  <data name="TaskSpeedGraph_Source.Text" xml:space="preserve">
+    <value>来源</value>
+  </data>
+  <data name="TaskSpeedGraph_Scope.Text" xml:space="preserve">
+    <value>范围</value>
+  </data>
+  <data name="TaskSpeedGraph_Sampling.Text" xml:space="preserve">
+    <value>取样</value>
+  </data>
+  <data name="TaskSpeedGraph_PeakCpu.Text" xml:space="preserve">
+    <value>处理器峰值</value>
+  </data>
+  <data name="TaskSpeedGraph_PhysicalMemoryShare.Text" xml:space="preserve">
+    <value>物理内存使用</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtSend.Text" xml:space="preserve">
+    <value>DHT send</value>
+  </data>
+  <data name="TaskSpeedGraph_GraphScale.Text" xml:space="preserve">
+    <value>图标比例</value>
+  </data>
+  <data name="TaskNewFromUrlButton.Text" xml:space="preserve">
+    <value>磁力链接</value>
+  </data>
+  <data name="TaskNewFromFileButton.Text" xml:space="preserve">
+    <value>种子文件</value>
+  </data>
+  <data name="TaskNewFromHttpButton.Text" xml:space="preserve">
+    <value>HTTP 下载</value>
+  </data>
+  <data name="Header_DownloadSize.Text" xml:space="preserve">
+    <value>下载大小</value>
+  </data>
+  <data name="Header_UploadSize.Text" xml:space="preserve">
+    <value>上传大小</value>
+  </data>
+  <data name="Header_TotalDownloadSize.Text" xml:space="preserve">
+    <value>总计下载大小</value>
+  </data>
+  <data name="Header_TotalUploadSize.Text" xml:space="preserve">
+    <value>总计上传大小</value>
+  </data>
+  <data name="Header_ULRate.Text" xml:space="preserve">
+    <value>上传速率</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
+    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
+    <value>Auto Size All Column&amp;apos;s Width to Fit</value>
+  </data>
+  <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
+    <value>重置列与排序状态</value>
+  </data>
+  <data name="ViewWindowExceptionHeader.Text" xml:space="preserve">
+    <value>An unrecoverable fatal error has occurred</value>
+  </data>
+  <data name="ViewExceptionWindowStacktraceHeader.Header" xml:space="preserve">
+    <value>异常详情</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Description" xml:space="preserve">
+    <value>Clear, step-by-step descriptions will help us locate the issue faster</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Header" xml:space="preserve">
+    <value>异常发生前，你执行了哪些操作？</value>
+  </data>
+  <data name="ViewWindowExceptionClose.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox.Content" xml:space="preserve">
+    <value>立即开始</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartDownloadButton.Content" xml:space="preserve">
+    <value>开始下载</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowCloseButton.Content" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Enc_None" xml:space="preserve">
+    <value>无加密</value>
+  </data>
+  <data name="BT_Proxy_None.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="IPF_ReplacementSkipped" xml:space="preserve">
+    <value>为保留现有规则，跳过了替换操作</value>
+  </data>
+  <data name="IPF_Skipped" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>未排序 点击以进行升序排序</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例缩放</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例填充</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Fill</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例缩放</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例填充</value>
+  </data>
+  <data name="FilePriority_Skip.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="FilePriority_Low.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>普通</value>
+  </data>
+  <data name="FilePriority_High.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="ViewMainWindowButton.Content" xml:space="preserve">
+    <value>[Dev] Invert Theme</value>
+  </data>
+  <data name="ViewGuideViewRun.Text" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+    <value>DHT</value>
+  </data>
+  <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
+    <value>端口阻塞。请检查你的路由或防火墙设置</value>
+  </data>
+  <data name="ViewNatToolsPageRun.Text" xml:space="preserve">
+    <value>Connected Peers: </value>
+  </data>
+  <data name="ViewNatToolsPageTextBlock.Text" xml:space="preserve">
+    <value>映射一致</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>未监听</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>从URL（.txt格式）订阅跟踪列表</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>Tracker Subscriptions</value>
+  </data>
+  <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
+    <value>订阅</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>Enable Local Peer Discovery (LSD)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>订阅链接 (e.g., https://example.com/trackers.txt)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>Discover peers on the local network</value>
+  </data>
+  <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
+    <value>前往仓库</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Description" xml:space="preserve">
+    <value>OpenNet for WinUI3</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Header" xml:space="preserve">
+    <value>OpenNet 开源</value>
+  </data>
+  <data name="ViewAboutPageSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEssential Build SDK version</value>
+  </data>
+  <data name="ViewAboutPageHyperlinkButton.Content" xml:space="preserve">
+    <value>在 Github 上加入</value>
+  </data>
+  <data name="ViewAboutPageRun.Text" xml:space="preserve">
+    <value>上次提交：</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>下载文件夹</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>高级 libtorrent</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>发送给对等节点的标识</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>已完成项目的移动路径</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>新下载的默认行为</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>下载默认值</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>1.2.3.4
+10.0.0.0/8
+192.168.1.0-192.168.1.255
+2400:1a00::/32</value>
+  </data>
+  <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
+    <value>重置列与排序状态</value>
+  </data>
+  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
+    <value>优先级</value>
+  </data>
+  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
+    <value>重置列与排序状态</value>
+  </data>
+  <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
+    <value>来源</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlock.Text" xml:space="preserve">
+    <value>↑ —</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Description" xml:space="preserve">
+    <value>配置渲染的线条、边框和渐变区域</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Header" xml:space="preserve">
+    <value>系列外观</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Description" xml:space="preserve">
+    <value>恢复每个图形自定义选项到程序原值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Header" xml:space="preserve">
+    <value>恢复默认值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetButton.Content" xml:space="preserve">
+    <value>重置</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxTimeUnit.Text" xml:space="preserve">
+    <value>毫秒</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemDot.Content" xml:space="preserve">
+    <value>圆点</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>自定义图形样式</value>
+  </data>
+  <data name="ViewTasksPageAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>搜索</value>
+  </data>
+  <data name="ViewTasksPageToggleMenuItem.Text" xml:space="preserve">
+    <value>用户</value>
+  </data>
+  <data name="ViewTorrentCheckGeneralPageTextBlock.Text" xml:space="preserve">
+    <value>您现在可以配置保存位置和跟踪器，或者立即添加任务。任务列表中的元数据将继续下载</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Description" xml:space="preserve">
+    <value>Intentionally throw a XAML-facing exception</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Header" xml:space="preserve">
+    <value>Exception handling</value>
+  </data>
+  <data name="ViewDevWindowButton.Content" xml:space="preserve">
+    <value>Trigger exception</value>
+  </data>
+  <data name="ViewInfoOverlayWindowTextBlock.Text" xml:space="preserve">
+    <value>DHT: 0 nodes</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowTextBlock.Text" xml:space="preserve">
+    <value>Waiting for a visible point…</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowButton.Content" xml:space="preserve">
+    <value>Add rounded batch</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowExpander.Header" xml:space="preserve">
+    <value>Graph properties and brush composition</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBox.Header" xml:space="preserve">
+    <value>高亮行为</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBoxItem.Content" xml:space="preserve">
+    <value>Each point</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceStrokeSettingsCard.Header" xml:space="preserve">
+    <value>线条粗细</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowToggleSwitch.Header" xml:space="preserve">
+    <value>Dashed border</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectorBarItem.Text" xml:space="preserve">
+    <value>追踪器</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowTextBlock.Text" xml:space="preserve">
+    <value>应用范围内的自定义跟踪开关和订阅在“网络设置”中进行管理</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowCheckBoxText1.Content" xml:space="preserve">
+    <value>将 .torrent 文件副本保存到下载文件夹</value>
+  </data>
+  <data name="ViewNatToolsPageNACoreNotRunning" xml:space="preserve">
+    <value>N/A (core not running)</value>
+  </data>
+  <data name="ViewNatToolsPageNA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewNatToolsPageDetecting" xml:space="preserve">
+    <value>Detecting...</value>
+  </data>
+  <data name="ViewNatToolsPage" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="ViewNatToolsPageTesting" xml:space="preserve">
+    <value>测试中…</value>
+  </data>
+  <data name="ViewNatToolsPageYesConsistentMappingAcrossAllServers" xml:space="preserve">
+    <value>是 - 所有服务器之间映射一致</value>
+  </data>
+  <data name="ViewNatToolsPageFullConeEIM" xml:space="preserve">
+    <value>Full Cone (EIM)</value>
+  </data>
+  <data name="ViewNatToolsPageNoSameIPButDifferentPorts" xml:space="preserve">
+    <value>否 - 相同的 IP 但不同的端口</value>
+  </data>
+  <data name="ViewNatToolsPagePortRestrictedSymmetric" xml:space="preserve">
+    <value>端口受限 / 对称型</value>
+  </data>
+  <data name="ViewNatToolsPageNoDifferentIPPortPerDestination" xml:space="preserve">
+    <value>No - different IP:Port per destination</value>
+  </data>
+  <data name="ViewNatToolsPageSymmetric" xml:space="preserve">
+    <value>对称型</value>
+  </data>
+  <data name="ViewNatToolsPagePartialOnlyOneServerResponded" xml:space="preserve">
+    <value>Partial - only one server responded</value>
+  </data>
+  <data name="ViewNatToolsPageUnknownPartialResults" xml:space="preserve">
+    <value>Unknown (partial results)</value>
+  </data>
+  <data name="ViewNatToolsPageFailedNoSTUNResponses" xml:space="preserve">
+    <value>Failed - no STUN responses</value>
+  </data>
+  <data name="ViewNatToolsPageUnknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewNatToolsPageError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="ViewNatToolsPageInvalidPortNumber" xml:space="preserve">
+    <value>Invalid port number</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNReportsYourExternalPortMatchesTheLocalPortPeersShouldBeAbleToConnectToYouDirectly" xml:space="preserve">
+    <value>STUN reports your external port matches the local port. Peers should be able to connect to you directly.</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNMappedPortDiffersFromLocalPortOrNoResponseReceivedYourNATMayBeRewritingThePortConsiderEnablingUpnpOrSettingUpPortForwarding" xml:space="preserve">
+    <value>STUN mapped port differs from local port, or no response received. Your NAT may be rewriting the port. Consider enabling UPnP or setting up port forwarding.</value>
+  </data>
+  <data name="ViewNatToolsPageErrorTestingPort" xml:space="preserve">
+    <value>Error testing port</value>
+  </data>
+  <data name="ViewNatToolsPageCouldNotCompleteTheSTUNBasedPortTestCheckYourNetworkConnection" xml:space="preserve">
+    <value>Could not complete the STUN-based port test. Check your network connection.</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeHttpDownload" xml:space="preserve">
+    <value>HTTP download</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNA" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeEngineUnavailable" xml:space="preserve">
+    <value>Engine unavailable</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNoTaskSelected" xml:space="preserve">
+    <value>没有选中的任务</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime0" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime00" xml:space="preserve">
+    <value>0 / 0</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNone" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewRuntimeStatusWindowReportCopied" xml:space="preserve">
+    <value>已将报告复制到剪贴板</value>
+  </data>
+  <data name="ViewTaskFilesPageRenameFileTitle" xml:space="preserve">
+    <value>重命名文件</value>
+  </data>
+  <data name="CommonRename" xml:space="preserve">
+    <value>重命名</value>
+  </data>
+  <data name="CommonSave" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="CommonClearAll" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerUrlPlaceholder" xml:space="preserve">
+    <value>每行输入一个 HTTP、HTTPS 或 UDP Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersTitle" xml:space="preserve">
+    <value>编辑 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageInvalidTrackerUrlTitle" xml:space="preserve">
+    <value>Tracker URL 无效</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerTitle" xml:space="preserve">
+    <value>删除 Tracker？</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllLogsTitle" xml:space="preserve">
+    <value>清除所有 Tracker 日志？</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePrompt" xml:space="preserve">
+    <value>删除已达到重试次数上限的所有 Tracker：</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTitle" xml:space="preserve">
+    <value>删除无法访问的 Tracker</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedTitle" xml:space="preserve">
+    <value>删除订阅</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationPrefix" xml:space="preserve">
+    <value>确定要删除“</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationSuffix" xml:space="preserve">
+    <value>”吗？</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnterClientNameHint" xml:space="preserve">
+    <value>输入要测试的对等客户端名称。</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageNoMatchingRule" xml:space="preserve">
+    <value>没有启用的规则匹配此客户端</value>
+  </data>
+  <data name="ViewClientFilterSettingsPagePatternLabel" xml:space="preserve">
+    <value>模式</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageMatchTypeLabel" xml:space="preserve">
+    <value>匹配类型</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageCaseSensitive" xml:space="preserve">
+    <value>区分大小写</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnabled" xml:space="preserve">
+    <value>已启用</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDescriptionLabel" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>编辑客户端过滤规则</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>删除客户端过滤规则</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageImportRulesTitle" xml:space="preserve">
+    <value>导入客户端过滤规则</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageChooseFile" xml:space="preserve">
+    <value>选择文件</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageClearRulesTitle" xml:space="preserve">
+    <value>清除客户端过滤规则</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
+    <value>选择了多个文件</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedPrompt" xml:space="preserve">
+    <value>你选择了多个文件，接下来要执行什么操作？</value>
+  </data>
+  <data name="ViewTasksPageCheckInNewWindows" xml:space="preserve">
+    <value>在新窗口中检查</value>
+  </data>
+  <data name="ViewTasksPageAddToList" xml:space="preserve">
+    <value>添加到列表</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableTitle" xml:space="preserve">
+    <value>HTTP 下载不可用</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableMessage" xml:space="preserve">
+    <value>aria2 下载引擎不可用。请确认 aria2c.exe 位于应用程序目录中。</value>
+  </data>
+  <data name="ViewTasksPageRenamePlaceholder" xml:space="preserve">
+    <value>输入新名称</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageInformationTitle" xml:space="preserve">
+    <value>磁盘使用信息</value>
+  </data>
+  <data name="CommonOk" xml:space="preserve">
+    <value>确定</value>
+  </data>
+  <data name="ViewSettingsPageCheckingForUpdates" xml:space="preserve">
+    <value>正在检查更新……</value>
+  </data>
+  <data name="ViewSettingsPageCheckUpdate" xml:space="preserve">
+    <value>检查更新</value>
+  </data>
+  <data name="ViewSettingsPageUpdateAvailable" xml:space="preserve">
+    <value>有可用的 OpenNet 更新</value>
+  </data>
+  <data name="ViewSettingsPageUpToDate" xml:space="preserve">
+    <value>OpenNet 已是最新版本</value>
+  </data>
+  <data name="ViewSettingsPageUpdateCheckFailed" xml:space="preserve">
+    <value>检查更新失败</value>
+  </data>
+  <data name="ViewSettingsPageUnableToOpenUpdate" xml:space="preserve">
+    <value>无法打开更新</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEntryLabel" xml:space="preserve">
+    <value>IP 地址、CIDR 网段或范围</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDescriptionOptional" xml:space="preserve">
+    <value>描述（可选）</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>编辑 IP 过滤规则</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>删除 IP 过滤规则</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesTitle" xml:space="preserve">
+    <value>清除所有规则</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesMessage" xml:space="preserve">
+    <value>确定要删除所有 IP 过滤规则吗？此操作无法撤销。</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageLocation" xml:space="preserve">
+    <value>位置：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTaskSize" xml:space="preserve">
+    <value>任务大小：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageUsedOnVolume" xml:space="preserve">
+    <value>卷已用空间：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageFreeOnVolume" xml:space="preserve">
+    <value>卷可用空间：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTotalCapacity" xml:space="preserve">
+    <value>总容量：</value>
+  </data>
+  <data name="CommonEnabled" xml:space="preserve">
+    <value>已启用</value>
+  </data>
+  <data name="CommonDisabled" xml:space="preserve">
+    <value>已禁用</value>
+  </data>
+  <data name="CommonDetecting" xml:space="preserve">
+    <value>检测中…</value>
+  </data>
+  <data name="CommonTesting" xml:space="preserve">
+    <value>测试中…</value>
+  </data>
+  <data name="ViewNATDetectorWindowEngineNotRunning" xml:space="preserve">
+    <value>引擎未运行</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForRouterResponse" xml:space="preserve">
+    <value>正在等待路由器响应</value>
+  </data>
+  <data name="ViewNATDetectorWindowReceived" xml:space="preserve">
+    <value>已收到</value>
+  </data>
+  <data name="ViewNATDetectorWindowNotReceived" xml:space="preserve">
+    <value>未收到</value>
+  </data>
+  <data name="ViewNATDetectorWindowStartEngineBeforeTesting" xml:space="preserve">
+    <value>请先启动 BitTorrent 引擎，再测试端口。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectingNAT" xml:space="preserve">
+    <value>正在检测 NAT 行为和入站可达性…</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForTraversalServer" xml:space="preserve">
+    <value>正在等待穿透服务器…</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionComplete" xml:space="preserve">
+    <value>检测完成</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionIncomplete" xml:space="preserve">
+    <value>检测未完成</value>
+  </data>
+  <data name="ViewNetworkSettingsPageInvalidEndpointBeforeUpdate" xml:space="preserve">
+    <value>请先修正无效的端点，再更新监听器。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageApplyingEndpointConfiguration" xml:space="preserve">
+    <value>正在应用端点配置…</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSaved" xml:space="preserve">
+    <value>已保存。BitTorrent 启动时将应用这些端点。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotRunning" xml:space="preserve">
+    <value>未运行</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEngineNotRunning" xml:space="preserve">
+    <value>BitTorrent 引擎未运行</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSavedForStartup" xml:space="preserve">
+    <value>已保存配置的端点，启动时将使用这些端点</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotSaved" xml:space="preserve">
+    <value>编辑的端点无效，尚未保存</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotListening" xml:space="preserve">
+    <value>未监听</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoListeningSocket" xml:space="preserve">
+    <value>libtorrent 尚未打开监听套接字。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotApplied" xml:space="preserve">
+    <value>编辑的端点无效，尚未应用</value>
+  </data>
+  <data name="ViewNetworkSettingsPageWaitingForListener" xml:space="preserve">
+    <value>正在等待监听器可用。</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogInvalidLinkFormat" xml:space="preserve">
+    <value>链接格式不正确。请先检查剪贴板（Win + V）。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageBitTorrentOnly" xml:space="preserve">
+    <value>BitTorrent 任务可用分片信息。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageMetadataPending" xml:space="preserve">
+    <value>尚未收到元数据。</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieceSize" xml:space="preserve">
+    <value>分片大小：</value>
+  </data>
+  <data name="ViewTaskPieceMapPageWebSeeds" xml:space="preserve">
+    <value>Web 种子：</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieces" xml:space="preserve">
+    <value>个分片</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicResourcesReady" xml:space="preserve">
+    <value>动态资源已准备就绪；已注册两个图表键。</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowAllResourcesReady" xml:space="preserve">
+    <value>动态和静态 Win2D 资源已准备就绪。</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowFrame" xml:space="preserve">
+    <value>帧</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowCPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowNetwork" xml:space="preserve">
+    <value>网络</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicHighlightY" xml:space="preserve">
+    <value>动态高亮 Y：</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowStaticY" xml:space="preserve">
+    <value>静态 Y：</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicStreamsReset" xml:space="preserve">
+    <value>动态流已重置。</value>
+  </data>
+  <data name="AppBitTorrentEngine" xml:space="preserve">
+    <value>BitTorrent 引擎</value>
+  </data>
+  <data name="AppLibtorrentInitialized" xml:space="preserve">
+    <value>libtorrent 初始化成功。</value>
+  </data>
+  <data name="AppBitTorrentEngineFailed" xml:space="preserve">
+    <value>BitTorrent 引擎失败</value>
+  </data>
+  <data name="AppLibtorrentInitializationUnknownError" xml:space="preserve">
+    <value>初始化 libtorrent 时发生未知错误。</value>
+  </data>
+  <data name="AppRSSServiceFailed" xml:space="preserve">
+    <value>RSS 服务失败</value>
+  </data>
+  <data name="AppRSSBackgroundUpdatesFailed" xml:space="preserve">
+    <value>无法启动 RSS 后台更新。</value>
+  </data>
+  <data name="AppWebUIFailed" xml:space="preserve">
+    <value>Web UI 失败</value>
+  </data>
+  <data name="AppWebUIStartFailed" xml:space="preserve">
+    <value>无法启动本地 qBittorrent 兼容 Web UI。</value>
+  </data>
+  <data name="AppWebUI" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="AppWebUIRunning" xml:space="preserve">
+    <value>qBittorrent 兼容 Web UI 正在运行。</value>
+  </data>
+  <data name="AppWebUIUnknownStartError" xml:space="preserve">
+    <value>启动 Web UI 时发生未知错误。</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>URL 错误</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>请输入有效的订阅源 URL。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDiagnosticInfoBar.Title" xml:space="preserve">
+    <value>检测说明</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageGridColorCard.Title" xml:space="preserve">
+    <value>网格颜色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasClearColorCard.Title" xml:space="preserve">
+    <value>画布清除颜色</value>
+  </data>
+  <data name="CommonUnknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingDirect" xml:space="preserve">
+    <value>直接连接 / 无地址转换</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingEndpointIndependent" xml:space="preserve">
+    <value>端点无关映射</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressDependent" xml:space="preserve">
+    <value>地址相关映射</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressAndPortDependent" xml:space="preserve">
+    <value>地址和端口相关映射</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringEndpointIndependent" xml:space="preserve">
+    <value>端点无关过滤</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressDependent" xml:space="preserve">
+    <value>地址相关过滤</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressAndPortDependent" xml:space="preserve">
+    <value>地址和端口相关过滤</value>
+  </data>
+  <data name="CoreNetworkDetectorNATOpenInternet" xml:space="preserve">
+    <value>开放互联网</value>
+  </data>
+  <data name="CoreNetworkDetectorNATFullCone" xml:space="preserve">
+    <value>完全锥形 NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATRestrictedCone" xml:space="preserve">
+    <value>受限锥形 NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATPortRestrictedCone" xml:space="preserve">
+    <value>端口受限锥形 NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATSymmetric" xml:space="preserve">
+    <value>对称 NAT</value>
+  </data>
+  <data name="ModelNetworkInfoStatusDisconnected" xml:space="preserve">
+    <value>已断开连接</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnecting" xml:space="preserve">
+    <value>连接中</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnected" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="ModelNetworkInfoStatusLimited" xml:space="preserve">
+    <value>受限连接</value>
+  </data>
+  <data name="ModelNetworkInfoStatusNoInternet" xml:space="preserve">
+    <value>无网络</value>
+  </data>
+  <data name="ModelNetworkInfoNATBlocked" xml:space="preserve">
+    <value>已阻止</value>
+  </data>
+  <data name="ModelTransferInfoStatusInitializing" xml:space="preserve">
+    <value>初始化中</value>
+  </data>
+  <data name="ModelTransferInfoStatusTransferring" xml:space="preserve">
+    <value>传输中</value>
+  </data>
+  <data name="ModelTransferInfoStatusCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="ModelTransferInfoStatusVerifying" xml:space="preserve">
+    <value>校验中</value>
+  </data>
+  <data name="ViewSettingsPageNoNewerRelease" xml:space="preserve">
+    <value>没有可用的新版本。</value>
+  </data>
+  <data name="ViewSettingsPageUnableToCheckUpdates" xml:space="preserve">
+    <value>无法检查更新</value>
+  </data>
+  <data name="ViewSettingsPageInvalidUpdateResponse" xml:space="preserve">
+    <value>更新服务器返回了无效响应。</value>
+  </data>
+  <data name="ViewSettingsPageNoValidUpdateMirror" xml:space="preserve">
+    <value>无法启动有效的更新镜像</value>
+  </data>
+  <data name="ViewRSSViewModelAddingFeed" xml:space="preserve">
+    <value>正在添加订阅源…</value>
+  </data>
+  <data name="ViewRSSViewModelFetchingFeed" xml:space="preserve">
+    <value>正在获取订阅源内容…</value>
+  </data>
+  <data name="ViewRSSViewModelFailedToAddFeed" xml:space="preserve">
+    <value>添加订阅源失败</value>
+  </data>
+  <data name="ViewRSSViewModelFeedRemoved" xml:space="preserve">
+    <value>订阅源已移除</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingFeed" xml:space="preserve">
+    <value>正在刷新订阅源…</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingAllFeeds" xml:space="preserve">
+    <value>正在刷新所有订阅源…</value>
+  </data>
+  <data name="ViewRSSViewModelFeedSettingsUpdated" xml:space="preserve">
+    <value>订阅源设置已更新</value>
+  </data>
+  <data name="ViewRSSViewModelFeedUpdated" xml:space="preserve">
+    <value>订阅源已更新</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectedItemNotBitTorrent" xml:space="preserve">
+    <value>所选项目不是 BitTorrent 任务。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowEngineUnavailable" xml:space="preserve">
+    <value>BitTorrent 引擎不可用</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataUnavailable" xml:space="preserve">
+    <value>此任务没有可用的种子元数据。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidLinkOrPath" xml:space="preserve">
+    <value>种子链接或文件路径无效。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataFetchError" xml:space="preserve">
+    <value>获取元数据时出错：</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowUnknownMetadataFetchError" xml:space="preserve">
+    <value>获取元数据时发生未知错误。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidTorrentSource" xml:space="preserve">
+    <value>种子来源无效：不是磁力链接或种子文件。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowFailedToStartDownload" xml:space="preserve">
+    <value>无法开始下载。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowStartDownloadError" xml:space="preserve">
+    <value>开始下载时出错：</value>
+  </data>
+  <data name="ViewRSSViewModelDownloadStarted" xml:space="preserve">
+    <value>下载已开始：</value>
+  </data>
+  <data name="ViewRSSViewModelNewItem" xml:space="preserve">
+    <value>新项目：</value>
+  </data>
+  <data name="ViewRSSViewModelError" xml:space="preserve">
+    <value>错误：</value>
+  </data>
+  <data name="CommonYes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="CommonNo" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogMagnetBox.PlaceholderText" xml:space="preserve">
+    <value>magnet:?xt=...</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
+    <value>分块图</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>速度图</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>选项卡宽度显示模式</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>等宽</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
+    <value>每个标签页的宽度都相同</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>适配到内容</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
+    <value>每个标签页的宽度都会根据标签页内的内容自动调整</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>紧凑</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
+    <value>未选中的标签页会折叠起来，只显示图标。选中的标签页会调整显示方式，显示标签页内的内容</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>自定义个性化图表</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>更改将会立即应用并保存</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>显示</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>像素</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>历史保存</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>保留移动到屏幕外的部分数据点，这样当窗口放大时，就能显示出近期的历史记录</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>屏幕宽度</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>平滑曲线处理</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>使用平滑圆角曲线在相邻的采样点之间进行插值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>高亮线</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>为已采样的数值显示一个移动的标记</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>所有系列中的最高值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>每个系列中的最低值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>所有系列中的最低值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>每个系列中的最高值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>十字交叉线</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>动画间隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>每个点</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>网格和画布</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>选择画布图案和间距</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>背景模式</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>十字交叉线间隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>点间隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>自定义画布颜色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>覆盖默认的“主题感知网格”和“透明画布”颜色设置</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>画布颜色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>选择当启用自定义颜色时，所使用的网格（线）和画布颜色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>控制采样、移动、曲线平滑和保留历史记录</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>移动和历史</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>渐变填充</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>边框线</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>滑动距离</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>在每次滚动持续时间内，水平方向移动的距离</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>滚动时长</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>移动指定距离所用的时间</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>采样间隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>遥测采样频率</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>外观</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>完成日期</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>分享率</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock" xml:space="preserve">
+    <value>做种/用户[总]</value>
   </data>
 </root>

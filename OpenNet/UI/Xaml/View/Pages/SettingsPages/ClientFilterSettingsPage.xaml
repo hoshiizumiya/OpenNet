@@ -62,7 +62,10 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE710;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button x:Uid="CF_AddBtn" Click="OnAddRuleClick" />
+                    <Button
+                        x:Uid="CF_AddBtn"
+                        AutomationProperties.AutomationId="CF_AddBtn"
+                        Click="OnAddRuleClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid ColumnSpacing="12" RowSpacing="10">
@@ -79,12 +82,14 @@
                                 <TextBox
                                     x:Name="PatternTextBox"
                                     x:Uid="CF_Pattern"
-                                    MinWidth="300" />
+                                    MinWidth="300"
+                                    AutomationProperties.AutomationId="CF_Pattern" />
                                 <ComboBox
                                     x:Name="MatchTypeComboBox"
                                     x:Uid="CF_MatchType"
                                     Grid.Column="1"
                                     HorizontalAlignment="Stretch"
+                                    AutomationProperties.AutomationId="CF_MatchType"
                                     SelectedIndex="0">
                                     <ComboBoxItem x:Uid="CF_MatchContains" />
                                     <ComboBoxItem x:Uid="CF_MatchExact" />
@@ -95,12 +100,14 @@
                                     x:Name="DescriptionTextBox"
                                     x:Uid="CF_Description"
                                     Grid.Row="1"
-                                    Grid.ColumnSpan="2" />
+                                    Grid.ColumnSpan="2"
+                                    AutomationProperties.AutomationId="CF_Description" />
                                 <ToggleSwitch
                                     x:Name="CaseSensitiveToggle"
                                     x:Uid="CF_CaseSensitive"
                                     Grid.Row="2"
-                                    Grid.ColumnSpan="2" />
+                                    Grid.ColumnSpan="2"
+                                    AutomationProperties.AutomationId="CF_CaseSensitive" />
                             </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
@@ -115,8 +122,12 @@
                             <TextBox
                                 x:Name="TestClientTextBox"
                                 x:Uid="CF_TestInput"
-                                MinWidth="320" />
-                            <Button x:Uid="CF_TestBtn" Click="OnTestClick" />
+                                MinWidth="320"
+                                AutomationProperties.AutomationId="CF_TestInput" />
+                            <Button
+                                x:Uid="CF_TestBtn"
+                                AutomationProperties.AutomationId="CF_TestBtn"
+                                Click="OnTestClick" />
                         </StackPanel>
                         <TextBlock
                             x:Name="TestResultText"
@@ -131,7 +142,10 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE70F;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button x:Uid="CF_RefreshBtn" Click="OnRefreshClick" />
+                    <Button
+                        x:Uid="CF_RefreshBtn"
+                        AutomationProperties.AutomationId="CF_RefreshBtn"
+                        Click="OnRefreshClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -144,6 +158,7 @@
                                 <TextBox
                                     x:Name="RuleSearchTextBox"
                                     x:Uid="CF_Search"
+                                    AutomationProperties.AutomationId="CF_Search"
                                     TextChanged="OnRuleSearchTextChanged" />
                                 <TextBlock
                                     x:Name="RulesShownText"
@@ -174,16 +189,19 @@
                                     <Button
                                         x:Name="ToggleSelectedRuleButton"
                                         x:Uid="CF_ToggleRuleBtn"
+                                        AutomationProperties.AutomationId="CF_ToggleRuleBtn"
                                         Click="OnToggleRuleClick"
                                         IsEnabled="False" />
                                     <Button
                                         x:Name="EditSelectedRuleButton"
                                         x:Uid="CF_EditRuleBtn"
+                                        AutomationProperties.AutomationId="CF_EditRuleBtn"
                                         Click="OnEditRuleClick"
                                         IsEnabled="False" />
                                     <Button
                                         x:Name="DeleteSelectedRuleButton"
                                         x:Uid="CF_DeleteRuleBtn"
+                                        AutomationProperties.AutomationId="CF_DeleteRuleBtn"
                                         Click="OnDeleteRuleClick"
                                         IsEnabled="False" />
                                 </StackPanel>
@@ -197,9 +215,18 @@
                         <FontIcon Glyph="&#xE8E5;" />
                     </essential:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button x:Uid="CF_ImportBtn" Click="OnImportClick" />
-                        <Button x:Uid="CF_ExportBtn" Click="OnExportClick" />
-                        <Button x:Uid="CF_ClearRulesBtn" Click="OnClearRulesClick" />
+                        <Button
+                            x:Uid="CF_ImportBtn"
+                            AutomationProperties.AutomationId="CF_ImportBtn"
+                            Click="OnImportClick" />
+                        <Button
+                            x:Uid="CF_ExportBtn"
+                            AutomationProperties.AutomationId="CF_ExportBtn"
+                            Click="OnExportClick" />
+                        <Button
+                            x:Uid="CF_ClearRulesBtn"
+                            AutomationProperties.AutomationId="CF_ClearRulesBtn"
+                            Click="OnClearRulesClick" />
                     </StackPanel>
                 </essential:SettingsCard>
 
@@ -209,7 +236,10 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE81C;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button x:Uid="CF_RefreshHistoryBtn" Click="OnRefreshClick" />
+                    <Button
+                        x:Uid="CF_RefreshHistoryBtn"
+                        AutomationProperties.AutomationId="CF_RefreshHistoryBtn"
+                        Click="OnRefreshClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -236,6 +266,7 @@
                                     x:Uid="CF_ClearHistoryBtn"
                                     Grid.Row="1"
                                     HorizontalAlignment="Right"
+                                    AutomationProperties.AutomationId="CF_ClearHistoryBtn"
                                     Click="OnClearHistoryClick" />
                             </Grid>
                         </essential:SettingsCard>

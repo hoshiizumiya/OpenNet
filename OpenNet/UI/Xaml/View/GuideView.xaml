@@ -377,7 +377,7 @@
                         <TextBlock>
                             <Run x:Uid="ViewGuideStepEnvironmentFontDescription1" Text="If the icons above are missing or displayed as boxes, visit " />
                             <Hyperlink NavigateUri="https://aka.ms/SegoeFluentIcons">
-                                <Run Text="Microsoft" />
+                                <Run x:Uid="ViewGuideViewRun" Text="Microsoft" />
                             </Hyperlink>
                             <Run x:Uid="ViewGuideStepEnvironmentFontDescription2" Text=" to download and install the font." />
                         </TextBlock>
@@ -391,7 +391,7 @@
                         <TextBlock>
                             <Run x:Uid="ViewGuideStepEnvironmentWebView2Description1" Text="If no WebView2 Runtime is detected, visit " />
                             <Hyperlink NavigateUri="https://go.microsoft.com/fwlink/p/?LinkId=2124703">
-                                <Run Text="Microsoft" />
+                                <Run x:Uid="ViewGuideViewRun" Text="Microsoft" />
                             </Hyperlink>
                             <Run x:Uid="ViewGuideStepEnvironmentWebView2Description2" Text=" to download and install it." />
                         </TextBlock>
@@ -447,9 +447,7 @@
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         Spacing="12">
-                        <FontIcon
-                        FontSize="44"
-                            Glyph="&#xE774;" />
+                        <FontIcon FontSize="44" Glyph="&#xE774;" />
                         <TextBlock
                             x:Uid="GuideWebUITitle"
                             HorizontalAlignment="Center"
@@ -472,11 +470,13 @@
                         <TextBox
                             x:Name="WebUIAddressBox"
                             x:Uid="GuideWebUIAddress"
+                            AutomationProperties.AutomationId="GuideWebUIAddress"
                             Header="Listen address"
                             PlaceholderText="127.0.0.1" />
                         <NumberBox
                             x:Name="WebUIPortBox"
                             x:Uid="GuideWebUIPort"
+                            AutomationProperties.AutomationId="GuideWebUIPort"
                             Header="Port"
                             Maximum="65535"
                             Minimum="1"
@@ -484,11 +484,13 @@
                         <TextBox
                             x:Name="WebUIUserNameBox"
                             x:Uid="GuideWebUIUsername"
+                            AutomationProperties.AutomationId="GuideWebUIUsername"
                             Header="Account"
                             PlaceholderText="admin" />
                         <PasswordBox
                             x:Name="WebUIPasswordBox"
                             x:Uid="GuideWebUIPassword"
+                            AutomationProperties.AutomationId="GuideWebUIPassword"
                             Header="Password"
                             PasswordRevealMode="Peek"
                             PlaceholderText="At least 6 characters" />
@@ -504,9 +506,7 @@
                     HorizontalAlignment="Center"
                     VerticalAlignment="Center"
                     Spacing="12">
-                    <FontIcon
-                        FontSize="44"
-                        Glyph="&#xE713;" />
+                    <FontIcon FontSize="44" Glyph="&#xE713;" />
                     <TextBlock
                         x:Uid="GuideCommonSettingsTitle"
                         HorizontalAlignment="Center"
@@ -521,6 +521,7 @@
                     <NumberBox
                         x:Name="GuiRefreshIntervalBox"
                         x:Uid="GuideGuiRefreshInterval"
+                        AutomationProperties.AutomationId="GuideGuiRefreshInterval"
                         Header="Refresh interval (milliseconds)"
                         Maximum="60000"
                         Minimum="100"
@@ -607,14 +608,14 @@
                                                 x:Uid="ViewModelGuideStaticResourceQualityHigh"
                                                 Text="ViewModelGuideStaticResourceQualityHigh"
                                                 TextAlignment="Left" />
-                                            <TextBlock Text="233 KB" TextAlignment="Left" />
+                                            <TextBlock Text="233 KB" TextAlignment="Left"  x:Uid="ViewGuideViewTextBlock"/>
                                         </StackPanel>
                                         <StackPanel HorizontalAlignment="Right" Orientation="Vertical">
                                             <TextBlock
                                                 x:Uid="ViewModelGuideStaticResourceQualityRaw"
                                                 Text="ViewModelGuideStaticResourceQualityRaw"
                                                 TextAlignment="Right" />
-                                            <TextBlock Text="1030 KB" TextAlignment="Right" />
+                                            <TextBlock Text="1030 KB" TextAlignment="Right"  x:Uid="ViewGuideViewTextBlock"/>
                                         </StackPanel>
                                     </Grid>
                                 </Grid>

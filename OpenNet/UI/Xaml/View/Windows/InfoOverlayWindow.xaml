@@ -29,7 +29,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <TextBlock FontWeight="SemiBold" Text="OpenNet" />
+        <TextBlock
+            x:Uid="ViewInfoOverlayWindowTextBlock"
+            FontWeight="SemiBold"
+            Text="OpenNet" />
         <Grid
             Grid.Row="1"
             Margin="0,10,0,0"
@@ -39,22 +42,31 @@
                 <ColumnDefinition />
             </Grid.ColumnDefinitions>
             <StackPanel>
-                <TextBlock Opacity="0.65" Text="Download" />
+                <TextBlock
+                    x:Uid="ViewInfoOverlayWindowTextBlock"
+                    Opacity="0.65"
+                    Text="Download" />
                 <TextBlock
                     x:Name="DownloadSpeedText"
+                    x:Uid="ViewInfoOverlayWindowTextBlock"
                     FontSize="18"
                     Text="0 B/s" />
             </StackPanel>
             <StackPanel Grid.Column="1">
-                <TextBlock Opacity="0.65" Text="Upload" />
+                <TextBlock
+                    x:Uid="ViewInfoOverlayWindowTextBlock"
+                    Opacity="0.65"
+                    Text="Upload" />
                 <TextBlock
                     x:Name="UploadSpeedText"
+                    x:Uid="ViewInfoOverlayWindowTextBlock"
                     FontSize="18"
                     Text="0 B/s" />
             </StackPanel>
         </Grid>
         <TextBlock
             x:Name="DhtText"
+            x:Uid="ViewInfoOverlayWindowTextBlock"
             Grid.Row="2"
             Margin="0,8,0,0"
             Opacity="0.65"

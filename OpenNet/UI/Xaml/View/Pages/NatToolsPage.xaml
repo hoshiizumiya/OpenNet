@@ -37,6 +37,7 @@
                 <Button
                     x:Name="DetectNatButton"
                     x:Uid="NatTools_DetectButton"
+                    AutomationProperties.AutomationId="NatTools_DetectButton"
                     Click="DetectNat_Click"
                     Content="Detect NAT Type" />
 
@@ -64,14 +65,14 @@
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="Public IPv6: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="Public IPv6: " />
                         <Run
                             x:Name="PublicIPv6Text"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="Network Type: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="Network Type: " />
                         <Run
                             x:Name="NetworkTypeText"
                             FontWeight="SemiBold"
@@ -85,35 +86,35 @@
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="NAT-PMP: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="NAT-PMP: " />
                         <Run
                             x:Name="NatPmpText"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="Listen Port: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="Listen Port: " />
                         <Run
                             x:Name="ListenPortText"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="DHT Nodes: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="DHT Nodes: " />
                         <Run
                             x:Name="DhtNodesText"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="Active Torrents: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="Active Torrents: " />
                         <Run
                             x:Name="ActiveTorrentsText"
                             FontWeight="SemiBold"
                             Text="-" />
                     </TextBlock>
                     <TextBlock>
-                        <Run Text="Connected Peers: " />
+                        <Run x:Uid="ViewNatToolsPageRun" Text="Connected Peers: " />
                         <Run
                             x:Name="ConnectedPeersText"
                             FontWeight="SemiBold"
@@ -123,6 +124,7 @@
 
                 <!--  STUN Test Detail Table  -->
                 <TextBlock
+                    x:Uid="ViewNatToolsPageTextBlock"
                     Margin="0,24,0,6"
                     Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                     Text="STUN Test Details" />
@@ -149,24 +151,28 @@
 
                     <!--  Header Row  -->
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="0"
                         Grid.Column="0"
                         Margin="0,0,0,8"
                         FontWeight="Bold"
                         Text="Test" />
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="0"
                         Grid.Column="1"
                         Margin="8,0,0,8"
                         FontWeight="Bold"
                         Text="Server 1 (Same Port)" />
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="0"
                         Grid.Column="2"
                         Margin="8,0,0,8"
                         FontWeight="Bold"
                         Text="Server 1 (Diff Port)" />
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="0"
                         Grid.Column="3"
                         Margin="8,0,0,8"
@@ -175,6 +181,7 @@
 
                     <!--  Row 1: STUN Binding  -->
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="1"
                         Grid.Column="0"
                         Margin="0,4"
@@ -200,6 +207,7 @@
 
                     <!--  Row 2: Public IP  -->
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="2"
                         Grid.Column="0"
                         Margin="0,4"
@@ -225,6 +233,7 @@
 
                     <!--  Row 3: Latency  -->
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="3"
                         Grid.Column="0"
                         Margin="0,4"
@@ -250,6 +259,7 @@
 
                     <!--  Row 4: Mapping Consistent  -->
                     <TextBlock
+                        x:Uid="ViewNatToolsPageTextBlock"
                         Grid.Row="4"
                         Grid.Column="0"
                         Margin="0,4"
@@ -276,6 +286,7 @@
                         x:Name="PortNumberBox"
                         x:Uid="NatTools_PortNumberBox"
                         Width="150"
+                        AutomationProperties.AutomationId="NatTools_PortNumberBox"
                         Maximum="65535"
                         Minimum="1"
                         PlaceholderText="Port"
@@ -284,6 +295,7 @@
                     <Button
                         x:Name="TestPortButton"
                         x:Uid="NatTools_TestPortButton"
+                        AutomationProperties.AutomationId="NatTools_TestPortButton"
                         Click="TestPort_Click"
                         Content="Test Port" />
                 </StackPanel>

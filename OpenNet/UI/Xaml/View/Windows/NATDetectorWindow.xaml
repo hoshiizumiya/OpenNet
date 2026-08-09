@@ -30,6 +30,7 @@
                 Spacing="10">
                 <FontIcon Glyph="&#xE968;" />
                 <TextBlock
+                    x:Uid="ViewNATDetectorWindowText1"
                     VerticalAlignment="Center"
                     FontSize="16"
                     FontWeight="SemiBold"
@@ -56,6 +57,7 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <TextBlock
+                            x:Uid="ViewNATDetectorWindowText2"
                             VerticalAlignment="Center"
                             FontWeight="SemiBold"
                             Text="Traversal directory" />
@@ -65,13 +67,16 @@
                             PlaceholderText="https://server.example/api/v1/traversal/servers" />
                         <NumberBox
                             x:Name="ListenPortNumber"
+                            x:Uid="ViewNATDetectorWindowText3"
                             Grid.Column="2"
                             Width="130"
+                            AutomationProperties.AutomationId="ViewNATDetectorWindowText3"
                             Header="Listen port"
                             Maximum="65535"
                             Minimum="1"
                             SpinButtonPlacementMode="Hidden" />
                         <TextBlock
+                            x:Uid="ViewNATDetectorWindowText4"
                             Grid.Row="1"
                             Grid.ColumnSpan="3"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -82,6 +87,7 @@
 
                 <InfoBar
                     x:Name="DiagnosticInfoBar"
+                    x:Uid="ViewNATDetectorWindowDiagnosticInfoBar"
                     Title="Detection note"
                     IsClosable="False"
                     IsOpen="False"
@@ -100,6 +106,7 @@
                         CornerRadius="8">
                         <StackPanel Spacing="8">
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText5"
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 Text="Address and NAT" />
@@ -115,34 +122,51 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="Local IPv4" />
+                                <TextBlock x:Uid="ViewNATDetectorWindowText6" Text="Local IPv4" />
                                 <TextBlock
                                     x:Name="LocalIPv4Text"
+                                    x:Uid="ViewNATDetectorWindowText7"
                                     Grid.Column="1"
                                     Text="—" />
-                                <TextBlock Grid.Row="1" Text="Public IPv4" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText8"
+                                    Grid.Row="1"
+                                    Text="Public IPv4" />
                                 <TextBlock
                                     x:Name="PublicIPv4Text"
+                                    x:Uid="ViewNATDetectorWindowText7"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Text="—" />
-                                <TextBlock Grid.Row="2" Text="Mapping behavior" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText10"
+                                    Grid.Row="2"
+                                    Text="Mapping behavior" />
                                 <TextBlock
                                     x:Name="MappingText"
+                                    x:Uid="ViewNATDetectorWindowText11"
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     Text="Unknown"
                                     TextWrapping="Wrap" />
-                                <TextBlock Grid.Row="3" Text="Filtering behavior" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText12"
+                                    Grid.Row="3"
+                                    Text="Filtering behavior" />
                                 <TextBlock
                                     x:Name="FilteringText"
+                                    x:Uid="ViewNATDetectorWindowText11"
                                     Grid.Row="3"
                                     Grid.Column="1"
                                     Text="Unknown"
                                     TextWrapping="Wrap" />
-                                <TextBlock Grid.Row="4" Text="Legacy label" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText14"
+                                    Grid.Row="4"
+                                    Text="Legacy label" />
                                 <TextBlock
                                     x:Name="NatTypeText"
+                                    x:Uid="ViewNATDetectorWindowText11"
                                     Grid.Row="4"
                                     Grid.Column="1"
                                     Text="Unknown"
@@ -160,6 +184,7 @@
                         CornerRadius="8">
                         <StackPanel Spacing="8">
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText16"
                                 FontSize="16"
                                 FontWeight="SemiBold"
                                 Text="Listening port" />
@@ -177,46 +202,71 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <TextBlock Text="TCP / BitTorrent" />
+                                <TextBlock x:Uid="ViewNATDetectorWindowText17" Text="TCP / BitTorrent" />
                                 <TextBlock
                                     x:Name="TcpPortText"
+                                    x:Uid="ViewNATDetectorWindowText18"
                                     Grid.Column="1"
                                     Text="Not tested" />
-                                <TextBlock Grid.Row="1" Text="UDP / uTP" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText19"
+                                    Grid.Row="1"
+                                    Text="UDP / uTP" />
                                 <TextBlock
                                     x:Name="UdpPortText"
+                                    x:Uid="ViewNATDetectorWindowText18"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Text="Not tested" />
-                                <TextBlock Grid.Row="2" Text="UPnP" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText21"
+                                    Grid.Row="2"
+                                    Text="UPnP" />
                                 <TextBlock
                                     x:Name="UpnpText"
+                                    x:Uid="ViewNATDetectorWindowText11"
                                     Grid.Row="2"
                                     Grid.Column="1"
                                     Text="Unknown" />
-                                <TextBlock Grid.Row="3" Text="NAT-PMP / PCP" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText23"
+                                    Grid.Row="3"
+                                    Text="NAT-PMP / PCP" />
                                 <TextBlock
                                     x:Name="NatPmpText"
+                                    x:Uid="ViewNATDetectorWindowText11"
                                     Grid.Row="3"
                                     Grid.Column="1"
                                     Text="Unknown" />
-                                <TextBlock Grid.Row="4" Text="Mapped port" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText25"
+                                    Grid.Row="4"
+                                    Text="Mapped port" />
                                 <TextBlock
                                     x:Name="PortMappingText"
+                                    x:Uid="ViewNATDetectorWindowText7"
                                     Grid.Row="4"
                                     Grid.Column="1"
                                     Text="—"
                                     TextWrapping="Wrap" />
-                                <TextBlock Grid.Row="5" Text="IPv6 TCP / UDP" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText27"
+                                    Grid.Row="5"
+                                    Text="IPv6 TCP / UDP" />
                                 <TextBlock
                                     x:Name="IPv6PortText"
+                                    x:Uid="ViewNATDetectorWindowText18"
                                     Grid.Row="5"
                                     Grid.Column="1"
                                     Text="Not tested"
                                     TextWrapping="Wrap" />
-                                <TextBlock Grid.Row="6" Text="Probe evidence" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText29"
+                                    Grid.Row="6"
+                                    Text="Probe evidence" />
                                 <TextBlock
                                     x:Name="ProbeEvidenceText"
+                                    x:Uid="ViewNATDetectorWindowText7"
                                     Grid.Row="6"
                                     Grid.Column="1"
                                     Text="—"
@@ -234,6 +284,7 @@
                     CornerRadius="8">
                     <StackPanel Spacing="10">
                         <TextBlock
+                            x:Uid="ViewNATDetectorWindowText31"
                             FontSize="16"
                             FontWeight="SemiBold"
                             Text="RFC 5780 mapping observations" />
@@ -251,82 +302,97 @@
                                 <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText32"
                                 Grid.Column="1"
                                 Padding="8"
                                 FontWeight="SemiBold"
                                 Text="Server 1 / primary" />
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText33"
                                 Grid.Column="2"
                                 Padding="8"
                                 FontWeight="SemiBold"
                                 Text="Server 1 / other port" />
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText34"
                                 Grid.Column="3"
                                 Padding="8"
                                 FontWeight="SemiBold"
                                 Text="Other IPv4 / server 2" />
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText35"
                                 Grid.Row="1"
                                 Padding="8"
                                 Text="Result" />
                             <TextBlock
                                 x:Name="Observation1Result"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="1"
                                 Grid.Column="1"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
                                 x:Name="Observation2Result"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="1"
                                 Grid.Column="2"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
                                 x:Name="Observation3Result"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="1"
                                 Grid.Column="3"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText39"
                                 Grid.Row="2"
                                 Padding="8"
                                 Text="Public IP:port" />
                             <TextBlock
                                 x:Name="Observation1Address"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
                                 x:Name="Observation2Address"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="2"
                                 Grid.Column="2"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
                                 x:Name="Observation3Address"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="2"
                                 Grid.Column="3"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
+                                x:Uid="ViewNATDetectorWindowText43"
                                 Grid.Row="3"
                                 Padding="8"
                                 Text="Latency" />
                             <TextBlock
                                 x:Name="Observation1Latency"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="3"
                                 Grid.Column="1"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
                                 x:Name="Observation2Latency"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="3"
                                 Grid.Column="2"
                                 Padding="8"
                                 Text="—" />
                             <TextBlock
                                 x:Name="Observation3Latency"
+                                x:Uid="ViewNATDetectorWindowText7"
                                 Grid.Row="3"
                                 Grid.Column="3"
                                 Padding="8"
@@ -353,6 +419,7 @@
                     IsActive="False" />
                 <TextBlock
                     x:Name="StatusText"
+                    x:Uid="ViewNATDetectorWindowText47"
                     VerticalAlignment="Center"
                     Text="Ready" />
             </StackPanel>
@@ -362,10 +429,16 @@
                 Spacing="8">
                 <Button
                     x:Name="StartButton"
+                    x:Uid="ViewNATDetectorWindowText48"
+                    AutomationProperties.AutomationId="ViewNATDetectorWindowText48"
                     Click="StartButton_Click"
                     Content="Start detection"
                     Style="{StaticResource AccentButtonStyle}" />
-                <Button Click="CloseButton_Click" Content="Close" />
+                <Button
+                    x:Uid="ViewNATDetectorWindowText49"
+                    AutomationProperties.AutomationId="ViewNATDetectorWindowText49"
+                    Click="CloseButton_Click"
+                    Content="Close" />
             </StackPanel>
         </Grid>
     </Grid>

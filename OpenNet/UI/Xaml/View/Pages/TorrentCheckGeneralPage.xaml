@@ -84,6 +84,7 @@
                                 x:Uid="TorrentCheckGeneralPage_FolderPickerButton"
                                 Grid.Column="2"
                                 MinWidth="36"
+                                AutomationProperties.AutomationId="TorrentCheckGeneralPage_FolderPickerButton"
                                 Click="TorrentCheckGeneralPageFolderPicker_Click"
                                 ToolTipService.ToolTip="Browse...">
                                 <Button.Content>
@@ -102,7 +103,8 @@
                                 x:Uid="TorrentCheckGeneralPage_FileNameTextBox"
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                Grid.ColumnSpan="2" />
+                                Grid.ColumnSpan="2"
+                                AutomationProperties.AutomationId="TorrentCheckGeneralPage_FileNameTextBox" />
 
                             <CheckBox
                                 x:Name="CreateSubfolderCheckBox"
@@ -110,6 +112,7 @@
                                 Grid.Row="2"
                                 Grid.Column="1"
                                 Grid.ColumnSpan="2"
+                                AutomationProperties.AutomationId="TorrentCheckGeneralPage_CreateSubfolderCheckBox"
                                 Content="Create subfolder"
                                 IsChecked="True" />
                         </Grid>
@@ -139,6 +142,7 @@
                                     IsActive="True"
                                     IsIndeterminate="True" />
                                 <TextBlock
+                                    x:Uid="ViewTorrentCheckGeneralPageTextBlock"
                                     HorizontalAlignment="Center"
                                     FontWeight="SemiBold"
                                     Text="Downloading magnet metadata" />
@@ -150,6 +154,7 @@
                                     TextAlignment="Center"
                                     TextWrapping="Wrap" />
                                 <TextBlock
+                                    x:Uid="ViewTorrentCheckGeneralPageTextBlock"
                                     MaxWidth="520"
                                     HorizontalAlignment="Center"
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -306,6 +311,7 @@
                                     x:Uid="TorrentDetailsExpander"
                                     Grid.Row="3"
                                     HorizontalAlignment="Stretch"
+                                    AutomationProperties.AutomationId="TorrentDetailsExpander"
                                     Header="Torrent details">
                                     <Grid
                                         Padding="12,8"
@@ -498,6 +504,7 @@
                     x:Name="SelectAllFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_SelectAll"
                     MinHeight="12"
+                    AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_SelectAll"
                     Checked="SelectAllCheckBox_Checked"
                     Content="Select All"
                     IsChecked="True"
@@ -505,6 +512,7 @@
                 <CheckBox
                     x:Name="VideoFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Video"
+                    AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Video"
                     Checked="FilterCheckBox_Checked"
                     Content="Video"
                     Tag=".mp4,.mkv,.avi,.mov,.wmv"
@@ -512,6 +520,7 @@
                 <CheckBox
                     x:Name="AudioFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Audio"
+                    AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Audio"
                     Checked="FilterCheckBox_Checked"
                     Content="Audio"
                     Tag=".mp3,.flac,.wav,.aac,.ogg"
@@ -519,6 +528,7 @@
                 <CheckBox
                     x:Name="PictureFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Picture"
+                    AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Picture"
                     Checked="FilterCheckBox_Checked"
                     Content="Picture"
                     Tag=".jpg,.jpeg,.png,.gif,.bmp,.webp"
@@ -526,6 +536,7 @@
                 <CheckBox
                     x:Name="OtherFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Other"
+                    AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Other"
                     Checked="FilterCheckBox_Checked"
                     Content="Other"
                     IsChecked="True"

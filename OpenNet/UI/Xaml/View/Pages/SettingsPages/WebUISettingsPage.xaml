@@ -54,6 +54,7 @@
                     x:Name="AddressTextBox"
                     x:Uid="WebUISettingsAddress"
                     MinWidth="240"
+                    AutomationProperties.AutomationId="WebUISettingsAddress"
                     PlaceholderText="127.0.0.1" />
             </essential:SettingsCard>
 
@@ -68,6 +69,7 @@
                     x:Name="PortNumberBox"
                     x:Uid="WebUISettingsPort"
                     MinWidth="160"
+                    AutomationProperties.AutomationId="WebUISettingsPort"
                     Maximum="65535"
                     Minimum="1"
                     SpinButtonPlacementMode="Compact" />
@@ -81,6 +83,7 @@
                     x:Name="LocaleTextBox"
                     x:Uid="WebUISettingsLocale"
                     MinWidth="180"
+                    AutomationProperties.AutomationId="WebUISettingsLocale"
                     PlaceholderText="en" />
             </essential:SettingsCard>
 
@@ -99,7 +102,8 @@
                 <TextBox
                     x:Name="UsernameTextBox"
                     x:Uid="WebUISettingsUsername"
-                    MinWidth="240" />
+                    MinWidth="240"
+                    AutomationProperties.AutomationId="WebUISettingsUsername" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -113,6 +117,7 @@
                     x:Name="PasswordInput"
                     x:Uid="WebUISettingsPassword"
                     MinWidth="240"
+                    AutomationProperties.AutomationId="WebUISettingsPassword"
                     PasswordRevealMode="Peek" />
             </essential:SettingsCard>
 
@@ -128,17 +133,21 @@
                         x:Name="ApiKeyInput"
                         x:Uid="WebUISettingsApiKey"
                         MinWidth="240"
+                        AutomationProperties.AutomationId="WebUISettingsApiKey"
                         PasswordRevealMode="Peek" />
                     <Button
                         x:Uid="WebUISettingsGenerateApiKey"
+                        AutomationProperties.AutomationId="WebUISettingsGenerateApiKey"
                         Click="OnGenerateApiKeyClick"
                         Content="Generate" />
                     <Button
                         x:Uid="WebUISettingsCopyApiKey"
+                        AutomationProperties.AutomationId="WebUISettingsCopyApiKey"
                         Click="OnCopyApiKeyClick"
                         Content="Copy" />
                     <Button
                         x:Uid="WebUISettingsClearApiKey"
+                        AutomationProperties.AutomationId="WebUISettingsClearApiKey"
                         Click="OnClearApiKeyClick"
                         Content="Clear" />
                 </StackPanel>
@@ -151,11 +160,13 @@
                 <Button
                     x:Name="SaveButton"
                     x:Uid="WebUISettingsSave"
+                    AutomationProperties.AutomationId="WebUISettingsSave"
                     Click="OnSaveClick"
                     Content="Save and restart Web UI"
                     Style="{StaticResource AccentButtonStyle}" />
                 <Button
                     x:Uid="WebUISettingsOpen"
+                    AutomationProperties.AutomationId="WebUISettingsOpen"
                     Click="OnOpenWebUIClick"
                     Content="Open Web UI" />
             </StackPanel>

@@ -64,11 +64,15 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE710;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button x:Uid="IPF_AddBtn" Click="OnAddRuleClick" />
+                    <Button
+                        x:Uid="IPF_AddBtn"
+                        AutomationProperties.AutomationId="IPF_AddBtn"
+                        Click="OnAddRuleClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="IPF_ManualInput">
                             <TextBox
                                 x:Name="ManualIpTextBox"
+                                x:Uid="ViewIPFilterSettingsPageTextBox"
                                 MinWidth="360"
                                 MaxHeight="120"
                                 AcceptsReturn="True"
@@ -82,7 +86,10 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8E5;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <Button x:Uid="IPF_ImportBtn" Click="OnImportClick" />
+                    <Button
+                        x:Uid="IPF_ImportBtn"
+                        AutomationProperties.AutomationId="IPF_ImportBtn"
+                        Click="OnImportClick" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="IPF_RuleFiles">
@@ -96,13 +103,18 @@
                             IsTextSelectionEnabled="True"
                             TextTrimming="CharacterEllipsis" />
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <Button x:Uid="IPF_OpenFolderBtn" Click="OnOpenRulesFolderClick" />
+                            <Button
+                                x:Uid="IPF_OpenFolderBtn"
+                                AutomationProperties.AutomationId="IPF_OpenFolderBtn"
+                                Click="OnOpenRulesFolderClick" />
                             <Button
                                 x:Uid="IPF_OpenPrimaryFileBtn"
+                                AutomationProperties.AutomationId="IPF_OpenPrimaryFileBtn"
                                 Click="OnOpenRuleFileClick"
                                 Tag="ipfilter.txt" />
                             <Button
                                 x:Uid="IPF_OpenSecondaryFileBtn"
+                                AutomationProperties.AutomationId="IPF_OpenSecondaryFileBtn"
                                 Click="OnOpenRuleFileClick"
                                 Tag="ipfilter2.txt" />
                         </StackPanel>
@@ -129,6 +141,7 @@
                         <Button
                             x:Name="UpdateSubscriptionsButton"
                             x:Uid="IPF_UpdateSubscriptionsNow"
+                            AutomationProperties.AutomationId="IPF_UpdateSubscriptionsNow"
                             Click="OnUpdateSubscriptionsClick">
                             <FontIcon Glyph="&#xE72C;" />
                         </Button>
@@ -150,11 +163,13 @@
                                     MinHeight="72"
                                     HorizontalAlignment="Stretch"
                                     AcceptsReturn="True"
+                                    AutomationProperties.AutomationId="IPF_SubscriptionUrl"
                                     TextWrapping="Wrap" />
                                 <Button
                                     x:Uid="IPF_AddSubscription"
                                     Grid.Column="1"
                                     VerticalAlignment="Center"
+                                    AutomationProperties.AutomationId="IPF_AddSubscription"
                                     Click="OnAddSubscriptionClick" />
                             </Grid>
                         </essential:SettingsCard>
@@ -188,11 +203,13 @@
                                     <Button
                                         x:Name="EditSubscriptionButton"
                                         x:Uid="IPF_EditSubscription"
+                                        AutomationProperties.AutomationId="IPF_EditSubscription"
                                         Click="OnEditSubscriptionClick"
                                         IsEnabled="False" />
                                     <Button
                                         x:Name="DeleteSubscriptionButton"
                                         x:Uid="IPF_DeleteSubscription"
+                                        AutomationProperties.AutomationId="IPF_DeleteSubscription"
                                         Click="OnDeleteSubscriptionClick"
                                         IsEnabled="False" />
                                 </StackPanel>
@@ -204,11 +221,13 @@
                                 <RadioButton
                                     x:Name="SubscriptionMergeRadio"
                                     x:Uid="IPF_SubscriptionMerge"
+                                    AutomationProperties.AutomationId="IPF_SubscriptionMerge"
                                     Checked="OnSubscriptionModeChanged"
                                     GroupName="IPFilterSubscriptionMode" />
                                 <RadioButton
                                     x:Name="SubscriptionReplaceRadio"
                                     x:Uid="IPF_SubscriptionReplace"
+                                    AutomationProperties.AutomationId="IPF_SubscriptionReplace"
                                     Checked="OnSubscriptionModeChanged"
                                     GroupName="IPFilterSubscriptionMode" />
                             </StackPanel>
@@ -245,7 +264,10 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE70F;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button x:Uid="IPF_RefreshRulesBtn" Click="OnRefreshRulesClick" />
+                    <Button
+                        x:Uid="IPF_RefreshRulesBtn"
+                        AutomationProperties.AutomationId="IPF_RefreshRulesBtn"
+                        Click="OnRefreshRulesClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -258,6 +280,7 @@
                                 <TextBox
                                     x:Name="RuleSearchTextBox"
                                     x:Uid="IPF_RuleSearch"
+                                    AutomationProperties.AutomationId="IPF_RuleSearch"
                                     TextChanged="OnRuleSearchTextChanged" />
                                 <TextBlock
                                     x:Name="RulesShownText"
@@ -289,11 +312,13 @@
                                     <Button
                                         x:Name="EditSelectedRuleButton"
                                         x:Uid="IPF_EditRuleBtn"
+                                        AutomationProperties.AutomationId="IPF_EditRuleBtn"
                                         Click="OnEditRuleClick"
                                         IsEnabled="False" />
                                     <Button
                                         x:Name="DeleteSelectedRuleButton"
                                         x:Uid="IPF_DeleteRuleBtn"
+                                        AutomationProperties.AutomationId="IPF_DeleteRuleBtn"
                                         Click="OnDeleteRuleClick"
                                         IsEnabled="False" />
                                 </StackPanel>
@@ -306,7 +331,10 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE74D;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <Button x:Uid="IPF_ClearBtn" Click="OnClearAllClick" />
+                    <Button
+                        x:Uid="IPF_ClearBtn"
+                        AutomationProperties.AutomationId="IPF_ClearBtn"
+                        Click="OnClearAllClick" />
                 </essential:SettingsCard>
 
                 <!--  Status InfoBar  -->

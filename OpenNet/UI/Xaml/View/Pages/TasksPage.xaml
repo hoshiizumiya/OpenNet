@@ -11,17 +11,12 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
     xmlns:vm="using:OpenNet.ViewModels"
     xmlns:xtlw="using:XamlToolkit.Labs.WinUI"
     x:Uid="TasksPageRoot"
     Loaded="Loaded"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <essential:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -39,47 +34,52 @@
             <AppBarButton
                 x:Name="TaskNewButton"
                 x:Uid="TaskNewButton"
+                AutomationProperties.AutomationId="TaskNewButton"
                 Icon="{essential:FontIcon Glyph=&#xE710;}">
-                <muxc:AppBarButton.Flyout>
-                    <muxc:MenuFlyout Placement="Bottom">
-                        <muxc:MenuFlyoutItem
+                <AppBarButton.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutItem
                             x:Name="MenuItemAddFromLink"
                             x:Uid="TaskNewFromUrlButton"
                             Click="MenuItemAddFromLink_ClickAsync"
                             Icon="{essential:FontIcon FontFamily=Segoe UI Emoji,
                                                       Glyph=&#x1F9F2;}"
                             Text="From Magnet Link" />
-                        <muxc:MenuFlyoutItem
+                        <MenuFlyoutItem
                             x:Name="MenuItemAddFromFile"
                             x:Uid="TaskNewFromFileButton"
                             Click="MenuItemAddFromFile_ClickAsync"
                             Icon="{essential:FontIcon Glyph=&#xE8E5;}"
                             Text="From Bittorrent File" />
-                        <muxc:MenuFlyoutSeparator />
-                        <muxc:MenuFlyoutItem
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem
                             x:Name="MenuItemAddFromHttp"
                             x:Uid="TaskNewFromHttpButton"
                             Click="MenuItemAddFromHttp_ClickAsync"
                             Icon="{essential:FontIcon Glyph=&#xE71B;}"
                             Text="HTTP Download" />
-                    </muxc:MenuFlyout>
-                </muxc:AppBarButton.Flyout>
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
             </AppBarButton>
             <AppBarButton
                 x:Uid="TaskStartButton"
+                AutomationProperties.AutomationId="TaskStartButton"
                 Command="{x:Bind ViewModel.StartCommand}"
                 Icon="{essential:FontIcon Glyph=&#xE768;}" />
             <AppBarButton
                 x:Uid="TaskPauseButton"
+                AutomationProperties.AutomationId="TaskPauseButton"
                 Command="{x:Bind ViewModel.PauseCommand}"
                 Icon="{essential:FontIcon Glyph=&#xE769;}" />
             <AppBarButton
                 x:Uid="TaskDeleteButton"
+                AutomationProperties.AutomationId="TaskDeleteButton"
                 Command="{x:Bind ViewModel.DeleteCommand}"
                 Icon="{essential:FontIcon Glyph=&#xE74D;}" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton
                     x:Uid="ViewTasksPagePortTestAppBarButton"
+                    AutomationProperties.AutomationId="ViewTasksPagePortTestAppBarButton"
                     Click="ViewTasksPagePortTestAppBarButton_Click"
                     Icon="{essential:FontIcon Glyph=&#xF196;}"
                     Label="Port Test">
@@ -92,6 +92,7 @@
                 </AppBarButton>
                 <AppBarButton
                     x:Uid="ViewTasksPageSettingsAppBarButton"
+                    AutomationProperties.AutomationId="ViewTasksPageSettingsAppBarButton"
                     Click="ViewTasksPageSettingsAppBarButton_Click"
                     Icon="{essential:FontIcon Glyph=&#xE713;}"
                     Label="Settings">
@@ -108,6 +109,7 @@
 
         <AutoSuggestBox
             x:Name="SearchBox"
+            x:Uid="ViewTasksPageAutoSuggestBox"
             Grid.Row="0"
             Width="280"
             Margin="12,6"
@@ -134,7 +136,7 @@
             PaneBackground="{ThemeResource SystemControlBackgroundChromeMediumLowBrush}">
             <SplitView.Pane>
                 <!--  左侧筛选导航 / Left-side filter navigation  -->
-                <muxc:NavigationView
+                <NavigationView
                     x:Name="FilterNavView"
                     essential:NavigationViewHelper.AcrylicWorkaround="True"
                     IsBackButtonVisible="Collapsed"
@@ -142,38 +144,38 @@
                     IsSettingsVisible="False"
                     PaneDisplayMode="LeftCompact"
                     SelectionChanged="FilterNavView_SelectionChanged">
-                    <muxc:NavigationView.MenuItems>
-                        <muxc:NavigationViewItem
+                    <NavigationView.MenuItems>
+                        <NavigationViewItem
                             x:Uid="FilterNavViewAllTasks"
                             Icon="{essential:FontIcon Glyph=&#xE8A9;}"
                             IsSelected="True"
                             Tag="AllTasks" />
-                        <muxc:NavigationViewItem
+                        <NavigationViewItem
                             x:Uid="FilterNavViewDownloading"
                             Icon="{essential:FontIcon Glyph=&#xE896;}"
                             Tag="Downloading" />
-                        <muxc:NavigationViewItem
+                        <NavigationViewItem
                             x:Uid="FilterNavViewSeeding"
                             Icon="{essential:FontIcon Glyph=&#xE898;}"
                             Tag="Seeding" />
-                        <muxc:NavigationViewItem
+                        <NavigationViewItem
                             x:Uid="FilterNavViewCompleted"
                             Icon="{essential:FontIcon Glyph=&#xE73E;}"
                             Tag="Completed" />
-                        <muxc:NavigationViewItem
+                        <NavigationViewItem
                             x:Uid="FilterNavViewUncompleted"
                             Icon="{essential:FontIcon Glyph=&#xE823;}"
                             Tag="Uncompleted" />
-                        <muxc:NavigationViewItem
+                        <NavigationViewItem
                             x:Uid="FilterNavViewActive"
                             Icon="{essential:FontIcon Glyph=&#xE768;}"
                             Tag="Active" />
-                        <muxc:NavigationViewItem
+                        <NavigationViewItem
                             x:Uid="FilterNavViewInactive"
                             Icon="{essential:FontIcon Glyph=&#xE769;}"
                             Tag="Inactive" />
-                    </muxc:NavigationView.MenuItems>
-                </muxc:NavigationView>
+                    </NavigationView.MenuItems>
+                </NavigationView>
             </SplitView.Pane>
 
             <Grid>
@@ -239,7 +241,7 @@
                                     x:Name="ColSize"
                                     CanResize="True"
                                     Tag="Size"
-                                    Visibility="{x:Bind ViewModel.IsColSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColSizeLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskSizeButton"
                                         Padding="0"
@@ -260,7 +262,7 @@
                                     x:Name="ColProgress"
                                     CanResize="True"
                                     Tag="Progress"
-                                    Visibility="{x:Bind ViewModel.IsColProgressLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColProgressLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskProgressButton"
                                         HorizontalAlignment="Stretch"
@@ -280,7 +282,7 @@
                                     x:Name="ColDownloadSize"
                                     CanResize="True"
                                     Tag="DownloadSize"
-                                    Visibility="{x:Bind ViewModel.IsColDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColDownloadSizeLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskDownloadSizeButton"
                                         HorizontalAlignment="Stretch"
@@ -300,7 +302,7 @@
                                     x:Name="ColUploadSize"
                                     CanResize="True"
                                     Tag="UploadSize"
-                                    Visibility="{x:Bind ViewModel.IsColUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColUploadSizeLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskUploadSizeButton"
                                         HorizontalAlignment="Stretch"
@@ -320,7 +322,7 @@
                                     x:Name="ColumnTotalDownloadSize"
                                     CanResize="True"
                                     Tag="TotalDownloadSize"
-                                    Visibility="{x:Bind ViewModel.IsColumnTotalDownloadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColumnTotalDownloadSizeLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskTotalDownloadButton"
                                         HorizontalAlignment="Stretch"
@@ -340,7 +342,7 @@
                                     x:Name="ColumnTotalUploadSize"
                                     CanResize="True"
                                     Tag="TotalUploadSize"
-                                    Visibility="{x:Bind ViewModel.IsColumnTotalUploadSizeLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColumnTotalUploadSizeLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskTotalUploadButton"
                                         HorizontalAlignment="Stretch"
@@ -360,7 +362,7 @@
                                     x:Name="ColDLRate"
                                     CanResize="True"
                                     Tag="DLRate"
-                                    Visibility="{x:Bind ViewModel.IsColDLRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColDLRateLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskDlRateButton"
                                         HorizontalAlignment="Stretch"
@@ -380,7 +382,7 @@
                                     x:Name="ColULRate"
                                     CanResize="True"
                                     Tag="ULRate"
-                                    Visibility="{x:Bind ViewModel.IsColULRateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColULRateLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskUlRateButton"
                                         HorizontalAlignment="Stretch"
@@ -400,7 +402,7 @@
                                     x:Name="ColRemaining"
                                     CanResize="True"
                                     Tag="Remaining"
-                                    Visibility="{x:Bind ViewModel.IsColRemainingLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColRemainingLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskRemainingButton"
                                         HorizontalAlignment="Stretch"
@@ -420,7 +422,7 @@
                                     x:Name="ColAddDate"
                                     CanResize="True"
                                     Tag="AddDate"
-                                    Visibility="{x:Bind ViewModel.IsColAddDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColAddDateLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskAddDateButton"
                                         HorizontalAlignment="Stretch"
@@ -440,7 +442,7 @@
                                     x:Name="ColCompletedDate"
                                     CanResize="True"
                                     Tag="CompletedDate"
-                                    Visibility="{x:Bind ViewModel.IsColCompletedDateLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColCompletedDateLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskCompletedDateButton"
                                         HorizontalAlignment="Stretch"
@@ -450,14 +452,17 @@
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="CompletedDate">
-                                        <TextBlock Text="Completed Date" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            x:Uid="ViewTasksPageCompletedDateTextBlock"
+                                            Text="Completed Date"
+                                            TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColShareRatio"
                                     CanResize="True"
                                     Tag="ShareRatio"
-                                    Visibility="{x:Bind ViewModel.IsColShareRatioLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColShareRatioLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskShareRatioButton"
                                         HorizontalAlignment="Stretch"
@@ -467,14 +472,17 @@
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="ShareRatio">
-                                        <TextBlock Text="Share Ratio" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            x:Uid="ViewTasksPageShareRatioTextBlock"
+                                            Text="Share Ratio"
+                                            TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColSeeds"
                                     CanResize="True"
                                     Tag="Seeds"
-                                    Visibility="{x:Bind ViewModel.IsColSeedsLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColSeedsLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskSeedsButton"
                                         HorizontalAlignment="Stretch"
@@ -484,14 +492,17 @@
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Seeds">
-                                        <TextBlock Text="Seeds" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            x:Uid="ViewTasksPageSeedsPeersTextBlock"
+                                            Text="Seeds/Peers[all]"
+                                            TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
                                     x:Name="ColPeers"
                                     CanResize="True"
                                     Tag="Peers"
-                                    Visibility="{x:Bind ViewModel.IsColPeersLoad, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColPeersLoad), Mode=OneWay}">
                                     <Button
                                         x:Name="SortTaskPeersButton"
                                         HorizontalAlignment="Stretch"
@@ -501,20 +512,25 @@
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Peers">
-                                        <TextBlock Text="Peers" TextTrimming="CharacterEllipsis" />
+                                        <TextBlock
+                                            x:Uid="ViewTasksPageTextBlock"
+                                            Text="Peers"
+                                            TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
                             </xtlw:DataTable>
-                            <muxc:Border.ContextFlyout>
+                            <Border.ContextFlyout>
                                 <MenuFlyout Closed="TasksColumnMenuFlyout_Closed" Opening="TasksColumnMenuFlyout_Opening">
                                     <MenuFlyoutItem
                                         x:Name="ViewPageTasksColumnAutoSizeSelectedWidth"
                                         x:Uid="ViewPageTasksColumnAutoSizeSelectedWidth"
+                                        AutomationProperties.AutomationId="ViewPageTasksColumnAutoSizeSelectedWidth"
                                         Click="TasksColumnAutoSizeSelectedWidth_Click"
                                         Text="Auto Size Selected Column's Width to Fit" />
                                     <MenuFlyoutItem
                                         x:Name="ViewPageTasksColumnAutoSizeAllWidth"
                                         x:Uid="ViewPageTasksColumnAutoSizeAllWidth"
+                                        AutomationProperties.AutomationId="ViewPageTasksColumnAutoSizeAllWidth"
                                         Click="TasksColumnAutoSizeAllWidth_Click"
                                         Text="Auto Size All Column's Width to Fit" />
                                     <MenuFlyoutSeparator />
@@ -585,21 +601,25 @@
                                         Tag="AddDate"
                                         Text="Add Date" />
                                     <ToggleMenuFlyoutItem
+                                        x:Uid="ViewTasksPageCompletedDateTextBlock"
                                         Click="TasksColumnVisibility_Click"
                                         IsChecked="{x:Bind ViewModel.IsColCompletedDateLoad, Mode=OneWay}"
                                         Tag="CompletedDate"
                                         Text="Completed Date" />
                                     <ToggleMenuFlyoutItem
+                                        x:Uid="ViewTasksPageShareRatioTextBlock"
                                         Click="TasksColumnVisibility_Click"
                                         IsChecked="{x:Bind ViewModel.IsColShareRatioLoad, Mode=OneWay}"
                                         Tag="ShareRatio"
                                         Text="Share Ratio" />
                                     <ToggleMenuFlyoutItem
+                                        x:Uid="ViewTasksPageToggleMenuItem"
                                         Click="TasksColumnVisibility_Click"
                                         IsChecked="{x:Bind ViewModel.IsColSeedsLoad, Mode=OneWay}"
                                         Tag="Seeds"
                                         Text="Seeds" />
                                     <ToggleMenuFlyoutItem
+                                        x:Uid="ViewTasksPageToggleMenuItem"
                                         Click="TasksColumnVisibility_Click"
                                         IsChecked="{x:Bind ViewModel.IsColPeersLoad, Mode=OneWay}"
                                         Tag="Peers"
@@ -607,11 +627,12 @@
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         x:Uid="ViewPageTasksColumnDisplayItemsReset"
+                                        AutomationProperties.AutomationId="ViewPageTasksColumnDisplayItemsReset"
                                         Click="TasksColumnDisplayItemsReset_Click"
                                         Text="Reset To Default Display Items" />
 
                                 </MenuFlyout>
-                            </muxc:Border.ContextFlyout>
+                            </Border.ContextFlyout>
                         </Border>
                     </ListView.Header>
                     <ListView.ContextFlyout>
@@ -619,24 +640,28 @@
                             <MenuFlyoutItem
                                 x:Name="StartTaskMenuItem"
                                 x:Uid="TasksContextStart"
+                                AutomationProperties.AutomationId="TasksContextStart"
                                 Click="StartTaskMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE768;}"
                                 Text="Start" />
                             <MenuFlyoutItem
                                 x:Name="StopTaskMenuItem"
                                 x:Uid="TasksContextStop"
+                                AutomationProperties.AutomationId="TasksContextStop"
                                 Click="StopTaskMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE769;}"
                                 Text="Stop" />
                             <MenuFlyoutItem
                                 x:Name="PreviewTaskMenuItem"
                                 x:Uid="TasksContextPreview"
+                                AutomationProperties.AutomationId="TasksContextPreview"
                                 Click="PreviewTaskMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE8B1;}"
                                 Text="Preview" />
                             <MenuFlyoutItem
                                 x:Name="UpdateTrackerMenuItem"
                                 x:Uid="TasksContextUpdateTracker"
+                                AutomationProperties.AutomationId="TasksContextUpdateTracker"
                                 Click="UpdateTrackerMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE895;}"
                                 Text="Update Tracker" />
@@ -654,74 +679,88 @@
                             <MenuFlyoutItem
                                 x:Name="OpenTaskFileMenuItem"
                                 x:Uid="TasksContextOpenFile"
+                                AutomationProperties.AutomationId="TasksContextOpenFile"
                                 Click="OpenTaskFileMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE7C3;}"
                                 Text="Open File" />
                             <MenuFlyoutItem
                                 x:Name="OpenTaskLocationMenuItem"
                                 x:Uid="OpenTaskLocationMenuItem"
+                                AutomationProperties.AutomationId="OpenTaskLocationMenuItem"
                                 Click="OpenTaskLocationMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE8E5;}"
                                 Text="Open Directory" />
                             <MenuFlyoutItem
                                 x:Name="ManualHashCheckMenuItem"
                                 x:Uid="TasksContextHashCheck"
+                                AutomationProperties.AutomationId="TasksContextHashCheck"
                                 Click="ManualHashCheckMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE9D5;}"
                                 Text="Manual Hash Check" />
                             <MenuFlyoutItem
                                 x:Name="SaveTorrentAsMenuItem"
                                 x:Uid="TasksContextSaveTorrent"
+                                AutomationProperties.AutomationId="TasksContextSaveTorrent"
                                 Click="SaveTorrentAsMenuItem_ClickAsync"
                                 Icon="{essential:FontIcon Glyph=&#xE74E;}"
                                 Text="Save Torrent as..." />
                             <MenuFlyoutItem
                                 x:Uid="TasksContextSubmitSnapshots"
+                                AutomationProperties.AutomationId="TasksContextSubmitSnapshots"
                                 IsEnabled="False"
                                 Text="Submit Snapshots" />
                             <MenuFlyoutItem
                                 x:Name="DeleteTaskMenuItem"
                                 x:Uid="TasksContextDelete"
+                                AutomationProperties.AutomationId="TasksContextDelete"
                                 Click="DeleteTaskMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE74D;}"
                                 Text="Delete" />
                             <MenuFlyoutItem
                                 x:Uid="TasksContextCleanUp"
+                                AutomationProperties.AutomationId="TasksContextCleanUp"
                                 IsEnabled="False"
                                 Text="Clean Up" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutSubItem
                                 x:Name="MoveTaskMenuItem"
                                 x:Uid="TasksContextMoveFiles"
+                                AutomationProperties.AutomationId="TasksContextMoveFiles"
                                 Icon="{essential:FontIcon Glyph=&#xE8DE;}"
                                 Text="Files Move To">
                                 <MenuFlyoutItem
                                     x:Uid="TasksContextChooseFolder"
+                                    AutomationProperties.AutomationId="TasksContextChooseFolder"
                                     Click="MoveTaskMenuItem_Click"
                                     Text="Choose folder..." />
                             </MenuFlyoutSubItem>
                             <MenuFlyoutSubItem
                                 x:Name="TagsMenuItem"
                                 x:Uid="TasksContextTags"
+                                AutomationProperties.AutomationId="TasksContextTags"
                                 Text="Tags">
                                 <MenuFlyoutItem
                                     x:Uid="TasksContextNoTags"
+                                    AutomationProperties.AutomationId="TasksContextNoTags"
                                     IsEnabled="False"
                                     Text="No tags configured" />
                             </MenuFlyoutSubItem>
                             <MenuFlyoutItem
                                 x:Name="RenameTaskMenuItem"
                                 x:Uid="RenameTaskMenuItem"
+                                AutomationProperties.AutomationId="RenameTaskMenuItem"
                                 Click="RenameTaskMenuItem_ClickAsync"
                                 Icon="{essential:FontIcon Glyph=&#xE8AC;}"
                                 Text="Rename..." />
                             <MenuFlyoutSubItem
                                 x:Name="SendToMenuItem"
                                 x:Uid="TasksContextSendTo"
+                                AutomationProperties.AutomationId="TasksContextSendTo"
                                 Text="Send to">
                                 <MenuFlyoutItem
                                     x:Name="SendToDefaultApplicationMenuItem"
                                     x:Uid="TasksContextDefaultApplication"
+                                    AutomationProperties.AutomationId="TasksContextDefaultApplication"
                                     Click="OpenTaskFileMenuItem_Click"
                                     Text="Default application" />
                             </MenuFlyoutSubItem>
@@ -729,12 +768,14 @@
                             <MenuFlyoutItem
                                 x:Name="SearchOnlineMenuItem"
                                 x:Uid="TasksContextSearchOnline"
+                                AutomationProperties.AutomationId="TasksContextSearchOnline"
                                 Click="SearchOnlineMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE721;}"
                                 Text="Search Online" />
                             <MenuFlyoutItem
                                 x:Name="CopyMagnetUriMenuItem"
                                 x:Uid="TasksContextCopyMagnet"
+                                AutomationProperties.AutomationId="TasksContextCopyMagnet"
                                 Click="CopyMagnetUriMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE8C8;}"
                                 Text="Copy Magnet URI  (Ctrl+C)">
@@ -745,30 +786,36 @@
                             <MenuFlyoutSubItem
                                 x:Name="CopyTaskMenuItem"
                                 x:Uid="TasksContextCopy"
+                                AutomationProperties.AutomationId="TasksContextCopy"
                                 Text="Copy">
                                 <MenuFlyoutItem
                                     x:Uid="TasksContextCopyName"
+                                    AutomationProperties.AutomationId="TasksContextCopyName"
                                     Click="CopyTaskNameMenuItem_Click"
                                     Text="Name" />
                                 <MenuFlyoutItem
                                     x:Name="CopyTaskHashMenuItem"
                                     x:Uid="TasksContextCopyHash"
+                                    AutomationProperties.AutomationId="TasksContextCopyHash"
                                     Click="CopyTaskHashMenuItem_Click"
                                     Text="Info hash" />
                                 <MenuFlyoutItem
                                     x:Uid="TasksContextCopyPath"
+                                    AutomationProperties.AutomationId="TasksContextCopyPath"
                                     Click="CopyTaskPathMenuItem_Click"
                                     Text="Save path" />
                             </MenuFlyoutSubItem>
                             <MenuFlyoutItem
                                 x:Name="DiskUsageInfoMenuItem"
                                 x:Uid="TasksContextDiskUsage"
+                                AutomationProperties.AutomationId="TasksContextDiskUsage"
                                 Click="DiskUsageInfoMenuItem_ClickAsync"
                                 Icon="{essential:FontIcon Glyph=&#xEDA2;}"
                                 Text="Disk Usage Info..." />
                             <MenuFlyoutItem
                                 x:Name="PropertiesMenuItem"
                                 x:Uid="PropertiesMenuItem"
+                                AutomationProperties.AutomationId="PropertiesMenuItem"
                                 Click="PropertiesMenuItem_Click"
                                 Icon="{essential:FontIcon Glyph=&#xE712;}"
                                 Text="Properties" />
@@ -776,7 +823,7 @@
                     </ListView.ContextFlyout>
                     <ListView.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <muxc:ItemsStackPanel Orientation="Vertical" />
+                            <ItemsStackPanel Orientation="Vertical" />
                         </ItemsPanelTemplate>
                     </ListView.ItemsPanel>
                     <ListView.ItemTemplate>
@@ -882,6 +929,7 @@
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColShareRatio.Visibility, Mode=OneWay}" />
                                 <TextBlock
+                                    x:Uid="ViewTasksPageTextBlock"
                                     HorizontalAlignment="Right"
                                     Text="{x:Bind Seeds, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
@@ -889,6 +937,7 @@
                                     ToolTipService.ToolTip="Connected seeds (all known seeds)"
                                     Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}" />
                                 <TextBlock
+                                    x:Uid="ViewTasksPageTextBlock"
                                     HorizontalAlignment="Right"
                                     Text="{x:Bind Peers, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
@@ -901,27 +950,99 @@
                 </ListView>
 
                 <!--  下方多标签 + SpeedGraph  -->
-                <muxc:SelectorBar
-                    x:Name="Task_SelectBar"
-                    Grid.Row="1"
-                    SelectionChanged="Task_SelectBar_SelectionChanged">
-                    <muxc:SelectorBarItem
-                        x:Name="SummaryContent"
-                        x:Uid="Task_SummaryContent"
-                        IsSelected="True" />
-                    <muxc:SelectorBarItem x:Name="SpeedGraphContent" Text="Speed Graph" />
-                    <muxc:SelectorBarItem x:Name="PieceMapContent" Text="Piece Map" />
-                    <muxc:SelectorBarItem x:Name="PeersList" x:Uid="Task_PeersList" />
-                    <muxc:SelectorBarItem x:Name="TrackersList" x:Uid="Task_TrackersList" />
-                    <muxc:SelectorBarItem x:Name="FilesList" x:Uid="Task_FilesList" />
-                </muxc:SelectorBar>
+                <Grid Grid.Row="1" RowDefinitions="Auto,*">
+                    <TabView
+                        x:Name="Task_TabView"
+                        Grid.Row="0"
+                        CanDragTabs="True"
+                        CanReorderTabs="True"
+                        IsAddTabButtonVisible="False"
+                        SelectionChanged="Task_TabView_SelectionChanged"
+                        TabWidthMode="{x:Bind TaskTabViewTabWidthMode, Mode=TwoWay}">
+                        <TabView.TabItems>
+                            <TabViewItem
+                                x:Name="SummaryContent"
+                                x:Uid="Task_SummaryContent"
+                                Header="Summary"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskSummaryPage}" />
+                            <TabViewItem
+                                x:Name="SpeedGraphContent"
+                                x:Uid="ViewTasksPageNavigationViewItemSpeedGraph"
+                                Header="Speed Graph"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskSpeedGraphPage}" />
+                            <TabViewItem
+                                x:Name="PieceMapContent"
+                                x:Uid="ViewTasksPageNavigationViewItemPieceMap"
+                                Header="Piece Map"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskPieceMapPage}" />
+                            <TabViewItem
+                                x:Name="PeersList"
+                                x:Uid="Task_PeersList"
+                                Header="Peers List"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskPeersListPage}" />
+                            <TabViewItem
+                                x:Name="TrackersList"
+                                x:Uid="Task_TrackersList"
+                                Header="Trackers List"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskTrackersPage}" />
+                            <TabViewItem
+                                x:Name="FilesList"
+                                x:Uid="Task_FilesList"
+                                Header="Files List"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskFilesPage}" />
+                        </TabView.TabItems>
+                        <TabView.ContextFlyout>
+                            <MenuFlyout Opening="TaskTabViewContextFlyout_Opening">
+                                <MenuFlyoutSubItem x:Uid="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode" Text="TabView TabWidthMode">
+                                    <RadioMenuFlyoutItem
+                                        x:Name="ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeEqual"
+                                        x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual"
+                                        Click="TabViewContextFlyoutRadioMenuFlyoutItem_Click"
+                                        GroupName="TabWidthMode"
+                                        Text="Equal">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip" Content="Each tab has the same width" />
+                                        </ToolTipService.ToolTip>
+                                    </RadioMenuFlyoutItem>
 
-                <Frame
-                    x:Name="ContentFrame"
-                    Grid.Row="1"
-                    Margin="0,42,0,0"
-                    IsNavigationStackEnabled="False" />
+                                    <RadioMenuFlyoutItem
+                                        x:Name="ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeSizeToContent"
+                                        x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent"
+                                        Click="TabViewContextFlyoutRadioMenuFlyoutItem_Click"
+                                        GroupName="TabWidthMode"
+                                        Text="Size To Content">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip" Content="Each tab adjusts its width to the content within the tab" />
+                                        </ToolTipService.ToolTip>
+                                    </RadioMenuFlyoutItem>
 
+                                    <RadioMenuFlyoutItem
+                                        x:Name="ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeCompact"
+                                        x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact"
+                                        Click="TabViewContextFlyoutRadioMenuFlyoutItem_Click"
+                                        GroupName="TabWidthMode"
+                                        Text="Compact">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip" Content="Unselected tabs collapse to show only their icon. The selected tab adjusts to display the content within the tab" />
+                                        </ToolTipService.ToolTip>
+                                    </RadioMenuFlyoutItem>
+                                </MenuFlyoutSubItem>
+                            </MenuFlyout>
+                        </TabView.ContextFlyout>
+                    </TabView>
+                    <Frame
+                        x:Name="ContentFrame"
+                        Grid.Row="1"
+                        essential:UIElementExtension.ClipToBounds="True"
+                        IsNavigationStackEnabled="False" />
+
+                </Grid>
                 <!--  上下可调分隔条（XamlToolkit GridSplitter）  -->
                 <controls:GridSplitter
                     Grid.Row="1"

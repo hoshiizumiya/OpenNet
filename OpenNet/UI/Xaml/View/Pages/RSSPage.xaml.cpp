@@ -8,6 +8,7 @@
 
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
@@ -195,10 +196,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		try
 		{
 			ContentDialog dialog;
-			dialog.Title(box_value(L"Remove Feed"));
-			dialog.Content(box_value(L"Are you sure you want to remove \"" + feed.Title() + L"\"?"));
-			dialog.PrimaryButtonText(L"Remove");
-			dialog.SecondaryButtonText(L"Cancel");
+			dialog.Title(box_value(ResourceGetString(L"ViewRSSPageRemoveFeedTitle")));
+			dialog.Content(box_value(ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationPrefix") + feed.Title() + ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationSuffix")));
+			dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
+			dialog.SecondaryButtonText(ResourceGetString(L"CommonCancel"));
 			dialog.DefaultButton(ContentDialogButton::Secondary);
 			dialog.XamlRoot(this->XamlRoot());
 

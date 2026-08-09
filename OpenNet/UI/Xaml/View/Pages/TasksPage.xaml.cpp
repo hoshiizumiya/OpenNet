@@ -22,6 +22,7 @@
 
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Core.HttpStateManager;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
@@ -30,9 +31,10 @@ import OpenNet.Core.torrentCore.TorrentStateManager;
 import OpenNet.Extension.DependencyObjectExtensions;
 import OpenNet.Factory.Window;
 import OpenNet.Helpers.ColumnWidthHelper;
-import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.Helpers.ControlLengthHelper;
+import OpenNet.Helpers.TabViewStateHelper;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.OpenNet.UI.Xaml.View.Pages.SettingsPages;
 import winrt.OpenNet.UI.Xaml.View.Windows;
@@ -252,8 +254,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return {};
 		}
 
-		winrt::hstring GetMagnetUri(
-			winrt::OpenNet::ViewModels::TaskViewModel const& task)
+		winrt::hstring GetMagnetUri(winrt::OpenNet::ViewModels::TaskViewModel const& task)
 		{
 			return GetMagnetUri(task, GetTorrentDetail(task));
 		}
@@ -344,12 +345,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::InitializeComponent()
 	{
 		TasksPageT::InitializeComponent();
-		// Set up bottom panel to show Summary by default
-		if (auto frame = ContentFrame())
-		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSummaryPage>(), m_viewModel);
-		}
 		UpdateTaskSortHeaders();
+		// While restoring order / selection, SelectionChanged may fire.
+		m_restoringTabViewState = true;
+		::OpenNet::Helpers::TabViewStateHelper::RestoreTabViewState(Task_TabView(), std::string{ TaskTabStateKey });
+		m_restoringTabViewState = false;
 	}
 
 	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
@@ -368,6 +368,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
 		SaveScrollPosition(m_currentFilterKey);
+		::OpenNet::Helpers::TabViewStateHelper::SaveTabViewState(Task_TabView(), std::string{ TaskTabStateKey });
 	}
 
 	// Restore saved column widths
@@ -483,6 +484,32 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		SetProperty(m_textWrappingAddDateTextBlock, value, L"TextWrappingAddDateTextBlock");
 	}
 
+	Microsoft::UI::Xaml::Controls::TabViewWidthMode TasksPage::TaskTabViewTabWidthMode()
+	{
+		if (!m_taskTabViewTabWidthModeInitialized)
+		{
+			m_taskTabViewTabWidthModeInitialized = true;
+
+			if (auto saved = ::OpenNet::Helpers::TabViewStateHelper::GetTabWidthMode(std::string{ TaskTabStateKey }))
+			{
+				m_taskTabViewTabWidthMode = *saved;
+			}
+		}
+
+		return m_taskTabViewTabWidthMode;
+	}
+
+	void TasksPage::TaskTabViewTabWidthMode(Microsoft::UI::Xaml::Controls::TabViewWidthMode const& value)
+	{
+		if(!SetProperty(m_taskTabViewTabWidthMode, value, L"TaskTabViewTabWidthMode"))
+		{
+			return;
+		}
+		::OpenNet::Helpers::TabViewStateHelper::SaveTabWidthMode(
+			value,
+			std::string{ TaskTabStateKey });
+	}
+
 	// Handler invoked when the ViewModel requests adding a new task
 	// Currently not used, kept for backward compatibility
 	winrt::Windows::Foundation::IAsyncAction TasksPage::OnAddTaskRequested(IInspectable const&, winrt::hstring const&)
@@ -553,14 +580,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			{
 				ContentDialog multiFileCheckDialog = ContentDialog();
 				multiFileCheckDialog.XamlRoot(control.XamlRoot());
+				multiFileCheckDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 				multiFileCheckDialog.RequestedTheme(control.ActualTheme());
 
 				Microsoft::Windows::ApplicationModel::Resources::ResourceLoader resourceLoader = Microsoft::Windows::ApplicationModel::Resources::ResourceLoader();
 				// resourceLoader.GetString(L"MultipleFilesSelectedMessage");
-				multiFileCheckDialog.Title(box_value(L"Multiple Files Selected"));
-				multiFileCheckDialog.Content(box_value(L"You picked multiple files. What do you want to do next?"));
+				multiFileCheckDialog.Title(box_value(ResourceGetString(L"ViewTasksPageMultipleFilesSelectedTitle")));
+				multiFileCheckDialog.Content(box_value(ResourceGetString(L"ViewTasksPageMultipleFilesSelectedPrompt")));
 
-				multiFileCheckDialog.PrimaryButtonText(L"Check in new windows");
+				multiFileCheckDialog.PrimaryButtonText(ResourceGetString(L"ViewTasksPageCheckInNewWindows"));
 				auto btnStyle = Microsoft::UI::Xaml::Style(xaml_typename<Button>());
 				auto baseStyle = Microsoft::UI::Xaml::Application::Current().Resources().Lookup(box_value(L"DefaultButtonStyle")).as<winrt::Microsoft::UI::Xaml::Style>();
 
@@ -568,9 +596,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::WidthProperty(), box_value(800.0)));
 				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::MaxWidthProperty(), box_value(1800.0)));
 				multiFileCheckDialog.PrimaryButtonStyle(btnStyle);
-				multiFileCheckDialog.SecondaryButtonText(L"Add to list");
+				multiFileCheckDialog.SecondaryButtonText(ResourceGetString(L"ViewTasksPageAddToList"));
 				multiFileCheckDialog.DefaultButton(ContentDialogButton::Primary);
-				multiFileCheckDialog.CloseButtonText(L"Cancel");
+				multiFileCheckDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 
 				auto result = co_await multiFileCheckDialog.ShowAsync();
 				if (result == ContentDialogResult::Primary)
@@ -611,9 +639,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	// Show HTTP download dialog for adding HTTP/HTTPS/FTP downloads
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromHttp_ClickAsync(
-		winrt::Windows::Foundation::IInspectable const& /*sender*/,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromHttp_ClickAsync(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
 		try
 		{
@@ -652,9 +678,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 							// Show error: aria2 not available
 							ContentDialog errorDialog;
 							errorDialog.XamlRoot(this->XamlRoot());
-							errorDialog.Title(box_value(L"HTTP Download Unavailable"));
-							errorDialog.Content(box_value(L"The aria2 download engine is not available. Please ensure aria2c.exe is present alongside the application."));
-							errorDialog.CloseButtonText(L"OK");
+							errorDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+							errorDialog.Title(box_value(ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableTitle")));
+							errorDialog.Content(box_value(ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableMessage")));
+							errorDialog.CloseButtonText(ResourceGetString(L"CommonOk"));
 							co_await errorDialog.ShowAsync();
 						}
 					}
@@ -854,44 +881,61 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::Task_SelectBar_SelectionChanged(
-		winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender,
-		winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& /*args*/)
+	void TasksPage::Task_TabView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
 	{
-		auto selectedItem = sender.SelectedItem();
-		auto frame = ContentFrame();
-		if (!selectedItem || !frame)
+		auto strong = get_strong();
+		auto tabView = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::TabView>();
+		auto selectedItem = tabView.SelectedItem();
+		if (!selectedItem)
+		{
 			return;
+		}
+		int32_t const currentSelectedIndex = tabView.SelectedIndex();
+		winrt::Microsoft::UI::Xaml::Navigation::FrameNavigationOptions navOptions;
+		if (m_previousSelectedIndex >= 0 &&
+			currentSelectedIndex >= 0 &&
+			currentSelectedIndex != m_previousSelectedIndex)
+		{
+			auto const effect =	currentSelectedIndex > m_previousSelectedIndex
+				? winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionEffect::FromRight
+				: winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionEffect::FromLeft;
 
-		if (selectedItem == SummaryContent())
-		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSummaryPage>(), m_viewModel);
+			winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionInfo transitionInfo;
+			transitionInfo.Effect(effect);
+			navOptions.TransitionInfoOverride(transitionInfo);
 		}
-		else if (selectedItem == SpeedGraphContent())
+		m_previousSelectedIndex = currentSelectedIndex;
+
+		ContentFrame().NavigateToType(*selectedItem.try_as<FrameworkElement>().Tag().try_as<winrt::Windows::UI::Xaml::Interop::TypeName>(), m_viewModel, navOptions);
+	}
+
+	void TasksPage::TaskTabViewContextFlyout_Opening(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)
+	{
+		UpdateTaskTabViewContextFlyout();
+	}
+
+	void TasksPage::TabViewContextFlyoutRadioMenuFlyoutItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		auto strong = get_strong();
+		if (sender == ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeEqual())
 		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskSpeedGraphPage>(), m_viewModel);
+			TaskTabViewTabWidthMode(TabViewWidthMode::Equal);
 		}
-		else if (selectedItem == PieceMapContent())
+		else if (sender == ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeSizeToContent())
 		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPieceMapPage>(), m_viewModel);
+			TaskTabViewTabWidthMode(TabViewWidthMode::SizeToContent);
 		}
-		else if (selectedItem == PeersList())
+		else if (sender == ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeCompact())
 		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPeersListPage>(), m_viewModel);
+			TaskTabViewTabWidthMode(TabViewWidthMode::Compact);
 		}
-		else if (selectedItem == TrackersList())
+		else
 		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskTrackersPage>(), m_viewModel);
-		}
-		else if (selectedItem == FilesList())
-		{
-			frame.Navigate(winrt::xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskFilesPage>(), m_viewModel);
+			return;
 		}
 	}
 
-	void TasksPage::TasksColumnHeader_RightTapped(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	void TasksPage::TasksColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
 	{
 		m_contextColumn = nullptr;
 		auto source = args.OriginalSource().try_as<DependencyObject>();
@@ -907,9 +951,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::TasksColumnHeader_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::TasksColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
 		if (!button || !button.Tag()) return;
@@ -1030,10 +1072,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Reorder incrementally so retained rows keep their identity. Clearing the
 		// vector made every row look newly created and defeated RepositionThemeTransition.
-		auto const selectedTask = TasksList()
-			? TasksList().SelectedItem().try_as<
-			winrt::OpenNet::ViewModels::TaskViewModel>()
-			: nullptr;
+		auto const selectedTask = TasksList() ? TasksList().SelectedItem().try_as<winrt::OpenNet::ViewModels::TaskViewModel>() : nullptr;
 		for (std::uint32_t targetIndex = 0;
 			 targetIndex < static_cast<std::uint32_t>(items.size());
 			 ++targetIndex)
@@ -1073,9 +1112,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_isApplyingSort = false;
 	}
 
-	void TasksPage::TasksColumnMenuFlyout_Opening(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Windows::Foundation::IInspectable const&)
+	void TasksPage::TasksColumnMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const&)
 	{
 		auto const hasItems = HasFilteredTasks();
 		ViewPageTasksColumnAutoSizeSelectedWidth().IsEnabled(hasItems && m_contextColumn);
@@ -1096,8 +1133,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::XamlToolkit::Labs::WinUI::DataColumn TasksPage::ColumnForTag(
-		winrt::hstring const& tag)
+	winrt::XamlToolkit::Labs::WinUI::DataColumn TasksPage::ColumnForTag(winrt::hstring const& tag)
 	{
 		if (tag == L"Name") return ColName();
 		if (tag == L"Size") return ColSize();
@@ -1240,9 +1276,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		PropertiesMenuItem().IsEnabled(isBitTorrent);
 	}
 
-	void TasksPage::TasksColumnAutoSizeSelectedWidth_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::TasksColumnAutoSizeSelectedWidth_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (HasFilteredTasks() && m_contextColumn)
 		{
@@ -1250,9 +1284,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::TasksColumnAutoSizeAllWidth_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::TasksColumnAutoSizeAllWidth_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (HasFilteredTasks())
 		{
@@ -1260,9 +1292,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::TasksColumnDisplayItemsReset_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::TasksColumnDisplayItemsReset_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (!m_viewModel)
 		{
@@ -1300,9 +1330,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		AutoSizeAllTaskColumns();
 	}
 
-	void TasksPage::StartTaskMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::StartTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel && m_viewModel.SelectedTask())
 		{
@@ -1314,9 +1342,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::StopTaskMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::StopTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel && m_viewModel.SelectedTask())
 		{
@@ -1328,9 +1354,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::PreviewTaskMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::PreviewTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel)
 		{
@@ -1338,9 +1362,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::UpdateTrackerMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::UpdateTrackerMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto const task = m_viewModel
 			? m_viewModel.SelectedTask()
@@ -1354,9 +1376,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::SuperSeedModeMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::SuperSeedModeMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto const task = m_viewModel
 			? m_viewModel.SelectedTask()
@@ -1372,9 +1392,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::SequentialDownloadMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::SequentialDownloadMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto const task = m_viewModel
 			? m_viewModel.SelectedTask()
@@ -1388,9 +1406,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::OpenTaskFileMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::OpenTaskFileMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel)
 		{
@@ -1398,9 +1414,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::ManualHashCheckMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::ManualHashCheckMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto const task = m_viewModel
 			? m_viewModel.SelectedTask()
@@ -1414,10 +1428,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		TasksPage::SaveTorrentAsMenuItem_ClickAsync(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::SaveTorrentAsMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto lifetime = get_strong();
 		auto const task = m_viewModel
@@ -1457,9 +1468,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::DeleteTaskMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::DeleteTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel && m_viewModel.SelectedTask())
 		{
@@ -1471,9 +1480,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction TasksPage::RenameTaskMenuItem_ClickAsync(
-		winrt::Windows::Foundation::IInspectable const& /*sender*/,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::RenameTaskMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
 	{
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
@@ -1486,16 +1493,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Build rename dialog
 		TextBox inputBox;
 		inputBox.Text(currentName);
-		inputBox.PlaceholderText(L"Enter new name");
+		inputBox.PlaceholderText(ResourceGetString(L"ViewTasksPageRenamePlaceholder"));
 		inputBox.AcceptsReturn(false);
 		inputBox.SelectAll();
 
 		ContentDialog renameDialog;
 		renameDialog.XamlRoot(this->XamlRoot());
-		renameDialog.Title(box_value(L"Rename"));
+		renameDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+		renameDialog.Title(box_value(ResourceGetString(L"CommonRename")));
 		renameDialog.Content(inputBox);
-		renameDialog.PrimaryButtonText(L"OK");
-		renameDialog.CloseButtonText(L"Cancel");
+		renameDialog.PrimaryButtonText(ResourceGetString(L"CommonOk"));
+		renameDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		renameDialog.DefaultButton(ContentDialogButton::Primary);
 
 		auto result = co_await renameDialog.ShowAsync();
@@ -1636,9 +1644,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	winrt::fire_and_forget TasksPage::SearchOnlineMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::fire_and_forget TasksPage::SearchOnlineMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto lifetime = get_strong();
 		auto const task = m_viewModel
@@ -1661,9 +1667,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::CopyMagnetUriMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::CopyMagnetUriMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel)
 		{
@@ -1671,9 +1675,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::CopyTaskNameMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::CopyTaskNameMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel && m_viewModel.SelectedTask())
 		{
@@ -1681,9 +1683,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::CopyTaskHashMenuItem_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TasksPage::CopyTaskHashMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_viewModel)
 		{
@@ -1732,18 +1732,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		details.IsTextSelectionEnabled(true);
 		details.TextWrapping(TextWrapping::Wrap);
 		details.Text(
-			L"Location: " + winrt::hstring{ path.c_str() } + L"\n" +
-			L"Task size: " + task.Size() + L"\n" +
-			L"Used on volume: " + FormatByteCount(used) + L"\n" +
-			L"Free on volume: " + FormatByteCount(free.QuadPart) + L"\n" +
-			L"Total capacity: " + FormatByteCount(total.QuadPart));
+			ResourceGetString(L"ViewTasksPageDiskUsageLocation") + L" " + winrt::hstring{ path.c_str() } + L"\n" +
+			ResourceGetString(L"ViewTasksPageDiskUsageTaskSize") + L" " + task.Size() + L"\n" +
+			ResourceGetString(L"ViewTasksPageDiskUsageUsedOnVolume") + L" " + FormatByteCount(used) + L"\n" +
+			ResourceGetString(L"ViewTasksPageDiskUsageFreeOnVolume") + L" " + FormatByteCount(free.QuadPart) + L"\n" +
+			ResourceGetString(L"ViewTasksPageDiskUsageTotalCapacity") + L" " + FormatByteCount(total.QuadPart));
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
 		dialog.Style(Microsoft::UI::Xaml::Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).try_as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(box_value(L"Disk Usage Information"));
+		dialog.Title(box_value(ResourceGetString(L"ViewTasksPageDiskUsageInformationTitle")));
 		dialog.Content(details);
-		dialog.CloseButtonText(L"Close");
+		dialog.CloseButtonText(ResourceGetString(L"CommonClose"));
 		co_await dialog.ShowAsync();
 	}
 
@@ -2036,5 +2036,41 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		return {};
+	}
+
+	void TasksPage::UpdateTaskTabViewContextFlyout()
+	{
+		auto tabView = Task_TabView();
+
+		if (!tabView)
+			return;
+
+		/*
+		 * =====================================================
+		 * TabWidthMode
+		 * =====================================================
+		 */
+
+		auto const widthMode = tabView.TabWidthMode();
+		ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeEqual().IsChecked(widthMode == TabViewWidthMode::Equal);
+		ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeSizeToContent().IsChecked(widthMode == TabViewWidthMode::SizeToContent);
+		ViewTasksPageTabViewRadioMenuFlyoutItemTabWidthModeCompact().IsChecked(widthMode == TabViewWidthMode::Compact);
+
+
+		/*
+		 * =====================================================
+		 * Future settings
+		 * =====================================================
+		 *
+		 * Example:
+		 *
+		 * ViewTasksPageTabViewToggleCanDragTabs()
+		 *     .IsChecked(
+		 *         tabView.CanDragTabs());
+		 *
+		 * ViewTasksPageTabViewToggleCanReorderTabs()
+		 *     .IsChecked(
+		 *         tabView.CanReorderTabs());
+		 */
 	}
 }

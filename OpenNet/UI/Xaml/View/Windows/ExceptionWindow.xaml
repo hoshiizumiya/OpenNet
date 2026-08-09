@@ -74,6 +74,7 @@
                 x:Uid="ViewExceptionWindowStacktraceHeader"
                 Grid.Row="1"
                 AcceptsReturn="True"
+                AutomationProperties.AutomationId="ViewExceptionWindowStacktraceHeader"
                 FontFamily="Consolas"
                 Header="Exception Details"
                 IsReadOnly="True"
@@ -85,6 +86,7 @@
                 x:Uid="ViewExceptionWindowComment"
                 Grid.Row="2"
                 AcceptsReturn="True"
+                AutomationProperties.AutomationId="ViewExceptionWindowComment"
                 Description="Clear, step-by-step descriptions will help us locate the issue faster"
                 Header="What actions did you perform before the crash occurred?"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
@@ -96,6 +98,7 @@
                 <Button
                     x:Name="ExceptionWindowCloseButton"
                     x:Uid="ViewWindowExceptionClose"
+                    AutomationProperties.AutomationId="ViewWindowExceptionClose"
                     Click="ViewWindowExceptionCloseButton_Click"
                     Content="Close" />
             </StackPanel>

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+import OpenNet.ViewModels.ObservableMixin;
 import winrt.XamlToolkit.Labs.WinUI;
 import winrt.XamlToolkit.WinUI.Animations;
 import winrt.XamlToolkit.WinUI.Behaviors;
@@ -26,7 +27,7 @@ import winrt.WinUI3Package.Svg;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	struct TaskPeersListPage : TaskPeersListPageT<TaskPeersListPage>
+	struct TaskPeersListPage : TaskPeersListPageT<TaskPeersListPage>, ::OpenNet::ViewModels::ObservableMixin<TaskPeersListPage>
 	{
 		TaskPeersListPage();
 		~TaskPeersListPage();

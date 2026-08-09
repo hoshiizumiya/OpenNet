@@ -21,6 +21,7 @@
         <CheckBox
             x:Name="ChkRemember"
             x:Uid="ViewDialogCloseToTrayRememberCheckBox"
+            AutomationProperties.AutomationId="ViewDialogCloseToTrayRememberCheckBox"
             Content="Remember my choice, do not ask again" />
     </StackPanel>
 </ContentDialog>

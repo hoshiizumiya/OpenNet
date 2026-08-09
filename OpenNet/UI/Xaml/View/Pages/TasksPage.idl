@@ -2,25 +2,27 @@
 
 namespace OpenNet.UI.Xaml.View.Pages
 {
-	[default_interface]
-	runtimeclass TasksPage : Microsoft.UI.Xaml.Controls.Page
-	{
-		TasksPage();
+    [default_interface]
+    runtimeclass TasksPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        TasksPage();
 
-	// Strongly-typed view model for x:Bind
-		OpenNet.ViewModels.TasksViewModel ViewModel { get; };
+    // Strongly-typed view model for x:Bind
+        OpenNet.ViewModels.TasksViewModel ViewModel { get; };
 
-		// DataTable
-		Microsoft.UI.Xaml.TextWrapping TextWrappingNameTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingSizeTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingProgressTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingDownloadSizeTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingUploadSizeTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingTotalDownloadSizeTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingTotalUploadSizeTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingDLRateTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingULRateTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingRemainingTextBlock;
-		Microsoft.UI.Xaml.TextWrapping TextWrappingAddDateTextBlock;
-	}
+        // DataTable
+        Microsoft.UI.Xaml.TextWrapping TextWrappingNameTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingSizeTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingProgressTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingDownloadSizeTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingUploadSizeTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingTotalDownloadSizeTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingTotalUploadSizeTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingDLRateTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingULRateTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingRemainingTextBlock;
+        Microsoft.UI.Xaml.TextWrapping TextWrappingAddDateTextBlock;
+
+        Microsoft.UI.Xaml.Controls.TabViewWidthMode TaskTabViewTabWidthMode;
+    }
 }

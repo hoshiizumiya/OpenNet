@@ -10,6 +10,7 @@
 #include "UI/Xaml/View/InfoBarView.xaml.h"
 
 import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Content;
@@ -838,13 +839,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const originalEntry = RuleEntry(*selected);
 
 		TextBlock entryLabel;
-		entryLabel.Text(L"IP address, CIDR block, or range");
+		entryLabel.Text(ResourceGetString(L"ViewIPFilterSettingsPageEntryLabel"));
 		TextBox entryBox;
 		entryBox.Text(winrt::to_hstring(originalEntry));
 		entryBox.MinWidth(460);
 
 		TextBlock descriptionLabel;
-		descriptionLabel.Text(L"Description (optional)");
+		descriptionLabel.Text(ResourceGetString(L"ViewIPFilterSettingsPageDescriptionOptional"));
 		TextBox descriptionBox;
 		if (selected->description != originalEntry)
 			descriptionBox.Text(winrt::to_hstring(selected->description));
@@ -858,10 +859,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Edit IP Filter Rule"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewIPFilterSettingsPageEditRuleTitle")));
 		dialog.Content(editor);
-		dialog.PrimaryButtonText(L"Save");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Primary);
 
 		auto const result = co_await dialog.ShowAsync();
@@ -905,12 +906,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Delete IP Filter Rule"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewIPFilterSettingsPageDeleteRuleTitle")));
 		dialog.Content(winrt::box_value(
 			winrt::hstring{ L"Delete this rule?\n\n" } +
 			winrt::to_hstring(RuleEntry(*selected))));
-		dialog.PrimaryButtonText(L"Delete");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonDelete"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Close);
 
 		auto const result = co_await dialog.ShowAsync();
@@ -931,10 +932,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Show confirmation dialog
 		ContentDialog dialog;
 		dialog.XamlRoot(this->XamlRoot());
-		dialog.Title(box_value(L"Clear All Rules"));
-		dialog.Content(box_value(L"Are you sure you want to remove all IP filter rules? This action cannot be undone."));
-		dialog.PrimaryButtonText(L"Clear All");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.Title(box_value(ResourceGetString(L"ViewIPFilterSettingsPageClearAllRulesTitle")));
+		dialog.Content(box_value(ResourceGetString(L"ViewIPFilterSettingsPageClearAllRulesMessage")));
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Close);
 
 		auto result = co_await dialog.ShowAsync();

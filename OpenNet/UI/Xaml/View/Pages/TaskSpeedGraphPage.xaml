@@ -48,6 +48,8 @@
                 x:Uid="TaskSpeedGraph_MetricSelector"
                 Grid.Column="1"
                 MinWidth="250"
+                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                AutomationProperties.AutomationId="TaskSpeedGraph_MetricSelector"
                 Header="Display"
                 SelectedIndex="0"
                 SelectedValuePath="Tag"
@@ -82,66 +84,109 @@
                     Tag="DhtUdp" />
             </ComboBox>
             <Button
+                x:Uid="ViewTaskSpeedGraphPageCustomButton"
                 Grid.Column="2"
                 Margin="0,24,0,0"
                 VerticalAlignment="Top"
-                AutomationProperties.Name="Customize graph"
-                ToolTipService.ToolTip="Customize graph">
+                AutomationProperties.Name="Customize graph style"
+                ToolTipService.ToolTip="Customize graph style">
                 <FontIcon Glyph="&#xE713;" />
                 <Button.Flyout>
-                    <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="BottomEdgeAlignedRight">
-                        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                    <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="Right">
+                        <ScrollViewer
+                            HorizontalContentAlignment="Stretch"
+                            HorizontalScrollBarVisibility="Auto"
+                            VerticalScrollBarVisibility="Auto">
                             <StackPanel Spacing="10">
                                 <StackPanel>
                                     <TextBlock
+                                        x:Uid="ViewTaskSpeedGraphPageTextBlockHeader"
                                         FontSize="18"
                                         FontWeight="SemiBold"
                                         Text="Graph customization" />
                                     <TextBlock
+                                        x:Uid="ViewTaskSpeedGraphPageTextBlockDescription"
                                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                         Text="Changes are applied immediately and saved for the next session."
                                         TextWrapping="Wrap" />
                                 </StackPanel>
 
-                                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Behavior" />
+                                <TextBlock
+                                    x:Uid="ViewTaskSpeedGraphPageTextBlockBehavior"
+                                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                                    Text="Behavior" />
 
-                                <essential:SettingsExpander Description="Control sampling, movement, curve smoothing, and retained history." Header="Motion and history">
+                                <essential:SettingsExpander
+                                    x:Uid="ViewTaskSpeedGraphPageBehaviorSettingsExpander"
+                                    Description="Control sampling, movement, curve smoothing, and retained history"
+                                    Header="Motion and history">
                                     <essential:SettingsExpander.HeaderIcon>
                                         <FontIcon Glyph="&#xE823;" />
                                     </essential:SettingsExpander.HeaderIcon>
                                     <essential:SettingsExpander.Items>
-                                        <essential:SettingsCard Description="Horizontal distance travelled during each scroll duration." Header="Scroll distance">
-                                            <NumberBox
-                                                Width="150"
-                                                Header="Pixels"
-                                                Maximum="500"
-                                                Minimum="0.1"
-                                                SmallChange="1"
-                                                SpinButtonPlacementMode="Compact"
-                                                Value="{x:Bind Settings.HorizontalScrollDistance, Mode=TwoWay}" />
+                                        <essential:SettingsCard
+                                            x:Uid="ViewTaskSpeedGraphPageBehaviorSettingsCard"
+                                            Description="Horizontal distance travelled during each scroll duration."
+                                            Header="Scroll distance">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <NumberBox
+                                                    Width="150"
+                                                    Maximum="500"
+                                                    Minimum="0.1"
+                                                    SmallChange="1"
+                                                    SpinButtonPlacementMode="Compact"
+                                                    Value="{x:Bind Settings.HorizontalScrollDistance, Mode=TwoWay}" />
+                                                <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit" Text="Pixels" />
+                                            </Grid>
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Description="Time used to travel the configured distance." Header="Scroll duration">
-                                            <NumberBox
-                                                Width="150"
-                                                Header="Milliseconds"
-                                                Maximum="5000"
-                                                Minimum="1"
-                                                SmallChange="25"
-                                                SpinButtonPlacementMode="Compact"
-                                                Value="{x:Bind Settings.HorizontalScrollDurationMilliseconds, Mode=TwoWay}" />
+                                        <essential:SettingsCard
+                                            x:Uid="ViewTaskSpeedGraphPageSettingsCardScrollDuration"
+                                            Description="Time used to travel the configured distance"
+                                            Header="Scroll duration">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <NumberBox
+                                                    Width="150"
+                                                    Maximum="5000"
+                                                    Minimum="1"
+                                                    SmallChange="25"
+                                                    SpinButtonPlacementMode="Compact"
+                                                    Value="{x:Bind Settings.HorizontalScrollDurationMilliseconds, Mode=TwoWay}" />
+                                                <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxTimeUnit" Text="Milliseconds" />
+                                            </Grid>
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Description="Telemetry sampling cadence." Header="Sample interval">
-                                            <NumberBox
-                                                Width="150"
-                                                Header="Milliseconds"
-                                                Maximum="5000"
-                                                Minimum="16"
-                                                SmallChange="25"
-                                                SpinButtonPlacementMode="Compact"
-                                                Value="{x:Bind Settings.SampleIntervalMilliseconds, Mode=TwoWay}" />
+                                        <essential:SettingsCard
+                                            x:Uid="ViewTaskSpeedGraphPageSettingsCardSampleInterval"
+                                            Description="Telemetry sampling cadence"
+                                            Header="Sample interval">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <NumberBox
+                                                    Width="150"
+                                                    Maximum="5000"
+                                                    Minimum="16"
+                                                    SmallChange="25"
+                                                    SpinButtonPlacementMode="Compact"
+                                                    Value="{x:Bind Settings.SampleIntervalMilliseconds, Mode=TwoWay}" />
+                                                <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxTimeUnit" Text="Milliseconds" />
+                                            </Grid>
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Description="Retain off-screen points so widening the window can reveal recent history." Header="History reserve">
+                                        <essential:SettingsCard
+                                            x:Uid="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer"
+                                            Description="Retain off-screen points so widening the window can reveal recent history"
+                                            Header="History reserve">
                                             <NumberBox
+                                                x:Uid="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer"
                                                 Width="150"
                                                 Header="Screen widths"
                                                 Maximum="4"
@@ -150,58 +195,74 @@
                                                 SpinButtonPlacementMode="Compact"
                                                 Value="{x:Bind Settings.HistoryBufferScreens, Mode=TwoWay}" />
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Description="Interpolate adjacent samples with rounded curves." Header="Smooth curves">
+                                        <essential:SettingsCard
+                                            x:Uid="ViewTaskSpeedGraphPageSettingsCardScrollDistance"
+                                            Description="Interpolate adjacent samples with rounded curves."
+                                            Header="Smooth curves">
                                             <ToggleSwitch IsOn="{x:Bind Settings.SmoothCurves, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                     </essential:SettingsExpander.Items>
                                 </essential:SettingsExpander>
 
-                                <essential:SettingsExpander Description="Display a moving marker for sampled graph values." Header="Highlight line">
+                                <essential:SettingsExpander
+                                    x:Uid="ViewTaskSpeedGraphPageSettingsExpanderHighlight"
+                                    Description="Display a moving marker for sampled graph values."
+                                    Header="Highlight line">
                                     <essential:SettingsExpander.HeaderIcon>
                                         <FontIcon Glyph="&#xE7C3;" />
                                     </essential:SettingsExpander.HeaderIcon>
                                     <ToggleSwitch IsOn="{x:Bind Settings.HighlightEnabled, Mode=TwoWay}" />
                                     <essential:SettingsExpander.Items>
-                                        <essential:SettingsCard Header="Point selection">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSettingsCard" Header="Point selection">
                                             <ComboBox Width="210" SelectedIndex="{x:Bind Settings.HighlightBehaviorIndex, Mode=TwoWay}">
-                                                <ComboBoxItem Content="Highest across all series" />
-                                                <ComboBoxItem Content="Lowest across all series" />
-                                                <ComboBoxItem Content="Highest in each series" />
-                                                <ComboBoxItem Content="Lowest in each series" />
-                                                <ComboBoxItem Content="Each point" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries" Content="Highest across all series" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries" Content="Lowest across all series" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries" Content="Highest in each series" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries" Content="Lowest in each series" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemEachPoint" Content="Each point" />
                                             </ComboBox>
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Header="Animation duration">
-                                            <NumberBox
-                                                Width="150"
-                                                Header="Milliseconds"
-                                                Maximum="2000"
-                                                Minimum="0"
-                                                SmallChange="50"
-                                                SpinButtonPlacementMode="Compact"
-                                                Value="{x:Bind Settings.HighlightAnimationMilliseconds, Mode=TwoWay}" />
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSettingsCardAnimationDuration" Header="Animation duration">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="Auto" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <NumberBox
+                                                    Width="150"
+                                                    Maximum="2000"
+                                                    Minimum="0"
+                                                    SmallChange="50"
+                                                    SpinButtonPlacementMode="Compact"
+                                                    Value="{x:Bind Settings.HighlightAnimationMilliseconds, Mode=TwoWay}" />
+                                                <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxTimeUnit" Text="Milliseconds" />
+                                            </Grid>
                                         </essential:SettingsCard>
                                     </essential:SettingsExpander.Items>
                                 </essential:SettingsExpander>
 
                                 <TextBlock
+                                    x:Uid="ViewTaskSpeedGraphPageAppearanceTextBlock"
                                     Margin="0,6,0,0"
                                     Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                                     Text="Appearance" />
 
-                                <essential:SettingsExpander Description="Choose the canvas pattern and spacing." Header="Grid and canvas">
+                                <essential:SettingsExpander
+                                    x:Uid="ViewTaskSpeedGraphPageCanvasSettingsExpander"
+                                    Description="Choose the canvas pattern and spacing"
+                                    Header="Grid and canvas">
                                     <essential:SettingsExpander.HeaderIcon>
                                         <FontIcon Glyph="&#xE80A;" />
                                     </essential:SettingsExpander.HeaderIcon>
                                     <essential:SettingsExpander.Items>
-                                        <essential:SettingsCard Header="Background pattern">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard" Header="Background pattern">
                                             <ComboBox Width="150" SelectedIndex="{x:Bind Settings.BackgroundModeIndex, Mode=TwoWay}">
-                                                <ComboBoxItem Content="None" />
-                                                <ComboBoxItem Content="Cross" />
-                                                <ComboBoxItem Content="Dot" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemNone" Content="None" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemCross" Content="Cross" />
+                                                <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemDot" Content="Dot" />
                                             </ComboBox>
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Header="Cross spacing">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageCrossSpacingSettingsCard" Header="Cross spacing">
                                             <NumberBox
                                                 Width="150"
                                                 Maximum="200"
@@ -209,7 +270,7 @@
                                                 SpinButtonPlacementMode="Compact"
                                                 Value="{x:Bind Settings.CrossSpacing, Mode=TwoWay}" />
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Header="Dot spacing">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageDotSpacingSettingsCard" Header="Dot spacing">
                                             <NumberBox
                                                 Width="150"
                                                 Maximum="200"
@@ -217,13 +278,19 @@
                                                 SpinButtonPlacementMode="Compact"
                                                 Value="{x:Bind Settings.DotSpacing, Mode=TwoWay}" />
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Description="Override theme-aware grid and transparent canvas defaults." Header="Custom canvas colors">
+                                        <essential:SettingsCard
+                                            x:Uid="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard"
+                                            Description="Override theme-aware grid and transparent canvas defaults"
+                                            Header="Custom canvas colors">
                                             <ToggleSwitch IsOn="{x:Bind Settings.UseCustomCanvasColors, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                     </essential:SettingsExpander.Items>
                                 </essential:SettingsExpander>
 
-                                <essential:SettingsExpander Description="Select the grid and canvas colors used when custom colors are enabled." Header="Canvas colors">
+                                <essential:SettingsExpander
+                                    x:Uid="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander"
+                                    Description="Select the grid and canvas colors used when custom colors are enabled"
+                                    Header="Canvas colors">
                                     <essential:SettingsExpander.HeaderIcon>
                                         <FontIcon Glyph="&#xE790;" />
                                     </essential:SettingsExpander.HeaderIcon>
@@ -231,6 +298,7 @@
                                         <essential:SettingsCard HorizontalContentAlignment="Stretch" ContentAlignment="Left">
                                             <StackPanel Spacing="12">
                                                 <card:TitleCard
+                                                    x:Uid="ViewTaskSpeedGraphPageGridColorCard"
                                                     Title="Grid color"
                                                     Padding="12"
                                                     DividerVisibility="Collapsed">
@@ -249,6 +317,7 @@
                                                     </card:TitleCard.Content>
                                                 </card:TitleCard>
                                                 <card:TitleCard
+                                                    x:Uid="ViewTaskSpeedGraphPageCanvasClearColorCard"
                                                     Title="Canvas clear color"
                                                     Padding="12"
                                                     DividerVisibility="Collapsed">
@@ -271,12 +340,15 @@
                                     </essential:SettingsExpander.Items>
                                 </essential:SettingsExpander>
 
-                                <essential:SettingsExpander Description="Configure the rendered line, border, and gradient area." Header="Series appearance">
+                                <essential:SettingsExpander
+                                    x:Uid="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander"
+                                    Description="Configure the rendered line, border, and gradient area"
+                                    Header="Series appearance">
                                     <essential:SettingsExpander.HeaderIcon>
                                         <FontIcon Glyph="&#xE8D2;" />
                                     </essential:SettingsExpander.HeaderIcon>
                                     <essential:SettingsExpander.Items>
-                                        <essential:SettingsCard Header="Stroke width">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSeriesAppearanceStrokeSettingsCard" Header="Stroke width">
                                             <NumberBox
                                                 Width="150"
                                                 Maximum="12"
@@ -285,20 +357,24 @@
                                                 SpinButtonPlacementMode="Compact"
                                                 Value="{x:Bind Settings.StrokeWidth, Mode=TwoWay}" />
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Header="Gradient fill">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard" Header="Gradient fill">
                                             <ToggleSwitch IsOn="{x:Bind Settings.FillEnabled, Mode=TwoWay}" />
                                         </essential:SettingsCard>
-                                        <essential:SettingsCard Header="Border line">
+                                        <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard" Header="Border line">
                                             <ToggleSwitch IsOn="{x:Bind Settings.BorderEnabled, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                     </essential:SettingsExpander.Items>
                                 </essential:SettingsExpander>
 
-                                <essential:SettingsCard Description="Reset every graph customization option to its original value." Header="Restore defaults">
+                                <essential:SettingsCard
+                                    x:Uid="ViewTaskSpeedGraphPageResetSettingsCard"
+                                    Description="Reset every graph customization option to its original value."
+                                    Header="Restore defaults">
                                     <essential:SettingsCard.HeaderIcon>
                                         <FontIcon Glyph="&#xE777;" />
                                     </essential:SettingsCard.HeaderIcon>
                                     <Button
+                                        x:Uid="ViewTaskSpeedGraphPageResetButton"
                                         Click="ResetGraphSettings_Click"
                                         Content="Reset"
                                         Style="{StaticResource AccentButtonStyle}" />
@@ -326,49 +402,50 @@
                     <essential:SwitchPresenter Value="{Binding SelectedValue, ElementName=MetricSelector, Mode=OneWay}">
                         <essential:Case Value="TransferSpeed">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_GlobalDownload"
+                                x:Uid="ViewTaskSpeedGraphPageGlobalDownload"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Global download" />
                         </essential:Case>
                         <essential:Case Value="DiskCache">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_DiskCacheTitle"
+                                x:Uid="ViewTaskSpeedGraphPageDiskCacheTitle"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Disk cache" />
                         </essential:Case>
                         <essential:Case Value="LongTermSeeding">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_LongTermUpload"
+                                x:Uid="ViewTaskSpeedGraphPageLongTermUpload"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Long-term upload" />
                         </essential:Case>
                         <essential:Case Value="CpuOverall">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_OverallCpu"
+                                x:Uid="ViewTaskSpeedGraphPageOverallCpu"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Overall CPU" />
                         </essential:Case>
                         <essential:Case Value="CpuLogicalProcessors">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_AverageCpu"
+                                x:Uid="ViewTaskSpeedGraphPageAverageCpu"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Average CPU" />
                         </essential:Case>
                         <essential:Case Value="MemoryUsage">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_WorkingSet"
+                                x:Uid="ViewTaskSpeedGraphPageWorkingSet"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="OpenNet working set" />
                         </essential:Case>
                         <essential:Case Value="DhtUdp">
                             <TextBlock
-                                x:Uid="TaskSpeedGraph_DhtReceive"
+                                x:Uid="ViewTaskSpeedGraphPageDhtReceive"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="DHT receive" />
                         </essential:Case>
                     </essential:SwitchPresenter>
                     <TextBlock
                         x:Name="PrimaryMetricValue"
+                        x:Uid="ViewTaskSpeedGraphPageTextBlock"
                         FontSize="18"
                         FontWeight="SemiBold"
                         Text="0 B/s" />

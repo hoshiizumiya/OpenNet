@@ -681,25 +681,25 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		UpdateClearColor();
 		UpdateHorizontalScrollSpeed();
 
-		auto weakThis = get_weak();
+		auto strong = get_strong();
 
 		m_canvasDrawToken = m_canvas.Draw(
-			[weakThis](
+			[strong](
 				ICanvasAnimatedControl const& sender,
 				CanvasAnimatedDrawEventArgs const& args)
 		{
-			if (auto strongThis = weakThis.get())
+			if (auto strongThis = strong.get())
 			{
 				strongThis->OnDraw(sender, args);
 			}
 		});
 
 		m_canvasCreateResourcesToken = m_canvas.CreateResources(
-			[weakThis](
+			[strong](
 				CanvasAnimatedControl const& sender,
 				CanvasCreateResourcesEventArgs const& args)
 		{
-			if (auto strongThis = weakThis.get())
+			if (auto strongThis = strong.get())
 			{
 				strongThis->OnCreateResources(sender, args);
 			}
@@ -710,9 +710,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			ActualThemeChanged(m_actualThemeChangedToken);
 		}
 		m_actualThemeChangedToken = ActualThemeChanged(
-			[weakThis](FrameworkElement const& sender, IInspectable const& args)
+			[strong](FrameworkElement const& sender, IInspectable const& args)
 		{
-			if (auto strongThis = weakThis.get())
+			if (auto strongThis = strong.get())
 			{
 				strongThis->OnActualThemeChanged(sender, args);
 			}
@@ -723,9 +723,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			SizeChanged(m_sizeChangedToken);
 		}
 		m_sizeChangedToken = SizeChanged(
-			[weakThis](IInspectable const& sender, SizeChangedEventArgs const& args)
+			[strong](IInspectable const& sender, SizeChangedEventArgs const& args)
 		{
-			if (auto strongThis = weakThis.get())
+			if (auto strongThis = strong.get())
 			{
 				strongThis->OnSizeChanged(sender, args);
 			}
@@ -736,9 +736,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			Unloaded(m_unloadedToken);
 		}
 		m_unloadedToken = Unloaded(
-			[weakThis](IInspectable const& sender, RoutedEventArgs const& args)
+			[strong](IInspectable const& sender, RoutedEventArgs const& args)
 		{
-			if (auto strongThis = weakThis.get())
+			if (auto strongThis = strong.get())
 			{
 				strongThis->OnUnloaded(sender, args);
 			}

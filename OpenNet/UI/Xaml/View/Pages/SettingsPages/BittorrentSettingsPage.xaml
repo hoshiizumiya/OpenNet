@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
     x:Class="OpenNet.UI.Xaml.View.Pages.SettingsPages.BittorrentSettingsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
@@ -266,6 +266,7 @@
                     </essential:SettingsCard.HeaderIcon>
                     <TextBox
                         x:Name="UserAgentTextBox"
+                        x:Uid="ViewBittorrentSettingsPageTextBox"
                         MinWidth="220"
                         LostFocus="OnSettingChanged"
                         PlaceholderText="libtorrent/2.0.11" />
@@ -320,6 +321,7 @@
                         <essential:SettingsCard x:Uid="BT_ProxyHostname">
                             <TextBox
                                 x:Name="ProxyHostnameTextBox"
+                                x:Uid="ViewBittorrentSettingsPageTextBox"
                                 MinWidth="200"
                                 LostFocus="OnSettingChanged"
                                 PlaceholderText="proxy.example.com" />
@@ -355,9 +357,15 @@
                 </essential:SettingsExpander>
 
                 <!--  libtorrent Advanced  -->
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Advanced libtorrent" />
+                <TextBlock
+                    x:Uid="ViewBittorrentSettingsPageTextBlock"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="Advanced libtorrent" />
 
-                <essential:SettingsCard Description="Maximum number of peers in peer list (default: 4000)" Header="Max Peer List Size">
+                <essential:SettingsCard
+                    x:Uid="ViewBittorrentSettingsPageSettingsCard"
+                    Description="Maximum number of peers in peer list (default: 4000)"
+                    Header="Max Peer List Size">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE716;" />
                     </essential:SettingsCard.HeaderIcon>
@@ -369,39 +377,47 @@
                         ValueChanged="OnSettingChanged" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard Description="Client identification string sent to peers" Header="Peer Fingerprint">
+                <essential:SettingsCard
+                    x:Uid="ViewBittorrentSettingsPageSettingsCard"
+                    Description="Client identification string sent to peers"
+                    Header="Peer Fingerprint">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8AF;" />
                     </essential:SettingsCard.HeaderIcon>
                     <TextBox
                         x:Name="PeerFingerprintTextBox"
+                        x:Uid="ViewBittorrentSettingsPageTextBox"
                         MinWidth="180"
                         LostFocus="OnSettingChanged"
                         PlaceholderText="-ON0100-" />
                 </essential:SettingsCard>
 
-                <essential:SettingsExpander Description="Default behavior for new downloads" Header="Download Defaults">
+                <essential:SettingsExpander
+                    x:Uid="ViewBittorrentSettingsPageSettingsExpander"
+                    Description="Default behavior for new downloads"
+                    Header="Download Defaults">
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE896;" />
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
-                        <essential:SettingsCard Header="Default Save Path">
+                        <essential:SettingsCard x:Uid="ViewBittorrentSettingsPageSettingsCard" Header="Default Save Path">
                             <TextBox
                                 x:Name="DefaultSavePathTextBox"
+                                x:Uid="ViewBittorrentSettingsPageTextBox"
                                 MinWidth="300"
                                 LostFocus="OnSettingChanged"
                                 PlaceholderText="Downloads folder" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard Header="Pre-allocate Storage">
+                        <essential:SettingsCard x:Uid="ViewBittorrentSettingsPageSettingsCard" Header="Pre-allocate Storage">
                             <ToggleSwitch x:Name="PreallocateStorageToggle" Toggled="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard Header="Auto-start Downloads">
+                        <essential:SettingsCard x:Uid="ViewBittorrentSettingsPageSettingsCard" Header="Auto-start Downloads">
                             <ToggleSwitch x:Name="AutoStartDownloadsToggle" Toggled="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard Header="Move Completed Downloads">
+                        <essential:SettingsCard x:Uid="ViewBittorrentSettingsPageSettingsCard" Header="Move Completed Downloads">
                             <ToggleSwitch x:Name="MoveCompletedToggle" Toggled="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard Header="Move Completed Path">
+                        <essential:SettingsCard x:Uid="ViewBittorrentSettingsPageSettingsCard" Header="Move Completed Path">
                             <TextBox
                                 x:Name="MoveCompletedPathTextBox"
                                 MinWidth="300"

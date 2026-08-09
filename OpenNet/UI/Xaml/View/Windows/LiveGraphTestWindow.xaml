@@ -58,10 +58,14 @@
                 <Grid>
                     <StackPanel VerticalAlignment="Center">
                         <TextBlock
+                            x:Uid="ViewLiveGraphTestWindowTextBlock"
                             FontSize="24"
                             FontWeight="SemiBold"
                             Text="LiveGraph interactive test" />
-                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Values are normalized to 0–100%. The dynamic graph emits two synthetic telemetry streams." />
+                        <TextBlock
+                            x:Uid="ViewLiveGraphTestWindowTextBlock"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Values are normalized to 0–100%. The dynamic graph emits two synthetic telemetry streams." />
                     </StackPanel>
                 </Grid>
 
@@ -79,12 +83,17 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel>
                                 <TextBlock
+                                    x:Uid="ViewLiveGraphTestWindowTextBlock"
                                     FontSize="18"
                                     FontWeight="SemiBold"
                                     Text="Dynamic graph" />
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Sine-wave CPU load and a secondary network-like signal are appended from Draw." />
+                                <TextBlock
+                                    x:Uid="ViewLiveGraphTestWindowTextBlock"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="Sine-wave CPU load and a secondary network-like signal are appended from Draw." />
                             </StackPanel>
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="1"
                                 Click="ResetDynamicGraph_Click"
                                 Content="Reset dynamic streams"
@@ -129,6 +138,7 @@
                                             CornerRadius="4">
                                             <TextBlock
                                                 x:Name="DynamicHighlightText"
+                                                x:Uid="ViewLiveGraphTestWindowTextBlock"
                                                 FontSize="12"
                                                 Text="Highlight waiting…" />
                                         </Border>
@@ -145,20 +155,27 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Button Click="GreenBrush_Click" Content="Green" />
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
+                                Click="GreenBrush_Click"
+                                Content="Green" />
+                            <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="1"
                                 Click="BlueBrush_Click"
                                 Content="Blue" />
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="2"
                                 Click="RedBrush_Click"
                                 Content="Red" />
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="3"
                                 Click="PurpleBrush_Click"
                                 Content="Purple" />
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="4"
                                 Click="CustomBrush_Click"
                                 Content="Custom sunset" />
@@ -181,16 +198,22 @@
                             </Grid.ColumnDefinitions>
                             <StackPanel>
                                 <TextBlock
+                                    x:Uid="ViewLiveGraphTestWindowTextBlock"
                                     FontSize="18"
                                     FontWeight="SemiBold"
                                     Text="Static graph" />
-                                <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="Push a complete normalized point collection with optional curve smoothing." />
+                                <TextBlock
+                                    x:Uid="ViewLiveGraphTestWindowTextBlock"
+                                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                    Text="Push a complete normalized point collection with optional curve smoothing." />
                             </StackPanel>
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="1"
                                 Click="AddStaticLine_Click"
                                 Content="Add line batch" />
                             <Button
+                                x:Uid="ViewLiveGraphTestWindowButton"
                                 Grid.Column="2"
                                 Click="AddStaticRounded_Click"
                                 Content="Add rounded batch"
@@ -224,6 +247,7 @@
                                             X2="10000" />
                                         <TextBlock
                                             x:Name="StaticHighlightText"
+                                            x:Uid="ViewLiveGraphTestWindowTextBlock"
                                             Margin="0,-24,10,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Top"
@@ -236,7 +260,10 @@
                     </StackPanel>
                 </Border>
 
-                <Expander Header="Graph properties and brush composition" IsExpanded="True">
+                <Expander
+                    x:Uid="ViewLiveGraphTestWindowExpander"
+                    Header="Graph properties and brush composition"
+                    IsExpanded="True">
                     <Grid
                         Margin="12"
                         ColumnSpacing="16"
@@ -255,32 +282,35 @@
 
                         <ComboBox
                             x:Name="BackgroundModeBox"
+                            x:Uid="ViewLiveGraphTestWindowComboBox"
                             Grid.Row="0"
                             Grid.Column="0"
                             Header="Background mode"
                             SelectedIndex="1"
                             SelectionChanged="BackgroundMode_SelectionChanged">
-                            <ComboBoxItem Content="None" />
-                            <ComboBoxItem Content="Cross" />
-                            <ComboBoxItem Content="Dot" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="None" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Cross" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Dot" />
                         </ComboBox>
 
                         <ComboBox
                             x:Name="HighlightBehaviorBox"
+                            x:Uid="ViewLiveGraphTestWindowComboBox"
                             Grid.Row="0"
                             Grid.Column="1"
                             Header="Highlight behavior"
                             SelectedIndex="4"
                             SelectionChanged="HighlightBehavior_SelectionChanged">
-                            <ComboBoxItem Content="Higher across graphs" />
-                            <ComboBoxItem Content="Lower across graphs" />
-                            <ComboBoxItem Content="Higher per graph" />
-                            <ComboBoxItem Content="Lower per graph" />
-                            <ComboBoxItem Content="Each point" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Higher across graphs" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Lower across graphs" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Higher per graph" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Lower per graph" />
+                            <ComboBoxItem x:Uid="ViewLiveGraphTestWindowComboBoxItem" Content="Each point" />
                         </ComboBox>
 
                         <NumberBox
                             x:Name="DotSpacingBox"
+                            x:Uid="ViewLiveGraphTestWindowNumberBox"
                             Grid.Row="0"
                             Grid.Column="2"
                             Header="Dot spacing"
@@ -292,6 +322,7 @@
 
                         <NumberBox
                             x:Name="CrossSpacingBox"
+                            x:Uid="ViewLiveGraphTestWindowNumberBox"
                             Grid.Row="0"
                             Grid.Column="3"
                             Header="Cross spacing"
@@ -303,6 +334,7 @@
 
                         <NumberBox
                             x:Name="ScrollDistanceBox"
+                            x:Uid="ViewLiveGraphTestWindowNumberBox"
                             Grid.Row="1"
                             Grid.Column="0"
                             Header="Scroll distance (px)"
@@ -315,6 +347,7 @@
 
                         <NumberBox
                             x:Name="ScrollDurationBox"
+                            x:Uid="ViewLiveGraphTestWindowNumberBox"
                             Grid.Row="1"
                             Grid.Column="1"
                             Header="Scroll duration (ms)"
@@ -327,6 +360,7 @@
 
                         <NumberBox
                             x:Name="StrokeWidthBox"
+                            x:Uid="ViewLiveGraphTestWindowNumberBox"
                             Grid.Row="1"
                             Grid.Column="2"
                             Header="Stroke width"
@@ -344,11 +378,13 @@
                             Spacing="12">
                             <ToggleSwitch
                                 x:Name="ShowHighlightToggle"
+                                x:Uid="ViewLiveGraphTestWindowToggleSwitch"
                                 Header="Highlight"
                                 IsOn="True"
                                 Toggled="HighlightVisibility_Toggled" />
                             <ToggleSwitch
                                 x:Name="UseCustomColorsToggle"
+                                x:Uid="ViewLiveGraphTestWindowToggleSwitch"
                                 Header="Canvas colors"
                                 Toggled="CustomColors_Toggled" />
                         </StackPanel>
@@ -361,16 +397,19 @@
                             Spacing="18">
                             <ToggleSwitch
                                 x:Name="ShowFillToggle"
+                                x:Uid="ViewLiveGraphTestWindowToggleSwitch"
                                 Header="Fill"
                                 IsOn="True"
                                 Toggled="BrushAppearance_Toggled" />
                             <ToggleSwitch
                                 x:Name="ShowBorderToggle"
+                                x:Uid="ViewLiveGraphTestWindowToggleSwitch"
                                 Header="Border"
                                 IsOn="True"
                                 Toggled="BrushAppearance_Toggled" />
                             <ToggleSwitch
                                 x:Name="DashedBorderToggle"
+                                x:Uid="ViewLiveGraphTestWindowToggleSwitch"
                                 Header="Dashed border"
                                 Toggled="BrushAppearance_Toggled" />
                         </StackPanel>
@@ -388,23 +427,35 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock FontWeight="SemiBold" Text="CreateResources" />
+                            <TextBlock
+                                x:Uid="ViewLiveGraphTestWindowTextBlock"
+                                FontWeight="SemiBold"
+                                Text="CreateResources" />
                             <TextBlock
                                 x:Name="ResourceStatusText"
+                                x:Uid="ViewLiveGraphTestWindowTextBlock"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Waiting for Win2D resources…" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
-                            <TextBlock FontWeight="SemiBold" Text="Draw" />
+                            <TextBlock
+                                x:Uid="ViewLiveGraphTestWindowTextBlock"
+                                FontWeight="SemiBold"
+                                Text="Draw" />
                             <TextBlock
                                 x:Name="DynamicFrameStatusText"
+                                x:Uid="ViewLiveGraphTestWindowTextBlock"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Waiting for the first frame…" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
-                            <TextBlock FontWeight="SemiBold" Text="HighlightLineUpdated" />
+                            <TextBlock
+                                x:Uid="ViewLiveGraphTestWindowTextBlock"
+                                FontWeight="SemiBold"
+                                Text="HighlightLineUpdated" />
                             <TextBlock
                                 x:Name="HighlightStatusText"
+                                x:Uid="ViewLiveGraphTestWindowTextBlock"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Waiting for a visible point…" />
                         </StackPanel>

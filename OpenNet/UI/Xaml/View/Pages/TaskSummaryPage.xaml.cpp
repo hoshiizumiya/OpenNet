@@ -8,6 +8,7 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.Utils.Message;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -109,11 +110,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			TaskSpeedGraph().SetSpeed(
 				task.ProgressPercent(),
 				task.DownloadSpeedKB() * 1024);
-			TaskPathText().Text(L"HTTP download");
+			TaskPathText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeHttpDownload"));
 			SavePathText().Text(L"—");
-			TaskStatusText().Text(task.ProgressPercent() >= 100.0 ? L"Finished" : L"Downloading");
-			DownloadedPiecesText().Text(L"N/A");
-			AvailablePiecesText().Text(L"N/A");
+			TaskStatusText().Text(task.ProgressPercent() >= 100.0 ? ResourceGetString(L"TaskStatusCompleted") : ResourceGetString(L"TaskStatusDownloading"));
+			DownloadedPiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
+			AvailablePiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
 			DownloadedPiecesProgress().Value(task.ProgressPercent());
 			AvailablePiecesProgress().Value(0);
 			return;
@@ -125,7 +126,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			TaskSpeedGraph().SetSpeed(
 				task.ProgressPercent(),
 				task.DownloadSpeedKB() * 1024);
-			TaskStatusText().Text(L"Engine unavailable");
+			TaskStatusText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeEngineUnavailable"));
 			return;
 		}
 
@@ -228,7 +229,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			? hstring{ L"N/A" }
 		: to_hstring(detail.creator));
 		CreatedOnText().Text(FormatTimestamp(detail.creationTimestamp));
-		PrivateTorrentText().Text(detail.isPrivate ? L"Yes" : L"No");
+		PrivateTorrentText().Text(detail.isPrivate ? ResourceGetString(L"CommonYes") : ResourceGetString(L"CommonNo"));
 		DescriptionText().Text(
 			detail.comment.empty()
 			? hstring{ L"—" }
@@ -269,14 +270,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskSummaryPage::ResetSummary()
 	{
-		TaskNameText().Text(L"No task selected");
+		TaskNameText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNoTaskSelected"));
 		GeneralTaskNameText().Text(L"—");
 		TaskPathText().Text(L"—");
-		TaskStatusText().Text(L"Idle");
+		TaskStatusText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeIdle"));
 		TaskProgress().Value(0);
-		TaskProgressText().Text(L"0%");
-		DownloadedPiecesText().Text(L"0 / 0");
-		AvailablePiecesText().Text(L"0 / 0");
+		TaskProgressText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntime0"));
+		DownloadedPiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntime00"));
+		AvailablePiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntime00"));
 		DownloadedPiecesProgress().Value(0);
 		AvailablePiecesProgress().Value(0);
 		TimeElapsedText().Text(L"—");
@@ -296,13 +297,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		LongTermShareRatioText().Text(L"—");
 		SavePathText().Text(L"—");
 		TaskSizeText().Text(L"—");
-		InfoHashV1Text().Text(L"N/A");
-		InfoHashV2Text().Text(L"N/A");
-		PieceHashesText().Text(L"N/A");
+		InfoHashV1Text().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
+		InfoHashV2Text().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
+		PieceHashesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
 		AddedOnText().Text(L"—");
 		FinishedOnText().Text(L"—");
-		PublisherText().Text(L"N/A");
-		TagsText().Text(L"None");
+		PublisherText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
+		TagsText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNone"));
 		RemainingSizeText().Text(L"—");
 		PiecesText().Text(L"—");
 		NumberOfFilesText().Text(L"—");
@@ -311,7 +312,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		CreatedByText().Text(L"—");
 		CreatedOnText().Text(L"—");
 		PrivateTorrentText().Text(L"—");
-		TaskFlagsText().Text(L"None");
+		TaskFlagsText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNone"));
 		DescriptionText().Text(L"—");
 	}
 

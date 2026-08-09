@@ -39,7 +39,7 @@
                 <!--<NavigationViewItem
                     x:Name="NavItem_Home"
                     x:Uid="NavItem_Home"
-                    Tag="home">
+                    Tag="home" AutomationProperties.AutomationId="NavItem_Home">
                     <NavigationViewItem.Icon>
                         <FontIcon
                             x:Name="HomeIcon"
@@ -51,6 +51,7 @@
                 <NavigationViewItem
                     x:Name="NavItem_Tasks"
                     x:Uid="NavItem_Tasks"
+                    AutomationProperties.AutomationId="NavItem_Tasks"
                     Content="Tasks"
                     Tag="tasks">
                     <NavigationViewItem.Icon>
@@ -63,6 +64,7 @@
 
                 <NavigationViewItem
                     x:Uid="NavItem_RSS"
+                    AutomationProperties.AutomationId="NavItem_RSS"
                     Content="RSS"
                     Tag="rss">
                     <NavigationViewItem.Icon>
@@ -78,6 +80,7 @@
                 <NavigationViewItem
                     x:Name="NavItem_More"
                     x:Uid="NavItem_More"
+                    AutomationProperties.AutomationId="NavItem_More"
                     Content="More"
                     SelectsOnInvoked="False"
                     Tag="more"
@@ -100,6 +103,7 @@
                 <NavigationViewItem
                     x:Name="NavItem_Settings"
                     x:Uid="NavItem_Settings"
+                    AutomationProperties.AutomationId="NavItem_Settings"
                     Tag="settings">
                     <NavigationViewItem.Icon>
                         <AnimatedIcon
@@ -184,6 +188,7 @@
                         FontSize="12"
                         Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay, FallbackValue='0'}" />
                     <TextBlock
+                        x:Uid="ViewMainViewTextBlock"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -198,6 +203,7 @@
                         FontSize="12"
                         Text="{x:Bind ViewModel.DhtNodeCount, Mode=OneWay, FallbackValue='0'}" />
                     <TextBlock
+                        x:Uid="ViewMainViewTextBlock"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -256,6 +262,7 @@
 
             <!--  Port State  -->
             <Button
+                x:Uid="ViewMainViewButton"
                 Grid.Column="3"
                 Margin="16,0,0,0"
                 Padding="6,3"
@@ -285,7 +292,10 @@
                                 FontSize="20"
                                 Glyph="&#x1F7E1;">
                                 <ToolTipService.ToolTip>
-                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Port is blocked. Please check your router or firewall settings." />
+                                    <ToolTip
+                                        x:Uid="ViewMainViewToolTipText1"
+                                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                                        Content="Port is blocked. Please check your router or firewall settings." />
                                 </ToolTipService.ToolTip>
                             </FontIcon>
                         </essential:Case>

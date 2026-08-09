@@ -117,6 +117,1308 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppTitleBar.Title" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋任何內容</value>
+  </data>
+  <data name="NavItem_Home.Content" xml:space="preserve">
+    <value>首頁</value>
+  </data>
+  <data name="NavItem_Contacts.Content" xml:space="preserve">
+    <value>聯絡人</value>
+  </data>
+  <data name="NavItem_Tasks.Content" xml:space="preserve">
+    <value>任務</value>
+  </data>
+  <data name="NavItem_Files.Content" xml:space="preserve">
+    <value>檔案</value>
+  </data>
+  <data name="NavItem_Network.Content" xml:space="preserve">
+    <value>網路</value>
+  </data>
+  <data name="NavItem_Servers.Content" xml:space="preserve">
+    <value>伺服器</value>
+  </data>
+  <data name="NavItem_Settings.Content" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="NavItem_RSS.Content" xml:space="preserve">
+    <value>RSS</value>
+  </data>
+  <data name="UserLabelRun.Text" xml:space="preserve">
+    <value>使用者：</value>
+  </data>
+  <data name="HomeTitle.Text" xml:space="preserve">
+    <value>歡迎使用 OpenNet</value>
+  </data>
+  <data name="QuickActionsTitle.Text" xml:space="preserve">
+    <value>快速操作</value>
+  </data>
+  <data name="DetectNetworkButtonText.Text" xml:space="preserve">
+    <value>偵測網路</value>
+  </data>
+  <data name="ConnectPeerButtonText.Text" xml:space="preserve">
+    <value>連線</value>
+  </data>
+  <data name="RefreshButtonText.Text" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="NetworkStatusTitle.Text" xml:space="preserve">
+    <value>網路狀態</value>
+  </data>
+  <data name="NetworkQualityLabelRun.Text" xml:space="preserve">
+    <value>品質：</value>
+  </data>
+  <data name="RecentActivitiesTitle.Text" xml:space="preserve">
+    <value>最近活動</value>
+  </data>
+  <data name="NetworkSettingsPagePlaceholder.Text" xml:space="preserve">
+    <value>網路設定頁面（預留）</value>
+  </data>
+  <data name="MainWindowRoot" xml:space="preserve">
+    <value>OpenNet - P2P 用戶端</value>
+  </data>
+  <data name="SettingsPagePlaceholder.Text" xml:space="preserve">
+    <value>設定頁面</value>
+  </data>
+  <data name="PortState" xml:space="preserve">
+    <value>連接埠狀態</value>
+  </data>
+  <data name="HomeTitleTip" xml:space="preserve">
+    <value>現代化視窗應用程式</value>
+  </data>
+  <data name="TaskStartButton.Label" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="TaskPauseButton.Label" xml:space="preserve">
+    <value>暫停</value>
+  </data>
+  <data name="TaskNewButton.Label" xml:space="preserve">
+    <value>新增任務</value>
+  </data>
+  <data name="Header_TaskName.Text" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="Header_Size.Text" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="Header_Progress.Text" xml:space="preserve">
+    <value>進度</value>
+  </data>
+  <data name="Header_DLRate.Text" xml:space="preserve">
+    <value>下載速率</value>
+  </data>
+  <data name="Header_Remaining.Text" xml:space="preserve">
+    <value>剩餘</value>
+  </data>
+  <data name="Header_AddDate.Text" xml:space="preserve">
+    <value>新增日期</value>
+  </data>
+  <data name="Task_SummaryContent.Header" xml:space="preserve">
+    <value>摘要</value>
+  </data>
+  <data name="Task_PeersList.Header" xml:space="preserve">
+    <value>節點清單</value>
+  </data>
+  <data name="Protocol_IPv4First" xml:space="preserve">
+    <value>IPv4 優先</value>
+  </data>
+  <data name="Protocol_IPv6First" xml:space="preserve">
+    <value>IPv6 優先</value>
+  </data>
+  <data name="Protocol_IPv4Only" xml:space="preserve">
+    <value>僅 IPv4</value>
+  </data>
+  <data name="Protocol_IPv6Only" xml:space="preserve">
+    <value>僅 IPv6</value>
+  </data>
+  <data name="Protocol_Auto" xml:space="preserve">
+    <value>自動選擇</value>
+  </data>
+  <data name="ConnProtocol_Auto" xml:space="preserve">
+    <value>自動選擇</value>
+  </data>
+  <data name="ConnProtocol_TCP" xml:space="preserve">
+    <value>TCP 協定</value>
+  </data>
+  <data name="ConnProtocol_UDP" xml:space="preserve">
+    <value>UDP 協定</value>
+  </data>
+  <data name="ConnProtocol_UTP" xml:space="preserve">
+    <value>uTP 協定</value>
+  </data>
+  <data name="ConnProtocol_BitTorrent" xml:space="preserve">
+    <value>BitTorrent 協定</value>
+  </data>
+  <data name="ConnProtocol_DHT" xml:space="preserve">
+    <value>DHT 網路</value>
+  </data>
+  <data name="ConnProtocol_WebRTC" xml:space="preserve">
+    <value>WebRTC 協定</value>
+  </data>
+  <data name="ConnProtocol_HTTP" xml:space="preserve">
+    <value>HTTP 協定</value>
+  </data>
+  <data name="Enc_Basic" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="Enc_Strong" xml:space="preserve">
+    <value>強</value>
+  </data>
+  <data name="General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="StartPage.Header" xml:space="preserve">
+    <value>預設起始頁面</value>
+  </data>
+  <data name="StartPage.Description" xml:space="preserve">
+    <value>指定應用程式啟動時顯示的頁面。</value>
+  </data>
+  <data name="SoftLanguage.Header" xml:space="preserve">
+    <value>語言</value>
+  </data>
+  <data name="SoftLanguage.Description" xml:space="preserve">
+    <value>設定應用程式語言。</value>
+  </data>
+  <data name="DowFlashl.Text" xml:space="preserve">
+    <value>下載快閃設定</value>
+  </data>
+  <data name="DfSettingsl.Header" xml:space="preserve">
+    <value>下載快閃設定</value>
+  </data>
+  <data name="SoftBackgroundColors.Header" xml:space="preserve">
+    <value>色彩</value>
+  </data>
+  <data name="SoftPersonalization.Header" xml:space="preserve">
+    <value>個人化</value>
+  </data>
+  <data name="SoftPersonalization.Description" xml:space="preserve">
+    <value>個人化程式 UI 顯示樣式</value>
+  </data>
+  <data name="ThemesLight.Text" xml:space="preserve">
+    <value>淺色</value>
+  </data>
+  <data name="ThemesDark.Text" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="ThemesDefault.Text" xml:space="preserve">
+    <value>使用系統設定</value>
+  </data>
+  <data name="AddMagnetDialog_Title" xml:space="preserve">
+    <value>新增磁力連結</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>確定</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="FilterNavViewAllTasks.Content" xml:space="preserve">
+    <value>所有任務</value>
+  </data>
+  <data name="FilterNavViewDownloading.Content" xml:space="preserve">
+    <value>下載中</value>
+  </data>
+  <data name="FilterNavViewSeeding.Content" xml:space="preserve">
+    <value>做種中</value>
+  </data>
+  <data name="FilterNavViewCompleted.Content" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="FilterNavViewUncompleted.Content" xml:space="preserve">
+    <value>未完成</value>
+  </data>
+  <data name="FilterNavViewActive.Content" xml:space="preserve">
+    <value>作用中</value>
+  </data>
+  <data name="FilterNavViewInactive.Content" xml:space="preserve">
+    <value>非作用中</value>
+  </data>
+  <data name="FilterNavViewFailed.Content" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="AddMagnet_SaveLabel.Text" xml:space="preserve">
+    <value>儲存路徑</value>
+  </data>
+  <data name="TorrentCheckModalWindow.Title" xml:space="preserve">
+    <value>建立新的 BitTorrent 任務視窗</value>
+  </data>
+  <data name="TorrentCheckGeneralPageSavePath.PlaceholderText" xml:space="preserve">
+    <value>輸入或選擇要儲存的資料夾路徑</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_SavePathLabel.Text" xml:space="preserve">
+    <value>儲存路徑：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FolderPickerButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>選擇資料夾</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FileNameLabel.Text" xml:space="preserve">
+    <value>檔案名稱：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FileNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>選填：覆寫檔案名稱</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_CreateSubfolderCheckBox.Content" xml:space="preserve">
+    <value>若種子僅包含單一檔案，則建立子資料夾</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentContentTitle.Text" xml:space="preserve">
+    <value>Torrent 內容</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentNameLabel.Text" xml:space="preserve">
+    <value>名稱：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentSizeLabel.Text" xml:space="preserve">
+    <value>大小：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentPublisherLabel.Text" xml:space="preserve">
+    <value>發佈者：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpace.Text" xml:space="preserve">
+    <value>磁碟空間：0 B</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FreeSpace.Text" xml:space="preserve">
+    <value>可用空間：0 B</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_FileName.Text" xml:space="preserve">
+    <value>檔案名稱</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Size.Text" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Percent.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_SelectAll.Content" xml:space="preserve">
+    <value>全選</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Video.Content" xml:space="preserve">
+    <value>影片</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Audio.Content" xml:space="preserve">
+    <value>音訊</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Picture.Content" xml:space="preserve">
+    <value>圖片</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Other.Content" xml:space="preserve">
+    <value>其他</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Action_DownloadNow.Content" xml:space="preserve">
+    <value>立即下載</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Action_DownloadLater.Content" xml:space="preserve">
+    <value>稍後下載</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Action_Cancel.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewDialogTorrentMetaDataDownloadDialog.Title" xml:space="preserve">
+    <value>新增磁力連結</value>
+  </data>
+  <data name="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip" xml:space="preserve">
+    <value>從剪貼簿貼上文字</value>
+  </data>
+  <data name="RSSPageTitle.Text" xml:space="preserve">
+    <value>RSS 訂閱</value>
+  </data>
+  <data name="RSSPageSubtitle.Text" xml:space="preserve">
+    <value>訂閱 Torrent RSS 摘要以自動下載</value>
+  </data>
+  <data name="RSSFeedsHeader.Text" xml:space="preserve">
+    <value>摘要來源</value>
+  </data>
+  <data name="RSSItemsLabel.Text" xml:space="preserve">
+    <value>個項目</value>
+  </data>
+  <data name="RSSSelectFeedPlaceholder.Text" xml:space="preserve">
+    <value>選擇摘要來源</value>
+  </data>
+  <data name="RSSAddFeedDialog.Title" xml:space="preserve">
+    <value>新增 RSS 摘要來源</value>
+  </data>
+  <data name="RSSAddFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="RSSAddFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.Header" xml:space="preserve">
+    <value>摘要來源 URL</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/rss.xml</value>
+  </data>
+  <data name="RSSFeedNameTextBox.Header" xml:space="preserve">
+    <value>名稱（選填）</value>
+  </data>
+  <data name="RSSFeedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>我的 RSS 摘要來源</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.Header" xml:space="preserve">
+    <value>儲存路徑（選填）</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>留空以使用預設值</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.Title" xml:space="preserve">
+    <value>摘要來源設定</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RSSSettingsTitleTextBox.Header" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="RSSSettingsUrlTextBox.Header" xml:space="preserve">
+    <value>摘要來源 URL</value>
+  </data>
+  <data name="RSSSettingsSavePathTextBox.Header" xml:space="preserve">
+    <value>儲存路徑</value>
+  </data>
+  <data name="RSSSettingsIntervalNumberBox.Header" xml:space="preserve">
+    <value>更新間隔（分鐘）</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.Header" xml:space="preserve">
+    <value>自動下載</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OnContent" xml:space="preserve">
+    <value>已啟用</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OffContent" xml:space="preserve">
+    <value>已停用</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.Header" xml:space="preserve">
+    <value>篩選模式（正規表示式）</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
+    <value>例如：1080p|720p</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
+    <value>移除摘要來源</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="RSSAddFeedTooltip" xml:space="preserve">
+    <value>新增摘要來源</value>
+  </data>
+  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+    <value>重新整理所有摘要來源</value>
+  </data>
+  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+    <value>重新整理此摘要來源</value>
+  </data>
+  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+    <value>摘要來源設定</value>
+  </data>
+  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+    <value>移除摘要來源</value>
+  </data>
+  <data name="RSSDownloadTooltip" xml:space="preserve">
+    <value>下載</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
+    <value>需要：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceFree.Text" xml:space="preserve">
+    <value>可用：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceTotal.Text" xml:space="preserve">
+    <value>總計：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_SelectedSizeLabel.Text" xml:space="preserve">
+    <value>已選取：</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
+    <value>優先順序</value>
+  </data>
+  <data name="BT_Title.Text" xml:space="preserve">
+    <value>BitTorrent 設定</value>
+  </data>
+  <data name="BT_Subtitle.Text" xml:space="preserve">
+    <value>設定進階 BitTorrent 協定選項</value>
+  </data>
+  <data name="BT_Section_Connection.Text" xml:space="preserve">
+    <value>連線</value>
+  </data>
+  <data name="BT_ListenInterfaces.Header" xml:space="preserve">
+    <value>監聽介面</value>
+  </data>
+  <data name="BT_ListenInterfaces.Description" xml:space="preserve">
+    <value>用於傳入連線的網路介面與連接埠（例如 0.0.0.0:6881）</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Header" xml:space="preserve">
+    <value>最大連線數</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Description" xml:space="preserve">
+    <value>每個 Torrent 的最大節點連線數</value>
+  </data>
+  <data name="BT_Protocol.Header" xml:space="preserve">
+    <value>協定</value>
+  </data>
+  <data name="BT_Protocol.Description" xml:space="preserve">
+    <value>啟用或停用特定傳輸協定</value>
+  </data>
+  <data name="BT_IncomingTcp.Header" xml:space="preserve">
+    <value>傳入 TCP</value>
+  </data>
+  <data name="BT_OutgoingTcp.Header" xml:space="preserve">
+    <value>傳出 TCP</value>
+  </data>
+  <data name="BT_IncomingUtp.Header" xml:space="preserve">
+    <value>傳入 uTP</value>
+  </data>
+  <data name="BT_OutgoingUtp.Header" xml:space="preserve">
+    <value>傳出 uTP</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Header" xml:space="preserve">
+    <value>每個 IP 多重連線</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Description" xml:space="preserve">
+    <value>允許來自相同 IP 位址的多個連線</value>
+  </data>
+  <data name="BT_AnonymousMode.Header" xml:space="preserve">
+    <value>匿名模式</value>
+  </data>
+  <data name="BT_AnonymousMode.Description" xml:space="preserve">
+    <value>對節點與 Tracker 隱藏用戶端身分</value>
+  </data>
+  <data name="BT_Section_Discovery.Text" xml:space="preserve">
+    <value>節點探索</value>
+  </data>
+  <data name="BT_EnableDht.Header" xml:space="preserve">
+    <value>DHT（分散式雜湊表）</value>
+  </data>
+  <data name="BT_EnableDht.Description" xml:space="preserve">
+    <value>啟用去中心化節點探索</value>
+  </data>
+  <data name="BT_EnableLsd.Header" xml:space="preserve">
+    <value>本機服務探索（LSD）</value>
+  </data>
+  <data name="BT_EnableUpnp.Header" xml:space="preserve">
+    <value>UPnP 連接埠對應</value>
+  </data>
+  <data name="BT_EnableNatpmp.Header" xml:space="preserve">
+    <value>NAT-PMP 連接埠對應</value>
+  </data>
+  <data name="BT_Section_Tracker.Text" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Header" xml:space="preserve">
+    <value>向所有層級宣告</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Description" xml:space="preserve">
+    <value>同時向所有 Tracker 層級傳送宣告</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Header" xml:space="preserve">
+    <value>向所有 Tracker 宣告</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Description" xml:space="preserve">
+    <value>向每個層級中的所有 Tracker 傳送宣告</value>
+  </data>
+  <data name="BT_Section_Limits.Text" xml:space="preserve">
+    <value>佇列限制</value>
+  </data>
+  <data name="BT_ActiveDownloads.Header" xml:space="preserve">
+    <value>作用中下載</value>
+  </data>
+  <data name="BT_ActiveDownloads.Description" xml:space="preserve">
+    <value>同時下載 Torrent 的最大數量</value>
+  </data>
+  <data name="BT_ActiveSeeds.Header" xml:space="preserve">
+    <value>作用中做種</value>
+  </data>
+  <data name="BT_ActiveSeeds.Description" xml:space="preserve">
+    <value>同時做種 Torrent 的最大數量</value>
+  </data>
+  <data name="BT_ActiveLimit.Header" xml:space="preserve">
+    <value>作用中 Torrent</value>
+  </data>
+  <data name="BT_ActiveLimit.Description" xml:space="preserve">
+    <value>作用中 Torrent 的最大總數（下載 + 做種）</value>
+  </data>
+  <data name="BT_Section_SpeedLimits.Text" xml:space="preserve">
+    <value>速度限制</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Header" xml:space="preserve">
+    <value>下載速率限制</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Description" xml:space="preserve">
+    <value>最大下載速度（KB/s，0 = 無限制）</value>
+  </data>
+  <data name="BT_UploadRateLimit.Header" xml:space="preserve">
+    <value>上傳速率限制</value>
+  </data>
+  <data name="BT_UploadRateLimit.Description" xml:space="preserve">
+    <value>最大上傳速度（KB/s，0 = 無限制）</value>
+  </data>
+  <data name="BT_Section_Seeding.Text" xml:space="preserve">
+    <value>做種</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Header" xml:space="preserve">
+    <value>做種比率限制</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Description" xml:space="preserve">
+    <value>達到比率時停止做種（0 = 無限制）</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Header" xml:space="preserve">
+    <value>做種時間限制</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Description" xml:space="preserve">
+    <value>經過指定分鐘數後停止做種（0 = 無限制）</value>
+  </data>
+  <data name="BT_Section_Peer.Text" xml:space="preserve">
+    <value>節點</value>
+  </data>
+  <data name="BT_Timeouts.Header" xml:space="preserve">
+    <value>逾時</value>
+  </data>
+  <data name="BT_Timeouts.Description" xml:space="preserve">
+    <value>設定節點連線逾時</value>
+  </data>
+  <data name="BT_PeerTimeout.Header" xml:space="preserve">
+    <value>節點逾時（秒）</value>
+  </data>
+  <data name="BT_HandshakeTimeout.Header" xml:space="preserve">
+    <value>交握逾時（秒）</value>
+  </data>
+  <data name="BT_CloseRedundant.Header" xml:space="preserve">
+    <value>關閉冗餘連線</value>
+  </data>
+  <data name="BT_CloseRedundant.Description" xml:space="preserve">
+    <value>關閉不再需要的連線</value>
+  </data>
+  <data name="BT_Section_DiskIO.Text" xml:space="preserve">
+    <value>磁碟 I/O</value>
+  </data>
+  <data name="BT_AioThreads.Header" xml:space="preserve">
+    <value>非同步 I/O 執行緒</value>
+  </data>
+  <data name="BT_AioThreads.Description" xml:space="preserve">
+    <value>非同步磁碟作業的執行緒數量</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Header" xml:space="preserve">
+    <value>雜湊檢查記憶體（MB）</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Description" xml:space="preserve">
+    <value>雜湊檢查可使用的最大記憶體</value>
+  </data>
+  <data name="BT_Section_Identity.Text" xml:space="preserve">
+    <value>身分</value>
+  </data>
+  <data name="BT_UserAgent.Header" xml:space="preserve">
+    <value>使用者代理</value>
+  </data>
+  <data name="BT_UserAgent.Description" xml:space="preserve">
+    <value>傳送給 Tracker 的用戶端識別字串</value>
+  </data>
+  <data name="BT_Section_Encryption.Text" xml:space="preserve">
+    <value>加密</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Header" xml:space="preserve">
+    <value>加密原則</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Description" xml:space="preserve">
+    <value>節點連線加密模式</value>
+  </data>
+  <data name="BT_Enc_Forced.Content" xml:space="preserve">
+    <value>強制</value>
+  </data>
+  <data name="BT_Enc_Enabled.Content" xml:space="preserve">
+    <value>已啟用</value>
+  </data>
+  <data name="BT_Enc_Disabled.Content" xml:space="preserve">
+    <value>已停用</value>
+  </data>
+  <data name="BT_PreferRc4.Header" xml:space="preserve">
+    <value>偏好 RC4 加密</value>
+  </data>
+  <data name="BT_PreferRc4.Description" xml:space="preserve">
+    <value>啟用加密時優先使用 RC4 而非明文</value>
+  </data>
+  <data name="BT_Section_Proxy.Text" xml:space="preserve">
+    <value>Proxy</value>
+  </data>
+  <data name="BT_ProxyType.Header" xml:space="preserve">
+    <value>Proxy 類型</value>
+  </data>
+  <data name="BT_ProxyType.Description" xml:space="preserve">
+    <value>選擇 BitTorrent 流量使用的 Proxy 協定</value>
+  </data>
+  <data name="BT_Proxy_Socks4.Content" xml:space="preserve">
+    <value>SOCKS4</value>
+  </data>
+  <data name="BT_Proxy_Socks5.Content" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="BT_Proxy_Socks5Pw.Content" xml:space="preserve">
+    <value>SOCKS5（含密碼）</value>
+  </data>
+  <data name="BT_Proxy_Http.Content" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="BT_Proxy_HttpPw.Content" xml:space="preserve">
+    <value>HTTP（含密碼）</value>
+  </data>
+  <data name="BT_ProxyDetails.Header" xml:space="preserve">
+    <value>Proxy 設定</value>
+  </data>
+  <data name="BT_ProxyDetails.Description" xml:space="preserve">
+    <value>設定 Proxy 伺服器詳細資料</value>
+  </data>
+  <data name="BT_ProxyHostname.Header" xml:space="preserve">
+    <value>主機名稱</value>
+  </data>
+  <data name="BT_ProxyPort.Header" xml:space="preserve">
+    <value>連接埠</value>
+  </data>
+  <data name="BT_ProxyUsername.Header" xml:space="preserve">
+    <value>使用者名稱</value>
+  </data>
+  <data name="BT_ProxyPassword.Header" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="BT_ProxyPeerConn.Header" xml:space="preserve">
+    <value>節點連線使用 Proxy</value>
+  </data>
+  <data name="BT_ProxyTrackerConn.Header" xml:space="preserve">
+    <value>Tracker 連線使用 Proxy</value>
+  </data>
+  <data name="DL_Section_SaveLocation.Text" xml:space="preserve">
+    <value>儲存位置</value>
+  </data>
+  <data name="DL_DefaultSavePath.Header" xml:space="preserve">
+    <value>預設儲存路徑</value>
+  </data>
+  <data name="DL_DefaultSavePath.Description" xml:space="preserve">
+    <value>新 Torrent 的預設下載目錄</value>
+  </data>
+  <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>（下載資料夾）</value>
+  </data>
+  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="DL_PreallocateStorage.Header" xml:space="preserve">
+    <value>預先配置磁碟空間</value>
+  </data>
+  <data name="DL_PreallocateStorage.Description" xml:space="preserve">
+    <value>下載開始前預留磁碟空間</value>
+  </data>
+  <data name="DL_Section_Behaviour.Text" xml:space="preserve">
+    <value>行為</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Header" xml:space="preserve">
+    <value>自動開始下載</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
+    <value>新增 Torrent 後自動開始下載</value>
+  </data>
+  <data name="DL_MoveCompleted.Header" xml:space="preserve">
+    <value>移動已完成的下載</value>
+  </data>
+  <data name="DL_MoveCompleted.Description" xml:space="preserve">
+    <value>將已完成的下載移至其他目錄</value>
+  </data>
+  <data name="DL_MoveCompletedPath.Header" xml:space="preserve">
+    <value>目的地</value>
+  </data>
+  <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
+    <value>已完成下載的路徑</value>
+  </data>
+  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
+    <value>新增 HTTP 下載</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.PrimaryButtonText" xml:space="preserve">
+    <value>下載</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.Header" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/file.zip</value>
+  </data>
+  <data name="HttpDownloadDialogPasteButtonText.Text" xml:space="preserve">
+    <value>從剪貼簿貼上</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.Header" xml:space="preserve">
+    <value>儲存至</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
+    <value>預設下載目錄</value>
+  </data>
+  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
+    <value>檔案名稱（選填）</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.PlaceholderText" xml:space="preserve">
+    <value>留空以自動偵測</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>無效的 URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>請輸入有效的 HTTP、HTTPS 或 FTP URL。</value>
+  </data>
+  <data name="PeerHeader_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerHeader_Client.Text" xml:space="preserve">
+    <value>用戶端</value>
+  </data>
+  <data name="PeerHeader_Progress.Text" xml:space="preserve">
+    <value>進度</value>
+  </data>
+  <data name="PeerHeader_DLSpeed.Text" xml:space="preserve">
+    <value>下載速度</value>
+  </data>
+  <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
+    <value>上傳速度</value>
+  </data>
+  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="PeersList_EmptyState.Text" xml:space="preserve">
+    <value>沒有已連線的節點</value>
+  </data>
+  <data name="Task_TrackersList.Header" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="TrackerHeader_URL.Text" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="TrackerHeader_Tier.Text" xml:space="preserve">
+    <value>層級</value>
+  </data>
+  <data name="TrackerHeader_Peers.Text" xml:space="preserve">
+    <value>節點</value>
+  </data>
+  <data name="TrackerHeader_Status.Text" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="TrackerHeader_Message.Text" xml:space="preserve">
+    <value>訊息</value>
+  </data>
+  <data name="TrackersList_EmptyState.Text" xml:space="preserve">
+    <value>沒有 Tracker</value>
+  </data>
+  <data name="Task_FilesList.Header" xml:space="preserve">
+    <value>檔案</value>
+  </data>
+  <data name="FileHeader_Path.Text" xml:space="preserve">
+    <value>檔案</value>
+  </data>
+  <data name="FileHeader_Size.Text" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="FileHeader_Progress.Text" xml:space="preserve">
+    <value>進度</value>
+  </data>
+  <data name="FileHeader_Done.Text" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="FileHeader_Priority.Text" xml:space="preserve">
+    <value>優先順序</value>
+  </data>
+  <data name="FilesList_EmptyState.Text" xml:space="preserve">
+    <value>沒有可用的檔案資訊</value>
+  </data>
+  <data name="IPF_Title.Text" xml:space="preserve">
+    <value>IP 篩選器</value>
+  </data>
+  <data name="IPF_Subtitle.Text" xml:space="preserve">
+    <value>封鎖或允許來自特定 IP 位址與範圍的連線</value>
+  </data>
+  <data name="IPF_Section_General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="IPF_Enable.Header" xml:space="preserve">
+    <value>啟用 IP 篩選器</value>
+  </data>
+  <data name="IPF_Enable.Description" xml:space="preserve">
+    <value>啟用時，來自被封鎖 IP 的連線將被拒絕</value>
+  </data>
+  <data name="IPF_RuleCount.Header" xml:space="preserve">
+    <value>規則總數</value>
+  </data>
+  <data name="IPF_RuleCount.Description" xml:space="preserve">
+    <value>目前已載入的 IP 篩選規則數量</value>
+  </data>
+  <data name="IPF_Section_AddRule.Text" xml:space="preserve">
+    <value>新增規則</value>
+  </data>
+  <data name="IPF_ManualAdd.Header" xml:space="preserve">
+    <value>手動輸入</value>
+  </data>
+  <data name="IPF_ManualAdd.Description" xml:space="preserve">
+    <value>輸入 IP 位址、CIDR 區塊或範圍（每行一個）</value>
+  </data>
+  <data name="IPF_ManualInput.Header" xml:space="preserve">
+    <value>IP 位址</value>
+  </data>
+  <data name="IPF_AddBtn.Content" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="IPF_ImportFile.Header" xml:space="preserve">
+    <value>從檔案匯入</value>
+  </data>
+  <data name="IPF_ImportFile.Description" xml:space="preserve">
+    <value>從文字檔（.txt、.dat、.p2p）匯入規則</value>
+  </data>
+  <data name="IPF_ImportBtn.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="IPF_Section_Manage.Text" xml:space="preserve">
+    <value>管理規則</value>
+  </data>
+  <data name="IPF_ClearAll.Header" xml:space="preserve">
+    <value>清除所有規則</value>
+  </data>
+  <data name="IPF_ClearAll.Description" xml:space="preserve">
+    <value>從資料庫移除所有 IP 篩選規則</value>
+  </data>
+  <data name="IPF_ClearBtn.Content" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <data name="IPF_RuleFiles.Header" xml:space="preserve">
+    <value>規則檔案</value>
+  </data>
+  <data name="IPF_RuleFiles.Description" xml:space="preserve">
+    <value>開啟應用程式資料中的可編輯副本；匯入檔案以新增變更，或在下方編輯作用中的資料庫規則</value>
+  </data>
+  <data name="IPF_OpenFolderBtn.Content" xml:space="preserve">
+    <value>開啟資料夾</value>
+  </data>
+  <data name="IPF_OpenPrimaryFileBtn.Content" xml:space="preserve">
+    <value>編輯 ipfilter.txt</value>
+  </data>
+  <data name="IPF_OpenSecondaryFileBtn.Content" xml:space="preserve">
+    <value>編輯 ipfilter2.txt</value>
+  </data>
+  <data name="IPF_RuleEditor.Header" xml:space="preserve">
+    <value>編輯已儲存的規則</value>
+  </data>
+  <data name="IPF_RuleEditor.Description" xml:space="preserve">
+    <value>搜尋、編輯或刪除作用中的資料庫規則；變更會立即套用至 libtorrent</value>
+  </data>
+  <data name="IPF_RefreshRulesBtn.Content" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="IPF_RuleSearch.PlaceholderText" xml:space="preserve">
+    <value>依 IP、範圍、說明或規則 ID 搜尋</value>
+  </data>
+  <data name="IPF_EditRuleBtn.Content" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="IPF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="IPF_Section_Subscriptions.Text" xml:space="preserve">
+    <value>訂閱</value>
+  </data>
+  <data name="IPF_Subscriptions.Header" xml:space="preserve">
+    <value>IP 篩選器訂閱</value>
+  </data>
+  <data name="IPF_Subscriptions.Description" xml:space="preserve">
+    <value>從 HTTP 或 HTTPS 來源下載並維護 IP 規則</value>
+  </data>
+  <data name="IPF_UpdateSubscriptionsNow.Content" xml:space="preserve">
+    <value>立即更新</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Header" xml:space="preserve">
+    <value>自動更新</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Description" xml:space="preserve">
+    <value>依設定的間隔在背景檢查已啟用的來源</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Header" xml:space="preserve">
+    <value>新增來源</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Description" xml:space="preserve">
+    <value>輸入純文字 IP 篩選清單的直接連結</value>
+  </data>
+  <data name="IPF_SubscriptionUrl.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/ipfilter.txt</value>
+  </data>
+  <data name="IPF_AddSubscription.Content" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Header" xml:space="preserve">
+    <value>已訂閱的來源</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Description" xml:space="preserve">
+    <value>每個來源都會顯示啟用狀態與最新結果</value>
+  </data>
+  <data name="IPF_EditSubscription.Content" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="IPF_DeleteSubscription.Content" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Header" xml:space="preserve">
+    <value>更新行為</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Description" xml:space="preserve">
+    <value>選擇下載的規則如何套用至目前資料庫</value>
+  </data>
+  <data name="IPF_SubscriptionMerge.Content" xml:space="preserve">
+    <value>合併至現有 IP 位址清單</value>
+  </data>
+  <data name="IPF_SubscriptionReplace.Content" xml:space="preserve">
+    <value>取代現有 IP 位址清單</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Header" xml:space="preserve">
+    <value>更新間隔（小時）</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Description" xml:space="preserve">
+    <value>允許範圍：1–168 小時</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Header" xml:space="preserve">
+    <value>上次更新結果</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Description" xml:space="preserve">
+    <value>最近一次自動或手動訂閱更新</value>
+  </data>
+  <data name="IPF_Never" xml:space="preserve">
+    <value>從不</value>
+  </data>
+  <data name="IPF_NeverUpdated" xml:space="preserve">
+    <value>尚未更新</value>
+  </data>
+  <data name="IPF_SourceSuccess" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="IPF_SourceFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="IPF_Rules" xml:space="preserve">
+    <value>條規則</value>
+  </data>
+  <data name="IPF_NotifyTitle" xml:space="preserve">
+    <value>IP 篩選器訂閱</value>
+  </data>
+  <data name="IPF_NoEnabledSubscriptions" xml:space="preserve">
+    <value>沒有已啟用的訂閱來源</value>
+  </data>
+  <data name="IPF_UpdateSummarySuccess" xml:space="preserve">
+    <value>已更新來源</value>
+  </data>
+  <data name="IPF_UpdateSummaryRules" xml:space="preserve">
+    <value>有效規則</value>
+  </data>
+  <data name="IPF_UpdateSummaryImported" xml:space="preserve">
+    <value>資料庫變更</value>
+  </data>
+  <data name="IPF_UpdateSummaryFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="IPF_UpdateAllFailed" xml:space="preserve">
+    <value>所有訂閱更新皆失敗。</value>
+  </data>
+  <data name="IPF_UpdateUnexpectedError" xml:space="preserve">
+    <value>訂閱更新發生未預期的失敗。</value>
+  </data>
+  <data name="IPF_InvalidSubscriptionUrl" xml:space="preserve">
+    <value>請輸入有效的 HTTP 或 HTTPS URL。</value>
+  </data>
+  <data name="IPF_DuplicateSubscription" xml:space="preserve">
+    <value>此訂閱已存在。</value>
+  </data>
+  <data name="IPF_SubscriptionAdded" xml:space="preserve">
+    <value>已新增訂閱來源</value>
+  </data>
+  <data name="IPF_InvalidOrDuplicateSubscriptions" xml:space="preserve">
+    <value>找不到新的有效訂閱 URL。</value>
+  </data>
+  <data name="IPF_SourceEnabled" xml:space="preserve">
+    <value>啟用此來源</value>
+  </data>
+  <data name="IPF_EditSubscriptionTitle" xml:space="preserve">
+    <value>編輯訂閱</value>
+  </data>
+  <data name="IPF_Save" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="IPF_Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="IPF_SubscriptionUpdateFailed" xml:space="preserve">
+    <value>無法儲存此訂閱。</value>
+  </data>
+  <data name="IPF_DeleteSubscriptionTitle" xml:space="preserve">
+    <value>刪除訂閱</value>
+  </data>
+  <data name="IPF_Delete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="RenameTaskMenuItem.Text" xml:space="preserve">
+    <value>重新命名</value>
+  </data>
+  <data name="BanPeer1hItem.Text" xml:space="preserve">
+    <value>封鎖 1 小時</value>
+  </data>
+  <data name="BanPeer24hItem.Text" xml:space="preserve">
+    <value>封鎖 24 小時</value>
+  </data>
+  <data name="BanPeerPermanentItem.Text" xml:space="preserve">
+    <value>永久封鎖</value>
+  </data>
+  <data name="UnbanPeerItem.Text" xml:space="preserve">
+    <value>移除手動 IP 封鎖</value>
+  </data>
+  <data name="PeerHeader_Location.Text" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="PeerHeader_PeerStatus.Text" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="PeerHeader_Reason.Text" xml:space="preserve">
+    <value>原因</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>原因</value>
+  </data>
+  <data name="PeerHeader_Protocol.Text" xml:space="preserve">
+    <value>協定</value>
+  </data>
+  <data name="PeerHeader_Initiator.Text" xml:space="preserve">
+    <value>發起方</value>
+  </data>
+  <data name="PeerHeader_Source.Text" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="PeerReason_Manual" xml:space="preserve">
+    <value>使用者手動封鎖</value>
+  </data>
+  <data name="PeerReason_Permanent" xml:space="preserve">
+    <value>永久</value>
+  </data>
+  <data name="PeerReason_Remaining" xml:space="preserve">
+    <value>剩餘</value>
+  </data>
+  <data name="PeerReason_ListMatch" xml:space="preserve">
+    <value>符合 IP 清單來源</value>
+  </data>
+  <data name="PeerReason_ClientListMatch" xml:space="preserve">
+    <value>符合防吸血用戶端清單</value>
+  </data>
+  <data name="PeerReason_AntiLeech" xml:space="preserve">
+    <value>防吸血封鎖</value>
+  </data>
+  <data name="PeerReason_IPFilter" xml:space="preserve">
+    <value>符合 IP 篩選器</value>
+  </data>
+  <data name="NavItem_NatTools.Content" xml:space="preserve">
+    <value>NAT 工具</value>
+  </data>
+  <data name="NatTools_NATDetection.Text" xml:space="preserve">
+    <value>NAT 類型偵測</value>
+  </data>
+  <data name="NatTools_DetectButton.Content" xml:space="preserve">
+    <value>偵測 NAT 類型</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.Text" xml:space="preserve">
+    <value>NAT 類型：</value>
+  </data>
+  <data name="NatTools_PublicIPLabel.Text" xml:space="preserve">
+    <value>公用 IPv4：</value>
+  </data>
+  <data name="NatTools_UPnPLabel.Text" xml:space="preserve">
+    <value>UPnP：</value>
+  </data>
+  <data name="NatTools_PortTest.Text" xml:space="preserve">
+    <value>連接埠可存取性測試</value>
+  </data>
+  <data name="NatTools_PortNumberBox.PlaceholderText" xml:space="preserve">
+    <value>連接埠</value>
+  </data>
+  <data name="NatTools_TestPortButton.Content" xml:space="preserve">
+    <value>測試連接埠</value>
+  </data>
+  <data name="NatTools_PortResultLabel.Text" xml:space="preserve">
+    <value>結果：</value>
+  </data>
+  <data name="NatTools_STUNServers.Text" xml:space="preserve">
+    <value>建議的 STUN 伺服器</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.Title" xml:space="preserve">
+    <value>視窗關閉動作</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.CloseButtonText" xml:space="preserve">
+    <value>結束應用程式</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.PrimaryButtonText" xml:space="preserve">
+    <value>關閉至系統匣</value>
+  </data>
+  <data name="ViewDialogCloseToTrayQuestion.Text" xml:space="preserve">
+    <value>關閉主視窗時，請選擇一個動作：</value>
+  </data>
+  <data name="ViewDialogCloseToTrayRememberCheckBox.Content" xml:space="preserve">
+    <value>記住我的選擇，不要再詢問</value>
+  </data>
+  <data name="TorrentCheckModalWindowTitleBar.Title" xml:space="preserve">
+    <value>建立新的 BitTorrent 任務</value>
+  </data>
+  <data name="ViewComboBoxSystemLang" xml:space="preserve">
+    <value>使用系統主要語言</value>
+  </data>
+  <data name="Appearance.Content" xml:space="preserve">
+    <value>外觀</value>
+  </data>
+  <data name="ClientFilterNavItem.Content" xml:space="preserve">
+    <value>用戶端篩選器</value>
+  </data>
+  <data name="CF_Title.Text" xml:space="preserve">
+    <value>用戶端篩選器</value>
+  </data>
+  <data name="CF_Subtitle.Text" xml:space="preserve">
+    <value>依 BitTorrent 節點宣告的用戶端名稱加以封鎖。節點交握後會將符合的節點位址加入工作階段 IP 篩選器，以強制執行比對結果。</value>
+  </data>
+  <data name="CF_Section_General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="CF_Enable.Header" xml:space="preserve">
+    <value>啟用用戶端篩選</value>
+  </data>
+  <data name="CF_Enable.Description" xml:space="preserve">
+    <value>持續檢查已連線的節點，並中斷符合條件的用戶端。</value>
+  </data>
+  <data name="CF_RuleCount.Header" xml:space="preserve">
+    <value>已儲存規則</value>
+  </data>
+  <data name="CF_RuleCount.Description" xml:space="preserve">
+    <value>儲存在本機資料庫中的用戶端比對規則總數。</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Header" xml:space="preserve">
+    <value>本次工作階段已封鎖的位址</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Description" xml:space="preserve">
+    <value>自上次規則變更以來，因用戶端規則而遭封鎖的不重複節點 IP 位址。</value>
+  </data>
+  <data name="CF_Section_Create.Text" xml:space="preserve">
+    <value>建立與測試</value>
+  </data>
+  <data name="CF_AddRule.Header" xml:space="preserve">
+    <value>新增用戶端規則</value>
+  </data>
+  <data name="CF_AddRule.Description" xml:space="preserve">
+    <value>選擇「包含」、「完全相符」、「萬用字元」（* 和 ?）或「正規表示式」比對。</value>
+  </data>
+  <data name="CF_AddBtn.Content" xml:space="preserve">
+    <value>新增規則</value>
+  </data>
+  <data name="CF_Pattern.Header" xml:space="preserve">
+    <value>用戶端模式</value>
+  </data>
+  <data name="CF_Pattern.PlaceholderText" xml:space="preserve">
+    <value>範例：BitComet 或 *Xunlei*</value>
+  </data>
+  <data name="CF_MatchType.Header" xml:space="preserve">
+    <value>比對類型</value>
+  </data>
+  <data name="CF_MatchContains.Content" xml:space="preserve">
+    <value>包含</value>
+  </data>
+  <data name="CF_MatchExact.Content" xml:space="preserve">
+    <value>完全相符</value>
+  </data>
+  <data name="CF_MatchWildcard.Content" xml:space="preserve">
+    <value>萬用字元</value>
+  </data>
+  <data name="CF_MatchRegex.Content" xml:space="preserve">
+    <value>正規表示式</value>
+  </data>
+  <data name="CF_Description.Header" xml:space="preserve">
+    <value>說明</value>
+  </data>
+  <data name="CF_Description.PlaceholderText" xml:space="preserve">
+    <value>選填備註</value>
+  </data>
+  <data name="CF_CaseSensitive.Header" xml:space="preserve">
+    <value>區分大小寫</value>
+  </data>
+  <data name="CF_Test.Header" xml:space="preserve">
+    <value>測試用戶端名稱</value>
+  </data>
+  <data name="CF_Test.Description" xml:space="preserve">
+    <value>預覽第一個會符合的已啟用規則，但不會封鎖任何內容。</value>
+  </data>
+  <data name="CF_TestInput.PlaceholderText" xml:space="preserve">
+    <value>貼上用戶端名稱，例如 qBittorrent/5.0.4</value>
+  </data>
+  <data name="CF_TestBtn.Content" xml:space="preserve">
+    <value>測試</value>
+  </data>
+  <data name="CF_Section_Manage.Text" xml:space="preserve">
+    <value>規則</value>
+  </data>
+  <data name="CF_RuleManager.Header" xml:space="preserve">
+    <value>管理規則</value>
+  </data>
+  <data name="CF_RuleManager.Description" xml:space="preserve">
+    <value>搜尋、啟用、停用、編輯或刪除個別用戶端規則。</value>
+  </data>
+  <data name="CF_RefreshBtn.Content" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="CF_Search.PlaceholderText" xml:space="preserve">
+    <value>搜尋模式、說明、類型或 ID</value>
+  </data>
+  <data name="CF_ToggleRuleBtn.Content" xml:space="preserve">
+    <value>啟用 / 停用</value>
+  </data>
+  <data name="CF_EditRuleBtn.Content" xml:space="preserve">
+    <value>編輯</value>
+  </data>
+  <data name="CF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="CF_ImportExport.Header" xml:space="preserve">
+    <value>匯入、匯出與重設</value>
+  </data>
+  <data name="CF_ImportExport.Description" xml:space="preserve">
+    <value>匯入 JSON 或純文字、匯出完整保真度 JSON，或移除所有規則。</value>
+  </data>
+  <data name="CF_ImportBtn.Content" xml:space="preserve">
+    <value>匯入</value>
+  </data>
+  <data name="CF_ExportBtn.Content" xml:space="preserve">
+    <value>匯出</value>
+  </data>
+  <data name="CF_ClearRulesBtn.Content" xml:space="preserve">
+    <value>清除所有規則</value>
+  </data>
+  <data name="CF_Section_History.Text" xml:space="preserve">
+    <value>命中記錄</value>
+  </data>
+  <data name="CF_History.Header" xml:space="preserve">
+    <value>最近符合</value>
+  </data>
+  <data name="CF_History.Description" xml:space="preserve">
+    <value>最多顯示 500 筆最近的用戶端規則命中記錄，包含用戶端、位址、Torrent 與時間。</value>
+  </data>
+  <data name="CF_RefreshHistoryBtn.Content" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="CF_ClearHistoryBtn.Content" xml:space="preserve">
+    <value>清除記錄</value>
+  </data>
   <data name="ViewModelGuideActionNext" xml:space="preserve">
     <value>下一步</value>
   </data>
@@ -225,8 +1527,26 @@
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
     <value>由 Crowdin 社群成員維護</value>
   </data>
-  <data name="DataTableSortNoneHint" xml:space="preserve">
-    <value>尚未排序。按一下以遞增排序。</value>
+  <data name="RuntimeStatusWindow.Title" xml:space="preserve">
+    <value>OpenNet Runtime Status</value>
+  </data>
+  <data name="RuntimeStatusTitleBar.Title" xml:space="preserve">
+    <value>OpenNet Runtime Status</value>
+  </data>
+  <data name="RuntimeStatusRefreshButton.Label" xml:space="preserve">
+    <value>Refresh</value>
+  </data>
+  <data name="RuntimeStatusCopyButton.Label" xml:space="preserve">
+    <value>Copy all</value>
+  </data>
+  <data name="RuntimeStatusItemColumn.Text" xml:space="preserve">
+    <value>Status item</value>
+  </data>
+  <data name="RuntimeStatusValueColumn.Text" xml:space="preserve">
+    <value>Current value</value>
+  </data>
+  <data name="RuntimeStatusLastUpdated.Text" xml:space="preserve">
+    <value>Waiting for first refresh</value>
   </data>
   <data name="DataTableSortAscendingHint" xml:space="preserve">
     <value>目前為遞增排序。按一下以遞減排序。</value>
@@ -251,5 +1571,2697 @@
   </data>
   <data name="TaskStatusFailed" xml:space="preserve">
     <value>失敗</value>
+  </data>
+  <data name="TasksContextStart.Text" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="TasksContextStop.Text" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="TasksContextPreview.Text" xml:space="preserve">
+    <value>預覽</value>
+  </data>
+  <data name="TasksContextUpdateTracker.Text" xml:space="preserve">
+    <value>更新 Tracker</value>
+  </data>
+  <data name="TasksContextSuperSeed.Text" xml:space="preserve">
+    <value>超級做種模式</value>
+  </data>
+  <data name="TasksContextSequential.Text" xml:space="preserve">
+    <value>依序下載模式</value>
+  </data>
+  <data name="TasksContextOpenFile.Text" xml:space="preserve">
+    <value>開啟檔案</value>
+  </data>
+  <data name="TasksContextHashCheck.Text" xml:space="preserve">
+    <value>手動雜湊檢查</value>
+  </data>
+  <data name="TasksContextSaveTorrent.Text" xml:space="preserve">
+    <value>另存 Torrent 為...</value>
+  </data>
+  <data name="TasksContextSubmitSnapshots.Text" xml:space="preserve">
+    <value>提交快照</value>
+  </data>
+  <data name="TasksContextDelete.Text" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="TasksContextCleanUp.Text" xml:space="preserve">
+    <value>清理</value>
+  </data>
+  <data name="TasksContextMoveFiles.Text" xml:space="preserve">
+    <value>將檔案移至</value>
+  </data>
+  <data name="TasksContextChooseFolder.Text" xml:space="preserve">
+    <value>選擇資料夾...</value>
+  </data>
+  <data name="TasksContextTags.Text" xml:space="preserve">
+    <value>標籤</value>
+  </data>
+  <data name="TasksContextNoTags.Text" xml:space="preserve">
+    <value>尚未設定標籤</value>
+  </data>
+  <data name="TasksContextSendTo.Text" xml:space="preserve">
+    <value>傳送至</value>
+  </data>
+  <data name="TasksContextDefaultApplication.Text" xml:space="preserve">
+    <value>預設應用程式</value>
+  </data>
+  <data name="TasksContextSearchOnline.Text" xml:space="preserve">
+    <value>線上搜尋</value>
+  </data>
+  <data name="TasksContextCopyMagnet.Text" xml:space="preserve">
+    <value>複製 Magnet URI（Ctrl+C）</value>
+  </data>
+  <data name="TasksContextCopy.Text" xml:space="preserve">
+    <value>複製</value>
+  </data>
+  <data name="TasksContextCopyName.Text" xml:space="preserve">
+    <value>名稱</value>
+  </data>
+  <data name="TasksContextCopyHash.Text" xml:space="preserve">
+    <value>資訊雜湊</value>
+  </data>
+  <data name="TasksContextCopyPath.Text" xml:space="preserve">
+    <value>儲存路徑</value>
+  </data>
+  <data name="TasksContextDiskUsage.Text" xml:space="preserve">
+    <value>磁碟使用資訊...</value>
+  </data>
+  <data name="TorrentDetailsExpander.Header" xml:space="preserve">
+    <value>Torrent 詳細資料</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.Text" xml:space="preserve">
+    <value>資訊雜湊：</value>
+  </data>
+  <data name="TorrentDetailsCreator.Text" xml:space="preserve">
+    <value>建立者：</value>
+  </data>
+  <data name="TorrentDetailsCreatedOn.Text" xml:space="preserve">
+    <value>建立時間：</value>
+  </data>
+  <data name="TorrentDetailsPieces.Text" xml:space="preserve">
+    <value>分塊：</value>
+  </data>
+  <data name="TorrentDetailsComment.Text" xml:space="preserve">
+    <value>註解：</value>
+  </data>
+  <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>開啟目錄</value>
+  </data>
+  <data name="PropertiesMenuItem.Text" xml:space="preserve">
+    <value>內容...</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Header" xml:space="preserve">
+    <value>圖片背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
+    <value>在主要內容後方顯示本機圖片</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.Content" xml:space="preserve">
+    <value>單一圖片</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.Content" xml:space="preserve">
+    <value>本機資料夾</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Header" xml:space="preserve">
+    <value>背景圖片來源</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Description" xml:space="preserve">
+    <value>選擇單一圖片或包含圖片的資料夾</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Header" xml:space="preserve">
+    <value>清除圖片背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Description" xml:space="preserve">
+    <value>清除已設定的圖片來源</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Header" xml:space="preserve">
+    <value>輪播間隔</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Description" xml:space="preserve">
+    <value>使用本機資料夾時選取新檔案的頻率</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationMinutesBox.Header" xml:space="preserve">
+    <value>分鐘</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Header" xml:space="preserve">
+    <value>影片背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Description" xml:space="preserve">
+    <value>在主要內容後方播放本機影片</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.Content" xml:space="preserve">
+    <value>單一影片</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.Content" xml:space="preserve">
+    <value>本機資料夾</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Header" xml:space="preserve">
+    <value>背景影片來源</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Description" xml:space="preserve">
+    <value>選擇影片或包含影片的資料夾</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Header" xml:space="preserve">
+    <value>清除影片背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Description" xml:space="preserve">
+    <value>停止播放並清除已設定的影片來源</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoMutedCard.Header" xml:space="preserve">
+    <value>將背景影片靜音</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoLoopingCard.Header" xml:space="preserve">
+    <value>循環播放影片</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Header" xml:space="preserve">
+    <value>影片延展模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Description" xml:space="preserve">
+    <value>影片填滿視窗的方式</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
+    <value>影片不透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
+    <value>影片在圖片與背景材質圖層上方的不透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Header" xml:space="preserve">
+    <value>套用至其他視窗</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
+    <value>將選取的背景材質與背景資源套用至輔助視窗</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>新增</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadTitle" xml:space="preserve">
+    <value>HTTP/FTP 批次下載</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadPlaceholder" xml:space="preserve">
+    <value>每行輸入一個 HTTP、HTTPS 或 FTP URL</value>
+  </data>
+  <data name="OperationProgressDialogCompleted" xml:space="preserve">
+    <value>✓ 操作成功完成</value>
+  </data>
+  <data name="OperationProgressDialogFailed" xml:space="preserve">
+    <value>✗ 操作失敗</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.Text" xml:space="preserve">
+    <value>開啟 OpenNet</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.Text" xml:space="preserve">
+    <value>開始所有下載</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.Text" xml:space="preserve">
+    <value>開始所有上傳</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.Text" xml:space="preserve">
+    <value>停止所有任務</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.Text" xml:space="preserve">
+    <value>暫停所有作用中任務</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.Text" xml:space="preserve">
+    <value>繼續上次暫停的任務</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.Text" xml:space="preserve">
+    <value>下載限制</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText14.Text" xml:space="preserve">
+    <value>不限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText16.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText17.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText18.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.Text" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.Text" xml:space="preserve">
+    <value>上傳限制</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.Text" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.Text" xml:space="preserve">
+    <value>啟用排程器</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.Text" xml:space="preserve">
+    <value>開啟 Torrent 檔案 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.Text" xml:space="preserve">
+    <value>從 URL 新增 Torrent ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.Text" xml:space="preserve">
+    <value>HTTP/FTP 下載 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.Text" xml:space="preserve">
+    <value>HTTP/FTP 批次下載 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.Text" xml:space="preserve">
+    <value>擷取剪貼簿 URL</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.Text" xml:space="preserve">
+    <value>系統匣氣泡通知</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.Text" xml:space="preserve">
+    <value>浮動視窗</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.Text" xml:space="preserve">
+    <value>浮動視窗設定</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.Text" xml:space="preserve">
+    <value>選項 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.Text" xml:space="preserve">
+    <value>結束</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Description" xml:space="preserve">
+    <value>在 P2P 網路中安全傳輸檔案</value>
+  </data>
+  <data name="ControlHeaderCarouselText2.Header" xml:space="preserve">
+    <value>檔案傳輸</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Description" xml:space="preserve">
+    <value>探索並連線至區域網路上的 Peer</value>
+  </data>
+  <data name="ControlHeaderCarouselText4.Header" xml:space="preserve">
+    <value>網路探索</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Description" xml:space="preserve">
+    <value>透過安全通道與 Peer 即時聊天</value>
+  </data>
+  <data name="ControlHeaderCarouselText6.Header" xml:space="preserve">
+    <value>Peer 聊天</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Description" xml:space="preserve">
+    <value>在裝置之間建立安全的加密通道</value>
+  </data>
+  <data name="ControlHeaderCarouselText8.Header" xml:space="preserve">
+    <value>VPN 通道</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Description" xml:space="preserve">
+    <value>與網路上的 Peer 共用資料夾與儲存空間</value>
+  </data>
+  <data name="ControlHeaderCarouselText10.Header" xml:space="preserve">
+    <value>共用儲存空間</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Description" xml:space="preserve">
+    <value>即時監控網路頻寬與效能</value>
+  </data>
+  <data name="ControlHeaderCarouselText12.Header" xml:space="preserve">
+    <value>頻寬監視器</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.Text" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.Text" xml:space="preserve">
+    <value>讓點對點網路變得簡單。</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.Text" xml:space="preserve">
+    <value>安全地連線、分享與通訊。</value>
+  </data>
+  <data name="ViewHomePageText1.Text" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="ViewHomePageText2.Text" xml:space="preserve">
+    <value>探索 OpenNet 如何協助你建立點對點連線</value>
+  </data>
+  <data name="ViewHomePageText3.Text" xml:space="preserve">
+    <value>安全檔案傳輸</value>
+  </data>
+  <data name="ViewHomePageText4.Text" xml:space="preserve">
+    <value>透過端對端加密在 Peer 之間直接傳輸檔案，不需要雲端中介服務。</value>
+  </data>
+  <data name="ViewHomePageText5.Text" xml:space="preserve">
+    <value>開始傳輸</value>
+  </data>
+  <data name="ViewHomePageText6.Text" xml:space="preserve">
+    <value>自動探索</value>
+  </data>
+  <data name="ViewHomePageText7.Text" xml:space="preserve">
+    <value>自動尋找區域網路上可用的 Peer</value>
+  </data>
+  <data name="ViewHomePageText8.Text" xml:space="preserve">
+    <value>掃描網路</value>
+  </data>
+  <data name="ViewHomePageText9.Text" xml:space="preserve">
+    <value>Peer 聊天</value>
+  </data>
+  <data name="ViewHomePageText10.Text" xml:space="preserve">
+    <value>使用加密訊息通道與 Peer 通訊</value>
+  </data>
+  <data name="ViewHomePageText11.Text" xml:space="preserve">
+    <value>VPN 與通道</value>
+  </data>
+  <data name="ViewHomePageText12.Text" xml:space="preserve">
+    <value>在裝置之間建立安全的加密通道，以透過網際網路進行私人網路連線</value>
+  </data>
+  <data name="ViewHomePageText13.Text" xml:space="preserve">
+    <value>開放原始碼</value>
+  </data>
+  <data name="ViewHomePageText14.Text" xml:space="preserve">
+    <value>OpenNet 是開放原始碼專案。歡迎貢獻程式碼、回報問題與提出功能需求。</value>
+  </data>
+  <data name="ViewHomePageText15.Text" xml:space="preserve">
+    <value>OpenNet 程式碼庫</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.Content" xml:space="preserve">
+    <value>靜態</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.Content" xml:space="preserve">
+    <value>自訂 Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.Content" xml:space="preserve">
+    <value>壓克力</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.Content" xml:space="preserve">
+    <value>自訂壓克力</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.Content" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.Content" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.Content" xml:space="preserve">
+    <value>薄板材質</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.Content" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.Content" xml:space="preserve">
+    <value>替代</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.Text" xml:space="preserve">
+    <value>分塊圖</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.Text" xml:space="preserve">
+    <value>選取 BitTorrent 任務以檢視其分塊。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.Content" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.Text" xml:space="preserve">
+    <value>已下載分塊</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.Text" xml:space="preserve">
+    <value>可用分塊</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.Text" xml:space="preserve">
+    <value>分塊大小：—</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.Text" xml:space="preserve">
+    <value>Web 種子：0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
+    <value>空白</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+    <value>下載中</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.Text" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.Text" xml:space="preserve">
+    <value>已停用</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.Text" xml:space="preserve">
+    <value>未檢查</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.Text" xml:space="preserve">
+    <value>未選取任務</value>
+  </data>
+  <data name="ViewTaskSummaryPageText80.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.Text" xml:space="preserve">
+    <value>閒置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.Text" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.Text" xml:space="preserve">
+    <value>已下載分塊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.Text" xml:space="preserve">
+    <value>可用分塊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.Text" xml:space="preserve">
+    <value>下載進度與速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.Text" xml:space="preserve">
+    <value>傳輸</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
+    <value>已經過時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
+    <value>下載速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.Text" xml:space="preserve">
+    <value>下載限制</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.Text" xml:space="preserve">
+    <value>做種時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.Text" xml:space="preserve">
+    <value>已上傳</value>
+  </data>
+  <data name="ViewTaskSummaryPageText36.Text" xml:space="preserve">
+    <value>上傳速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.Text" xml:space="preserve">
+    <value>上傳限制</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.Text" xml:space="preserve">
+    <value>種子</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.Text" xml:space="preserve">
+    <value>Peer</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.Text" xml:space="preserve">
+    <value>連線數</value>
+  </data>
+  <data name="ViewTaskSummaryPageText38.Text" xml:space="preserve">
+    <value>分享比率</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.Text" xml:space="preserve">
+    <value>長期做種</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.Text" xml:space="preserve">
+    <value>上傳大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.Text" xml:space="preserve">
+    <value>任務名稱</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.Text" xml:space="preserve">
+    <value>儲存路徑</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.Text" xml:space="preserve">
+    <value>任務大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.Text" xml:space="preserve">
+    <value>資訊雜湊 v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText58.Text" xml:space="preserve">
+    <value>不適用</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.Text" xml:space="preserve">
+    <value>資訊雜湊 v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.Text" xml:space="preserve">
+    <value>分塊雜湊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.Text" xml:space="preserve">
+    <value>新增時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.Text" xml:space="preserve">
+    <value>完成時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.Text" xml:space="preserve">
+    <value>發布者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.Text" xml:space="preserve">
+    <value>標籤</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.Text" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.Text" xml:space="preserve">
+    <value>剩餘大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.Text" xml:space="preserve">
+    <value>分塊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.Text" xml:space="preserve">
+    <value>檔案數量</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.Text" xml:space="preserve">
+    <value>檔案對齊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.Text" xml:space="preserve">
+    <value>佇列位置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.Text" xml:space="preserve">
+    <value>建立者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.Text" xml:space="preserve">
+    <value>建立時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.Text" xml:space="preserve">
+    <value>私人 Torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.Text" xml:space="preserve">
+    <value>旗標</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.Text" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.Text" xml:space="preserve">
+    <value>編輯 Tracker...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.Text" xml:space="preserve">
+    <value>更新 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.Text" xml:space="preserve">
+    <value>移除 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.Text" xml:space="preserve">
+    <value>檢視記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.Text" xml:space="preserve">
+    <value>清除記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.Text" xml:space="preserve">
+    <value>清除所有 Tracker 的記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.Text" xml:space="preserve">
+    <value>清除所有任務之 Tracker 記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
+    <value>移除所有無法連線的 Tracker...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
+    <value>自動調整所選欄寬以符合內容</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
+    <value>自動調整所有欄寬</value>
+  </data>
+  <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText21.Text" xml:space="preserve">
+    <value>記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText22.Text" xml:space="preserve">
+    <value>重試次數</value>
+  </data>
+  <data name="ViewTaskTrackersPageText23.Text" xml:space="preserve">
+    <value>剩餘時間</value>
+  </data>
+  <data name="ViewTaskTrackersPageText24.Text" xml:space="preserve">
+    <value>做種者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
+    <value>下載者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+    <value>重設欄位與排序</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
+    <value>沒有 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.Content" xml:space="preserve">
+    <value>新增 Tracker</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.Text" xml:space="preserve">
+    <value>NAT 與連接埠偵測</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.Text" xml:space="preserve">
+    <value>穿透目錄</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.Header" xml:space="preserve">
+    <value>監聽連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.Text" xml:space="preserve">
+    <value>NAT 行為使用暫時的 UDP Socket。連接埠可達性會針對 libtorrent 現有的 TCP/uTP 監聽器進行測試。</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.Text" xml:space="preserve">
+    <value>位址與 NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.Text" xml:space="preserve">
+    <value>本機 IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText46.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.Text" xml:space="preserve">
+    <value>公用 IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.Text" xml:space="preserve">
+    <value>映射行為</value>
+  </data>
+  <data name="ViewNATDetectorWindowText24.Text" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.Text" xml:space="preserve">
+    <value>篩選行為</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.Text" xml:space="preserve">
+    <value>舊版標籤</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.Text" xml:space="preserve">
+    <value>監聽中的連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.Text" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText28.Text" xml:space="preserve">
+    <value>未測試</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.Text" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.Text" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.Text" xml:space="preserve">
+    <value>映射連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.Text" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.Text" xml:space="preserve">
+    <value>探測證據</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.Text" xml:space="preserve">
+    <value>RFC 5780 映射觀察結果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.Text" xml:space="preserve">
+    <value>伺服器 1／主要</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.Text" xml:space="preserve">
+    <value>伺服器 1／其他連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.Text" xml:space="preserve">
+    <value>其他 IPv4／伺服器 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.Text" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.Text" xml:space="preserve">
+    <value>公用 IP:連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.Text" xml:space="preserve">
+    <value>延遲</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.Text" xml:space="preserve">
+    <value>就緒</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.Content" xml:space="preserve">
+    <value>開始偵測</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.Content" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.Text" xml:space="preserve">
+    <value>進階</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.Text" xml:space="preserve">
+    <value>發布者</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.Text" xml:space="preserve">
+    <value>下載順序</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.Text" xml:space="preserve">
+    <value>任務名稱</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.Header" xml:space="preserve">
+    <value>永遠置頂</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.Text" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.Text" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.Text" xml:space="preserve">
+    <value>內容</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.Text" xml:space="preserve">
+    <value>尚無 Tracker 記錄項目</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.Text" xml:space="preserve">
+    <value>上傳速度</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.Text" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.Text" xml:space="preserve">
+    <value>下載者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.Text" xml:space="preserve">
+    <value>重試次數</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.Text" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
+    <value>未測試</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.Text" xml:space="preserve">
+    <value>做種者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.Text" xml:space="preserve">
+    <value>剩餘時間</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.Text" xml:space="preserve">
+    <value>分享比率</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.Text" xml:space="preserve">
+    <value>不限</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.Text" xml:space="preserve">
+    <value>不適用</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.Text" xml:space="preserve">
+    <value>記錄</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開啟 OpenNet</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開始所有下載</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開始所有上傳</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>停止所有任務</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>暫停所有作用中任務</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>繼續上次暫停的任務</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載限制</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>不限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上傳限制</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>啟用排程器</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開啟 Torrent 檔案 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>從 URL 新增 Torrent ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP 下載 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP 批次下載 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>擷取剪貼簿 URL</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>系統匣氣泡通知</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>浮動視窗</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>浮動視窗設定</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>選項 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>結束</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>在 P2P 網路中安全傳輸檔案</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>探索並連線至區域網路上的 Peer</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>透過安全通道與 Peer 即時聊天</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>在裝置之間建立安全的加密通道</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>與網路上的 Peer 共用資料夾與儲存空間</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>即時監控網路頻寬與效能</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>讓點對點網路變得簡單。</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安全地連線、分享與通訊。</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>我已閱讀並同意</value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>專案說明與使用須知</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>隱私權說明</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>問題回報規範</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet 開放原始碼授權條款</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>如果上方圖示缺失、顯示為亂碼或方框，請前往 </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> 下載並安裝圖示字型。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安裝完成後請重新啟動 OpenNet，以確認元件是否正常生效。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>如果未偵測到 WebView2 執行階段，請前往 </value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> 下載並安裝。</value>
+  </data>
+  <data name="ViewHomePageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>功能</value>
+  </data>
+  <data name="ViewHomePageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>探索 OpenNet 如何協助你建立點對點連線</value>
+  </data>
+  <data name="ViewHomePageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安全檔案傳輸</value>
+  </data>
+  <data name="ViewHomePageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>透過端對端加密在 Peer 之間直接傳輸檔案，不需要雲端中介服務。</value>
+  </data>
+  <data name="ViewHomePageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開始傳輸</value>
+  </data>
+  <data name="ViewHomePageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動探索</value>
+  </data>
+  <data name="ViewHomePageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動尋找區域網路上可用的 Peer</value>
+  </data>
+  <data name="ViewHomePageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>掃描網路</value>
+  </data>
+  <data name="ViewHomePageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peer 聊天</value>
+  </data>
+  <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>使用加密訊息通道與 Peer 通訊</value>
+  </data>
+  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>VPN 與通道</value>
+  </data>
+  <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>在裝置之間建立安全的加密通道，以透過網際網路進行私人網路連線</value>
+  </data>
+  <data name="ViewHomePageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開放原始碼</value>
+  </data>
+  <data name="ViewHomePageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet 是開放原始碼專案。歡迎貢獻程式碼、回報問題與提出功能需求。</value>
+  </data>
+  <data name="ViewHomePageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet 程式碼庫</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT 類型：</value>
+  </data>
+  <data name="NatTools_PublicIPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>公用 IPv4：</value>
+  </data>
+  <data name="NatTools_UPnPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP：</value>
+  </data>
+  <data name="NatTools_PortResultLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>結果：</value>
+  </data>
+  <data name="RSSItemsLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>個項目</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>靜態</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自訂 Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>壓克力</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自訂壓克力</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>薄板材質</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>替代</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>單一圖片</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>本機資料夾</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>單一影片</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>本機資料夾</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分塊圖</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>選取 BitTorrent 任務以檢視其分塊。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>重新整理</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已下載分塊</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>可用分塊</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分塊大小：—</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Web 種子：0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>空白</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載中</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已停用</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未檢查</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未選取任務</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>閒置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已下載分塊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>可用分塊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載進度與速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>傳輸</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已經過時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載限制</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>做種時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已上傳</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上傳速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上傳限制</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>種子</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Peer</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>連線數</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分享比率</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>長期做種</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上傳大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>任務名稱</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>儲存路徑</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>任務大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>資訊雜湊 v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>不適用</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>資訊雜湊 v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分塊雜湊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>新增時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>完成時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>發布者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>標籤</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>剩餘大小</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>分塊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>檔案數量</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>檔案對齊</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>佇列位置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>建立者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>建立時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>私人 Torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>旗標</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>編輯 Tracker...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>更新 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>移除 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>檢視記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>清除記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>清除所有 Tracker 的記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>清除所有任務之 Tracker 記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>移除所有無法連線的 Tracker...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動調整所選欄寬以符合內容</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動調整所有欄寬</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>記錄</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>重試次數</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>剩餘時間</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>做種者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載者</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>重設欄位與排序</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>沒有 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>新增 Tracker</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentNameLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>名稱：</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>資訊雜湊：</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT 與連接埠偵測</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>穿透目錄</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>監聽連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT 行為使用暫時的 UDP Socket。連接埠可達性會針對 libtorrent 現有的 TCP/uTP 監聽器進行測試。</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>位址與 NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>本機 IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>公用 IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>映射行為</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>篩選行為</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>舊版標籤</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>監聽中的連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未測試</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>映射連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>探測證據</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>RFC 5780 映射觀察結果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>伺服器 1／主要</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>伺服器 1／其他連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>其他 IPv4／伺服器 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>公用 IP:連接埠</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>延遲</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>就緒</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>開始偵測</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>進階</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>發布者</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>下載順序</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>任務名稱</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>永遠置頂</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Tracker URL</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>內容</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>尚無 Tracker 記錄項目</value>
+  </data>
+  <data name="trayIcon.ToolTip" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Header" xml:space="preserve">
+    <value>檔案傳輸</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Header" xml:space="preserve">
+    <value>網路探索</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Header" xml:space="preserve">
+    <value>Peer 聊天</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Header" xml:space="preserve">
+    <value>VPN 通道</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Header" xml:space="preserve">
+    <value>共用儲存空間</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Header" xml:space="preserve">
+    <value>頻寬監視器</value>
+  </data>
+  <data name="IpEndpointInputAddress.Header" xml:space="preserve">
+    <value>IP 位址</value>
+  </data>
+  <data name="IpEndpointInputAddress.PlaceholderText" xml:space="preserve">
+    <value>0.0.0.0 或 ::</value>
+  </data>
+  <data name="IpEndpointInputPort.Header" xml:space="preserve">
+    <value>連接埠</value>
+  </data>
+  <data name="GuideWebUIUsername.PlaceholderText" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="InfoBarShowButtonText.Text" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="InfoBarPanelTitle.Text" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="MoreToolsHeader.Text" xml:space="preserve">
+    <value>OpenNet 工具</value>
+  </data>
+  <data name="MoreRuntimeStatusTitle.Text" xml:space="preserve">
+    <value>完整執行狀態</value>
+  </data>
+  <data name="MoreRuntimeStatusDescription.Text" xml:space="preserve">
+    <value>引擎、網路、傳輸、CPU、記憶體、磁碟與佇列</value>
+  </data>
+  <data name="MoreNatDetectionTitle.Text" xml:space="preserve">
+    <value>NAT 與連接埠偵測</value>
+  </data>
+  <data name="MoreNatDetectionDescription.Text" xml:space="preserve">
+    <value>STUN 觀察結果與 libtorrent 連接埠映射</value>
+  </data>
+  <data name="MoreGuideTitle.Text" xml:space="preserve">
+    <value>設定指南</value>
+  </data>
+  <data name="MoreGuideDescription.Text" xml:space="preserve">
+    <value>重新開啟 Web UI 認證與 GUI 設定</value>
+  </data>
+  <data name="MoreWebUIStatus.Text" xml:space="preserve">
+    <value>正在檢查 Web UI…</value>
+  </data>
+  <data name="MoreCopyWebUIAddress.Content" xml:space="preserve">
+    <value>複製</value>
+  </data>
+  <data name="MoreOpenWebUIButton.Content" xml:space="preserve">
+    <value>開啟</value>
+  </data>
+  <data name="NavItem_More.Content" xml:space="preserve">
+    <value>更多</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Description" xml:space="preserve">
+    <value>首次新增 BitTorrent 任務時，附加所有已啟用的自訂與訂閱 Tracker</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Header" xml:space="preserve">
+    <value>自動加入自訂 Tracker</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNewTrackerTextBox.PlaceholderText" xml:space="preserve">
+    <value>輸入 Tracker URL（例如 tracker.example.com:6969）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageBestItem.Content" xml:space="preserve">
+    <value>精选列表（best.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageAllItem.Content" xml:space="preserve">
+    <value>完整列表（all.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageHttpItem.Content" xml:space="preserve">
+    <value>HTTP(S) 列表（http.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoHttpItem.Content" xml:space="preserve">
+    <value>无 HTTP 列表（nohttp.txt）</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettingsHeader.Text" xml:space="preserve">
+    <value>連線</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Description" xml:space="preserve">
+    <value>設定 libtorrent 使用的 IPv4 與 IPv6 端點。連接埠設為 0 時，由作業系統選擇可用連接埠。</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Header" xml:space="preserve">
+    <value>BitTorrent 監聽端點</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListener.Header" xml:space="preserve">
+    <value>執行階段監聽器</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListenerEndpoint.Text" xml:space="preserve">
+    <value>BitTorrent 引擎未執行。</value>
+  </data>
+  <data name="RSSMaxItemsLabel.Text" xml:space="preserve">
+    <value>每個摘要來源的最大項目數：</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Description" xml:space="preserve">
+    <value>製作人員／特別感謝名單</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Header" xml:space="preserve">
+    <value>開發者</value>
+  </data>
+  <data name="SettingsGeneralNavItem.Content" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="SettingsBitTorrentNavItem.Content" xml:space="preserve">
+    <value>BitTorrent</value>
+  </data>
+  <data name="SettingsNetworkNavItem.Content" xml:space="preserve">
+    <value>網路</value>
+  </data>
+  <data name="SettingsTrackerNavItem.Content" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="SettingsIPFilterNavItem.Content" xml:space="preserve">
+    <value>IP 篩選器</value>
+  </data>
+  <data name="SettingsDownloadNavItem.Content" xml:space="preserve">
+    <value>下載行為</value>
+  </data>
+  <data name="SettingsWebUINavItem.Content" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="SettingsAboutNavItem.Content" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="SettingsPersonalizeTitle.Text" xml:space="preserve">
+    <value>個人化你的裝置</value>
+  </data>
+  <data name="SettingsPersonalizeDescription.Text" xml:space="preserve">
+    <value>使用自訂主題與背景打造專屬 OpenNet</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>版本與更新</value>
+  </data>
+  <data name="AppUpdateCheckButton.Content" xml:space="preserve">
+    <value>檢查更新</value>
+  </data>
+  <data name="AutoCheckUpdateCheckbox.Content" xml:space="preserve">
+    <value>自動檢查更新</value>
+  </data>
+  <data name="SettingsAppThemeCard.Description" xml:space="preserve">
+    <value>選擇要顯示的應用程式主題</value>
+  </data>
+  <data name="SettingsAppThemeCard.Header" xml:space="preserve">
+    <value>應用程式主題</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Description" xml:space="preserve">
+    <value>套用於任務檔案、Tracker、Peer 與執行狀態。較低的值可能會增加 CPU 使用率。</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Header" xml:space="preserve">
+    <value>GUI 資料重新整理間隔</value>
+  </data>
+  <data name="GuiRefreshIntervalBox.Header" xml:space="preserve">
+    <value>毫秒</value>
+  </data>
+  <data name="RestartToApplyLanguageButton.Content" xml:space="preserve">
+    <value>立即重新啟動</value>
+  </data>
+  <data name="ViewThemeSettingLuminosityOpacitySlider.Header" xml:space="preserve">
+    <value>亮度不透明度</value>
+  </data>
+  <data name="ViewThemeSettingTintOpacitySlider.Header" xml:space="preserve">
+    <value>色調不透明度</value>
+  </data>
+  <data name="ViewThemeSettingEnableAcrylicSwitch.Header" xml:space="preserve">
+    <value>視窗非作用中時啟用壓克力效果</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Description" xml:space="preserve">
+    <value>应用的背景类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Header" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundMica.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Description" xml:space="preserve">
+    <value>背景的亚克力效果模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Header" xml:space="preserve">
+    <value>亚克力类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Description" xml:space="preserve">
+    <value>背景的 Mica 效果模式</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Header" xml:space="preserve">
+    <value>Mica 类型</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Description" xml:space="preserve">
+    <value>Mica 無法使用時啟用備援效果（Win10）</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Header" xml:space="preserve">
+    <value>Mica 錯誤備援</value>
+  </data>
+  <data name="SoftBackgroundColors.Description" xml:space="preserve">
+    <value>選擇強調色並進行個人化</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Description" xml:space="preserve">
+    <value>背景中图片大小的设置方式</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Header" xml:space="preserve">
+    <value>图片拉伸模式</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.Content" xml:space="preserve">
+    <value>填滿</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>等比例縮放</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>等比例填滿</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Description" xml:space="preserve">
+    <value>图片在背景中的透明度，会覆盖窗口色</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Header" xml:space="preserve">
+    <value>透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.Content" xml:space="preserve">
+    <value>填滿</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>等比例縮放</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>等比例填滿</value>
+  </data>
+  <data name="ViewThemesSettingsPageFontSetting.Description" xml:space="preserve">
+    <value>字型大小</value>
+  </data>
+  <data name="ViewThemesSettingsPageFontSetting.Header" xml:space="preserve">
+    <value>字型設定</value>
+  </data>
+  <data name="WebUISettingsTitle.Text" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="WebUISettingsDescription.Text" xml:space="preserve">
+    <value>透過瀏覽器使用內附的 qBittorrent WebUI，或使用任何與 qBittorrent Web API 相容的用戶端。</value>
+  </data>
+  <data name="WebUISettingsConnectionHeader.Text" xml:space="preserve">
+    <value>連線</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Description" xml:space="preserve">
+    <value>內嵌 HTTP 伺服器接受的 IP 位址。</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Header" xml:space="preserve">
+    <value>監聽位址</value>
+  </data>
+  <data name="WebUISettingsPortCard.Description" xml:space="preserve">
+    <value>重新啟動 Web UI 後會立即套用新的連接埠。</value>
+  </data>
+  <data name="WebUISettingsPortCard.Header" xml:space="preserve">
+    <value>連接埠</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Description" xml:space="preserve">
+    <value>WebUI 使用的語言代碼，例如 en 或 zh_CN。</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Header" xml:space="preserve">
+    <value>地區設定</value>
+  </data>
+  <data name="WebUISettingsLocale.PlaceholderText" xml:space="preserve">
+    <value>en</value>
+  </data>
+  <data name="WebUISettingsAuthenticationHeader.Text" xml:space="preserve">
+    <value>驗證</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Description" xml:space="preserve">
+    <value>至少 3 個字元；不可包含冒號。</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Header" xml:space="preserve">
+    <value>使用者名稱</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Description" xml:space="preserve">
+    <value>至少 6 個字元。套用設定時，現有的瀏覽器工作階段將被清除。</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Header" xml:space="preserve">
+    <value>密碼</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Description" xml:space="preserve">
+    <value>供 API 用戶端使用的選填 Bearer Token。請將它視同密碼保管。</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Header" xml:space="preserve">
+    <value>API 金鑰</value>
+  </data>
+  <data name="WebUISettingsGenerateApiKey.Content" xml:space="preserve">
+    <value>產生</value>
+  </data>
+  <data name="WebUISettingsCopyApiKey.Content" xml:space="preserve">
+    <value>複製</value>
+  </data>
+  <data name="WebUISettingsClearApiKey.Content" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="WebUISettingsSave.Content" xml:space="preserve">
+    <value>儲存並重新啟動 Web UI</value>
+  </data>
+  <data name="WebUISettingsOpen.Content" xml:space="preserve">
+    <value>開啟 Web UI</value>
+  </data>
+  <data name="FilePriority_Skip.Content" xml:space="preserve">
+    <value>略過</value>
+  </data>
+  <data name="FilePriority_Low.Content" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.Content" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="FilePriority_High.Content" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="TaskSpeedGraph_Title.Text" xml:space="preserve">
+    <value>效能圖表</value>
+  </data>
+  <data name="TaskSpeedGraph_Subtitle.Text" xml:space="preserve">
+    <value>即時工作階段與系統遙測資料</value>
+  </data>
+  <data name="TaskSpeedGraph_MetricSelector.Header" xml:space="preserve">
+    <value>顯示</value>
+  </data>
+  <data name="TaskSpeedGraph_TransferSpeed.Content" xml:space="preserve">
+    <value>傳輸速度</value>
+  </data>
+  <data name="TaskSpeedGraph_DiskCache.Content" xml:space="preserve">
+    <value>磁碟快取</value>
+  </data>
+  <data name="TaskSpeedGraph_LongTermSeeding.Content" xml:space="preserve">
+    <value>長期做種</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuOverall.Content" xml:space="preserve">
+    <value>CPU 使用率（整體）</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuLogicalProcessors.Content" xml:space="preserve">
+    <value>CPU 使用率（邏輯處理器）</value>
+  </data>
+  <data name="TaskSpeedGraph_MemoryUsage.Content" xml:space="preserve">
+    <value>記憶體使用量</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtUdp.Content" xml:space="preserve">
+    <value>透過 UDP 的 DHT</value>
+  </data>
+  <data name="TaskViewTaskSpeedGraphPageGlobalDownload.Text" xml:space="preserve">
+    <value>全域下載</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDiskCacheTitle.Text" xml:space="preserve">
+    <value>磁碟快取</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageLongTermUpload.Text" xml:space="preserve">
+    <value>長期上傳</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageOverallCpu.Text" xml:space="preserve">
+    <value>整體 CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAverageCpu.Text" xml:space="preserve">
+    <value>平均 CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageWorkingSet.Text" xml:space="preserve">
+    <value>OpenNet 工作集</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDhtReceive.Text" xml:space="preserve">
+    <value>DHT 接收</value>
+  </data>
+  <data name="TaskSpeedGraph_GlobalUpload.Text" xml:space="preserve">
+    <value>全域上傳</value>
+  </data>
+  <data name="TaskSpeedGraph_Source.Text" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="TaskSpeedGraph_Scope.Text" xml:space="preserve">
+    <value>範圍</value>
+  </data>
+  <data name="TaskSpeedGraph_Sampling.Text" xml:space="preserve">
+    <value>取樣</value>
+  </data>
+  <data name="TaskSpeedGraph_PeakCpu.Text" xml:space="preserve">
+    <value>CPU 峰值</value>
+  </data>
+  <data name="TaskSpeedGraph_PhysicalMemoryShare.Text" xml:space="preserve">
+    <value>實體記憶體占比</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtSend.Text" xml:space="preserve">
+    <value>DHT 傳送</value>
+  </data>
+  <data name="TaskSpeedGraph_GraphScale.Text" xml:space="preserve">
+    <value>圖表比例</value>
+  </data>
+  <data name="TaskNewFromUrlButton.Text" xml:space="preserve">
+    <value>從 Magnet 連結</value>
+  </data>
+  <data name="TaskNewFromFileButton.Text" xml:space="preserve">
+    <value>從 BitTorrent 檔案</value>
+  </data>
+  <data name="TaskNewFromHttpButton.Text" xml:space="preserve">
+    <value>HTTP 下載</value>
+  </data>
+  <data name="Header_DownloadSize.Text" xml:space="preserve">
+    <value>下載大小</value>
+  </data>
+  <data name="Header_UploadSize.Text" xml:space="preserve">
+    <value>上傳大小</value>
+  </data>
+  <data name="Header_TotalDownloadSize.Text" xml:space="preserve">
+    <value>下載總大小</value>
+  </data>
+  <data name="Header_TotalUploadSize.Text" xml:space="preserve">
+    <value>上傳總大小</value>
+  </data>
+  <data name="Header_ULRate.Text" xml:space="preserve">
+    <value>上傳速率</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
+    <value>自動調整所選欄寬以符合內容</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
+    <value>自動調整所有欄寬以符合內容</value>
+  </data>
+  <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
+    <value>重設為預設顯示項目</value>
+  </data>
+  <data name="ViewWindowExceptionHeader.Text" xml:space="preserve">
+    <value>發生無法復原的嚴重錯誤</value>
+  </data>
+  <data name="ViewExceptionWindowStacktraceHeader.Header" xml:space="preserve">
+    <value>例外狀況詳細資料</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Description" xml:space="preserve">
+    <value>清楚且逐步的描述能幫助我們更快定位問題</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Header" xml:space="preserve">
+    <value>當機發生前，你執行了哪些操作？</value>
+  </data>
+  <data name="ViewWindowExceptionClose.Content" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox.Content" xml:space="preserve">
+    <value>立即開始</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartDownloadButton.Content" xml:space="preserve">
+    <value>開始下載</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowCloseButton.Content" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Enc_None" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="BT_Proxy_None.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="IPF_ReplacementSkipped" xml:space="preserve">
+    <value>為保留現有規則，已略過取代</value>
+  </data>
+  <data name="IPF_Skipped" xml:space="preserve">
+    <value>已略過</value>
+  </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>尚未排序。按一下以遞增排序</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>填滿</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例縮放</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例填滿</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>填滿</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例縮放</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>等比例填滿</value>
+  </data>
+  <data name="FilePriority_Skip.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>略過</value>
+  </data>
+  <data name="FilePriority_Low.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="FilePriority_High.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="ViewMainWindowButton.Content" xml:space="preserve">
+    <value>[開發] 反轉主題</value>
+  </data>
+  <data name="ViewGuideViewRun.Text" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+    <value>DHT</value>
+  </data>
+  <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
+    <value>連接埠遭封鎖。請檢查路由器或防火牆設定。</value>
+  </data>
+  <data name="ViewNatToolsPageRun.Text" xml:space="preserve">
+    <value>已連線 Peer：</value>
+  </data>
+  <data name="ViewNatToolsPageTextBlock.Text" xml:space="preserve">
+    <value>映射一致</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>未監聽</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>從 URL 訂閱 Tracker 清單（.txt 格式）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>Tracker 訂閱</value>
+  </data>
+  <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
+    <value>訂閱</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>啟用區域 Peer 探索（LSD）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>訂閱 URL（例如 https://example.com/trackers.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>探索區域網路上的 Peer</value>
+  </data>
+  <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
+    <value>前往重現專案</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Description" xml:space="preserve">
+    <value>適用於 WinUI3 的 OpenNet</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Header" xml:space="preserve">
+    <value>OpenNet 開放原始碼</value>
+  </data>
+  <data name="ViewAboutPageSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEssential Build SDK 版本</value>
+  </data>
+  <data name="ViewAboutPageHyperlinkButton.Content" xml:space="preserve">
+    <value>在 GitHub 上加入此專案</value>
+  </data>
+  <data name="ViewAboutPageRun.Text" xml:space="preserve">
+    <value>最近一次提交：</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>下載資料夾</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>進階 libtorrent</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>傳送給 Peer 的用戶端識別字串</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>已完成項目的移動路徑</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>新下載的預設行為</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>下載預設值</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>1.2.3.4
+10.0.0.0/8
+192.168.1.0-192.168.1.255
+2400:1a00::/32</value>
+  </data>
+  <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>字型</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
+    <value>重設欄位與排序</value>
+  </data>
+  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
+    <value>優先順序</value>
+  </data>
+  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
+    <value>重設欄位與排序</value>
+  </data>
+  <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlock.Text" xml:space="preserve">
+    <value>↑ —</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Description" xml:space="preserve">
+    <value>設定繪製的線條、邊框與漸層區域</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Header" xml:space="preserve">
+    <value>數列外觀</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Description" xml:space="preserve">
+    <value>將所有圖表自訂選項重設為原始值。</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Header" xml:space="preserve">
+    <value>還原預設值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetButton.Content" xml:space="preserve">
+    <value>重設</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxTimeUnit.Text" xml:space="preserve">
+    <value>毫秒</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemDot.Content" xml:space="preserve">
+    <value>點</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>自訂圖表樣式</value>
+  </data>
+  <data name="ViewTasksPageAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋</value>
+  </data>
+  <data name="ViewTasksPageToggleMenuItem.Text" xml:space="preserve">
+    <value>Peer</value>
+  </data>
+  <data name="ViewTorrentCheckGeneralPageTextBlock.Text" xml:space="preserve">
+    <value>你可以現在設定儲存位置與 Tracker，或立即新增任務。中繼資料將繼續在任務清單中下載。</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Description" xml:space="preserve">
+    <value>刻意擲回一個面向 XAML 的例外狀況</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Header" xml:space="preserve">
+    <value>例外狀況處理</value>
+  </data>
+  <data name="ViewDevWindowButton.Content" xml:space="preserve">
+    <value>觸發例外狀況</value>
+  </data>
+  <data name="ViewInfoOverlayWindowTextBlock.Text" xml:space="preserve">
+    <value>DHT：0 個節點</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowTextBlock.Text" xml:space="preserve">
+    <value>正在等待可見的資料點…</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowButton.Content" xml:space="preserve">
+    <value>新增圓角批次</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowExpander.Header" xml:space="preserve">
+    <value>圖表屬性與筆刷組合</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBox.Header" xml:space="preserve">
+    <value>醒目提示行為</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBoxItem.Content" xml:space="preserve">
+    <value>每個資料點</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceStrokeSettingsCard.Header" xml:space="preserve">
+    <value>筆畫寬度</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowToggleSwitch.Header" xml:space="preserve">
+    <value>虛線邊框</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectorBarItem.Text" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowTextBlock.Text" xml:space="preserve">
+    <value>全應用程式的自訂 Tracker 開關與訂閱可在「網路」設定中管理。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowCheckBoxText1.Content" xml:space="preserve">
+    <value>將 .torrent 副本儲存至下載資料夾</value>
+  </data>
+  <data name="ViewNatToolsPageNACoreNotRunning" xml:space="preserve">
+    <value>不適用（核心未執行）</value>
+  </data>
+  <data name="ViewNatToolsPageNA" xml:space="preserve">
+    <value>不適用</value>
+  </data>
+  <data name="ViewNatToolsPageDetecting" xml:space="preserve">
+    <value>正在偵測...</value>
+  </data>
+  <data name="ViewNatToolsPage" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="ViewNatToolsPageTesting" xml:space="preserve">
+    <value>正在測試...</value>
+  </data>
+  <data name="ViewNatToolsPageYesConsistentMappingAcrossAllServers" xml:space="preserve">
+    <value>是－所有伺服器的映射一致</value>
+  </data>
+  <data name="ViewNatToolsPageFullConeEIM" xml:space="preserve">
+    <value>全錐形（EIM）</value>
+  </data>
+  <data name="ViewNatToolsPageNoSameIPButDifferentPorts" xml:space="preserve">
+    <value>否－相同 IP，但連接埠不同</value>
+  </data>
+  <data name="ViewNatToolsPagePortRestrictedSymmetric" xml:space="preserve">
+    <value>連接埠限制型／對稱型</value>
+  </data>
+  <data name="ViewNatToolsPageNoDifferentIPPortPerDestination" xml:space="preserve">
+    <value>否－每個目的地使用不同的 IP:連接埠</value>
+  </data>
+  <data name="ViewNatToolsPageSymmetric" xml:space="preserve">
+    <value>對稱型</value>
+  </data>
+  <data name="ViewNatToolsPagePartialOnlyOneServerResponded" xml:space="preserve">
+    <value>部分成功－只有一部伺服器回應</value>
+  </data>
+  <data name="ViewNatToolsPageUnknownPartialResults" xml:space="preserve">
+    <value>未知（部分結果）</value>
+  </data>
+  <data name="ViewNatToolsPageFailedNoSTUNResponses" xml:space="preserve">
+    <value>失敗－未收到 STUN 回應</value>
+  </data>
+  <data name="ViewNatToolsPageUnknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="ViewNatToolsPageError" xml:space="preserve">
+    <value>錯誤</value>
+  </data>
+  <data name="ViewNatToolsPageInvalidPortNumber" xml:space="preserve">
+    <value>無效的連接埠號碼</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNReportsYourExternalPortMatchesTheLocalPortPeersShouldBeAbleToConnectToYouDirectly" xml:space="preserve">
+    <value>STUN 顯示外部連接埠與本機連接埠相符。Peer 應可直接連線至你。</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNMappedPortDiffersFromLocalPortOrNoResponseReceivedYourNATMayBeRewritingThePortConsiderEnablingUpnpOrSettingUpPortForwarding" xml:space="preserve">
+    <value>STUN 映射連接埠與本機連接埠不同，或未收到回應。你的 NAT 可能正在改寫連接埠。建議啟用 UPnP 或設定連接埠轉送。</value>
+  </data>
+  <data name="ViewNatToolsPageErrorTestingPort" xml:space="preserve">
+    <value>測試連接埠時發生錯誤</value>
+  </data>
+  <data name="ViewNatToolsPageCouldNotCompleteTheSTUNBasedPortTestCheckYourNetworkConnection" xml:space="preserve">
+    <value>無法完成基於 STUN 的連接埠測試。請檢查網路連線。</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeHttpDownload" xml:space="preserve">
+    <value>HTTP 下載</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNA" xml:space="preserve">
+    <value>不適用</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeEngineUnavailable" xml:space="preserve">
+    <value>引擎無法使用</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNoTaskSelected" xml:space="preserve">
+    <value>未選取任務</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeIdle" xml:space="preserve">
+    <value>閒置</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime0" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime00" xml:space="preserve">
+    <value>0 / 0</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNone" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewRuntimeStatusWindowReportCopied" xml:space="preserve">
+    <value>報告已複製到剪貼簿</value>
+  </data>
+  <data name="ViewTaskFilesPageRenameFileTitle" xml:space="preserve">
+    <value>重新命名檔案</value>
+  </data>
+  <data name="CommonRename" xml:space="preserve">
+    <value>重新命名</value>
+  </data>
+  <data name="CommonSave" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="CommonClearAll" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerUrlPlaceholder" xml:space="preserve">
+    <value>每行輸入一個 HTTP、HTTPS 或 UDP Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersTitle" xml:space="preserve">
+    <value>編輯 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageInvalidTrackerUrlTitle" xml:space="preserve">
+    <value>無效的 Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerTitle" xml:space="preserve">
+    <value>要移除 Tracker 嗎？</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllLogsTitle" xml:space="preserve">
+    <value>要清除所有 Tracker 記錄嗎？</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePrompt" xml:space="preserve">
+    <value>移除所有已達到以下重試次數的 Tracker：</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTitle" xml:space="preserve">
+    <value>移除無法連線的 Tracker</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedTitle" xml:space="preserve">
+    <value>移除摘要來源</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationPrefix" xml:space="preserve">
+    <value>確定要移除「</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationSuffix" xml:space="preserve">
+    <value>"?</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnterClientNameHint" xml:space="preserve">
+    <value>輸入要測試的 Peer 用戶端名稱。</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageNoMatchingRule" xml:space="preserve">
+    <value>沒有已啟用的規則符合此用戶端</value>
+  </data>
+  <data name="ViewClientFilterSettingsPagePatternLabel" xml:space="preserve">
+    <value>模式</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageMatchTypeLabel" xml:space="preserve">
+    <value>比對類型</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageCaseSensitive" xml:space="preserve">
+    <value>區分大小寫</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnabled" xml:space="preserve">
+    <value>已啟用</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDescriptionLabel" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>編輯用戶端篩選規則</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>刪除用戶端篩選規則</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageImportRulesTitle" xml:space="preserve">
+    <value>匯入用戶端篩選規則</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageChooseFile" xml:space="preserve">
+    <value>選擇檔案</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageClearRulesTitle" xml:space="preserve">
+    <value>清除用戶端篩選規則</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>刪除</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
+    <value>已選取多個檔案</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedPrompt" xml:space="preserve">
+    <value>你選取了多個檔案。接下來要怎麼做？</value>
+  </data>
+  <data name="ViewTasksPageCheckInNewWindows" xml:space="preserve">
+    <value>在新視窗中檢查</value>
+  </data>
+  <data name="ViewTasksPageAddToList" xml:space="preserve">
+    <value>新增至清單</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableTitle" xml:space="preserve">
+    <value>HTTP 下載無法使用</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableMessage" xml:space="preserve">
+    <value>aria2 下載引擎無法使用。請確認 aria2c.exe 位於應用程式相同目錄。</value>
+  </data>
+  <data name="ViewTasksPageRenamePlaceholder" xml:space="preserve">
+    <value>輸入新名稱</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageInformationTitle" xml:space="preserve">
+    <value>磁碟使用資訊</value>
+  </data>
+  <data name="CommonOk" xml:space="preserve">
+    <value>確定</value>
+  </data>
+  <data name="ViewSettingsPageCheckingForUpdates" xml:space="preserve">
+    <value>正在檢查...</value>
+  </data>
+  <data name="ViewSettingsPageCheckUpdate" xml:space="preserve">
+    <value>檢查更新</value>
+  </data>
+  <data name="ViewSettingsPageUpdateAvailable" xml:space="preserve">
+    <value>有可用的 OpenNet 更新</value>
+  </data>
+  <data name="ViewSettingsPageUpToDate" xml:space="preserve">
+    <value>OpenNet 已是最新版本</value>
+  </data>
+  <data name="ViewSettingsPageUpdateCheckFailed" xml:space="preserve">
+    <value>更新檢查失敗</value>
+  </data>
+  <data name="ViewSettingsPageUnableToOpenUpdate" xml:space="preserve">
+    <value>無法開啟更新</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEntryLabel" xml:space="preserve">
+    <value>IP 位址、CIDR 區塊或範圍</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDescriptionOptional" xml:space="preserve">
+    <value>描述（選填）</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>編輯 IP 篩選規則</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>刪除 IP 篩選規則</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesTitle" xml:space="preserve">
+    <value>清除所有規則</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesMessage" xml:space="preserve">
+    <value>確定要移除所有 IP 篩選規則嗎？此操作無法復原。</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageLocation" xml:space="preserve">
+    <value>位置：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTaskSize" xml:space="preserve">
+    <value>工作大小：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageUsedOnVolume" xml:space="preserve">
+    <value>磁碟區已使用：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageFreeOnVolume" xml:space="preserve">
+    <value>磁碟區可用：</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTotalCapacity" xml:space="preserve">
+    <value>總容量：</value>
+  </data>
+  <data name="CommonEnabled" xml:space="preserve">
+    <value>已啟用</value>
+  </data>
+  <data name="CommonDisabled" xml:space="preserve">
+    <value>已停用</value>
+  </data>
+  <data name="CommonDetecting" xml:space="preserve">
+    <value>偵測中…</value>
+  </data>
+  <data name="CommonTesting" xml:space="preserve">
+    <value>測試中…</value>
+  </data>
+  <data name="ViewNATDetectorWindowEngineNotRunning" xml:space="preserve">
+    <value>引擎未執行</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForRouterResponse" xml:space="preserve">
+    <value>正在等待路由器回應</value>
+  </data>
+  <data name="ViewNATDetectorWindowReceived" xml:space="preserve">
+    <value>已收到</value>
+  </data>
+  <data name="ViewNATDetectorWindowNotReceived" xml:space="preserve">
+    <value>未收到</value>
+  </data>
+  <data name="ViewNATDetectorWindowStartEngineBeforeTesting" xml:space="preserve">
+    <value>請先啟動 BitTorrent 引擎，再測試連接埠。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectingNAT" xml:space="preserve">
+    <value>正在偵測 NAT 行為與輸入連線可達性…</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForTraversalServer" xml:space="preserve">
+    <value>正在等待穿透伺服器…</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionComplete" xml:space="preserve">
+    <value>偵測完成</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionIncomplete" xml:space="preserve">
+    <value>偵測未完成</value>
+  </data>
+  <data name="ViewNetworkSettingsPageInvalidEndpointBeforeUpdate" xml:space="preserve">
+    <value>請先修正無效的端點，再更新接聽程式。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageApplyingEndpointConfiguration" xml:space="preserve">
+    <value>正在套用端點設定…</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSaved" xml:space="preserve">
+    <value>已儲存。BitTorrent 啟動時將套用這些端點。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotRunning" xml:space="preserve">
+    <value>未執行</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEngineNotRunning" xml:space="preserve">
+    <value>BitTorrent 引擎未執行。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSavedForStartup" xml:space="preserve">
+    <value>已儲存設定的端點，啟動時將使用這些端點。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotSaved" xml:space="preserve">
+    <value>編輯的端點無效，尚未儲存。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotListening" xml:space="preserve">
+    <value>未接聽</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoListeningSocket" xml:space="preserve">
+    <value>libtorrent 尚未開啟接聽通訊端。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotApplied" xml:space="preserve">
+    <value>編輯的端點無效，尚未套用。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageWaitingForListener" xml:space="preserve">
+    <value>正在等待接聽程式可用。</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogInvalidLinkFormat" xml:space="preserve">
+    <value>連結格式不正確。請先檢查剪貼簿（Win + V）。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageBitTorrentOnly" xml:space="preserve">
+    <value>BitTorrent 工作可使用區塊資訊。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageMetadataPending" xml:space="preserve">
+    <value>尚未收到中繼資料。</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieceSize" xml:space="preserve">
+    <value>區塊大小：</value>
+  </data>
+  <data name="ViewTaskPieceMapPageWebSeeds" xml:space="preserve">
+    <value>Web 種子：</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieces" xml:space="preserve">
+    <value>個區塊</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicResourcesReady" xml:space="preserve">
+    <value>動態資源已準備就緒；已註冊兩個圖表索引鍵。</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowAllResourcesReady" xml:space="preserve">
+    <value>動態和靜態 Win2D 資源已準備就緒。</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowFrame" xml:space="preserve">
+    <value>影格</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowCPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowNetwork" xml:space="preserve">
+    <value>網路</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicHighlightY" xml:space="preserve">
+    <value>動態醒目提示 Y：</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowStaticY" xml:space="preserve">
+    <value>靜態 Y：</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicStreamsReset" xml:space="preserve">
+    <value>動態資料流已重設。</value>
+  </data>
+  <data name="AppBitTorrentEngine" xml:space="preserve">
+    <value>BitTorrent 引擎</value>
+  </data>
+  <data name="AppLibtorrentInitialized" xml:space="preserve">
+    <value>libtorrent 初始化成功。</value>
+  </data>
+  <data name="AppBitTorrentEngineFailed" xml:space="preserve">
+    <value>BitTorrent 引擎失敗</value>
+  </data>
+  <data name="AppLibtorrentInitializationUnknownError" xml:space="preserve">
+    <value>初始化 libtorrent 時發生未知錯誤。</value>
+  </data>
+  <data name="AppRSSServiceFailed" xml:space="preserve">
+    <value>RSS 服務失敗</value>
+  </data>
+  <data name="AppRSSBackgroundUpdatesFailed" xml:space="preserve">
+    <value>無法啟動 RSS 背景更新。</value>
+  </data>
+  <data name="AppWebUIFailed" xml:space="preserve">
+    <value>Web UI 失敗</value>
+  </data>
+  <data name="AppWebUIStartFailed" xml:space="preserve">
+    <value>無法啟動本機 qBittorrent 相容 Web UI。</value>
+  </data>
+  <data name="AppWebUI" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="AppWebUIRunning" xml:space="preserve">
+    <value>qBittorrent 相容 Web UI 正在執行。</value>
+  </data>
+  <data name="AppWebUIUnknownStartError" xml:space="preserve">
+    <value>啟動 Web UI 時發生未知錯誤。</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>URL 錯誤</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>請輸入有效的摘要 URL。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDiagnosticInfoBar.Title" xml:space="preserve">
+    <value>偵測備註</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageGridColorCard.Title" xml:space="preserve">
+    <value>格線色彩</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasClearColorCard.Title" xml:space="preserve">
+    <value>畫布清除色彩</value>
+  </data>
+  <data name="CommonUnknown" xml:space="preserve">
+    <value>未知</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingDirect" xml:space="preserve">
+    <value>直接 / 無位址轉換</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingEndpointIndependent" xml:space="preserve">
+    <value>端點無關的對映</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressDependent" xml:space="preserve">
+    <value>位址相關的對映</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressAndPortDependent" xml:space="preserve">
+    <value>位址和連接埠相關的對映</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringEndpointIndependent" xml:space="preserve">
+    <value>端點無關的篩選</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressDependent" xml:space="preserve">
+    <value>位址相關的篩選</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressAndPortDependent" xml:space="preserve">
+    <value>位址和連接埠相關的篩選</value>
+  </data>
+  <data name="CoreNetworkDetectorNATOpenInternet" xml:space="preserve">
+    <value>開放網際網路</value>
+  </data>
+  <data name="CoreNetworkDetectorNATFullCone" xml:space="preserve">
+    <value>完整錐形 NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATRestrictedCone" xml:space="preserve">
+    <value>受限錐形 NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATPortRestrictedCone" xml:space="preserve">
+    <value>連接埠受限錐形 NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATSymmetric" xml:space="preserve">
+    <value>對稱 NAT</value>
+  </data>
+  <data name="ModelNetworkInfoStatusDisconnected" xml:space="preserve">
+    <value>已中斷連線</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnecting" xml:space="preserve">
+    <value>連線中</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnected" xml:space="preserve">
+    <value>已連線</value>
+  </data>
+  <data name="ModelNetworkInfoStatusLimited" xml:space="preserve">
+    <value>受限連線</value>
+  </data>
+  <data name="ModelNetworkInfoStatusNoInternet" xml:space="preserve">
+    <value>無網際網路</value>
+  </data>
+  <data name="ModelNetworkInfoNATBlocked" xml:space="preserve">
+    <value>已封鎖</value>
+  </data>
+  <data name="ModelTransferInfoStatusInitializing" xml:space="preserve">
+    <value>初始化中</value>
+  </data>
+  <data name="ModelTransferInfoStatusTransferring" xml:space="preserve">
+    <value>傳輸中</value>
+  </data>
+  <data name="ModelTransferInfoStatusCancelled" xml:space="preserve">
+    <value>已取消</value>
+  </data>
+  <data name="ModelTransferInfoStatusVerifying" xml:space="preserve">
+    <value>驗證中</value>
+  </data>
+  <data name="ViewSettingsPageNoNewerRelease" xml:space="preserve">
+    <value>沒有可用的新版本。</value>
+  </data>
+  <data name="ViewSettingsPageUnableToCheckUpdates" xml:space="preserve">
+    <value>無法檢查更新</value>
+  </data>
+  <data name="ViewSettingsPageInvalidUpdateResponse" xml:space="preserve">
+    <value>更新伺服器傳回無效回應。</value>
+  </data>
+  <data name="ViewSettingsPageNoValidUpdateMirror" xml:space="preserve">
+    <value>無法啟動有效的更新鏡像</value>
+  </data>
+  <data name="ViewRSSViewModelAddingFeed" xml:space="preserve">
+    <value>正在新增摘要…</value>
+  </data>
+  <data name="ViewRSSViewModelFetchingFeed" xml:space="preserve">
+    <value>正在取得摘要內容…</value>
+  </data>
+  <data name="ViewRSSViewModelFailedToAddFeed" xml:space="preserve">
+    <value>新增摘要失敗</value>
+  </data>
+  <data name="ViewRSSViewModelFeedRemoved" xml:space="preserve">
+    <value>摘要已移除</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingFeed" xml:space="preserve">
+    <value>正在重新整理摘要…</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingAllFeeds" xml:space="preserve">
+    <value>正在重新整理所有摘要…</value>
+  </data>
+  <data name="ViewRSSViewModelFeedSettingsUpdated" xml:space="preserve">
+    <value>摘要設定已更新</value>
+  </data>
+  <data name="ViewRSSViewModelFeedUpdated" xml:space="preserve">
+    <value>摘要已更新</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectedItemNotBitTorrent" xml:space="preserve">
+    <value>選取的項目不是 BitTorrent 工作。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowEngineUnavailable" xml:space="preserve">
+    <value>BitTorrent 引擎無法使用。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataUnavailable" xml:space="preserve">
+    <value>此工作沒有可用的 torrent 中繼資料。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidLinkOrPath" xml:space="preserve">
+    <value>torrent 連結或檔案路徑無效。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataFetchError" xml:space="preserve">
+    <value>取得中繼資料時發生錯誤：</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowUnknownMetadataFetchError" xml:space="preserve">
+    <value>取得中繼資料時發生未知錯誤。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidTorrentSource" xml:space="preserve">
+    <value>torrent 來源無效：不是 magnet 連結或 torrent 檔案。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowFailedToStartDownload" xml:space="preserve">
+    <value>無法開始下載。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowStartDownloadError" xml:space="preserve">
+    <value>開始下載時發生錯誤：</value>
+  </data>
+  <data name="ViewRSSViewModelDownloadStarted" xml:space="preserve">
+    <value>下載已開始：</value>
+  </data>
+  <data name="ViewRSSViewModelNewItem" xml:space="preserve">
+    <value>新項目：</value>
+  </data>
+  <data name="ViewRSSViewModelError" xml:space="preserve">
+    <value>錯誤：</value>
+  </data>
+  <data name="CommonYes" xml:space="preserve">
+    <value>是</value>
+  </data>
+  <data name="CommonNo" xml:space="preserve">
+    <value>否</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogMagnetBox.PlaceholderText" xml:space="preserve">
+    <value>magnet:?xt=...</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
+    <value>分塊圖</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
+    <value>每個凸輪寬度相同</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
+    <value>每個分頁會根據分頁內內容調整寬度</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
+    <value>未選取的分頁會收斂，只顯示其圖示。 選取的索引標籤會調整以顯示索引標籤的內容</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
+    <value>無</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
   </data>
 </root>

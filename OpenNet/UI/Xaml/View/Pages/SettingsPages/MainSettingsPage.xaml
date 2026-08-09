@@ -44,6 +44,7 @@
             <NavigationViewItem
                 x:Name="GeneralNavItem"
                 x:Uid="SettingsGeneralNavItem"
+                AutomationProperties.AutomationId="SettingsGeneralNavItem"
                 Content="General"
                 Icon="{essential:FontIcon Glyph=&#xE713;}"
                 Tag="general">
@@ -57,6 +58,7 @@
             <NavigationViewItem
                 x:Name="BitTorrentNavItem"
                 x:Uid="SettingsBitTorrentNavItem"
+                AutomationProperties.AutomationId="SettingsBitTorrentNavItem"
                 Content="BitTorrent"
                 IsExpanded="True"
                 Tag="bittorrent">
@@ -67,6 +69,7 @@
                     <NavigationViewItem
                         x:Name="NetworkNavItem"
                         x:Uid="SettingsNetworkNavItem"
+                        AutomationProperties.AutomationId="SettingsNetworkNavItem"
                         Content="Network"
                         Tag="network">
                         <NavigationViewItem.Icon>
@@ -75,6 +78,7 @@
                     </NavigationViewItem>
                     <NavigationViewItem
                         x:Uid="SettingsTrackerNavItem"
+                        AutomationProperties.AutomationId="SettingsTrackerNavItem"
                         Content="Tracker"
                         Tag="tracker">
                         <NavigationViewItem.Icon>
@@ -83,6 +87,7 @@
                     </NavigationViewItem>
                     <NavigationViewItem
                         x:Uid="SettingsIPFilterNavItem"
+                        AutomationProperties.AutomationId="SettingsIPFilterNavItem"
                         Content="IP Filter"
                         Tag="ipfilter">
                         <NavigationViewItem.Icon>
@@ -91,6 +96,7 @@
                     </NavigationViewItem>
                     <NavigationViewItem
                         x:Uid="ClientFilterNavItem"
+                        AutomationProperties.AutomationId="ClientFilterNavItem"
                         Content="Client Filter"
                         Tag="clientfilter">
                         <NavigationViewItem.Icon>
@@ -103,6 +109,7 @@
             <NavigationViewItem
                 x:Name="DownloadBehaviorNavItem"
                 x:Uid="SettingsDownloadNavItem"
+                AutomationProperties.AutomationId="SettingsDownloadNavItem"
                 Content="DownloadBehavior"
                 Tag="download">
                 <NavigationViewItem.Icon>
@@ -114,7 +121,7 @@
                 x:Name="RSSNavItem"
                 x:Uid="SettingsRSSNavItem"
                 Content="RSS"
-                Tag="rss">
+                Tag="rss" AutomationProperties.AutomationId="SettingsRSSNavItem">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE71A;" />
                 </NavigationViewItem.Icon>
@@ -123,6 +130,7 @@
             <NavigationViewItem
                 x:Name="WebUINavItem"
                 x:Uid="SettingsWebUINavItem"
+                AutomationProperties.AutomationId="SettingsWebUINavItem"
                 Content="Web UI"
                 Tag="webui">
                 <NavigationViewItem.Icon>
@@ -133,6 +141,7 @@
             <NavigationViewItem
                 x:Name="AppearanceNavItem"
                 x:Uid="Appearance"
+                AutomationProperties.AutomationId="Appearance"
                 Content="Appearance"
                 Tag="appearance">
                 <NavigationViewItem.Icon>
@@ -144,7 +153,7 @@
                 x:Name="AdvancedNavItem"
                 x:Uid="SettingsAdvancedNavItem"
                 Content="Advanced"
-                Tag="advanced">
+                Tag="advanced" AutomationProperties.AutomationId="SettingsAdvancedNavItem">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE90F;" />
                 </NavigationViewItem.Icon>
@@ -155,6 +164,7 @@
             <NavigationViewItem
                 x:Name="AboutNavItem"
                 x:Uid="SettingsAboutNavItem"
+                AutomationProperties.AutomationId="SettingsAboutNavItem"
                 Content="About"
                 Tag="about">
                 <NavigationViewItem.Icon>

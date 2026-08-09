@@ -1,7 +1,7 @@
 ﻿namespace OpenNet.UI.Xaml.View.Pages
 {
     [default_interface]
-    runtimeclass TaskPieceMapPage : Microsoft.UI.Xaml.Controls.Page
+    runtimeclass TaskPieceMapPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         TaskPieceMapPage();
     }

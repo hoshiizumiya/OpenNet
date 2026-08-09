@@ -19,6 +19,7 @@ import OpenNet.Core.HttpStateManager;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.TorrentSettings;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.ThemeHelper;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Windows.ApplicationModel;
@@ -377,7 +378,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		DataPackage package;
 		package.SetText(m_lastReport);
 		Clipboard::SetContent(package);
-		LastUpdatedText().Text(L"Report copied to clipboard");
+		LastUpdatedText().Text(ResourceGetString(L"ViewRuntimeStatusWindowReportCopied"));
 	}
 
 	void RuntimeStatusWindow::RefreshReport()

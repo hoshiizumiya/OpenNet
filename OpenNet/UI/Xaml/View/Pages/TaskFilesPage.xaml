@@ -34,19 +34,23 @@
                 <MenuFlyout Opening="FileContextMenu_Opening">
                     <MenuFlyoutItem
                         x:Name="OpenFileMenuItem"
+                        x:Uid="ViewTaskFilesPageMenuItem"
                         Click="OpenFile_Click"
                         Text="Open File" />
                     <MenuFlyoutItem
                         x:Name="PlayFileMenuItem"
+                        x:Uid="ViewTaskFilesPageMenuItem"
                         Click="PlayFile_Click"
                         Text="Play File" />
                     <MenuFlyoutItem
                         x:Name="OpenFileLocationMenuItem"
+                        x:Uid="ViewTaskFilesPageMenuItem"
                         Click="OpenFileLocation_Click"
                         Text="Open File Location" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
                         x:Name="RenameFileMenuItem"
+                        x:Uid="ViewTaskFilesPageMenuItem"
                         Click="RenameFile_ClickAsync"
                         Text="Rename..." />
                 </MenuFlyout>
@@ -61,37 +65,49 @@
                         <MenuFlyout Opening="ColumnMenu_Opening">
                             <MenuFlyoutItem
                                 x:Name="AutoSizeSelectedColumnItem"
+                                x:Uid="ViewTaskFilesPageMenuItem"
                                 Click="AutoSizeSelectedColumn_Click"
                                 Text="Auto Size Selected Column's Width to Fit" />
-                            <MenuFlyoutItem Click="AutoSizeAllColumns_Click" Text="Auto Size All Columns' Width to Fit" />
+                            <MenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageMenuItem"
+                                Click="AutoSizeAllColumns_Click"
+                                Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Path"
                                 Text="File" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Size"
                                 Text="Size" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Progress"
                                 Text="Progress" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Done"
                                 Text="Done" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageToggleMenuItem"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Priority"
                                 Text="Priority" />
                             <MenuFlyoutSeparator />
-                            <MenuFlyoutItem Click="ResetColumns_Click" Text="Reset Columns and Sorting" />
+                            <MenuFlyoutItem
+                                x:Uid="ViewTaskFilesPageMenuItem"
+                                Click="ResetColumns_Click"
+                                Text="Reset Columns and Sorting" />
                         </MenuFlyout>
                     </Border.ContextFlyout>
                     <interactivity:Interaction.Behaviors>

@@ -12,6 +12,7 @@ import winrt.Microsoft.Graphics.Canvas.UI.Xaml;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.OpenNet.UI.Xaml.Control.Graph;
+import OpenNet.Core.Utils.Message;
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
 import winrt.Windows.Foundation.Numerics;
@@ -58,7 +59,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		RecreateDynamicStreams(canvas);
 		ResourceStatusText().Text(
-			L"Dynamic resources ready; two graph keys registered.");
+			ResourceGetString(L"ViewLiveGraphTestWindowDynamicResourcesReady"));
 	}
 
 	void LiveGraphTestWindow::StaticGraph_CreateResources(
@@ -83,7 +84,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_staticGraphKey = graph.RegisterGraphBrush(m_staticBrush);
 		AddStaticBatch(true);
 		ResourceStatusText().Text(
-			L"Dynamic and static Win2D resources are ready.");
+			ResourceGetString(L"ViewLiveGraphTestWindowAllResourcesReady"));
 	}
 
 	void LiveGraphTestWindow::RecreateDynamicStreams(
@@ -179,11 +180,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			{
 				if (auto self = weak.get())
 				{
-					self->DynamicFrameStatusText().Text(std::format(
-						L"Frame {} · CPU {:.1f}% · Network {:.1f}%",
-						frame,
-						cpuValue,
-						networkValue));
+					self->DynamicFrameStatusText().Text(
+						ResourceGetString(L"ViewLiveGraphTestWindowFrame") + L" " +
+						std::to_wstring(frame) + L" · " +
+						ResourceGetString(L"ViewLiveGraphTestWindowCPU") + L" " +
+						std::format(L"{:.1f}%", cpuValue) + L" · " +
+						ResourceGetString(L"ViewLiveGraphTestWindowNetwork") + L" " +
+						std::format(L"{:.1f}%", networkValue));
 				}
 			});
 		}
@@ -193,7 +196,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		IInspectable const&,
 		float value)
 	{
-		auto const text = std::format(L"Dynamic highlight Y: {:.1f}px", value);
+		auto const text = ResourceGetString(L"ViewLiveGraphTestWindowDynamicHighlightY") + L" " + std::format(L"{:.1f}px", value);
 		DynamicHighlightText().Text(text);
 		HighlightStatusText().Text(text);
 	}
@@ -203,7 +206,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		float value)
 	{
 		StaticHighlightText().Text(
-			std::format(L"Static Y: {:.1f}px", value));
+			ResourceGetString(L"ViewLiveGraphTestWindowStaticY") + L" " + std::format(L"{:.1f}px", value));
 	}
 
 	void LiveGraphTestWindow::ResetDynamicGraph_Click(
@@ -220,7 +223,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (canvas)
 		{
 			RecreateDynamicStreams(canvas);
-			DynamicFrameStatusText().Text(L"Dynamic streams reset.");
+			DynamicFrameStatusText().Text(ResourceGetString(L"ViewLiveGraphTestWindowDynamicStreamsReset"));
 		}
 	}
 
@@ -544,8 +547,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 		m_dynamicScrollPixelsPerSecond.store(
 			durationMilliseconds > 0.0
-				? scrollDistance * 1000.0 / durationMilliseconds
-				: 0.0,
+			? scrollDistance * 1000.0 / durationMilliseconds
+			: 0.0,
 			std::memory_order_relaxed);
 
 		auto const duration = std::chrono::duration_cast<TimeSpan>(

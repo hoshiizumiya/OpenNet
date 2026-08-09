@@ -44,12 +44,14 @@
                         <StackPanel>
                             <TextBlock
                                 x:Name="TaskNameText"
+                                x:Uid="ViewTaskSummaryPageText1"
                                 FontSize="18"
                                 FontWeight="SemiBold"
                                 Text="No task selected"
                                 TextTrimming="CharacterEllipsis" />
                             <TextBlock
                                 x:Name="TaskPathText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                 Text="—"
                                 TextTrimming="CharacterEllipsis" />
@@ -61,6 +63,7 @@
                             CornerRadius="12">
                             <TextBlock
                                 x:Name="TaskStatusText"
+                                x:Uid="ViewTaskSummaryPageText3"
                                 FontWeight="SemiBold"
                                 Text="Idle" />
                         </Border>
@@ -77,6 +80,7 @@
                             Maximum="100" />
                         <TextBlock
                             x:Name="TaskProgressText"
+                            x:Uid="ViewTaskSummaryPageText4"
                             Grid.Column="1"
                             FontWeight="SemiBold"
                             Text="0%" />
@@ -88,7 +92,7 @@
                         </Grid.ColumnDefinitions>
                         <StackPanel Spacing="3">
                             <Grid>
-                                <TextBlock Text="Downloaded pieces" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText5" Text="Downloaded pieces" />
                                 <TextBlock
                                     x:Name="DownloadedPiecesText"
                                     HorizontalAlignment="Right"
@@ -102,7 +106,7 @@
                         </StackPanel>
                         <StackPanel Grid.Column="1" Spacing="3">
                             <Grid>
-                                <TextBlock Text="Available pieces" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText6" Text="Available pieces" />
                                 <TextBlock
                                     x:Name="AvailablePiecesText"
                                     HorizontalAlignment="Right"
@@ -124,7 +128,10 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <TextBlock FontWeight="SemiBold" Text="Download progress and speed" />
+                    <TextBlock
+                        x:Uid="ViewTaskSummaryPageText7"
+                        FontWeight="SemiBold"
+                        Text="Download progress and speed" />
                     <speedgraph:SpeedGraph
                         x:Name="TaskSpeedGraph"
                         Grid.Row="1"
@@ -135,7 +142,10 @@
 
             <Border Style="{StaticResource SectionCardStyle}">
                 <StackPanel Spacing="8">
-                    <TextBlock FontWeight="SemiBold" Text="Transfer" />
+                    <TextBlock
+                        x:Uid="ViewTaskSummaryPageText8"
+                        FontWeight="SemiBold"
+                        Text="Transfer" />
                     <Grid ColumnSpacing="18" RowSpacing="8">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -148,58 +158,90 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Time elapsed" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText9"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Time elapsed" />
                             <TextBlock
                                 x:Name="TimeElapsedText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Downloaded" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText11"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Downloaded" />
                             <TextBlock
                                 x:Name="DownloadedText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Download speed" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText13"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Download speed" />
                             <TextBlock
                                 x:Name="DownloadSpeedText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="3">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Download limit" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText15"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Download limit" />
                             <TextBlock
                                 x:Name="DownloadLimitText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Row="1">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Seeding time" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText17"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Seeding time" />
                             <TextBlock
                                 x:Name="SeedingTimeText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="1">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Uploaded" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText19"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Uploaded" />
                             <TextBlock
                                 x:Name="UploadedText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="2">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload speed" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText21"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Upload speed" />
                             <TextBlock
                                 x:Name="UploadSpeedText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Row="1" Grid.Column="3">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload limit" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText23"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Upload limit" />
                             <TextBlock
                                 x:Name="UploadLimitText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
@@ -212,30 +254,46 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Seeds" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText25"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Seeds" />
                             <TextBlock
                                 x:Name="SeedsText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Peers" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText27"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Peers" />
                             <TextBlock
                                 x:Name="PeersText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Connections" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText29"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Connections" />
                             <TextBlock
                                 x:Name="ConnectionsText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="3">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Share ratio" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText31"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Share ratio" />
                             <TextBlock
                                 x:Name="ShareRatioText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
@@ -245,7 +303,10 @@
 
             <Border Style="{StaticResource SectionCardStyle}">
                 <StackPanel Spacing="8">
-                    <TextBlock FontWeight="SemiBold" Text="Long-Term Seeding" />
+                    <TextBlock
+                        x:Uid="ViewTaskSummaryPageText33"
+                        FontWeight="SemiBold"
+                        Text="Long-Term Seeding" />
                     <Grid ColumnSpacing="18">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -253,23 +314,35 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
                         <StackPanel>
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload size" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText34"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Upload size" />
                             <TextBlock
                                 x:Name="LongTermUploadSizeText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="1">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Upload speed" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText21"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Upload speed" />
                             <TextBlock
                                 x:Name="LongTermUploadSpeedText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
                         <StackPanel Grid.Column="2">
-                            <TextBlock Style="{StaticResource MetricCaptionStyle}" Text="Share ratio" />
+                            <TextBlock
+                                x:Uid="ViewTaskSummaryPageText31"
+                                Style="{StaticResource MetricCaptionStyle}"
+                                Text="Share ratio" />
                             <TextBlock
                                 x:Name="LongTermShareRatioText"
+                                x:Uid="ViewTaskSummaryPageText2"
                                 Style="{StaticResource MetricValueStyle}"
                                 Text="—" />
                         </StackPanel>
@@ -279,7 +352,10 @@
 
             <Border Style="{StaticResource SectionCardStyle}">
                 <StackPanel Spacing="8">
-                    <TextBlock FontWeight="SemiBold" Text="General" />
+                    <TextBlock
+                        x:Uid="ViewTaskSummaryPageText40"
+                        FontWeight="SemiBold"
+                        Text="General" />
                     <Grid ColumnSpacing="24" RowSpacing="7">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*" />
@@ -291,9 +367,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Task name" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText41" Text="Task name" />
                                 <TextBlock
                                     x:Name="GeneralTaskNameText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—"
                                     TextTrimming="CharacterEllipsis" />
@@ -303,9 +380,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Save path" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText43" Text="Save path" />
                                 <TextBlock
                                     x:Name="SavePathText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
                                     Text="—"
@@ -316,9 +394,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Task size" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText45" Text="Task size" />
                                 <TextBlock
                                     x:Name="TaskSizeText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -327,9 +406,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Info hash v1" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText47" Text="Info hash v1" />
                                 <TextBlock
                                     x:Name="InfoHashV1Text"
+                                    x:Uid="ViewTaskSummaryPageText48"
                                     Grid.Column="1"
                                     FontFamily="Consolas"
                                     FontSize="12"
@@ -341,9 +421,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Info hash v2" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText49" Text="Info hash v2" />
                                 <TextBlock
                                     x:Name="InfoHashV2Text"
+                                    x:Uid="ViewTaskSummaryPageText48"
                                     Grid.Column="1"
                                     FontFamily="Consolas"
                                     FontSize="12"
@@ -355,9 +436,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Piece hashes" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText51" Text="Piece hashes" />
                                 <TextBlock
                                     x:Name="PieceHashesText"
+                                    x:Uid="ViewTaskSummaryPageText48"
                                     Grid.Column="1"
                                     Text="N/A" />
                             </Grid>
@@ -366,9 +448,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Added on" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText53" Text="Added on" />
                                 <TextBlock
                                     x:Name="AddedOnText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -377,9 +460,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Finished on" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText55" Text="Finished on" />
                                 <TextBlock
                                     x:Name="FinishedOnText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -388,9 +472,10 @@
                                     <ColumnDefinition Width="110" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Publisher" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText57" Text="Publisher" />
                                 <TextBlock
                                     x:Name="PublisherText"
+                                    x:Uid="ViewTaskSummaryPageText48"
                                     Grid.Column="1"
                                     Text="N/A"
                                     TextTrimming="CharacterEllipsis" />
@@ -402,9 +487,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Tags" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText59" Text="Tags" />
                                 <TextBlock
                                     x:Name="TagsText"
+                                    x:Uid="ViewTaskSummaryPageText60"
                                     Grid.Column="1"
                                     Text="None"
                                     TextTrimming="CharacterEllipsis" />
@@ -414,9 +500,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Remaining size" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText61" Text="Remaining size" />
                                 <TextBlock
                                     x:Name="RemainingSizeText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -425,9 +512,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Pieces" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText63" Text="Pieces" />
                                 <TextBlock
                                     x:Name="PiecesText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -436,9 +524,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Number of files" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText65" Text="Number of files" />
                                 <TextBlock
                                     x:Name="NumberOfFilesText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -447,9 +536,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="File alignment" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText67" Text="File alignment" />
                                 <TextBlock
                                     x:Name="FileAlignmentText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -458,9 +548,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Queue position" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText69" Text="Queue position" />
                                 <TextBlock
                                     x:Name="QueuePositionText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -469,9 +560,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Created by" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText71" Text="Created by" />
                                 <TextBlock
                                     x:Name="CreatedByText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -480,9 +572,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Created on" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText73" Text="Created on" />
                                 <TextBlock
                                     x:Name="CreatedOnText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -491,9 +584,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Private torrent" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText75" Text="Private torrent" />
                                 <TextBlock
                                     x:Name="PrivateTorrentText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—" />
                             </Grid>
@@ -502,9 +596,10 @@
                                     <ColumnDefinition Width="120" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <TextBlock Text="Flags" />
+                                <TextBlock x:Uid="ViewTaskSummaryPageText77" Text="Flags" />
                                 <TextBlock
                                     x:Name="TaskFlagsText"
+                                    x:Uid="ViewTaskSummaryPageText2"
                                     Grid.Column="1"
                                     Text="—"
                                     TextWrapping="Wrap" />
@@ -516,9 +611,10 @@
                             <ColumnDefinition Width="110" />
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
-                        <TextBlock Text="Description" />
+                        <TextBlock x:Uid="ViewTaskSummaryPageText79" Text="Description" />
                         <TextBlock
                             x:Name="DescriptionText"
+                            x:Uid="ViewTaskSummaryPageText2"
                             Grid.Column="1"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="—"

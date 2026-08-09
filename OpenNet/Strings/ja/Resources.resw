@@ -117,6 +117,1308 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AppTitleBar.Title" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="SearchBox.PlaceholderText" xml:space="preserve">
+    <value>何でも検索</value>
+  </data>
+  <data name="NavItem_Home.Content" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="NavItem_Contacts.Content" xml:space="preserve">
+    <value>連絡先</value>
+  </data>
+  <data name="NavItem_Tasks.Content" xml:space="preserve">
+    <value>タスク</value>
+  </data>
+  <data name="NavItem_Files.Content" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="NavItem_Network.Content" xml:space="preserve">
+    <value>ネットワーク</value>
+  </data>
+  <data name="NavItem_Servers.Content" xml:space="preserve">
+    <value>サーバー</value>
+  </data>
+  <data name="NavItem_Settings.Content" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="NavItem_RSS.Content" xml:space="preserve">
+    <value>RSS</value>
+  </data>
+  <data name="UserLabelRun.Text" xml:space="preserve">
+    <value>ユーザー:</value>
+  </data>
+  <data name="HomeTitle.Text" xml:space="preserve">
+    <value>OpenNet へようこそ</value>
+  </data>
+  <data name="QuickActionsTitle.Text" xml:space="preserve">
+    <value>クイック操作</value>
+  </data>
+  <data name="DetectNetworkButtonText.Text" xml:space="preserve">
+    <value>ネットワークを検出</value>
+  </data>
+  <data name="ConnectPeerButtonText.Text" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="RefreshButtonText.Text" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="NetworkStatusTitle.Text" xml:space="preserve">
+    <value>ネットワーク状態</value>
+  </data>
+  <data name="NetworkQualityLabelRun.Text" xml:space="preserve">
+    <value>品質:</value>
+  </data>
+  <data name="RecentActivitiesTitle.Text" xml:space="preserve">
+    <value>最近のアクティビティ</value>
+  </data>
+  <data name="NetworkSettingsPagePlaceholder.Text" xml:space="preserve">
+    <value>ネットワーク設定ページ（プレースホルダー）</value>
+  </data>
+  <data name="MainWindowRoot" xml:space="preserve">
+    <value>OpenNet - P2P クライアント</value>
+  </data>
+  <data name="SettingsPagePlaceholder.Text" xml:space="preserve">
+    <value>設定ページ</value>
+  </data>
+  <data name="PortState" xml:space="preserve">
+    <value>ポート状態</value>
+  </data>
+  <data name="HomeTitleTip" xml:space="preserve">
+    <value>モダンなウィンドウアプリ</value>
+  </data>
+  <data name="TaskStartButton.Label" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="TaskPauseButton.Label" xml:space="preserve">
+    <value>一時停止</value>
+  </data>
+  <data name="TaskNewButton.Label" xml:space="preserve">
+    <value>新しいタスク</value>
+  </data>
+  <data name="Header_TaskName.Text" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="Header_Size.Text" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="Header_Progress.Text" xml:space="preserve">
+    <value>進行状況</value>
+  </data>
+  <data name="Header_DLRate.Text" xml:space="preserve">
+    <value>DL レート</value>
+  </data>
+  <data name="Header_Remaining.Text" xml:space="preserve">
+    <value>残り</value>
+  </data>
+  <data name="Header_AddDate.Text" xml:space="preserve">
+    <value>追加日</value>
+  </data>
+  <data name="Task_SummaryContent.Header" xml:space="preserve">
+    <value>概要</value>
+  </data>
+  <data name="Task_PeersList.Header" xml:space="preserve">
+    <value>ピア一覧</value>
+  </data>
+  <data name="Protocol_IPv4First" xml:space="preserve">
+    <value>IPv4 を優先</value>
+  </data>
+  <data name="Protocol_IPv6First" xml:space="preserve">
+    <value>IPv6 を優先</value>
+  </data>
+  <data name="Protocol_IPv4Only" xml:space="preserve">
+    <value>IPv4 のみ</value>
+  </data>
+  <data name="Protocol_IPv6Only" xml:space="preserve">
+    <value>IPv6 のみ</value>
+  </data>
+  <data name="Protocol_Auto" xml:space="preserve">
+    <value>自動選択</value>
+  </data>
+  <data name="ConnProtocol_Auto" xml:space="preserve">
+    <value>自動選択</value>
+  </data>
+  <data name="ConnProtocol_TCP" xml:space="preserve">
+    <value>TCP プロトコル</value>
+  </data>
+  <data name="ConnProtocol_UDP" xml:space="preserve">
+    <value>UDP プロトコル</value>
+  </data>
+  <data name="ConnProtocol_UTP" xml:space="preserve">
+    <value>uTP プロトコル</value>
+  </data>
+  <data name="ConnProtocol_BitTorrent" xml:space="preserve">
+    <value>BitTorrent プロトコル</value>
+  </data>
+  <data name="ConnProtocol_DHT" xml:space="preserve">
+    <value>DHT ネットワーク</value>
+  </data>
+  <data name="ConnProtocol_WebRTC" xml:space="preserve">
+    <value>WebRTC プロトコル</value>
+  </data>
+  <data name="ConnProtocol_HTTP" xml:space="preserve">
+    <value>HTTP プロトコル</value>
+  </data>
+  <data name="Enc_Basic" xml:space="preserve">
+    <value>基本</value>
+  </data>
+  <data name="Enc_Strong" xml:space="preserve">
+    <value>強力</value>
+  </data>
+  <data name="General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="StartPage.Header" xml:space="preserve">
+    <value>既定の開始ページ</value>
+  </data>
+  <data name="StartPage.Description" xml:space="preserve">
+    <value>アプリ起動時に表示するページを指定します。</value>
+  </data>
+  <data name="SoftLanguage.Header" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="SoftLanguage.Description" xml:space="preserve">
+    <value>アプリケーションの言語を設定します。</value>
+  </data>
+  <data name="DowFlashl.Text" xml:space="preserve">
+    <value>ダウンロード Flash 設定</value>
+  </data>
+  <data name="DfSettingsl.Header" xml:space="preserve">
+    <value>ダウンロード Flash 設定</value>
+  </data>
+  <data name="SoftBackgroundColors.Header" xml:space="preserve">
+    <value>色</value>
+  </data>
+  <data name="SoftPersonalization.Header" xml:space="preserve">
+    <value>個人設定</value>
+  </data>
+  <data name="SoftPersonalization.Description" xml:space="preserve">
+    <value>プログラム UI の表示スタイルをカスタマイズします</value>
+  </data>
+  <data name="ThemesLight.Text" xml:space="preserve">
+    <value>ライト</value>
+  </data>
+  <data name="ThemesDark.Text" xml:space="preserve">
+    <value>ダーク</value>
+  </data>
+  <data name="ThemesDefault.Text" xml:space="preserve">
+    <value>システム設定を使用</value>
+  </data>
+  <data name="AddMagnetDialog_Title" xml:space="preserve">
+    <value>マグネットリンクを追加</value>
+  </data>
+  <data name="OK" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="FilterNavViewAllTasks.Content" xml:space="preserve">
+    <value>すべてのタスク</value>
+  </data>
+  <data name="FilterNavViewDownloading.Content" xml:space="preserve">
+    <value>ダウンロード中</value>
+  </data>
+  <data name="FilterNavViewSeeding.Content" xml:space="preserve">
+    <value>シード中</value>
+  </data>
+  <data name="FilterNavViewCompleted.Content" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="FilterNavViewUncompleted.Content" xml:space="preserve">
+    <value>未完了</value>
+  </data>
+  <data name="FilterNavViewActive.Content" xml:space="preserve">
+    <value>アクティブ</value>
+  </data>
+  <data name="FilterNavViewInactive.Content" xml:space="preserve">
+    <value>非アクティブ</value>
+  </data>
+  <data name="FilterNavViewFailed.Content" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="AddMagnet_SaveLabel.Text" xml:space="preserve">
+    <value>保存先</value>
+  </data>
+  <data name="TorrentCheckModalWindow.Title" xml:space="preserve">
+    <value>新しい BitTorrent タスクウィンドウを作成</value>
+  </data>
+  <data name="TorrentCheckGeneralPageSavePath.PlaceholderText" xml:space="preserve">
+    <value>保存するフォルダーパスを入力または選択</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_SavePathLabel.Text" xml:space="preserve">
+    <value>保存先:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FolderPickerButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>フォルダーを選択</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FileNameLabel.Text" xml:space="preserve">
+    <value>ファイル名:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FileNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>任意: ファイル名を上書き</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_CreateSubfolderCheckBox.Content" xml:space="preserve">
+    <value>Torrent にファイルが 1 つだけ含まれる場合はサブフォルダーを作成</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentContentTitle.Text" xml:space="preserve">
+    <value>Torrent の内容</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentNameLabel.Text" xml:space="preserve">
+    <value>名前:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentSizeLabel.Text" xml:space="preserve">
+    <value>サイズ:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentPublisherLabel.Text" xml:space="preserve">
+    <value>発行者:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpace.Text" xml:space="preserve">
+    <value>ディスク容量: 0 B</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_FreeSpace.Text" xml:space="preserve">
+    <value>空き容量: 0 B</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_FileName.Text" xml:space="preserve">
+    <value>ファイル名</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Size.Text" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Percent.Text" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_SelectAll.Content" xml:space="preserve">
+    <value>すべて選択</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Video.Content" xml:space="preserve">
+    <value>動画</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Audio.Content" xml:space="preserve">
+    <value>音声</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Picture.Content" xml:space="preserve">
+    <value>画像</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Filter_Other.Content" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Action_DownloadNow.Content" xml:space="preserve">
+    <value>今すぐダウンロード</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Action_DownloadLater.Content" xml:space="preserve">
+    <value>後でダウンロード</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_Action_Cancel.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="ViewDialogTorrentMetaDataDownloadDialog.Title" xml:space="preserve">
+    <value>マグネットを追加</value>
+  </data>
+  <data name="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip" xml:space="preserve">
+    <value>クリップボードからテキストを貼り付け</value>
+  </data>
+  <data name="RSSPageTitle.Text" xml:space="preserve">
+    <value>RSS 購読</value>
+  </data>
+  <data name="RSSPageSubtitle.Text" xml:space="preserve">
+    <value>Torrent の RSS フィードを購読して自動ダウンロード</value>
+  </data>
+  <data name="RSSFeedsHeader.Text" xml:space="preserve">
+    <value>フィード</value>
+  </data>
+  <data name="RSSItemsLabel.Text" xml:space="preserve">
+    <value>項目</value>
+  </data>
+  <data name="RSSSelectFeedPlaceholder.Text" xml:space="preserve">
+    <value>フィードを選択</value>
+  </data>
+  <data name="RSSAddFeedDialog.Title" xml:space="preserve">
+    <value>RSS フィードを追加</value>
+  </data>
+  <data name="RSSAddFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="RSSAddFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.Header" xml:space="preserve">
+    <value>フィード URL</value>
+  </data>
+  <data name="RSSFeedUrlTextBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/rss.xml</value>
+  </data>
+  <data name="RSSFeedNameTextBox.Header" xml:space="preserve">
+    <value>名前（任意）</value>
+  </data>
+  <data name="RSSFeedNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>マイ RSS フィード</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.Header" xml:space="preserve">
+    <value>保存先（任意）</value>
+  </data>
+  <data name="RSSFeedSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>既定値を使用する場合は空欄のままにしてください</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.Title" xml:space="preserve">
+    <value>フィード設定</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="RSSFeedSettingsDialog.SecondaryButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="RSSSettingsTitleTextBox.Header" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="RSSSettingsUrlTextBox.Header" xml:space="preserve">
+    <value>フィード URL</value>
+  </data>
+  <data name="RSSSettingsSavePathTextBox.Header" xml:space="preserve">
+    <value>保存先</value>
+  </data>
+  <data name="RSSSettingsIntervalNumberBox.Header" xml:space="preserve">
+    <value>更新間隔（分）</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.Header" xml:space="preserve">
+    <value>自動ダウンロード</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OnContent" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="RSSSettingsAutoDownloadToggle.OffContent" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.Header" xml:space="preserve">
+    <value>フィルターパターン（正規表現）</value>
+  </data>
+  <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
+    <value>例: 1080p|720p</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
+    <value>フィードを削除</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.PrimaryButtonText" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="RSSAddFeedTooltip" xml:space="preserve">
+    <value>新しいフィードを追加</value>
+  </data>
+  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+    <value>すべてのフィードを更新</value>
+  </data>
+  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+    <value>このフィードを更新</value>
+  </data>
+  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+    <value>フィード設定</value>
+  </data>
+  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+    <value>フィードを削除</value>
+  </data>
+  <data name="RSSDownloadTooltip" xml:space="preserve">
+    <value>ダウンロード</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
+    <value>必要:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceFree.Text" xml:space="preserve">
+    <value>空き:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_DiskSpaceTotal.Text" xml:space="preserve">
+    <value>合計:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_SelectedSizeLabel.Text" xml:space="preserve">
+    <value>選択済み:</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_ListHeader_Priority.Text" xml:space="preserve">
+    <value>優先度</value>
+  </data>
+  <data name="BT_Title.Text" xml:space="preserve">
+    <value>BitTorrent 設定</value>
+  </data>
+  <data name="BT_Subtitle.Text" xml:space="preserve">
+    <value>高度な BitTorrent プロトコル設定を構成します</value>
+  </data>
+  <data name="BT_Section_Connection.Text" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="BT_ListenInterfaces.Header" xml:space="preserve">
+    <value>リッスンインターフェイス</value>
+  </data>
+  <data name="BT_ListenInterfaces.Description" xml:space="preserve">
+    <value>着信接続用のネットワークインターフェイスとポート（例: 0.0.0.0:6881）</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Header" xml:space="preserve">
+    <value>最大接続数</value>
+  </data>
+  <data name="BT_ConnectionsLimit.Description" xml:space="preserve">
+    <value>Torrent ごとの最大ピア接続数</value>
+  </data>
+  <data name="BT_Protocol.Header" xml:space="preserve">
+    <value>プロトコル</value>
+  </data>
+  <data name="BT_Protocol.Description" xml:space="preserve">
+    <value>特定の転送プロトコルを有効または無効にします</value>
+  </data>
+  <data name="BT_IncomingTcp.Header" xml:space="preserve">
+    <value>受信 TCP</value>
+  </data>
+  <data name="BT_OutgoingTcp.Header" xml:space="preserve">
+    <value>送信 TCP</value>
+  </data>
+  <data name="BT_IncomingUtp.Header" xml:space="preserve">
+    <value>受信 uTP</value>
+  </data>
+  <data name="BT_OutgoingUtp.Header" xml:space="preserve">
+    <value>送信 uTP</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Header" xml:space="preserve">
+    <value>IP ごとの複数接続</value>
+  </data>
+  <data name="BT_MultiConnPerIp.Description" xml:space="preserve">
+    <value>同じ IP アドレスからの複数接続を許可します</value>
+  </data>
+  <data name="BT_AnonymousMode.Header" xml:space="preserve">
+    <value>匿名モード</value>
+  </data>
+  <data name="BT_AnonymousMode.Description" xml:space="preserve">
+    <value>ピアとトラッカーに対してクライアントの識別情報を隠します</value>
+  </data>
+  <data name="BT_Section_Discovery.Text" xml:space="preserve">
+    <value>ピア検出</value>
+  </data>
+  <data name="BT_EnableDht.Header" xml:space="preserve">
+    <value>DHT（分散ハッシュテーブル）</value>
+  </data>
+  <data name="BT_EnableDht.Description" xml:space="preserve">
+    <value>分散型ピア検出を有効にします</value>
+  </data>
+  <data name="BT_EnableLsd.Header" xml:space="preserve">
+    <value>ローカルサービス検出（LSD）</value>
+  </data>
+  <data name="BT_EnableUpnp.Header" xml:space="preserve">
+    <value>UPnP ポートマッピング</value>
+  </data>
+  <data name="BT_EnableNatpmp.Header" xml:space="preserve">
+    <value>NAT-PMP ポートマッピング</value>
+  </data>
+  <data name="BT_Section_Tracker.Text" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Header" xml:space="preserve">
+    <value>すべての階層にアナウンス</value>
+  </data>
+  <data name="BT_AnnounceAllTiers.Description" xml:space="preserve">
+    <value>すべてのトラッカー階層へ同時にアナウンスを送信します</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Header" xml:space="preserve">
+    <value>すべてのトラッカーにアナウンス</value>
+  </data>
+  <data name="BT_AnnounceAllTrackers.Description" xml:space="preserve">
+    <value>各階層のすべてのトラッカーにアナウンスを送信します</value>
+  </data>
+  <data name="BT_Section_Limits.Text" xml:space="preserve">
+    <value>キュー制限</value>
+  </data>
+  <data name="BT_ActiveDownloads.Header" xml:space="preserve">
+    <value>アクティブなダウンロード</value>
+  </data>
+  <data name="BT_ActiveDownloads.Description" xml:space="preserve">
+    <value>同時にダウンロードできる Torrent の最大数</value>
+  </data>
+  <data name="BT_ActiveSeeds.Header" xml:space="preserve">
+    <value>アクティブなシード</value>
+  </data>
+  <data name="BT_ActiveSeeds.Description" xml:space="preserve">
+    <value>同時にシードできる Torrent の最大数</value>
+  </data>
+  <data name="BT_ActiveLimit.Header" xml:space="preserve">
+    <value>アクティブな Torrent</value>
+  </data>
+  <data name="BT_ActiveLimit.Description" xml:space="preserve">
+    <value>アクティブな Torrent の合計最大数（ダウンロード + シード）</value>
+  </data>
+  <data name="BT_Section_SpeedLimits.Text" xml:space="preserve">
+    <value>速度制限</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Header" xml:space="preserve">
+    <value>ダウンロード速度制限</value>
+  </data>
+  <data name="BT_DownloadRateLimit.Description" xml:space="preserve">
+    <value>最大ダウンロード速度（KB/s、0 = 無制限）</value>
+  </data>
+  <data name="BT_UploadRateLimit.Header" xml:space="preserve">
+    <value>アップロード速度制限</value>
+  </data>
+  <data name="BT_UploadRateLimit.Description" xml:space="preserve">
+    <value>最大アップロード速度（KB/s、0 = 無制限）</value>
+  </data>
+  <data name="BT_Section_Seeding.Text" xml:space="preserve">
+    <value>シード中</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Header" xml:space="preserve">
+    <value>シード比率制限</value>
+  </data>
+  <data name="BT_SeedRatioLimit.Description" xml:space="preserve">
+    <value>比率に達したらシードを停止（0 = 制限なし）</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Header" xml:space="preserve">
+    <value>シード時間制限</value>
+  </data>
+  <data name="BT_SeedTimeLimit.Description" xml:space="preserve">
+    <value>指定した分数後にシードを停止（0 = 制限なし）</value>
+  </data>
+  <data name="BT_Section_Peer.Text" xml:space="preserve">
+    <value>ピア</value>
+  </data>
+  <data name="BT_Timeouts.Header" xml:space="preserve">
+    <value>タイムアウト</value>
+  </data>
+  <data name="BT_Timeouts.Description" xml:space="preserve">
+    <value>ピア接続のタイムアウトを構成します</value>
+  </data>
+  <data name="BT_PeerTimeout.Header" xml:space="preserve">
+    <value>ピアタイムアウト（秒）</value>
+  </data>
+  <data name="BT_HandshakeTimeout.Header" xml:space="preserve">
+    <value>ハンドシェイクタイムアウト（秒）</value>
+  </data>
+  <data name="BT_CloseRedundant.Header" xml:space="preserve">
+    <value>冗長な接続を閉じる</value>
+  </data>
+  <data name="BT_CloseRedundant.Description" xml:space="preserve">
+    <value>不要になった接続を閉じます</value>
+  </data>
+  <data name="BT_Section_DiskIO.Text" xml:space="preserve">
+    <value>ディスク I/O</value>
+  </data>
+  <data name="BT_AioThreads.Header" xml:space="preserve">
+    <value>非同期 I/O スレッド</value>
+  </data>
+  <data name="BT_AioThreads.Description" xml:space="preserve">
+    <value>非同期ディスク操作に使用するスレッド数</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Header" xml:space="preserve">
+    <value>ハッシュ検証メモリ（MB）</value>
+  </data>
+  <data name="BT_CheckingMemUsage.Description" xml:space="preserve">
+    <value>ハッシュ検証に使用する最大メモリ</value>
+  </data>
+  <data name="BT_Section_Identity.Text" xml:space="preserve">
+    <value>識別情報</value>
+  </data>
+  <data name="BT_UserAgent.Header" xml:space="preserve">
+    <value>ユーザーエージェント</value>
+  </data>
+  <data name="BT_UserAgent.Description" xml:space="preserve">
+    <value>トラッカーへ送信するクライアント識別文字列</value>
+  </data>
+  <data name="BT_Section_Encryption.Text" xml:space="preserve">
+    <value>暗号化</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Header" xml:space="preserve">
+    <value>暗号化ポリシー</value>
+  </data>
+  <data name="BT_EncryptionPolicy.Description" xml:space="preserve">
+    <value>ピア接続の暗号化モード</value>
+  </data>
+  <data name="BT_Enc_Forced.Content" xml:space="preserve">
+    <value>強制</value>
+  </data>
+  <data name="BT_Enc_Enabled.Content" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="BT_Enc_Disabled.Content" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="BT_PreferRc4.Header" xml:space="preserve">
+    <value>RC4 暗号化を優先</value>
+  </data>
+  <data name="BT_PreferRc4.Description" xml:space="preserve">
+    <value>暗号化が有効な場合、平文より RC4 を優先します</value>
+  </data>
+  <data name="BT_Section_Proxy.Text" xml:space="preserve">
+    <value>プロキシ</value>
+  </data>
+  <data name="BT_ProxyType.Header" xml:space="preserve">
+    <value>プロキシの種類</value>
+  </data>
+  <data name="BT_ProxyType.Description" xml:space="preserve">
+    <value>BitTorrent 通信に使用するプロキシプロトコルを選択します</value>
+  </data>
+  <data name="BT_Proxy_Socks4.Content" xml:space="preserve">
+    <value>SOCKS4</value>
+  </data>
+  <data name="BT_Proxy_Socks5.Content" xml:space="preserve">
+    <value>SOCKS5</value>
+  </data>
+  <data name="BT_Proxy_Socks5Pw.Content" xml:space="preserve">
+    <value>SOCKS5（パスワードあり）</value>
+  </data>
+  <data name="BT_Proxy_Http.Content" xml:space="preserve">
+    <value>HTTP</value>
+  </data>
+  <data name="BT_Proxy_HttpPw.Content" xml:space="preserve">
+    <value>HTTP（パスワードあり）</value>
+  </data>
+  <data name="BT_ProxyDetails.Header" xml:space="preserve">
+    <value>プロキシ構成</value>
+  </data>
+  <data name="BT_ProxyDetails.Description" xml:space="preserve">
+    <value>プロキシサーバーの詳細を構成します</value>
+  </data>
+  <data name="BT_ProxyHostname.Header" xml:space="preserve">
+    <value>ホスト名</value>
+  </data>
+  <data name="BT_ProxyPort.Header" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="BT_ProxyUsername.Header" xml:space="preserve">
+    <value>ユーザー名</value>
+  </data>
+  <data name="BT_ProxyPassword.Header" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="BT_ProxyPeerConn.Header" xml:space="preserve">
+    <value>ピア接続にプロキシを使用</value>
+  </data>
+  <data name="BT_ProxyTrackerConn.Header" xml:space="preserve">
+    <value>トラッカー接続にプロキシを使用</value>
+  </data>
+  <data name="DL_Section_SaveLocation.Text" xml:space="preserve">
+    <value>保存場所</value>
+  </data>
+  <data name="DL_DefaultSavePath.Header" xml:space="preserve">
+    <value>既定の保存先</value>
+  </data>
+  <data name="DL_DefaultSavePath.Description" xml:space="preserve">
+    <value>新しい Torrent の既定ダウンロード先</value>
+  </data>
+  <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
+    <value>（ダウンロードフォルダー）</value>
+  </data>
+  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
+    <value>参照...</value>
+  </data>
+  <data name="DL_PreallocateStorage.Header" xml:space="preserve">
+    <value>ディスク領域を事前割り当て</value>
+  </data>
+  <data name="DL_PreallocateStorage.Description" xml:space="preserve">
+    <value>ダウンロード開始前にディスク領域を確保します</value>
+  </data>
+  <data name="DL_Section_Behaviour.Text" xml:space="preserve">
+    <value>動作</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Header" xml:space="preserve">
+    <value>ダウンロードを自動開始</value>
+  </data>
+  <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
+    <value>Torrent の追加後に自動的にダウンロードを開始します</value>
+  </data>
+  <data name="DL_MoveCompleted.Header" xml:space="preserve">
+    <value>完了したダウンロードを移動</value>
+  </data>
+  <data name="DL_MoveCompleted.Description" xml:space="preserve">
+    <value>完了したダウンロードを別のディレクトリへ移動します</value>
+  </data>
+  <data name="DL_MoveCompletedPath.Header" xml:space="preserve">
+    <value>移動先</value>
+  </data>
+  <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
+    <value>完了済みダウンロードの保存先</value>
+  </data>
+  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
+    <value>参照...</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
+    <value>新しい HTTP ダウンロード</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.PrimaryButtonText" xml:space="preserve">
+    <value>ダウンロード</value>
+  </data>
+  <data name="ViewDialogHttpDownloadDialog.CloseButtonText" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.Header" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlBox.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/file.zip</value>
+  </data>
+  <data name="HttpDownloadDialogPasteButtonText.Text" xml:space="preserve">
+    <value>クリップボードから貼り付け</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.Header" xml:space="preserve">
+    <value>保存先</value>
+  </data>
+  <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
+    <value>既定のダウンロードディレクトリ</value>
+  </data>
+  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+    <value>参照...</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
+    <value>ファイル名（任意）</value>
+  </data>
+  <data name="HttpDownloadDialogFileNameBox.PlaceholderText" xml:space="preserve">
+    <value>自動検出する場合は空欄のままにしてください</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>無効な URL</value>
+  </data>
+  <data name="HttpDownloadDialogUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>有効な HTTP、HTTPS、または FTP URL を入力してください。</value>
+  </data>
+  <data name="PeerHeader_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerHeader_Client.Text" xml:space="preserve">
+    <value>クライアント</value>
+  </data>
+  <data name="PeerHeader_Progress.Text" xml:space="preserve">
+    <value>進行状況</value>
+  </data>
+  <data name="PeerHeader_DLSpeed.Text" xml:space="preserve">
+    <value>DL 速度</value>
+  </data>
+  <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
+    <value>UL 速度</value>
+  </data>
+  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="PeersList_EmptyState.Text" xml:space="preserve">
+    <value>接続中のピアはありません</value>
+  </data>
+  <data name="Task_TrackersList.Header" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="TrackerHeader_URL.Text" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="TrackerHeader_Tier.Text" xml:space="preserve">
+    <value>階層</value>
+  </data>
+  <data name="TrackerHeader_Peers.Text" xml:space="preserve">
+    <value>ピア</value>
+  </data>
+  <data name="TrackerHeader_Status.Text" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="TrackerHeader_Message.Text" xml:space="preserve">
+    <value>メッセージ</value>
+  </data>
+  <data name="TrackersList_EmptyState.Text" xml:space="preserve">
+    <value>トラッカーはありません</value>
+  </data>
+  <data name="Task_FilesList.Header" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="FileHeader_Path.Text" xml:space="preserve">
+    <value>ファイル</value>
+  </data>
+  <data name="FileHeader_Size.Text" xml:space="preserve">
+    <value>サイズ</value>
+  </data>
+  <data name="FileHeader_Progress.Text" xml:space="preserve">
+    <value>進行状況</value>
+  </data>
+  <data name="FileHeader_Done.Text" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="FileHeader_Priority.Text" xml:space="preserve">
+    <value>優先度</value>
+  </data>
+  <data name="FilesList_EmptyState.Text" xml:space="preserve">
+    <value>ファイル情報はありません</value>
+  </data>
+  <data name="IPF_Title.Text" xml:space="preserve">
+    <value>IP フィルター</value>
+  </data>
+  <data name="IPF_Subtitle.Text" xml:space="preserve">
+    <value>特定の IP アドレスや範囲からの接続をブロックまたは許可します</value>
+  </data>
+  <data name="IPF_Section_General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="IPF_Enable.Header" xml:space="preserve">
+    <value>IP フィルターを有効にする</value>
+  </data>
+  <data name="IPF_Enable.Description" xml:space="preserve">
+    <value>有効にすると、ブロックされた IP からの接続は拒否されます</value>
+  </data>
+  <data name="IPF_RuleCount.Header" xml:space="preserve">
+    <value>ルール総数</value>
+  </data>
+  <data name="IPF_RuleCount.Description" xml:space="preserve">
+    <value>現在読み込まれている IP フィルタールールの数</value>
+  </data>
+  <data name="IPF_Section_AddRule.Text" xml:space="preserve">
+    <value>ルールを追加</value>
+  </data>
+  <data name="IPF_ManualAdd.Header" xml:space="preserve">
+    <value>手動入力</value>
+  </data>
+  <data name="IPF_ManualAdd.Description" xml:space="preserve">
+    <value>IP アドレス、CIDR ブロック、または範囲を入力（1 行につき 1 件）</value>
+  </data>
+  <data name="IPF_ManualInput.Header" xml:space="preserve">
+    <value>IP アドレス</value>
+  </data>
+  <data name="IPF_AddBtn.Content" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="IPF_ImportFile.Header" xml:space="preserve">
+    <value>ファイルからインポート</value>
+  </data>
+  <data name="IPF_ImportFile.Description" xml:space="preserve">
+    <value>テキストファイル（.txt、.dat、.p2p）からルールをインポートします</value>
+  </data>
+  <data name="IPF_ImportBtn.Content" xml:space="preserve">
+    <value>参照...</value>
+  </data>
+  <data name="IPF_Section_Manage.Text" xml:space="preserve">
+    <value>ルールを管理</value>
+  </data>
+  <data name="IPF_ClearAll.Header" xml:space="preserve">
+    <value>すべてのルールを消去</value>
+  </data>
+  <data name="IPF_ClearAll.Description" xml:space="preserve">
+    <value>データベースからすべての IP フィルタールールを削除します</value>
+  </data>
+  <data name="IPF_ClearBtn.Content" xml:space="preserve">
+    <value>すべて消去</value>
+  </data>
+  <data name="IPF_RuleFiles.Header" xml:space="preserve">
+    <value>ルールファイル</value>
+  </data>
+  <data name="IPF_RuleFiles.Description" xml:space="preserve">
+    <value>アプリケーションデータ内の編集可能なコピーを開きます。変更を追加するにはファイルをインポートするか、下の有効なデータベースルールを編集してください</value>
+  </data>
+  <data name="IPF_OpenFolderBtn.Content" xml:space="preserve">
+    <value>フォルダーを開く</value>
+  </data>
+  <data name="IPF_OpenPrimaryFileBtn.Content" xml:space="preserve">
+    <value>ipfilter.txt を編集</value>
+  </data>
+  <data name="IPF_OpenSecondaryFileBtn.Content" xml:space="preserve">
+    <value>ipfilter2.txt を編集</value>
+  </data>
+  <data name="IPF_RuleEditor.Header" xml:space="preserve">
+    <value>保存済みルールを編集</value>
+  </data>
+  <data name="IPF_RuleEditor.Description" xml:space="preserve">
+    <value>有効なデータベースルールを検索、編集、または削除します。変更は直ちに libtorrent に適用されます</value>
+  </data>
+  <data name="IPF_RefreshRulesBtn.Content" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="IPF_RuleSearch.PlaceholderText" xml:space="preserve">
+    <value>IP、範囲、説明、またはルール ID で検索</value>
+  </data>
+  <data name="IPF_EditRuleBtn.Content" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="IPF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="IPF_Section_Subscriptions.Text" xml:space="preserve">
+    <value>購読</value>
+  </data>
+  <data name="IPF_Subscriptions.Header" xml:space="preserve">
+    <value>IP フィルター購読</value>
+  </data>
+  <data name="IPF_Subscriptions.Description" xml:space="preserve">
+    <value>HTTP または HTTPS ソースから IP ルールをダウンロードして維持します</value>
+  </data>
+  <data name="IPF_UpdateSubscriptionsNow.Content" xml:space="preserve">
+    <value>今すぐ更新</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Header" xml:space="preserve">
+    <value>自動更新</value>
+  </data>
+  <data name="IPF_SubscriptionAutoUpdate.Description" xml:space="preserve">
+    <value>設定した間隔で有効なソースをバックグラウンド確認します</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Header" xml:space="preserve">
+    <value>ソースを追加</value>
+  </data>
+  <data name="IPF_SubscriptionAdd.Description" xml:space="preserve">
+    <value>プレーンテキストの IP フィルター一覧への直接リンクを入力</value>
+  </data>
+  <data name="IPF_SubscriptionUrl.PlaceholderText" xml:space="preserve">
+    <value>https://example.com/ipfilter.txt</value>
+  </data>
+  <data name="IPF_AddSubscription.Content" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Header" xml:space="preserve">
+    <value>購読中のソース</value>
+  </data>
+  <data name="IPF_SubscriptionSources.Description" xml:space="preserve">
+    <value>各ソースの有効状態と最新結果が表示されます</value>
+  </data>
+  <data name="IPF_EditSubscription.Content" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="IPF_DeleteSubscription.Content" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Header" xml:space="preserve">
+    <value>更新動作</value>
+  </data>
+  <data name="IPF_SubscriptionMode.Description" xml:space="preserve">
+    <value>ダウンロードしたルールを現在のデータベースへ適用する方法を選択します</value>
+  </data>
+  <data name="IPF_SubscriptionMerge.Content" xml:space="preserve">
+    <value>既存の IP アドレス一覧にマージ</value>
+  </data>
+  <data name="IPF_SubscriptionReplace.Content" xml:space="preserve">
+    <value>既存の IP アドレス一覧を置き換え</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Header" xml:space="preserve">
+    <value>更新間隔（時間）</value>
+  </data>
+  <data name="IPF_SubscriptionInterval.Description" xml:space="preserve">
+    <value>許容範囲: 1～168 時間</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Header" xml:space="preserve">
+    <value>前回の更新結果</value>
+  </data>
+  <data name="IPF_SubscriptionLastResult.Description" xml:space="preserve">
+    <value>最新の自動または手動購読更新</value>
+  </data>
+  <data name="IPF_Never" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="IPF_NeverUpdated" xml:space="preserve">
+    <value>まだ更新されていません</value>
+  </data>
+  <data name="IPF_SourceSuccess" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="IPF_SourceFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="IPF_Rules" xml:space="preserve">
+    <value>ルール</value>
+  </data>
+  <data name="IPF_NotifyTitle" xml:space="preserve">
+    <value>IP フィルター購読</value>
+  </data>
+  <data name="IPF_NoEnabledSubscriptions" xml:space="preserve">
+    <value>有効な購読ソースがありません</value>
+  </data>
+  <data name="IPF_UpdateSummarySuccess" xml:space="preserve">
+    <value>更新済みソース</value>
+  </data>
+  <data name="IPF_UpdateSummaryRules" xml:space="preserve">
+    <value>有効なルール</value>
+  </data>
+  <data name="IPF_UpdateSummaryImported" xml:space="preserve">
+    <value>データベース変更</value>
+  </data>
+  <data name="IPF_UpdateSummaryFailed" xml:space="preserve">
+    <value>失敗</value>
+  </data>
+  <data name="IPF_UpdateAllFailed" xml:space="preserve">
+    <value>すべての購読更新に失敗しました。</value>
+  </data>
+  <data name="IPF_UpdateUnexpectedError" xml:space="preserve">
+    <value>購読の更新中に予期しないエラーが発生しました。</value>
+  </data>
+  <data name="IPF_InvalidSubscriptionUrl" xml:space="preserve">
+    <value>有効な HTTP または HTTPS URL を入力してください。</value>
+  </data>
+  <data name="IPF_DuplicateSubscription" xml:space="preserve">
+    <value>この購読はすでに存在します。</value>
+  </data>
+  <data name="IPF_SubscriptionAdded" xml:space="preserve">
+    <value>購読ソースを追加しました</value>
+  </data>
+  <data name="IPF_InvalidOrDuplicateSubscriptions" xml:space="preserve">
+    <value>新しい有効な購読 URL が見つかりませんでした。</value>
+  </data>
+  <data name="IPF_SourceEnabled" xml:space="preserve">
+    <value>このソースを有効にする</value>
+  </data>
+  <data name="IPF_EditSubscriptionTitle" xml:space="preserve">
+    <value>購読を編集</value>
+  </data>
+  <data name="IPF_Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="IPF_Cancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="IPF_SubscriptionUpdateFailed" xml:space="preserve">
+    <value>購読を保存できませんでした。</value>
+  </data>
+  <data name="IPF_DeleteSubscriptionTitle" xml:space="preserve">
+    <value>購読を削除</value>
+  </data>
+  <data name="IPF_Delete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="RenameTaskMenuItem.Text" xml:space="preserve">
+    <value>名前を変更</value>
+  </data>
+  <data name="BanPeer1hItem.Text" xml:space="preserve">
+    <value>1 時間ブロック</value>
+  </data>
+  <data name="BanPeer24hItem.Text" xml:space="preserve">
+    <value>24 時間ブロック</value>
+  </data>
+  <data name="BanPeerPermanentItem.Text" xml:space="preserve">
+    <value>永久にブロック</value>
+  </data>
+  <data name="UnbanPeerItem.Text" xml:space="preserve">
+    <value>手動 IP ブロックを解除</value>
+  </data>
+  <data name="PeerHeader_Location.Text" xml:space="preserve">
+    <value>場所</value>
+  </data>
+  <data name="PeerHeader_PeerStatus.Text" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="PeerHeader_Reason.Text" xml:space="preserve">
+    <value>理由</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>理由</value>
+  </data>
+  <data name="PeerHeader_Protocol.Text" xml:space="preserve">
+    <value>プロトコル</value>
+  </data>
+  <data name="PeerHeader_Initiator.Text" xml:space="preserve">
+    <value>開始元</value>
+  </data>
+  <data name="PeerHeader_Source.Text" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="PeerReason_Manual" xml:space="preserve">
+    <value>ユーザーによる手動ブロック</value>
+  </data>
+  <data name="PeerReason_Permanent" xml:space="preserve">
+    <value>永久</value>
+  </data>
+  <data name="PeerReason_Remaining" xml:space="preserve">
+    <value>残り</value>
+  </data>
+  <data name="PeerReason_ListMatch" xml:space="preserve">
+    <value>IP リストソース一致</value>
+  </data>
+  <data name="PeerReason_ClientListMatch" xml:space="preserve">
+    <value>アンチリーチクライアント一覧一致</value>
+  </data>
+  <data name="PeerReason_AntiLeech" xml:space="preserve">
+    <value>アンチリーチによるブロック</value>
+  </data>
+  <data name="PeerReason_IPFilter" xml:space="preserve">
+    <value>IP フィルター一致</value>
+  </data>
+  <data name="NavItem_NatTools.Content" xml:space="preserve">
+    <value>NAT ツール</value>
+  </data>
+  <data name="NatTools_NATDetection.Text" xml:space="preserve">
+    <value>NAT タイプ検出</value>
+  </data>
+  <data name="NatTools_DetectButton.Content" xml:space="preserve">
+    <value>NAT タイプを検出</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.Text" xml:space="preserve">
+    <value>NAT タイプ: </value>
+  </data>
+  <data name="NatTools_PublicIPLabel.Text" xml:space="preserve">
+    <value>パブリック IPv4: </value>
+  </data>
+  <data name="NatTools_UPnPLabel.Text" xml:space="preserve">
+    <value>UPnP: </value>
+  </data>
+  <data name="NatTools_PortTest.Text" xml:space="preserve">
+    <value>ポート到達性テスト</value>
+  </data>
+  <data name="NatTools_PortNumberBox.PlaceholderText" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="NatTools_TestPortButton.Content" xml:space="preserve">
+    <value>ポートをテスト</value>
+  </data>
+  <data name="NatTools_PortResultLabel.Text" xml:space="preserve">
+    <value>結果: </value>
+  </data>
+  <data name="NatTools_STUNServers.Text" xml:space="preserve">
+    <value>推奨 STUN サーバー</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.Title" xml:space="preserve">
+    <value>ウィンドウを閉じるときの動作</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.CloseButtonText" xml:space="preserve">
+    <value>アプリケーションを終了</value>
+  </data>
+  <data name="ViewDialogCloseToTrayDialog.PrimaryButtonText" xml:space="preserve">
+    <value>トレイに格納</value>
+  </data>
+  <data name="ViewDialogCloseToTrayQuestion.Text" xml:space="preserve">
+    <value>メインウィンドウを閉じるときの動作を選択してください:</value>
+  </data>
+  <data name="ViewDialogCloseToTrayRememberCheckBox.Content" xml:space="preserve">
+    <value>選択を記憶し、今後確認しない</value>
+  </data>
+  <data name="TorrentCheckModalWindowTitleBar.Title" xml:space="preserve">
+    <value>新しい BitTorrent タスクを作成</value>
+  </data>
+  <data name="ViewComboBoxSystemLang" xml:space="preserve">
+    <value>システムの主要言語を使用</value>
+  </data>
+  <data name="Appearance.Content" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="ClientFilterNavItem.Content" xml:space="preserve">
+    <value>クライアントフィルター</value>
+  </data>
+  <data name="CF_Title.Text" xml:space="preserve">
+    <value>クライアントフィルター</value>
+  </data>
+  <data name="CF_Subtitle.Text" xml:space="preserve">
+    <value>通知されたクライアント名で BitTorrent ピアをブロックします。ピアのハンドシェイク後に一致を判定し、そのピアアドレスをセッション IP フィルターへ追加します。</value>
+  </data>
+  <data name="CF_Section_General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="CF_Enable.Header" xml:space="preserve">
+    <value>クライアントフィルタリングを有効にする</value>
+  </data>
+  <data name="CF_Enable.Description" xml:space="preserve">
+    <value>接続中のピアを継続的に検査し、一致するクライアントを切断します。</value>
+  </data>
+  <data name="CF_RuleCount.Header" xml:space="preserve">
+    <value>保存済みルール</value>
+  </data>
+  <data name="CF_RuleCount.Description" xml:space="preserve">
+    <value>ローカルデータベースに保存されているクライアント一致ルールの総数。</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Header" xml:space="preserve">
+    <value>このセッションでブロックしたアドレス</value>
+  </data>
+  <data name="CF_RuntimeBlocks.Description" xml:space="preserve">
+    <value>最後にルールを変更してから、クライアントルールによってブロックされた一意のピア IP アドレス数。</value>
+  </data>
+  <data name="CF_Section_Create.Text" xml:space="preserve">
+    <value>作成とテスト</value>
+  </data>
+  <data name="CF_AddRule.Header" xml:space="preserve">
+    <value>クライアントルールを追加</value>
+  </data>
+  <data name="CF_AddRule.Description" xml:space="preserve">
+    <value>部分一致、完全一致、ワイルドカード（* と ?）、または正規表現による一致を選択します。</value>
+  </data>
+  <data name="CF_AddBtn.Content" xml:space="preserve">
+    <value>ルールを追加</value>
+  </data>
+  <data name="CF_Pattern.Header" xml:space="preserve">
+    <value>クライアントパターン</value>
+  </data>
+  <data name="CF_Pattern.PlaceholderText" xml:space="preserve">
+    <value>例: BitComet または *Xunlei*</value>
+  </data>
+  <data name="CF_MatchType.Header" xml:space="preserve">
+    <value>一致タイプ</value>
+  </data>
+  <data name="CF_MatchContains.Content" xml:space="preserve">
+    <value>部分一致</value>
+  </data>
+  <data name="CF_MatchExact.Content" xml:space="preserve">
+    <value>完全一致</value>
+  </data>
+  <data name="CF_MatchWildcard.Content" xml:space="preserve">
+    <value>ワイルドカード</value>
+  </data>
+  <data name="CF_MatchRegex.Content" xml:space="preserve">
+    <value>正規表現</value>
+  </data>
+  <data name="CF_Description.Header" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="CF_Description.PlaceholderText" xml:space="preserve">
+    <value>任意のメモ</value>
+  </data>
+  <data name="CF_CaseSensitive.Header" xml:space="preserve">
+    <value>大文字と小文字を区別</value>
+  </data>
+  <data name="CF_Test.Header" xml:space="preserve">
+    <value>クライアント名をテスト</value>
+  </data>
+  <data name="CF_Test.Description" xml:space="preserve">
+    <value>何もブロックせず、最初に一致する有効なルールをプレビューします。</value>
+  </data>
+  <data name="CF_TestInput.PlaceholderText" xml:space="preserve">
+    <value>クライアント名を貼り付けます。例: qBittorrent/5.0.4</value>
+  </data>
+  <data name="CF_TestBtn.Content" xml:space="preserve">
+    <value>テスト</value>
+  </data>
+  <data name="CF_Section_Manage.Text" xml:space="preserve">
+    <value>ルール</value>
+  </data>
+  <data name="CF_RuleManager.Header" xml:space="preserve">
+    <value>ルールを管理</value>
+  </data>
+  <data name="CF_RuleManager.Description" xml:space="preserve">
+    <value>個別のクライアントルールを検索、有効化、無効化、編集、または削除します。</value>
+  </data>
+  <data name="CF_RefreshBtn.Content" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="CF_Search.PlaceholderText" xml:space="preserve">
+    <value>パターン、説明、タイプ、または ID を検索</value>
+  </data>
+  <data name="CF_ToggleRuleBtn.Content" xml:space="preserve">
+    <value>有効 / 無効</value>
+  </data>
+  <data name="CF_EditRuleBtn.Content" xml:space="preserve">
+    <value>編集</value>
+  </data>
+  <data name="CF_DeleteRuleBtn.Content" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="CF_ImportExport.Header" xml:space="preserve">
+    <value>インポート、エクスポート、リセット</value>
+  </data>
+  <data name="CF_ImportExport.Description" xml:space="preserve">
+    <value>JSON またはプレーンテキストをインポートし、完全な JSON をエクスポートするか、すべてのルールを削除します。</value>
+  </data>
+  <data name="CF_ImportBtn.Content" xml:space="preserve">
+    <value>インポート</value>
+  </data>
+  <data name="CF_ExportBtn.Content" xml:space="preserve">
+    <value>エクスポート</value>
+  </data>
+  <data name="CF_ClearRulesBtn.Content" xml:space="preserve">
+    <value>すべてのルールを消去</value>
+  </data>
+  <data name="CF_Section_History.Text" xml:space="preserve">
+    <value>一致履歴</value>
+  </data>
+  <data name="CF_History.Header" xml:space="preserve">
+    <value>最近の一致</value>
+  </data>
+  <data name="CF_History.Description" xml:space="preserve">
+    <value>クライアント、アドレス、Torrent、時刻を含む最近のクライアントルール一致を最大 500 件表示します。</value>
+  </data>
+  <data name="CF_RefreshHistoryBtn.Content" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="CF_ClearHistoryBtn.Content" xml:space="preserve">
+    <value>履歴を消去</value>
+  </data>
   <data name="ViewModelGuideActionNext" xml:space="preserve">
     <value>次へ</value>
   </data>
@@ -126,17 +1428,125 @@
   <data name="CoreWebView2HelperVersionUndetected" xml:space="preserve">
     <value>WebView2 ランタイムが検出されませんでした</value>
   </data>
+  <data name="GuideTitleBar.Title" xml:space="preserve">
+    <value>OpenNet ガイド</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.Text" xml:space="preserve">
+    <value>以下を読み、同意します: </value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.Text" xml:space="preserve">
+    <value>プロジェクト README と使用上の注意</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.Text" xml:space="preserve">
+    <value>プライバシーに関する通知</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.Text" xml:space="preserve">
+    <value>問題報告ガイドライン</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.Text" xml:space="preserve">
+    <value>OpenNet オープンソースライセンス</value>
+  </data>
   <data name="ViewGuideStepAgreementConfirmation" xml:space="preserve">
     <value>上記のすべての条件を読み、理解し、同意します。</value>
+  </data>
+  <data name="GuideEnvironmentSegoeFluentIcons.Text" xml:space="preserve">
+    <value>Segoe Fluent Icons</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.Text" xml:space="preserve">
+    <value>上のアイコンが表示されない、または四角形で表示される場合は、</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.Text" xml:space="preserve">
+    <value> にアクセスしてフォントをダウンロードし、インストールしてください。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.Text" xml:space="preserve">
+    <value>インストール後に OpenNet を再起動し、正常に動作することを確認してください。</value>
+  </data>
+  <data name="ViewPageSettingWebview2Header.Text" xml:space="preserve">
+    <value>WebView2 ランタイム</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.Text" xml:space="preserve">
+    <value>WebView2 ランタイムが検出されない場合は、</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.Text" xml:space="preserve">
+    <value> にアクセスしてダウンロードし、インストールしてください。</value>
+  </data>
+  <data name="ViewGuideStepDataFolderHeader.Text" xml:space="preserve">
+    <value>OpenNet はアプリケーションのデータベース、キャッシュ、実行時データをこのフォルダーに保存します。</value>
+  </data>
+  <data name="ViewPageSettingSetDataFolderHeader.Header" xml:space="preserve">
+    <value>データディレクトリ</value>
+  </data>
+  <data name="ViewGuideStepDataFolderHint.Text" xml:space="preserve">
+    <value>データフォルダーは Windows によって管理され、アプリケーションのアンインストール時に削除されます。</value>
+  </data>
+  <data name="GuideWebUITitle.Text" xml:space="preserve">
+    <value>qBittorrent Web UI を初期化</value>
+  </data>
+  <data name="GuideWebUIDescription.Text" xml:space="preserve">
+    <value>サービス開始前にローカル Web UI アカウントを設定します。パスワードは 6 文字以上必要です。</value>
+  </data>
+  <data name="GuideWebUIValidation.Title" xml:space="preserve">
+    <value>Web UI 設定が未完了です</value>
+  </data>
+  <data name="GuideWebUIValidation.Message" xml:space="preserve">
+    <value>有効なアドレス、ポート、アカウント、および 6 文字以上のパスワードを入力してください。</value>
+  </data>
+  <data name="GuideWebUIAddress.Header" xml:space="preserve">
+    <value>リッスンアドレス</value>
+  </data>
+  <data name="GuideWebUIPort.Header" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="GuideWebUIUsername.Header" xml:space="preserve">
+    <value>アカウント</value>
+  </data>
+  <data name="GuideWebUIPassword.Header" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="GuideWebUIPassword.PlaceholderText" xml:space="preserve">
+    <value>6 文字以上</value>
+  </data>
+  <data name="GuideCommonSettingsTitle.Text" xml:space="preserve">
+    <value>GUI データ更新</value>
+  </data>
+  <data name="GuideCommonSettingsDescription.Text" xml:space="preserve">
+    <value>タスクファイル、ピア、トラッカー、状態データの更新頻度を制御します。値を小さくすると CPU 使用率が高くなります。</value>
+  </data>
+  <data name="GuideGuiRefreshInterval.Header" xml:space="preserve">
+    <value>更新間隔（ミリ秒）</value>
+  </data>
+  <data name="GuideCompletedTitle.Text" xml:space="preserve">
+    <value>OpenNet の準備が完了しました</value>
+  </data>
+  <data name="GuideCompletedDescription.Text" xml:space="preserve">
+    <value>Web UI の資格情報と GUI 更新間隔を保存しました。このガイドは後で「その他」から再度開けます。</value>
   </data>
   <data name="ViewGuideStepLanguageMaintainedByMSTRDI.Text" xml:space="preserve">
     <value>MSTRDI によって維持</value>
   </data>
   <data name="ViewGuideStepLanguageMaintainedByCrowdin.Text" xml:space="preserve">
-    <value>Crowdin コミュニティーメンバーによって維持</value>
+    <value>Crowdin コミュニティメンバーによって維持</value>
   </data>
-  <data name="DataTableSortNoneHint" xml:space="preserve">
-    <value>未並べ替えです。選択すると昇順になります。</value>
+  <data name="RuntimeStatusWindow.Title" xml:space="preserve">
+    <value>OpenNet ランタイム状態</value>
+  </data>
+  <data name="RuntimeStatusTitleBar.Title" xml:space="preserve">
+    <value>OpenNet ランタイム状態</value>
+  </data>
+  <data name="RuntimeStatusRefreshButton.Label" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="RuntimeStatusCopyButton.Label" xml:space="preserve">
+    <value>すべてコピー</value>
+  </data>
+  <data name="RuntimeStatusItemColumn.Text" xml:space="preserve">
+    <value>状態項目</value>
+  </data>
+  <data name="RuntimeStatusValueColumn.Text" xml:space="preserve">
+    <value>現在の値</value>
+  </data>
+  <data name="RuntimeStatusLastUpdated.Text" xml:space="preserve">
+    <value>最初の更新を待機中</value>
   </data>
   <data name="DataTableSortAscendingHint" xml:space="preserve">
     <value>昇順です。選択すると降順になります。</value>
@@ -161,5 +1571,2697 @@
   </data>
   <data name="TaskStatusFailed" xml:space="preserve">
     <value>失敗</value>
+  </data>
+  <data name="TasksContextStart.Text" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="TasksContextStop.Text" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="TasksContextPreview.Text" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="TasksContextUpdateTracker.Text" xml:space="preserve">
+    <value>トラッカーを更新</value>
+  </data>
+  <data name="TasksContextSuperSeed.Text" xml:space="preserve">
+    <value>スーパーシードモード</value>
+  </data>
+  <data name="TasksContextSequential.Text" xml:space="preserve">
+    <value>順次ダウンロードモード</value>
+  </data>
+  <data name="TasksContextOpenFile.Text" xml:space="preserve">
+    <value>ファイルを開く</value>
+  </data>
+  <data name="TasksContextHashCheck.Text" xml:space="preserve">
+    <value>手動ハッシュチェック</value>
+  </data>
+  <data name="TasksContextSaveTorrent.Text" xml:space="preserve">
+    <value>Torrent を名前を付けて保存...</value>
+  </data>
+  <data name="TasksContextSubmitSnapshots.Text" xml:space="preserve">
+    <value>スナップショットを送信</value>
+  </data>
+  <data name="TasksContextDelete.Text" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="TasksContextCleanUp.Text" xml:space="preserve">
+    <value>クリーンアップ</value>
+  </data>
+  <data name="TasksContextMoveFiles.Text" xml:space="preserve">
+    <value>ファイルの移動先</value>
+  </data>
+  <data name="TasksContextChooseFolder.Text" xml:space="preserve">
+    <value>フォルダーを選択...</value>
+  </data>
+  <data name="TasksContextTags.Text" xml:space="preserve">
+    <value>タグ</value>
+  </data>
+  <data name="TasksContextNoTags.Text" xml:space="preserve">
+    <value>タグが設定されていません</value>
+  </data>
+  <data name="TasksContextSendTo.Text" xml:space="preserve">
+    <value>送信先</value>
+  </data>
+  <data name="TasksContextDefaultApplication.Text" xml:space="preserve">
+    <value>既定のアプリケーション</value>
+  </data>
+  <data name="TasksContextSearchOnline.Text" xml:space="preserve">
+    <value>オンラインで検索</value>
+  </data>
+  <data name="TasksContextCopyMagnet.Text" xml:space="preserve">
+    <value>マグネット URI をコピー  (Ctrl+C)</value>
+  </data>
+  <data name="TasksContextCopy.Text" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="TasksContextCopyName.Text" xml:space="preserve">
+    <value>名前</value>
+  </data>
+  <data name="TasksContextCopyHash.Text" xml:space="preserve">
+    <value>情報ハッシュ</value>
+  </data>
+  <data name="TasksContextCopyPath.Text" xml:space="preserve">
+    <value>保存先</value>
+  </data>
+  <data name="TasksContextDiskUsage.Text" xml:space="preserve">
+    <value>ディスク使用量情報...</value>
+  </data>
+  <data name="TorrentDetailsExpander.Header" xml:space="preserve">
+    <value>Torrent の詳細</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.Text" xml:space="preserve">
+    <value>情報ハッシュ:</value>
+  </data>
+  <data name="TorrentDetailsCreator.Text" xml:space="preserve">
+    <value>作成者:</value>
+  </data>
+  <data name="TorrentDetailsCreatedOn.Text" xml:space="preserve">
+    <value>作成日:</value>
+  </data>
+  <data name="TorrentDetailsPieces.Text" xml:space="preserve">
+    <value>ピース:</value>
+  </data>
+  <data name="TorrentDetailsComment.Text" xml:space="preserve">
+    <value>コメント:</value>
+  </data>
+  <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>ディレクトリを開く</value>
+  </data>
+  <data name="PropertiesMenuItem.Text" xml:space="preserve">
+    <value>プロパティ...</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Header" xml:space="preserve">
+    <value>画像背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
+    <value>メインコンテンツの背後にローカル画像を表示します</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.Content" xml:space="preserve">
+    <value>単一画像</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.Content" xml:space="preserve">
+    <value>ローカルフォルダー</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Header" xml:space="preserve">
+    <value>背景画像のソース</value>
+  </data>
+  <data name="ViewThemesSettingsPageSetImageCard.Description" xml:space="preserve">
+    <value>単一の画像または画像を含むフォルダーを選択</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Header" xml:space="preserve">
+    <value>画像背景を消去</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearImageCard.Description" xml:space="preserve">
+    <value>設定された画像ソースを消去します</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Header" xml:space="preserve">
+    <value>切り替え間隔</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationCard.Description" xml:space="preserve">
+    <value>ローカルフォルダー使用時に新しいファイルを選択する頻度</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundRotationMinutesBox.Header" xml:space="preserve">
+    <value>分</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Header" xml:space="preserve">
+    <value>動画背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoBackgroundExpander.Description" xml:space="preserve">
+    <value>メインコンテンツの背後でローカル動画を再生します</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.Content" xml:space="preserve">
+    <value>単一動画</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.Content" xml:space="preserve">
+    <value>ローカルフォルダー</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Header" xml:space="preserve">
+    <value>背景動画のソース</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoSourceCard.Description" xml:space="preserve">
+    <value>動画または動画を含むフォルダーを選択</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Header" xml:space="preserve">
+    <value>動画背景を消去</value>
+  </data>
+  <data name="ViewThemesSettingsPageClearVideoCard.Description" xml:space="preserve">
+    <value>再生を停止し、設定された動画ソースを消去します</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoMutedCard.Header" xml:space="preserve">
+    <value>背景動画をミュート</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoLoopingCard.Header" xml:space="preserve">
+    <value>動画をループ</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Header" xml:space="preserve">
+    <value>動画の伸縮モード</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoStretchCard.Description" xml:space="preserve">
+    <value>動画をウィンドウに合わせる方法</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Header" xml:space="preserve">
+    <value>動画の不透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoOpacityCard.Description" xml:space="preserve">
+    <value>画像および背景レイヤー上の動画の不透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Header" xml:space="preserve">
+    <value>他のウィンドウにも適用</value>
+  </data>
+  <data name="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard.Description" xml:space="preserve">
+    <value>選択した背景効果と背景リソースを補助ウィンドウにも適用します</value>
+  </data>
+  <data name="CommonAdd" xml:space="preserve">
+    <value>追加</value>
+  </data>
+  <data name="CommonCancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="CommonClose" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadTitle" xml:space="preserve">
+    <value>HTTP/FTP 一括ダウンロード</value>
+  </data>
+  <data name="MainWindowHttpFtpBatchDownloadPlaceholder" xml:space="preserve">
+    <value>1 行に 1 つの HTTP、HTTPS、または FTP URL を入力</value>
+  </data>
+  <data name="OperationProgressDialogCompleted" xml:space="preserve">
+    <value>✓ 操作が正常に完了しました</value>
+  </data>
+  <data name="OperationProgressDialogFailed" xml:space="preserve">
+    <value>✗ 操作に失敗しました</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.Text" xml:space="preserve">
+    <value>OpenNet を開く</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.Text" xml:space="preserve">
+    <value>すべてのダウンロードを開始</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.Text" xml:space="preserve">
+    <value>すべてのアップロードを開始</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.Text" xml:space="preserve">
+    <value>すべてのタスクを停止</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.Text" xml:space="preserve">
+    <value>すべてのアクティブタスクを一時停止</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.Text" xml:space="preserve">
+    <value>最後に一時停止したタスクを再開</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.Text" xml:space="preserve">
+    <value>ダウンロード制限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText14.Text" xml:space="preserve">
+    <value>無制限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText16.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText17.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText18.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.Text" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.Text" xml:space="preserve">
+    <value>アップロード制限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.Text" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.Text" xml:space="preserve">
+    <value>スケジューラーを有効にする</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.Text" xml:space="preserve">
+    <value>Torrent ファイルを開く ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.Text" xml:space="preserve">
+    <value>URL から Torrent を追加 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.Text" xml:space="preserve">
+    <value>HTTP/FTP ダウンロード ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.Text" xml:space="preserve">
+    <value>HTTP/FTP 一括ダウンロード ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.Text" xml:space="preserve">
+    <value>クリップボードの URL を取得</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.Text" xml:space="preserve">
+    <value>トレイ通知</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.Text" xml:space="preserve">
+    <value>フローティングウィンドウ</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.Text" xml:space="preserve">
+    <value>フローティングウィンドウ設定</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.Text" xml:space="preserve">
+    <value>オプション ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.Text" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Description" xml:space="preserve">
+    <value>P2P ネットワーク上でファイルを安全に転送</value>
+  </data>
+  <data name="ControlHeaderCarouselText2.Header" xml:space="preserve">
+    <value>ファイル転送</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Description" xml:space="preserve">
+    <value>ローカルネットワーク上のピアを検出して接続</value>
+  </data>
+  <data name="ControlHeaderCarouselText4.Header" xml:space="preserve">
+    <value>ネットワーク検出</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Description" xml:space="preserve">
+    <value>安全なチャネルを介してピアとリアルタイムにチャット</value>
+  </data>
+  <data name="ControlHeaderCarouselText6.Header" xml:space="preserve">
+    <value>ピアチャット</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Description" xml:space="preserve">
+    <value>デバイス間に安全な暗号化トンネルを作成</value>
+  </data>
+  <data name="ControlHeaderCarouselText8.Header" xml:space="preserve">
+    <value>VPN トンネル</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Description" xml:space="preserve">
+    <value>ネットワーク上のピアとフォルダーやストレージを共有</value>
+  </data>
+  <data name="ControlHeaderCarouselText10.Header" xml:space="preserve">
+    <value>共有ストレージ</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Description" xml:space="preserve">
+    <value>ネットワーク帯域幅とパフォーマンスをリアルタイム監視</value>
+  </data>
+  <data name="ControlHeaderCarouselText12.Header" xml:space="preserve">
+    <value>帯域幅モニター</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.Text" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.Text" xml:space="preserve">
+    <value>ピアツーピアネットワークをシンプルに。</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.Text" xml:space="preserve">
+    <value>安全に接続、共有、通信。</value>
+  </data>
+  <data name="ViewHomePageText1.Text" xml:space="preserve">
+    <value>機能</value>
+  </data>
+  <data name="ViewHomePageText2.Text" xml:space="preserve">
+    <value>OpenNet がピアツーピア接続の構築をどう支援するかをご覧ください</value>
+  </data>
+  <data name="ViewHomePageText3.Text" xml:space="preserve">
+    <value>安全なファイル転送</value>
+  </data>
+  <data name="ViewHomePageText4.Text" xml:space="preserve">
+    <value>エンドツーエンド暗号化でピア間のファイルを直接転送します。クラウドの仲介は不要です。</value>
+  </data>
+  <data name="ViewHomePageText5.Text" xml:space="preserve">
+    <value>転送を開始</value>
+  </data>
+  <data name="ViewHomePageText6.Text" xml:space="preserve">
+    <value>自動検出</value>
+  </data>
+  <data name="ViewHomePageText7.Text" xml:space="preserve">
+    <value>ローカルネットワーク上の利用可能なピアを自動的に検出します</value>
+  </data>
+  <data name="ViewHomePageText8.Text" xml:space="preserve">
+    <value>ネットワークをスキャン</value>
+  </data>
+  <data name="ViewHomePageText9.Text" xml:space="preserve">
+    <value>ピアチャット</value>
+  </data>
+  <data name="ViewHomePageText10.Text" xml:space="preserve">
+    <value>暗号化されたメッセージチャネルを使用してピアと通信します</value>
+  </data>
+  <data name="ViewHomePageText11.Text" xml:space="preserve">
+    <value>VPN &amp;amp;amp; トンネリング</value>
+  </data>
+  <data name="ViewHomePageText12.Text" xml:space="preserve">
+    <value>インターネットを介したプライベートネットワーク用に、デバイス間で安全な暗号化トンネルを作成します</value>
+  </data>
+  <data name="ViewHomePageText13.Text" xml:space="preserve">
+    <value>オープンソース</value>
+  </data>
+  <data name="ViewHomePageText14.Text" xml:space="preserve">
+    <value>OpenNet はオープンソースです。コントリビューション、Issue、機能リクエストを歓迎します。</value>
+  </data>
+  <data name="ViewHomePageText15.Text" xml:space="preserve">
+    <value>OpenNet リポジトリ</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.Content" xml:space="preserve">
+    <value>静的</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.Content" xml:space="preserve">
+    <value>カスタム Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.Content" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.Content" xml:space="preserve">
+    <value>カスタム Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.Content" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.Content" xml:space="preserve">
+    <value>ベース</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.Content" xml:space="preserve">
+    <value>薄い</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.Content" xml:space="preserve">
+    <value>ベース</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.Content" xml:space="preserve">
+    <value>代替</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.Text" xml:space="preserve">
+    <value>ピースマップ</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.Text" xml:space="preserve">
+    <value>ピースを確認する BitTorrent タスクを選択してください。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.Content" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.Text" xml:space="preserve">
+    <value>ダウンロード済みピース</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.Text" xml:space="preserve">
+    <value>利用可能なピース</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.Text" xml:space="preserve">
+    <value>ピースサイズ: —</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.Text" xml:space="preserve">
+    <value>Web シード: 0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+    <value>ダウンロード中</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.Text" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.Text" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.Text" xml:space="preserve">
+    <value>未チェック</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.Text" xml:space="preserve">
+    <value>タスクが選択されていません</value>
+  </data>
+  <data name="ViewTaskSummaryPageText80.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.Text" xml:space="preserve">
+    <value>アイドル</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.Text" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.Text" xml:space="preserve">
+    <value>ダウンロード済みピース</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.Text" xml:space="preserve">
+    <value>利用可能なピース</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.Text" xml:space="preserve">
+    <value>ダウンロード進行状況と速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.Text" xml:space="preserve">
+    <value>転送</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
+    <value>経過時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
+    <value>ダウンロード速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.Text" xml:space="preserve">
+    <value>ダウンロード制限</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.Text" xml:space="preserve">
+    <value>シード時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.Text" xml:space="preserve">
+    <value>アップロード済み</value>
+  </data>
+  <data name="ViewTaskSummaryPageText36.Text" xml:space="preserve">
+    <value>アップロード速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.Text" xml:space="preserve">
+    <value>アップロード制限</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.Text" xml:space="preserve">
+    <value>シード</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.Text" xml:space="preserve">
+    <value>ピア</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.Text" xml:space="preserve">
+    <value>接続数</value>
+  </data>
+  <data name="ViewTaskSummaryPageText38.Text" xml:space="preserve">
+    <value>共有比率</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.Text" xml:space="preserve">
+    <value>長期シード</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.Text" xml:space="preserve">
+    <value>アップロードサイズ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.Text" xml:space="preserve">
+    <value>タスク名</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.Text" xml:space="preserve">
+    <value>保存先</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.Text" xml:space="preserve">
+    <value>タスクサイズ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.Text" xml:space="preserve">
+    <value>情報ハッシュ v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText58.Text" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.Text" xml:space="preserve">
+    <value>情報ハッシュ v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.Text" xml:space="preserve">
+    <value>ピースハッシュ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.Text" xml:space="preserve">
+    <value>追加日時</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.Text" xml:space="preserve">
+    <value>完了日時</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.Text" xml:space="preserve">
+    <value>発行者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.Text" xml:space="preserve">
+    <value>タグ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.Text" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.Text" xml:space="preserve">
+    <value>残りサイズ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.Text" xml:space="preserve">
+    <value>ピース</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.Text" xml:space="preserve">
+    <value>ファイル数</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.Text" xml:space="preserve">
+    <value>ファイルアラインメント</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.Text" xml:space="preserve">
+    <value>キュー位置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.Text" xml:space="preserve">
+    <value>作成者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.Text" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.Text" xml:space="preserve">
+    <value>プライベート Torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.Text" xml:space="preserve">
+    <value>フラグ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.Text" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.Text" xml:space="preserve">
+    <value>トラッカーを編集...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.Text" xml:space="preserve">
+    <value>トラッカーを更新</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.Text" xml:space="preserve">
+    <value>トラッカーを削除</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.Text" xml:space="preserve">
+    <value>ログを表示</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.Text" xml:space="preserve">
+    <value>ログを消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.Text" xml:space="preserve">
+    <value>すべてのトラッカーのログを消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.Text" xml:space="preserve">
+    <value>すべてのタスクのトラッカーログを消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
+    <value>到達不能なトラッカーをすべて削除...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
+    <value>選択した列の幅を内容に合わせて自動調整</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
+    <value>すべての列幅を自動調整</value>
+  </data>
+  <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
+    <value>トラッカー URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText21.Text" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="ViewTaskTrackersPageText22.Text" xml:space="preserve">
+    <value>再試行回数</value>
+  </data>
+  <data name="ViewTaskTrackersPageText23.Text" xml:space="preserve">
+    <value>残り時間</value>
+  </data>
+  <data name="ViewTaskTrackersPageText24.Text" xml:space="preserve">
+    <value>シーダー</value>
+  </data>
+  <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
+    <value>リーチャー</value>
+  </data>
+  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+    <value>列と並べ替えをリセット</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
+    <value>トラッカーはありません</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.Content" xml:space="preserve">
+    <value>トラッカーを追加</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.Text" xml:space="preserve">
+    <value>NAT とポートの検出</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.Text" xml:space="preserve">
+    <value>トラバーサルディレクトリ</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.Header" xml:space="preserve">
+    <value>リッスンポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.Text" xml:space="preserve">
+    <value>NAT 動作には一時的な UDP ソケットを使用します。ポート到達性は libtorrent&amp;apos;s の既存 TCP/uTP リスナーに対してテストされます。</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.Text" xml:space="preserve">
+    <value>アドレスと NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.Text" xml:space="preserve">
+    <value>ローカル IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText46.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.Text" xml:space="preserve">
+    <value>パブリック IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.Text" xml:space="preserve">
+    <value>マッピング動作</value>
+  </data>
+  <data name="ViewNATDetectorWindowText24.Text" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.Text" xml:space="preserve">
+    <value>フィルタリング動作</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.Text" xml:space="preserve">
+    <value>旧ラベル</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.Text" xml:space="preserve">
+    <value>リッスンポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.Text" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText28.Text" xml:space="preserve">
+    <value>未テスト</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.Text" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.Text" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.Text" xml:space="preserve">
+    <value>マッピング済みポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.Text" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.Text" xml:space="preserve">
+    <value>プローブ情報</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.Text" xml:space="preserve">
+    <value>RFC 5780 マッピング観測</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.Text" xml:space="preserve">
+    <value>サーバー 1 / プライマリ</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.Text" xml:space="preserve">
+    <value>サーバー 1 / 別ポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.Text" xml:space="preserve">
+    <value>別 IPv4 / サーバー 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.Text" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.Text" xml:space="preserve">
+    <value>パブリック IP:ポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.Text" xml:space="preserve">
+    <value>遅延</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.Text" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.Content" xml:space="preserve">
+    <value>検出を開始</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.Content" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.Text" xml:space="preserve">
+    <value>詳細設定</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.Text" xml:space="preserve">
+    <value>発行者</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.Text" xml:space="preserve">
+    <value>ダウンロード順序</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.Text" xml:space="preserve">
+    <value>タスク名</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.Header" xml:space="preserve">
+    <value>常に手前に表示</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.Text" xml:space="preserve">
+    <value>トラッカー URL</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.Text" xml:space="preserve">
+    <value>時刻</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.Text" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.Text" xml:space="preserve">
+    <value>トラッカーログのエントリはまだありません</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.Text" xml:space="preserve">
+    <value>アップロード速度</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.Text" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.Text" xml:space="preserve">
+    <value>リーチャー</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.Text" xml:space="preserve">
+    <value>再試行回数</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.Text" xml:space="preserve">
+    <value>トラッカー URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
+    <value>未テスト</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.Text" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.Text" xml:space="preserve">
+    <value>シーダー</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.Text" xml:space="preserve">
+    <value>残り時間</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.Text" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.Text" xml:space="preserve">
+    <value>共有比率</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.Text" xml:space="preserve">
+    <value>無制限</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.Text" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.Text" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.Text" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.Text" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet を開く</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべてのダウンロードを開始</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべてのアップロードを開始</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべてのタスクを停止</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべてのアクティブタスクを一時停止</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>最後に一時停止したタスクを再開</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード制限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無制限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>1 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>5 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>10 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>50 MiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アップロード制限</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>256 KiB/s</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>スケジューラーを有効にする</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText20.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Torrent ファイルを開く ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>URL から Torrent を追加 ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText22.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP ダウンロード ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>HTTP/FTP 一括ダウンロード ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText24.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>クリップボードの URL を取得</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トレイ通知</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText26.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フローティングウィンドウ</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フローティングウィンドウ設定</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>オプション ...</value>
+  </data>
+  <data name="ViewNotifyIconContextMenuText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>P2P ネットワーク上でファイルを安全に転送</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ローカルネットワーク上のピアを検出して接続</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安全なチャネルを介してピアとリアルタイムにチャット</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>デバイス間に安全な暗号化トンネルを作成</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ネットワーク上のピアとフォルダーやストレージを共有</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ネットワーク帯域幅とパフォーマンスをリアルタイム監視</value>
+  </data>
+  <data name="ControlHeaderCarouselText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピアツーピアネットワークをシンプルに。</value>
+  </data>
+  <data name="ControlHeaderCarouselText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安全に接続、共有、通信。</value>
+  </data>
+  <data name="ViewGuideStepAgreementIHaveReadText.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>以下を読み、同意します: </value>
+  </data>
+  <data name="ViewGuideStepAgreementTermOfService.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>プロジェクト README と使用上の注意</value>
+  </data>
+  <data name="ViewGuideStepAgreementPrivacyPolicy.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>プライバシーに関する通知</value>
+  </data>
+  <data name="ViewGuideStepAgreementIssueReport.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>問題報告ガイドライン</value>
+  </data>
+  <data name="ViewGuideStepAgreementOpenSourceLicense.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet オープンソースライセンス</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>上のアイコンが表示されない、または四角形で表示される場合は、</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentFontDescription2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> にアクセスしてフォントをダウンロードし、インストールしてください。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentAfterInstallDescription.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>インストール後に OpenNet を再起動し、正常に動作することを確認してください。</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>WebView2 ランタイムが検出されない場合は、</value>
+  </data>
+  <data name="ViewGuideStepEnvironmentWebView2Description2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value> にアクセスしてダウンロードし、インストールしてください。</value>
+  </data>
+  <data name="ViewHomePageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>機能</value>
+  </data>
+  <data name="ViewHomePageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet がピアツーピア接続の構築をどう支援するかをご覧ください</value>
+  </data>
+  <data name="ViewHomePageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>安全なファイル転送</value>
+  </data>
+  <data name="ViewHomePageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>エンドツーエンド暗号化でピア間のファイルを直接転送します。クラウドの仲介は不要です。</value>
+  </data>
+  <data name="ViewHomePageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>転送を開始</value>
+  </data>
+  <data name="ViewHomePageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動検出</value>
+  </data>
+  <data name="ViewHomePageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ローカルネットワーク上の利用可能なピアを自動的に検出します</value>
+  </data>
+  <data name="ViewHomePageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ネットワークをスキャン</value>
+  </data>
+  <data name="ViewHomePageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピアチャット</value>
+  </data>
+  <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>暗号化されたメッセージチャネルを使用してピアと通信します</value>
+  </data>
+  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>VPN &amp;amp;amp; トンネリング</value>
+  </data>
+  <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>インターネットを介したプライベートネットワーク用に、デバイス間で安全な暗号化トンネルを作成します</value>
+  </data>
+  <data name="ViewHomePageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>オープンソース</value>
+  </data>
+  <data name="ViewHomePageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet はオープンソースです。コントリビューション、Issue、機能リクエストを歓迎します。</value>
+  </data>
+  <data name="ViewHomePageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>OpenNet リポジトリ</value>
+  </data>
+  <data name="NatTools_NATTypeLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT タイプ: </value>
+  </data>
+  <data name="NatTools_PublicIPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>パブリック IPv4: </value>
+  </data>
+  <data name="NatTools_UPnPLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP: </value>
+  </data>
+  <data name="NatTools_PortResultLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>結果: </value>
+  </data>
+  <data name="RSSItemsLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>項目</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundStatic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>静的</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomMica.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>カスタム Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>カスタム Acrylic</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeDefault.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ベース</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeThin.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>薄い</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ベース</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeBaseAlt.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>代替</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>単一画像</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ローカルフォルダー</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeSingle.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>単一動画</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeFolder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ローカルフォルダー</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピースマップ</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピースを確認する BitTorrent タスクを選択してください。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード済みピース</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>利用可能なピース</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピースサイズ: —</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Web シード: 0</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード中</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>×</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="ViewTaskPieceMapPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未チェック</value>
+  </data>
+  <data name="ViewTaskSummaryPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>タスクが選択されていません</value>
+  </data>
+  <data name="ViewTaskSummaryPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewTaskSummaryPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アイドル</value>
+  </data>
+  <data name="ViewTaskSummaryPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード済みピース</value>
+  </data>
+  <data name="ViewTaskSummaryPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>利用可能なピース</value>
+  </data>
+  <data name="ViewTaskSummaryPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード進行状況と速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>転送</value>
+  </data>
+  <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>経過時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード制限</value>
+  </data>
+  <data name="ViewTaskSummaryPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>シード時間</value>
+  </data>
+  <data name="ViewTaskSummaryPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アップロード済み</value>
+  </data>
+  <data name="ViewTaskSummaryPageText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アップロード速度</value>
+  </data>
+  <data name="ViewTaskSummaryPageText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アップロード制限</value>
+  </data>
+  <data name="ViewTaskSummaryPageText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>シード</value>
+  </data>
+  <data name="ViewTaskSummaryPageText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピア</value>
+  </data>
+  <data name="ViewTaskSummaryPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>接続数</value>
+  </data>
+  <data name="ViewTaskSummaryPageText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>共有比率</value>
+  </data>
+  <data name="ViewTaskSummaryPageText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>長期シード</value>
+  </data>
+  <data name="ViewTaskSummaryPageText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アップロードサイズ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText40.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ViewTaskSummaryPageText41.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>タスク名</value>
+  </data>
+  <data name="ViewTaskSummaryPageText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>保存先</value>
+  </data>
+  <data name="ViewTaskSummaryPageText45.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>タスクサイズ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>情報ハッシュ v1</value>
+  </data>
+  <data name="ViewTaskSummaryPageText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="ViewTaskSummaryPageText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>情報ハッシュ v2</value>
+  </data>
+  <data name="ViewTaskSummaryPageText51.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピースハッシュ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText53.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>追加日時</value>
+  </data>
+  <data name="ViewTaskSummaryPageText55.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>完了日時</value>
+  </data>
+  <data name="ViewTaskSummaryPageText57.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>発行者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText59.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>タグ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText60.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewTaskSummaryPageText61.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>残りサイズ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText63.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ピース</value>
+  </data>
+  <data name="ViewTaskSummaryPageText65.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ファイル数</value>
+  </data>
+  <data name="ViewTaskSummaryPageText67.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ファイルアラインメント</value>
+  </data>
+  <data name="ViewTaskSummaryPageText69.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>キュー位置</value>
+  </data>
+  <data name="ViewTaskSummaryPageText71.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>作成者</value>
+  </data>
+  <data name="ViewTaskSummaryPageText73.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="ViewTaskSummaryPageText75.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>プライベート Torrent</value>
+  </data>
+  <data name="ViewTaskSummaryPageText77.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フラグ</value>
+  </data>
+  <data name="ViewTaskSummaryPageText79.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="ViewTaskTrackersPageText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカーを編集...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカーを更新</value>
+  </data>
+  <data name="ViewTaskTrackersPageText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカーを削除</value>
+  </data>
+  <data name="ViewTaskTrackersPageText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ログを表示</value>
+  </data>
+  <data name="ViewTaskTrackersPageText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ログを消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべてのトラッカーのログを消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべてのタスクのトラッカーログを消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>到達不能なトラッカーをすべて削除...</value>
+  </data>
+  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>選択した列の幅を内容に合わせて自動調整</value>
+  </data>
+  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>すべての列幅を自動調整</value>
+  </data>
+  <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカー URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ログ</value>
+  </data>
+  <data name="ViewTaskTrackersPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>再試行回数</value>
+  </data>
+  <data name="ViewTaskTrackersPageText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>残り時間</value>
+  </data>
+  <data name="ViewTaskTrackersPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>シーダー</value>
+  </data>
+  <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>リーチャー</value>
+  </data>
+  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>状態</value>
+  </data>
+  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>列と並べ替えをリセット</value>
+  </data>
+  <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカーはありません</value>
+  </data>
+  <data name="ViewTaskTrackersPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカーを追加</value>
+  </data>
+  <data name="TorrentCheckGeneralPage_TorrentNameLabel.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>名前:</value>
+  </data>
+  <data name="TorrentDetailsInfoHash.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>情報ハッシュ:</value>
+  </data>
+  <data name="ViewNATDetectorWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT とポートの検出</value>
+  </data>
+  <data name="ViewNATDetectorWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラバーサルディレクトリ</value>
+  </data>
+  <data name="ViewNATDetectorWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>リッスンポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT 動作には一時的な UDP ソケットを使用します。ポート到達性は libtorrent&amp;apos;s の既存 TCP/uTP リスナーに対してテストされます。</value>
+  </data>
+  <data name="ViewNATDetectorWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>アドレスと NAT</value>
+  </data>
+  <data name="ViewNATDetectorWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ローカル IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>—</value>
+  </data>
+  <data name="ViewNATDetectorWindowText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>パブリック IPv4</value>
+  </data>
+  <data name="ViewNATDetectorWindowText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>マッピング動作</value>
+  </data>
+  <data name="ViewNATDetectorWindowText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ViewNATDetectorWindowText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>フィルタリング動作</value>
+  </data>
+  <data name="ViewNATDetectorWindowText14.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>旧ラベル</value>
+  </data>
+  <data name="ViewNATDetectorWindowText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>リッスンポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>TCP / BitTorrent</value>
+  </data>
+  <data name="ViewNATDetectorWindowText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>未テスト</value>
+  </data>
+  <data name="ViewNATDetectorWindowText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UDP / uTP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>NAT-PMP / PCP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>マッピング済みポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>IPv6 TCP / UDP</value>
+  </data>
+  <data name="ViewNATDetectorWindowText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>プローブ情報</value>
+  </data>
+  <data name="ViewNATDetectorWindowText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>RFC 5780 マッピング観測</value>
+  </data>
+  <data name="ViewNATDetectorWindowText32.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>サーバー 1 / プライマリ</value>
+  </data>
+  <data name="ViewNATDetectorWindowText33.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>サーバー 1 / 別ポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText34.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>別 IPv4 / サーバー 2</value>
+  </data>
+  <data name="ViewNATDetectorWindowText35.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>結果</value>
+  </data>
+  <data name="ViewNATDetectorWindowText39.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>パブリック IP:ポート</value>
+  </data>
+  <data name="ViewNATDetectorWindowText43.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>遅延</value>
+  </data>
+  <data name="ViewNATDetectorWindowText47.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>準備完了</value>
+  </data>
+  <data name="ViewNATDetectorWindowText48.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>検出を開始</value>
+  </data>
+  <data name="ViewNATDetectorWindowText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>詳細設定</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>発行者</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード順序</value>
+  </data>
+  <data name="ViewTrackerLogWindowText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>タスク名</value>
+  </data>
+  <data name="ViewTrackerLogWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>常に手前に表示</value>
+  </data>
+  <data name="ViewTrackerLogWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカー URL</value>
+  </data>
+  <data name="ViewTrackerLogWindowText4.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>時刻</value>
+  </data>
+  <data name="ViewTrackerLogWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>内容</value>
+  </data>
+  <data name="ViewTrackerLogWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>トラッカーログのエントリはまだありません</value>
+  </data>
+  <data name="trayIcon.ToolTip" xml:space="preserve">
+    <value>OpenNet</value>
+  </data>
+  <data name="ControlHeaderCarouselText1.Header" xml:space="preserve">
+    <value>ファイル転送</value>
+  </data>
+  <data name="ControlHeaderCarouselText3.Header" xml:space="preserve">
+    <value>ネットワーク検出</value>
+  </data>
+  <data name="ControlHeaderCarouselText5.Header" xml:space="preserve">
+    <value>ピアチャット</value>
+  </data>
+  <data name="ControlHeaderCarouselText7.Header" xml:space="preserve">
+    <value>VPN トンネル</value>
+  </data>
+  <data name="ControlHeaderCarouselText9.Header" xml:space="preserve">
+    <value>共有ストレージ</value>
+  </data>
+  <data name="ControlHeaderCarouselText11.Header" xml:space="preserve">
+    <value>帯域幅モニター</value>
+  </data>
+  <data name="IpEndpointInputAddress.Header" xml:space="preserve">
+    <value>IP アドレス</value>
+  </data>
+  <data name="IpEndpointInputAddress.PlaceholderText" xml:space="preserve">
+    <value>0.0.0.0 または ::</value>
+  </data>
+  <data name="IpEndpointInputPort.Header" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="GuideWebUIUsername.PlaceholderText" xml:space="preserve">
+    <value>admin</value>
+  </data>
+  <data name="InfoBarShowButtonText.Text" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="InfoBarPanelTitle.Text" xml:space="preserve">
+    <value>通知</value>
+  </data>
+  <data name="MoreToolsHeader.Text" xml:space="preserve">
+    <value>OpenNet ツール</value>
+  </data>
+  <data name="MoreRuntimeStatusTitle.Text" xml:space="preserve">
+    <value>完全なランタイム状態</value>
+  </data>
+  <data name="MoreRuntimeStatusDescription.Text" xml:space="preserve">
+    <value>エンジン、ネットワーク、転送、CPU、メモリ、ディスク、キュー</value>
+  </data>
+  <data name="MoreNatDetectionTitle.Text" xml:space="preserve">
+    <value>NAT とポートの検出</value>
+  </data>
+  <data name="MoreNatDetectionDescription.Text" xml:space="preserve">
+    <value>STUN 観測と libtorrent ポートマッピング</value>
+  </data>
+  <data name="MoreGuideTitle.Text" xml:space="preserve">
+    <value>セットアップガイド</value>
+  </data>
+  <data name="MoreGuideDescription.Text" xml:space="preserve">
+    <value>Web UI の資格情報と GUI 設定を再度開く</value>
+  </data>
+  <data name="MoreWebUIStatus.Text" xml:space="preserve">
+    <value>Web UI を確認中…</value>
+  </data>
+  <data name="MoreCopyWebUIAddress.Content" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="MoreOpenWebUIButton.Content" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="NavItem_More.Content" xml:space="preserve">
+    <value>その他</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Description" xml:space="preserve">
+    <value>新しい BitTorrent タスクが初めて追加されたとき、有効なカスタムおよび購読トラッカーをすべて追加します</value>
+  </data>
+  <data name="ViewSettingsPageAutoAddTrackers.Header" xml:space="preserve">
+    <value>カスタムトラッカーを自動追加</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNewTrackerTextBox.PlaceholderText" xml:space="preserve">
+    <value>トラッカー URL を入力（例: tracker.example.com:6969）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageBestItem.Content" xml:space="preserve">
+    <value>厳選リスト（best.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageAllItem.Content" xml:space="preserve">
+    <value>完全リスト（all.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageHttpItem.Content" xml:space="preserve">
+    <value>HTTP(S) リスト（http.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoHttpItem.Content" xml:space="preserve">
+    <value>HTTP なしリスト（nohttp.txt）</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettingsHeader.Text" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Description" xml:space="preserve">
+    <value>libtorrent が使用する IPv4 および IPv6 エンドポイントを設定します。ポート 0 の場合、OS が利用可能なポートを選択します。</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageConnectionSettings.Header" xml:space="preserve">
+    <value>BitTorrent リッスンエンドポイント</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListener.Header" xml:space="preserve">
+    <value>ランタイムリスナー</value>
+  </data>
+  <data name="ViewPageNetworkSettingsPageRuntimeListenerEndpoint.Text" xml:space="preserve">
+    <value>BitTorrent エンジンは実行されていません。</value>
+  </data>
+  <data name="RSSMaxItemsLabel.Text" xml:space="preserve">
+    <value>フィードごとの最大項目数:</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Description" xml:space="preserve">
+    <value>制作者一覧 / 特別謝辞</value>
+  </data>
+  <data name="ViewAboutPageDeveloperExpander.Header" xml:space="preserve">
+    <value>開発者</value>
+  </data>
+  <data name="SettingsGeneralNavItem.Content" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="SettingsBitTorrentNavItem.Content" xml:space="preserve">
+    <value>BitTorrent</value>
+  </data>
+  <data name="SettingsNetworkNavItem.Content" xml:space="preserve">
+    <value>ネットワーク</value>
+  </data>
+  <data name="SettingsTrackerNavItem.Content" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="SettingsIPFilterNavItem.Content" xml:space="preserve">
+    <value>IP フィルター</value>
+  </data>
+  <data name="SettingsDownloadNavItem.Content" xml:space="preserve">
+    <value>ダウンロード動作</value>
+  </data>
+  <data name="SettingsWebUINavItem.Content" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="SettingsAboutNavItem.Content" xml:space="preserve">
+    <value>このアプリについて</value>
+  </data>
+  <data name="SettingsPersonalizeTitle.Text" xml:space="preserve">
+    <value>デバイスをカスタマイズ</value>
+  </data>
+  <data name="SettingsPersonalizeDescription.Text" xml:space="preserve">
+    <value>カスタムテーマと背景で OpenNet を自分好みに設定</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>バージョンと更新</value>
+  </data>
+  <data name="AppUpdateCheckButton.Content" xml:space="preserve">
+    <value>更新を確認</value>
+  </data>
+  <data name="AutoCheckUpdateCheckbox.Content" xml:space="preserve">
+    <value>更新を自動確認</value>
+  </data>
+  <data name="SettingsAppThemeCard.Description" xml:space="preserve">
+    <value>表示するアプリテーマを選択</value>
+  </data>
+  <data name="SettingsAppThemeCard.Header" xml:space="preserve">
+    <value>アプリテーマ</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Description" xml:space="preserve">
+    <value>タスクファイル、トラッカー、ピア、ランタイム状態に適用されます。値を小さくすると CPU 使用率が上がる場合があります。</value>
+  </data>
+  <data name="GuiRefreshIntervalCard.Header" xml:space="preserve">
+    <value>GUI データ更新間隔</value>
+  </data>
+  <data name="GuiRefreshIntervalBox.Header" xml:space="preserve">
+    <value>ミリ秒</value>
+  </data>
+  <data name="RestartToApplyLanguageButton.Content" xml:space="preserve">
+    <value>今すぐ再起動</value>
+  </data>
+  <data name="ViewThemeSettingLuminosityOpacitySlider.Header" xml:space="preserve">
+    <value>明度の不透明度</value>
+  </data>
+  <data name="ViewThemeSettingTintOpacitySlider.Header" xml:space="preserve">
+    <value>色合いの不透明度</value>
+  </data>
+  <data name="ViewThemeSettingEnableAcrylicSwitch.Header" xml:space="preserve">
+    <value>ウィンドウが非アクティブでも Acrylic を有効にする</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Description" xml:space="preserve">
+    <value>適用する背景タイプ</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundExpander.Header" xml:space="preserve">
+    <value>背景</value>
+  </data>
+  <data name="ViewThemesSettingsPageBackgroundMica.Content" xml:space="preserve">
+    <value>Mica</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Description" xml:space="preserve">
+    <value>背景の Acrylic 効果モード</value>
+  </data>
+  <data name="ViewThemesSettingsPageAcrylicTypeCard.Header" xml:space="preserve">
+    <value>Acrylic タイプ</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Description" xml:space="preserve">
+    <value>背景の Mica 効果モード</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaTypeCard.Header" xml:space="preserve">
+    <value>Mica タイプ</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Description" xml:space="preserve">
+    <value>Mica が利用できない場合にフォールバックを有効にする（Win10）</value>
+  </data>
+  <data name="ViewThemesSettingsPageMicaErrorFallback.Header" xml:space="preserve">
+    <value>Mica エラー時のフォールバック</value>
+  </data>
+  <data name="SoftBackgroundColors.Description" xml:space="preserve">
+    <value>アクセントカラーを選択してカスタマイズ</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.Content" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Description" xml:space="preserve">
+    <value>背景画像のサイズ設定方法</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageStretchCard.Header" xml:space="preserve">
+    <value>画像の伸縮モード</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.Content" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.Content" xml:space="preserve">
+    <value>塗りつぶし</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>均等</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>均等に塗りつぶし</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Description" xml:space="preserve">
+    <value>背景内の画像の不透明度。ウィンドウ色より前面に表示されます</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageOpacityCard.Header" xml:space="preserve">
+    <value>不透明度</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.Content" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.Content" xml:space="preserve">
+    <value>塗りつぶし</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.Content" xml:space="preserve">
+    <value>均等</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.Content" xml:space="preserve">
+    <value>均等に塗りつぶし</value>
+  </data>
+  <data name="ViewThemesSettingsPageFontSetting.Description" xml:space="preserve">
+    <value>フォントサイズ</value>
+  </data>
+  <data name="ViewThemesSettingsPageFontSetting.Header" xml:space="preserve">
+    <value>フォント設定</value>
+  </data>
+  <data name="WebUISettingsTitle.Text" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="WebUISettingsDescription.Text" xml:space="preserve">
+    <value>ブラウザーまたは qBittorrent Web API 互換クライアントから、同梱の qBittorrent WebUI を使用します。</value>
+  </data>
+  <data name="WebUISettingsConnectionHeader.Text" xml:space="preserve">
+    <value>接続</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Description" xml:space="preserve">
+    <value>組み込み HTTP サーバーが受け付ける IP アドレス。</value>
+  </data>
+  <data name="WebUISettingsAddressCard.Header" xml:space="preserve">
+    <value>リッスンアドレス</value>
+  </data>
+  <data name="WebUISettingsPortCard.Description" xml:space="preserve">
+    <value>Web UI を再起動すると新しいポートが直ちに適用されます。</value>
+  </data>
+  <data name="WebUISettingsPortCard.Header" xml:space="preserve">
+    <value>ポート</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Description" xml:space="preserve">
+    <value>WebUI が使用する言語コード。例: en または zh_CN。</value>
+  </data>
+  <data name="WebUISettingsLocaleCard.Header" xml:space="preserve">
+    <value>ロケール</value>
+  </data>
+  <data name="WebUISettingsLocale.PlaceholderText" xml:space="preserve">
+    <value>en</value>
+  </data>
+  <data name="WebUISettingsAuthenticationHeader.Text" xml:space="preserve">
+    <value>認証</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Description" xml:space="preserve">
+    <value>3 文字以上。コロンは使用できません。</value>
+  </data>
+  <data name="WebUISettingsUsernameCard.Header" xml:space="preserve">
+    <value>ユーザー名</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Description" xml:space="preserve">
+    <value>6 文字以上。設定適用時に既存のブラウザーセッションは消去されます。</value>
+  </data>
+  <data name="WebUISettingsPasswordCard.Header" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Description" xml:space="preserve">
+    <value>API クライアント用の任意のベアラートークン。パスワードと同様に扱ってください。</value>
+  </data>
+  <data name="WebUISettingsApiKeyCard.Header" xml:space="preserve">
+    <value>API キー</value>
+  </data>
+  <data name="WebUISettingsGenerateApiKey.Content" xml:space="preserve">
+    <value>生成</value>
+  </data>
+  <data name="WebUISettingsCopyApiKey.Content" xml:space="preserve">
+    <value>コピー</value>
+  </data>
+  <data name="WebUISettingsClearApiKey.Content" xml:space="preserve">
+    <value>消去</value>
+  </data>
+  <data name="WebUISettingsSave.Content" xml:space="preserve">
+    <value>保存して Web UI を再起動</value>
+  </data>
+  <data name="WebUISettingsOpen.Content" xml:space="preserve">
+    <value>Web UI を開く</value>
+  </data>
+  <data name="FilePriority_Skip.Content" xml:space="preserve">
+    <value>スキップ</value>
+  </data>
+  <data name="FilePriority_Low.Content" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.Content" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="FilePriority_High.Content" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="TaskSpeedGraph_Title.Text" xml:space="preserve">
+    <value>パフォーマンスグラフ</value>
+  </data>
+  <data name="TaskSpeedGraph_Subtitle.Text" xml:space="preserve">
+    <value>ライブセッションとシステムテレメトリ</value>
+  </data>
+  <data name="TaskSpeedGraph_MetricSelector.Header" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="TaskSpeedGraph_TransferSpeed.Content" xml:space="preserve">
+    <value>転送速度</value>
+  </data>
+  <data name="TaskSpeedGraph_DiskCache.Content" xml:space="preserve">
+    <value>ディスクキャッシュ</value>
+  </data>
+  <data name="TaskSpeedGraph_LongTermSeeding.Content" xml:space="preserve">
+    <value>長期シード</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuOverall.Content" xml:space="preserve">
+    <value>CPU 使用率（全体）</value>
+  </data>
+  <data name="TaskSpeedGraph_CpuLogicalProcessors.Content" xml:space="preserve">
+    <value>CPU 使用率（論理プロセッサ）</value>
+  </data>
+  <data name="TaskSpeedGraph_MemoryUsage.Content" xml:space="preserve">
+    <value>メモリ使用量</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtUdp.Content" xml:space="preserve">
+    <value>UDP 経由の DHT</value>
+  </data>
+  <data name="TaskViewTaskSpeedGraphPageGlobalDownload.Text" xml:space="preserve">
+    <value>グローバルダウンロード</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDiskCacheTitle.Text" xml:space="preserve">
+    <value>ディスクキャッシュ</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageLongTermUpload.Text" xml:space="preserve">
+    <value>長期アップロード</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageOverallCpu.Text" xml:space="preserve">
+    <value>CPU 全体</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAverageCpu.Text" xml:space="preserve">
+    <value>平均 CPU</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageWorkingSet.Text" xml:space="preserve">
+    <value>OpenNet ワーキングセット</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDhtReceive.Text" xml:space="preserve">
+    <value>DHT 受信</value>
+  </data>
+  <data name="TaskSpeedGraph_GlobalUpload.Text" xml:space="preserve">
+    <value>グローバルアップロード</value>
+  </data>
+  <data name="TaskSpeedGraph_Source.Text" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="TaskSpeedGraph_Scope.Text" xml:space="preserve">
+    <value>範囲</value>
+  </data>
+  <data name="TaskSpeedGraph_Sampling.Text" xml:space="preserve">
+    <value>サンプリング</value>
+  </data>
+  <data name="TaskSpeedGraph_PeakCpu.Text" xml:space="preserve">
+    <value>CPU ピーク</value>
+  </data>
+  <data name="TaskSpeedGraph_PhysicalMemoryShare.Text" xml:space="preserve">
+    <value>物理メモリ使用率</value>
+  </data>
+  <data name="TaskSpeedGraph_DhtSend.Text" xml:space="preserve">
+    <value>DHT 送信</value>
+  </data>
+  <data name="TaskSpeedGraph_GraphScale.Text" xml:space="preserve">
+    <value>グラフスケール</value>
+  </data>
+  <data name="TaskNewFromUrlButton.Text" xml:space="preserve">
+    <value>マグネットリンクから</value>
+  </data>
+  <data name="TaskNewFromFileButton.Text" xml:space="preserve">
+    <value>BitTorrent ファイルから</value>
+  </data>
+  <data name="TaskNewFromHttpButton.Text" xml:space="preserve">
+    <value>HTTP ダウンロード</value>
+  </data>
+  <data name="Header_DownloadSize.Text" xml:space="preserve">
+    <value>ダウンロードサイズ</value>
+  </data>
+  <data name="Header_UploadSize.Text" xml:space="preserve">
+    <value>アップロードサイズ</value>
+  </data>
+  <data name="Header_TotalDownloadSize.Text" xml:space="preserve">
+    <value>総ダウンロードサイズ</value>
+  </data>
+  <data name="Header_TotalUploadSize.Text" xml:space="preserve">
+    <value>総アップロードサイズ</value>
+  </data>
+  <data name="Header_ULRate.Text" xml:space="preserve">
+    <value>アップロード速度</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
+    <value>選択した列の幅を内容に合わせて自動調整</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
+    <value>すべての列幅を内容に合わせて自動調整</value>
+  </data>
+  <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
+    <value>表示項目を既定値にリセット</value>
+  </data>
+  <data name="ViewWindowExceptionHeader.Text" xml:space="preserve">
+    <value>回復不能な致命的エラーが発生しました</value>
+  </data>
+  <data name="ViewExceptionWindowStacktraceHeader.Header" xml:space="preserve">
+    <value>例外の詳細</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Description" xml:space="preserve">
+    <value>明確な手順ごとの説明があると、問題をより早く特定できます</value>
+  </data>
+  <data name="ViewExceptionWindowComment.Header" xml:space="preserve">
+    <value>クラッシュが発生する前にどのような操作を行いましたか？</value>
+  </data>
+  <data name="ViewWindowExceptionClose.Content" xml:space="preserve">
+    <value>閉じる</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General.Text" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox.Content" xml:space="preserve">
+    <value>すぐに開始</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowStartDownloadButton.Content" xml:space="preserve">
+    <value>ダウンロードを開始</value>
+  </data>
+  <data name="ViewModalWindowTorrentCheckModalWindowCloseButton.Content" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="Enc_None" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="BT_Proxy_None.Content" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="IPF_ReplacementSkipped" xml:space="preserve">
+    <value>既存のルールを保持するため置換をスキップしました</value>
+  </data>
+  <data name="IPF_Skipped" xml:space="preserve">
+    <value>スキップ済み</value>
+  </data>
+  <data name="DataTableSortNoneHint" xml:space="preserve">
+    <value>未並べ替えです。選択すると昇順になります</value>
+  </data>
+  <data name="ViewThemesSettingsPageImageModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>塗りつぶし</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>均等</value>
+  </data>
+  <data name="ViewThemeSettingsPageImageStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>均等に塗りつぶし</value>
+  </data>
+  <data name="ViewThemesSettingsPageVideoModeNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxNone.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>塗りつぶし</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniform.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>均等</value>
+  </data>
+  <data name="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>均等に塗りつぶし</value>
+  </data>
+  <data name="FilePriority_Skip.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>スキップ</value>
+  </data>
+  <data name="FilePriority_Low.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="FilePriority_Normal.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>標準</value>
+  </data>
+  <data name="FilePriority_High.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="ViewMainWindowButton.Content" xml:space="preserve">
+    <value>[開発] テーマを反転</value>
+  </data>
+  <data name="ViewGuideViewRun.Text" xml:space="preserve">
+    <value>Microsoft</value>
+  </data>
+  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+    <value>DHT</value>
+  </data>
+  <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
+    <value>ポートがブロックされています。ルーターまたはファイアウォールの設定を確認してください。</value>
+  </data>
+  <data name="ViewNatToolsPageRun.Text" xml:space="preserve">
+    <value>接続中のピア: </value>
+  </data>
+  <data name="ViewNatToolsPageTextBlock.Text" xml:space="preserve">
+    <value>マッピングは一貫しています</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>リッスンしていません</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>URL（.txt 形式）からトラッカー一覧を購読</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>トラッカー購読</value>
+  </data>
+  <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
+    <value>購読</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>ローカルピア検出（LSD）を有効にする</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>購読 URL（例: https://example.com/trackers.txt）</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>ローカルネットワーク上のピアを検出</value>
+  </data>
+  <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
+    <value>再現手順へ移動</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Description" xml:space="preserve">
+    <value>WinUI3 向け OpenNet</value>
+  </data>
+  <data name="ViewAboutPageSettingsExpander.Header" xml:space="preserve">
+    <value>オープンソースの OpenNet</value>
+  </data>
+  <data name="ViewAboutPageSettingsCard.Header" xml:space="preserve">
+    <value>WinUIEssential Build SDK バージョン</value>
+  </data>
+  <data name="ViewAboutPageHyperlinkButton.Content" xml:space="preserve">
+    <value>GitHub でプロジェクトに参加</value>
+  </data>
+  <data name="ViewAboutPageRun.Text" xml:space="preserve">
+    <value>最終コミット: </value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>ダウンロードフォルダー</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>高度な libtorrent</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Description" xml:space="preserve">
+    <value>ピアへ送信するクライアント識別文字列</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsCard.Header" xml:space="preserve">
+    <value>完了済みファイルの移動先</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Description" xml:space="preserve">
+    <value>新しいダウンロードの既定動作</value>
+  </data>
+  <data name="ViewBittorrentSettingsPageSettingsExpander.Header" xml:space="preserve">
+    <value>ダウンロードの既定値</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageTextBox.PlaceholderText" xml:space="preserve">
+    <value>1.2.3.4
+10.0.0.0/8
+192.168.1.0-192.168.1.255
+2400:1a00::/32</value>
+  </data>
+  <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
+    <value>フォント</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
+    <value>列と並べ替えをリセット</value>
+  </data>
+  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
+    <value>優先度</value>
+  </data>
+  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
+    <value>列と並べ替えをリセット</value>
+  </data>
+  <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
+    <value>ソース</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlock.Text" xml:space="preserve">
+    <value>↑ —</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Description" xml:space="preserve">
+    <value>描画する線、枠線、グラデーション領域を設定します</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceSettingsExpander.Header" xml:space="preserve">
+    <value>系列の外観</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Description" xml:space="preserve">
+    <value>すべてのグラフカスタマイズ設定を初期値に戻します。</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetSettingsCard.Header" xml:space="preserve">
+    <value>既定値に戻す</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageResetButton.Content" xml:space="preserve">
+    <value>戻す</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxTimeUnit.Text" xml:space="preserve">
+    <value>ミリ秒</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemDot.Content" xml:space="preserve">
+    <value>点</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomButton.ToolTipService.ToolTip" xml:space="preserve">
+    <value>グラフスタイルをカスタマイズ</value>
+  </data>
+  <data name="ViewTasksPageAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>検索</value>
+  </data>
+  <data name="ViewTasksPageToggleMenuItem.Text" xml:space="preserve">
+    <value>ピア</value>
+  </data>
+  <data name="ViewTorrentCheckGeneralPageTextBlock.Text" xml:space="preserve">
+    <value>保存場所とトラッカーを今設定するか、すぐにタスクを追加できます。メタデータのダウンロードはタスク一覧で継続されます。</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Description" xml:space="preserve">
+    <value>意図的に XAML 側の例外を発生させます</value>
+  </data>
+  <data name="ViewDevWindowSettingsCard.Header" xml:space="preserve">
+    <value>例外処理</value>
+  </data>
+  <data name="ViewDevWindowButton.Content" xml:space="preserve">
+    <value>例外を発生</value>
+  </data>
+  <data name="ViewInfoOverlayWindowTextBlock.Text" xml:space="preserve">
+    <value>DHT: 0 ノード</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowTextBlock.Text" xml:space="preserve">
+    <value>表示可能なポイントを待機中…</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowButton.Content" xml:space="preserve">
+    <value>丸み付きバッチを追加</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowExpander.Header" xml:space="preserve">
+    <value>グラフのプロパティとブラシ構成</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBox.Header" xml:space="preserve">
+    <value>ハイライト動作</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowComboBoxItem.Content" xml:space="preserve">
+    <value>各ポイント</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceStrokeSettingsCard.Header" xml:space="preserve">
+    <value>線の太さ</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowToggleSwitch.Header" xml:space="preserve">
+    <value>破線の枠線</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectorBarItem.Text" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowTextBlock.Text" xml:space="preserve">
+    <value>アプリ全体のカスタムトラッカースイッチと購読はネットワーク設定で管理します。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowCheckBoxText1.Content" xml:space="preserve">
+    <value>.torrent のコピーをダウンロードフォルダーに保存</value>
+  </data>
+  <data name="ViewNatToolsPageNACoreNotRunning" xml:space="preserve">
+    <value>該当なし（コアが実行されていません）</value>
+  </data>
+  <data name="ViewNatToolsPageNA" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="ViewNatToolsPageDetecting" xml:space="preserve">
+    <value>検出中...</value>
+  </data>
+  <data name="ViewNatToolsPage" xml:space="preserve">
+    <value>...</value>
+  </data>
+  <data name="ViewNatToolsPageTesting" xml:space="preserve">
+    <value>テスト中...</value>
+  </data>
+  <data name="ViewNatToolsPageYesConsistentMappingAcrossAllServers" xml:space="preserve">
+    <value>はい - すべてのサーバーで一貫したマッピング</value>
+  </data>
+  <data name="ViewNatToolsPageFullConeEIM" xml:space="preserve">
+    <value>フルコーン（EIM）</value>
+  </data>
+  <data name="ViewNatToolsPageNoSameIPButDifferentPorts" xml:space="preserve">
+    <value>いいえ - 同じ IP ですがポートが異なります</value>
+  </data>
+  <data name="ViewNatToolsPagePortRestrictedSymmetric" xml:space="preserve">
+    <value>ポート制限 / シンメトリック</value>
+  </data>
+  <data name="ViewNatToolsPageNoDifferentIPPortPerDestination" xml:space="preserve">
+    <value>いいえ - 宛先ごとに異なる IP:ポート</value>
+  </data>
+  <data name="ViewNatToolsPageSymmetric" xml:space="preserve">
+    <value>シンメトリック</value>
+  </data>
+  <data name="ViewNatToolsPagePartialOnlyOneServerResponded" xml:space="preserve">
+    <value>一部のみ - 応答したサーバーは 1 台だけです</value>
+  </data>
+  <data name="ViewNatToolsPageUnknownPartialResults" xml:space="preserve">
+    <value>不明（一部の結果のみ）</value>
+  </data>
+  <data name="ViewNatToolsPageFailedNoSTUNResponses" xml:space="preserve">
+    <value>失敗 - STUN から応答がありません</value>
+  </data>
+  <data name="ViewNatToolsPageUnknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="ViewNatToolsPageError" xml:space="preserve">
+    <value>エラー</value>
+  </data>
+  <data name="ViewNatToolsPageInvalidPortNumber" xml:space="preserve">
+    <value>無効なポート番号</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNReportsYourExternalPortMatchesTheLocalPortPeersShouldBeAbleToConnectToYouDirectly" xml:space="preserve">
+    <value>STUN によると外部ポートはローカルポートと一致しています。ピアから直接接続できるはずです。</value>
+  </data>
+  <data name="ViewNatToolsPageSTUNMappedPortDiffersFromLocalPortOrNoResponseReceivedYourNATMayBeRewritingThePortConsiderEnablingUpnpOrSettingUpPortForwarding" xml:space="preserve">
+    <value>STUN のマッピングポートがローカルポートと異なるか、応答がありません。NAT がポートを書き換えている可能性があります。UPnP を有効にするか、ポート転送を設定してください。</value>
+  </data>
+  <data name="ViewNatToolsPageErrorTestingPort" xml:space="preserve">
+    <value>ポートテスト中にエラー</value>
+  </data>
+  <data name="ViewNatToolsPageCouldNotCompleteTheSTUNBasedPortTestCheckYourNetworkConnection" xml:space="preserve">
+    <value>STUN ベースのポートテストを完了できませんでした。ネットワーク接続を確認してください。</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeHttpDownload" xml:space="preserve">
+    <value>HTTP ダウンロード</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNA" xml:space="preserve">
+    <value>該当なし</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeEngineUnavailable" xml:space="preserve">
+    <value>エンジンを利用できません</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNoTaskSelected" xml:space="preserve">
+    <value>タスクが選択されていません</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeIdle" xml:space="preserve">
+    <value>アイドル</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime0" xml:space="preserve">
+    <value>0%</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntime00" xml:space="preserve">
+    <value>0 / 0</value>
+  </data>
+  <data name="ViewTaskSummaryPageRuntimeNone" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="ViewRuntimeStatusWindowReportCopied" xml:space="preserve">
+    <value>レポートをクリップボードにコピーしました</value>
+  </data>
+  <data name="ViewTaskFilesPageRenameFileTitle" xml:space="preserve">
+    <value>ファイル名を変更</value>
+  </data>
+  <data name="CommonRename" xml:space="preserve">
+    <value>名前を変更</value>
+  </data>
+  <data name="CommonSave" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="CommonRemove" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="CommonClearAll" xml:space="preserve">
+    <value>すべて消去</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerUrlPlaceholder" xml:space="preserve">
+    <value>1 行につき 1 つの HTTP、HTTPS、または UDP トラッカー URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersTitle" xml:space="preserve">
+    <value>トラッカーを編集</value>
+  </data>
+  <data name="ViewTaskTrackersPageInvalidTrackerUrlTitle" xml:space="preserve">
+    <value>無効なトラッカー URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerTitle" xml:space="preserve">
+    <value>トラッカーを削除しますか？</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllLogsTitle" xml:space="preserve">
+    <value>すべてのトラッカーログを消去しますか？</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePrompt" xml:space="preserve">
+    <value>再試行回数が次の値に達したすべてのトラッカーを削除:</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTitle" xml:space="preserve">
+    <value>到達不能なトラッカーを削除</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedTitle" xml:space="preserve">
+    <value>フィードを削除</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationPrefix" xml:space="preserve">
+    <value>「</value>
+  </data>
+  <data name="ViewRSSPageRemoveFeedConfirmationSuffix" xml:space="preserve">
+    <value>」を削除してもよろしいですか？</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnterClientNameHint" xml:space="preserve">
+    <value>テストするピアクライアント名を入力してください。</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageNoMatchingRule" xml:space="preserve">
+    <value>このクライアントに一致する有効なルールはありません</value>
+  </data>
+  <data name="ViewClientFilterSettingsPagePatternLabel" xml:space="preserve">
+    <value>パターン</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageMatchTypeLabel" xml:space="preserve">
+    <value>一致タイプ</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageCaseSensitive" xml:space="preserve">
+    <value>大文字と小文字を区別</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEnabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDescriptionLabel" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>クライアントフィルタールールを編集</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>クライアントフィルタールールを削除</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageImportRulesTitle" xml:space="preserve">
+    <value>クライアントフィルタールールをインポート</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageChooseFile" xml:space="preserve">
+    <value>ファイルを選択</value>
+  </data>
+  <data name="ViewClientFilterSettingsPageClearRulesTitle" xml:space="preserve">
+    <value>クライアントフィルタールールをすべて消去</value>
+  </data>
+  <data name="CommonDelete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
+    <value>複数のファイルが選択されています</value>
+  </data>
+  <data name="ViewTasksPageMultipleFilesSelectedPrompt" xml:space="preserve">
+    <value>複数のファイルを選択しました。次に何を行いますか？</value>
+  </data>
+  <data name="ViewTasksPageCheckInNewWindows" xml:space="preserve">
+    <value>新しいウィンドウで確認</value>
+  </data>
+  <data name="ViewTasksPageAddToList" xml:space="preserve">
+    <value>一覧に追加</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableTitle" xml:space="preserve">
+    <value>HTTP ダウンロードを利用できません</value>
+  </data>
+  <data name="ViewTasksPageHttpDownloadUnavailableMessage" xml:space="preserve">
+    <value>aria2 ダウンロードエンジンを利用できません。aria2c.exe がアプリケーションと同じ場所にあることを確認してください。</value>
+  </data>
+  <data name="ViewTasksPageRenamePlaceholder" xml:space="preserve">
+    <value>新しい名前を入力</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageInformationTitle" xml:space="preserve">
+    <value>ディスク使用量情報</value>
+  </data>
+  <data name="CommonOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="ViewSettingsPageCheckingForUpdates" xml:space="preserve">
+    <value>確認中...</value>
+  </data>
+  <data name="ViewSettingsPageCheckUpdate" xml:space="preserve">
+    <value>更新を確認</value>
+  </data>
+  <data name="ViewSettingsPageUpdateAvailable" xml:space="preserve">
+    <value>OpenNet の更新があります</value>
+  </data>
+  <data name="ViewSettingsPageUpToDate" xml:space="preserve">
+    <value>OpenNet は最新です</value>
+  </data>
+  <data name="ViewSettingsPageUpdateCheckFailed" xml:space="preserve">
+    <value>更新の確認に失敗しました</value>
+  </data>
+  <data name="ViewSettingsPageUnableToOpenUpdate" xml:space="preserve">
+    <value>更新を開けません</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEntryLabel" xml:space="preserve">
+    <value>IP アドレス、CIDR ブロック、または範囲</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDescriptionOptional" xml:space="preserve">
+    <value>説明（任意）</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageEditRuleTitle" xml:space="preserve">
+    <value>IP フィルタールールを編集</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageDeleteRuleTitle" xml:space="preserve">
+    <value>IP フィルタールールを削除</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesTitle" xml:space="preserve">
+    <value>すべてのルールを消去</value>
+  </data>
+  <data name="ViewIPFilterSettingsPageClearAllRulesMessage" xml:space="preserve">
+    <value>すべての IP フィルタールールを削除してもよろしいですか？この操作は元に戻せません。</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageLocation" xml:space="preserve">
+    <value>場所:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTaskSize" xml:space="preserve">
+    <value>タスクサイズ:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageUsedOnVolume" xml:space="preserve">
+    <value>ボリューム使用量:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageFreeOnVolume" xml:space="preserve">
+    <value>ボリューム空き容量:</value>
+  </data>
+  <data name="ViewTasksPageDiskUsageTotalCapacity" xml:space="preserve">
+    <value>合計容量:</value>
+  </data>
+  <data name="CommonEnabled" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="CommonDisabled" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="CommonDetecting" xml:space="preserve">
+    <value>検出中…</value>
+  </data>
+  <data name="CommonTesting" xml:space="preserve">
+    <value>テスト中…</value>
+  </data>
+  <data name="ViewNATDetectorWindowEngineNotRunning" xml:space="preserve">
+    <value>エンジンが実行されていません</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForRouterResponse" xml:space="preserve">
+    <value>ルーターの応答を待機中</value>
+  </data>
+  <data name="ViewNATDetectorWindowReceived" xml:space="preserve">
+    <value>受信済み</value>
+  </data>
+  <data name="ViewNATDetectorWindowNotReceived" xml:space="preserve">
+    <value>未受信</value>
+  </data>
+  <data name="ViewNATDetectorWindowStartEngineBeforeTesting" xml:space="preserve">
+    <value>ポートをテストする前に BitTorrent エンジンを起動してください。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectingNAT" xml:space="preserve">
+    <value>NAT の動作と受信到達性を検出中…</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForTraversalServer" xml:space="preserve">
+    <value>トラバーサルサーバーを待機中…</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionComplete" xml:space="preserve">
+    <value>検出完了</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionIncomplete" xml:space="preserve">
+    <value>検出未完了</value>
+  </data>
+  <data name="ViewNetworkSettingsPageInvalidEndpointBeforeUpdate" xml:space="preserve">
+    <value>リスナーを更新する前に無効なエンドポイントを修正してください。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageApplyingEndpointConfiguration" xml:space="preserve">
+    <value>エンドポイント構成を適用中…</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSaved" xml:space="preserve">
+    <value>保存しました。BitTorrent の起動時にエンドポイントが適用されます。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotRunning" xml:space="preserve">
+    <value>実行されていません</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEngineNotRunning" xml:space="preserve">
+    <value>BitTorrent エンジンが実行されていません。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEndpointsSavedForStartup" xml:space="preserve">
+    <value>構成済みエンドポイントは保存され、起動時に使用されます。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotSaved" xml:space="preserve">
+    <value>編集したエンドポイントが無効なため保存されませんでした。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNotListening" xml:space="preserve">
+    <value>リッスンしていません</value>
+  </data>
+  <data name="ViewNetworkSettingsPageNoListeningSocket" xml:space="preserve">
+    <value>libtorrent はリッスンソケットを開いていません。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidNotApplied" xml:space="preserve">
+    <value>編集したエンドポイントが無効なため適用されませんでした。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageWaitingForListener" xml:space="preserve">
+    <value>リスナーの準備を待機中です。</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogInvalidLinkFormat" xml:space="preserve">
+    <value>リンク形式が正しくありません。まずクリップボードを確認してください（Win + V）。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageBitTorrentOnly" xml:space="preserve">
+    <value>ピース情報は BitTorrent タスクで利用できます。</value>
+  </data>
+  <data name="ViewTaskPieceMapPageMetadataPending" xml:space="preserve">
+    <value>メタデータはまだ受信されていません。</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieceSize" xml:space="preserve">
+    <value>ピースサイズ:</value>
+  </data>
+  <data name="ViewTaskPieceMapPageWebSeeds" xml:space="preserve">
+    <value>Web シード:</value>
+  </data>
+  <data name="ViewTaskPieceMapPagePieces" xml:space="preserve">
+    <value>ピース</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicResourcesReady" xml:space="preserve">
+    <value>動的リソースの準備が完了しました。グラフキーを 2 つ登録しました。</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowAllResourcesReady" xml:space="preserve">
+    <value>動的および静的 Win2D リソースの準備が完了しました。</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowFrame" xml:space="preserve">
+    <value>フレーム</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowCPU" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowNetwork" xml:space="preserve">
+    <value>ネットワーク</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicHighlightY" xml:space="preserve">
+    <value>動的ハイライト Y:</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowStaticY" xml:space="preserve">
+    <value>静的 Y:</value>
+  </data>
+  <data name="ViewLiveGraphTestWindowDynamicStreamsReset" xml:space="preserve">
+    <value>動的ストリームをリセットしました。</value>
+  </data>
+  <data name="AppBitTorrentEngine" xml:space="preserve">
+    <value>BitTorrent エンジン</value>
+  </data>
+  <data name="AppLibtorrentInitialized" xml:space="preserve">
+    <value>libtorrent の初期化に成功しました。</value>
+  </data>
+  <data name="AppBitTorrentEngineFailed" xml:space="preserve">
+    <value>BitTorrent エンジンに失敗しました</value>
+  </data>
+  <data name="AppLibtorrentInitializationUnknownError" xml:space="preserve">
+    <value>libtorrent の初期化中に不明なエラーが発生しました。</value>
+  </data>
+  <data name="AppRSSServiceFailed" xml:space="preserve">
+    <value>RSS サービスに失敗しました</value>
+  </data>
+  <data name="AppRSSBackgroundUpdatesFailed" xml:space="preserve">
+    <value>RSS バックグラウンド更新を開始できませんでした。</value>
+  </data>
+  <data name="AppWebUIFailed" xml:space="preserve">
+    <value>Web UI に失敗しました</value>
+  </data>
+  <data name="AppWebUIStartFailed" xml:space="preserve">
+    <value>ローカルの qBittorrent 互換 Web UI を開始できませんでした。</value>
+  </data>
+  <data name="AppWebUI" xml:space="preserve">
+    <value>Web UI</value>
+  </data>
+  <data name="AppWebUIRunning" xml:space="preserve">
+    <value>qBittorrent 互換 Web UI が実行中です。</value>
+  </data>
+  <data name="AppWebUIUnknownStartError" xml:space="preserve">
+    <value>Web UI の起動中に不明なエラーが発生しました。</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Title" xml:space="preserve">
+    <value>URL エラー</value>
+  </data>
+  <data name="RSSUrlErrorInfoBar.Message" xml:space="preserve">
+    <value>有効なフィード URL を入力してください。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDiagnosticInfoBar.Title" xml:space="preserve">
+    <value>検出メモ</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageGridColorCard.Title" xml:space="preserve">
+    <value>グリッドの色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasClearColorCard.Title" xml:space="preserve">
+    <value>キャンバスのクリア色</value>
+  </data>
+  <data name="CommonUnknown" xml:space="preserve">
+    <value>不明</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingDirect" xml:space="preserve">
+    <value>直接 / アドレス変換なし</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingEndpointIndependent" xml:space="preserve">
+    <value>エンドポイント非依存マッピング</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressDependent" xml:space="preserve">
+    <value>アドレス依存マッピング</value>
+  </data>
+  <data name="CoreNetworkDetectorMappingAddressAndPortDependent" xml:space="preserve">
+    <value>アドレスとポート依存マッピング</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringEndpointIndependent" xml:space="preserve">
+    <value>エンドポイント非依存フィルタリング</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressDependent" xml:space="preserve">
+    <value>アドレス依存フィルタリング</value>
+  </data>
+  <data name="CoreNetworkDetectorFilteringAddressAndPortDependent" xml:space="preserve">
+    <value>アドレスとポート依存フィルタリング</value>
+  </data>
+  <data name="CoreNetworkDetectorNATOpenInternet" xml:space="preserve">
+    <value>オープンインターネット</value>
+  </data>
+  <data name="CoreNetworkDetectorNATFullCone" xml:space="preserve">
+    <value>フルコーン NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATRestrictedCone" xml:space="preserve">
+    <value>制限付きコーン NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATPortRestrictedCone" xml:space="preserve">
+    <value>ポート制限付きコーン NAT</value>
+  </data>
+  <data name="CoreNetworkDetectorNATSymmetric" xml:space="preserve">
+    <value>対称 NAT</value>
+  </data>
+  <data name="ModelNetworkInfoStatusDisconnected" xml:space="preserve">
+    <value>切断</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnecting" xml:space="preserve">
+    <value>接続中</value>
+  </data>
+  <data name="ModelNetworkInfoStatusConnected" xml:space="preserve">
+    <value>接続済み</value>
+  </data>
+  <data name="ModelNetworkInfoStatusLimited" xml:space="preserve">
+    <value>接続制限あり</value>
+  </data>
+  <data name="ModelNetworkInfoStatusNoInternet" xml:space="preserve">
+    <value>インターネット接続なし</value>
+  </data>
+  <data name="ModelNetworkInfoNATBlocked" xml:space="preserve">
+    <value>ブロック</value>
+  </data>
+  <data name="ModelTransferInfoStatusInitializing" xml:space="preserve">
+    <value>初期化中</value>
+  </data>
+  <data name="ModelTransferInfoStatusTransferring" xml:space="preserve">
+    <value>転送中</value>
+  </data>
+  <data name="ModelTransferInfoStatusCancelled" xml:space="preserve">
+    <value>キャンセル済み</value>
+  </data>
+  <data name="ModelTransferInfoStatusVerifying" xml:space="preserve">
+    <value>検証中</value>
+  </data>
+  <data name="ViewSettingsPageNoNewerRelease" xml:space="preserve">
+    <value>新しいリリースはありません。</value>
+  </data>
+  <data name="ViewSettingsPageUnableToCheckUpdates" xml:space="preserve">
+    <value>更新を確認できません</value>
+  </data>
+  <data name="ViewSettingsPageInvalidUpdateResponse" xml:space="preserve">
+    <value>更新サーバーから無効な応答が返されました。</value>
+  </data>
+  <data name="ViewSettingsPageNoValidUpdateMirror" xml:space="preserve">
+    <value>有効な更新ミラーを起動できませんでした</value>
+  </data>
+  <data name="ViewRSSViewModelAddingFeed" xml:space="preserve">
+    <value>フィードを追加中…</value>
+  </data>
+  <data name="ViewRSSViewModelFetchingFeed" xml:space="preserve">
+    <value>フィードの内容を取得中…</value>
+  </data>
+  <data name="ViewRSSViewModelFailedToAddFeed" xml:space="preserve">
+    <value>フィードを追加できませんでした</value>
+  </data>
+  <data name="ViewRSSViewModelFeedRemoved" xml:space="preserve">
+    <value>フィードを削除しました</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingFeed" xml:space="preserve">
+    <value>フィードを更新中…</value>
+  </data>
+  <data name="ViewRSSViewModelRefreshingAllFeeds" xml:space="preserve">
+    <value>すべてのフィードを更新中…</value>
+  </data>
+  <data name="ViewRSSViewModelFeedSettingsUpdated" xml:space="preserve">
+    <value>フィード設定を更新しました</value>
+  </data>
+  <data name="ViewRSSViewModelFeedUpdated" xml:space="preserve">
+    <value>フィードを更新しました</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowSelectedItemNotBitTorrent" xml:space="preserve">
+    <value>選択した項目は BitTorrent タスクではありません。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowEngineUnavailable" xml:space="preserve">
+    <value>BitTorrent エンジンを利用できません。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataUnavailable" xml:space="preserve">
+    <value>このタスクの torrent メタデータは利用できません。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidLinkOrPath" xml:space="preserve">
+    <value>torrent リンクまたはファイルパスが無効です。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowMetadataFetchError" xml:space="preserve">
+    <value>メタデータ取得エラー:</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowUnknownMetadataFetchError" xml:space="preserve">
+    <value>メタデータ取得中に不明なエラーが発生しました。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowInvalidTorrentSource" xml:space="preserve">
+    <value>torrent ソースが無効です。magnet リンクまたは torrent ファイルではありません。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowFailedToStartDownload" xml:space="preserve">
+    <value>ダウンロードを開始できませんでした。</value>
+  </data>
+  <data name="ViewTorrentCheckModalWindowStartDownloadError" xml:space="preserve">
+    <value>ダウンロード開始エラー:</value>
+  </data>
+  <data name="ViewRSSViewModelDownloadStarted" xml:space="preserve">
+    <value>ダウンロードを開始しました:</value>
+  </data>
+  <data name="ViewRSSViewModelNewItem" xml:space="preserve">
+    <value>新しい項目:</value>
+  </data>
+  <data name="ViewRSSViewModelError" xml:space="preserve">
+    <value>エラー:</value>
+  </data>
+  <data name="CommonYes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="CommonNo" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="ViewTorrentMetaDataDownloadDialogMagnetBox.PlaceholderText" xml:space="preserve">
+    <value>magnet:?xt=...</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
+    <value>Piece Map</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
+    <value>各タブの幅は同じです</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
+    <value />
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
+    <value> 各タブは、タブ内のコンテンツに合わせて幅を調整します</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
+    <value>選択されていないタブが折りたたまれると、そのアイコンのみが表示されます。 選択したタブが調整され、タブ内のコンテンツが表示されます</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
+    <value>なし</value>
   </data>
 </root>

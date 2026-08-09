@@ -10,6 +10,7 @@ import OpenNet.App;
 import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Windows.Graphics;
@@ -44,8 +45,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Error);
 				DiagnosticInfoBar().Message(
 					stats.listenError.empty()
-						? L"libtorrent did not open a listening socket."
-						: winrt::to_hstring(stats.listenError));
+					? L"libtorrent did not open a listening socket."
+					: winrt::to_hstring(stats.listenError));
 				DiagnosticInfoBar().IsOpen(true);
 			}
 		}
@@ -70,8 +71,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (!core || !core->IsRunning())
 		{
-			UpnpText().Text(L"Engine not running");
-			NatPmpText().Text(L"Engine not running");
+			UpnpText().Text(ResourceGetString(L"ViewNATDetectorWindowEngineNotRunning"));
+			NatPmpText().Text(ResourceGetString(L"ViewNATDetectorWindowEngineNotRunning"));
 			PortMappingText().Text(L"—");
 			return;
 		}
@@ -80,10 +81,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto stats = core->GetSessionStats();
 		ListenPortNumber().Value(
 			stats.isListening && stats.listenPort > 0
-				? static_cast<double>(stats.listenPort)
-				: std::numeric_limits<double>::quiet_NaN());
-		UpnpText().Text(status.upnpEnabled ? L"Enabled" : L"Disabled");
-		NatPmpText().Text(status.natPmpEnabled ? L"Enabled" : L"Disabled");
+			? static_cast<double>(stats.listenPort)
+			: std::numeric_limits<double>::quiet_NaN());
+		UpnpText().Text(status.upnpEnabled ? ResourceGetString(L"CommonEnabled") : ResourceGetString(L"CommonDisabled"));
+		NatPmpText().Text(status.natPmpEnabled ? ResourceGetString(L"CommonEnabled") : ResourceGetString(L"CommonDisabled"));
 		if (status.tcpExternalPort > 0 || status.udpExternalPort > 0)
 		{
 			auto tcp = status.tcpExternalPort > 0
@@ -106,7 +107,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 		else
 		{
-			PortMappingText().Text(L"Waiting for router response");
+			PortMappingText().Text(ResourceGetString(L"ViewNATDetectorWindowWaitingForRouterResponse"));
 		}
 	}
 
@@ -134,7 +135,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto latencies = std::array{
 			Observation1Latency(), Observation2Latency(), Observation3Latency() };
 
-		results[index].Text(observation.success ? L"Received" : L"Not received");
+		results[index].Text(observation.success ? ResourceGetString(L"ViewNATDetectorWindowReceived") : ResourceGetString(L"ViewNATDetectorWindowNotReceived"));
 		addresses[index].Text(
 			observation.success
 			? observation.mappedAddress + L":" + winrt::to_hstring(observation.mappedPort)
@@ -157,7 +158,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (!torrentCore || !torrentCore->IsRunning())
 		{
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Error);
-			DiagnosticInfoBar().Message(L"Start the BitTorrent engine before testing its port.");
+			DiagnosticInfoBar().Message(ResourceGetString(L"ViewNATDetectorWindowStartEngineBeforeTesting"));
 			DiagnosticInfoBar().IsOpen(true);
 			co_return;
 		}
@@ -167,8 +168,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Error);
 			DiagnosticInfoBar().Message(
 				sessionStats.listenError.empty()
-					? L"libtorrent is not listening. Set an available port in BitTorrent settings."
-					: winrt::to_hstring(sessionStats.listenError));
+				? L"libtorrent is not listening. Set an available port in BitTorrent settings."
+				: winrt::to_hstring(sessionStats.listenError));
 			DiagnosticInfoBar().IsOpen(true);
 			co_return;
 		}
@@ -177,15 +178,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_running = true;
 		StartButton().IsEnabled(false);
 		DetectingProgress().IsActive(true);
-		StatusText().Text(L"Detecting NAT behavior and inbound reachability…");
+		StatusText().Text(ResourceGetString(L"ViewNATDetectorWindowDetectingNAT"));
 		DiagnosticInfoBar().IsOpen(false);
 		ResetObservationTable();
-		MappingText().Text(L"Detecting…");
-		FilteringText().Text(L"Detecting…");
-		NatTypeText().Text(L"Detecting…");
-		TcpPortText().Text(L"Testing…");
-		UdpPortText().Text(L"Testing…");
-		ProbeEvidenceText().Text(L"Waiting for traversal server…");
+		MappingText().Text(ResourceGetString(L"CommonDetecting"));
+		FilteringText().Text(ResourceGetString(L"CommonDetecting"));
+		NatTypeText().Text(ResourceGetString(L"CommonDetecting"));
+		TcpPortText().Text(ResourceGetString(L"CommonTesting"));
+		UdpPortText().Text(ResourceGetString(L"CommonTesting"));
+		ProbeEvidenceText().Text(ResourceGetString(L"ViewNATDetectorWindowWaitingForTraversalServer"));
 
 		if (torrentCore && torrentCore->IsRunning())
 		{
@@ -219,19 +220,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				: L"Not tested",
 				result->portProbe.ipv6UdpCompleted
 				? (result->portProbe.ipv6UdpReachable ? L"Open" : L"Blocked")
-					: L"Not tested")
-				: L"Not available");
+				: L"Not tested")
+			: L"Not available");
 		ProbeEvidenceText().Text(
 			result->portProbe.completed || result->portProbe.ipv6Completed
-				? std::format(
-					L"TCP: {}; UDP: {}",
-					result->portProbe.tcpEvidence.empty()
-						? L"no response"
-						: result->portProbe.tcpEvidence,
-					result->portProbe.udpEvidence.empty()
-						? L"no response"
-						: result->portProbe.udpEvidence)
-				: L"No traversal probe response");
+			? std::format(
+				L"TCP: {}; UDP: {}",
+				result->portProbe.tcpEvidence.empty()
+				? L"no response"
+				: result->portProbe.tcpEvidence,
+				result->portProbe.udpEvidence.empty()
+				? L"no response"
+				: result->portProbe.udpEvidence)
+			: L"No traversal probe response");
 
 		for (std::size_t index = 0; index < result->observations.size() && index < 3; ++index)
 			ShowObservation(index, result->observations[index]);
@@ -240,14 +241,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			DiagnosticInfoBar().Severity(
 				result->completed
-					? Controls::InfoBarSeverity::Informational
-					: Controls::InfoBarSeverity::Warning);
+				? Controls::InfoBarSeverity::Informational
+				: Controls::InfoBarSeverity::Warning);
 			DiagnosticInfoBar().Message(result->diagnostic);
 			DiagnosticInfoBar().IsOpen(true);
 		}
 
 		UpdateLibtorrentState();
-		StatusText().Text(result->completed ? L"Detection complete" : L"Detection incomplete");
+		StatusText().Text(result->completed ? ResourceGetString(L"ViewNATDetectorWindowDetectionComplete") : ResourceGetString(L"ViewNATDetectorWindowDetectionIncomplete"));
 		DetectingProgress().IsActive(false);
 		StartButton().IsEnabled(true);
 		m_running = false;

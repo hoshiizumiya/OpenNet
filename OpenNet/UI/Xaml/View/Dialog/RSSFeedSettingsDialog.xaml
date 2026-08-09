@@ -18,18 +18,22 @@
         <TextBox
             x:Name="SettingsTitleTextBox"
             x:Uid="RSSSettingsTitleTextBox"
+            AutomationProperties.AutomationId="RSSSettingsTitleTextBox"
             Header="Name" />
         <TextBox
             x:Name="SettingsUrlTextBox"
             x:Uid="RSSSettingsUrlTextBox"
+            AutomationProperties.AutomationId="RSSSettingsUrlTextBox"
             Header="Feed URL" />
         <TextBox
             x:Name="SettingsSavePathTextBox"
             x:Uid="RSSSettingsSavePathTextBox"
+            AutomationProperties.AutomationId="RSSSettingsSavePathTextBox"
             Header="Save Path" />
         <NumberBox
             x:Name="SettingsIntervalNumberBox"
             x:Uid="RSSSettingsIntervalNumberBox"
+            AutomationProperties.AutomationId="RSSSettingsIntervalNumberBox"
             Header="Update Interval (minutes)"
             Maximum="1440"
             Minimum="5"
@@ -37,12 +41,14 @@
         <ToggleSwitch
             x:Name="SettingsAutoDownloadToggle"
             x:Uid="RSSSettingsAutoDownloadToggle"
+            AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
             Header="Auto Download"
             OffContent="Disabled"
             OnContent="Enabled" />
         <TextBox
             x:Name="SettingsFilterTextBox"
             x:Uid="RSSSettingsFilterTextBox"
+            AutomationProperties.AutomationId="RSSSettingsFilterTextBox"
             Header="Filter Pattern (regex)"
             PlaceholderText="e.g., 1080p|720p" />
     </StackPanel>

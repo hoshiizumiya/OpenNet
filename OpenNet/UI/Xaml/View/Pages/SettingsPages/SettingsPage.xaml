@@ -208,6 +208,7 @@
                     <Button
                         x:Name="AppUpdateCheckButton"
                         x:Uid="AppUpdateCheckButton"
+                        AutomationProperties.AutomationId="AppUpdateCheckButton"
                         Click="AppUpdateCheckButton_Click"
                         Content="Check update"
                         Style="{StaticResource AccentButtonStyle}" />
@@ -216,6 +217,7 @@
                             <CheckBox
                                 x:Name="AutoCheckUpdateCheckbox"
                                 x:Uid="AutoCheckUpdateCheckbox"
+                                AutomationProperties.AutomationId="AutoCheckUpdateCheckbox"
                                 Checked="AutoCheckUpdateCheckbox_Checked"
                                 Content="Automatically check for updates"
                                 IsChecked="True"
@@ -317,6 +319,7 @@
                         x:Name="GuiRefreshIntervalBox"
                         x:Uid="GuiRefreshIntervalBox"
                         Width="160"
+                        AutomationProperties.AutomationId="GuiRefreshIntervalBox"
                         Header="Milliseconds"
                         Maximum="60000"
                         Minimum="100"
@@ -336,6 +339,7 @@
                     <controls:InfoBar.ActionButton>
                         <Button
                             x:Uid="RestartToApplyLanguageButton"
+                            AutomationProperties.AutomationId="RestartToApplyLanguageButton"
                             Click="RestartToApplyLanguage_Click"
                             Content="Restart now"
                             Style="{StaticResource AccentButtonStyle}" />

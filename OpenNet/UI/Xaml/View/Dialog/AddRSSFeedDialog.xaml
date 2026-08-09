@@ -18,20 +18,24 @@
         <TextBox
             x:Name="FeedUrlTextBox"
             x:Uid="RSSFeedUrlTextBox"
+            AutomationProperties.AutomationId="RSSFeedUrlTextBox"
             Header="Feed URL"
             PlaceholderText="https://example.com/rss.xml" />
         <TextBox
             x:Name="FeedNameTextBox"
             x:Uid="RSSFeedNameTextBox"
+            AutomationProperties.AutomationId="RSSFeedNameTextBox"
             Header="Name (optional)"
             PlaceholderText="My RSS Feed" />
         <TextBox
             x:Name="FeedSavePathTextBox"
             x:Uid="RSSFeedSavePathTextBox"
+            AutomationProperties.AutomationId="RSSFeedSavePathTextBox"
             Header="Save Path (optional)"
             PlaceholderText="Leave empty to use default" />
         <InfoBar
             x:Name="UrlErrorInfoBar"
+            x:Uid="RSSUrlErrorInfoBar"
             Title="URL error"
             IsClosable="False"
             IsOpen="False"

@@ -50,11 +50,13 @@
             DefaultLabelPosition="Right">
             <AppBarButton
                 x:Uid="RuntimeStatusRefreshButton"
+                AutomationProperties.AutomationId="RuntimeStatusRefreshButton"
                 Click="RefreshButton_Click"
                 Icon="{essential:FontIcon Glyph=&#xE72C;}"
                 Label="Refresh" />
             <AppBarButton
                 x:Uid="RuntimeStatusCopyButton"
+                AutomationProperties.AutomationId="RuntimeStatusCopyButton"
                 Click="CopyButton_Click"
                 Icon="{essential:FontIcon Glyph=&#xE8C8;}"
                 Label="Copy all" />

@@ -9,7 +9,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ouxv="using:OpenNet.UI.Xaml.View"
     xmlns:pages="using:OpenNet.UI.Xaml.View.Pages"
-    x:Uid="MainWindowRoot"
     Title="OpenNet"
     mc:Ignorable="d">
 
@@ -96,6 +95,7 @@
                         </Style>
                     </StackPanel.Resources>
                     <Button
+                        x:Uid="ViewMainWindowButton"
                         Padding="6"
                         Click="InvertAppThemeButton_Click"
                         Content="[Dev] Invert Theme"

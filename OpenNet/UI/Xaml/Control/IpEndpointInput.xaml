@@ -21,6 +21,7 @@
             x:Name="AddressTextBox"
             x:Uid="IpEndpointInputAddress"
             MinWidth="220"
+            AutomationProperties.AutomationId="IpEndpointInputAddress"
             Header="IP address"
             PlaceholderText="0.0.0.0 or ::"
             TextChanged="AddressTextBox_TextChanged" />
@@ -29,6 +30,7 @@
             x:Uid="IpEndpointInputPort"
             Grid.Column="1"
             Margin="8,0,0,0"
+            AutomationProperties.AutomationId="IpEndpointInputPort"
             Header="Port"
             Maximum="65535"
             Minimum="0"

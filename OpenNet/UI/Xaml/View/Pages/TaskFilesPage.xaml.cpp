@@ -13,6 +13,7 @@ import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -564,10 +565,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		input.SelectAll();
 		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Rename file"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskFilesPageRenameFileTitle")));
 		dialog.Content(input);
-		dialog.PrimaryButtonText(L"Rename");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonRename"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(
 			winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 		if (co_await dialog.ShowAsync() !=

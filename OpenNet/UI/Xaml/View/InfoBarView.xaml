@@ -73,7 +73,10 @@
             BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="{ThemeResource ControlCornerRadius}">
-            <Button x:Uid="InfoBarShowButton" Style="{StaticResource SubtleButtonStyle}">
+            <Button
+                x:Uid="InfoBarShowButton"
+                AutomationProperties.AutomationId="InfoBarShowButton"
+                Style="{StaticResource SubtleButtonStyle}">
                 <interactivity:Interaction.Behaviors>
                     <interactivity:EventTriggerBehavior EventName="Click">
                         <labs:StartTransitionAction
@@ -133,6 +136,7 @@
                         Spacing="4">
                         <Button
                             x:Uid="InfoBarClearAllButton"
+                            AutomationProperties.AutomationId="InfoBarClearAllButton"
                             Click="OnClearAllButtonClick"
                             Style="{StaticResource SubtleButtonStyle}"
                             ToolTipService.ToolTip="Clear all">
@@ -140,6 +144,7 @@
                         </Button>
                         <Button
                             x:Uid="InfoBarCollapseButton"
+                            AutomationProperties.AutomationId="InfoBarCollapseButton"
                             Style="{StaticResource SubtleButtonStyle}"
                             ToolTipService.ToolTip="Collapse">
                             <interactivity:Interaction.Behaviors>

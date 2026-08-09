@@ -17,6 +17,7 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.WindowHelper;
 import winrtplus.Microsoft.UI.Interop;
 import winrt.Microsoft.UI.Windowing;
@@ -59,9 +60,9 @@ namespace winrt::OpenNet::implementation
 		});
 		m_appWindowChangedToken = AppWindow().Changed(
 			[this](auto const&, auto const&)
-			{
-				UpdateBackgroundPlaybackState();
-			});
+		{
+			UpdateBackgroundPlaybackState();
+		});
 
 		Closed([this](auto&&, auto&&)
 		{
@@ -106,7 +107,7 @@ namespace winrt::OpenNet::implementation
 			bool active = appWindow.IsVisible();
 			if (auto presenter = appWindow.Presenter().try_as<OverlappedPresenter>())
 				active = active
-					&& presenter.State() != OverlappedPresenterState::Minimized;
+				&& presenter.State() != OverlappedPresenterState::Minimized;
 
 			auto mainView = winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::
 				implementation::MainView>(MainContentView());
@@ -172,14 +173,14 @@ namespace winrt::OpenNet::implementation
 			urls.MinWidth(420);
 			urls.MinHeight(180);
 			urls.PlaceholderText(
-				L"Enter one HTTP, HTTPS, or FTP URL per line");
+				ResourceGetString(L"MainWindowHttpFtpBatchDownloadPlaceholder"));
 
 			ContentDialog dialog;
 			dialog.XamlRoot(tasksPage.XamlRoot());
-			dialog.Title(box_value(L"HTTP/FTP Batch Download"));
+			dialog.Title(box_value(ResourceGetString(L"MainWindowHttpFtpBatchDownloadTitle")));
 			dialog.Content(urls);
-			dialog.PrimaryButtonText(L"Add");
-			dialog.CloseButtonText(L"Cancel");
+			dialog.PrimaryButtonText(ResourceGetString(L"CommonAdd"));
+			dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 			dialog.DefaultButton(ContentDialogButton::Primary);
 
 			if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)

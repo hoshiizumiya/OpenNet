@@ -14,6 +14,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.App;
 import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.Torrent.TrackerManager;
@@ -101,7 +102,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (!task || task.TaskType() !=
 			winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
-			ShowError(L"The selected item is not a BitTorrent task.");
+			ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowSelectedItemNotBitTorrent"));
 			return;
 		}
 
@@ -111,13 +112,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			L" · ↓ " + task.DownloadRate() + L" · ↑ " + task.UploadRate());
 		DownloadOptionsPanel().Visibility(Visibility::Collapsed);
 		StartDownloadButton().Visibility(Visibility::Collapsed);
-		CloseButton().Content(box_value(L"Close"));
+		CloseButton().Content(box_value(ResourceGetString(L"CommonClose")));
 		TrackerListTextBox().IsReadOnly(true);
 
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (!core)
 		{
-			ShowError(L"The BitTorrent engine is not available.");
+			ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowEngineUnavailable"));
 			return;
 		}
 
@@ -125,7 +126,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto const detail = core->GetTorrentDetail(taskId);
 		if (detail.name.empty() && detail.infoHash.empty() && detail.files.empty())
 		{
-			ShowError(L"Torrent metadata is not available for this task.");
+			ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowMetadataUnavailable"));
 			return;
 		}
 
@@ -229,7 +230,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			dispatcherQueue.TryEnqueue([this]()
 			{
-				ShowError(L"Invalid torrent link or file path");
+				ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowInvalidLinkOrPath"));
 			});
 			co_return;
 		}
@@ -290,21 +291,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			dispatcherQueue.TryEnqueue([this, msg = ex.message()]()
 			{
-				ShowError(L"Metadata fetch error: " + msg);
+				ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowMetadataFetchError") + L" " + msg);
 			});
 		}
 		catch (std::exception const& ex)
 		{
 			dispatcherQueue.TryEnqueue([this, msg = winrt::to_hstring(ex.what())]()
 			{
-				ShowError(L"Metadata fetch error: " + msg);
+				ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowMetadataFetchError") + L" " + msg);
 			});
 		}
 		catch (...)
 		{
 			dispatcherQueue.TryEnqueue([this]()
 			{
-				ShowError(L"Unknown error during metadata fetch");
+				ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowUnknownMetadataFetchError"));
 			});
 		}
 	}
@@ -530,7 +531,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				{
 					m_downloadStarting = false;
 					StartDownloadButton().IsEnabled(true);
-					ShowError(L"Invalid torrent source: not a magnet link or torrent file");
+					ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowInvalidTorrentSource"));
 				});
 				co_return;
 			}
@@ -546,7 +547,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				{
 					m_downloadStarting = false;
 					StartDownloadButton().IsEnabled(true);
-					ShowError(L"Failed to start download");
+					ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowFailedToStartDownload"));
 				});
 			}
 		}
@@ -556,7 +557,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			{
 				m_downloadStarting = false;
 				StartDownloadButton().IsEnabled(true);
-				ShowError(L"Error starting download: " + msg);
+				ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowStartDownloadError") + L" " + msg);
 			});
 		}
 	}

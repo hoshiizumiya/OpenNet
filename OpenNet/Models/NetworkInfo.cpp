@@ -1,6 +1,8 @@
 ﻿#include "XamlWorkaround.h"
 #include "NetworkInfo.h"
 
+import OpenNet.Core.Utils.Message;
+
 using namespace winrt;
 using namespace Windows::Foundation;
 
@@ -24,12 +26,12 @@ namespace winrt::OpenNet::Models::implementation
 	{
 		switch (status)
 		{
-			case ConnectionStatus::Disconnected: return L"断开连接 / Disconnected";
-			case ConnectionStatus::Connecting: return L"连接中 / Connecting";
-			case ConnectionStatus::Connected: return L"已连接 / Connected";
-			case ConnectionStatus::Limited: return L"受限连接 / Limited";
-			case ConnectionStatus::NoInternet: return L"无网络 / No Internet";
-			default: return L"未知 / Unknown";
+			case ConnectionStatus::Disconnected: return ResourceGetString(L"ModelNetworkInfoStatusDisconnected");
+			case ConnectionStatus::Connecting: return ResourceGetString(L"ModelNetworkInfoStatusConnecting");
+			case ConnectionStatus::Connected: return ResourceGetString(L"ModelNetworkInfoStatusConnected");
+			case ConnectionStatus::Limited: return ResourceGetString(L"ModelNetworkInfoStatusLimited");
+			case ConnectionStatus::NoInternet: return ResourceGetString(L"ModelNetworkInfoStatusNoInternet");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 
@@ -37,14 +39,14 @@ namespace winrt::OpenNet::Models::implementation
 	{
 		switch (natType)
 		{
-			case NATType::Unknown: return L"未知 / Unknown";
-			case NATType::Open: return L"开放 / Open";
-			case NATType::FullCone: return L"完全锥型 / Full Cone";
-			case NATType::RestrictedCone: return L"受限锥型 / Restricted Cone";
-			case NATType::PortRestricted: return L"端口受限 / Port Restricted";
-			case NATType::Symmetric: return L"对称型 / Symmetric";
-			case NATType::Blocked: return L"被阻塞 / Blocked";
-			default: return L"未知 / Unknown";
+			case NATType::Unknown: return ResourceGetString(L"CommonUnknown");
+			case NATType::Open: return ResourceGetString(L"CoreNetworkDetectorNATOpenInternet");
+			case NATType::FullCone: return ResourceGetString(L"CoreNetworkDetectorNATFullCone");
+			case NATType::RestrictedCone: return ResourceGetString(L"CoreNetworkDetectorNATRestrictedCone");
+			case NATType::PortRestricted: return ResourceGetString(L"CoreNetworkDetectorNATPortRestrictedCone");
+			case NATType::Symmetric: return ResourceGetString(L"CoreNetworkDetectorNATSymmetric");
+			case NATType::Blocked: return ResourceGetString(L"ModelNetworkInfoNATBlocked");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 
@@ -52,12 +54,12 @@ namespace winrt::OpenNet::Models::implementation
 	{
 		switch (protocolPriority)
 		{
-			case IPProtocolPriority::IPv4First: return L"IPv4优先 / IPv4 First";
-			case IPProtocolPriority::IPv6First: return L"IPv6优先 / IPv6 First";
-			case IPProtocolPriority::IPv4Only: return L"仅IPv4 / IPv4 Only";
-			case IPProtocolPriority::IPv6Only: return L"仅IPv6 / IPv6 Only";
-			case IPProtocolPriority::Auto: return L"自动选择 / Auto Select";
-			default: return L"未知 / Unknown";
+			case IPProtocolPriority::IPv4First: return ResourceGetString(L"Protocol_IPv4First");
+			case IPProtocolPriority::IPv6First: return ResourceGetString(L"Protocol_IPv6First");
+			case IPProtocolPriority::IPv4Only: return ResourceGetString(L"Protocol_IPv4Only");
+			case IPProtocolPriority::IPv6Only: return ResourceGetString(L"Protocol_IPv6Only");
+			case IPProtocolPriority::Auto: return ResourceGetString(L"Protocol_Auto");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 
@@ -65,15 +67,15 @@ namespace winrt::OpenNet::Models::implementation
 	{
 		switch (preferredProtocol)
 		{
-			case ConnectionProtocol::Auto: return L"自动选择 / Auto Select";
-			case ConnectionProtocol::TCP: return L"TCP协议 / TCP Protocol";
-			case ConnectionProtocol::UDP: return L"UDP协议 / UDP Protocol";
-			case ConnectionProtocol::UTP: return L"uTP协议 / uTP Protocol";
-			case ConnectionProtocol::BitTorrent: return L"BitTorrent协议 / BitTorrent Protocol";
-			case ConnectionProtocol::DHT: return L"DHT网络 / DHT Network";
-			case ConnectionProtocol::WebRTC: return L"WebRTC协议 / WebRTC Protocol";
-			case ConnectionProtocol::HTTP: return L"HTTP协议 / HTTP Protocol";
-			default: return L"未知 / Unknown";
+			case ConnectionProtocol::Auto: return ResourceGetString(L"ConnProtocol_Auto");
+			case ConnectionProtocol::TCP: return ResourceGetString(L"ConnProtocol_TCP");
+			case ConnectionProtocol::UDP: return ResourceGetString(L"ConnProtocol_UDP");
+			case ConnectionProtocol::UTP: return ResourceGetString(L"ConnProtocol_UTP");
+			case ConnectionProtocol::BitTorrent: return ResourceGetString(L"ConnProtocol_BitTorrent");
+			case ConnectionProtocol::DHT: return ResourceGetString(L"ConnProtocol_DHT");
+			case ConnectionProtocol::WebRTC: return ResourceGetString(L"ConnProtocol_WebRTC");
+			case ConnectionProtocol::HTTP: return ResourceGetString(L"ConnProtocol_HTTP");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 

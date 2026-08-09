@@ -42,12 +42,13 @@
             <SelectorBar.Items>
                 <SelectorBarItem
                     x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General"
+                    AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_General"
                     IsSelected="True"
                     Text="General" />
-                <SelectorBarItem Text="Trackers" />
-                <!--<SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced" Text="Advanced" />
-                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher" Text="Publisher" />
-                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder" Text="Download Order" />-->
+                <SelectorBarItem x:Uid="ViewTorrentCheckModalWindowSelectorBarItem" Text="Trackers" />
+                <!--<SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced" Text="Advanced"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced"/>
+                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher" Text="Publisher"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher"/>
+                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder" Text="Download Order"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder"/>-->
             </SelectorBar.Items>
         </SelectorBar>
 
@@ -72,8 +73,12 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <StackPanel Margin="0,0,0,12" Spacing="4">
-                    <TextBlock FontWeight="SemiBold" Text="Tracker list for this task" />
                     <TextBlock
+                        x:Uid="ViewTorrentCheckModalWindowTextBlock"
+                        FontWeight="SemiBold"
+                        Text="Tracker list for this task" />
+                    <TextBlock
+                        x:Uid="ViewTorrentCheckModalWindowTextBlock"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="One tracker URL per line. Trackers already present in the magnet or .torrent file and enabled custom trackers are merged automatically."
                         TextWrapping="Wrap" />
@@ -88,6 +93,7 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     TextWrapping="NoWrap" />
                 <TextBlock
+                    x:Uid="ViewTorrentCheckModalWindowTextBlock"
                     Grid.Row="2"
                     Margin="0,8,0,0"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -117,9 +123,13 @@
                 <CheckBox
                     x:Name="StartImmediatelyCheckBox"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
+                    AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
                     Content="Start immediately"
                     IsChecked="True" />
-                <CheckBox x:Name="SaveTorrentCopyCheckBox" Content="Save a .torrent copy to the download folder" />
+                <CheckBox
+                    x:Name="SaveTorrentCopyCheckBox"
+                    x:Uid="ViewTorrentCheckModalWindowCheckBoxText1"
+                    Content="Save a .torrent copy to the download folder" />
             </StackPanel>
 
             <StackPanel
@@ -129,12 +139,14 @@
                 <Button
                     x:Name="StartDownloadButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"
+                    AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"
                     Click="StartDownloadButton_Click"
                     Content="Start Download"
                     Style="{StaticResource AccentButtonStyle}" />
                 <Button
                     x:Name="CloseButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowCloseButton"
+                    AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowCloseButton"
                     Click="CancelButton_Click"
                     Content="Cancel" />
             </StackPanel>

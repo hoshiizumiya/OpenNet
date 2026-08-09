@@ -748,6 +748,7 @@
       <Filter>UI\Xaml\Control</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\InfoBarTemplateSelector.cpp" />
+    <ClCompile Include="Helpers\TabViewStateHelper.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Service\Background\BackgroundMediaService.h">

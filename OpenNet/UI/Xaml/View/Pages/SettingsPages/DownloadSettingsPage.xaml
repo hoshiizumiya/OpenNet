@@ -36,10 +36,12 @@
                         x:Name="DefaultSavePathTextBox"
                         x:Uid="DL_DefaultSavePathTextBox"
                         Width="360"
+                        AutomationProperties.AutomationId="DL_DefaultSavePathTextBox"
                         LostFocus="OnSettingChanged" />
                     <Button
                         x:Name="BrowseSavePathButton"
                         x:Uid="DL_BrowseSavePathButton"
+                        AutomationProperties.AutomationId="DL_BrowseSavePathButton"
                         Click="BrowseSavePathButton_Click" />
                 </StackPanel>
             </essential:SettingsCard>
@@ -73,10 +75,12 @@
                                 x:Name="MoveCompletedPathTextBox"
                                 x:Uid="DL_MoveCompletedPathTextBox"
                                 Width="360"
+                                AutomationProperties.AutomationId="DL_MoveCompletedPathTextBox"
                                 LostFocus="OnSettingChanged" />
                             <Button
                                 x:Name="BrowseMovePathButton"
                                 x:Uid="DL_BrowseMovePathButton"
+                                AutomationProperties.AutomationId="DL_BrowseMovePathButton"
                                 Click="BrowseMovePathButton_Click" />
                         </StackPanel>
                     </essential:SettingsCard>

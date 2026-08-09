@@ -6,6 +6,7 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Windows.UI;
 
@@ -90,7 +91,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			|| task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			PieceGrid().Items().Clear();
-			PieceMapSubtitle().Text(L"Piece information is available for BitTorrent tasks.");
+			PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageBitTorrentOnly"));
 			DownloadedPiecesText().Text(L"0 / 0");
 			AvailablePiecesText().Text(L"0 / 0");
 			DownloadedPiecesProgress().Value(0);
@@ -112,7 +113,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (pieces.states.empty())
 		{
 			PieceGrid().Items().Clear();
-			PieceMapSubtitle().Text(L"Metadata has not been received yet.");
+			PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageMetadataPending"));
 			return;
 		}
 
@@ -135,11 +136,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		AvailablePiecesText().Text(std::format(L"{} / {}", available, total));
 		DownloadedPiecesProgress().Value(total ? finished * 100.0 / total : 0.0);
 		AvailablePiecesProgress().Value(total ? available * 100.0 / total : 0.0);
-		PieceSizeText().Text(L"Piece size: " + FormatBytes(pieces.pieceSize));
-		WebSeedCountText().Text(
-			std::format(L"Web seeds: {}", pieces.webSeeds.size()));
-		PieceMapSubtitle().Text(
-			std::format(L"{} · {} pieces", task.Name().c_str(), total));
+		PieceSizeText().Text(ResourceGetString(L"ViewTaskPieceMapPagePieceSize") + L" " + FormatBytes(pieces.pieceSize));
+		WebSeedCountText().Text(ResourceGetString(L"ViewTaskPieceMapPageWebSeeds") + L" " + std::to_wstring(pieces.webSeeds.size()));
+		PieceMapSubtitle().Text(task.Name() + L" · " + std::to_wstring(total) + L" " + ResourceGetString(L"ViewTaskPieceMapPagePieces"));
 
 		if (taskId == m_renderedTaskId
 			&& pieces.states == m_renderedStates

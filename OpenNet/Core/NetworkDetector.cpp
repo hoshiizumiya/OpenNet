@@ -4,6 +4,7 @@
 import OpenNet.Core.Setting.LocalSetting;
 import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Web.ServerDomain;
+import OpenNet.Core.Utils.Message;
 import winrt.Windows.Data.Json;
 
 using namespace winrt;
@@ -185,7 +186,9 @@ namespace OpenNet::Core
 						}
 					}
 				}
-				catch (...) {}
+				catch (...)
+				{
+				}
 			});
 
 			co_await socket.BindServiceNameAsync(L"");
@@ -258,8 +261,8 @@ namespace OpenNet::Core
 			HttpClient client;
 			auto request = client.GetStringAsync(Uri(m_traversalDirectoryUri));
 			for (int index = 0;
-				index < 50 && request.Status() == AsyncStatus::Started;
-				++index)
+				 index < 50 && request.Status() == AsyncStatus::Started;
+				 ++index)
 			{
 				co_await winrt::resume_after(std::chrono::milliseconds(100));
 			}
@@ -325,8 +328,8 @@ namespace OpenNet::Core
 				L"application/json");
 			auto request = client.PostAsync(uri, content);
 			for (int index = 0;
-				index < 50 && request.Status() == AsyncStatus::Started;
-				++index)
+				 index < 50 && request.Status() == AsyncStatus::Started;
+				 ++index)
 			{
 				co_await winrt::resume_after(std::chrono::milliseconds(100));
 			}
@@ -482,12 +485,12 @@ namespace OpenNet::Core
 	{
 		switch (type)
 		{
-		case NetworkType::Ethernet:  return L"Ethernet";
-		case NetworkType::WiFi:      return L"WiFi";
-		case NetworkType::Mobile:    return L"Mobile";
-		case NetworkType::Bluetooth: return L"Bluetooth";
-		case NetworkType::VPN:       return L"VPN";
-		default:                     return L"Unknown";
+			case NetworkType::Ethernet:  return L"Ethernet";
+			case NetworkType::WiFi:      return L"WiFi";
+			case NetworkType::Mobile:    return L"Mobile";
+			case NetworkType::Bluetooth: return L"Bluetooth";
+			case NetworkType::VPN:       return L"VPN";
+			default:                     return L"Unknown";
 		}
 	}
 
@@ -557,11 +560,14 @@ namespace OpenNet::Core
 							uint16_t mp = (data[offset + 6] << 8) | data[offset + 7];
 							uint32_t ip = (data[offset + 8] << 24) | (data[offset + 9] << 16) |
 								(data[offset + 10] << 8) | data[offset + 11];
-							if (attrType == 0x0020) { mp ^= 0x2112; ip ^= 0x2112A442; }
+							if (attrType == 0x0020)
+							{
+								mp ^= 0x2112; ip ^= 0x2112A442;
+							}
 							wchar_t buf[64];
 							swprintf(buf, 64, L"%u.%u.%u.%u:%u",
-								(ip >> 24) & 0xFF, (ip >> 16) & 0xFF,
-								(ip >> 8) & 0xFF, ip & 0xFF, mp);
+									 (ip >> 24) & 0xFF, (ip >> 16) & 0xFF,
+									 (ip >> 8) & 0xFF, ip & 0xFF, mp);
 							mappedAddress = buf;
 							gotResponse = true;
 							break;
@@ -569,7 +575,9 @@ namespace OpenNet::Core
 						offset += 4 + ((attrLen + 3) & ~3u);
 					}
 				}
-				catch (...) {}
+				catch (...)
+				{
+				}
 			});
 
 			co_await socket.ConnectAsync(HostName(serverHost), serverPort);
@@ -624,78 +632,78 @@ namespace OpenNet::Core
 		auto started = std::chrono::steady_clock::now();
 		auto token = socket.MessageReceived(
 			[state, started](DatagramSocket const&, DatagramSocketMessageReceivedEventArgs const& args)
+		{
+			try
 			{
-				try
+				auto reader = args.GetDataReader();
+				auto length = reader.UnconsumedBufferLength();
+				if (length < 20)
+					return;
+
+				std::vector<uint8_t> data(length);
+				reader.ReadBytes(winrt::array_view<uint8_t>(data));
+				auto read16 = [&data](size_t offset)
 				{
-					auto reader = args.GetDataReader();
-					auto length = reader.UnconsumedBufferLength();
-					if (length < 20)
-						return;
+					return static_cast<uint16_t>(
+						(static_cast<uint16_t>(data[offset]) << 8) | data[offset + 1]);
+				};
+				if (read16(0) != 0x0101
+					|| data[4] != 0x21 || data[5] != 0x12
+					|| data[6] != 0xA4 || data[7] != 0x42
+					|| !std::equal(
+						state->transaction.begin(),
+						state->transaction.end(),
+						data.begin() + 8))
+				{
+					return;
+				}
 
-					std::vector<uint8_t> data(length);
-					reader.ReadBytes(winrt::array_view<uint8_t>(data));
-					auto read16 = [&data](size_t offset)
+				uint16_t messageLength = read16(2);
+				if (data.size() < 20U + messageLength)
+					return;
+				for (size_t offset = 20; offset + 4 <= 20U + messageLength;)
+				{
+					uint16_t type = read16(offset);
+					uint16_t attributeLength = read16(offset + 2);
+					size_t value = offset + 4;
+					if (value + attributeLength > 20U + messageLength)
+						break;
+					if ((type == 0x0020 || type == 0x0001)
+						&& attributeLength >= 8
+						&& data[value + 1] == 0x01)
 					{
-						return static_cast<uint16_t>(
-							(static_cast<uint16_t>(data[offset]) << 8) | data[offset + 1]);
-					};
-					if (read16(0) != 0x0101
-						|| data[4] != 0x21 || data[5] != 0x12
-						|| data[6] != 0xA4 || data[7] != 0x42
-						|| !std::equal(
-							state->transaction.begin(),
-							state->transaction.end(),
-							data.begin() + 8))
-					{
-						return;
-					}
-
-					uint16_t messageLength = read16(2);
-					if (data.size() < 20U + messageLength)
-						return;
-					for (size_t offset = 20; offset + 4 <= 20U + messageLength;)
-					{
-						uint16_t type = read16(offset);
-						uint16_t attributeLength = read16(offset + 2);
-						size_t value = offset + 4;
-						if (value + attributeLength > 20U + messageLength)
-							break;
-						if ((type == 0x0020 || type == 0x0001)
-							&& attributeLength >= 8
-							&& data[value + 1] == 0x01)
+						uint16_t mappedPort = read16(value + 2);
+						uint32_t mappedIp =
+							(static_cast<uint32_t>(data[value + 4]) << 24)
+							| (static_cast<uint32_t>(data[value + 5]) << 16)
+							| (static_cast<uint32_t>(data[value + 6]) << 8)
+							| data[value + 7];
+						if (type == 0x0020)
 						{
-							uint16_t mappedPort = read16(value + 2);
-							uint32_t mappedIp =
-								(static_cast<uint32_t>(data[value + 4]) << 24)
-								| (static_cast<uint32_t>(data[value + 5]) << 16)
-								| (static_cast<uint32_t>(data[value + 6]) << 8)
-								| data[value + 7];
-							if (type == 0x0020)
-							{
-								mappedPort ^= 0x2112;
-								mappedIp ^= 0x2112A442;
-							}
-							state->observation.mappedAddress = winrt::hstring{ std::format(
-								L"{}.{}.{}.{}",
-								(mappedIp >> 24) & 0xff,
-								(mappedIp >> 16) & 0xff,
-								(mappedIp >> 8) & 0xff,
-								mappedIp & 0xff) };
-							state->observation.mappedPort = mappedPort;
-							state->observation.latencyMs = static_cast<int32_t>(
-								std::chrono::duration_cast<std::chrono::milliseconds>(
-									std::chrono::steady_clock::now() - started).count());
-							state->observation.success = true;
-							state->received.store(true);
-							return;
+							mappedPort ^= 0x2112;
+							mappedIp ^= 0x2112A442;
 						}
-						offset = value + ((attributeLength + 3U) & ~3U);
+						state->observation.mappedAddress = winrt::hstring{ std::format(
+							L"{}.{}.{}.{}",
+							(mappedIp >> 24) & 0xff,
+							(mappedIp >> 16) & 0xff,
+							(mappedIp >> 8) & 0xff,
+							mappedIp & 0xff) };
+						state->observation.mappedPort = mappedPort;
+						state->observation.latencyMs = static_cast<int32_t>(
+							std::chrono::duration_cast<std::chrono::milliseconds>(
+								std::chrono::steady_clock::now() - started).count());
+						state->observation.success = true;
+						state->received.store(true);
+						return;
 					}
+					offset = value + ((attributeLength + 3U) & ~3U);
 				}
-				catch (...)
-				{
-				}
-			});
+			}
+			catch (...)
+			{
+			}
+		});
 
 		try
 		{
@@ -890,7 +898,7 @@ namespace OpenNet::Core
 					result.legacyType = NATType::PortRestricted;
 			}
 			else if (result.mapping == NatMappingBehavior::AddressDependent
-				|| result.mapping == NatMappingBehavior::AddressAndPortDependent)
+					 || result.mapping == NatMappingBehavior::AddressAndPortDependent)
 			{
 				result.legacyType = NATType::Symmetric;
 			}
@@ -922,11 +930,11 @@ namespace OpenNet::Core
 	{
 		switch (value)
 		{
-		case NatMappingBehavior::Direct: return L"Direct / no address translation";
-		case NatMappingBehavior::EndpointIndependent: return L"Endpoint-independent mapping";
-		case NatMappingBehavior::AddressDependent: return L"Address-dependent mapping";
-		case NatMappingBehavior::AddressAndPortDependent: return L"Address-and-port-dependent mapping";
-		default: return L"Unknown";
+			case NatMappingBehavior::Direct: return ResourceGetString(L"CoreNetworkDetectorMappingDirect");
+			case NatMappingBehavior::EndpointIndependent: return ResourceGetString(L"CoreNetworkDetectorMappingEndpointIndependent");
+			case NatMappingBehavior::AddressDependent: return ResourceGetString(L"CoreNetworkDetectorMappingAddressDependent");
+			case NatMappingBehavior::AddressAndPortDependent: return ResourceGetString(L"CoreNetworkDetectorMappingAddressAndPortDependent");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 
@@ -934,10 +942,10 @@ namespace OpenNet::Core
 	{
 		switch (value)
 		{
-		case NatFilteringBehavior::EndpointIndependent: return L"Endpoint-independent filtering";
-		case NatFilteringBehavior::AddressDependent: return L"Address-dependent filtering";
-		case NatFilteringBehavior::AddressAndPortDependent: return L"Address-and-port-dependent filtering";
-		default: return L"Unknown";
+			case NatFilteringBehavior::EndpointIndependent: return ResourceGetString(L"CoreNetworkDetectorFilteringEndpointIndependent");
+			case NatFilteringBehavior::AddressDependent: return ResourceGetString(L"CoreNetworkDetectorFilteringAddressDependent");
+			case NatFilteringBehavior::AddressAndPortDependent: return ResourceGetString(L"CoreNetworkDetectorFilteringAddressAndPortDependent");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 
@@ -945,12 +953,12 @@ namespace OpenNet::Core
 	{
 		switch (value)
 		{
-		case NATType::Open: return L"Open Internet";
-		case NATType::FullCone: return L"Full cone NAT (compatibility label)";
-		case NATType::RestrictedCone: return L"Restricted cone NAT (compatibility label)";
-		case NATType::PortRestricted: return L"Port-restricted cone NAT (compatibility label)";
-		case NATType::Symmetric: return L"Symmetric NAT (compatibility label)";
-		default: return L"Unknown";
+			case NATType::Open: return ResourceGetString(L"CoreNetworkDetectorNATOpenInternet");
+			case NATType::FullCone: return ResourceGetString(L"CoreNetworkDetectorNATFullCone");
+			case NATType::RestrictedCone: return ResourceGetString(L"CoreNetworkDetectorNATRestrictedCone");
+			case NATType::PortRestricted: return ResourceGetString(L"CoreNetworkDetectorNATPortRestrictedCone");
+			case NATType::Symmetric: return ResourceGetString(L"CoreNetworkDetectorNATSymmetric");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 
@@ -974,11 +982,11 @@ namespace OpenNet::Core
 				auto ianaType = adapter.IanaInterfaceType();
 				switch (ianaType)
 				{
-				case 6:   return NetworkType::Ethernet;
-				case 71:  return NetworkType::WiFi;
-				case 243: return NetworkType::Mobile;
-				case 15:  return NetworkType::Bluetooth;
-				default:  break;
+					case 6:   return NetworkType::Ethernet;
+					case 71:  return NetworkType::WiFi;
+					case 243: return NetworkType::Mobile;
+					case 15:  return NetworkType::Bluetooth;
+					default:  break;
 				}
 			}
 
@@ -995,7 +1003,7 @@ namespace OpenNet::Core
 		// 启动网络状态监控 / Start network state monitoring
 		try
 		{
-		   // Register network status changed handler and store token so we can unregister later
+			// Register network status changed handler and store token so we can unregister later
 			m_networkStatusChangedToken = NetworkInformation::NetworkStatusChanged([this](auto&&)
 			{
 				// 网络状态发生变化时触发事件 / Trigger event when network state changes
@@ -1013,7 +1021,7 @@ namespace OpenNet::Core
 		// 停止网络状态监控 / Stop network state monitoring
 		// WinRT NetworkInformation 不提供直接的取消注册方法
 		// WinRT NetworkInformation doesn't provide direct unregister method
-	   try
+		try
 		{
 			if (m_networkStatusChangedToken.value != 0)
 			{
@@ -1021,6 +1029,8 @@ namespace OpenNet::Core
 				m_networkStatusChangedToken = {};
 			}
 		}
-		catch (...) {}
+		catch (...)
+		{
+		}
 	}
 }

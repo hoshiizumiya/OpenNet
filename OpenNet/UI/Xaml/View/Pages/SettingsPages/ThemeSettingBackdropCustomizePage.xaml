@@ -47,6 +47,7 @@
                 x:Name="LuminosityOpacitySlider"
                 x:Uid="ViewThemeSettingLuminosityOpacitySlider"
                 essential:SliderHelper.AcrylicWorkaround="True"
+                AutomationProperties.AutomationId="ViewThemeSettingLuminosityOpacitySlider"
                 Header="LuminosityOpacity"
                 ValueChanged="BackdropValueChanged" />
 
@@ -54,12 +55,14 @@
                 x:Name="TintOpacitySlider"
                 x:Uid="ViewThemeSettingTintOpacitySlider"
                 essential:SliderHelper.AcrylicWorkaround="True"
+                AutomationProperties.AutomationId="ViewThemeSettingTintOpacitySlider"
                 Header="TintOpacity"
                 ValueChanged="BackdropValueChanged" />
 
             <ToggleSwitch
                 x:Name="EnableSwitch"
                 x:Uid="ViewThemeSettingEnableAcrylicSwitch"
+                AutomationProperties.AutomationId="ViewThemeSettingEnableAcrylicSwitch"
                 Header="Enable acrylic when window is inactive"
                 Toggled="BackdropValueChanged" />
         </StackPanel>

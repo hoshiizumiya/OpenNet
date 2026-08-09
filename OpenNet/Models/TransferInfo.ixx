@@ -1,6 +1,7 @@
 ﻿export module OpenNet.Models.TransferInfo;
 
 import winrt.Windows.Foundation;
+import OpenNet.Core.Utils.Message;
 import std;
 
 export namespace winrt::OpenNet::Models
@@ -182,15 +183,15 @@ export namespace winrt::OpenNet::Models
 		{
 			switch (status)
 			{
-				case Status::Pending: return L"等待中 / Pending";
-				case Status::Initializing: return L"初始化中 / Initializing";
-				case Status::Transferring: return L"传输中 / Transferring";
-				case Status::Paused: return L"已暂停 / Paused";
-				case Status::Completed: return L"已完成 / Completed";
-				case Status::Failed: return L"失败 / Failed";
-				case Status::Cancelled: return L"已取消 / Cancelled";
-				case Status::Verifying: return L"校验中 / Verifying";
-				default: return L"未知状态 / Unknown";
+				case Status::Pending: return ResourceGetString(L"TaskStatusPending");
+				case Status::Initializing: return ResourceGetString(L"ModelTransferInfoStatusInitializing");
+				case Status::Transferring: return ResourceGetString(L"ModelTransferInfoStatusTransferring");
+				case Status::Paused: return ResourceGetString(L"TaskStatusPaused");
+				case Status::Completed: return ResourceGetString(L"TaskStatusCompleted");
+				case Status::Failed: return ResourceGetString(L"TaskStatusFailed");
+				case Status::Cancelled: return ResourceGetString(L"ModelTransferInfoStatusCancelled");
+				case Status::Verifying: return ResourceGetString(L"ModelTransferInfoStatusVerifying");
+				default: return ResourceGetString(L"CommonUnknown");
 			}
 		}
 

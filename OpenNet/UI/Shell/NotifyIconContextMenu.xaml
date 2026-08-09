@@ -10,6 +10,8 @@
     mc:Ignorable="d">
 
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText1"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText1"
         Click="HomeAppBarButton_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE80F;}"
@@ -17,92 +19,122 @@
     <MenuFlyoutSeparator />
 
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText2"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText2"
         Click="StartDownloadingAll_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE896;}"
         Text="Start Downloading All" />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText3"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText3"
         Click="StartUploadingAll_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE898;}"
         Text="Start Uploading All" />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText4"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText4"
         Click="StopAllTasks_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE71A;}"
         Text="Stop All Tasks" />
     <MenuFlyoutSeparator />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText5"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText5"
         Click="SuspendAllActiveTasks_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE769;}"
         Text="Suspend All Active Tasks" />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText6"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText6"
         Click="ResumeLastSuspendedTasks_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE768;}"
         Text="Resume Last Suspended Tasks" />
     <MenuFlyoutSeparator />
 
-    <MenuFlyoutSubItem Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons, Glyph=&#xE9D9;}" Text="Download Limit">
+    <MenuFlyoutSubItem
+        x:Uid="ViewNotifyIconContextMenuText7"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText7"
+        Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
+                                  Glyph=&#xE9D9;}"
+        Text="Download Limit">
         <RadioMenuFlyoutItem
             x:Name="DownloadLimitUnlimited"
+            x:Uid="ViewNotifyIconContextMenuText8"
             Click="TransferLimit_Click"
             GroupName="DownloadLimits"
             Tag="download:0"
             Text="Unlimited" />
         <RadioMenuFlyoutItem
             x:Name="DownloadLimit1MiB"
+            x:Uid="ViewNotifyIconContextMenuText9"
             Click="TransferLimit_Click"
             GroupName="DownloadLimits"
             Tag="download:1048576"
             Text="1 MiB/s" />
         <RadioMenuFlyoutItem
             x:Name="DownloadLimit5MiB"
+            x:Uid="ViewNotifyIconContextMenuText10"
             Click="TransferLimit_Click"
             GroupName="DownloadLimits"
             Tag="download:5242880"
             Text="5 MiB/s" />
         <RadioMenuFlyoutItem
             x:Name="DownloadLimit10MiB"
+            x:Uid="ViewNotifyIconContextMenuText11"
             Click="TransferLimit_Click"
             GroupName="DownloadLimits"
             Tag="download:10485760"
             Text="10 MiB/s" />
         <RadioMenuFlyoutItem
             x:Name="DownloadLimit50MiB"
+            x:Uid="ViewNotifyIconContextMenuText12"
             Click="TransferLimit_Click"
             GroupName="DownloadLimits"
             Tag="download:52428800"
             Text="50 MiB/s" />
     </MenuFlyoutSubItem>
-    <MenuFlyoutSubItem Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons, Glyph=&#xE9D9;}" Text="Upload Limit">
+    <MenuFlyoutSubItem
+        x:Uid="ViewNotifyIconContextMenuText13"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText13"
+        Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
+                                  Glyph=&#xE9D9;}"
+        Text="Upload Limit">
         <RadioMenuFlyoutItem
             x:Name="UploadLimitUnlimited"
+            x:Uid="ViewNotifyIconContextMenuText8"
             Click="TransferLimit_Click"
             GroupName="UploadLimits"
             Tag="upload:0"
             Text="Unlimited" />
         <RadioMenuFlyoutItem
             x:Name="UploadLimit256KiB"
+            x:Uid="ViewNotifyIconContextMenuText15"
             Click="TransferLimit_Click"
             GroupName="UploadLimits"
             Tag="upload:262144"
             Text="256 KiB/s" />
         <RadioMenuFlyoutItem
             x:Name="UploadLimit1MiB"
+            x:Uid="ViewNotifyIconContextMenuText9"
             Click="TransferLimit_Click"
             GroupName="UploadLimits"
             Tag="upload:1048576"
             Text="1 MiB/s" />
         <RadioMenuFlyoutItem
             x:Name="UploadLimit5MiB"
+            x:Uid="ViewNotifyIconContextMenuText10"
             Click="TransferLimit_Click"
             GroupName="UploadLimits"
             Tag="upload:5242880"
             Text="5 MiB/s" />
         <RadioMenuFlyoutItem
             x:Name="UploadLimit10MiB"
+            x:Uid="ViewNotifyIconContextMenuText11"
             Click="TransferLimit_Click"
             GroupName="UploadLimits"
             Tag="upload:10485760"
@@ -110,26 +142,35 @@
     </MenuFlyoutSubItem>
     <ToggleMenuFlyoutItem
         x:Name="SchedulerToggle"
+        x:Uid="ViewNotifyIconContextMenuText19"
         Click="SchedulerToggle_Click"
         Text="Enable Scheduler" />
     <MenuFlyoutSeparator />
 
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText20"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText20"
         Click="OpenTorrentFile_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE8E5;}"
         Text="Open Torrent File ..." />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText21"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText21"
         Click="AddTorrentFromUrl_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE71B;}"
         Text="Add Torrent from URL ..." />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText22"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText22"
         Click="HttpDownload_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE896;}"
         Text="HTTP/FTP Download ..." />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText23"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText23"
         Click="HttpBatchDownload_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE8FD;}"
@@ -138,17 +179,22 @@
 
     <ToggleMenuFlyoutItem
         x:Name="CaptureClipboardToggle"
+        x:Uid="ViewNotifyIconContextMenuText24"
         Click="CaptureClipboardToggle_Click"
         Text="Capture Clipboard URL" />
     <ToggleMenuFlyoutItem
         x:Name="TrayBalloonToggle"
+        x:Uid="ViewNotifyIconContextMenuText25"
         Click="TrayBalloonToggle_Click"
         Text="Tray Balloon" />
     <ToggleMenuFlyoutItem
         x:Name="FloatingWindowToggle"
+        x:Uid="ViewNotifyIconContextMenuText26"
         Click="FloatingWindowToggle_Click"
         Text="Floating Window" />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText27"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText27"
         Click="FloatingWindowSettings_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE713;}"
@@ -156,11 +202,15 @@
     <MenuFlyoutSeparator />
 
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText28"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText28"
         Click="Options_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE713;}"
         Text="Options ..." />
     <MenuFlyoutItem
+        x:Uid="ViewNotifyIconContextMenuText29"
+        AutomationProperties.AutomationId="ViewNotifyIconContextMenuText29"
         Click="ExitAppBarButton_Click"
         Icon="{essential:FontIcon FontFamily=Segoe Fluent Icons,
                                   Glyph=&#xE7E8;}"

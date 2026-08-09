@@ -12,6 +12,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
@@ -431,7 +432,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		editor.TextWrapping(winrt::Microsoft::UI::Xaml::TextWrapping::NoWrap);
 		editor.MinWidth(560);
 		editor.MinHeight(260);
-		editor.PlaceholderText(L"One HTTP, HTTPS or UDP tracker URL per line");
+		editor.PlaceholderText(ResourceGetString(L"ViewTaskTrackersPageTrackerUrlPlaceholder"));
 		winrt::hstring existingText;
 		for (auto const& tracker : detail.trackers)
 		{
@@ -442,10 +443,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Edit trackers"));
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageEditTrackersTitle")));
 		dialog.Content(editor);
-		dialog.PrimaryButtonText(L"Save");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
@@ -480,9 +482,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			winrt::Microsoft::UI::Xaml::Controls::ContentDialog error;
 			error.XamlRoot(XamlRoot());
-			error.Title(winrt::box_value(L"Invalid tracker URL"));
+			error.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+			error.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageInvalidTrackerUrlTitle")));
 			error.Content(winrt::box_value(invalid));
-			error.CloseButtonText(L"Close");
+			error.CloseButtonText(ResourceGetString(L"CommonClose"));
 			co_await error.ShowAsync();
 			co_return;
 		}
@@ -524,10 +527,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (url.empty() || !TryGetTaskContext(taskId, taskName)) co_return;
 		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Remove tracker?"));
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageRemoveTrackerTitle")));
 		dialog.Content(winrt::box_value(url));
-		dialog.PrimaryButtonText(L"Remove");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Close);
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
@@ -567,11 +571,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!TryGetTaskContext(taskId, taskName)) co_return;
 		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Clear all tracker logs?"));
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageClearAllLogsTitle")));
 		dialog.Content(winrt::box_value(
 			L"This clears in-memory tracker logs for every task."));
-		dialog.PrimaryButtonText(L"Clear all");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		if (co_await dialog.ShowAsync()
 			== winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 		{
@@ -590,7 +595,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::Controls::StackPanel content;
 		content.Spacing(10);
 		winrt::Microsoft::UI::Xaml::Controls::TextBlock prompt;
-		prompt.Text(L"Remove all trackers that have reached the number of retries:");
+		prompt.Text(ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachablePrompt"));
 		prompt.TextWrapping(TextWrapping::Wrap);
 		winrt::Microsoft::UI::Xaml::Controls::NumberBox retries;
 		retries.Minimum(1);
@@ -605,10 +610,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		content.Children().Append(retries);
 		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(L"Remove unreachable trackers"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachableTitle")));
 		dialog.Content(content);
-		dialog.PrimaryButtonText(L"Remove");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)

@@ -63,6 +63,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::TextWrapping TextWrappingAddDateTextBlock();
 		void TextWrappingAddDateTextBlock(winrt::Microsoft::UI::Xaml::TextWrapping const& value);
 
+		Microsoft::UI::Xaml::Controls::TabViewWidthMode TaskTabViewTabWidthMode();
+		void TaskTabViewTabWidthMode(Microsoft::UI::Xaml::Controls::TabViewWidthMode const& value);
+
 		// Filter nav selection (must be public for XAML wiring)
 		void FilterNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
 		// Task list container content changing
@@ -75,8 +78,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Search
 		void SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
 
-		// SelectorBar (Summary / PeersList) tab switch
-		void Task_SelectBar_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::SelectorBar const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectorBarSelectionChangedEventArgs const& args);
+		// TabView
+		void Task_TabView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
+		void TaskTabViewContextFlyout_Opening(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&);
+		void TabViewContextFlyoutRadioMenuFlyoutItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 		// Context menu item handlers
 		void TasksColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
@@ -138,7 +143,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingRemainingTextBlock;
 		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingAddDateTextBlock;
 
+		Microsoft::UI::Xaml::Controls::TabViewWidthMode m_taskTabViewTabWidthMode{ Microsoft::UI::Xaml::Controls::TabViewWidthMode::Equal };
+		bool m_taskTabViewTabWidthModeInitialized{};
+
 		winrt::event_token m_addTaskToken{};
+
+		static constexpr std::string_view TaskTabStateKey =	"TasksPage.TaskTabs";
+		bool m_restoringTabViewState{ true };
+		int32_t m_previousSelectedIndex{ -1 };
 
 		// Handle when ViewModel requests adding a new task
 		winrt::Windows::Foundation::IAsyncAction OnAddTaskRequested(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const&);
@@ -191,6 +203,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void CancelScrollRestore();
 		winrt::Windows::Foundation::IAsyncOperation<winrt::Windows::Foundation::IInspectable> GetItem(hstring const& key);
 		hstring GetKey(IInspectable const& object);
+		void UpdateTaskTabViewContextFlyout();
 	};
 }
 

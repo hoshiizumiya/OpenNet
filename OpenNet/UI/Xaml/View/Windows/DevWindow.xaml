@@ -40,19 +40,35 @@
 
         <ScrollViewer Grid.Row="1">
             <StackPanel Margin="16" Spacing="10">
-                <essential:SettingsCard Description="Open the isolated static/dynamic Win2D graph test studio." Header="LiveGraph">
+                <essential:SettingsCard
+                    x:Uid="ViewDevWindowSettingsCardOpenSpeedGraphWindow"
+                    Description="Open the isolated static/dynamic Win2D graph test studio."
+                    Header="LiveGraph">
                     <Button
+                        x:Uid="ViewDevWindowButton"
                         Click="OpenLiveGraphTestWindow_Click"
                         Content="Open test studio"
                         Style="{StaticResource AccentButtonStyle}" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard Description="Show the operation progress dialog test." Header="Operation dialog">
-                    <Button Click="OpenOperationProgressDialog_Click" Content="Open dialog" />
+                <essential:SettingsCard
+                    x:Uid="ViewDevWindowSettingsCardOpenOperationProgressDialog"
+                    Description="Show the operation progress dialog test."
+                    Header="Operation dialog">
+                    <Button
+                        x:Uid="ViewDevWindowButton"
+                        Click="OpenOperationProgressDialog_Click"
+                        Content="Open dialog" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard Description="Intentionally throw a XAML-facing exception." Header="Exception handling">
-                    <Button Click="TriggerXamlException_Click" Content="Trigger exception" />
+                <essential:SettingsCard
+                    x:Uid="ViewDevWindowSettingsCard"
+                    Description="Intentionally throw a XAML-facing exception."
+                    Header="Exception handling">
+                    <Button
+                        x:Uid="ViewDevWindowButton"
+                        Click="TriggerXamlException_Click"
+                        Content="Trigger exception" />
                 </essential:SettingsCard>
             </StackPanel>
         </ScrollViewer>

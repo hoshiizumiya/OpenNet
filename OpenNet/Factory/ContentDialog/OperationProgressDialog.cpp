@@ -5,6 +5,7 @@ module OpenNet.Factory.OperationProgressDialog;
 
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml;
+import OpenNet.Core.Utils.Message;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -19,7 +20,7 @@ namespace OpenNet::Factory::ContentDialog
 		m_dialog = winrt::Microsoft::UI::Xaml::Controls::ContentDialog();
 		m_dialog.Style(winrt::Microsoft::UI::Xaml::Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).try_as<winrt::Microsoft::UI::Xaml::Style>());
 		m_dialog.Title(winrt::box_value(title));
-		m_dialog.CloseButtonText(L"Cancel");
+		m_dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		m_dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 
 		// 创建进度条
@@ -102,7 +103,9 @@ namespace OpenNet::Factory::ContentDialog
 			m_progressBar.Maximum(100);
 			m_progressBar.Value(100);
 
-			auto statusMessage = success ? L"✓ Operation completed successfully" : L"✗ Operation failed";
+			auto statusMessage = success
+				? ResourceGetString(L"OperationProgressDialogCompleted")
+				: ResourceGetString(L"OperationProgressDialogFailed");
 			if (!message.empty())
 			{
 				statusMessage = message.c_str();

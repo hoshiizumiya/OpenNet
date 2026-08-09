@@ -8,6 +8,7 @@ import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.Windows.Storage.Pickers;
+import OpenNet.Core.Utils.Message;
 import winrtplus_coroutine;
 
 using namespace winrt;
@@ -343,7 +344,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			winrt::to_string(TestClientTextBox().Text()));
 		if (client.empty())
 		{
-			TestResultText().Text(L"Enter a peer client name to test.");
+			TestResultText().Text(ResourceGetString(L"ViewClientFilterSettingsPageEnterClientNameHint"));
 			return;
 		}
 
@@ -352,7 +353,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			MatchClient(client);
 		if (!matched)
 		{
-			TestResultText().Text(L"No enabled rule matches this client.");
+			TestResultText().Text(ResourceGetString(L"ViewClientFilterSettingsPageNoMatchingRule"));
 			return;
 		}
 
@@ -404,13 +405,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			co_return;
 
 		TextBlock patternLabel;
-		patternLabel.Text(L"Pattern");
+		patternLabel.Text(ResourceGetString(L"ViewClientFilterSettingsPagePatternLabel"));
 		TextBox patternBox;
 		patternBox.Text(winrt::to_hstring(selected->pattern));
 		patternBox.MinWidth(460);
 
 		TextBlock matchLabel;
-		matchLabel.Text(L"Match type");
+		matchLabel.Text(ResourceGetString(L"ViewClientFilterSettingsPageMatchTypeLabel"));
 		ComboBox matchBox;
 		matchBox.HorizontalAlignment(HorizontalAlignment::Stretch);
 		matchBox.Items().Append(winrt::box_value(L"Contains"));
@@ -420,15 +421,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		matchBox.SelectedIndex(static_cast<int>(selected->matchType));
 
 		ToggleSwitch caseToggle;
-		caseToggle.Header(winrt::box_value(L"Case sensitive"));
+		caseToggle.Header(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageCaseSensitive")));
 		caseToggle.IsOn(selected->caseSensitive);
 
 		ToggleSwitch enabledToggle;
-		enabledToggle.Header(winrt::box_value(L"Enabled"));
+		enabledToggle.Header(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageEnabled")));
 		enabledToggle.IsOn(selected->enabled);
 
 		TextBlock descriptionLabel;
-		descriptionLabel.Text(L"Description");
+		descriptionLabel.Text(ResourceGetString(L"ViewClientFilterSettingsPageDescriptionLabel"));
 		TextBox descriptionBox;
 		descriptionBox.Text(winrt::to_hstring(selected->description));
 
@@ -446,10 +447,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
 		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(L"Edit Client Filter Rule"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageEditRuleTitle")));
 		dialog.Content(editor);
-		dialog.PrimaryButtonText(L"Save");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Primary);
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
@@ -497,12 +498,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
 		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(L"Delete Client Filter Rule"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageDeleteRuleTitle")));
 		dialog.Content(winrt::box_value(
 			winrt::hstring{ L"Delete this rule?\n\n" } +
 			winrt::to_hstring(selected->pattern)));
-		dialog.PrimaryButtonText(L"Delete");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonDelete"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Close);
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
@@ -534,10 +535,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ContentDialog optionsDialog;
 		optionsDialog.XamlRoot(XamlRoot());
 		optionsDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		optionsDialog.Title(winrt::box_value(L"Import Client Filter Rules"));
+		optionsDialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageImportRulesTitle")));
 		optionsDialog.Content(options);
-		optionsDialog.PrimaryButtonText(L"Choose File");
-		optionsDialog.CloseButtonText(L"Cancel");
+		optionsDialog.PrimaryButtonText(ResourceGetString(L"ViewClientFilterSettingsPageChooseFile"));
+		optionsDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		optionsDialog.DefaultButton(ContentDialogButton::Primary);
 		if (co_await optionsDialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
@@ -640,11 +641,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
 		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(L"Clear Client Filter Rules"));
+		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageClearRulesTitle")));
 		dialog.Content(winrt::box_value(
 			L"Remove every client filter rule? This cannot be undone."));
-		dialog.PrimaryButtonText(L"Clear All");
-		dialog.CloseButtonText(L"Cancel");
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Close);
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;

@@ -7,6 +7,7 @@
 import Core.Utils.Misc;
 import OpenNet.Core.RSS.RSSManager;
 import OpenNet.Core.RSS.RSSParser;
+import OpenNet.Core.Utils.Message;
 import winrt.Windows.Storage;
 
 using namespace ::OpenNet::Core::RSS;
@@ -263,7 +264,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 	void RSSViewModel::AddFeed(hstring const& url, hstring const& name, hstring const& savePath)
 	{
 		SetIsLoading(true);
-		SetStatusMessage(L"Adding feed...");
+		SetStatusMessage(ResourceGetString(L"ViewRSSViewModelAddingFeed"));
 
 		RSSSubscription sub;
 		sub.url = std::wstring(url.c_str());
@@ -306,11 +307,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 			// Reload to get the actual feed with its generated ID
 			LoadFeeds();
-			SetStatusMessage(L"Fetching feed content...");
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelFetchingFeed"));
 		}
 		else
 		{
-			SetStatusMessage(L"Failed to add feed");
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelFailedToAddFeed"));
 			SetIsLoading(false);
 		}
 	}
@@ -328,21 +329,21 @@ namespace winrt::OpenNet::ViewModels::implementation
 					break;
 				}
 			}
-			SetStatusMessage(L"Feed removed");
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelFeedRemoved"));
 		}
 	}
 
 	void RSSViewModel::RefreshFeed(hstring const& feedId)
 	{
 		SetIsLoading(true);
-		SetStatusMessage(L"Refreshing feed...");
+		SetStatusMessage(ResourceGetString(L"ViewRSSViewModelRefreshingFeed"));
 		RSSManager::Instance().RefreshFeed(std::wstring(feedId.c_str()));
 	}
 
 	void RSSViewModel::RefreshAllFeeds()
 	{
 		SetIsLoading(true);
-		SetStatusMessage(L"Refreshing all feeds...");
+		SetStatusMessage(ResourceGetString(L"ViewRSSViewModelRefreshingAllFeeds"));
 		RSSManager::Instance().RefreshAllFeeds();
 	}
 
@@ -360,7 +361,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			coreItem
 		);
 
-		SetStatusMessage(L"Download started: " + item.Title());
+		SetStatusMessage(ResourceGetString(L"ViewRSSViewModelDownloadStarted") + L" " + item.Title());
 	}
 
 	void RSSViewModel::UpdateFeedSettings(OpenNet::ViewModels::RSSFeedViewModel const& feed)
@@ -379,7 +380,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		if (RSSManager::Instance().UpdateSubscription(sub))
 		{
-			SetStatusMessage(L"Feed settings updated");
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelFeedSettingsUpdated"));
 		}
 	}
 
@@ -438,7 +439,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			}
 
 			SetIsLoading(false);
-			SetStatusMessage(L"Feed updated");
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelFeedUpdated"));
 		});
 	}
 
@@ -448,7 +449,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		m_dispatcherQueue.TryEnqueue([this, feedId, item]()
 		{
-			SetStatusMessage(L"New item: " + hstring(item.title));
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelNewItem") + L" " + hstring(item.title));
 		});
 	}
 
@@ -459,7 +460,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_dispatcherQueue.TryEnqueue([this, error]()
 		{
 			SetIsLoading(false);
-			SetStatusMessage(L"Error: " + hstring(error));
+			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelError") + L" " + hstring(error));
 		});
 	}
 

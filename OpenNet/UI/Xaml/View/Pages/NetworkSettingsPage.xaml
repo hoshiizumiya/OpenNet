@@ -35,16 +35,23 @@
                 <!--<TextBlock
                     Margin="0,0,0,16"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="Network Settings" />-->
+                    Text="Network Settings"  x:Uid="ViewNetworkSettingsPageTextBlock"/>-->
 
                 <!--  Custom Tracker Section  -->
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Custom Trackers" />
+                <TextBlock
+                    x:Uid="ViewNetworkSettingsPageTextBlock"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="Custom Trackers" />
 
-                <essential:SettingsExpander Description="Manage your custom tracker list" Header="Custom Trackers">
+                <essential:SettingsExpander
+                    x:Uid="ViewNetworkSettingsPageSettingsExpander"
+                    Description="Manage your custom tracker list"
+                    Header="Custom Trackers">
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE774;" />
                     </essential:SettingsExpander.HeaderIcon>
                     <Button
+                        x:Uid="ViewNetworkSettingsPageButton"
                         Click="RefreshTrackersButton_Click"
                         Content="Refresh"
                         ToolTipService.ToolTip="Refresh all trackers" />
@@ -55,7 +62,10 @@
                             Header="Automatically add custom trackers">
                             <ToggleSwitch x:Name="AutoAddTrackersToggle" Toggled="AutoAddTrackersToggle_Toggled" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard ContentAlignment="Left" Header="Add tracker">
+                        <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
+                            ContentAlignment="Left"
+                            Header="Add tracker">
                             <Grid MinWidth="400">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -64,8 +74,10 @@
                                 <TextBox
                                     x:Name="NewTrackerTextBox"
                                     x:Uid="ViewNetworkSettingsPageNewTrackerTextBox"
+                                    AutomationProperties.AutomationId="ViewNetworkSettingsPageNewTrackerTextBox"
                                     PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)" />
                                 <Button
+                                    x:Uid="ViewNetworkSettingsPageButton"
                                     Grid.Column="1"
                                     Margin="8,0,0,0"
                                     Click="AddTrackerButton_Click"
@@ -73,7 +85,10 @@
                                     Style="{StaticResource AccentButtonStyle}" />
                             </Grid>
                         </essential:SettingsCard>
-                        <essential:SettingsCard ContentAlignment="Left" Header="Tracker list">
+                        <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
+                            ContentAlignment="Left"
+                            Header="Tracker list">
                             <ListView
                                 x:Name="TrackerListView"
                                 MaxHeight="300"
@@ -104,6 +119,7 @@
                         </essential:SettingsCard>
                         <essential:SettingsCard ContentAlignment="Left">
                             <TextBlock
+                                x:Uid="ViewNetworkSettingsPageTextBlock"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Style="{StaticResource CaptionTextBlockStyle}"
                                 Text="These trackers will be automatically added to new torrents to help find peers."
@@ -113,23 +129,39 @@
                 </essential:SettingsExpander>
 
                 <!--  Tracker Subscription Section  -->
-                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="Tracker Subscriptions" />
+                <TextBlock
+                    x:Uid="ViewNetworkSettingsPageTextBlock"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="Tracker Subscriptions" />
 
-                <essential:SettingsExpander Description="Subscribe to tracker lists from URLs (.txt format)" Header="Tracker Subscriptions">
+                <essential:SettingsExpander
+                    x:Uid="ViewNetworkSettingsPageSettingsExpander"
+                    Description="Subscribe to tracker lists from URLs (.txt format)"
+                    Header="Tracker Subscriptions">
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE8F1;" />
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
-                        <essential:SettingsCard ContentAlignment="Left" Header="Add subscription">
+                        <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
+                            ContentAlignment="Left"
+                            Header="Add subscription">
                             <StackPanel MinWidth="400" Spacing="8">
-                                <TextBox x:Name="SubscriptionNameTextBox" PlaceholderText="Subscription name (e.g., Public Trackers)" />
+                                <TextBox
+                                    x:Name="SubscriptionNameTextBox"
+                                    x:Uid="ViewNetworkSettingsPageTextBox"
+                                    PlaceholderText="Subscription name (e.g., Public Trackers)" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="SubscriptionUrlTextBox" PlaceholderText="Subscription URL (e.g., https://example.com/trackers.txt)" />
+                                    <TextBox
+                                        x:Name="SubscriptionUrlTextBox"
+                                        x:Uid="ViewNetworkSettingsPageTextBox"
+                                        PlaceholderText="Subscription URL (e.g., https://example.com/trackers.txt)" />
                                     <Button
+                                        x:Uid="ViewNetworkSettingsPageButton"
                                         Grid.Column="1"
                                         Margin="8,0,0,0"
                                         Click="AddSubscriptionButton_Click"
@@ -138,7 +170,10 @@
                                 </Grid>
                             </StackPanel>
                         </essential:SettingsCard>
-                        <essential:SettingsCard ContentAlignment="Left" Header="Active subscriptions">
+                        <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
+                            ContentAlignment="Left"
+                            Header="Active subscriptions">
                             <ListView
                                 x:Name="SubscriptionListView"
                                 MaxHeight="200"
@@ -168,6 +203,7 @@
                             </ListView>
                         </essential:SettingsCard>
                         <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
                             ContentAlignment="Left"
                             Description="Choose a maintained XIU2 list and add it as a subscription"
                             Header="Recommended tracker lists">
@@ -198,6 +234,7 @@
                                         Tag="https://cf.trackerslist.com/nohttp.txt" />
                                 </ComboBox>
                                 <Button
+                                    x:Uid="ViewNetworkSettingsPageButton"
                                     Grid.Column="1"
                                     Margin="8,0,0,0"
                                     Click="AddPresetTrackerListButton_Click"
@@ -223,11 +260,13 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <TextBlock
                         x:Name="ActualListenPortText"
+                        x:Uid="ViewNetworkSettingsPageTextBlock"
                         VerticalAlignment="Center"
                         FontWeight="SemiBold"
                         Text="Not listening" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
                             ContentAlignment="Left"
                             Description="Use 0.0.0.0 to listen on every IPv4 interface."
                             Header="IPv4 endpoint">
@@ -239,6 +278,7 @@
                                 ValueChanged="ListenEndpoint_ValueChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard
+                            x:Uid="ViewNetworkSettingsPageSettingsCard"
                             ContentAlignment="Left"
                             Description="Use :: to listen on every IPv6 interface."
                             Header="IPv6 endpoint">
@@ -270,15 +310,24 @@
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
 
-                <essential:SettingsCard Description="Distributed Hash Table for decentralized peer discovery" Header="Enable DHT">
+                <essential:SettingsCard
+                    x:Uid="ViewNetworkSettingsPageSettingsCard"
+                    Description="Distributed Hash Table for decentralized peer discovery"
+                    Header="Enable DHT">
                     <ToggleSwitch x:Name="EnableDHTToggle" IsOn="True" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard Description="Exchange peer lists with connected peers" Header="Enable Peer Exchange (PEX)">
+                <essential:SettingsCard
+                    x:Uid="ViewNetworkSettingsPageSettingsCard"
+                    Description="Exchange peer lists with connected peers"
+                    Header="Enable Peer Exchange (PEX)">
                     <ToggleSwitch x:Name="EnablePEXToggle" IsOn="True" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard Description="Discover peers on the local network" Header="Enable Local Peer Discovery (LSD)">
+                <essential:SettingsCard
+                    x:Uid="ViewNetworkSettingsPageSettingsCard"
+                    Description="Discover peers on the local network"
+                    Header="Enable Local Peer Discovery (LSD)">
                     <ToggleSwitch x:Name="EnableLSDToggle" IsOn="True" />
                 </essential:SettingsCard>
 

@@ -21,6 +21,7 @@ import OpenNet.Core.RSS.RSSManager;
 import OpenNet.Core.Setting.LocalSetting;
 import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Core.Torrent.TrackerManager;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.ViewModels.Guide.GuideState;
@@ -267,6 +268,10 @@ namespace winrt::OpenNet::implementation
 		return true;
 	}
 
+	/// <summary>
+	/// Handles the activation of the application.
+	/// </summary>
+	/// <param name="args">The activation arguments.</param>
 	void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
 	{
 		CreateSetMainWindow();
@@ -275,6 +280,7 @@ namespace winrt::OpenNet::implementation
 			: nullptr;
 
 		// 根据激活类型处理不同的激活参数
+		// Handle different activation kinds based on the activation arguments
 		ExtendedActivationKind kind = args.Kind();
 
 		if (kind == ExtendedActivationKind::Launch)
@@ -293,20 +299,19 @@ namespace winrt::OpenNet::implementation
 		}
 		else if (kind == ExtendedActivationKind::File)
 		{
-			// 处理文件激活
+			// File activation (e.g., when a user opens a file associated with the app)
+			// https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.applifecycle.appactivationarguments.data
 			auto fileArgs = args.Data().try_as<winrt::Windows::ApplicationModel::Activation::IFileActivatedEventArgs>();
-			if (fileArgs)
+			// Get all files from the activation arguments
+			auto files = fileArgs.Files();
+			for (auto const& file : files)
 			{
-				// 可以在这里处理打开的文件
-				// auto files = fileArgs.Files();
-				// for (auto const& file : files)
-				// {
-				//     auto storageFile = file.try_as<winrt::Windows::Storage::IStorageFile>();
-				//     // 处理文件
-				// }
+				auto storageFile = file.try_as<winrt::Windows::Storage::IStorageFile>();
+				// Process the file
+				// storageFile
 			}
 
-			// 文件激活时闪烁提示
+			// File activation when flashing notification
 			FLASHWINFO fw = {};
 			fw.cbSize = sizeof(FLASHWINFO);
 			fw.hwnd = hwnd;
@@ -530,8 +535,8 @@ namespace winrt::OpenNet::implementation
 				.EnsureTorrentCoreInitializedAsync();
 			OutputDebugStringA("App: libtorrent core initialized\n");
 			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
-				L"BitTorrent engine",
-				L"libtorrent initialized successfully.",
+				ResourceGetString(L"AppBitTorrentEngine"),
+				ResourceGetString(L"AppLibtorrentInitialized"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Success,
 				3500);
 		}
@@ -541,7 +546,7 @@ namespace winrt::OpenNet::implementation
 				"App: Failed to initialize libtorrent core: "
 				+ std::string(exception.what()) + "\n").c_str());
 			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
-				L"BitTorrent engine failed",
+				ResourceGetString(L"AppBitTorrentEngineFailed"),
 				to_hstring(exception.what()),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
 				0);
@@ -550,8 +555,8 @@ namespace winrt::OpenNet::implementation
 		{
 			OutputDebugStringA("App: Failed to initialize libtorrent core\n");
 			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
-				L"BitTorrent engine failed",
-				L"An unknown error occurred while initializing libtorrent.",
+				ResourceGetString(L"AppBitTorrentEngineFailed"),
+				ResourceGetString(L"AppLibtorrentInitializationUnknownError"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
 				0);
 		}
@@ -570,8 +575,8 @@ namespace winrt::OpenNet::implementation
 		{
 			OutputDebugStringA("App: Failed to initialize RSS Manager\n");
 			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
-				L"RSS service failed",
-				L"RSS background updates could not be started.",
+				ResourceGetString(L"AppRSSServiceFailed"),
+				ResourceGetString(L"AppRSSBackgroundUpdatesFailed"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Warning,
 				0);
 		}
@@ -602,8 +607,8 @@ namespace winrt::OpenNet::implementation
 				{
 					winrt::OpenNet::UI::Xaml::View::implementation::
 						InfoBarView::Show(
-							L"Web UI failed",
-							L"The local qBittorrent-compatible Web UI could not be started.",
+							ResourceGetString(L"AppWebUIFailed"),
+							ResourceGetString(L"AppWebUIStartFailed"),
 							Microsoft::UI::Xaml::Controls::
 							InfoBarSeverity::Error,
 							0);
@@ -615,8 +620,8 @@ namespace winrt::OpenNet::implementation
 				{
 					winrt::OpenNet::UI::Xaml::View::implementation::
 						InfoBarView::Show(
-							L"Web UI",
-							L"The qBittorrent-compatible Web UI is running.",
+							ResourceGetString(L"AppWebUI"),
+							ResourceGetString(L"AppWebUIRunning"),
 							Microsoft::UI::Xaml::Controls::
 							InfoBarSeverity::Success,
 							4500);
@@ -629,7 +634,7 @@ namespace winrt::OpenNet::implementation
 				"App: Failed to initialize WebUI: "
 				+ std::string(exception.what()) + "\n").c_str());
 			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
-				L"Web UI failed",
+				ResourceGetString(L"AppWebUIFailed"),
 				to_hstring(exception.what()),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
 				0);
@@ -638,8 +643,8 @@ namespace winrt::OpenNet::implementation
 		{
 			OutputDebugStringA("App: Failed to initialize WebUI\n");
 			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
-				L"Web UI failed",
-				L"An unknown error occurred while starting the Web UI.",
+				ResourceGetString(L"AppWebUIFailed"),
+				ResourceGetString(L"AppWebUIUnknownStartError"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
 				0);
 		}

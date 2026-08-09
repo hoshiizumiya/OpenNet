@@ -25,6 +25,7 @@
                 x:Uid="MoreOpenWebUIQuickAction"
                 Width="100"
                 MaxWidth="100"
+                AutomationProperties.AutomationId="MoreOpenWebUIQuickAction"
                 Click="OnOpenWebUIClick"
                 Icon="{essential:FontIcon Glyph=&#xE774;}"
                 Label="Web UI" />
@@ -32,6 +33,7 @@
                 x:Uid="MoreRuntimeStatusQuickAction"
                 Width="100"
                 MaxWidth="100"
+                AutomationProperties.AutomationId="MoreRuntimeStatusQuickAction"
                 Click="OnRuntimeStatusClick"
                 Icon="{essential:FontIcon Glyph=&#xE9D9;}"
                 Label="Status" />
@@ -39,6 +41,7 @@
                 x:Uid="MoreNatDetectionQuickAction"
                 Width="100"
                 MaxWidth="100"
+                AutomationProperties.AutomationId="MoreNatDetectionQuickAction"
                 Click="OnNatDetectionClick"
                 Icon="{essential:FontIcon Glyph=&#xE968;}"
                 Label="NAT" />
@@ -46,6 +49,7 @@
                 x:Uid="MoreGuideQuickAction"
                 Width="100"
                 MaxWidth="100"
+                AutomationProperties.AutomationId="MoreGuideQuickAction"
                 Click="OnGuideClick"
                 Icon="{essential:FontIcon Glyph=&#xE897;}"
                 Label="Guide" />
@@ -67,6 +71,7 @@
                 x:Uid="MoreRuntimeStatusItem"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                AutomationProperties.AutomationId="MoreRuntimeStatusItem"
                 Click="OnRuntimeStatusClick">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
@@ -94,6 +99,7 @@
                 x:Uid="MoreNatDetectionItem"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                AutomationProperties.AutomationId="MoreNatDetectionItem"
                 Click="OnNatDetectionClick">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
@@ -121,6 +127,7 @@
                 x:Uid="MoreGuideItem"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                AutomationProperties.AutomationId="MoreGuideItem"
                 Click="OnGuideClick">
                 <Grid ColumnSpacing="12">
                     <Grid.ColumnDefinitions>
@@ -169,11 +176,13 @@
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
                         <Button
                             x:Uid="MoreCopyWebUIAddress"
+                            AutomationProperties.AutomationId="MoreCopyWebUIAddress"
                             Click="OnCopyUrlClick"
                             Content="Copy" />
                         <Button
                             x:Uid="MoreOpenWebUIButton"
                             Margin="6,0,0,0"
+                            AutomationProperties.AutomationId="MoreOpenWebUIButton"
                             Click="OnOpenWebUIClick"
                             Content="Open"
                             Style="{StaticResource AccentButtonStyle}" />

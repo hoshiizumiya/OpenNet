@@ -19,6 +19,7 @@
         Spacing="8">
         <TextBox
             x:Name="MagnetBox"
+            x:Uid="ViewTorrentMetaDataDownloadDialogMagnetBox"
             MinWidth="480"
             MinHeight="300"
             AcceptsReturn="False"
@@ -28,6 +29,7 @@
         <Button
             x:Name="PasteTextFromTheClipboard"
             x:Uid="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
+            AutomationProperties.AutomationId="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
             AutomationProperties.Name="PasteTextFromTheClipboard"
             Click="PasteTextFromTheClipboard_Click">
             <Button.Content>

@@ -1,13 +1,13 @@
 ﻿#pragma once
 
 import winrt.XamlToolkit.Labs.WinUI;
-import std;
+import OpenNet.ViewModels.ObservableMixin;
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	struct TaskFilesPage : TaskFilesPageT<TaskFilesPage>
+	struct TaskFilesPage : TaskFilesPageT<TaskFilesPage>, ::OpenNet::ViewModels::ObservableMixin<TaskFilesPage>
 	{
 		TaskFilesPage();
 		~TaskFilesPage();

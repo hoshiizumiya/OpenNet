@@ -12,6 +12,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 import Core.Utils.Misc;
 import OpenNet.Core.P2PManager;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Core.Utils.Message;
 import OpenNet.ViewModels.ObservableMixin;
 import winrt.Windows.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -33,8 +34,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		this->Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		RequestedTheme(::OpenNet::Helpers::ThemeHelper::RootTheme());
 
-		CloseButtonText(ResourceLoader().GetString(L"Cancel"));
-		PrimaryButtonText(ResourceLoader().GetString(L"OK"));
+		CloseButtonText(ResourceGetString(L"CommonCancel"));
+		PrimaryButtonText(ResourceGetString(L"CommonOk"));
 
 		// Keep the tray "Capture Clipboard URL" flow frictionless: when the
 		// add-from-URL dialog opens, prefill a valid torrent link if one is
@@ -50,12 +51,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			}
 			try
 			{
-				auto clipboard =
-					winrt::Windows::ApplicationModel::DataTransfer::Clipboard::
-						GetContent();
-				if (clipboard.Contains(
-					winrt::Windows::ApplicationModel::DataTransfer::
-						StandardDataFormats::Text()))
+				auto clipboard = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
+				if (clipboard.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
 				{
 					auto text = co_await clipboard.GetTextAsync();
 					if (Core::Utils::Misc::isTorrentLink(text))
@@ -107,7 +104,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			}
 			else
 			{
-				MagnetBox().Text(L"-Incorrect link format! Please check your clipboard first (Win + V)-");
+				MagnetBox().Text(ResourceGetString(L"ViewTorrentMetaDataDownloadDialogInvalidLinkFormat"));
 				IsLinkValid(true);
 			}
 		}

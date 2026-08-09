@@ -43,6 +43,7 @@
             </Grid.RowDefinitions>
 
             <TextBlock
+                x:Uid="ViewTrackerLogWindowText1"
                 VerticalAlignment="Center"
                 FontWeight="SemiBold"
                 Text="Task name" />
@@ -53,13 +54,16 @@
                 TextTrimming="CharacterEllipsis" />
             <ToggleSwitch
                 x:Name="AlwaysOnTopToggle"
+                x:Uid="ViewTrackerLogWindowText2"
                 Grid.RowSpan="2"
                 Grid.Column="2"
                 VerticalAlignment="Center"
+                AutomationProperties.AutomationId="ViewTrackerLogWindowText2"
                 Header="Always on top"
                 Toggled="AlwaysOnTopToggle_Toggled" />
 
             <TextBlock
+                x:Uid="ViewTrackerLogWindowText3"
                 Grid.Row="1"
                 VerticalAlignment="Center"
                 FontWeight="SemiBold"
@@ -81,10 +85,16 @@
                 <Border Padding="12,6" Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}">
                     <labs:DataTable ColumnSpacing="16">
                         <labs:DataColumn DesiredWidth="190">
-                            <TextBlock FontWeight="SemiBold" Text="Time" />
+                            <TextBlock
+                                x:Uid="ViewTrackerLogWindowText4"
+                                FontWeight="SemiBold"
+                                Text="Time" />
                         </labs:DataColumn>
                         <labs:DataColumn DesiredWidth="*">
-                            <TextBlock FontWeight="SemiBold" Text="Content" />
+                            <TextBlock
+                                x:Uid="ViewTrackerLogWindowText5"
+                                FontWeight="SemiBold"
+                                Text="Content" />
                         </labs:DataColumn>
                     </labs:DataTable>
                 </Border>
@@ -134,6 +144,7 @@
 
         <TextBlock
             x:Name="EmptyLogText"
+            x:Uid="ViewTrackerLogWindowText6"
             Grid.Row="2"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"

@@ -22,16 +22,20 @@
             </Grid.ColumnDefinitions>
             <StackPanel Spacing="2">
                 <TextBlock
+                    x:Uid="ViewTaskPieceMapPageText1"
                     FontSize="18"
                     FontWeight="SemiBold"
                     Text="Piece map" />
                 <TextBlock
                     x:Name="PieceMapSubtitle"
+                    x:Uid="ViewTaskPieceMapPageText2"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="Select a BitTorrent task to inspect its pieces." />
             </StackPanel>
             <Button
+                x:Uid="ViewTaskPieceMapPageText3"
                 Grid.Column="1"
+                AutomationProperties.AutomationId="ViewTaskPieceMapPageText3"
                 Click="RefreshButton_Click"
                 Content="Refresh"
                 Style="{StaticResource SubtleButtonStyle}" />
@@ -45,7 +49,7 @@
             </Grid.ColumnDefinitions>
             <StackPanel Spacing="4">
                 <Grid>
-                    <TextBlock Text="Downloaded pieces" />
+                    <TextBlock x:Uid="ViewTaskPieceMapPageText4" Text="Downloaded pieces" />
                     <TextBlock
                         x:Name="DownloadedPiecesText"
                         HorizontalAlignment="Right"
@@ -60,7 +64,7 @@
             </StackPanel>
             <StackPanel Grid.Column="1" Spacing="4">
                 <Grid>
-                    <TextBlock Text="Available pieces" />
+                    <TextBlock x:Uid="ViewTaskPieceMapPageText5" Text="Available pieces" />
                     <TextBlock
                         x:Name="AvailablePiecesText"
                         HorizontalAlignment="Right"
@@ -79,10 +83,12 @@
                 VerticalAlignment="Bottom">
                 <TextBlock
                     x:Name="PieceSizeText"
+                    x:Uid="ViewTaskPieceMapPageText6"
                     HorizontalAlignment="Right"
                     Text="Piece size: —" />
                 <TextBlock
                     x:Name="WebSeedCountText"
+                    x:Uid="ViewTaskPieceMapPageText7"
                     HorizontalAlignment="Right"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="Web seeds: 0" />
@@ -121,7 +127,7 @@
                     BorderBrush="{ThemeResource ControlStrokeColorDefaultBrush}"
                     BorderThickness="1"
                     CornerRadius="2" />
-                <TextBlock Text="Empty" />
+                <TextBlock x:Uid="ViewTaskPieceMapPageText8" Text="Empty" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Border
@@ -129,7 +135,7 @@
                     Height="14"
                     Background="#D72F9A"
                     CornerRadius="2" />
-                <TextBlock Text="Downloading" />
+                <TextBlock x:Uid="ViewTaskPieceMapPageText9" Text="Downloading" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Border
@@ -137,7 +143,7 @@
                     Height="14"
                     Background="#1683D8"
                     CornerRadius="2" />
-                <TextBlock Text="Finished" />
+                <TextBlock x:Uid="ViewTaskPieceMapPageText10" Text="Finished" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Border
@@ -146,12 +152,13 @@
                     Background="#696969"
                     CornerRadius="2">
                     <TextBlock
+                        x:Uid="ViewTaskPieceMapPageText11"
                         HorizontalAlignment="Center"
                         VerticalAlignment="Center"
                         FontSize="11"
                         Text="×" />
                 </Border>
-                <TextBlock Text="Disabled" />
+                <TextBlock x:Uid="ViewTaskPieceMapPageText12" Text="Disabled" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Border
@@ -159,7 +166,7 @@
                     Height="14"
                     Background="#F2C811"
                     CornerRadius="2" />
-                <TextBlock Text="Unchecked" />
+                <TextBlock x:Uid="ViewTaskPieceMapPageText13" Text="Unchecked" />
             </StackPanel>
         </StackPanel>
     </Grid>
