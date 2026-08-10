@@ -85,7 +85,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// The type selectors only describe options exposed by the native backdrop.
 		// Custom backdrops are configured on the Colors Style page instead.
 		MicaTypeCard().IsEnabled(backgroundType == 1);
-		AcrylicTypeCard().IsEnabled(backgroundType == 4);
+		AcrylicTypeCard().IsEnabled(backgroundType == 3);
 
 		// BackdropFallbackSwitch enabled only for native Mica (index 1)
 		BackdropFallbackSwitch().IsEnabled(backgroundType == 1);
