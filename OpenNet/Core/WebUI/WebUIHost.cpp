@@ -56,6 +56,7 @@ import OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 import OpenNet.Core.torrentCore.TorrentMetadataInfo;
 import OpenNet.Core.torrentCore.TorrentStateManager;
+import winrt.Microsoft.Windows.Globalization;
 
 namespace OpenNet::Core::WebUI
 {
@@ -116,6 +117,49 @@ namespace OpenNet::Core::WebUI
 				return std::nullopt;
 			}
 			return result;
+		}
+
+		int ListenPortFromInterfaces(std::string_view interfaces)
+		{
+			auto const separator = interfaces.find(',');
+			auto const first = interfaces.substr(0, separator);
+			auto const colon = first.rfind(':');
+			if (colon == std::string_view::npos) return 0;
+			int port{};
+			auto const value = first.substr(colon + 1);
+			auto const [position, error] = std::from_chars(
+				value.data(), value.data() + value.size(), port);
+			return error == std::errc{} && position == value.data() + value.size()
+				&& port >= 0 && port <= 65535 ? port : 0;
+		}
+
+		std::string InterfacesWithPort(std::string_view interfaces, int port)
+		{
+			if (interfaces.empty())
+				return "0.0.0.0:" + std::to_string(port)
+				+ ",[::]:" + std::to_string(port);
+			std::string result;
+			while (!interfaces.empty())
+			{
+				auto const comma = interfaces.find(',');
+				auto endpoint = interfaces.substr(0, comma);
+				while (!endpoint.empty() && std::isspace(
+					static_cast<unsigned char>(endpoint.front()))) endpoint.remove_prefix(1);
+				while (!endpoint.empty() && std::isspace(
+					static_cast<unsigned char>(endpoint.back()))) endpoint.remove_suffix(1);
+				auto const colon = endpoint.rfind(':');
+				if (colon != std::string::npos)
+				{
+					if (!result.empty()) result.push_back(',');
+					result += endpoint.substr(0, colon + 1);
+					result += std::to_string(port);
+				}
+				if (comma == std::string_view::npos) break;
+				interfaces.remove_prefix(comma + 1);
+			}
+			return result.empty()
+				? "0.0.0.0:" + std::to_string(port) + ",[::]:" + std::to_string(port)
+				: result;
 		}
 
 		bool ParseBool(const std::string_view value)
@@ -577,36 +621,191 @@ namespace OpenNet::Core::WebUI
 		}
 
 		std::filesystem::path ResolveAssetRoot(
-			const std::filesystem::path& requested)
+			const std::filesystem::path& requested,
+			std::string_view frontend)
 		{
 			std::vector<std::filesystem::path> candidates;
 			if (!requested.empty())
 				candidates.push_back(requested);
 			const auto executable = ExecutableDirectory();
-			if (!executable.empty())
+			const bool vueTorrent = frontend == "vuetorrent";
+			if (!executable.empty() && vueTorrent)
+			{
+				candidates.push_back(executable / L"WebUI" / L"VueTorrent");
+				candidates.push_back(executable / L"ThirdParty" /
+									 L"VueTorrentWebUI" / L"upstream" / L"public");
+			}
+			else if (!executable.empty())
 			{
 				candidates.push_back(executable / L"WebUI");
 				candidates.push_back(
 					executable / L"ThirdParty" / L"qBittorrentWebUI" / L"upstream");
 			}
 			const auto current = std::filesystem::current_path();
-			candidates.push_back(
-				current / L"OpenNet" / L"ThirdParty" / L"qBittorrentWebUI" / L"upstream");
-			candidates.push_back(
-				current / L"ThirdParty" / L"qBittorrentWebUI" / L"upstream");
+			if (vueTorrent)
+			{
+				candidates.push_back(current / L"OpenNet" / L"ThirdParty" /
+									 L"VueTorrentWebUI" / L"upstream" / L"public");
+				candidates.push_back(current / L"ThirdParty" /
+									 L"VueTorrentWebUI" / L"upstream" / L"public");
+			}
+			else
+			{
+				candidates.push_back(
+					current / L"OpenNet" / L"ThirdParty" / L"qBittorrentWebUI" / L"upstream");
+				candidates.push_back(
+					current / L"ThirdParty" / L"qBittorrentWebUI" / L"upstream");
+			}
 
 			for (const auto& candidate : candidates)
 			{
 				std::error_code error;
-				if (std::filesystem::is_regular_file(
-					candidate / L"private" / L"index.html", error)
-					&& std::filesystem::is_regular_file(
-						candidate / L"public" / L"index.html", error))
+				const bool valid = vueTorrent
+					? std::filesystem::is_regular_file(
+						candidate / L"index.html", error)
+					: (std::filesystem::is_regular_file(
+						candidate / L"private" / L"index.html", error)
+						&& std::filesystem::is_regular_file(
+							candidate / L"public" / L"index.html", error));
+				if (valid)
 				{
 					return std::filesystem::weakly_canonical(candidate);
 				}
 			}
 			return {};
+		}
+
+		std::filesystem::path ResolveOverrideRoot(
+			const std::filesystem::path& assetRoot)
+		{
+			auto root = assetRoot.parent_path() / L"overrides" / L"private";
+			std::error_code error;
+			if (!std::filesystem::is_directory(root, error))
+				root = assetRoot / L"opennet-overrides" / L"private";
+			return root;
+		}
+
+		std::filesystem::path ResolveVueOverrideRoot(
+			const std::filesystem::path& assetRoot)
+		{
+			auto root = assetRoot / L"opennet-overrides";
+			std::error_code error;
+			if (!std::filesystem::is_directory(root, error))
+				root = assetRoot.parent_path().parent_path() / L"overrides";
+			return root;
+		}
+
+		std::string ReadTextFile(const std::filesystem::path& path)
+		{
+			std::ifstream stream(path, std::ios::binary);
+			if (!stream) return {};
+			return {
+				std::istreambuf_iterator<char>{ stream },
+				std::istreambuf_iterator<char>{}
+			};
+		}
+
+		std::string CurrentApplicationLocale()
+		{
+			try
+			{
+				auto languages = winrt::Microsoft::Windows::Globalization::
+					ApplicationLanguages::Languages();
+				if (languages.Size() > 0)
+					return winrt::to_string(languages.GetAt(0));
+			}
+			catch (...)
+			{
+			}
+			return "en";
+		}
+
+		std::string NormalizeWebUiLocale(
+			std::string locale, const std::filesystem::path& assetRoot)
+		{
+			const auto exists = [&assetRoot](std::string const& candidate)
+			{
+				std::error_code error;
+				return std::filesystem::is_regular_file(
+					assetRoot / L"translations" /
+					PathFromUtf8("webui_" + candidate + ".ts"), error);
+			};
+
+			std::replace(locale.begin(), locale.end(), '-', '_');
+			auto lower = ToLower(locale);
+			std::vector<std::string> candidates;
+			if (lower.starts_with("zh_hans") || lower == "zh_cn"
+				|| lower == "zh_sg")
+				candidates.emplace_back("zh_CN");
+			else if (lower.starts_with("zh_hant") || lower == "zh_tw"
+					 || lower == "zh_hk" || lower == "zh_mo")
+				candidates.emplace_back("zh_TW");
+			candidates.push_back(locale);
+			if (auto separator = locale.find('_'); separator != std::string::npos)
+				candidates.push_back(locale.substr(0, separator));
+			candidates.emplace_back("en");
+			for (auto const& candidate : candidates)
+			{
+				if (!candidate.empty() && exists(candidate))
+					return candidate;
+			}
+			return "en";
+		}
+
+		std::string NormalizeVueTorrentLocale(std::string locale)
+		{
+			std::replace(locale.begin(), locale.end(), '_', '-');
+			const auto lower = ToLower(locale);
+			if (lower.starts_with("zh-hans") || lower == "zh-cn"
+				|| lower == "zh-sg" || lower == "zh") return "zh-Hans";
+			if (lower.starts_with("zh-hant") || lower == "zh-tw"
+				|| lower == "zh-hk" || lower == "zh-mo") return "zh-Hant";
+			if (lower.starts_with("pt-br")) return "pt-BR";
+			if (lower.starts_with("ro-ro")) return "ro-RO";
+			static constexpr std::array<std::string_view, 14> Supported{
+				"cs", "de", "en", "es", "fr", "hu", "it", "ja", "ko",
+				"nl", "pl", "ru", "tr", "uk" };
+			const auto separator = lower.find('-');
+			const auto language = lower.substr(0, separator);
+			return std::ranges::find(Supported, language) != Supported.end()
+				? language : "en";
+		}
+
+		std::string VueTorrentBootstrap(std::string_view locale)
+		{
+			// Pinia persistence plugin stores the VueTorrent settings under this
+			// stable key. Seed only the language field and preserve every other
+			// VueTorrent-owned preference.
+			return "(() => { try { const k='vuetorrent-webuiSettings';"
+				"const v=JSON.parse(localStorage.getItem(k)||'{}');"
+				"v.language='" + std::string(locale) + "';"
+				"localStorage.setItem(k,JSON.stringify(v)); } catch (_) {} })();";
+		}
+
+		void InjectOpenNetWebUiLayer(
+			std::string& html, std::string const& css,
+			std::string const& script)
+		{
+			if (!css.empty()
+				&& html.find("data-opennet-theme") == std::string::npos)
+			{
+				const std::string style =
+					"<style data-opennet-theme=\"inline\">" + css + "</style>";
+				if (const auto head = html.find("</head>"); head != std::string::npos)
+					html.insert(head, style);
+				else
+					html.insert(0, style);
+			}
+			if (!script.empty()
+				&& html.find("data-opennet-adapter") == std::string::npos)
+			{
+				const std::string element =
+					"<script data-opennet-adapter=\"inline\">" + script + "</script>";
+				if (const auto body = html.find("</body>"); body != std::string::npos)
+					html.insert(body, element);
+				else
+					html.append(element);
+			}
 		}
 
 		std::string ReplaceAll(
@@ -621,7 +820,101 @@ namespace OpenNet::Core::WebUI
 			return value;
 		}
 
-		std::string StripTranslationMarkers(std::string value)
+		using TranslationCatalog = std::unordered_map<std::string, std::string>;
+
+		std::optional<std::string_view> XmlElementBody(
+			std::string_view block, std::string_view name,
+			std::string_view* openingTag = nullptr)
+		{
+			const std::string open = "<" + std::string(name);
+			const std::string close = "</" + std::string(name) + ">";
+			const auto begin = block.find(open);
+			if (begin == std::string_view::npos) return std::nullopt;
+			const auto openEnd = block.find('>', begin + open.size());
+			if (openEnd == std::string_view::npos) return std::nullopt;
+			const auto end = block.find(close, openEnd + 1);
+			if (end == std::string_view::npos) return std::nullopt;
+			if (openingTag)
+				*openingTag = block.substr(begin, openEnd + 1 - begin);
+			return block.substr(openEnd + 1, end - openEnd - 1);
+		}
+
+		std::string UnwrapXmlText(std::string_view value)
+		{
+			if (value.starts_with("<![CDATA[") && value.ends_with("]]>")
+				&& value.size() >= 12)
+			{
+				value.remove_prefix(9);
+				value.remove_suffix(3);
+			}
+			if (auto plural = XmlElementBody(value, "numerusform"))
+				value = *plural;
+			return std::string(value);
+		}
+
+		TranslationCatalog LoadTranslationCatalog(
+			const std::filesystem::path& assetRoot, std::string_view locale)
+		{
+			TranslationCatalog result;
+			if (locale == "en") return result;
+			const auto xml = ReadTextFile(assetRoot / L"translations" /
+										  PathFromUtf8("webui_" + std::string(locale) + ".ts"));
+			if (xml.empty()) return result;
+
+			std::size_t contextCursor = 0;
+			while (true)
+			{
+				const auto contextBegin = xml.find("<context>", contextCursor);
+				if (contextBegin == std::string::npos) break;
+				const auto contextEnd = xml.find("</context>", contextBegin);
+				if (contextEnd == std::string::npos) break;
+				const std::string_view contextBlock{
+					xml.data() + contextBegin,
+					contextEnd + std::string_view("</context>").size() - contextBegin };
+				auto contextName = XmlElementBody(contextBlock, "name");
+				if (!contextName)
+				{
+					contextCursor = contextEnd + 10;
+					continue;
+				}
+
+				std::size_t messageCursor = 0;
+				while (true)
+				{
+					const auto messageBegin = contextBlock.find("<message", messageCursor);
+					if (messageBegin == std::string_view::npos) break;
+					const auto messageEnd = contextBlock.find("</message>", messageBegin);
+					if (messageEnd == std::string_view::npos) break;
+					const auto message = contextBlock.substr(
+						messageBegin, messageEnd + 10 - messageBegin);
+					auto source = XmlElementBody(message, "source");
+					std::string_view translationTag;
+					auto translation = XmlElementBody(
+						message, "translation", &translationTag);
+					if (source && translation
+						&& translationTag.find("type=\"unfinished\"") == std::string_view::npos
+						&& translationTag.find("type=\"vanished\"") == std::string_view::npos
+						&& translationTag.find("type=\"obsolete\"") == std::string_view::npos)
+					{
+						auto translated = UnwrapXmlText(*translation);
+						if (!translated.empty())
+						{
+							std::string key{ *contextName };
+							key.push_back('\0');
+							key.append(*source);
+							result.insert_or_assign(
+								std::move(key), std::move(translated));
+						}
+					}
+					messageCursor = messageEnd + 10;
+				}
+				contextCursor = contextEnd + 10;
+			}
+			return result;
+		}
+
+		std::string TranslateMarkers(
+			std::string value, TranslationCatalog const& catalog)
 		{
 			constexpr std::string_view Prefix = "QBT_TR(";
 			constexpr std::string_view Context = ")QBT_TR[CONTEXT=";
@@ -635,8 +928,16 @@ namespace OpenNet::Core::WebUI
 				const std::size_t markerEnd = value.find(']', contextStart + Context.size());
 				if (markerEnd == std::string::npos)
 					break;
-				const std::string translated = value.substr(
-					textStart, contextStart - textStart);
+				const auto source = value.substr(textStart, contextStart - textStart);
+				const auto contextValueStart = contextStart + Context.size();
+				const auto context = value.substr(
+					contextValueStart, markerEnd - contextValueStart);
+				std::string key = context;
+				key.push_back('\0');
+				key += source;
+				auto const found = catalog.find(key);
+				const std::string& translated = found == catalog.end()
+					? source : found->second;
 				value.replace(cursor, markerEnd + 1 - cursor, translated);
 				cursor += translated.size();
 			}
@@ -1030,14 +1331,6 @@ namespace OpenNet::Core::WebUI
 
 			options.workerThreads = std::clamp<std::size_t>(
 				options.workerThreads, 1, 8);
-			const auto assetRoot = ResolveAssetRoot(options.assetRoot);
-			if (assetRoot.empty())
-			{
-				OutputDebugStringA(
-					"WebUIHost: qBittorrent WebUI assets were not found.\n");
-				return false;
-			}
-
 			try
 			{
 				::OpenNet::Core::AppSettingsDatabase::Instance().Initialize();
@@ -1049,8 +1342,32 @@ namespace OpenNet::Core::WebUI
 					"webui_host", "username").value_or(options.username);
 				options.password = database.GetString(
 					"webui_host", "password").value_or(options.password);
-				options.locale = database.GetString(
-					"webui_host", "locale").value_or(options.locale);
+				options.frontend = ToLower(database.GetString(
+					"webui_host", "frontend").value_or(options.frontend));
+				if (options.frontend != "vuetorrent")
+					options.frontend = "qbittorrent";
+				const auto assetRoot = ResolveAssetRoot(
+					options.assetRoot, options.frontend);
+				if (assetRoot.empty())
+				{
+					OutputDebugStringA((
+						"WebUIHost: assets were not found for frontend "
+						+ options.frontend + ".\n").c_str());
+					return false;
+				}
+				const auto storedLocale = database.GetString(
+					"webui_host", "locale");
+				// Preserve an existing explicit locale during migration. New installs,
+				// which have no locale override, follow the native application.
+				const bool followApplicationLanguage = database.GetBool(
+					"webui_host", "follow_application_language")
+					.value_or(!storedLocale.has_value());
+				options.locale = followApplicationLanguage
+					? CurrentApplicationLocale()
+					: storedLocale.value_or(options.locale);
+				options.locale = options.frontend == "vuetorrent"
+					? NormalizeVueTorrentLocale(options.locale)
+					: NormalizeWebUiLocale(options.locale, assetRoot);
 				if (const auto port =
 					database.GetInt("webui_host", "port");
 					port && *port > 0
@@ -1065,8 +1382,31 @@ namespace OpenNet::Core::WebUI
 					static_cast<int>(options.workerThreads));
 				m_options = std::move(options);
 				m_assetRoot = assetRoot;
+				m_vueTorrentFrontend = m_options.frontend == "vuetorrent";
 				m_cacheId = RandomHex(8);
-				m_languageOptions = LanguageOptions(m_assetRoot);
+				if (m_vueTorrentFrontend)
+				{
+					m_languageOptions.clear();
+					m_translationCatalog.clear();
+					m_webUiThemeCss = ReadTextFile(
+						ResolveVueOverrideRoot(m_assetRoot) /
+						L"winuionweb-vuetify.css");
+					m_webUiAdapterScript.clear();
+					m_vueTorrentBootstrap = VueTorrentBootstrap(m_options.locale);
+				}
+				else
+				{
+					m_languageOptions = LanguageOptions(m_assetRoot);
+					m_translationCatalog = LoadTranslationCatalog(
+						m_assetRoot, m_options.locale);
+					auto const overrideRoot = ResolveOverrideRoot(m_assetRoot);
+					// Keep qBittorrent's upstream appearance intact. The override layer
+					// only provides behavioral/API compatibility for its Options dialog.
+					m_webUiThemeCss.clear();
+					m_webUiAdapterScript = ReadTextFile(
+						overrideRoot / L"opennet" / L"scripts" / L"adapter.js");
+					m_vueTorrentBootstrap.clear();
+				}
 				LoadClientData();
 				LoadTorrentMetadata();
 				LoadRssRules();
@@ -1536,6 +1876,126 @@ namespace OpenNet::Core::WebUI
 					m_launchTime.time_since_epoch()).count();
 				return JsonResponse(request, Json{ {"launch_time", launch} });
 			}
+			if (path == "/api/v2/opennet/capabilities")
+			{
+				Json capabilities{
+					{"product", "OpenNet"},
+					{"schema", 2},
+					{"theme", "upstream-qbittorrent"},
+					{"supportedPreferenceKeys", Json::array({
+						"locale", "save_path", "preallocate_all",
+						"add_stopped_enabled", "listen_port", "upnp",
+						"upnp_lease_duration",
+						"bittorrent_protocol", "proxy_type", "proxy_ip",
+						"proxy_port", "proxy_auth_enabled", "proxy_username",
+						"proxy_password", "proxy_bittorrent",
+						"proxy_peer_connections", "encryption",
+						"max_connec", "dl_limit", "up_limit",
+						"alt_dl_limit", "alt_up_limit", "dht", "lsd",
+						"anonymous_mode", "queueing_enabled",
+						"max_active_downloads",
+						"max_active_uploads", "max_active_torrents",
+						"max_ratio_enabled", "max_ratio",
+						"max_seeding_time_enabled", "max_seeding_time",
+						"rss_max_articles_per_feed", "async_io_threads",
+						"hashing_threads", "file_pool_size", "checking_memory_use",
+						"disk_queue_size", "enable_piece_extent_affinity",
+						"enable_upload_suggestions", "send_buffer_watermark",
+						"send_buffer_low_watermark", "send_buffer_watermark_factor",
+						"connection_speed", "seeding_outgoing_connections",
+						"socket_send_buffer_size", "socket_receive_buffer_size",
+						"socket_backlog_size", "utp_tcp_mixed_mode",
+						"hostname_cache_ttl", "validate_https_tracker_certificate",
+						"ssrf_mitigation", "block_peers_on_privileged_ports",
+						"upload_slots_behavior", "upload_choking_algorithm",
+						"announce_ip", "announce_port",
+						"max_concurrent_http_announces", "stop_tracker_timeout",
+						"peer_turnover", "peer_turnover_cutoff",
+						"peer_turnover_interval", "request_queue_size",
+						"dht_bootstrap_nodes",
+						"enable_multi_connections_from_same_ip",
+						"announce_to_all_trackers", "announce_to_all_tiers",
+						"confirm_torrent_deletion", "status_bar_external_ip",
+						"performance_warning",
+						"web_ui_address", "web_ui_port",
+						"web_ui_username", "web_ui_password"
+					})},
+					{"supportedControlIds", Json::array({
+						"locale_select", "confirmTorrentDeletion",
+						"statusBarExternalIP", "performanceWarning",
+						"savepath_text", "preallocateall_checkbox",
+						"dontstartdownloads_checkbox", "enable_protocol_combobox",
+						"portValue", "upnpCheckbox",
+						"UPnPLeaseDuration",
+						"maxConnectionsCheckbox", "maxConnectionsValue",
+						"peer_proxy_type_select", "peer_proxy_host_text",
+						"peer_proxy_port_value", "peer_proxy_auth_checkbox",
+						"peer_proxy_username_text", "peer_proxy_password_text",
+						"proxy_bittorrent_checkbox", "use_peer_proxy_checkbox",
+						"upLimitValue", "dlLimitValue", "altUpLimitValue",
+						"altDlLimitValue", "dht_checkbox", "lsd_checkbox",
+						"encryption_select", "anonymous_mode_checkbox",
+						"queueingCheckbox",
+						"maxActiveDlValue", "maxActiveUpValue", "maxActiveToValue",
+						"maxRatioCheckbox", "maxRatioValue",
+						"maxSeedingTimeCheckbox", "maxSeedingTimeValue",
+						"maximum_article_number", "asyncIOThreads",
+						"hashingThreads", "filePoolSize",
+						"outstandMemoryWhenCheckingTorrents", "diskQueueSize",
+						"pieceExtentAffinity", "sendUploadPieceSuggestions",
+						"sendBufferWatermark", "sendBufferLowWatermark",
+						"sendBufferWatermarkFactor", "connectionSpeed",
+						"seedingOutgoingConnections", "socketSendBufferSize",
+						"socketReceiveBufferSize", "socketBacklogSize",
+						"utpTCPMixedModeAlgorithm", "hostnameCacheTTL",
+						"validateHTTPSTrackerCertificate", "mitigateSSRF",
+						"blockPeersOnPrivilegedPorts", "uploadSlotsBehavior",
+						"uploadChokingAlgorithm", "announceIP", "announcePort",
+						"maxConcurrentHTTPAnnounces", "stopTrackerTimeout",
+						"peerTurnover", "peerTurnoverCutoff",
+						"peerTurnoverInterval", "requestQueueSize",
+						"dhtBootstrapNodes",
+						"allowMultipleConnectionsFromTheSameIPAddress",
+						"announceAllTrackers", "announceAllTiers",
+						"webuiAddressValue", "webuiPortValue",
+						"webui_username_text", "webui_password_text",
+						"WebUIAPIKeyText", "webUIAPIKeyCopyButton",
+						"webUIAPIKeyRotateButton", "webUIAPIKeyDeleteButton"
+					})},
+					{"clientSideControlIds", Json::array({
+						"dateFormatSelect", "colorSchemeSelect", "displayDensitySelect",
+						"displayFullURLTrackerColumn", "useVirtualList",
+						"addTorrentWindowEnabled", "hideZeroFiltersCheckbox",
+						"dblclickDownloadSelect", "dblclickCompleteSelect",
+						"dblclickFiltersSelect", "useAltRowColorsInput"
+					})},
+					{"restartRequiredPreferenceKeys", Json::array({
+						"locale", "web_ui_address", "web_ui_port"
+					})}
+				};
+				auto& capabilityDatabase =
+					::OpenNet::Core::AppSettingsDatabase::Instance();
+				if (capabilityDatabase.GetBool(
+					"webui_host", "follow_application_language")
+					.value_or(!capabilityDatabase.GetString(
+						"webui_host", "locale").has_value()))
+				{
+					const auto removeValue = [](Json& values, std::string_view value)
+					{
+						for (auto iterator = values.begin(); iterator != values.end();)
+						{
+							if (iterator->is_string()
+								&& iterator->get<std::string>() == value)
+								iterator = values.erase(iterator);
+							else
+								++iterator;
+						}
+					};
+					removeValue(capabilities["supportedPreferenceKeys"], "locale");
+					removeValue(capabilities["supportedControlIds"], "locale_select");
+				}
+				return JsonResponse(request, std::move(capabilities));
+			}
 			if (path == "/api/v2/app/defaultSavePath")
 				return TextResponse(
 					request, http::status::ok, DefaultSavePath());
@@ -1618,9 +2078,11 @@ namespace OpenNet::Core::WebUI
 			}
 			if (path == "/api/v2/torrents/add")
 				return AddTorrent(request, parameters, multipart);
-			if (path == "/api/v2/torrents/start")
+			if (path == "/api/v2/torrents/start"
+				|| path == "/api/v2/torrents/resume")
 				return TorrentAction(request, parameters, "start");
-			if (path == "/api/v2/torrents/stop")
+			if (path == "/api/v2/torrents/stop"
+				|| path == "/api/v2/torrents/pause")
 				return TorrentAction(request, parameters, "stop");
 			if (path == "/api/v2/torrents/delete")
 				return TorrentAction(request, parameters, "delete");
@@ -1831,17 +2293,33 @@ namespace OpenNet::Core::WebUI
 				cursor = separator + 1;
 			}
 
-			const auto selectedRoot =
-				m_assetRoot / (authenticated ? L"private" : L"public");
+			const bool overrideRequest = !m_vueTorrentFrontend && authenticated
+				&& normalizedPath.starts_with("/opennet/");
+			auto const overrideRoot = m_vueTorrentFrontend
+				? std::filesystem::path{}
+			: ResolveOverrideRoot(m_assetRoot);
+			auto selectedRoot = m_vueTorrentFrontend
+				? m_assetRoot
+				: (overrideRequest
+				   ? overrideRoot
+				   : m_assetRoot / (authenticated ? L"private" : L"public"));
 			auto file = selectedRoot / relative;
 			std::error_code error;
-			if (!std::filesystem::is_regular_file(file, error)
+			if (!m_vueTorrentFrontend && !overrideRequest
+				&& !std::filesystem::is_regular_file(file, error)
 				&& authenticated)
 			{
-				file = m_assetRoot / L"public" / relative;
+				selectedRoot = m_assetRoot / L"public";
+				file = selectedRoot / relative;
+			}
+			if (m_vueTorrentFrontend
+				&& !std::filesystem::is_regular_file(file, error)
+				&& std::filesystem::path(relative).extension().empty())
+			{
+				file = selectedRoot / L"index.html";
 			}
 			if (!std::filesystem::is_regular_file(file, error)
-				|| !IsPathInside(m_assetRoot, file))
+				|| !IsPathInside(selectedRoot, file))
 			{
 				return TextResponse(
 					request, http::status::not_found, "Not Found");
@@ -1869,7 +2347,25 @@ namespace OpenNet::Core::WebUI
 					std::move(body), "${CACHEID}", m_cacheId);
 				body = ReplaceAll(
 					std::move(body), "${LANGUAGE_OPTIONS}", m_languageOptions);
-				body = StripTranslationMarkers(std::move(body));
+				if (!m_vueTorrentFrontend)
+					body = TranslateMarkers(
+						std::move(body), m_translationCatalog);
+				// qBittorrent renders preferences, dialogs and property views in
+				// separate HTML documents/iframes. CSS and DOM adapters injected only
+				// into index.html cannot cross those document boundaries, so inject
+				// the OpenNet compatibility layer into every authenticated HTML asset.
+				if (ToLower(file.extension().string()) == ".html")
+				{
+					// Most qBittorrent views (including preferences.html) are HTML
+					// fragments without head/body tags. Inline the compatibility layer
+					// with a fragment fallback so both the desktop and modal content get
+					// the same design tokens and capability enforcement.
+					InjectOpenNetWebUiLayer(
+						body, m_webUiThemeCss,
+						m_vueTorrentFrontend
+						? m_vueTorrentBootstrap
+						: (authenticated ? m_webUiAdapterScript : std::string{}));
+				}
 			}
 
 			auto response = TextResponse(
@@ -1899,6 +2395,39 @@ namespace OpenNet::Core::WebUI
 		{
 			const auto settings =
 				::OpenNet::Core::TorrentSettingsManager::Instance().Get();
+			auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+			const int bittorrentProtocol =
+				(settings.enableIncomingTcp || settings.enableOutgoingTcp)
+				? ((settings.enableIncomingUtp || settings.enableOutgoingUtp) ? 0 : 1)
+				: 2;
+			const int encryption = settings.encryptionPolicy
+				== ::OpenNet::Core::EncryptionPolicy::Forced ? 1
+				: (settings.encryptionPolicy
+				   == ::OpenNet::Core::EncryptionPolicy::Disabled ? 2 : 0);
+			std::string proxyType = "None";
+			bool proxyAuth = false;
+			switch (settings.proxyType)
+			{
+				case ::OpenNet::Core::ProxyType::Socks4:
+					proxyType = "SOCKS4";
+					break;
+				case ::OpenNet::Core::ProxyType::Socks5Password:
+					proxyAuth = true;
+					[[fallthrough]];
+				case ::OpenNet::Core::ProxyType::Socks5:
+					proxyType = "SOCKS5";
+					break;
+				case ::OpenNet::Core::ProxyType::HttpPassword:
+					proxyAuth = true;
+					[[fallthrough]];
+				case ::OpenNet::Core::ProxyType::Http:
+					proxyType = "HTTP";
+					break;
+				default:
+					break;
+			}
+			const bool queueingEnabled = settings.activeDownloads >= 0
+				|| settings.activeSeeds >= 0 || settings.activeLimit >= 0;
 			std::string apiKey;
 			std::string username;
 			{
@@ -1925,31 +2454,210 @@ namespace OpenNet::Core::WebUI
 				{"web_ui_username", std::move(username)},
 				{"web_ui_api_key", std::move(apiKey)},
 				{"save_path", DefaultSavePath()},
+				{"preallocate_all", settings.preallocateStorage},
+				{"add_stopped_enabled", !settings.autoStartDownloads},
+				{"listen_port", ListenPortFromInterfaces(settings.listenInterfaces)},
+				{"bittorrent_protocol", bittorrentProtocol},
 				{"temp_path_enabled", false},
 				{"temp_path", ""},
 				{"autorun_enabled", false},
 				{"autorun_program", ""},
-				{"confirm_torrent_deletion", true},
+				{"confirm_torrent_deletion", database.GetBool(
+					"webui_preferences", "confirm_torrent_deletion").value_or(true)},
 				{"confirm_torrent_recheck", true},
 				{"delete_torrent_content_files", false},
 				{"dht", settings.enableDht},
-				{"pex", true},
+				{"dht_bootstrap_nodes", settings.dhtBootstrapNodes},
+				// OpenNet currently has no independent PEX preference. Keep the
+				// qBittorrent-only control disabled instead of reporting fake state.
+				{"pex", false},
 				{"lsd", settings.enableLsd},
-				{"upnp", settings.enableUpnp},
-				{"queueing_enabled", true},
+				{"upnp", settings.enableUpnp || settings.enableNatpmp},
+				{"upnp_lease_duration", settings.upnpLeaseDuration},
+				{"anonymous_mode", settings.anonymousMode},
+				{"encryption", encryption},
+				{"proxy_type", proxyType},
+				{"proxy_ip", settings.proxyHostname},
+				{"proxy_port", settings.proxyPort},
+				{"proxy_auth_enabled", proxyAuth},
+				{"proxy_username", settings.proxyUsername},
+				{"proxy_password", settings.proxyPassword},
+				{"proxy_bittorrent", settings.proxyType != ::OpenNet::Core::ProxyType::None},
+				{"proxy_peer_connections", settings.proxyPeerConnections},
+				{"max_connec", settings.connectionsLimit},
+				{"queueing_enabled", queueingEnabled},
 				{"max_active_downloads", settings.activeDownloads},
 				{"max_active_uploads", settings.activeSeeds},
 				{"max_active_torrents", settings.activeLimit},
+				{"max_ratio_enabled", settings.seedingRatioLimit > 0.0},
+				{"max_ratio", settings.seedingRatioLimit},
+				{"max_seeding_time_enabled", settings.seedingTimeLimit > 0},
+				{"max_seeding_time", settings.seedingTimeLimit},
+				{"max_ratio_act", 0},
 				{"dl_limit", settings.downloadRateLimit},
 				{"up_limit", settings.uploadRateLimit},
-				{"status_bar_external_ip", true},
+				{"alt_dl_limit", m_altDownloadLimit.load()},
+				{"alt_up_limit", m_altUploadLimit.load()},
+				{"rss_max_articles_per_feed", database.GetInt(
+					::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+					"max_items_per_feed", 100)},
+				{"async_io_threads", settings.aioThreads},
+				{"hashing_threads", settings.hashingThreads},
+				{"file_pool_size", settings.filePoolSize},
+				{"checking_memory_use", settings.checkingMemUsage},
+				{"disk_queue_size", settings.diskQueueSize},
+				{"enable_piece_extent_affinity", settings.pieceExtentAffinity},
+				{"enable_upload_suggestions", settings.uploadSuggestions},
+				{"send_buffer_watermark", settings.sendBufferWatermark},
+				{"send_buffer_low_watermark", settings.sendBufferLowWatermark},
+				{"send_buffer_watermark_factor", settings.sendBufferWatermarkFactor},
+				{"connection_speed", settings.connectionSpeed},
+				{"seeding_outgoing_connections", settings.seedingOutgoingConnections},
+				{"socket_send_buffer_size", settings.socketSendBufferSize},
+				{"socket_receive_buffer_size", settings.socketReceiveBufferSize},
+				{"socket_backlog_size", settings.socketBacklogSize},
+				{"utp_tcp_mixed_mode", settings.mixedModeAlgorithm},
+				{"hostname_cache_ttl", settings.hostnameCacheTtl},
+				{"validate_https_tracker_certificate", settings.validateHttpsTrackers},
+				{"ssrf_mitigation", settings.ssrfMitigation},
+				{"block_peers_on_privileged_ports", settings.blockPeersOnPrivilegedPorts},
+				{"upload_slots_behavior", settings.uploadSlotsBehavior},
+				{"upload_choking_algorithm", settings.uploadChokingAlgorithm},
+				{"announce_ip", settings.announceIp},
+				{"announce_port", settings.announcePort},
+				{"max_concurrent_http_announces", settings.maxConcurrentHttpAnnounces},
+				{"stop_tracker_timeout", settings.stopTrackerTimeout},
+				{"peer_turnover", settings.peerTurnover},
+				{"peer_turnover_cutoff", settings.peerTurnoverCutoff},
+				{"peer_turnover_interval", settings.peerTurnoverInterval},
+				{"request_queue_size", settings.requestQueueSize},
+				{"enable_multi_connections_from_same_ip",
+					settings.allowMultipleConnectionsPerIp},
+				{"announce_to_all_trackers", settings.announceToAllTrackers},
+				{"announce_to_all_tiers", settings.announceToAllTiers},
+				{"status_bar_external_ip", database.GetBool(
+					"webui_preferences", "status_bar_external_ip").value_or(true)},
+				{"performance_warning", database.GetBool(
+					"webui_preferences", "performance_warning").value_or(true)},
 				{"alternative_webui_enabled", false},
 				{"rss_processing_enabled", false},
 				{"mail_notification_enabled", false},
 				{"scheduler_enabled", false}
 			};
-			std::scoped_lock lock(m_preferenceMutex);
-			value.update(m_preferenceOverrides);
+
+			// preferences.html is an upstream client contract, not a sparse DTO. It
+			// unconditionally reads every field below while constructing the dialog;
+			// missing values can abort the script before the capability adapter gets a
+			// chance to disable unsupported controls. Keep neutral, correctly-typed
+			// values for the qBittorrent-only surface.
+			static const Json contractDefaults = Json::parse(R"json({
+				"add_to_top_of_queue": false,
+				"add_trackers": "", "add_trackers_enabled": false,
+				"add_trackers_from_url_enabled": false,
+				"add_trackers_url": "", "add_trackers_url_list": "",
+				"alternative_webui_path": "", "announce_ip": "", "announce_port": 0,
+				"autorun_on_torrent_added_enabled": false,
+				"autorun_on_torrent_added_program": "",
+				"auto_delete_mode": 0, "auto_tmm_enabled": false,
+				"banned_IPs": "", "bdecode_depth_limit": 100,
+				"bdecode_token_limit": 10000000,
+				"block_peers_on_privileged_ports": false,
+				"bypass_auth_subnet_whitelist": "",
+				"bypass_auth_subnet_whitelist_enabled": false,
+				"bypass_local_auth": false,
+				"category_changed_tmm_enabled": false,
+				"connection_speed": 30, "current_interface_address": "",
+				"current_interface_name": "", "current_network_interface": "",
+				"disk_cache": -1, "disk_cache_ttl": 60,
+				"disk_io_read_mode": 0, "disk_io_type": 0,
+				"disk_io_write_mode": 0, "disk_queue_size": 1048576,
+				"dht_bootstrap_nodes": "dht.libtorrent.org:25401",
+				"dont_count_slow_torrents": false,
+				"dyndns_domain": "", "dyndns_enabled": false,
+				"dyndns_password": "", "dyndns_service": 0, "dyndns_username": "",
+				"embedded_tracker_port": 9000,
+				"embedded_tracker_port_forwarding": false,
+				"enable_coalesce_read_write": false,
+				"enable_embedded_tracker": false,
+				"enable_multi_connections_from_same_peer_id": false,
+				"enable_piece_extent_affinity": false,
+				"enable_upload_suggestions": false,
+				"excluded_file_names": "", "excluded_file_names_enabled": false,
+				"file_log_age": 1, "file_log_age_type": 1,
+				"file_log_backup_enabled": true, "file_log_delete_old": true,
+				"file_log_enabled": false, "file_log_max_size": 66560,
+				"file_log_path": "", "file_pool_size": 40,
+				"hashing_threads": 1, "hostname_cache_ttl": 3600,
+				"i2p_address": "127.0.0.1", "i2p_enabled": false,
+				"i2p_inbound_length": 3, "i2p_inbound_quantity": 3,
+				"i2p_mixed_mode": false, "i2p_outbound_length": 3,
+				"i2p_outbound_quantity": 3, "i2p_port": 7656,
+				"idn_support_enabled": true, "ignore_ssl_errors": false,
+				"incomplete_files_ext": false, "ip_filter_enabled": false,
+				"ip_filter_path": "", "ip_filter_trackers": false,
+				"limit_lan_peers": false, "limit_tcp_overhead": false,
+				"limit_utp_rate": true,
+				"mail_notification_auth_enabled": false,
+				"mail_notification_email": "", "mail_notification_encryption_type": 0,
+				"mail_notification_password": "", "mail_notification_sender": "",
+				"mail_notification_smtp": "", "mail_notification_username": "",
+				"mark_of_the_web": true, "max_active_checking_torrents": 1,
+				"max_concurrent_http_announces": 50,
+				"max_connec_per_torrent": 100, "max_inactive_seeding_time": 0,
+				"max_inactive_seeding_time_enabled": false,
+				"max_uploads": -1, "max_uploads_per_torrent": 4,
+				"memory_working_set_limit": 0, "merge_trackers": true,
+				"outgoing_ports_max": 0, "outgoing_ports_min": 0,
+				"peer_tos": 4, "peer_turnover": 4,
+				"peer_turnover_cutoff": 90, "peer_turnover_interval": 300,
+				"proxy_hostname_lookup": true, "proxy_misc": false,
+				"proxy_rss": false, "python_executable_path": "",
+				"reannounce_when_address_changed": false,
+				"recheck_completed_torrents": false, "refresh_interval": 1500,
+				"remove_torrent_file_backup": false, "request_queue_size": 500,
+				"resolve_peer_countries": true, "resolve_peer_host_names": false,
+				"resume_data_storage_type": "Legacy",
+				"rss_auto_downloading_enabled": false,
+				"rss_download_repack_proper_episodes": true,
+				"rss_fetch_delay": 0, "rss_refresh_interval": 30,
+				"rss_smart_episode_filters": "",
+				"save_path_changed_tmm_enabled": false,
+				"save_resume_data_interval": 60, "save_statistics_interval": 15,
+				"scan_dirs": {}, "schedule_from_hour": 8,
+				"schedule_from_min": 0, "schedule_to_hour": 20,
+				"schedule_to_min": 0, "scheduler_days": 0,
+				"seeding_outgoing_connections": true,
+				"send_buffer_low_watermark": 10, "send_buffer_watermark": 500,
+				"send_buffer_watermark_factor": 50,
+				"slow_torrent_dl_rate_threshold": 2048,
+				"slow_torrent_inactive_timer": 60,
+				"slow_torrent_ul_rate_threshold": 2048,
+				"socket_backlog_size": 30, "socket_receive_buffer_size": 0,
+				"socket_send_buffer_size": 0, "ssrf_mitigation": true,
+				"stop_tracker_timeout": 5,
+				"torrent_changed_tmm_enabled": false,
+				"torrent_content_layout": "Original",
+				"torrent_content_remove_option": "Delete",
+				"torrent_file_size_limit": 104857600,
+				"torrent_files_backup_dir": "",
+				"torrent_files_backup_enabled": false,
+				"torrent_files_finished_backup_dir": "",
+				"torrent_files_finished_backup_dir_enabled": false,
+				"torrent_stop_condition": "None",
+				"upload_choking_algorithm": 1, "upload_slots_behavior": 0,
+				"use_category_paths_in_manual_mode": false,
+				"use_https": false, "use_unwanted_folder": false,
+				"utp_tcp_mixed_mode": 0,
+				"validate_https_tracker_certificate": true,
+				"web_ui_custom_http_headers": "",
+				"web_ui_domain_list": "*", "web_ui_https_cert_path": "",
+				"web_ui_https_key_path": "", "web_ui_reverse_proxies_list": "",
+				"web_ui_sessions_count_limit": 10
+			})json");
+			for (auto const& [key, defaultValue] : contractDefaults.items())
+			{
+				if (!value.contains(key)) value[key] = defaultValue;
+			}
 			return value;
 		}
 
@@ -1975,7 +2683,7 @@ namespace OpenNet::Core::WebUI
 				auto settings =
 					::OpenNet::Core::TorrentSettingsManager::Instance().Get();
 				const auto setInteger = [&parsed](
-					const char* key, int& destination)
+					const char* key, int& destination, const int minimum = 0)
 				{
 					if (!parsed.contains(key))
 						return;
@@ -1984,7 +2692,7 @@ namespace OpenNet::Core::WebUI
 						throw std::invalid_argument(
 							std::string(key) + " must be an integer");
 					const auto integer = value.get<std::int64_t>();
-					if (integer < 0
+					if (integer < minimum
 						|| integer > std::numeric_limits<int>::max())
 					{
 						throw std::out_of_range(
@@ -2003,17 +2711,210 @@ namespace OpenNet::Core::WebUI
 							std::string(key) + " must be a boolean");
 					destination = value.get<bool>();
 				};
+				const auto setString = [&parsed](
+					const char* key, std::string& destination)
+				{
+					if (!parsed.contains(key)) return;
+					const auto& value = parsed.at(key);
+					if (!value.is_string())
+						throw std::invalid_argument(std::string(key) + " must be a string");
+					destination = value.get<std::string>();
+				};
+				const auto number = [&parsed](const char* key) -> std::optional<double>
+				{
+					if (!parsed.contains(key)) return std::nullopt;
+					const auto& value = parsed.at(key);
+					if (!value.is_number())
+						throw std::invalid_argument(std::string(key) + " must be a number");
+					return value.get<double>();
+				};
 
 				setInteger("dl_limit", settings.downloadRateLimit);
 				setInteger("up_limit", settings.uploadRateLimit);
-				setInteger("max_active_downloads", settings.activeDownloads);
-				setInteger("max_active_uploads", settings.activeSeeds);
-				setInteger("max_active_torrents", settings.activeLimit);
-				setInteger("max_connec", settings.connectionsLimit);
+				setInteger("max_active_downloads", settings.activeDownloads, -1);
+				setInteger("max_active_uploads", settings.activeSeeds, -1);
+				setInteger("max_active_torrents", settings.activeLimit, -1);
+				setInteger("max_connec", settings.connectionsLimit, -1);
 				setBoolean("dht", settings.enableDht);
+				setString("dht_bootstrap_nodes", settings.dhtBootstrapNodes);
 				setBoolean("lsd", settings.enableLsd);
-				setBoolean("upnp", settings.enableUpnp);
+				setInteger("upnp_lease_duration", settings.upnpLeaseDuration);
+				if (parsed.contains("upnp"))
+				{
+					bool enabled = settings.enableUpnp || settings.enableNatpmp;
+					setBoolean("upnp", enabled);
+					settings.enableUpnp = enabled;
+					settings.enableNatpmp = enabled;
+				}
 				setBoolean("anonymous_mode", settings.anonymousMode);
+				setBoolean("preallocate_all", settings.preallocateStorage);
+				if (parsed.contains("add_stopped_enabled"))
+				{
+					bool addStopped = !settings.autoStartDownloads;
+					setBoolean("add_stopped_enabled", addStopped);
+					settings.autoStartDownloads = !addStopped;
+				}
+				setBoolean("enable_multi_connections_from_same_ip",
+						   settings.allowMultipleConnectionsPerIp);
+				setBoolean("announce_to_all_trackers", settings.announceToAllTrackers);
+				setBoolean("announce_to_all_tiers", settings.announceToAllTiers);
+				setInteger("async_io_threads", settings.aioThreads, 1);
+				setInteger("hashing_threads", settings.hashingThreads, 1);
+				setInteger("file_pool_size", settings.filePoolSize, 1);
+				setInteger("checking_memory_use", settings.checkingMemUsage, 1);
+				setInteger("disk_queue_size", settings.diskQueueSize);
+				setBoolean("enable_piece_extent_affinity", settings.pieceExtentAffinity);
+				setBoolean("enable_upload_suggestions", settings.uploadSuggestions);
+				setInteger("send_buffer_watermark", settings.sendBufferWatermark);
+				setInteger("send_buffer_low_watermark", settings.sendBufferLowWatermark);
+				setInteger("send_buffer_watermark_factor", settings.sendBufferWatermarkFactor);
+				setInteger("connection_speed", settings.connectionSpeed);
+				setBoolean("seeding_outgoing_connections", settings.seedingOutgoingConnections);
+				setInteger("socket_send_buffer_size", settings.socketSendBufferSize);
+				setInteger("socket_receive_buffer_size", settings.socketReceiveBufferSize);
+				setInteger("socket_backlog_size", settings.socketBacklogSize);
+				setInteger("utp_tcp_mixed_mode", settings.mixedModeAlgorithm);
+				setInteger("hostname_cache_ttl", settings.hostnameCacheTtl);
+				setBoolean("validate_https_tracker_certificate", settings.validateHttpsTrackers);
+				setBoolean("ssrf_mitigation", settings.ssrfMitigation);
+				setBoolean("block_peers_on_privileged_ports", settings.blockPeersOnPrivilegedPorts);
+				setInteger("upload_slots_behavior", settings.uploadSlotsBehavior);
+				setInteger("upload_choking_algorithm", settings.uploadChokingAlgorithm);
+				setString("announce_ip", settings.announceIp);
+				setInteger("announce_port", settings.announcePort);
+				setInteger("max_concurrent_http_announces", settings.maxConcurrentHttpAnnounces, 1);
+				setInteger("stop_tracker_timeout", settings.stopTrackerTimeout);
+				setInteger("peer_turnover", settings.peerTurnover);
+				setInteger("peer_turnover_cutoff", settings.peerTurnoverCutoff);
+				setInteger("peer_turnover_interval", settings.peerTurnoverInterval);
+				setInteger("request_queue_size", settings.requestQueueSize, 1);
+
+				if (parsed.contains("bittorrent_protocol"))
+				{
+					const auto& protocolValue = parsed.at("bittorrent_protocol");
+					if (!protocolValue.is_number_integer())
+						throw std::invalid_argument("bittorrent_protocol must be an integer");
+					const int protocol = protocolValue.get<int>();
+					if (protocol < 0 || protocol > 2)
+						throw std::out_of_range("bittorrent_protocol is out of range");
+					const bool tcp = protocol != 2;
+					const bool utp = protocol != 1;
+					settings.enableIncomingTcp = tcp;
+					settings.enableOutgoingTcp = tcp;
+					settings.enableIncomingUtp = utp;
+					settings.enableOutgoingUtp = utp;
+				}
+				if (parsed.contains("encryption"))
+				{
+					const auto& encryptionValue = parsed.at("encryption");
+					if (!encryptionValue.is_number_integer())
+						throw std::invalid_argument("encryption must be an integer");
+					switch (encryptionValue.get<int>())
+					{
+						case 0:
+							settings.encryptionPolicy = ::OpenNet::Core::EncryptionPolicy::Enabled;
+							break;
+						case 1:
+							settings.encryptionPolicy = ::OpenNet::Core::EncryptionPolicy::Forced;
+							break;
+						case 2:
+							settings.encryptionPolicy = ::OpenNet::Core::EncryptionPolicy::Disabled;
+							break;
+						default:
+							throw std::out_of_range("encryption is out of range");
+					}
+				}
+				if (parsed.contains("queueing_enabled"))
+				{
+					bool enabled = true;
+					setBoolean("queueing_enabled", enabled);
+					if (!enabled)
+					{
+						settings.activeDownloads = -1;
+						settings.activeSeeds = -1;
+						settings.activeLimit = -1;
+					}
+				}
+				if (parsed.contains("max_ratio_enabled"))
+				{
+					bool enabled = settings.seedingRatioLimit > 0.0;
+					setBoolean("max_ratio_enabled", enabled);
+					if (!enabled) settings.seedingRatioLimit = 0.0;
+					else if (auto value = number("max_ratio"))
+					{
+						if (*value <= 0.0) throw std::out_of_range("max_ratio is out of range");
+						settings.seedingRatioLimit = *value;
+					}
+				}
+				if (parsed.contains("max_seeding_time_enabled"))
+				{
+					bool enabled = settings.seedingTimeLimit > 0;
+					setBoolean("max_seeding_time_enabled", enabled);
+					if (!enabled) settings.seedingTimeLimit = 0;
+					else setInteger("max_seeding_time", settings.seedingTimeLimit, 1);
+				}
+
+				setString("proxy_ip", settings.proxyHostname);
+				setInteger("proxy_port", settings.proxyPort);
+				setString("proxy_username", settings.proxyUsername);
+				setString("proxy_password", settings.proxyPassword);
+				setBoolean("proxy_peer_connections", settings.proxyPeerConnections);
+				if (parsed.contains("proxy_type") || parsed.contains("proxy_auth_enabled")
+					|| parsed.contains("proxy_bittorrent"))
+				{
+					std::string type = "None";
+					if (parsed.contains("proxy_type"))
+					{
+						if (!parsed.at("proxy_type").is_string())
+							throw std::invalid_argument("proxy_type must be a string");
+						type = parsed.at("proxy_type").get<std::string>();
+					}
+					bool authenticated = false;
+					setBoolean("proxy_auth_enabled", authenticated);
+					bool enabled = type != "None";
+					setBoolean("proxy_bittorrent", enabled);
+					settings.proxyTrackerConnections = enabled;
+					if (!enabled || type == "None")
+						settings.proxyType = ::OpenNet::Core::ProxyType::None;
+					else if (type == "SOCKS4")
+						settings.proxyType = ::OpenNet::Core::ProxyType::Socks4;
+					else if (type == "SOCKS5")
+						settings.proxyType = authenticated
+						? ::OpenNet::Core::ProxyType::Socks5Password
+						: ::OpenNet::Core::ProxyType::Socks5;
+					else if (type == "HTTP")
+						settings.proxyType = authenticated
+						? ::OpenNet::Core::ProxyType::HttpPassword
+						: ::OpenNet::Core::ProxyType::Http;
+					else
+						throw std::invalid_argument("Unsupported proxy_type");
+				}
+				if (parsed.contains("listen_port"))
+				{
+					if (!parsed.at("listen_port").is_number_integer())
+						throw std::invalid_argument("listen_port must be an integer");
+					auto const port = parsed.at("listen_port").get<std::int64_t>();
+					if (port < 0 || port > 65535)
+						throw std::out_of_range("listen_port is out of range");
+					settings.listenInterfaces = InterfacesWithPort(
+						settings.listenInterfaces, static_cast<int>(port));
+				}
+				if (parsed.contains("alt_dl_limit"))
+				{
+					int value = m_altDownloadLimit.load();
+					setInteger("alt_dl_limit", value);
+					m_altDownloadLimit.store(value);
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(
+						"webui_transfer", "alt_download_limit", value);
+				}
+				if (parsed.contains("alt_up_limit"))
+				{
+					int value = m_altUploadLimit.load();
+					setInteger("alt_up_limit", value);
+					m_altUploadLimit.store(value);
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(
+						"webui_transfer", "alt_upload_limit", value);
+				}
 				if (parsed.contains("save_path"))
 				{
 					if (!parsed.at("save_path").is_string())
@@ -2054,10 +2955,20 @@ namespace OpenNet::Core::WebUI
 					if (!parsed.at("locale").is_string())
 						throw std::invalid_argument(
 							"locale must be a string");
-					::OpenNet::Core::AppSettingsDatabase::Instance()
-						.SetString(
-							"webui_host", "locale",
-							parsed.at("locale").get<std::string>());
+					auto& database =
+						::OpenNet::Core::AppSettingsDatabase::Instance();
+					if (!database.GetBool(
+						"webui_host", "follow_application_language")
+						.value_or(!database.GetString(
+							"webui_host", "locale").has_value()))
+					{
+						auto locale = parsed.at("locale").get<std::string>();
+						locale = m_vueTorrentFrontend
+							? NormalizeVueTorrentLocale(std::move(locale))
+							: NormalizeWebUiLocale(std::move(locale), m_assetRoot);
+						database.SetString("webui_host", "locale", locale);
+						m_options.locale = std::move(locale);
+					}
 				}
 				if (parsed.contains("web_ui_address"))
 				{
@@ -2070,6 +2981,7 @@ namespace OpenNet::Core::WebUI
 					::OpenNet::Core::AppSettingsDatabase::Instance()
 						.SetString(
 							"webui_host", "address", address);
+					m_options.address = address;
 				}
 				if (parsed.contains("web_ui_port"))
 				{
@@ -2087,7 +2999,30 @@ namespace OpenNet::Core::WebUI
 					}
 					::OpenNet::Core::AppSettingsDatabase::Instance()
 						.SetInt("webui_host", "port", value);
+					m_options.port = static_cast<std::uint16_t>(value);
 				}
+				if (parsed.contains("rss_max_articles_per_feed"))
+				{
+					int maximum = static_cast<int>(
+						::OpenNet::Core::AppSettingsDatabase::Instance().GetInt(
+							::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+							"max_items_per_feed", 100));
+					setInteger("rss_max_articles_per_feed", maximum, 10);
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(
+						::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+						"max_items_per_feed", maximum);
+				}
+				const auto persistWebUiBoolean = [&parsed](const char* key)
+				{
+					if (!parsed.contains(key)) return;
+					if (!parsed.at(key).is_boolean())
+						throw std::invalid_argument(std::string(key) + " must be a boolean");
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(
+						"webui_preferences", key, parsed.at(key).get<bool>());
+				};
+				persistWebUiBoolean("confirm_torrent_deletion");
+				persistWebUiBoolean("status_bar_external_ip");
+				persistWebUiBoolean("performance_warning");
 				PersistAndApplyTorrentSettings(settings);
 				if (username || password)
 				{
@@ -2108,17 +3043,6 @@ namespace OpenNet::Core::WebUI
 						::OpenNet::Core::AppSettingsDatabase::Instance()
 							.SetBool(
 								"webui_host", "initialized", true);
-					}
-				}
-				{
-					std::scoped_lock lock(m_preferenceMutex);
-					for (const auto& [key, value] : parsed.items())
-					{
-						if (key == "web_ui_password")
-							continue;
-						m_preferenceOverrides[key] = value;
-						::OpenNet::Core::AppSettingsDatabase::Instance().SetString(
-							"webui_preferences", key, value.dump());
 					}
 				}
 				return EmptyResponse(request);
@@ -2329,18 +3253,6 @@ namespace OpenNet::Core::WebUI
 				try
 				{
 					m_clientData[entry.key] = Json::parse(entry.value);
-				}
-				catch (...)
-				{
-				}
-			}
-			for (const auto& entry :
-				 ::OpenNet::Core::AppSettingsDatabase::Instance().GetCategory(
-					 "webui_preferences"))
-			{
-				try
-				{
-					m_preferenceOverrides[entry.key] = Json::parse(entry.value);
 				}
 				catch (...)
 				{
@@ -5226,6 +6138,11 @@ namespace OpenNet::Core::WebUI
 		std::filesystem::path m_assetRoot;
 		std::string m_cacheId;
 		std::string m_languageOptions;
+		TranslationCatalog m_translationCatalog;
+		std::string m_webUiThemeCss;
+		std::string m_webUiAdapterScript;
+		std::string m_vueTorrentBootstrap;
+		bool m_vueTorrentFrontend{};
 		std::unique_ptr<asio::io_context> m_context;
 		std::shared_ptr<Listener> m_listener;
 		std::vector<std::thread> m_threads;
@@ -5248,9 +6165,6 @@ namespace OpenNet::Core::WebUI
 
 		std::mutex m_clientDataMutex;
 		Json m_clientData = Json::object();
-
-		std::mutex m_preferenceMutex;
-		Json m_preferenceOverrides = Json::object();
 
 		std::mutex m_metadataMutex;
 		Json m_categories = Json::object();

@@ -45,7 +45,6 @@
                     Description="Open the isolated static/dynamic Win2D graph test studio."
                     Header="LiveGraph">
                     <Button
-                        x:Uid="ViewDevWindowButton"
                         Click="OpenLiveGraphTestWindow_Click"
                         Content="Open test studio"
                         Style="{StaticResource AccentButtonStyle}" />
@@ -55,10 +54,7 @@
                     x:Uid="ViewDevWindowSettingsCardOpenOperationProgressDialog"
                     Description="Show the operation progress dialog test."
                     Header="Operation dialog">
-                    <Button
-                        x:Uid="ViewDevWindowButton"
-                        Click="OpenOperationProgressDialog_Click"
-                        Content="Open dialog" />
+                    <Button Click="OpenOperationProgressDialog_Click" Content="Open dialog" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard

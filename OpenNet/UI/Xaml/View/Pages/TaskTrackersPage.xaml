@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -76,15 +77,15 @@
                         <MenuFlyout Opening="ColumnMenu_Opening">
                             <MenuFlyoutItem
                                 x:Name="AutoSizeSelectedColumnItem"
-                                x:Uid="ViewTaskTrackersPageText9"
-                                AutomationProperties.AutomationId="ViewTaskTrackersPageText9"
+                                x:Uid="ViewPageTasksColumnAutoSizeSelectedWidth"
+                                AutomationProperties.AutomationId="ViewPageTasksColumnAutoSizeSelectedWidth"
                                 Click="AutoSizeSelectedColumn_Click"
-                                Text="Auto Size Selected Column's Width to Fit" />
+                                Text="Auto Fit Selected Column" />
                             <MenuFlyoutItem
-                                x:Uid="ViewTaskTrackersPageText10"
-                                AutomationProperties.AutomationId="ViewTaskTrackersPageText10"
+                                x:Uid="ViewPageTasksColumnAutoSizeAllWidth"
+                                AutomationProperties.AutomationId="ViewPageTasksColumnAutoSizeAllWidth"
                                 Click="AutoSizeAllColumns_Click"
-                                Text="Auto size all columns" />
+                                Text="Auto Fit All Columns" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
                                 x:Uid="ViewTaskTrackersPageText11"
@@ -136,8 +137,8 @@
                                 Text="Status" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
-                                x:Uid="ViewTaskTrackersPageText19"
-                                AutomationProperties.AutomationId="ViewTaskTrackersPageText19"
+                                x:Uid="CommonTextResetColumns"
+                                AutomationProperties.AutomationId="CommonTextResetColumns"
                                 Click="ResetColumns_Click"
                                 Text="Reset Columns and Sorting" />
                         </MenuFlyout>
@@ -229,7 +230,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
                                 <TextBlock
-                                    x:Uid="ViewTaskTrackersPageText17"
+                                    x:Uid="CommonTextDownloaded"
                                     Text="Downloaded"
                                     TextTrimming="CharacterEllipsis" />
                             </Button>
@@ -256,10 +257,11 @@
                         HorizontalAlignment="Left"
                         Loaded="TrackerDataRow_Loaded"
                         RightTapped="TrackerRow_RightTapped">
-                        <TextBlock
-                            Text="{x:Bind URL, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind URL, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind URL, Mode=OneWay}" TextTrimming="CharacterEllipsis">
+                            <ToolTipService.ToolTip>
+                                <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind URL, Mode=OneWay}" />
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
                         <Button
                             Padding="8,2"
                             Click="TrackerLogButton_Click"
@@ -272,10 +274,11 @@
                         <TextBlock Text="{x:Bind Seeders, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <TextBlock Text="{x:Bind Leechers, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock
-                            Text="{x:Bind Status, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind Status, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind Status, Mode=OneWay}" TextTrimming="CharacterEllipsis">
+                            <ToolTipService.ToolTip>
+                                <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Status, Mode=OneWay}" />
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
                     </labs:DataRow>
                 </DataTemplate>
             </ListView.ItemTemplate>

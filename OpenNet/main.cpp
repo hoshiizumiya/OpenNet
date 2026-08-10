@@ -122,21 +122,9 @@ bool DecideRedirection()
 
 	if (keyInstance.IsCurrent())
 	{
-		// 这是主实例，注册 Activated 事件处理器
-		// 当其他实例重定向激活到这里时会触发此事件
-		keyInstance.Activated([](auto&& sender, AppActivationArguments const& args)
-		{
-			// 在 UI 线程中处理激活
-			auto dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
-			if (dispatcher)
-			{
-				dispatcher.TryEnqueue([args]()
-				{
-					winrt::OpenNet::implementation::App::HandleActivation(args);
-				});
-			}
-		}
-		);
+		// The XAML App registers Activated after the UI DispatcherQueue exists.
+		// Registering here runs too early and GetForCurrentThread() can return
+		// null when a secondary process redirects an activation.
 	}
 	else
 	{

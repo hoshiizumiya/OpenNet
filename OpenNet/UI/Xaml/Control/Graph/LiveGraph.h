@@ -386,6 +386,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		winrt::event_token m_actualThemeChangedToken{};
 		winrt::event_token m_sizeChangedToken{};
 		winrt::event_token m_unloadedToken{};
+		winrt::event_token m_loadedToken{};
 
 		winrt::event<winrt::Windows::Foundation::EventHandler<float>>
 			m_highlightLineUpdated;

@@ -45,6 +45,17 @@
                     Orientation="Horizontal"
                     Spacing="8">
                     <TextBlock
+                        x:Uid="ViewRSSPageOpenLinksText"
+                        VerticalAlignment="Center"
+                        Text="Open article links:" />
+                    <ComboBox
+                        x:Name="LinkOpenBehaviorBox"
+                        MinWidth="150"
+                        SelectionChanged="LinkOpenBehaviorBox_SelectionChanged">
+                        <ComboBoxItem Content="In-app tabs" />
+                        <ComboBoxItem Content="System browser" />
+                    </ComboBox>
+                    <TextBlock
                         x:Uid="RSSMaxItemsLabel"
                         VerticalAlignment="Center"
                         Text="Max items per feed:" />
@@ -89,19 +100,33 @@
                     Grid.Column="1"
                     Orientation="Horizontal"
                     Spacing="4">
+                    <ComboBox
+                        x:Name="ItemDoubleClickActionBox"
+                        MinWidth="160"
+                        Header="Double-click action"
+                        SelectionChanged="ItemDoubleClickActionBox_SelectionChanged">
+                        <ComboBoxItem Content="Add to tasks" />
+                        <ComboBoxItem Content="Show details" />
+                    </ComboBox>
                     <Button
                         x:Name="AddFeedButton"
-                        x:Uid="ViewRSSPageButton"
                         Padding="8"
-                        Click="AddFeedButton_Click"
-                        ToolTipService.ToolTip="Add new feed">
+                        Click="AddFeedButton_Click">
+                        <ToolTipService.ToolTip>
+                            <ToolTip
+                                x:Uid="ViewRSSPageAddNewFeed"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Add new feed" />
+                        </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xED0E;" />
                     </Button>
-                    <Button
-                        x:Uid="ViewRSSPageButton"
-                        Padding="8"
-                        Click="RefreshAllButton_Click"
-                        ToolTipService.ToolTip="Refresh all feeds">
+                    <Button Padding="8" Click="RefreshAllButton_Click">
+                        <ToolTipService.ToolTip>
+                            <ToolTip
+                                x:Uid="ViewRSSPageRefreshAllFeeds"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Refresh all feeds" />
+                        </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE72C;" />
                     </Button>
                 </StackPanel>
@@ -174,27 +199,39 @@
                     Orientation="Horizontal"
                     Spacing="4">
                     <Button
-                        x:Uid="ViewRSSPageButton"
                         Padding="8"
                         Click="RefreshFeedButton_Click"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}"
-                        ToolTipService.ToolTip="Refresh this feed">
+                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
+                        <ToolTipService.ToolTip>
+                            <ToolTip
+                                x:Uid="ViewRSSPageRefreshThisFeed"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Refresh this feed" />
+                        </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE72C;" />
                     </Button>
                     <Button
-                        x:Uid="ViewRSSPageButton"
                         Padding="8"
                         Click="FeedSettingsButton_Click"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}"
-                        ToolTipService.ToolTip="Feed settings">
+                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
+                        <ToolTipService.ToolTip>                        
+                            <ToolTip
+                                x:Uid="ViewRSSPageFeedSetting"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Feed settings" />
+                        </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE713;" />
                     </Button>
                     <Button
-                        x:Uid="ViewRSSPageButton"
                         Padding="8"
                         Click="RemoveFeedButton_Click"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}"
-                        ToolTipService.ToolTip="Remove feed">
+                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
+                        <ToolTipService.ToolTip>                        
+                            <ToolTip
+                                x:Uid="ViewRSSPageRemoveFeed"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Remove feed" />
+                        </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE74D;" />
                     </Button>
                 </StackPanel>
@@ -204,12 +241,41 @@
             <ListView
                 x:Name="ItemsListView"
                 Grid.Row="1"
+                HorizontalContentAlignment="Stretch"
                 ItemsSource="{x:Bind ViewModel.SelectedFeed.Items, Mode=OneWay}"
                 SelectedItem="{x:Bind ViewModel.SelectedItem, Mode=TwoWay}"
                 SelectionMode="Single">
+                <ListView.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Click="AddSelectedItem_Click" Text="Add to tasks">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE896;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutItem Click="ShowSelectedItemDetails_Click" Text="Show details">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE946;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem Click="OpenSelectedItemInBrowser_Click" Text="Open in system browser">
+                            <MenuFlyoutItem.Icon>
+                                <FontIcon Glyph="&#xE774;" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
+                    </MenuFlyout>
+                </ListView.ContextFlyout>
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="viewmodels:RSSItemViewModel">
-                        <Grid Padding="12" ColumnSpacing="12">
+                        <Grid
+                            Padding="12"
+                            Background="Transparent"
+                            ColumnSpacing="12"
+                            DoubleTapped="RSSItem_DoubleTapped"
+                            PointerEntered="RSSItem_PointerEntered"
+                            PointerExited="RSSItem_PointerExited"
+                            RightTapped="RSSItem_RightTapped"
+                            Tag="{x:Bind}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -238,12 +304,16 @@
                                 </StackPanel>
                             </StackPanel>
                             <Button
-                                x:Uid="ViewRSSPageButton"
                                 Grid.Column="1"
                                 Padding="8"
                                 Click="DownloadItemButton_Click"
-                                Tag="{x:Bind}"
-                                ToolTipService.ToolTip="Download">
+                                Tag="{x:Bind}">
+                                <ToolTipService.ToolTip>                                
+                                    <ToolTip
+                                        x:Uid="CommonContentDownload"
+                                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                                        Content="Download" />
+                                </ToolTipService.ToolTip>
                                 <FontIcon
                                     FontSize="14"
                                     Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"

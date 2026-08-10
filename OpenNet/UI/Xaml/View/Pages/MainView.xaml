@@ -188,7 +188,7 @@
                         FontSize="12"
                         Text="{x:Bind ViewModel.ConnectedPeersCount, Mode=OneWay, FallbackValue='0'}" />
                     <TextBlock
-                        x:Uid="ViewMainViewTextBlock"
+                        x:Uid="ViewTasksPageToggleMenuItem"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -203,7 +203,7 @@
                         FontSize="12"
                         Text="{x:Bind ViewModel.DhtNodeCount, Mode=OneWay, FallbackValue='0'}" />
                     <TextBlock
-                        x:Uid="ViewMainViewTextBlock"
+                        x:Uid="ViewMainViewDHTTextBlock"
                         VerticalAlignment="Center"
                         FontSize="12"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -262,13 +262,17 @@
 
             <!--  Port State  -->
             <Button
-                x:Uid="ViewMainViewButton"
                 Grid.Column="3"
                 Margin="16,0,0,0"
                 Padding="6,3"
                 Click="PortState_Click"
-                Style="{StaticResource SubtleButtonStyle}"
-                ToolTipService.ToolTip="Open NAT and port detection">
+                Style="{StaticResource SubtleButtonStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip
+                        x:Uid="ViewMainViewPortButtonToolTip"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Open NAT and port detection" />
+                </ToolTipService.ToolTip>
                 <StackPanel
                     VerticalAlignment="Center"
                     Orientation="Horizontal"

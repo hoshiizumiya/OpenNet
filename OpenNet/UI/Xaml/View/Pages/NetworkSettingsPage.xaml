@@ -53,8 +53,11 @@
                     <Button
                         x:Uid="ViewNetworkSettingsPageButton"
                         Click="RefreshTrackersButton_Click"
-                        Content="Refresh"
-                        ToolTipService.ToolTip="Refresh all trackers" />
+                        Content="Refresh">
+                        <ToolTipService.ToolTip>
+                            <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Refresh all trackers" />
+                        </ToolTipService.ToolTip>
+                    </Button>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard
                             x:Uid="ViewSettingsPageAutoAddTrackers"

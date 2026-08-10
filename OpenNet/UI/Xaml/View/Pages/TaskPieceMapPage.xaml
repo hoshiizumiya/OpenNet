@@ -135,7 +135,7 @@
                     Height="14"
                     Background="#D72F9A"
                     CornerRadius="2" />
-                <TextBlock x:Uid="ViewTaskPieceMapPageText9" Text="Downloading" />
+                <TextBlock x:Uid="CommonTextDownloading" Text="Downloading" />
             </StackPanel>
             <StackPanel Orientation="Horizontal" Spacing="6">
                 <Border

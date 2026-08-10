@@ -33,25 +33,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		Loaded([this](auto, auto)
 		{
+			RestoreColumn(ColPeerIP(), "Peers.IP");
 			RestoreColumn(ColPeerLocation(), "Peers.Location");
 			RestoreColumn(ColPeerProgress(), "Peers.Progress");
 			RestoreColumn(ColPeerDLSpeed(), "Peers.DLSpeed");
 			RestoreColumn(ColPeerULSpeed(), "Peers.ULSpeed");
 			RestoreColumn(ColPeerDownloaded(), "Peers.Downloaded");
+			RestoreColumn(ColPeerUploaded(), "Peers.Uploaded");
 			RestoreColumn(ColPeerClient(), "Peers.Client");
 			RestoreColumn(ColPeerStatus(), "Peers.Status");
 			RestoreColumn(ColPeerReason(), "Peers.Reason");
 			RestoreColumn(ColPeerProtocol(), "Peers.Protocol");
 			RestoreColumn(ColPeerInitiator(), "Peers.Initiator");
 			RestoreColumn(ColPeerSource(), "Peers.Source");
+			ScheduleRowLayoutSynchronization();
 		});
 		Unloaded([this](auto, auto)
 		{
+			SaveColumnWidth("Peers.IP", ColPeerIP());
 			SaveColumnWidth("Peers.Location", ColPeerLocation());
 			SaveColumnWidth("Peers.Progress", ColPeerProgress());
 			SaveColumnWidth("Peers.DLSpeed", ColPeerDLSpeed());
 			SaveColumnWidth("Peers.ULSpeed", ColPeerULSpeed());
 			SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded());
+			SaveColumnWidth("Peers.Uploaded", ColPeerUploaded());
 			SaveColumnWidth("Peers.Client", ColPeerClient());
 			SaveColumnWidth("Peers.Status", ColPeerStatus());
 			SaveColumnWidth("Peers.Reason", ColPeerReason());
@@ -59,6 +64,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			SaveColumnWidth("Peers.Initiator", ColPeerInitiator());
 			SaveColumnWidth("Peers.Source", ColPeerSource());
 		});
+
+		// DataColumn resizing does not change the DataTable's outer size, so a
+		// virtualized TreeView row can miss the layout invalidation until its data
+		// changes. Observe each header column and coalesce one realized-row pass.
+		auto weak = get_weak();
+		for (auto const& column : std::array{
+			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(),
+			ColPeerStatus(), ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(),
+			ColPeerSource() })
+		{
+			column.SizeChanged([weak](auto const&, auto const&)
+			{
+				if (auto self = weak.get())
+					self->ScheduleRowLayoutSynchronization();
+			});
+		}
 	}
 
 	TaskPeersListPage::~TaskPeersListPage()
@@ -178,6 +200,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		update(SortPeerDlSpeedButton());
 		update(SortPeerUlSpeedButton());
 		update(SortPeerDownloadedButton());
+		update(SortPeerUploadedButton());
 		update(SortPeerClientButton());
 		update(SortPeerStatusButton());
 		update(SortPeerReasonButton());
@@ -192,28 +215,60 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (m_sortDirection == 0) return;
 		auto const column = m_sortColumn;
 		auto const direction = m_sortDirection;
-		auto value = [column](auto const& item)
+		auto compareText = [](winrt::hstring const& left, winrt::hstring const& right)
 		{
-			if (column == L"IP") return item.IP();
-			if (column == L"Location") return item.Location();
-			if (column == L"Progress") return item.Progress();
-			if (column == L"DLSpeed") return item.DLSpeed();
-			if (column == L"ULSpeed") return item.ULSpeed();
-			if (column == L"Downloaded") return item.Downloaded();
-			if (column == L"Client") return item.Client();
-			if (column == L"Status") return item.PeerStatus();
-			if (column == L"Reason") return item.Reason();
-			if (column == L"Protocol") return item.Protocol();
-			if (column == L"Initiator") return item.Initiator();
-			return item.Source();
+			return _wcsicmp(left.c_str(), right.c_str());
+		};
+		auto compare = [column, compareText](auto const& left, auto const& right)
+		{
+			const auto compareNumber = [](auto lhs, auto rhs)
+			{
+				return lhs < rhs ? -1 : lhs > rhs ? 1 : 0;
+			};
+			if (column == L"Progress")
+				return compareNumber(left.ProgressValue(), right.ProgressValue());
+			if (column == L"DLSpeed")
+				return compareNumber(left.DownloadRate(), right.DownloadRate());
+			if (column == L"ULSpeed")
+				return compareNumber(left.UploadRate(), right.UploadRate());
+			if (column == L"Downloaded")
+				return compareNumber(left.DownloadedBytes(), right.DownloadedBytes());
+			if (column == L"Uploaded")
+				return compareNumber(left.UploadedBytes(), right.UploadedBytes());
+			if (column == L"IP") return compareText(left.IP(), right.IP());
+			if (column == L"Location") return compareText(left.Location(), right.Location());
+			if (column == L"Client") return compareText(left.Client(), right.Client());
+			if (column == L"Status") return compareText(left.PeerStatus(), right.PeerStatus());
+			if (column == L"Reason") return compareText(left.Reason(), right.Reason());
+			if (column == L"Protocol") return compareText(left.Protocol(), right.Protocol());
+			if (column == L"Initiator") return compareText(left.Initiator(), right.Initiator());
+			return compareText(left.Source(), right.Source());
 		};
 		std::stable_sort(items.begin(), items.end(),
-						 [direction, value](auto const& left, auto const& right)
+						 [direction, compare](auto const& left, auto const& right)
 		{
 			return direction == 1
-				? value(left) < value(right)
-				: value(right) < value(left);
+				? compare(left, right) < 0
+				: compare(left, right) > 0;
 		});
+	}
+
+	void TaskPeersListPage::ColumnHeader_PointerPressed(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args)
+	{
+		if (!args.GetCurrentPoint(nullptr).Properties().IsRightButtonPressed())
+			return;
+		auto source = args.OriginalSource().try_as<DependencyObject>();
+		while (source)
+		{
+			if (auto column = source.try_as<winrt::XamlToolkit::Labs::WinUI::DataColumn>())
+			{
+				m_contextColumn = column;
+				return;
+			}
+			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
+		}
 	}
 
 	void TaskPeersListPage::ColumnHeader_RightTapped(
@@ -261,6 +316,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (tag == L"DLSpeed") return ColPeerDLSpeed();
 		if (tag == L"ULSpeed") return ColPeerULSpeed();
 		if (tag == L"Downloaded") return ColPeerDownloaded();
+		if (tag == L"Uploaded") return ColPeerUploaded();
 		if (tag == L"Client") return ColPeerClient();
 		if (tag == L"Status") return ColPeerStatus();
 		if (tag == L"Reason") return ColPeerReason();
@@ -305,7 +361,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			AutoSizeColumn(column);
 	}
@@ -319,7 +375,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		UpdateSortHeaders();
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			column.Visibility(Visibility::Visible);
 		SynchronizePeerRows();
@@ -333,7 +389,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		std::array const columns{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
 			sender.try_as<winrt::XamlToolkit::Labs::WinUI::DataRow>(),
@@ -344,11 +400,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		std::array const columns{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRealizedRows(
 			PeersTreeView(), columns.data(), static_cast<unsigned int>(columns.size()));
 		PeersTreeView().InvalidateMeasure();
+	}
+
+	void TaskPeersListPage::ScheduleRowLayoutSynchronization()
+	{
+		if (m_rowLayoutSynchronizationQueued)
+			return;
+		m_rowLayoutSynchronizationQueued = true;
+		auto weak = get_weak();
+		if (!DispatcherQueue().TryEnqueue([weak]()
+			{
+				if (auto self = weak.get())
+				{
+					self->m_rowLayoutSynchronizationQueued = false;
+					self->SynchronizePeerRows();
+				}
+			}))
+		{
+			m_rowLayoutSynchronizationQueued = false;
+			SynchronizePeerRows();
+		}
 	}
 
 	void TaskPeersListPage::ResetPeerGroups()
@@ -705,6 +781,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.DLSpeed(FormatSpeed(peer.downloadRateKB));
 			item.ULSpeed(FormatSpeed(peer.uploadRateKB));
 			item.Downloaded(FormatBytes(peer.totalDownloaded));
+			item.Uploaded(FormatBytes(peer.totalUploaded));
+			item.ProgressValue(peer.progress);
+			item.DownloadRate(peer.downloadRateKB);
+			item.UploadRate(peer.uploadRateKB);
+			item.DownloadedBytes(peer.totalDownloaded);
+			item.UploadedBytes(peer.totalUploaded);
 			item.PeerStatus(FormatPeerStatus(peer.flags));
 			item.Reason(L"");
 			item.ConnectionTime(L"-");
@@ -723,6 +805,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.DLSpeed(L"-");
 			item.ULSpeed(L"-");
 			item.Downloaded(L"-");
+			item.Uploaded(L"-");
 			item.ConnectionTime(L"-");
 			item.Protocol(L"-");
 			item.Initiator(L"-");

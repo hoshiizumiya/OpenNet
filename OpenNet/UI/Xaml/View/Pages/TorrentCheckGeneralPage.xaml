@@ -85,8 +85,13 @@
                                 Grid.Column="2"
                                 MinWidth="36"
                                 AutomationProperties.AutomationId="TorrentCheckGeneralPage_FolderPickerButton"
-                                Click="TorrentCheckGeneralPageFolderPicker_Click"
-                                ToolTipService.ToolTip="Browse...">
+                                Click="TorrentCheckGeneralPageFolderPicker_Click">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip
+                                        x:Uid="CommonContentBrowse"
+                                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                                        Content="Browse..." />
+                                </ToolTipService.ToolTip>
                                 <Button.Content>
                                     <FontIcon Glyph="&#xEC50;" />
                                 </Button.Content>
@@ -461,8 +466,11 @@
                                                                 Grid.Column="2"
                                                                 VerticalAlignment="Center"
                                                                 Text="{x:Bind Name}"
-                                                                TextTrimming="CharacterEllipsis"
-                                                                ToolTipService.ToolTip="{x:Bind FullPath}" />
+                                                                TextTrimming="CharacterEllipsis">
+                                                                <ToolTipService.ToolTip>
+                                                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind FullPath}" />
+                                                                </ToolTipService.ToolTip>
+                                                            </TextBlock>
                                                         </Grid>
                                                         <!--  Size  -->
                                                         <TextBlock VerticalAlignment="Center" Text="{x:Bind SizeText}" />

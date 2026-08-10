@@ -507,22 +507,22 @@
   <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="RSSAddFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageAddNewFeed.Content" xml:space="preserve">
     <value>Add new feed</value>
   </data>
-  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshAllFeeds.Content" xml:space="preserve">
     <value>Refresh all feeds</value>
   </data>
-  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshThisFeed.Content" xml:space="preserve">
     <value>Refresh this feed</value>
   </data>
-  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+  <data name="ViewRSSPageFeedSetting.Content" xml:space="preserve">
     <value>Feed settings</value>
   </data>
-  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRemoveFeed.Content" xml:space="preserve">
     <value>Remove feed</value>
   </data>
-  <data name="RSSDownloadTooltip" xml:space="preserve">
+  <data name="CommonContentDownload.Content" xml:space="preserve">
     <value>Download</value>
   </data>
   <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
@@ -804,9 +804,6 @@
   <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
     <value>(Downloads folder)</value>
   </data>
-  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
-    <value>Browse...</value>
-  </data>
   <data name="DL_PreallocateStorage.Header" xml:space="preserve">
     <value>Pre-allocate Disk Space</value>
   </data>
@@ -834,9 +831,6 @@
   <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
     <value>Completed download path</value>
   </data>
-  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
-    <value>Browse...</value>
-  </data>
   <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
     <value>New HTTP Download</value>
   </data>
@@ -861,7 +855,10 @@
   <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
     <value>Default download directory</value>
   </data>
-  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+  <data name="CommonContentBrowse.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="CommonContentBrowse.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Browse...</value>
   </data>
   <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
@@ -891,8 +888,50 @@
   <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
     <value>UL Speed</value>
   </data>
-  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+  <data name="CommonTextDownloaded.Text" xml:space="preserve">
     <value>Downloaded</value>
+  </data>
+  <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Downloaded</value>
+  </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>Uploaded</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>DL Speed</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>UL Speed</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>Uploaded</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>Initiator</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>Source</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>No peers connected</value>
@@ -980,9 +1019,6 @@
   </data>
   <data name="IPF_ImportFile.Description" xml:space="preserve">
     <value>Import rules from a text file (.txt, .dat, .p2p)</value>
-  </data>
-  <data name="IPF_ImportBtn.Content" xml:space="preserve">
-    <value>Browse...</value>
   </data>
   <data name="IPF_Section_Manage.Text" xml:space="preserve">
     <value>Manage Rules</value>
@@ -1189,9 +1225,6 @@
     <value>Status</value>
   </data>
   <data name="PeerHeader_Reason.Text" xml:space="preserve">
-    <value>Reason</value>
-  </data>
-  <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>Reason</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
@@ -1480,7 +1513,7 @@
     <value>The data folder is managed by Windows and is removed when the application is uninstalled.</value>
   </data>
   <data name="GuideWebUITitle.Text" xml:space="preserve">
-    <value>Initialize qBittorrent Web UI</value>
+    <value>Initialize Web UI</value>
   </data>
   <data name="GuideWebUIDescription.Text" xml:space="preserve">
     <value>Set the local Web UI account before the service starts. The password must contain at least 6 characters.</value>
@@ -1667,6 +1700,9 @@
   </data>
   <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
     <value>Open Directory</value>
+  </data>
+  <data name="OpenFileLocationMenuItem.Text" xml:space="preserve">
+    <value>Open File Directory</value>
   </data>
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
     <value>Properties...</value>
@@ -1989,7 +2025,7 @@
   <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
     <value>Empty</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+  <data name="CommonTextDownloading.Text" xml:space="preserve">
     <value>Downloading</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
@@ -2030,9 +2066,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
     <value>Time elapsed</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
-    <value>Downloaded</value>
   </data>
   <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
     <value>Download speed</value>
@@ -2163,12 +2196,6 @@
   <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
     <value>Remove all unreachable trackers...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
-    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
-    <value>Auto size all columns</value>
-  </data>
   <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
     <value>Tracker URL</value>
   </data>
@@ -2187,13 +2214,13 @@
   <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
     <value>Leechers</value>
   </data>
-  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
-    <value>Downloaded</value>
-  </data>
   <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
     <value>Status</value>
   </data>
-  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+  <data name="CommonTextResetColumns.Text" xml:space="preserve">
+    <value>Reset Columns and Sorting</value>
+  </data>
+  <data name="CommonTextResetColumns.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Reset Columns and Sorting</value>
   </data>
   <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
@@ -2339,9 +2366,6 @@
   </data>
   <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
     <value>Status</value>
-  </data>
-  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
-    <value>Downloaded</value>
   </data>
   <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
     <value>Not tested</value>
@@ -2541,9 +2565,6 @@
   <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Communicate with peers using encrypted messaging channels</value>
   </data>
-  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>VPN &amp;amp;amp; Tunneling</value>
-  </data>
   <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Create secure encrypted tunnels between devices for private networking across the internet</value>
   </data>
@@ -2634,7 +2655,7 @@
   <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Empty</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="CommonTextDownloading.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Downloading</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
@@ -2675,9 +2696,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Time elapsed</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Downloaded</value>
   </data>
   <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Download speed</value>
@@ -2808,12 +2826,6 @@
   <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Remove all unreachable trackers...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Auto size all columns</value>
-  </data>
   <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Tracker URL</value>
   </data>
@@ -2832,14 +2844,8 @@
   <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Leechers</value>
   </data>
-  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Downloaded</value>
-  </data>
   <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Status</value>
-  </data>
-  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Reset Columns and Sorting</value>
   </data>
   <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>No trackers</value>
@@ -3412,10 +3418,16 @@
     <value>Upload Rate</value>
   </data>
   <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
-    <value>Auto Size Selected Column&amp;apos;s Width to Fit</value>
+    <value>Auto Fit Selected Column</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Fit Selected Column</value>
   </data>
   <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
-    <value>Auto Size All Column&amp;apos;s Width to Fit</value>
+    <value>Auto Fit All Columns</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Fit All Columns</value>
   </data>
   <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
     <value>Reset To Default Display Items</value>
@@ -3510,7 +3522,7 @@
   <data name="ViewGuideViewRun.Text" xml:space="preserve">
     <value>Microsoft</value>
   </data>
-  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+  <data name="ViewMainViewDHTTextBlock.Text" xml:space="preserve">
     <value>DHT</value>
   </data>
   <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
@@ -3588,14 +3600,8 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>Font</value>
   </data>
-  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
-    <value>Reset Columns and Sorting</value>
-  </data>
   <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
     <value>Priority</value>
-  </data>
-  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
-    <value>Reset Columns and Sorting</value>
   </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>Source</value>
@@ -4392,7 +4398,46 @@
   <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
     <value>Share Ratio</value>
   </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock" xml:space="preserve">
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Seeds/Peers[all]</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>Seeds/Peers[all]</value>
+  </data>
+  <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
+    <value>UPnP lease duration (seconds)</value>
+  </data>
+  <data name="BT_UpnpLeaseDuration.Description" xml:space="preserve">
+    <value>Use 0 for a permanent mapping. A finite lease is refreshed at 75% of its duration.</value>
+  </data>
+  <data name="WebUISettingsFrontendCard.Header" xml:space="preserve">
+    <value>Frontend</value>
+  </data>
+  <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
+    <value>Both frontends use the same OpenNet/qBittorrent-compatible API and settings store.</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>Open NAT and port detection</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>Reload</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>Forward</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>Back</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>Go</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>Open in the default system browser</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>Connected seeds / connected peers [all known seeds / all known peers]</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>Play File</value>
   </data>
 </root>

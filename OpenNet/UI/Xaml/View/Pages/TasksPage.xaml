@@ -498,26 +498,6 @@
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
-                                <xtlw:DataColumn
-                                    x:Name="ColPeers"
-                                    CanResize="True"
-                                    Tag="Peers"
-                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(ViewModel.IsColPeersLoad), Mode=OneWay}">
-                                    <Button
-                                        x:Name="SortTaskPeersButton"
-                                        HorizontalAlignment="Stretch"
-                                        VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
-                                        FontWeight="SemiBold"
-                                        Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                        Tag="Peers">
-                                        <TextBlock
-                                            x:Uid="ViewTasksPageTextBlock"
-                                            Text="Peers"
-                                            TextTrimming="CharacterEllipsis" />
-                                    </Button>
-                                </xtlw:DataColumn>
                             </xtlw:DataTable>
                             <Border.ContextFlyout>
                                 <MenuFlyout Closed="TasksColumnMenuFlyout_Closed" Opening="TasksColumnMenuFlyout_Opening">
@@ -617,13 +597,7 @@
                                         Click="TasksColumnVisibility_Click"
                                         IsChecked="{x:Bind ViewModel.IsColSeedsLoad, Mode=OneWay}"
                                         Tag="Seeds"
-                                        Text="Seeds" />
-                                    <ToggleMenuFlyoutItem
-                                        x:Uid="ViewTasksPageToggleMenuItem"
-                                        Click="TasksColumnVisibility_Click"
-                                        IsChecked="{x:Bind ViewModel.IsColPeersLoad, Mode=OneWay}"
-                                        Tag="Peers"
-                                        Text="Peers" />
+                                        Text="Seeds/Peers[all]" />
                                     <MenuFlyoutSeparator />
                                     <MenuFlyoutItem
                                         x:Uid="ViewPageTasksColumnDisplayItemsReset"
@@ -929,21 +903,17 @@
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColShareRatio.Visibility, Mode=OneWay}" />
                                 <TextBlock
-                                    x:Uid="ViewTasksPageTextBlock"
                                     HorizontalAlignment="Right"
                                     Text="{x:Bind Seeds, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
-                                    ToolTipService.ToolTip="Connected seeds (all known seeds)"
                                     Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Uid="ViewTasksPageTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind Peers, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    ToolTipService.ToolTip="Connected peers (all known peers)"
-                                    Visibility="{x:Bind ColPeers.Visibility, Mode=OneWay}" />
+                                <ToolTipService.ToolTip>
+                                    <ToolTip
+                                        x:Uid="ViewTasksPagePeersToolTip"
+                                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                                        Content="Connected seeds / connected peers [all known seeds / all known peers]" />
+                                </ToolTipService.ToolTip>
                             </xtlw:DataRow>
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -1007,7 +977,10 @@
                                         GroupName="TabWidthMode"
                                         Text="Equal">
                                         <ToolTipService.ToolTip>
-                                            <ToolTip x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip" Content="Each tab has the same width" />
+                                            <ToolTip
+                                                x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip"
+                                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                                Content="Each tab has the same width" />
                                         </ToolTipService.ToolTip>
                                     </RadioMenuFlyoutItem>
 
@@ -1018,7 +991,10 @@
                                         GroupName="TabWidthMode"
                                         Text="Size To Content">
                                         <ToolTipService.ToolTip>
-                                            <ToolTip x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip" Content="Each tab adjusts its width to the content within the tab" />
+                                            <ToolTip
+                                                x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip"
+                                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                                Content="Each tab adjusts its width to the content within the tab" />
                                         </ToolTipService.ToolTip>
                                     </RadioMenuFlyoutItem>
 
@@ -1029,7 +1005,10 @@
                                         GroupName="TabWidthMode"
                                         Text="Compact">
                                         <ToolTipService.ToolTip>
-                                            <ToolTip x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip" Content="Unselected tabs collapse to show only their icon. The selected tab adjusts to display the content within the tab" />
+                                            <ToolTip
+                                                x:Uid="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip"
+                                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                                Content="Unselected tabs collapse to show only their icon. The selected tab adjusts to display the content within the tab" />
                                         </ToolTipService.ToolTip>
                                     </RadioMenuFlyoutItem>
                                 </MenuFlyoutSubItem>

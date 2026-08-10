@@ -88,8 +88,10 @@
                 Grid.Column="2"
                 Margin="0,24,0,0"
                 VerticalAlignment="Top"
-                AutomationProperties.Name="Customize graph style"
-                ToolTipService.ToolTip="Customize graph style">
+                AutomationProperties.Name="Customize graph style">
+                <ToolTipService.ToolTip>
+                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Customize graph style" />
+                </ToolTipService.ToolTip>
                 <FontIcon Glyph="&#xE713;" />
                 <Button.Flyout>
                     <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="Right">

@@ -1,0 +1,12 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+    [default_interface]
+    runtimeclass RSSBrowserWindow : WinUI3Package.WindowEx
+    {
+        RSSBrowserWindow();
+        void AddNewTab(String url, String title);
+        void CloseTab(String tabId);
+        void SwitchToTab(String tabId);
+        void UpdateTabTitle(String tabId, String title);
+    }
+}

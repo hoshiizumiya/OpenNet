@@ -38,6 +38,22 @@
                 IsOpen="True"
                 Severity="Informational" />
 
+            <essential:SettingsCard
+                x:Uid="WebUISettingsFrontendCard"
+                Description="Both frontends use the same OpenNet/qBittorrent-compatible API and settings store."
+                Header="Frontend">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE8A5;" />
+                </essential:SettingsCard.HeaderIcon>
+                <ComboBox
+                    x:Name="FrontendComboBox"
+                    MinWidth="220"
+                    SelectedIndex="0">
+                    <ComboBoxItem Content="qBittorrent WebUI" />
+                    <ComboBoxItem Content="VueTorrent (WinUI theme)" />
+                </ComboBox>
+            </essential:SettingsCard>
+
             <TextBlock
                 x:Uid="WebUISettingsConnectionHeader"
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
@@ -76,8 +92,22 @@
             </essential:SettingsCard>
 
             <essential:SettingsCard
+                x:Uid="WebUISettingsFollowLanguageCard"
+                Description="Keep the Web UI locale synchronized with OpenNet's application language."
+                Header="Follow application language">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE8C1;" />
+                </essential:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    x:Name="FollowApplicationLanguageToggle"
+                    x:Uid="WebUISettingsFollowLanguage"
+                    AutomationProperties.AutomationId="WebUISettingsFollowLanguage"
+                    Toggled="OnFollowApplicationLanguageToggled" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
                 x:Uid="WebUISettingsLocaleCard"
-                Description="Language code used by qBittorrent WebUI, for example en or zh_CN."
+                Description="Used only when following the application language is turned off."
                 Header="Locale">
                 <TextBox
                     x:Name="LocaleTextBox"

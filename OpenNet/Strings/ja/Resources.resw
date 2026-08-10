@@ -507,22 +507,22 @@
   <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
     <value>キャンセル</value>
   </data>
-  <data name="RSSAddFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageAddNewFeed.Content" xml:space="preserve">
     <value>新しいフィードを追加</value>
   </data>
-  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshAllFeeds.Content" xml:space="preserve">
     <value>すべてのフィードを更新</value>
   </data>
-  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshThisFeed.Content" xml:space="preserve">
     <value>このフィードを更新</value>
   </data>
-  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+  <data name="ViewRSSPageFeedSetting.Content" xml:space="preserve">
     <value>フィード設定</value>
   </data>
-  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRemoveFeed.Content" xml:space="preserve">
     <value>フィードを削除</value>
   </data>
-  <data name="RSSDownloadTooltip" xml:space="preserve">
+  <data name="CommonContentDownload.Content" xml:space="preserve">
     <value>ダウンロード</value>
   </data>
   <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
@@ -804,9 +804,6 @@
   <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
     <value>（ダウンロードフォルダー）</value>
   </data>
-  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
-    <value>参照...</value>
-  </data>
   <data name="DL_PreallocateStorage.Header" xml:space="preserve">
     <value>ディスク領域を事前割り当て</value>
   </data>
@@ -834,9 +831,6 @@
   <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
     <value>完了済みダウンロードの保存先</value>
   </data>
-  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
-    <value>参照...</value>
-  </data>
   <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
     <value>新しい HTTP ダウンロード</value>
   </data>
@@ -861,7 +855,10 @@
   <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
     <value>既定のダウンロードディレクトリ</value>
   </data>
-  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+  <data name="CommonContentBrowse.Content" xml:space="preserve">
+    <value>参照...</value>
+  </data>
+  <data name="CommonContentBrowse.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>参照...</value>
   </data>
   <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
@@ -891,8 +888,14 @@
   <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
     <value>UL 速度</value>
   </data>
-  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+  <data name="CommonTextDownloaded.Text" xml:space="preserve">
     <value>ダウンロード済み</value>
+  </data>
+  <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>ダウンロード済み</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>理由</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>接続中のピアはありません</value>
@@ -980,9 +983,6 @@
   </data>
   <data name="IPF_ImportFile.Description" xml:space="preserve">
     <value>テキストファイル（.txt、.dat、.p2p）からルールをインポートします</value>
-  </data>
-  <data name="IPF_ImportBtn.Content" xml:space="preserve">
-    <value>参照...</value>
   </data>
   <data name="IPF_Section_Manage.Text" xml:space="preserve">
     <value>ルールを管理</value>
@@ -1189,9 +1189,6 @@
     <value>状態</value>
   </data>
   <data name="PeerHeader_Reason.Text" xml:space="preserve">
-    <value>理由</value>
-  </data>
-  <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>理由</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
@@ -1480,7 +1477,7 @@
     <value>データフォルダーは Windows によって管理され、アプリケーションのアンインストール時に削除されます。</value>
   </data>
   <data name="GuideWebUITitle.Text" xml:space="preserve">
-    <value>qBittorrent Web UI を初期化</value>
+    <value>Web UI を初期化</value>
   </data>
   <data name="GuideWebUIDescription.Text" xml:space="preserve">
     <value>サービス開始前にローカル Web UI アカウントを設定します。パスワードは 6 文字以上必要です。</value>
@@ -1666,6 +1663,9 @@
     <value>コメント:</value>
   </data>
   <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>ディレクトリを開く</value>
+  </data>
+  <data name="OpenFileLocationMenuItem.Text" xml:space="preserve">
     <value>ディレクトリを開く</value>
   </data>
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
@@ -1989,7 +1989,7 @@
   <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
     <value>空</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+  <data name="CommonTextDownloading.Text" xml:space="preserve">
     <value>ダウンロード中</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
@@ -2030,9 +2030,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
     <value>経過時間</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
-    <value>ダウンロード済み</value>
   </data>
   <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
     <value>ダウンロード速度</value>
@@ -2163,12 +2160,6 @@
   <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
     <value>到達不能なトラッカーをすべて削除...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
-    <value>選択した列の幅を内容に合わせて自動調整</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
-    <value>すべての列幅を自動調整</value>
-  </data>
   <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
     <value>トラッカー URL</value>
   </data>
@@ -2187,13 +2178,13 @@
   <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
     <value>リーチャー</value>
   </data>
-  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
-    <value>ダウンロード済み</value>
-  </data>
   <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
     <value>状態</value>
   </data>
-  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+  <data name="CommonTextResetColumns.Text" xml:space="preserve">
+    <value>列と並べ替えをリセット</value>
+  </data>
+  <data name="CommonTextResetColumns.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>列と並べ替えをリセット</value>
   </data>
   <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
@@ -2339,9 +2330,6 @@
   </data>
   <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
     <value>状態</value>
-  </data>
-  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
-    <value>ダウンロード済み</value>
   </data>
   <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
     <value>未テスト</value>
@@ -2541,9 +2529,6 @@
   <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>暗号化されたメッセージチャネルを使用してピアと通信します</value>
   </data>
-  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>VPN &amp;amp;amp; トンネリング</value>
-  </data>
   <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>インターネットを介したプライベートネットワーク用に、デバイス間で安全な暗号化トンネルを作成します</value>
   </data>
@@ -2634,7 +2619,7 @@
   <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>空</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="CommonTextDownloading.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>ダウンロード中</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
@@ -2675,9 +2660,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>経過時間</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>ダウンロード済み</value>
   </data>
   <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>ダウンロード速度</value>
@@ -2808,12 +2790,6 @@
   <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>到達不能なトラッカーをすべて削除...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>選択した列の幅を内容に合わせて自動調整</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>すべての列幅を自動調整</value>
-  </data>
   <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>トラッカー URL</value>
   </data>
@@ -2832,14 +2808,8 @@
   <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>リーチャー</value>
   </data>
-  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>ダウンロード済み</value>
-  </data>
   <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>状態</value>
-  </data>
-  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>列と並べ替えをリセット</value>
   </data>
   <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>トラッカーはありません</value>
@@ -3414,7 +3384,13 @@
   <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
     <value>選択した列の幅を内容に合わせて自動調整</value>
   </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>選択した列の幅を内容に合わせて自動調整</value>
+  </data>
   <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
+    <value>すべての列幅を内容に合わせて自動調整</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>すべての列幅を内容に合わせて自動調整</value>
   </data>
   <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
@@ -3510,7 +3486,7 @@
   <data name="ViewGuideViewRun.Text" xml:space="preserve">
     <value>Microsoft</value>
   </data>
-  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+  <data name="ViewMainViewDHTTextBlock.Text" xml:space="preserve">
     <value>DHT</value>
   </data>
   <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
@@ -3588,14 +3564,8 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>フォント</value>
   </data>
-  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
-    <value>列と並べ替えをリセット</value>
-  </data>
   <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
     <value>優先度</value>
-  </data>
-  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
-    <value>列と並べ替えをリセット</value>
   </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>ソース</value>

@@ -170,7 +170,7 @@
                         </StackPanel>
                         <StackPanel Grid.Column="1">
                             <TextBlock
-                                x:Uid="ViewTaskSummaryPageText11"
+                                x:Uid="CommonTextDownloaded"
                                 Style="{StaticResource MetricCaptionStyle}"
                                 Text="Downloaded" />
                             <TextBlock

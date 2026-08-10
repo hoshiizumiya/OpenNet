@@ -429,28 +429,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void LiveGraphTestWindow::DisposeBrush(GraphBrushData const& brush) noexcept
 	{
-		if (!brush)
-		{
-			return;
-		}
-
-		auto close = [](auto const& resource) noexcept
-		{
-			if (!resource)
-			{
-				return;
-			}
-			try
-			{
-				resource.Close();
-			}
-			catch (...)
-			{
-			}
-		};
-		close(brush.Brush());
-		close(brush.OpacityBrush());
-		close(brush.BorderBrush());
+		// Releasing the GraphBrushData wrapper is sufficient. The animated draw
+		// loop may still hold a native brush snapshot when this window navigates.
+		(void)brush;
 	}
 
 	void LiveGraphTestWindow::BackgroundMode_SelectionChanged(

@@ -507,22 +507,22 @@
   <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
     <value>Annuler</value>
   </data>
-  <data name="RSSAddFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageAddNewFeed.Content" xml:space="preserve">
     <value>Ajouter un nouveau flux</value>
   </data>
-  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshAllFeeds.Content" xml:space="preserve">
     <value>Actualiser tous les flux</value>
   </data>
-  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshThisFeed.Content" xml:space="preserve">
     <value>Actualiser ce flux</value>
   </data>
-  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+  <data name="ViewRSSPageFeedSetting.Content" xml:space="preserve">
     <value>Paramètres du flux</value>
   </data>
-  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRemoveFeed.Content" xml:space="preserve">
     <value>Supprimer le flux</value>
   </data>
-  <data name="RSSDownloadTooltip" xml:space="preserve">
+  <data name="CommonContentDownload.Content" xml:space="preserve">
     <value>Télécharger</value>
   </data>
   <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
@@ -804,9 +804,6 @@
   <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
     <value>(Dossier Téléchargements)</value>
   </data>
-  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
-    <value>Parcourir...</value>
-  </data>
   <data name="DL_PreallocateStorage.Header" xml:space="preserve">
     <value>Préallouer l’espace disque</value>
   </data>
@@ -834,9 +831,6 @@
   <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
     <value>Chemin des téléchargements terminés</value>
   </data>
-  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
-    <value>Parcourir...</value>
-  </data>
   <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
     <value>Nouveau téléchargement HTTP</value>
   </data>
@@ -861,7 +855,10 @@
   <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
     <value>Répertoire de téléchargement par défaut</value>
   </data>
-  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+  <data name="CommonContentBrowse.Content" xml:space="preserve">
+    <value>Parcourir...</value>
+  </data>
+  <data name="CommonContentBrowse.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Parcourir...</value>
   </data>
   <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
@@ -891,8 +888,14 @@
   <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
     <value>Vitesse de téléversement</value>
   </data>
-  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+  <data name="CommonTextDownloaded.Text" xml:space="preserve">
     <value>Téléchargé</value>
+  </data>
+  <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Téléchargé</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>Raison</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>Aucun pair connecté</value>
@@ -980,9 +983,6 @@
   </data>
   <data name="IPF_ImportFile.Description" xml:space="preserve">
     <value>Importer des règles depuis un fichier texte (.txt, .dat, .p2p)</value>
-  </data>
-  <data name="IPF_ImportBtn.Content" xml:space="preserve">
-    <value>Parcourir...</value>
   </data>
   <data name="IPF_Section_Manage.Text" xml:space="preserve">
     <value>Gérer les règles</value>
@@ -1189,9 +1189,6 @@
     <value>État</value>
   </data>
   <data name="PeerHeader_Reason.Text" xml:space="preserve">
-    <value>Raison</value>
-  </data>
-  <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>Raison</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
@@ -1480,7 +1477,7 @@
     <value>Le dossier de données est géré par Windows et supprimé lorsque l’application est désinstallée.</value>
   </data>
   <data name="GuideWebUITitle.Text" xml:space="preserve">
-    <value>Initialize qBittorrent Web UI</value>
+    <value>Initialize Web UI</value>
   </data>
   <data name="GuideWebUIDescription.Text" xml:space="preserve">
     <value>Configurez le compte Web UI local avant le démarrage du service. Le mot de passe doit comporter au moins 6 caractères.</value>
@@ -1666,6 +1663,9 @@
     <value>Commentaire :</value>
   </data>
   <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>Ouvrir le répertoire</value>
+  </data>
+  <data name="OpenFileLocationMenuItem.Text" xml:space="preserve">
     <value>Ouvrir le répertoire</value>
   </data>
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
@@ -1989,7 +1989,7 @@
   <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
     <value>Vide</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+  <data name="CommonTextDownloading.Text" xml:space="preserve">
     <value>Téléchargement</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
@@ -2030,9 +2030,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
     <value>Temps écoulé</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
-    <value>Téléchargé</value>
   </data>
   <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
     <value>Vitesse de téléchargement</value>
@@ -2163,12 +2160,6 @@
   <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
     <value>Supprimer tous les traqueurs inaccessibles...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
-    <value>Auto Taille Sélectionné Column&amp;apos;s Width vers Fit</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
-    <value>Ajuster automatiquement toutes les colonnes</value>
-  </data>
   <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
     <value>URL du traqueur</value>
   </data>
@@ -2187,13 +2178,13 @@
   <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
     <value>Téléchargeurs</value>
   </data>
-  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
-    <value>Téléchargé</value>
-  </data>
   <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
     <value>État</value>
   </data>
-  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+  <data name="CommonTextResetColumns.Text" xml:space="preserve">
+    <value>Réinitialiser les colonnes et le tri</value>
+  </data>
+  <data name="CommonTextResetColumns.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Réinitialiser les colonnes et le tri</value>
   </data>
   <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
@@ -2339,9 +2330,6 @@
   </data>
   <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
     <value>État</value>
-  </data>
-  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
-    <value>Téléchargé</value>
   </data>
   <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
     <value>Non testé</value>
@@ -2541,9 +2529,6 @@
   <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Communicate avec pairs using chiffré messaging channels</value>
   </data>
-  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>VPN &amp;amp;amp; Tunneling</value>
-  </data>
   <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Créez des tunnels chiffrés sécurisés entre les appareils pour établir un réseau privé via Internet</value>
   </data>
@@ -2634,7 +2619,7 @@
   <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Vide</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="CommonTextDownloading.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Téléchargement</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
@@ -2675,9 +2660,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Temps écoulé</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Téléchargé</value>
   </data>
   <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Vitesse de téléchargement</value>
@@ -2808,12 +2790,6 @@
   <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Supprimer tous les traqueurs inaccessibles...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Auto Taille Sélectionné Column&amp;apos;s Width vers Fit</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Ajuster automatiquement toutes les colonnes</value>
-  </data>
   <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>URL du traqueur</value>
   </data>
@@ -2832,14 +2808,8 @@
   <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Téléchargeurs</value>
   </data>
-  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Téléchargé</value>
-  </data>
   <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>État</value>
-  </data>
-  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Réinitialiser les colonnes et le tri</value>
   </data>
   <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Aucun traqueur</value>
@@ -3412,10 +3382,16 @@
     <value>Téléverser Débit</value>
   </data>
   <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
-    <value>Auto Taille Sélectionné Column&amp;apos;s Width vers Fit</value>
+    <value>Auto Taille Sélectionné Column's Width vers Fit</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Taille Sélectionné Column's Width vers Fit</value>
   </data>
   <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
-    <value>Auto Taille Tous Column&amp;apos;s Width vers Fit</value>
+    <value>Auto Taille Sélectionné Column's Width vers Fit</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Auto Taille Sélectionné Column's Width vers Fit</value>
   </data>
   <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
     <value>Réinitialiser les éléments d’affichage par défaut</value>
@@ -3510,7 +3486,7 @@
   <data name="ViewGuideViewRun.Text" xml:space="preserve">
     <value>Microsoft</value>
   </data>
-  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+  <data name="ViewMainViewDHTTextBlock.Text" xml:space="preserve">
     <value>DHT</value>
   </data>
   <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
@@ -3588,14 +3564,8 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>Font</value>
   </data>
-  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
-    <value>Réinitialiser les colonnes et le tri</value>
-  </data>
   <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
     <value>Priorité</value>
-  </data>
-  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
-    <value>Réinitialiser les colonnes et le tri</value>
   </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>Source</value>

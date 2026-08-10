@@ -1,0 +1,69 @@
+/* OpenNet-owned token bridge. Keep separate from the VueTorrent release. */
+:root {
+    color-scheme: light dark;
+    --on-accent: #ffffff;
+    --win-accent: #0067c0;
+    --win-surface: rgba(249, 249, 249, 0.94);
+    --win-surface-secondary: rgba(243, 243, 243, 0.88);
+    --win-card: rgba(255, 255, 255, 0.72);
+    --win-stroke: rgba(0, 0, 0, 0.10);
+    --win-text: #1a1a1a;
+    --win-text-secondary: rgba(0, 0, 0, 0.62);
+    --win-radius-small: 4px;
+    --win-radius-medium: 8px;
+    --win-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --win-accent: #60cdff;
+        --win-surface: rgba(32, 32, 32, 0.94);
+        --win-surface-secondary: rgba(40, 40, 40, 0.88);
+        --win-card: rgba(50, 50, 50, 0.76);
+        --win-stroke: rgba(255, 255, 255, 0.09);
+        --win-text: #ffffff;
+        --win-text-secondary: rgba(255, 255, 255, 0.68);
+    }
+}
+
+/* Vuetify semantic tokens, backed by the WinUIonWeb-compatible token layer. */
+.v-theme--light,
+.v-theme--dark {
+    --v-theme-primary: 0, 103, 192;
+    --v-theme-on-primary: 255, 255, 255;
+    --v-theme-background: 243, 243, 243;
+    --v-theme-surface: 249, 249, 249;
+    --v-theme-on-background: 26, 26, 26;
+    --v-theme-on-surface: 26, 26, 26;
+}
+
+.v-theme--dark {
+    --v-theme-primary: 96, 205, 255;
+    --v-theme-on-primary: 0, 0, 0;
+    --v-theme-background: 32, 32, 32;
+    --v-theme-surface: 40, 40, 40;
+    --v-theme-on-background: 255, 255, 255;
+    --v-theme-on-surface: 255, 255, 255;
+}
+
+.v-card,
+.v-dialog > .v-overlay__content,
+.v-menu > .v-overlay__content,
+.v-navigation-drawer {
+    border: 1px solid var(--win-stroke) !important;
+    border-radius: var(--win-radius-medium) !important;
+    box-shadow: var(--win-shadow) !important;
+}
+
+.v-btn,
+.v-field,
+.v-list-item {
+    border-radius: var(--win-radius-small) !important;
+}
+
+html,
+body,
+#app {
+    font-family: "Segoe UI Variable Text", "Segoe UI", sans-serif !important;
+}
+

@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -34,23 +35,23 @@
                 <MenuFlyout Opening="FileContextMenu_Opening">
                     <MenuFlyoutItem
                         x:Name="OpenFileMenuItem"
-                        x:Uid="ViewTaskFilesPageMenuItem"
+                        x:Uid="TasksContextOpenFile"
                         Click="OpenFile_Click"
                         Text="Open File" />
                     <MenuFlyoutItem
                         x:Name="PlayFileMenuItem"
-                        x:Uid="ViewTaskFilesPageMenuItem"
+                        x:Uid="ViewTaskFilesPageMenuItemPlayFile"
                         Click="PlayFile_Click"
                         Text="Play File" />
                     <MenuFlyoutItem
                         x:Name="OpenFileLocationMenuItem"
-                        x:Uid="ViewTaskFilesPageMenuItem"
+                        x:Uid="OpenFileLocationMenuItem"
                         Click="OpenFileLocation_Click"
                         Text="Open File Location" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
                         x:Name="RenameFileMenuItem"
-                        x:Uid="ViewTaskFilesPageMenuItem"
+                        x:Uid="RenameTaskMenuItem"
                         Click="RenameFile_ClickAsync"
                         Text="Rename..." />
                 </MenuFlyout>
@@ -65,11 +66,11 @@
                         <MenuFlyout Opening="ColumnMenu_Opening">
                             <MenuFlyoutItem
                                 x:Name="AutoSizeSelectedColumnItem"
-                                x:Uid="ViewTaskFilesPageMenuItem"
+                                x:Uid="ViewPageTasksColumnAutoSizeSelectedWidth"
                                 Click="AutoSizeSelectedColumn_Click"
                                 Text="Auto Size Selected Column's Width to Fit" />
                             <MenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageMenuItem"
+                                x:Uid="ViewPageTasksColumnAutoSizeAllWidth"
                                 Click="AutoSizeAllColumns_Click"
                                 Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
@@ -105,7 +106,7 @@
                                 Text="Priority" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageMenuItem"
+                                x:Uid="CommonTextResetColumns"
                                 Click="ResetColumns_Click"
                                 Text="Reset Columns and Sorting" />
                         </MenuFlyout>
@@ -185,10 +186,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:FileDisplayItem">
                     <labs:DataRow HorizontalAlignment="Left" Loaded="FileDataRow_Loaded">
-                        <TextBlock
-                            Text="{x:Bind Path, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis"
-                            ToolTipService.ToolTip="{x:Bind Path, Mode=OneWay}" />
+                        <TextBlock Text="{x:Bind Path, Mode=OneWay}" TextTrimming="CharacterEllipsis">
+                            <ToolTipService.ToolTip>
+                                <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Path, Mode=OneWay}" />
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
                         <TextBlock Text="{x:Bind Size, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                         <ProgressBar
                             Margin="4,0"
@@ -199,6 +201,7 @@
                         <ComboBox
                             MinWidth="80"
                             HorizontalAlignment="Stretch"
+                            essential:ComboBoxHelper.AcrylicWorkaround="True"
                             SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
                             SelectionChanged="FilePriority_SelectionChanged"
                             Tag="{x:Bind FileIndex}">

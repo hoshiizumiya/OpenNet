@@ -1,0 +1,136 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<essential:WindowEx
+    x:Class="OpenNet.UI.Xaml.View.Windows.RSSBrowserWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Width="1200"
+    Height="760"
+    MinWidth="640"
+    MinHeight="420"
+    mc:Ignorable="d">
+
+    <essential:WindowEx.ContextMenu>
+        <essential:ModernStandardWindowContextMenu />
+    </essential:WindowEx.ContextMenu>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TitleBar
+            x:Name="WindowTitleBar"
+            Title="OpenNet Browser"
+            Subtitle="RSS" />
+
+        <Grid
+            Grid.Row="1"
+            Padding="12,8"
+            ColumnSpacing="8">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button
+                x:Name="BackButton"
+                Click="BackButton_Click"
+                IsEnabled="False"
+                Style="{StaticResource SubtleButtonStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip
+                        x:Uid="CommonContentBack"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Back" />
+                </ToolTipService.ToolTip>
+                <FontIcon Glyph="&#xE72B;" />
+            </Button>
+            <Button
+                x:Name="ForwardButton"
+                Grid.Column="1"
+                Click="ForwardButton_Click"
+                IsEnabled="False"
+                Style="{StaticResource SubtleButtonStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip
+                        x:Uid="CommonContentForward"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Forward" />
+                </ToolTipService.ToolTip>
+                <FontIcon Glyph="&#xE72A;" />
+            </Button>
+            <Button
+                Grid.Column="2"
+                Click="ReloadButton_Click"
+                Style="{StaticResource SubtleButtonStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip
+                        x:Uid="CommonContentReload"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Reload" />
+                </ToolTipService.ToolTip>
+                <FontIcon Glyph="&#xE72C;" />
+            </Button>
+            <TextBox
+                x:Name="AddressBox"
+                Grid.Column="3"
+                VerticalAlignment="Center"
+                KeyDown="AddressBox_KeyDown"
+                PlaceholderText="Enter a web address" />
+            <Button
+                Grid.Column="4"
+                Click="GoButton_Click"
+                Style="{StaticResource SubtleButtonStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip
+                        x:Uid="CommonContentGo"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Go" />
+                </ToolTipService.ToolTip>
+                <FontIcon Glyph="&#xE751;" />
+            </Button>
+            <Button
+                Grid.Column="5"
+                Click="OpenExternalButton_Click"
+                Style="{StaticResource SubtleButtonStyle}">
+                <ToolTipService.ToolTip>
+                    <ToolTip
+                        x:Uid="CommonContentOpenSysBrowser"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Open in system browser" />
+                </ToolTipService.ToolTip>
+                <FontIcon Glyph="&#xE774;" />
+            </Button>
+        </Grid>
+
+        <!--
+            WebView2 needs a non-zero realized layout slot before its controller is
+            created.  TabView does not always propagate the WindowEx star-row height
+            to dynamically-created content during the first measure pass, so keep an
+            explicit host and synchronize the effective viewport from SizeChanged.
+        -->
+        <Grid
+            x:Name="BrowserHost"
+            Grid.Row="2"
+            Loaded="BrowserHost_Loaded"
+            SizeChanged="BrowserHost_SizeChanged">
+            <TabView
+                x:Name="BrowserTabView"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch"
+                AddTabButtonClick="BrowserTabView_AddTabButtonClick"
+                SelectionChanged="BrowserTabView_SelectionChanged"
+                TabCloseRequested="BrowserTabView_TabCloseRequested"
+                TabWidthMode="SizeToContent" />
+        </Grid>
+    </Grid>
+</essential:WindowEx>

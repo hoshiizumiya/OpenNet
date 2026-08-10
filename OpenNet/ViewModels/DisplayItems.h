@@ -95,6 +95,60 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_downloaded, v, L"Downloaded");
 		}
 
+		winrt::hstring Uploaded() const
+		{
+			return m_uploaded;
+		}
+		void Uploaded(winrt::hstring const& v)
+		{
+			SetProperty(m_uploaded, v, L"Uploaded");
+		}
+
+		double ProgressValue() const
+		{
+			return m_progressValue;
+		}
+		void ProgressValue(double v)
+		{
+			SetProperty(m_progressValue, v, L"ProgressValue");
+		}
+
+		std::int64_t DownloadRate() const
+		{
+			return m_downloadRate;
+		}
+		void DownloadRate(std::int64_t v)
+		{
+			SetProperty(m_downloadRate, v, L"DownloadRate");
+		}
+
+		std::int64_t UploadRate() const
+		{
+			return m_uploadRate;
+		}
+		void UploadRate(std::int64_t v)
+		{
+			SetProperty(m_uploadRate, v, L"UploadRate");
+		}
+
+		std::int64_t DownloadedBytes() const
+		{
+			return m_downloadedBytes;
+		}
+		void DownloadedBytes(std::int64_t v)
+		{
+			SetProperty(m_downloadedBytes, v, L"DownloadedBytes");
+		}
+
+		std::int64_t UploadedBytes() const
+		{
+			return m_uploadedBytes;
+		}
+		void UploadedBytes(std::int64_t v)
+		{
+			SetProperty(m_uploadedBytes, v, L"UploadedBytes");
+		}
+
 		winrt::hstring PeerStatus() const
 		{
 			return m_peerStatus;
@@ -209,6 +263,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_dlSpeed;
 		winrt::hstring m_ulSpeed;
 		winrt::hstring m_downloaded;
+		winrt::hstring m_uploaded;
+		double m_progressValue{};
+		std::int64_t m_downloadRate{};
+		std::int64_t m_uploadRate{};
+		std::int64_t m_downloadedBytes{};
+		std::int64_t m_uploadedBytes{};
 		winrt::hstring m_peerStatus;
 		winrt::hstring m_reason;
 		winrt::hstring m_location;

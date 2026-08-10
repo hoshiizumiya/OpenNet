@@ -77,11 +77,11 @@
                 PlaceholderText="Default download directory" />
             <Button
                 x:Name="BrowseDirButton"
-                x:Uid="HttpDownloadDialogBrowseButton"
+                x:Uid="CommonContentBrowse"
                 Grid.Column="1"
                 Margin="8,0,0,0"
                 VerticalAlignment="Bottom"
-                AutomationProperties.AutomationId="HttpDownloadDialogBrowseButton"
+                AutomationProperties.AutomationId="CommonContentBrowse"
                 Click="BrowseDirButton_Click"
                 Content="Browse..." />
         </Grid>

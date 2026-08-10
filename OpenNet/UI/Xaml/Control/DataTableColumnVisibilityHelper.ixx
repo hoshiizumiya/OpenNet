@@ -27,6 +27,7 @@ export namespace OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper
 		}
 
 		row.InvalidateMeasure();
+		row.InvalidateArrange();
 	}
 
 	void SynchronizeRealizedRows(

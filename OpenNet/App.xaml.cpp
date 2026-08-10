@@ -6,6 +6,7 @@
 #include "UI/Xaml/View/Dialog/CloseToTrayDialog.h"
 #include "UI/Xaml/View/Windows/DevWindow.xaml.h"
 #include "UI/Xaml/View/Windows/GuideWindow.xaml.h"
+#include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/InfoBarView.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
 #include "UI/Xaml/Control/Effect/TextMorphEffect.h"
@@ -26,6 +27,7 @@ import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Windows.ApplicationModel.Activation;
+import winrt.Windows.Storage;
 import winrt.Microsoft.Windows.Storage;
 import winrt.Microsoft.UI.Xaml.Controls;
 
@@ -50,6 +52,43 @@ namespace winrt::OpenNet::implementation
 
 		// Register unified exception handler
 		UnhandledException(::OpenNet::Core::ExceptionService::ExceptionHandling::OnAppUnhandledException);
+
+		// App is constructed by Application::Start on the XAML thread, so this is
+		// the first reliable place to capture the UI dispatcher for redirected
+		// singleton activations.
+		s_uiDispatcher = Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+		s_appInstance = AppInstance::GetCurrent();
+		s_activatedToken = s_appInstance.Activated([](auto const&, AppActivationArguments const& args)
+		{
+			try
+			{
+				// AppActivationArguments::Data can be a proxy owned by the redirecting
+				// process.  Read it while the Activated callback is still active and
+				// enqueue only apartment-neutral strings.
+				auto snapshot = SnapshotActivation(args);
+				if (s_uiDispatcher)
+				{
+					s_uiDispatcher.TryEnqueue(
+						[snapshot = std::move(snapshot)]() noexcept
+					{
+						try
+						{
+							HandleActivation(snapshot);
+						}
+						catch (...)
+						{
+							// Exceptions escaping a DispatcherQueueHandler cause XAML to
+							// fail fast. Activation failures are reported by the handler.
+						}
+					});
+				}
+			}
+			catch (...)
+			{
+				// The remote activation broker may already be unavailable. Never let
+				// that failure unwind through the AppInstance event callback.
+			}
+		});
 	}
 
 	/// <summary>
@@ -191,7 +230,14 @@ namespace winrt::OpenNet::implementation
 		devWindow.Activate();
 #endif
 
-		HandleActivation(AppInstance::GetCurrent().GetActivatedEventArgs());
+		try
+		{
+			HandleActivation(SnapshotActivation(
+				AppInstance::GetCurrent().GetActivatedEventArgs()));
+		}
+		catch (...)
+		{
+		}
 	}
 
 	void App::StartIPFilterSubscriptionUpdates()
@@ -269,10 +315,53 @@ namespace winrt::OpenNet::implementation
 	}
 
 	/// <summary>
-	/// Handles the activation of the application.
+	AppActivationSnapshot App::SnapshotActivation(
+		winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
+	{
+		AppActivationSnapshot snapshot;
+		snapshot.Kind = args.Kind();
+		auto data = args.Data();
+
+		if (snapshot.Kind == ExtendedActivationKind::Launch)
+		{
+			if (auto launchArgs = data.try_as<
+				winrt::Windows::ApplicationModel::Activation::ILaunchActivatedEventArgs>())
+			{
+				snapshot.LaunchArguments = launchArgs.Arguments();
+			}
+		}
+		else if (snapshot.Kind == ExtendedActivationKind::File)
+		{
+			if (auto fileArgs = data.try_as<
+				winrt::Windows::ApplicationModel::Activation::IFileActivatedEventArgs>())
+			{
+				for (auto const& file : fileArgs.Files())
+				{
+					try
+					{
+						auto storageFile = file.try_as<winrt::Windows::Storage::StorageFile>();
+						if (!storageFile) continue;
+						std::wstring name{ storageFile.Name().c_str() };
+						std::transform(name.begin(), name.end(), name.begin(), std::towlower);
+						if (name.ends_with(L".torrent"))
+						{
+							snapshot.TorrentPaths.emplace_back(storageFile.Path());
+						}
+					}
+					catch (...)
+					{
+					}
+				}
+			}
+		}
+
+		return snapshot;
+	}
+
+	/// <summary>
+	/// Handles an apartment-neutral snapshot of the activation request.
 	/// </summary>
-	/// <param name="args">The activation arguments.</param>
-	void App::HandleActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
+	void App::HandleActivation(AppActivationSnapshot const& args)
 	{
 		CreateSetMainWindow();
 		HWND hwnd = window
@@ -281,18 +370,11 @@ namespace winrt::OpenNet::implementation
 
 		// 根据激活类型处理不同的激活参数
 		// Handle different activation kinds based on the activation arguments
-		ExtendedActivationKind kind = args.Kind();
+		ExtendedActivationKind kind = args.Kind;
 
 		if (kind == ExtendedActivationKind::Launch)
 		{
-			// 处理启动激活（包括命令行参数）
-			auto launchArgs = args.Data().try_as<winrt::Windows::ApplicationModel::Activation::ILaunchActivatedEventArgs>();
-			if (launchArgs)
-			{
-				// 在这里处理命令行参数
-				// auto cmdLineArgs = launchArgs.Arguments();
-				// OutputDebugStringW((L"Launch args: " + std::wstring(cmdLineArgs.c_str()) + L"\n").c_str());
-			}
+			// Command-line arguments are already copied into args.LaunchArguments.
 		}
 		else if (kind == ExtendedActivationKind::AppNotification)
 		{
@@ -301,14 +383,20 @@ namespace winrt::OpenNet::implementation
 		{
 			// File activation (e.g., when a user opens a file associated with the app)
 			// https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.windows.applifecycle.appactivationarguments.data
-			auto fileArgs = args.Data().try_as<winrt::Windows::ApplicationModel::Activation::IFileActivatedEventArgs>();
-			// Get all files from the activation arguments
-			auto files = fileArgs.Files();
-			for (auto const& file : files)
+			for (auto const& path : args.TorrentPaths)
 			{
-				auto storageFile = file.try_as<winrt::Windows::Storage::IStorageFile>();
-				// Process the file
-				// storageFile
+				try
+				{
+					auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(path);
+					::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(*checkWindow);
+					checkWindow->Activate();
+				}
+				catch (winrt::hresult_error const& error)
+				{
+					winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+						L"Torrent file", error.message(),
+						Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error, 0);
+				}
 			}
 
 			// File activation when flashing notification
@@ -327,6 +415,11 @@ namespace winrt::OpenNet::implementation
 	{
 		try
 		{
+			if (s_appInstance && s_activatedToken.value)
+			{
+				s_appInstance.Activated(s_activatedToken);
+				s_activatedToken = {};
+			}
 			OutputDebugStringA("App: Destructor called, cleaning up...\n");
 
 			// Remove tray icon (UI operation, OK on UI thread)

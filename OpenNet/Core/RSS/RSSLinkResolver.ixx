@@ -1,6 +1,7 @@
 ﻿export module OpenNet.Core.RSS.RSSLinkResolver;
 
 import std;
+import winrt.Windows.Foundation;
 
 export namespace OpenNet::Core::RSS
 {
@@ -44,5 +45,8 @@ export namespace OpenNet::Core::RSS
 		/// Get content type from URL
 		/// </summary>
 		static std::wstring GetContentType(const std::wstring& url);
+
+		static winrt::Windows::Foundation::IAsyncOperation<winrt::hstring>
+			ResolveTorrentSourceAsync(winrt::hstring const& source);
 	};
 }

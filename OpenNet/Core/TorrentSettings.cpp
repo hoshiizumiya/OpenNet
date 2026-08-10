@@ -119,10 +119,16 @@ namespace OpenNet::Core
 			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd", s.enableLsd);
 			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp", s.enableUpnp);
 			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp", s.enableNatpmp);
+			db.SetInt(AppSettingsDatabase::CAT_DISCOVERY, "upnpLeaseDuration", s.upnpLeaseDuration);
 
 			// Tracker
 			db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers", s.announceToAllTiers);
 			db.SetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers", s.announceToAllTrackers);
+			db.SetString(AppSettingsDatabase::CAT_TRACKER, "dhtBootstrapNodes", s.dhtBootstrapNodes);
+			db.SetString(AppSettingsDatabase::CAT_TRACKER, "announceIp", s.announceIp);
+			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "announcePort", s.announcePort);
+			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "maxConcurrentHttpAnnounces", s.maxConcurrentHttpAnnounces);
+			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "stopTrackerTimeout", s.stopTrackerTimeout);
 
 			// Limits (Torrent category)
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads", s.activeDownloads);
@@ -142,10 +148,34 @@ namespace OpenNet::Core
 			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout", s.handshakeTimeout);
 			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections", s.closeRedundantConnections);
 			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize", s.maxPeerListSize);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionSpeed", s.connectionSpeed);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "seedingOutgoingConnections", s.seedingOutgoingConnections);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "socketSendBufferSize", s.socketSendBufferSize);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "socketReceiveBufferSize", s.socketReceiveBufferSize);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "socketBacklogSize", s.socketBacklogSize);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "mixedModeAlgorithm", s.mixedModeAlgorithm);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "hostnameCacheTtl", s.hostnameCacheTtl);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "validateHttpsTrackers", s.validateHttpsTrackers);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "ssrfMitigation", s.ssrfMitigation);
+			db.SetBool(AppSettingsDatabase::CAT_CONNECTION, "blockPeersOnPrivilegedPorts", s.blockPeersOnPrivilegedPorts);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTurnover", s.peerTurnover);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTurnoverCutoff", s.peerTurnoverCutoff);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTurnoverInterval", s.peerTurnoverInterval);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "requestQueueSize", s.requestQueueSize);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadSlotsBehavior", s.uploadSlotsBehavior);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadChokingAlgorithm", s.uploadChokingAlgorithm);
 
 			// Disk I/O
 			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads", s.aioThreads);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "hashingThreads", s.hashingThreads);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "filePoolSize", s.filePoolSize);
 			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage", s.checkingMemUsage);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "diskQueueSize", s.diskQueueSize);
+			db.SetBool(AppSettingsDatabase::CAT_DISK_IO, "pieceExtentAffinity", s.pieceExtentAffinity);
+			db.SetBool(AppSettingsDatabase::CAT_DISK_IO, "uploadSuggestions", s.uploadSuggestions);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermark", s.sendBufferWatermark);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferLowWatermark", s.sendBufferLowWatermark);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermarkFactor", s.sendBufferWatermarkFactor);
 
 			// Encryption
 			db.SetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy", static_cast<int>(s.encryptionPolicy));
@@ -208,10 +238,18 @@ namespace OpenNet::Core
 			s.enableLsd = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd").value_or(s.enableLsd);
 			s.enableUpnp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp").value_or(s.enableUpnp);
 			s.enableNatpmp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp").value_or(s.enableNatpmp);
+			s.upnpLeaseDuration = static_cast<int>(db.GetInt(
+				AppSettingsDatabase::CAT_DISCOVERY, "upnpLeaseDuration")
+				.value_or(s.upnpLeaseDuration));
 
 			// Tracker
 			s.announceToAllTiers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTiers").value_or(s.announceToAllTiers);
 			s.announceToAllTrackers = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "announceToAllTrackers").value_or(s.announceToAllTrackers);
+			s.dhtBootstrapNodes = db.GetString(AppSettingsDatabase::CAT_TRACKER, "dhtBootstrapNodes").value_or(s.dhtBootstrapNodes);
+			s.announceIp = db.GetString(AppSettingsDatabase::CAT_TRACKER, "announceIp").value_or(s.announceIp);
+			s.announcePort = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "announcePort").value_or(s.announcePort));
+			s.maxConcurrentHttpAnnounces = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "maxConcurrentHttpAnnounces").value_or(s.maxConcurrentHttpAnnounces));
+			s.stopTrackerTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "stopTrackerTimeout").value_or(s.stopTrackerTimeout));
 
 			// Limits
 			s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
@@ -231,10 +269,34 @@ namespace OpenNet::Core
 			s.handshakeTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "handshakeTimeout").value_or(s.handshakeTimeout));
 			s.closeRedundantConnections = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "closeRedundantConnections").value_or(s.closeRedundantConnections);
 			s.maxPeerListSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "maxPeerListSize").value_or(s.maxPeerListSize));
+			s.connectionSpeed = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "connectionSpeed").value_or(s.connectionSpeed));
+			s.seedingOutgoingConnections = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "seedingOutgoingConnections").value_or(s.seedingOutgoingConnections);
+			s.socketSendBufferSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "socketSendBufferSize").value_or(s.socketSendBufferSize));
+			s.socketReceiveBufferSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "socketReceiveBufferSize").value_or(s.socketReceiveBufferSize));
+			s.socketBacklogSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "socketBacklogSize").value_or(s.socketBacklogSize));
+			s.mixedModeAlgorithm = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "mixedModeAlgorithm").value_or(s.mixedModeAlgorithm));
+			s.hostnameCacheTtl = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "hostnameCacheTtl").value_or(s.hostnameCacheTtl));
+			s.validateHttpsTrackers = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "validateHttpsTrackers").value_or(s.validateHttpsTrackers);
+			s.ssrfMitigation = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "ssrfMitigation").value_or(s.ssrfMitigation);
+			s.blockPeersOnPrivilegedPorts = db.GetBool(AppSettingsDatabase::CAT_CONNECTION, "blockPeersOnPrivilegedPorts").value_or(s.blockPeersOnPrivilegedPorts);
+			s.peerTurnover = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTurnover").value_or(s.peerTurnover));
+			s.peerTurnoverCutoff = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTurnoverCutoff").value_or(s.peerTurnoverCutoff));
+			s.peerTurnoverInterval = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTurnoverInterval").value_or(s.peerTurnoverInterval));
+			s.requestQueueSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "requestQueueSize").value_or(s.requestQueueSize));
+			s.uploadSlotsBehavior = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadSlotsBehavior").value_or(s.uploadSlotsBehavior));
+			s.uploadChokingAlgorithm = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadChokingAlgorithm").value_or(s.uploadChokingAlgorithm));
 
 			// Disk I/O
 			s.aioThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads").value_or(s.aioThreads));
+			s.hashingThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "hashingThreads").value_or(s.hashingThreads));
+			s.filePoolSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "filePoolSize").value_or(s.filePoolSize));
 			s.checkingMemUsage = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage").value_or(s.checkingMemUsage));
+			s.diskQueueSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "diskQueueSize").value_or(s.diskQueueSize));
+			s.pieceExtentAffinity = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "pieceExtentAffinity").value_or(s.pieceExtentAffinity);
+			s.uploadSuggestions = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "uploadSuggestions").value_or(s.uploadSuggestions);
+			s.sendBufferWatermark = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermark").value_or(s.sendBufferWatermark));
+			s.sendBufferLowWatermark = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferLowWatermark").value_or(s.sendBufferLowWatermark));
+			s.sendBufferWatermarkFactor = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermarkFactor").value_or(s.sendBufferWatermarkFactor));
 
 			// Encryption
 			s.encryptionPolicy = static_cast<EncryptionPolicy>(db.GetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy").value_or(static_cast<int>(s.encryptionPolicy)));
@@ -298,10 +360,17 @@ namespace OpenNet::Core
 		pack.set_bool(lt::settings_pack::enable_lsd, s.enableLsd);
 		pack.set_bool(lt::settings_pack::enable_upnp, s.enableUpnp);
 		pack.set_bool(lt::settings_pack::enable_natpmp, s.enableNatpmp);
+		pack.set_int(lt::settings_pack::upnp_lease_duration,
+					 std::max(0, s.upnpLeaseDuration));
 
 		// Tracker
 		pack.set_bool(lt::settings_pack::announce_to_all_tiers, s.announceToAllTiers);
 		pack.set_bool(lt::settings_pack::announce_to_all_trackers, s.announceToAllTrackers);
+		pack.set_str(lt::settings_pack::dht_bootstrap_nodes, s.dhtBootstrapNodes);
+		pack.set_str(lt::settings_pack::announce_ip, s.announceIp);
+		pack.set_int(lt::settings_pack::announce_port, s.announcePort);
+		pack.set_int(lt::settings_pack::max_concurrent_http_announces, s.maxConcurrentHttpAnnounces);
+		pack.set_int(lt::settings_pack::stop_tracker_timeout, s.stopTrackerTimeout);
 
 		// Limits
 		pack.set_int(lt::settings_pack::active_downloads, s.activeDownloads);
@@ -317,10 +386,36 @@ namespace OpenNet::Core
 		pack.set_int(lt::settings_pack::handshake_timeout, s.handshakeTimeout);
 		pack.set_bool(lt::settings_pack::close_redundant_connections, s.closeRedundantConnections);
 		pack.set_int(lt::settings_pack::max_peerlist_size, s.maxPeerListSize);
+		pack.set_int(lt::settings_pack::connection_speed, s.connectionSpeed);
+		pack.set_bool(lt::settings_pack::seeding_outgoing_connections, s.seedingOutgoingConnections);
+		pack.set_int(lt::settings_pack::send_socket_buffer_size, s.socketSendBufferSize);
+		pack.set_int(lt::settings_pack::recv_socket_buffer_size, s.socketReceiveBufferSize);
+		pack.set_int(lt::settings_pack::listen_queue_size, s.socketBacklogSize);
+		pack.set_int(lt::settings_pack::mixed_mode_algorithm, s.mixedModeAlgorithm);
+		pack.set_int(lt::settings_pack::resolver_cache_timeout, s.hostnameCacheTtl);
+		pack.set_bool(lt::settings_pack::validate_https_trackers, s.validateHttpsTrackers);
+		pack.set_bool(lt::settings_pack::ssrf_mitigation, s.ssrfMitigation);
+		pack.set_bool(lt::settings_pack::no_connect_privileged_ports, s.blockPeersOnPrivilegedPorts);
+		pack.set_int(lt::settings_pack::peer_turnover, s.peerTurnover);
+		pack.set_int(lt::settings_pack::peer_turnover_cutoff, s.peerTurnoverCutoff);
+		pack.set_int(lt::settings_pack::peer_turnover_interval, s.peerTurnoverInterval);
+		pack.set_int(lt::settings_pack::max_out_request_queue, s.requestQueueSize);
+		pack.set_int(lt::settings_pack::choking_algorithm, s.uploadSlotsBehavior);
+		pack.set_int(lt::settings_pack::seed_choking_algorithm, s.uploadChokingAlgorithm);
 
 		// Disk I/O
 		pack.set_int(lt::settings_pack::aio_threads, s.aioThreads);
+		pack.set_int(lt::settings_pack::hashing_threads, s.hashingThreads);
+		pack.set_int(lt::settings_pack::file_pool_size, s.filePoolSize);
 		pack.set_int(lt::settings_pack::checking_mem_usage, s.checkingMemUsage);
+		pack.set_int(lt::settings_pack::max_queued_disk_bytes, s.diskQueueSize);
+		pack.set_bool(lt::settings_pack::piece_extent_affinity, s.pieceExtentAffinity);
+		pack.set_int(lt::settings_pack::suggest_mode, s.uploadSuggestions
+					 ? lt::settings_pack::suggest_read_cache
+					 : lt::settings_pack::no_piece_suggestions);
+		pack.set_int(lt::settings_pack::send_buffer_watermark, s.sendBufferWatermark * 1024);
+		pack.set_int(lt::settings_pack::send_buffer_low_watermark, s.sendBufferLowWatermark * 1024);
+		pack.set_int(lt::settings_pack::send_buffer_watermark_factor, s.sendBufferWatermarkFactor);
 
 		// Encryption (pe_settings mapped to settings_pack ints)
 		// In libtorrent 2.x: out_enc_policy, in_enc_policy, allowed_enc_level
@@ -397,9 +492,15 @@ namespace OpenNet::Core
 		s.enableLsd = pack.get_bool(lt::settings_pack::enable_lsd);
 		s.enableUpnp = pack.get_bool(lt::settings_pack::enable_upnp);
 		s.enableNatpmp = pack.get_bool(lt::settings_pack::enable_natpmp);
+		s.upnpLeaseDuration = pack.get_int(lt::settings_pack::upnp_lease_duration);
 
 		s.announceToAllTiers = pack.get_bool(lt::settings_pack::announce_to_all_tiers);
 		s.announceToAllTrackers = pack.get_bool(lt::settings_pack::announce_to_all_trackers);
+		s.dhtBootstrapNodes = pack.get_str(lt::settings_pack::dht_bootstrap_nodes);
+		s.announceIp = pack.get_str(lt::settings_pack::announce_ip);
+		s.announcePort = pack.get_int(lt::settings_pack::announce_port);
+		s.maxConcurrentHttpAnnounces = pack.get_int(lt::settings_pack::max_concurrent_http_announces);
+		s.stopTrackerTimeout = pack.get_int(lt::settings_pack::stop_tracker_timeout);
 
 		s.activeDownloads = pack.get_int(lt::settings_pack::active_downloads);
 		s.activeSeeds = pack.get_int(lt::settings_pack::active_seeds);
@@ -412,9 +513,34 @@ namespace OpenNet::Core
 		s.handshakeTimeout = pack.get_int(lt::settings_pack::handshake_timeout);
 		s.closeRedundantConnections = pack.get_bool(lt::settings_pack::close_redundant_connections);
 		s.maxPeerListSize = pack.get_int(lt::settings_pack::max_peerlist_size);
+		s.connectionSpeed = pack.get_int(lt::settings_pack::connection_speed);
+		s.seedingOutgoingConnections = pack.get_bool(lt::settings_pack::seeding_outgoing_connections);
+		s.socketSendBufferSize = pack.get_int(lt::settings_pack::send_socket_buffer_size);
+		s.socketReceiveBufferSize = pack.get_int(lt::settings_pack::recv_socket_buffer_size);
+		s.socketBacklogSize = pack.get_int(lt::settings_pack::listen_queue_size);
+		s.mixedModeAlgorithm = pack.get_int(lt::settings_pack::mixed_mode_algorithm);
+		s.hostnameCacheTtl = pack.get_int(lt::settings_pack::resolver_cache_timeout);
+		s.validateHttpsTrackers = pack.get_bool(lt::settings_pack::validate_https_trackers);
+		s.ssrfMitigation = pack.get_bool(lt::settings_pack::ssrf_mitigation);
+		s.blockPeersOnPrivilegedPorts = pack.get_bool(lt::settings_pack::no_connect_privileged_ports);
+		s.peerTurnover = pack.get_int(lt::settings_pack::peer_turnover);
+		s.peerTurnoverCutoff = pack.get_int(lt::settings_pack::peer_turnover_cutoff);
+		s.peerTurnoverInterval = pack.get_int(lt::settings_pack::peer_turnover_interval);
+		s.requestQueueSize = pack.get_int(lt::settings_pack::max_out_request_queue);
+		s.uploadSlotsBehavior = pack.get_int(lt::settings_pack::choking_algorithm);
+		s.uploadChokingAlgorithm = pack.get_int(lt::settings_pack::seed_choking_algorithm);
 
 		s.aioThreads = pack.get_int(lt::settings_pack::aio_threads);
+		s.hashingThreads = pack.get_int(lt::settings_pack::hashing_threads);
+		s.filePoolSize = pack.get_int(lt::settings_pack::file_pool_size);
 		s.checkingMemUsage = pack.get_int(lt::settings_pack::checking_mem_usage);
+		s.diskQueueSize = pack.get_int(lt::settings_pack::max_queued_disk_bytes);
+		s.pieceExtentAffinity = pack.get_bool(lt::settings_pack::piece_extent_affinity);
+		s.uploadSuggestions = pack.get_int(lt::settings_pack::suggest_mode)
+			== lt::settings_pack::suggest_read_cache;
+		s.sendBufferWatermark = pack.get_int(lt::settings_pack::send_buffer_watermark) / 1024;
+		s.sendBufferLowWatermark = pack.get_int(lt::settings_pack::send_buffer_low_watermark) / 1024;
+		s.sendBufferWatermarkFactor = pack.get_int(lt::settings_pack::send_buffer_watermark_factor);
 
 		s.userAgent = pack.get_str(lt::settings_pack::user_agent);
 		s.peerFingerprint = pack.get_str(lt::settings_pack::peer_fingerprint);

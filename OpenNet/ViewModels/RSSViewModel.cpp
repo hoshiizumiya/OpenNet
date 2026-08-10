@@ -34,7 +34,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_torrentLink(RSSParser::ExtractTorrentLink(item))
 		, m_pubDate(FormatDate(item.pubDate))
 		, m_category(item.category)
-		, m_fileSize(::Core::Utils::Misc::friendlyUnitCompact(item.enclosureLength))
+		// RSS enclosure length is optional and describes the .torrent enclosure,
+		// not the payload declared by the torrent. Do not present a missing value
+		// as a zero-byte download.
+		, m_fileSize(item.enclosureLength == 0
+					 ? winrt::hstring{ L"—" }
+					 : winrt::hstring{ ::Core::Utils::Misc::friendlyUnitCompact(item.enclosureLength) })
 		, m_isDownloaded(item.isDownloaded)
 		, m_feedId(feedId)
 		, m_itemGuid(item.guid)
@@ -354,6 +359,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		RSSItem coreItem;
 		coreItem.guid = std::wstring(item.ItemGuid().c_str());
 		coreItem.link = std::wstring(item.Link().c_str());
+		coreItem.enclosureUrl = std::wstring(item.TorrentLink().c_str());
 		coreItem.title = std::wstring(item.Title().c_str());
 
 		RSSManager::Instance().DownloadItem(

@@ -134,8 +134,11 @@
                             <TextBlock
                                 Grid.Column="1"
                                 Text="{x:Bind Content, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis"
-                                ToolTipService.ToolTip="{x:Bind Content, Mode=OneWay}" />
+                                TextTrimming="CharacterEllipsis">
+                                <ToolTipService.ToolTip>
+                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Content, Mode=OneWay}" />
+                                </ToolTipService.ToolTip>
+                            </TextBlock>
                         </Grid>
                     </labs:DataRow>
                 </DataTemplate>

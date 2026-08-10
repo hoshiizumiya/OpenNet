@@ -30,7 +30,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 	using namespace ::Core::Utils::Misc;
 	static winrt::hstring FormatByteSize(std::uint64_t bytes);
 	static winrt::hstring FormatRatio(std::uint64_t uploaded, std::uint64_t downloaded);
-	static winrt::hstring FormatConnectedKnown(int connected, int known);
+	static winrt::hstring FormatSeedsPeers(
+		int connectedSeeds, int connectedPeers, int knownSeeds, int knownPeers);
 	// Tip: All constructions will do in winrt::make<>().
 	TasksViewModel::TasksViewModel()
 	{
@@ -558,10 +559,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 						vm.ShareRatio(FormatRatio(
 							static_cast<std::uint64_t>((std::max)(std::int64_t{}, detail.allTimeUploaded)),
 							static_cast<std::uint64_t>((std::max)(std::int64_t{}, totalDownloaded))));
-						vm.Seeds(FormatConnectedKnown(detail.numSeeds, detail.numComplete));
-						vm.Peers(FormatConnectedKnown(
+						vm.Seeds(FormatSeedsPeers(
+							detail.numSeeds,
 							(std::max)(0, detail.numPeers - detail.numSeeds),
-							detail.numIncomplete));
+							detail.numComplete, detail.numIncomplete));
 						if (detail.completedTimestamp > 0)
 							vm.CompletedDate(FormatTimestamp(detail.completedTimestamp));
 						else
@@ -766,11 +767,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 			L"{:.2f}", static_cast<double>(uploaded) / downloaded) };
 	}
 
-	static winrt::hstring FormatConnectedKnown(int connected, int known)
+	static winrt::hstring FormatSeedsPeers(
+		int connectedSeeds, int connectedPeers, int knownSeeds, int knownPeers)
 	{
-		return known >= 0
-			? winrt::hstring{ std::format(L"{} ({})", (std::max)(0, connected), known) }
-			: winrt::hstring{ std::format(L"{} (-)", (std::max)(0, connected)) };
+		return winrt::hstring{ std::format(
+			L"{}/{}[{}/{}]",
+			(std::max)(0, connectedSeeds), (std::max)(0, connectedPeers),
+			knownSeeds >= 0 ? std::to_wstring(knownSeeds) : L"-",
+			knownPeers >= 0 ? std::to_wstring(knownPeers) : L"-") };
 	}
 
 	void TasksViewModel::OnProgress(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
@@ -817,9 +821,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.ShareRatio(FormatRatio(
 					static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.allTimeUploaded)),
 					static_cast<std::uint64_t>((std::max)(std::int64_t{}, allTimeDownloaded))));
-				item.Seeds(FormatConnectedKnown(e.connectedSeeds, e.knownSeeds));
-				item.Peers(FormatConnectedKnown(
-					(std::max)(0, e.connectedPeers - e.connectedSeeds), e.knownPeers));
+				item.Seeds(FormatSeedsPeers(
+					e.connectedSeeds,
+					(std::max)(0, e.connectedPeers - e.connectedSeeds),
+					e.knownSeeds, e.knownPeers));
 				if (e.completedTimestamp > 0)
 					item.CompletedDate(FormatTimestamp(e.completedTimestamp));
 				else if (item.CompletedDate().empty())

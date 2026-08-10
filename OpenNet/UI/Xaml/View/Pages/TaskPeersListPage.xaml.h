@@ -41,6 +41,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void BanPeerPermanent_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void UnbanPeer_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void ColumnHeader_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
 		void ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void AutoSizeSelectedColumn_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
@@ -71,6 +72,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::hstring m_sortColumn;
 		int m_sortDirection{};
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
+		bool m_rowLayoutSynchronizationQueued{};
 
 		// Track last known task id to detect task change
 		std::string m_lastTaskId;
@@ -90,6 +92,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
 		void SynchronizePeerRows();
+		void ScheduleRowLayoutSynchronization();
 	};
 }
 

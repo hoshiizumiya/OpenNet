@@ -57,10 +57,19 @@ export namespace OpenNet::Core
 		bool enableLsd{ true };
 		bool enableUpnp{ true };
 		bool enableNatpmp{ true };
+		// 0 requests a permanent UPnP lease. Besides matching qBittorrent's
+		// conservative default, this avoids an expired-timer retry storm while a
+		// slow router is still answering a lease refresh request.
+		int upnpLeaseDuration{ 0 };
 
 		// ----- Tracker -----
 		bool announceToAllTiers{ false };
 		bool announceToAllTrackers{ false };
+		std::string dhtBootstrapNodes{ "dht.libtorrent.org:25401" };
+		std::string announceIp;
+		int announcePort{ 0 };
+		int maxConcurrentHttpAnnounces{ 50 };
+		int stopTrackerTimeout{ 5 };
 
 		// ----- Limits -----
 		int activeDownloads{ 3 };
@@ -82,10 +91,34 @@ export namespace OpenNet::Core
 		int handshakeTimeout{ 10 };
 		bool closeRedundantConnections{ true };
 		int maxPeerListSize{ 4000 };
+		int connectionSpeed{ 30 };
+		bool seedingOutgoingConnections{ true };
+		int socketSendBufferSize{ 0 };
+		int socketReceiveBufferSize{ 0 };
+		int socketBacklogSize{ 30 };
+		int mixedModeAlgorithm{ 0 };
+		int hostnameCacheTtl{ 3600 };
+		bool validateHttpsTrackers{ true };
+		bool ssrfMitigation{ true };
+		bool blockPeersOnPrivilegedPorts{ false };
+		int peerTurnover{ 4 };
+		int peerTurnoverCutoff{ 90 };
+		int peerTurnoverInterval{ 300 };
+		int requestQueueSize{ 500 };
+		int uploadSlotsBehavior{ 0 };
+		int uploadChokingAlgorithm{ 1 };
 
 		// ----- Disk I/O -----
 		int aioThreads{ 4 };
+		int hashingThreads{ 1 };
+		int filePoolSize{ 40 };
 		int checkingMemUsage{ 256 };
+		int diskQueueSize{ 1024 * 1024 };
+		bool pieceExtentAffinity{ false };
+		bool uploadSuggestions{ false };
+		int sendBufferWatermark{ 500 };
+		int sendBufferLowWatermark{ 10 };
+		int sendBufferWatermarkFactor{ 50 };
 
 		// ----- Encryption -----
 		EncryptionPolicy encryptionPolicy{ EncryptionPolicy::Enabled };

@@ -1,7 +1,9 @@
 ﻿module OpenNet.Core.RSS.RSSManager;
 
 import OpenNet.Core.RSS.RSSDatabase;
+import OpenNet.Core.RSS.RSSLinkResolver;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.P2PManager;
 import winrt.Windows.Web.Http.Headers;
 import winrt.Windows.Web.Http;
 import winrt.Windows.Storage;
@@ -447,10 +449,50 @@ namespace OpenNet::Core::RSS
 			}
 		}
 
-		// TODO: Integrate with LibtorrentHandle to add the torrent
-		// This would call into the existing torrent infrastructure
-		// For now, mark as downloaded
-		MarkItemAsDownloaded(feedId, item.guid);
+		[](RSSManager* self, std::wstring feed, RSSItem rssItem,
+			std::wstring source, std::wstring destination) -> winrt::fire_and_forget
+		{
+			try
+			{
+				auto resolved = co_await RSSLinkResolver::ResolveTorrentSourceAsync(
+					winrt::hstring{ source });
+				auto& manager = ::OpenNet::Core::P2PManager::Instance();
+				co_await manager.EnsureTorrentCoreInitializedAsync();
+				std::wstring normalized{ resolved.c_str() };
+				std::wstring lower = normalized;
+				std::transform(lower.begin(), lower.end(), lower.begin(), std::towlower);
+				bool added = false;
+				if (lower.starts_with(L"magnet:"))
+				{
+					added = co_await manager.AddMagnetAsync(
+						winrt::to_string(resolved), winrt::to_string(destination));
+				}
+				else
+				{
+					added = co_await manager.AddTorrentFileAsync(
+						winrt::to_string(resolved), winrt::to_string(destination));
+				}
+				if (!added)
+				{
+					throw winrt::hresult_error(
+						winrt::hresult{ -2147467259 },
+						L"libtorrent rejected the RSS item.");
+				}
+				self->MarkItemAsDownloaded(feed, rssItem.guid);
+			}
+			catch (winrt::hresult_error const& error)
+			{
+				ErrorCallback callback;
+				{
+					std::lock_guard lock(self->m_callbackMutex);
+					callback = self->m_errorCallback;
+				}
+				if (callback)
+				{
+					callback(feed, std::wstring(error.message().c_str()));
+				}
+			}
+		}(this, feedId, item, torrentLink, savePath);
 	}
 
 	void RSSManager::SetFeedUpdatedCallback(FeedUpdatedCallback callback)

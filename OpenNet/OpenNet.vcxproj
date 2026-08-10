@@ -467,6 +467,10 @@
       <DependentUpon>UI\Xaml\View\Windows\RuntimeStatusWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Windows\RSSBrowserWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\RSSBrowserWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.h">
       <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -771,6 +775,9 @@
     <Page Include="UI\Xaml\View\Windows\RuntimeStatusWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Windows\RSSBrowserWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -1029,6 +1036,10 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\InfoOverlayWindow.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Windows\InfoOverlayWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Windows\RSSBrowserWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\RSSBrowserWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml.cpp">
@@ -1388,6 +1399,10 @@
       <DependentUpon>UI\Xaml\View\Windows\RuntimeStatusWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Windows\RSSBrowserWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\RSSBrowserWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.idl">
       <DependentUpon>UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1507,6 +1522,24 @@
       <TargetPath>WebUI\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
       <Link>WebUI\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </None>
+    <None Include="ThirdParty\qBittorrentWebUI\overrides\**\*">
+      <DeploymentContent>true</DeploymentContent>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>WebUI\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      <Link>WebUI\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+	<None Include="ThirdParty\VueTorrentWebUI\upstream\public\**\*">
+	  <DeploymentContent>true</DeploymentContent>
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <TargetPath>WebUI\VueTorrent\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+	  <Link>WebUI\VueTorrent\%(RecursiveDir)%(Filename)%(Extension)</Link>
+	</None>
+	<None Include="ThirdParty\VueTorrentWebUI\overrides\**\*">
+	  <DeploymentContent>true</DeploymentContent>
+	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  <TargetPath>WebUI\VueTorrent\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+	  <Link>WebUI\VueTorrent\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</Link>
+	</None>
     <Image Include="Assets\AppIcons\BadgeLogo.scale-100.png" />
     <Image Include="Assets\AppIcons\BadgeLogo.scale-125.png" />
     <Image Include="Assets\AppIcons\BadgeLogo.scale-150.png" />

@@ -8,8 +8,12 @@
 
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.RSS.RSSLinkResolver;
 import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.UI.Xaml.Controls.Primitives;
+import winrt.Microsoft.UI.Xaml.Input;
+import winrt.Windows.System;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -21,6 +25,75 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		m_viewModel = winrt::make<ViewModels::implementation::RSSViewModel>();
 		InitializeComponent();
+		m_previewWebView = WebView2{};
+		m_previewWebView.Width(640);
+		m_previewWebView.Height(400);
+		m_previewHost = Border{};
+		winrt::Microsoft::UI::Xaml::CornerRadius previewCornerRadius{};
+		previewCornerRadius.TopLeft = 8.0;
+		previewCornerRadius.TopRight = 8.0;
+		previewCornerRadius.BottomRight = 8.0;
+		previewCornerRadius.BottomLeft = 8.0;
+		m_previewHost.CornerRadius(previewCornerRadius);
+		m_previewHost.Child(m_previewWebView);
+		m_previewFlyout = Flyout{};
+		m_previewFlyout.Placement(
+			winrt::Microsoft::UI::Xaml::Controls::Primitives::
+			FlyoutPlacementMode::RightEdgeAlignedTop);
+		m_previewFlyout.Content(m_previewHost);
+		m_previewFlyout.Opened([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get()) self->m_previewOpen = true;
+		});
+		m_previewFlyout.Closed([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				self->m_previewOpen = false;
+				self->m_previewPointerOverFlyout = false;
+				if (!self->m_previewPointerOverItem) self->m_previewTarget = nullptr;
+			}
+		});
+		m_previewHost.PointerEntered([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				self->m_previewPointerOverFlyout = true;
+				if (self->m_previewCloseTimer) self->m_previewCloseTimer.Stop();
+			}
+		});
+		m_previewHost.PointerExited([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				self->m_previewPointerOverFlyout = false;
+				if (self->m_previewCloseTimer) self->m_previewCloseTimer.Start();
+			}
+		});
+		m_previewTimer = DispatcherQueue().CreateTimer();
+		m_previewTimer.IsRepeating(false);
+		m_previewTimer.Interval(std::chrono::milliseconds(225));
+		m_previewTimer.Tick([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get(); self && self->m_previewTarget
+				&& self->m_previewPointerOverItem)
+			{
+				self->m_previewFlyout.ShowAt(self->m_previewTarget);
+			}
+		});
+		m_previewCloseTimer = DispatcherQueue().CreateTimer();
+		m_previewCloseTimer.IsRepeating(false);
+		m_previewCloseTimer.Interval(std::chrono::milliseconds(650));
+		m_previewCloseTimer.Tick([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get(); self
+				&& !self->m_previewPointerOverItem
+				&& !self->m_previewPointerOverFlyout)
+			{
+				self->m_previewTarget = nullptr;
+				if (self->m_previewOpen) self->m_previewFlyout.Hide();
+			}
+		});
 
 		// Defer UI initialization to Loaded event per C++/WinRT guidelines
 		Loaded([this](IInspectable const& sender, RoutedEventArgs const& e)
@@ -30,11 +103,41 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
 				int maxItems = static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "max_items_per_feed", 100));
 				MaxItemsPerFeedBox().Value(static_cast<double>(maxItems));
+				ItemDoubleClickActionBox().SelectedIndex(static_cast<int32_t>(
+					db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+						"item_double_click_action", 0)));
+				LinkOpenBehaviorBox().SelectedIndex(static_cast<int32_t>(
+					db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+						"link_open_behavior", 0)));
+				m_loadingSettings = false;
 			}
 			catch (...)
 			{
 			}
 		});
+		Unloaded([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				if (self->m_previewTimer) self->m_previewTimer.Stop();
+				if (self->m_previewCloseTimer) self->m_previewCloseTimer.Stop();
+				if (self->m_previewOpen) self->m_previewFlyout.Hide();
+				self->m_previewTarget = nullptr;
+				self->m_previewPointerOverItem = false;
+			}
+		});
+	}
+
+	RSSPage::~RSSPage()
+	{
+		if (m_previewTimer) m_previewTimer.Stop();
+		if (m_previewCloseTimer) m_previewCloseTimer.Stop();
+		try
+		{
+			if (m_previewOpen) m_previewFlyout.Hide();
+			if (m_previewWebView) m_previewWebView.Close();
+		}
+		catch (...) {}
 	}
 
 	void RSSPage::AddFeedButton_Click(::winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -92,20 +195,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void RSSPage::ProcessAndShowTorrentMetadataWindow(hstring const& torrentLink)
+	winrt::fire_and_forget RSSPage::ProcessAndShowTorrentMetadataWindow(hstring torrentLink)
 	{
+		auto lifetime = get_strong();
 		if (torrentLink.empty())
 		{
-			return;
+			co_return;
 		}
 
 		try
 		{
+			auto source = co_await ::OpenNet::Core::RSS::RSSLinkResolver::ResolveTorrentSourceAsync(torrentLink);
 			// Create a shared_ptr to keep the window alive during async operations
-			auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(torrentLink);
+			auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(source);
 			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(*checkWindow);
 			checkWindow->Activate();
 			// The window manages its own lifetime - it will close when user closes it or operations complete
+		}
+		catch (winrt::hresult_error const& ex)
+		{
+			m_viewModel.SetStatusMessage(L"Unable to open torrent: " + ex.message());
 		}
 		catch (const std::exception& ex)
 		{
@@ -118,6 +227,161 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			OutputDebugStringW(L"Unknown error creating torrent check window\n");
 		}
+	}
+
+	OpenNet::ViewModels::RSSItemViewModel RSSPage::ItemFromSender(IInspectable const& sender) const
+	{
+		if (auto element = sender.try_as<FrameworkElement>())
+		{
+			return element.Tag().try_as<ViewModels::RSSItemViewModel>();
+		}
+		return nullptr;
+	}
+
+	void RSSPage::RSSItem_RightTapped(IInspectable const& sender, Input::RightTappedRoutedEventArgs const&)
+	{
+		if (auto item = ItemFromSender(sender))
+		{
+			ItemsListView().SelectedItem(item);
+		}
+	}
+
+	void RSSPage::RSSItem_DoubleTapped(IInspectable const& sender, Input::DoubleTappedRoutedEventArgs const& args)
+	{
+		if (auto item = ItemFromSender(sender))
+		{
+			ItemsListView().SelectedItem(item);
+			if (ItemDoubleClickActionBox().SelectedIndex() == 0)
+			{
+				ProcessAndShowTorrentMetadataWindow(item.TorrentLink().empty() ? item.Link() : item.TorrentLink());
+			}
+			else
+			{
+				OpenItemInBrowser(item);
+			}
+			args.Handled(true);
+		}
+	}
+
+	void RSSPage::RSSItem_PointerEntered(IInspectable const& sender, Input::PointerRoutedEventArgs const&)
+	{
+		auto item = ItemFromSender(sender);
+		auto target = sender.try_as<FrameworkElement>();
+		if (!item || !target || item.Link().empty()) return;
+		m_previewTimer.Stop();
+		m_previewCloseTimer.Stop();
+		m_previewPointerOverItem = true;
+		const bool targetChanged = m_previewTarget != target;
+		if (targetChanged && m_previewOpen)
+		{
+			// A Flyout keeps the placement target with which it was opened. Reopen
+			// it for the new row so moving between items updates both content and
+			// placement instead of leaving a stale preview on screen.
+			m_previewFlyout.Hide();
+			m_previewOpen = false;
+		}
+		m_previewTarget = target;
+		try
+		{
+			if (m_previewUrl != item.Link())
+			{
+				m_previewUrl = item.Link();
+				m_previewWebView.Source(winrt::Windows::Foundation::Uri(m_previewUrl));
+			}
+			if (!m_previewOpen) m_previewTimer.Start();
+		}
+		catch (...)
+		{
+			m_previewPointerOverItem = false;
+			m_previewTarget = nullptr;
+		}
+	}
+
+	void RSSPage::RSSItem_PointerExited(IInspectable const&, Input::PointerRoutedEventArgs const&)
+	{
+		m_previewTimer.Stop();
+		m_previewPointerOverItem = false;
+		// Moving from a ListView row into a Flyout crosses separate XAML roots.
+		// A short grace period lets the Flyout host receive PointerEntered first.
+		m_previewCloseTimer.Stop();
+		m_previewCloseTimer.Start();
+	}
+
+	void RSSPage::AddSelectedItem_Click(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (auto item = m_viewModel.SelectedItem())
+		{
+			ProcessAndShowTorrentMetadataWindow(item.TorrentLink().empty() ? item.Link() : item.TorrentLink());
+		}
+	}
+
+	void RSSPage::ShowSelectedItemDetails_Click(IInspectable const&, RoutedEventArgs const&)
+	{
+		OpenItemInBrowser(m_viewModel.SelectedItem());
+	}
+
+	void RSSPage::OpenSelectedItemInBrowser_Click(IInspectable const&, RoutedEventArgs const&)
+	{
+		OpenItemExternally(m_viewModel.SelectedItem());
+	}
+
+	winrt::fire_and_forget RSSPage::OpenItemInBrowser(ViewModels::RSSItemViewModel item)
+	{
+		auto lifetime = get_strong();
+		if (!item || item.Link().empty()) co_return;
+		try
+		{
+			if (LinkOpenBehaviorBox().SelectedIndex() == 1)
+			{
+				co_await winrt::Windows::System::Launcher::LaunchUriAsync(
+					winrt::Windows::Foundation::Uri(item.Link()));
+				co_return;
+			}
+
+			if (!m_browserWindow)
+			{
+				m_browserWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::
+					implementation::RSSBrowserWindow>();
+				::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(m_browserWindow);
+				m_browserWindow.Closed([weak = get_weak()](auto const&, auto const&)
+				{
+					if (auto self = weak.get()) self->m_browserWindow = nullptr;
+				});
+			}
+			// Activate first so WebView2 can bind its controller to a real HWND.
+			m_browserWindow.Activate();
+			m_browserWindow.AddNewTab(item.Link(), item.Title());
+		}
+		catch (...) { m_viewModel.SetStatusMessage(L"Unable to open the article link."); }
+	}
+
+	winrt::fire_and_forget RSSPage::OpenItemExternally(ViewModels::RSSItemViewModel item)
+	{
+		auto lifetime = get_strong();
+		if (!item || item.Link().empty()) co_return;
+		try
+		{
+			co_await winrt::Windows::System::Launcher::LaunchUriAsync(
+				winrt::Windows::Foundation::Uri(item.Link()));
+		}
+		catch (...) { m_viewModel.SetStatusMessage(L"Unable to open the article link."); }
+	}
+
+	void RSSPage::ItemDoubleClickActionBox_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		if (m_loadingSettings) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(
+			::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+			"item_double_click_action", ItemDoubleClickActionBox().SelectedIndex());
+	}
+
+	void RSSPage::LinkOpenBehaviorBox_SelectionChanged(
+		IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		if (m_loadingSettings) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(
+			::OpenNet::Core::AppSettingsDatabase::CAT_RSS,
+			"link_open_behavior", LinkOpenBehaviorBox().SelectedIndex());
 	}
 
 	winrt::fire_and_forget RSSPage::ShowAddFeedDialog()

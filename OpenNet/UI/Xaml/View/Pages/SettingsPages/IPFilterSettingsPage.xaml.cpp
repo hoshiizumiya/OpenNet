@@ -78,6 +78,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 		}
 
+		std::string MigrateLegacySubscriptionUrl(std::string url)
+		{
+			// PeerBanHelper retired the temporary ghostchu-services.top BTN rule
+			// host in favor of the stable pbh-btn.com domain. Preserve the path so
+			// existing user subscriptions continue to update transparently.
+			constexpr std::string_view legacyHost =
+				"bcr.pbh-btn.ghorg.ghostchu-services.top";
+			constexpr std::string_view currentHost = "bcr.pbh-btn.com";
+			auto lower = url;
+			std::transform(lower.begin(), lower.end(), lower.begin(),
+				[](unsigned char ch)
+				{
+					return static_cast<char>(std::tolower(ch));
+				});
+			auto const position = lower.find(legacyHost);
+			if (position != std::string::npos)
+				url.replace(position, legacyHost.size(), currentHost);
+			return url;
+		}
+
 		struct SubscriptionUpdateGuard
 		{
 			std::atomic_bool& value;
@@ -175,11 +195,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		std::int32_t failed = 0;
 		std::int32_t downloadedRules = 0;
 		winrt::Windows::Web::Http::HttpClient client;
+		client.DefaultRequestHeaders().UserAgent().ParseAdd(
+			L"OpenNet/1.0 IPFilterSubscription");
+		client.DefaultRequestHeaders().Accept().ParseAdd(
+			L"text/plain, */*;q=0.8");
 
-		for (auto const& subscription : subscriptions)
+		for (auto subscription : subscriptions)
 		{
 			try
 			{
+				auto const migratedUrl = MigrateLegacySubscriptionUrl(subscription.url);
+				if (migratedUrl != subscription.url)
+				{
+					manager.UpdateSubscription(
+						subscription.id, migratedUrl, subscription.enabled);
+					subscription.url = migratedUrl;
+				}
 				auto const url = winrt::to_hstring(subscription.url);
 				if (!IsHttpSubscriptionUrl(url))
 					throw std::invalid_argument("Only HTTP and HTTPS URLs are supported");

@@ -87,9 +87,10 @@
                         <FontIcon Glyph="&#xE8E5;" />
                     </essential:SettingsCard.HeaderIcon>
                     <Button
-                        x:Uid="IPF_ImportBtn"
-                        AutomationProperties.AutomationId="IPF_ImportBtn"
-                        Click="OnImportClick" />
+                        x:Uid="CommonContentBrowse"
+                        AutomationProperties.AutomationId="CommonContentBrowse"
+                        Click="OnImportClick"
+                        Content="Browse..." />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="IPF_RuleFiles">
@@ -190,8 +191,11 @@
                                                 IsTextSelectionEnabled="True"
                                                 Text="{Binding}"
                                                 TextTrimming="CharacterEllipsis"
-                                                TextWrapping="WrapWholeWords"
-                                                ToolTipService.ToolTip="{Binding}" />
+                                                TextWrapping="WrapWholeWords">
+                                                <ToolTipService.ToolTip>
+                                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{Binding}" />
+                                                </ToolTipService.ToolTip>
+                                            </TextBlock>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
@@ -299,8 +303,11 @@
                                                 FontFamily="Consolas"
                                                 IsTextSelectionEnabled="True"
                                                 Text="{Binding}"
-                                                TextTrimming="CharacterEllipsis"
-                                                ToolTipService.ToolTip="{Binding}" />
+                                                TextTrimming="CharacterEllipsis">
+                                                <ToolTipService.ToolTip>
+                                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{Binding}" />
+                                                </ToolTipService.ToolTip>
+                                            </TextBlock>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>

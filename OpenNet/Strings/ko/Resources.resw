@@ -507,22 +507,22 @@
   <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
     <value>취소</value>
   </data>
-  <data name="RSSAddFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageAddNewFeed.Content" xml:space="preserve">
     <value>새 피드 추가</value>
   </data>
-  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshAllFeeds.Content" xml:space="preserve">
     <value>모든 피드 새로 고침</value>
   </data>
-  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshThisFeed.Content" xml:space="preserve">
     <value>이 피드 새로 고침</value>
   </data>
-  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+  <data name="ViewRSSPageFeedSetting.Content" xml:space="preserve">
     <value>피드 설정</value>
   </data>
-  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRemoveFeed.Content" xml:space="preserve">
     <value>피드 제거</value>
   </data>
-  <data name="RSSDownloadTooltip" xml:space="preserve">
+  <data name="CommonContentDownload.Content" xml:space="preserve">
     <value>다운로드</value>
   </data>
   <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
@@ -804,9 +804,6 @@
   <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
     <value>(다운로드 폴더)</value>
   </data>
-  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
-    <value>찾아보기...</value>
-  </data>
   <data name="DL_PreallocateStorage.Header" xml:space="preserve">
     <value>디스크 공간 미리 할당</value>
   </data>
@@ -834,9 +831,6 @@
   <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
     <value>완료된 다운로드 경로</value>
   </data>
-  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
-    <value>찾아보기...</value>
-  </data>
   <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
     <value>새 HTTP 다운로드</value>
   </data>
@@ -861,7 +855,10 @@
   <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
     <value>기본 다운로드 폴더</value>
   </data>
-  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+  <data name="CommonContentBrowse.Content" xml:space="preserve">
+    <value>찾아보기...</value>
+  </data>
+  <data name="CommonContentBrowse.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>찾아보기...</value>
   </data>
   <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
@@ -891,8 +888,14 @@
   <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
     <value>업로드 속도</value>
   </data>
-  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+  <data name="CommonTextDownloaded.Text" xml:space="preserve">
     <value>다운로드됨</value>
+  </data>
+  <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>다운로드됨</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>이유</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>연결된 피어 없음</value>
@@ -980,9 +983,6 @@
   </data>
   <data name="IPF_ImportFile.Description" xml:space="preserve">
     <value>텍스트 파일(.txt, .dat, .p2p)에서 규칙을 가져옵니다</value>
-  </data>
-  <data name="IPF_ImportBtn.Content" xml:space="preserve">
-    <value>찾아보기...</value>
   </data>
   <data name="IPF_Section_Manage.Text" xml:space="preserve">
     <value>규칙 관리</value>
@@ -1189,9 +1189,6 @@
     <value>상태</value>
   </data>
   <data name="PeerHeader_Reason.Text" xml:space="preserve">
-    <value>이유</value>
-  </data>
-  <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>이유</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
@@ -1480,7 +1477,7 @@
     <value>데이터 폴더는 Windows에서 관리하며 애플리케이션을 제거하면 함께 삭제됩니다.</value>
   </data>
   <data name="GuideWebUITitle.Text" xml:space="preserve">
-    <value>qBittorrent Web UI 초기화</value>
+    <value>Web UI 초기화</value>
   </data>
   <data name="GuideWebUIDescription.Text" xml:space="preserve">
     <value>서비스 시작 전에 로컬 Web UI 계정을 설정하세요. 비밀번호는 6자 이상이어야 합니다.</value>
@@ -1666,6 +1663,9 @@
     <value>설명:</value>
   </data>
   <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>폴더 열기</value>
+  </data>
+  <data name="OpenFileLocationMenuItem.Text" xml:space="preserve">
     <value>폴더 열기</value>
   </data>
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
@@ -1989,7 +1989,7 @@
   <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
     <value>비어 있음</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+  <data name="CommonTextDownloading.Text" xml:space="preserve">
     <value>다운로드 중</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
@@ -2030,9 +2030,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
     <value>경과 시간</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
-    <value>다운로드됨</value>
   </data>
   <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
     <value>다운로드 속도</value>
@@ -2163,12 +2160,6 @@
   <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
     <value>접근할 수 없는 모든 트래커 제거...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
-    <value>선택한 열 너비 자동 맞춤</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
-    <value>모든 열 너비 자동 맞춤</value>
-  </data>
   <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
     <value>트래커 URL</value>
   </data>
@@ -2187,13 +2178,13 @@
   <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
     <value>리처</value>
   </data>
-  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
-    <value>다운로드됨</value>
-  </data>
   <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
     <value>상태</value>
   </data>
-  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+  <data name="CommonTextResetColumns.Text" xml:space="preserve">
+    <value>열 및 정렬 초기화</value>
+  </data>
+  <data name="CommonTextResetColumns.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>열 및 정렬 초기화</value>
   </data>
   <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
@@ -2339,9 +2330,6 @@
   </data>
   <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
     <value>상태</value>
-  </data>
-  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
-    <value>다운로드됨</value>
   </data>
   <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
     <value>테스트하지 않음</value>
@@ -2541,9 +2529,6 @@
   <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>암호화된 메시징 채널을 사용하여 피어와 통신합니다</value>
   </data>
-  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>VPN 및 터널링</value>
-  </data>
   <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>인터넷을 통한 개인 네트워킹을 위해 장치 간에 안전한 암호화 터널을 만듭니다</value>
   </data>
@@ -2634,7 +2619,7 @@
   <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>비어 있음</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="CommonTextDownloading.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>다운로드 중</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
@@ -2675,9 +2660,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>경과 시간</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>다운로드됨</value>
   </data>
   <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>다운로드 속도</value>
@@ -2808,12 +2790,6 @@
   <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>접근할 수 없는 모든 트래커 제거...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>선택한 열 너비 자동 맞춤</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>모든 열 너비 자동 맞춤</value>
-  </data>
   <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>트래커 URL</value>
   </data>
@@ -2832,14 +2808,8 @@
   <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>리처</value>
   </data>
-  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>다운로드됨</value>
-  </data>
   <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>상태</value>
-  </data>
-  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>열 및 정렬 초기화</value>
   </data>
   <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>트래커 없음</value>
@@ -3414,7 +3384,13 @@
   <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
     <value>선택한 열 너비 자동 맞춤</value>
   </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>선택한 열 너비 자동 맞춤</value>
+  </data>
   <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
+    <value>모든 열 너비 자동 맞춤</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>모든 열 너비 자동 맞춤</value>
   </data>
   <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
@@ -3510,7 +3486,7 @@
   <data name="ViewGuideViewRun.Text" xml:space="preserve">
     <value>Microsoft</value>
   </data>
-  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+  <data name="ViewMainViewDHTTextBlock.Text" xml:space="preserve">
     <value>DHT</value>
   </data>
   <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
@@ -3588,14 +3564,8 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>글꼴</value>
   </data>
-  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
-    <value>열 및 정렬 초기화</value>
-  </data>
   <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
     <value>우선순위</value>
-  </data>
-  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
-    <value>열 및 정렬 초기화</value>
   </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>소스</value>

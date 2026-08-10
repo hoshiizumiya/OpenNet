@@ -1,4 +1,4 @@
-# qBittorrent WebUI
+﻿# qBittorrent WebUI
 
 This directory contains the unmodified qBittorrent WebUI used by OpenNet.
 
@@ -13,11 +13,16 @@ Do not edit files under `upstream`. Update them with:
 .\scripts\Update-QBittorrentWebUI.ps1
 ```
 
-OpenNet-specific changes belong in a separate patch or override layer. The
-runtime compatibility target is recorded in
+OpenNet-specific changes belong under `overrides`; `WebUIHost` serves that
+directory through `/opennet/`. `WebUIHost` inlines only the compatibility adapter
+into authenticated pages and HTML fragments (including qBittorrent's preferences
+and property views), so fragment responses without `<head>`/`<body>` are covered
+while the upstream HTML/CSS and visual design remain unchanged. The adapter
+queries `/api/v2/opennet/capabilities` and disables qBittorrent-only server
+options instead of pretending they were persisted by OpenNet. The runtime
+compatibility target is recorded in
 `docs/qbittorrent-webapi-compatibility-matrix.md`.
 
-The qBittorrent source is GPL-2.0-or-later. Binary distributions containing its
-GPLv3+ assets are GPL-3.0-or-later. Retain all file-level notices and review the
-repository-wide licensing gate before publishing an OpenNet build containing
-these assets.
+The qBittorrent source is GPL-2.0-or-later. Retain all file-level notices and
+review the repository-wide licensing gate before publishing an OpenNet build
+containing these assets.

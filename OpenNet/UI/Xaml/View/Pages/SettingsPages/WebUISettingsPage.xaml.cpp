@@ -9,6 +9,7 @@
 import OpenNet.Core.AppSettingsDatabase;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.Microsoft.Windows.Globalization;
 import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Windows.Foundation;
 import winrt.Windows.System;
@@ -65,13 +66,35 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
+		FrontendComboBox().SelectedIndex(
+			database.GetString(Category.data(), "frontend")
+			.value_or("qbittorrent") == "vuetorrent" ? 1 : 0);
 		AddressTextBox().Text(to_hstring(
 			database.GetString(Category.data(), "address")
 			.value_or("127.0.0.1")));
 		PortNumberBox().Value(static_cast<double>(
 			database.GetInt(Category.data(), "port").value_or(8080)));
+		auto const storedLocale = database.GetString(Category.data(), "locale");
+		const bool followApplicationLanguage = database.GetBool(
+			Category.data(), "follow_application_language")
+			.value_or(!storedLocale.has_value());
+		FollowApplicationLanguageToggle().IsOn(followApplicationLanguage);
+		std::string applicationLocale{ "en" };
+		try
+		{
+			auto languages = winrt::Microsoft::Windows::Globalization::
+				ApplicationLanguages::Languages();
+			if (languages.Size() > 0)
+				applicationLocale = to_string(languages.GetAt(0));
+		}
+		catch (...)
+		{
+		}
 		LocaleTextBox().Text(to_hstring(
-			database.GetString(Category.data(), "locale").value_or("en")));
+			followApplicationLanguage
+			? applicationLocale
+			: storedLocale.value_or("en")));
+		LocaleTextBox().IsEnabled(!followApplicationLanguage);
 		UsernameTextBox().Text(to_hstring(
 			database.GetString(Category.data(), "username")
 			.value_or("admin")));
@@ -109,7 +132,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	void WebUISettingsPage::OnSaveClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		const auto address = to_string(AddressTextBox().Text());
+		const std::string frontend = FrontendComboBox().SelectedIndex() == 1
+			? "vuetorrent" : "qbittorrent";
 		const auto locale = to_string(LocaleTextBox().Text());
+		const bool followApplicationLanguage =
+			FollowApplicationLanguageToggle().IsOn();
 		const auto username = to_string(UsernameTextBox().Text());
 		const auto password = to_string(PasswordInput().Password());
 		const auto apiKey = to_string(ApiKeyInput().Password());
@@ -133,7 +160,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			if (password.size() < 6)
 				throw std::invalid_argument(
 					"Password must contain at least 6 characters.");
-			if (locale.empty())
+			if (!followApplicationLanguage && locale.empty())
 				throw std::invalid_argument("Locale cannot be empty.");
 
 			auto& database =
@@ -141,10 +168,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			database.Initialize();
 			const auto oldAddress =
 				database.GetString(Category.data(), "address");
+			const auto oldFrontend =
+				database.GetString(Category.data(), "frontend");
 			const auto oldPort =
 				database.GetInt(Category.data(), "port");
 			const auto oldLocale =
 				database.GetString(Category.data(), "locale");
+			const auto oldFollowApplicationLanguage =
+				database.GetBool(Category.data(), "follow_application_language");
 			const auto oldUsername =
 				database.GetString(Category.data(), "username");
 			const auto oldPassword =
@@ -153,10 +184,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				database.GetString("webui_http", "api_key");
 
 			database.SetString(Category.data(), "address", address);
+			database.SetString(Category.data(), "frontend", frontend);
 			database.SetInt(
 				Category.data(), "port",
 				static_cast<std::int64_t>(portValue));
-			database.SetString(Category.data(), "locale", locale);
+			database.SetBool(Category.data(), "follow_application_language",
+							 followApplicationLanguage);
+			if (!followApplicationLanguage)
+				database.SetString(Category.data(), "locale", locale);
 			database.SetString(Category.data(), "username", username);
 			database.SetString(Category.data(), "password", password);
 			database.SetBool(Category.data(), "initialized", true);
@@ -181,11 +216,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 						database.Delete(category, key);
 				};
 				restoreString(Category.data(), "address", oldAddress);
+				restoreString(Category.data(), "frontend", oldFrontend);
 				if (oldPort)
 					database.SetInt(Category.data(), "port", *oldPort);
 				else
 					database.Delete(Category.data(), "port");
 				restoreString(Category.data(), "locale", oldLocale);
+				if (oldFollowApplicationLanguage)
+					database.SetBool(Category.data(), "follow_application_language",
+									 *oldFollowApplicationLanguage);
+				else
+					database.Delete(Category.data(), "follow_application_language");
 				restoreString(Category.data(), "username", oldUsername);
 				restoreString(Category.data(), "password", oldPassword);
 				restoreString("webui_http", "api_key", oldApiKey);
@@ -202,6 +243,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			UpdateStatus(
 				to_hstring(exception.what()), InfoBarSeverity::Error);
+		}
+	}
+
+	void WebUISettingsPage::OnFollowApplicationLanguageToggled(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		const bool follow = FollowApplicationLanguageToggle().IsOn();
+		LocaleTextBox().IsEnabled(!follow);
+		if (!follow) return;
+		try
+		{
+			auto languages = winrt::Microsoft::Windows::Globalization::
+				ApplicationLanguages::Languages();
+			if (languages.Size() > 0)
+				LocaleTextBox().Text(languages.GetAt(0));
+		}
+		catch (...)
+		{
 		}
 	}
 

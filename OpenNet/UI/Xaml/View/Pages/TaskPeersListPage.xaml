@@ -66,58 +66,64 @@
                         <MenuFlyout Opening="ColumnMenu_Opening">
                             <MenuFlyoutItem
                                 x:Name="AutoSizeSelectedColumnItem"
-                                x:Uid="ViewTaskPeersListPageMenuItem"
+                                x:Uid="ViewPageTasksColumnAutoSizeSelectedWidth"
                                 Click="AutoSizeSelectedColumn_Click"
                                 Text="Auto Size Selected Column's Width to Fit" />
                             <MenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageMenuItem"
+                                x:Uid="ViewPageTasksColumnAutoSizeAllWidth"
                                 Click="AutoSizeAllColumns_Click"
                                 Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_IP"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="IP"
                                 Text="IP" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Location"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Location"
                                 Text="Location" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Progress"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Progress"
                                 Text="Progress" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_DLSpeed"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="DLSpeed"
                                 Text="DL Speed" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_ULSpeed"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="ULSpeed"
                                 Text="UL Speed" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="CommonTextDownloaded"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Downloaded"
                                 Text="Downloaded" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Uploaded"
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="Uploaded"
+                                Text="Uploaded" />
+                            <ToggleMenuFlyoutItem
+                                x:Uid="PeerMenu_Client"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Client"
                                 Text="Client" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Status"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Status"
@@ -129,26 +135,26 @@
                                 Tag="Reason"
                                 Text="Reason" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Protocol"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Protocol"
                                 Text="Protocol" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Initiator"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Initiator"
                                 Text="Initiator" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageToggleMenuItem"
+                                x:Uid="PeerMenu_Source"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Source"
                                 Text="Source" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutItem
-                                x:Uid="ViewTaskPeersListPageMenuItem"
+                                x:Uid="CommonTextResetColumns"
                                 Click="ResetColumns_Click"
                                 Text="Reset Columns and Sorting" />
                         </MenuFlyout>
@@ -156,7 +162,7 @@
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StickyHeaderBehavior />
                     </interactivity:Interaction.Behaviors>
-                    <labs:DataTable ColumnSpacing="16">
+                    <labs:DataTable ColumnSpacing="16" PointerPressed="ColumnHeader_PointerPressed">
                         <labs:DataColumn x:Name="ColPeerIP" CanResize="True">
                             <Button
                                 x:Name="SortPeerIpButton"
@@ -230,8 +236,21 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
                                 <TextBlock
-                                    x:Uid="PeerHeader_Downloaded"
+                                    x:Uid="CommonTextDownloaded"
                                     Text="Downloaded"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColPeerUploaded" CanResize="True">
+                            <Button
+                                x:Name="SortPeerUploadedButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="Uploaded">
+                                <TextBlock
+                                    x:Uid="PeerHeader_Uploaded"
+                                    Text="Uploaded"
                                     TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
@@ -355,6 +374,7 @@
                             <TextBlock Text="{x:Bind DLSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind ULSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind Uploaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Client, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind PeerStatus, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Reason, Mode=OneWay}" TextTrimming="CharacterEllipsis" />

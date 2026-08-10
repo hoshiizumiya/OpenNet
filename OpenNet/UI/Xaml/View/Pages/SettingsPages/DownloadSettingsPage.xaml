@@ -40,9 +40,10 @@
                         LostFocus="OnSettingChanged" />
                     <Button
                         x:Name="BrowseSavePathButton"
-                        x:Uid="DL_BrowseSavePathButton"
-                        AutomationProperties.AutomationId="DL_BrowseSavePathButton"
-                        Click="BrowseSavePathButton_Click" />
+                        x:Uid="CommonContentBrowse"
+                        AutomationProperties.AutomationId="CommonContentBrowse"
+                        Click="BrowseSavePathButton_Click"
+                        Content="Browse..." />
                 </StackPanel>
             </essential:SettingsCard>
 
@@ -79,9 +80,10 @@
                                 LostFocus="OnSettingChanged" />
                             <Button
                                 x:Name="BrowseMovePathButton"
-                                x:Uid="DL_BrowseMovePathButton"
-                                AutomationProperties.AutomationId="DL_BrowseMovePathButton"
-                                Click="BrowseMovePathButton_Click" />
+                                x:Uid="CommonContentBrowse"
+                                AutomationProperties.AutomationId="CommonContentBrowse"
+                                Click="BrowseMovePathButton_Click"
+                                Content="Browse..." />
                         </StackPanel>
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>

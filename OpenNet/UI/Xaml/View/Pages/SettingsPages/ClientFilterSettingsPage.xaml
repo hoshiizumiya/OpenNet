@@ -176,8 +176,11 @@
                                                 FontFamily="Consolas"
                                                 IsTextSelectionEnabled="True"
                                                 Text="{Binding}"
-                                                TextTrimming="CharacterEllipsis"
-                                                ToolTipService.ToolTip="{Binding}" />
+                                                TextTrimming="CharacterEllipsis">
+                                                <ToolTipService.ToolTip>
+                                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{Binding}" />
+                                                </ToolTipService.ToolTip>
+                                            </TextBlock>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
@@ -257,8 +260,11 @@
                                                 FontFamily="Consolas"
                                                 IsTextSelectionEnabled="True"
                                                 Text="{Binding}"
-                                                TextTrimming="CharacterEllipsis"
-                                                ToolTipService.ToolTip="{Binding}" />
+                                                TextTrimming="CharacterEllipsis">
+                                                <ToolTipService.ToolTip>
+                                                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{Binding}" />
+                                                </ToolTipService.ToolTip>
+                                            </TextBlock>
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>

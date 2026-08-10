@@ -507,22 +507,22 @@
   <data name="RSSRemoveFeedDialog.SecondaryButtonText" xml:space="preserve">
     <value>取消</value>
   </data>
-  <data name="RSSAddFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageAddNewFeed.Content" xml:space="preserve">
     <value>新增摘要來源</value>
   </data>
-  <data name="RSSRefreshAllTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshAllFeeds.Content" xml:space="preserve">
     <value>重新整理所有摘要來源</value>
   </data>
-  <data name="RSSRefreshFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRefreshThisFeed.Content" xml:space="preserve">
     <value>重新整理此摘要來源</value>
   </data>
-  <data name="RSSFeedSettingsTooltip" xml:space="preserve">
+  <data name="ViewRSSPageFeedSetting.Content" xml:space="preserve">
     <value>摘要來源設定</value>
   </data>
-  <data name="RSSRemoveFeedTooltip" xml:space="preserve">
+  <data name="ViewRSSPageRemoveFeed.Content" xml:space="preserve">
     <value>移除摘要來源</value>
   </data>
-  <data name="RSSDownloadTooltip" xml:space="preserve">
+  <data name="CommonContentDownload.Content" xml:space="preserve">
     <value>下載</value>
   </data>
   <data name="TorrentCheckGeneralPage_DiskSpaceRequired.Text" xml:space="preserve">
@@ -804,9 +804,6 @@
   <data name="DL_DefaultSavePathTextBox.PlaceholderText" xml:space="preserve">
     <value>（下載資料夾）</value>
   </data>
-  <data name="DL_BrowseSavePathButton.Content" xml:space="preserve">
-    <value>瀏覽...</value>
-  </data>
   <data name="DL_PreallocateStorage.Header" xml:space="preserve">
     <value>預先配置磁碟空間</value>
   </data>
@@ -834,9 +831,6 @@
   <data name="DL_MoveCompletedPathTextBox.PlaceholderText" xml:space="preserve">
     <value>已完成下載的路徑</value>
   </data>
-  <data name="DL_BrowseMovePathButton.Content" xml:space="preserve">
-    <value>瀏覽...</value>
-  </data>
   <data name="ViewDialogHttpDownloadDialog.Title" xml:space="preserve">
     <value>新增 HTTP 下載</value>
   </data>
@@ -861,7 +855,10 @@
   <data name="HttpDownloadDialogSaveDirBox.PlaceholderText" xml:space="preserve">
     <value>預設下載目錄</value>
   </data>
-  <data name="HttpDownloadDialogBrowseButton.Content" xml:space="preserve">
+  <data name="CommonContentBrowse.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="CommonContentBrowse.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>瀏覽...</value>
   </data>
   <data name="HttpDownloadDialogFileNameBox.Header" xml:space="preserve">
@@ -891,8 +888,50 @@
   <data name="PeerHeader_ULSpeed.Text" xml:space="preserve">
     <value>上傳速度</value>
   </data>
-  <data name="PeerHeader_Downloaded.Text" xml:space="preserve">
+  <data name="CommonTextDownloaded.Text" xml:space="preserve">
     <value>已下載</value>
+  </data>
+  <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>已下載</value>
+  </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>已上傳</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>位置</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>進度</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>下載速度</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>上傳速度</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>已上傳</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>用戶端</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>狀態</value>
+  </data>
+  <data name="PeerMenu_Reason.Text" xml:space="preserve">
+    <value>原因</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>協定</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>發起方</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>來源</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>沒有已連線的節點</value>
@@ -980,9 +1019,6 @@
   </data>
   <data name="IPF_ImportFile.Description" xml:space="preserve">
     <value>從文字檔（.txt、.dat、.p2p）匯入規則</value>
-  </data>
-  <data name="IPF_ImportBtn.Content" xml:space="preserve">
-    <value>瀏覽...</value>
   </data>
   <data name="IPF_Section_Manage.Text" xml:space="preserve">
     <value>管理規則</value>
@@ -1189,9 +1225,6 @@
     <value>狀態</value>
   </data>
   <data name="PeerHeader_Reason.Text" xml:space="preserve">
-    <value>原因</value>
-  </data>
-  <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>原因</value>
   </data>
   <data name="PeerHeader_Protocol.Text" xml:space="preserve">
@@ -1480,7 +1513,7 @@
     <value>資料資料夾由 Windows 管理，並會在解除安裝應用程式時一併刪除。</value>
   </data>
   <data name="GuideWebUITitle.Text" xml:space="preserve">
-    <value>初始化 qBittorrent Web UI</value>
+    <value>初始化 Web UI</value>
   </data>
   <data name="GuideWebUIDescription.Text" xml:space="preserve">
     <value>請在服務啟動前設定本機 Web UI 帳戶。密碼至少需要 6 個字元。</value>
@@ -1666,6 +1699,9 @@
     <value>註解：</value>
   </data>
   <data name="OpenTaskLocationMenuItem.Text" xml:space="preserve">
+    <value>開啟目錄</value>
+  </data>
+  <data name="OpenFileLocationMenuItem.Text" xml:space="preserve">
     <value>開啟目錄</value>
   </data>
   <data name="PropertiesMenuItem.Text" xml:space="preserve">
@@ -1989,7 +2025,7 @@
   <data name="ViewTaskPieceMapPageText8.Text" xml:space="preserve">
     <value>空白</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.Text" xml:space="preserve">
+  <data name="CommonTextDownloading.Text" xml:space="preserve">
     <value>下載中</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
@@ -2030,9 +2066,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.Text" xml:space="preserve">
     <value>已經過時間</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.Text" xml:space="preserve">
-    <value>已下載</value>
   </data>
   <data name="ViewTaskSummaryPageText13.Text" xml:space="preserve">
     <value>下載速度</value>
@@ -2163,12 +2196,6 @@
   <data name="ViewTaskTrackersPageText8.Text" xml:space="preserve">
     <value>移除所有無法連線的 Tracker...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.Text" xml:space="preserve">
-    <value>自動調整所選欄寬以符合內容</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.Text" xml:space="preserve">
-    <value>自動調整所有欄寬</value>
-  </data>
   <data name="ViewTaskTrackersPageText20.Text" xml:space="preserve">
     <value>Tracker URL</value>
   </data>
@@ -2187,13 +2214,13 @@
   <data name="ViewTaskTrackersPageText25.Text" xml:space="preserve">
     <value>下載者</value>
   </data>
-  <data name="ViewTaskTrackersPageText26.Text" xml:space="preserve">
-    <value>已下載</value>
-  </data>
   <data name="ViewTaskTrackersPageText27.Text" xml:space="preserve">
     <value>狀態</value>
   </data>
-  <data name="ViewTaskTrackersPageText19.Text" xml:space="preserve">
+  <data name="CommonTextResetColumns.Text" xml:space="preserve">
+    <value>重設欄位與排序</value>
+  </data>
+  <data name="CommonTextResetColumns.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>重設欄位與排序</value>
   </data>
   <data name="ViewTaskTrackersPageText28.Text" xml:space="preserve">
@@ -2339,9 +2366,6 @@
   </data>
   <data name="ViewTaskTrackersPageText18.Text" xml:space="preserve">
     <value>狀態</value>
-  </data>
-  <data name="ViewTaskTrackersPageText17.Text" xml:space="preserve">
-    <value>已下載</value>
   </data>
   <data name="ViewNATDetectorWindowText18.Text" xml:space="preserve">
     <value>未測試</value>
@@ -2541,9 +2565,6 @@
   <data name="ViewHomePageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>使用加密訊息通道與 Peer 通訊</value>
   </data>
-  <data name="ViewHomePageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>VPN 與通道</value>
-  </data>
   <data name="ViewHomePageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>在裝置之間建立安全的加密通道，以透過網際網路進行私人網路連線</value>
   </data>
@@ -2634,7 +2655,7 @@
   <data name="ViewTaskPieceMapPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>空白</value>
   </data>
-  <data name="ViewTaskPieceMapPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+  <data name="CommonTextDownloading.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>下載中</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
@@ -2675,9 +2696,6 @@
   </data>
   <data name="ViewTaskSummaryPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>已經過時間</value>
-  </data>
-  <data name="ViewTaskSummaryPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>已下載</value>
   </data>
   <data name="ViewTaskSummaryPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>下載速度</value>
@@ -2808,12 +2826,6 @@
   <data name="ViewTaskTrackersPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>移除所有無法連線的 Tracker...</value>
   </data>
-  <data name="ViewTaskTrackersPageText9.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>自動調整所選欄寬以符合內容</value>
-  </data>
-  <data name="ViewTaskTrackersPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>自動調整所有欄寬</value>
-  </data>
   <data name="ViewTaskTrackersPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Tracker URL</value>
   </data>
@@ -2832,14 +2844,8 @@
   <data name="ViewTaskTrackersPageText16.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>下載者</value>
   </data>
-  <data name="ViewTaskTrackersPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>已下載</value>
-  </data>
   <data name="ViewTaskTrackersPageText18.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>狀態</value>
-  </data>
-  <data name="ViewTaskTrackersPageText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>重設欄位與排序</value>
   </data>
   <data name="ViewTaskTrackersPageText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>沒有 Tracker</value>
@@ -3414,8 +3420,14 @@
   <data name="ViewPageTasksColumnAutoSizeSelectedWidth.Text" xml:space="preserve">
     <value>自動調整所選欄寬以符合內容</value>
   </data>
+  <data name="ViewPageTasksColumnAutoSizeSelectedWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動調整所選欄寬以符合內容</value>
+  </data>
   <data name="ViewPageTasksColumnAutoSizeAllWidth.Text" xml:space="preserve">
-    <value>自動調整所有欄寬以符合內容</value>
+    <value>自動調整所有欄寬</value>
+  </data>
+  <data name="ViewPageTasksColumnAutoSizeAllWidth.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>自動調整所有欄寬</value>
   </data>
   <data name="ViewPageTasksColumnDisplayItemsReset.Text" xml:space="preserve">
     <value>重設為預設顯示項目</value>
@@ -3510,7 +3522,7 @@
   <data name="ViewGuideViewRun.Text" xml:space="preserve">
     <value>Microsoft</value>
   </data>
-  <data name="ViewMainViewTextBlock.Text" xml:space="preserve">
+  <data name="ViewMainViewDHTTextBlock.Text" xml:space="preserve">
     <value>DHT</value>
   </data>
   <data name="ViewMainViewToolTipText1.Content" xml:space="preserve">
@@ -3588,14 +3600,8 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>字型</value>
   </data>
-  <data name="ViewTaskFilesPageMenuItem.Text" xml:space="preserve">
-    <value>重設欄位與排序</value>
-  </data>
   <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
     <value>優先順序</value>
-  </data>
-  <data name="ViewTaskPeersListPageMenuItem.Text" xml:space="preserve">
-    <value>重設欄位與排序</value>
   </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>來源</value>

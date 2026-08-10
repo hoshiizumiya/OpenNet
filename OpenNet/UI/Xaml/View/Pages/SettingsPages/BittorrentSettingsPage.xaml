@@ -103,6 +103,18 @@
                     <ToggleSwitch x:Name="EnableNatpmpToggle" Toggled="OnSettingChanged" />
                 </essential:SettingsCard>
 
+                <essential:SettingsCard
+                    x:Uid="BT_UpnpLeaseDuration"
+                    Description="Use 0 for a permanent mapping. A finite lease is refreshed at 75% of its duration."
+                    Header="UPnP lease duration (seconds)">
+                    <NumberBox
+                        x:Name="UpnpLeaseDurationNumberBox"
+                        Maximum="86400"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Compact"
+                        ValueChanged="OnSettingChanged" />
+                </essential:SettingsCard>
+
                 <!--  Tracker  -->
                 <TextBlock x:Uid="BT_Section_Tracker" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 
@@ -391,6 +403,232 @@
                         LostFocus="OnSettingChanged"
                         PlaceholderText="-ON0100-" />
                 </essential:SettingsCard>
+
+                <essential:SettingsExpander Description="Settings shared by the native UI, qBittorrent WebUI and VueTorrent" Header="Advanced performance, network and tracker">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE950;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard Header="Hashing threads">
+                            <NumberBox
+                                x:Name="HashingThreadsNumberBox"
+                                Maximum="64"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="File pool size">
+                            <NumberBox
+                                x:Name="FilePoolSizeNumberBox"
+                                Maximum="10000"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Disk queue size (KiB)">
+                            <NumberBox
+                                x:Name="DiskQueueSizeNumberBox"
+                                Maximum="1048576"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Use piece extent affinity">
+                            <ToggleSwitch x:Name="PieceExtentAffinityToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Send upload piece suggestions">
+                            <ToggleSwitch x:Name="UploadSuggestionsToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Send buffer watermark (KiB)">
+                            <NumberBox
+                                x:Name="SendBufferWatermarkNumberBox"
+                                Maximum="1048576"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Send buffer low watermark (KiB)">
+                            <NumberBox
+                                x:Name="SendBufferLowWatermarkNumberBox"
+                                Maximum="1048576"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Send buffer watermark factor (%)">
+                            <NumberBox
+                                x:Name="SendBufferWatermarkFactorNumberBox"
+                                Maximum="1000"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
+                <essential:SettingsExpander Description="Connection scheduling, socket and peer policies" Header="Advanced network behavior">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE968;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard Header="Outgoing connections per second">
+                            <NumberBox
+                                x:Name="ConnectionSpeedNumberBox"
+                                Maximum="10000"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Allow outgoing connections when seeding">
+                            <ToggleSwitch x:Name="SeedingOutgoingConnectionsToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Socket send buffer size (KiB)">
+                            <NumberBox
+                                x:Name="SocketSendBufferSizeNumberBox"
+                                Maximum="1048576"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Socket receive buffer size (KiB)">
+                            <NumberBox
+                                x:Name="SocketReceiveBufferSizeNumberBox"
+                                Maximum="1048576"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Socket backlog size">
+                            <NumberBox
+                                x:Name="SocketBacklogSizeNumberBox"
+                                Maximum="10000"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="μTP/TCP mixed mode">
+                            <ComboBox
+                                x:Name="MixedModeComboBox"
+                                SelectedIndex="0"
+                                SelectionChanged="OnSettingChanged">
+                                <ComboBoxItem Content="Prefer TCP" />
+                                <ComboBoxItem Content="Peer proportional" />
+                            </ComboBox>
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Hostname cache TTL (seconds)">
+                            <NumberBox
+                                x:Name="HostnameCacheTtlNumberBox"
+                                Maximum="86400"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Validate HTTPS tracker certificates">
+                            <ToggleSwitch x:Name="ValidateHttpsTrackersToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="SSRF mitigation">
+                            <ToggleSwitch x:Name="SsrfMitigationToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Block peers on privileged ports">
+                            <ToggleSwitch x:Name="BlockPrivilegedPortsToggle" Toggled="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Upload slots behavior">
+                            <ComboBox
+                                x:Name="UploadSlotsBehaviorComboBox"
+                                SelectedIndex="0"
+                                SelectionChanged="OnSettingChanged">
+                                <ComboBoxItem Content="Fixed slots" />
+                                <ComboBoxItem Content="Upload rate based" />
+                            </ComboBox>
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Upload choking algorithm">
+                            <ComboBox
+                                x:Name="UploadChokingAlgorithmComboBox"
+                                SelectedIndex="1"
+                                SelectionChanged="OnSettingChanged">
+                                <ComboBoxItem Content="Round-robin" />
+                                <ComboBoxItem Content="Fastest upload" />
+                                <ComboBoxItem Content="Anti-leech" />
+                            </ComboBox>
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
+
+                <essential:SettingsExpander Description="Announce identity, tracker concurrency and peer turnover" Header="Advanced tracker behavior">
+                    <essential:SettingsExpander.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </essential:SettingsExpander.HeaderIcon>
+                    <essential:SettingsExpander.Items>
+                        <essential:SettingsCard Header="DHT bootstrap nodes">
+                            <TextBox
+                                x:Name="DhtBootstrapNodesTextBox"
+                                MinWidth="240"
+                                LostFocus="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="IP reported to trackers">
+                            <TextBox
+                                x:Name="AnnounceIpTextBox"
+                                MinWidth="180"
+                                LostFocus="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Port reported to trackers">
+                            <NumberBox
+                                x:Name="AnnouncePortNumberBox"
+                                Maximum="65535"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Maximum concurrent HTTP announces">
+                            <NumberBox
+                                x:Name="MaxConcurrentHttpAnnouncesNumberBox"
+                                Maximum="10000"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Stop tracker timeout (seconds)">
+                            <NumberBox
+                                x:Name="StopTrackerTimeoutNumberBox"
+                                Maximum="3600"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Peer turnover disconnect (%)">
+                            <NumberBox
+                                x:Name="PeerTurnoverNumberBox"
+                                Maximum="100"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Peer turnover threshold (%)">
+                            <NumberBox
+                                x:Name="PeerTurnoverCutoffNumberBox"
+                                Maximum="100"
+                                Minimum="0"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Peer turnover interval (seconds)">
+                            <NumberBox
+                                x:Name="PeerTurnoverIntervalNumberBox"
+                                Maximum="86400"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                        <essential:SettingsCard Header="Maximum outstanding requests per peer">
+                            <NumberBox
+                                x:Name="RequestQueueSizeNumberBox"
+                                Maximum="100000"
+                                Minimum="1"
+                                SpinButtonPlacementMode="Compact"
+                                ValueChanged="OnSettingChanged" />
+                        </essential:SettingsCard>
+                    </essential:SettingsExpander.Items>
+                </essential:SettingsExpander>
 
                 <essential:SettingsExpander
                     x:Uid="ViewBittorrentSettingsPageSettingsExpander"

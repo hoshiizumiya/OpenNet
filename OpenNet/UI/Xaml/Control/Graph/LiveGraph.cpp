@@ -35,22 +35,6 @@ namespace
 		return std::chrono::duration_cast<TimeSpan>(std::chrono::seconds{ 1 });
 	}
 
-	void CloseBrush(ICanvasBrush const& brush) noexcept
-	{
-		if (!brush)
-		{
-			return;
-		}
-
-		try
-		{
-			brush.Close();
-		}
-		catch (...)
-		{
-			// Closing an already-closed Win2D resource is harmless for the control.
-		}
-	}
 }
 
 namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
@@ -201,9 +185,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			return;
 		}
 
-		CloseBrush(m_brush);
-		CloseBrush(m_opacityBrush);
-		CloseBrush(m_borderBrush);
+		// Win2D wrappers may share the same native resource with the page that
+		// registered this data. Close() invalidates every wrapper and can race the
+		// animated draw callback during navigation. Releasing our references lets
+		// COM destroy the resource only after all draw snapshots are gone.
+		m_brush = nullptr;
+		m_opacityBrush = nullptr;
+		m_borderBrush = nullptr;
+		m_strokeStyle = nullptr;
 		m_isDisposed = true;
 	}
 
@@ -743,6 +732,18 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				strongThis->OnUnloaded(sender, args);
 			}
 		});
+
+		if (m_loadedToken.value)
+		{
+			Loaded(m_loadedToken);
+		}
+		m_loadedToken = Loaded([strong](IInspectable const&, RoutedEventArgs const&)
+		{
+			if (auto strongThis = strong.get(); strongThis && strongThis->m_canvas)
+			{
+				strongThis->m_canvas.Paused(false);
+			}
+		});
 	}
 
 	void LiveGraph::DetachCanvasHandlers()
@@ -812,14 +813,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 	void LiveGraph::OnUnloaded(IInspectable const&, RoutedEventArgs const&)
 	{
-		std::scoped_lock lock(m_graphMutex);
-		for (auto const& entry : m_polygonBrushes)
+		// Unloaded is a navigation state, not object destruction. Pause the game
+		// loop but keep registered resources alive for cached-page re-entry.
+		if (m_canvas)
 		{
-			auto const& brushData = entry.second;
-			if (brushData)
-			{
-				get_self<GraphBrushData>(brushData)->Dispose();
-			}
+			m_canvas.Paused(true);
 		}
 	}
 
@@ -1533,7 +1531,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			}
 			catch (hresult_error const&)
 			{
-				// A brush can be closed concurrently while the control unloads.
+				// Device loss may invalidate a resource between snapshot and draw.
 				continue;
 			}
 		}

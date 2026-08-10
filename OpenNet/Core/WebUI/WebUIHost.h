@@ -15,6 +15,8 @@ namespace OpenNet::Core::WebUI
 		std::string username{ "admin" };
 		std::string password{ "adminadmin" };
 		std::string locale{ "en" };
+		// "qbittorrent" or "vuetorrent". Both use the same OpenNet Web API.
+		std::string frontend{ "qbittorrent" };
 		std::filesystem::path assetRoot;
 		std::size_t workerThreads{ 2 };
 		std::function<void()> shutdownCallback;

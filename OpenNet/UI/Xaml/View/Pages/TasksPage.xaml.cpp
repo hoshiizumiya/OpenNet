@@ -501,7 +501,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::TaskTabViewTabWidthMode(Microsoft::UI::Xaml::Controls::TabViewWidthMode const& value)
 	{
-		if(!SetProperty(m_taskTabViewTabWidthMode, value, L"TaskTabViewTabWidthMode"))
+		if (!SetProperty(m_taskTabViewTabWidthMode, value, L"TaskTabViewTabWidthMode"))
 		{
 			return;
 		}
@@ -988,7 +988,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		update(SortTaskCompletedDateButton());
 		update(SortTaskShareRatioButton());
 		update(SortTaskSeedsButton());
-		update(SortTaskPeersButton());
 	}
 
 	void TasksPage::SortFilteredTasks()
@@ -1149,7 +1148,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (tag == L"CompletedDate") return ColCompletedDate();
 		if (tag == L"ShareRatio") return ColShareRatio();
 		if (tag == L"Seeds") return ColSeeds();
-		if (tag == L"Peers") return ColPeers();
 		return nullptr;
 	}
 
@@ -1169,7 +1167,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		else if (tag == L"CompletedDate") m_viewModel.IsColCompletedDateLoad(value);
 		else if (tag == L"ShareRatio") m_viewModel.IsColShareRatioLoad(value);
 		else if (tag == L"Seeds") m_viewModel.IsColSeedsLoad(value);
-		else if (tag == L"Peers") m_viewModel.IsColPeersLoad(value);
 	}
 
 	void TasksPage::TasksColumnVisibility_Click(
@@ -1194,8 +1191,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::array const columns{
 			ColName(), ColSize(), ColProgress(), ColDownloadSize(), ColUploadSize(),
 			ColumnTotalDownloadSize(), ColumnTotalUploadSize(), ColDLRate(), ColULRate(),
-			ColRemaining(), ColAddDate(), ColCompletedDate(), ColShareRatio(), ColSeeds(),
-			ColPeers() };
+			ColRemaining(), ColAddDate(), ColCompletedDate(), ColShareRatio(), ColSeeds() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
 			sender.try_as<winrt::XamlToolkit::Labs::WinUI::DataRow>(),
 			columns.data(), static_cast<unsigned int>(columns.size()));
@@ -1206,8 +1202,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::array const columns{
 			ColName(), ColSize(), ColProgress(), ColDownloadSize(), ColUploadSize(),
 			ColumnTotalDownloadSize(), ColumnTotalUploadSize(), ColDLRate(), ColULRate(),
-			ColRemaining(), ColAddDate(), ColCompletedDate(), ColShareRatio(), ColSeeds(),
-			ColPeers() };
+			ColRemaining(), ColAddDate(), ColCompletedDate(), ColShareRatio(), ColSeeds() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRealizedRows(
 			TasksList(), columns.data(), static_cast<unsigned int>(columns.size()));
 		TasksList().InvalidateMeasure();
@@ -1313,12 +1308,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel.IsColCompletedDateLoad(true);
 		m_viewModel.IsColShareRatioLoad(true);
 		m_viewModel.IsColSeedsLoad(true);
-		m_viewModel.IsColPeersLoad(true);
 		for (auto const& column : std::array{
 			ColName(), ColSize(), ColProgress(), ColDownloadSize(), ColUploadSize(),
 			ColumnTotalDownloadSize(), ColumnTotalUploadSize(), ColDLRate(), ColULRate(),
-			ColRemaining(), ColAddDate(), ColCompletedDate(), ColShareRatio(), ColSeeds(),
-			ColPeers() })
+			ColRemaining(), ColAddDate(), ColCompletedDate(), ColShareRatio(), ColSeeds() })
 		{
 			column.Visibility(Visibility::Visible);
 		}
@@ -1802,7 +1795,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RestoreColumn(ColCompletedDate(), "Tasks.CompletedDate");
 		RestoreColumn(ColShareRatio(), "Tasks.ShareRatio");
 		RestoreColumn(ColSeeds(), "Tasks.Seeds");
-		RestoreColumn(ColPeers(), "Tasks.Peers");
 	}
 
 	void TasksPage::SaveColumnWidths()
@@ -1822,7 +1814,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		SaveColumnWidth("Tasks.CompletedDate", ColCompletedDate());
 		SaveColumnWidth("Tasks.ShareRatio", ColShareRatio());
 		SaveColumnWidth("Tasks.Seeds", ColSeeds());
-		SaveColumnWidth("Tasks.Peers", ColPeers());
 	}
 
 	void TasksPage::AutoSizeTaskColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column)
@@ -1854,8 +1845,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ColAddDate(),
 			ColCompletedDate(),
 			ColShareRatio(),
-			ColSeeds(),
-			ColPeers()
+			ColSeeds()
 		};
 
 		for (auto const& column : columns)

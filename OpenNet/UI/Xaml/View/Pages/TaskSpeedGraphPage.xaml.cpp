@@ -45,21 +45,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return box_value(color).as<IReference<Color>>();
 		}
 
-		void CloseResource(auto const& resource) noexcept
-		{
-			if (!resource)
-			{
-				return;
-			}
-			try
-			{
-				resource.Close();
-			}
-			catch (...)
-			{
-			}
-		}
-
 		Color SeriesColor(std::size_t index)
 		{
 			constexpr std::array<Color, 12> Colors
@@ -189,8 +174,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
 		if (canvas)
 		{
-			// The page is navigation-cached, but LiveGraph releases its Win2D
-			// brushes on Unloaded. Recreate them whenever the cached page returns.
+			// Rebind the data streams when this cached page returns. LiveGraph itself
+			// only pauses while unloaded and never closes shared Win2D resources.
 			RecreateGraphStreams(canvas);
 		}
 		else
@@ -514,14 +499,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				m_graphStrokeWidth.load(std::memory_order_relaxed));
 			if (!m_fillEnabled.load(std::memory_order_relaxed))
 			{
-				CloseResource(brush.Brush());
-				CloseResource(brush.OpacityBrush());
 				brush.Brush(nullptr);
 				brush.OpacityBrush(nullptr);
 			}
 			if (!m_borderEnabled.load(std::memory_order_relaxed))
 			{
-				CloseResource(brush.BorderBrush());
 				brush.BorderBrush(nullptr);
 			}
 			m_graphKeys.push_back(graph.RegisterGraphBrush(brush));
@@ -534,16 +516,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskSpeedGraphPage::DisposeBrushes() noexcept
 	{
-		for (auto const& brush : m_brushes)
-		{
-			if (!brush)
-			{
-				continue;
-			}
-			CloseResource(brush.Brush());
-			CloseResource(brush.OpacityBrush());
-			CloseResource(brush.BorderBrush());
-		}
+		// Drop strong references. Calling Close() here would invalidate the same
+		// native brushes still snapshotted by CanvasAnimatedControl::Draw.
 		m_brushes.clear();
 	}
 
