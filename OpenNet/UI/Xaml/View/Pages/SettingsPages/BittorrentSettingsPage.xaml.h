@@ -21,7 +21,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
         ::OpenNet::Core::TorrentSettings CollectFromUI();
         void SaveAndApply();
 
-        bool m_loading{false}; // suppress change events during initial load
+        // XAML controls can raise change events while InitializeComponent is still
+        // connecting later named elements. Start suppressed and only enable saving
+        // after the initial settings snapshot has populated every control.
+        bool m_loading{true};
     };
 }
 

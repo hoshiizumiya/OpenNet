@@ -21,8 +21,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
 	BittorrentSettingsPage::BittorrentSettingsPage()
 	{
-		InitializeComponent();
-
 		Loaded([this](IInspectable const&, RoutedEventArgs const&)
 		{
 			LoadSettings();
@@ -309,7 +307,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void BittorrentSettingsPage::OnSettingChanged(IInspectable const&, IInspectable const&)
 	{
-		if (m_loading)
+		// ComboBox.SelectedIndex and other XAML properties may raise their
+		// events from InitializeComponent before every named control has
+		// been connected. CollectFromUI must only run for a fully loaded
+		// page, otherwise a generated control accessor can still be null.
+		if (m_loading || !IsLoaded())
 			return;
 		SaveAndApply();
 	}
