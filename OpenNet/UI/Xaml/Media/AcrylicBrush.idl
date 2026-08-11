@@ -1,0 +1,23 @@
+namespace OpenNet.UI.Xaml.Media
+{
+    /// Acrylic material based on the WinUI AcrylicBrush recipe, with optional noise.
+    [default_interface]
+    runtimeclass AcrylicBrush : Microsoft.UI.Xaml.Media.XamlCompositionBrushBase
+    {
+        AcrylicBrush();
+
+        Windows.UI.Color TintColor;
+        Double TintOpacity;
+        Windows.Foundation.IReference<Double> TintLuminosityOpacity;
+        Windows.Foundation.TimeSpan TintTransitionDuration;
+        Boolean AlwaysUseFallback;
+        Boolean IsNoiseEnabled;
+
+        static Microsoft.UI.Xaml.DependencyProperty TintColorProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty TintOpacityProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty TintLuminosityOpacityProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty TintTransitionDurationProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty AlwaysUseFallbackProperty{ get; };
+        static Microsoft.UI.Xaml.DependencyProperty IsNoiseEnabledProperty{ get; };
+    }
+}

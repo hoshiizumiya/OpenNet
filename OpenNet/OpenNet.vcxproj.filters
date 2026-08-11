@@ -137,7 +137,7 @@
       <Filter>UI\Xaml\Control\Card</Filter>
     </Page>
     <Page Include="UI\Xaml\Control\Effect\TextMorphEffect_ResourceDictionary.xaml">
-      <Filter>UI\Xaml\Media\Effects</Filter>
+      <Filter>UI\Xaml\Control\Effect</Filter>
     </Page>
     <Page Include="UI\Shell\NotifyIconXamlHostWindow.xaml">
       <Filter>UI\Shell</Filter>
@@ -195,6 +195,7 @@
       <Filter>UI\Xaml\Control\Graph</Filter>
     </Page>
     <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\View\Windows\RSSBrowserWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -255,14 +256,8 @@
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\SettingsPage.idl">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Midl>
-    <Midl Include="UI\Xaml\Media\Enums.idl">
+    <Midl Include="UI\Xaml\Media\AcrylicBrush.idl">
       <Filter>UI\Xaml\Media</Filter>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Shadows\AttachedCardShadow.idl">
-      <Filter>UI\Xaml\Media\Shadows</Filter>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Visuals\Visuals.idl">
-      <Filter>UI\Xaml\Media\Visuals</Filter>
     </Midl>
     <Midl Include="UI\Xaml\Control\Card\TitleCard.idl">
       <Filter>UI\Xaml\Control\Card</Filter>
@@ -278,15 +273,6 @@
     <Midl Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.idl">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </Midl>
-    <Midl Include="UI\Xaml\Media\Pipelines\PipelineBrush.idl">
-      <Filter>UI\Xaml\Media\Pipelines</Filter>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Effects\Effects.idl">
-      <Filter>UI\Xaml\Media\Effects</Filter>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Brushes\Brushes.idl">
-      <Filter>UI\Xaml\Media\Brushes</Filter>
-    </Midl>
     <Midl Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.idl">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </Midl>
@@ -300,7 +286,7 @@
       <Filter>ViewModels</Filter>
     </Midl>
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl">
-      <Filter>UI\Xaml\Media\Effects</Filter>
+      <Filter>UI\Xaml\Control\Effect</Filter>
     </Midl>
     <Midl Include="UI\Xaml\Markup\UInt32Extension.idl">
       <Filter>UI\Xaml\Markup</Filter>
@@ -437,26 +423,8 @@
     <ClCompile Include="Factory\ContentDialog\OperationProgressDialog.cpp">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBuilder.cpp">
-      <Filter>UI\Xaml\Media\Pipelines</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBrush.cpp">
-      <Filter>UI\Xaml\Media\Pipelines</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Effects\PipelineEffect.cpp">
-      <Filter>UI\Xaml\Media\Effects</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Effects\EffectTypes.cpp">
-      <Filter>UI\Xaml\Media\Effects</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Brushes\BrushTypes.cpp">
-      <Filter>UI\Xaml\Media\Brushes</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Shadows\AttachedCardShadow.cpp">
-      <Filter>UI\Xaml\Media\Shadows</Filter>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Visuals\VisualTypes.cpp">
-      <Filter>UI\Xaml\Media\Visuals</Filter>
+    <ClCompile Include="UI\Xaml\Media\AcrylicBrush.cpp">
+      <Filter>UI\Xaml\Media</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\RSSViewModel.cpp" />
     <ClCompile Include="Core\RSS\RSSLinkResolver.cpp">
@@ -904,41 +872,8 @@
     <ClInclude Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml.h">
       <Filter>UI\Xaml\Control\HomePage\Header</Filter>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Effects\GaussianBlurEffect.h">
-      <Filter>UI\Xaml\Media\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Effects\PipelineEffect.h">
-      <Filter>UI\Xaml\Media\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Effects\EffectTypes.h">
-      <Filter>UI\Xaml\Media\Effects</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBuilder.h">
-      <Filter>UI\Xaml\Media\Pipelines</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBrush.h">
-      <Filter>UI\Xaml\Media\Pipelines</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Visuals\PipelineVisualFactoryHelper.h">
-      <Filter>UI\Xaml\Media\Visuals</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Visuals\VisualTypes.h">
-      <Filter>UI\Xaml\Media\Visuals</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Shadows\AttachedCardShadow.h">
-      <Filter>UI\Xaml\Media\Shadows</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Helpers\AsyncMutex.h">
-      <Filter>UI\Xaml\Media\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Helpers\CompositionExtensions.h">
-      <Filter>UI\Xaml\Media\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Helpers\SurfaceLoader.h">
-      <Filter>UI\Xaml\Media\Helpers</Filter>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Brushes\BrushTypes.h">
-      <Filter>UI\Xaml\Media\Brushes</Filter>
+    <ClInclude Include="UI\Xaml\Media\AcrylicBrush.h">
+      <Filter>UI\Xaml\Media</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\AdvancedOptionItem.h">
       <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
@@ -1236,12 +1171,6 @@
     <Filter Include="UI\Xaml\View\Dialog">
       <UniqueIdentifier>{11704fb4-16c1-43e5-9577-16cb47d04909}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Xaml\Media">
-      <UniqueIdentifier>{a60a9496-d7a7-4e66-b431-1a3d5094aa94}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Animations">
-      <UniqueIdentifier>{c2a48255-b645-43bf-9d06-8a55e624d5e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core\Utils">
       <UniqueIdentifier>{a0191b50-163a-4fd2-a7fb-d9bdc122663b}</UniqueIdentifier>
     </Filter>
@@ -1254,14 +1183,14 @@
     <Filter Include="UI\Xaml\Control\Card">
       <UniqueIdentifier>{8865e15d-8ee2-451f-8d77-e61c64ee16da}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI\Xaml\Control\Effect">
+      <UniqueIdentifier>{4f3a4d32-8b87-4bb3-a123-8e26a9a1f034}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Core\IO">
       <UniqueIdentifier>{a8e23636-bebc-4885-980e-3f5729f7e6f6}</UniqueIdentifier>
     </Filter>
     <Filter Include="UI\Shell">
       <UniqueIdentifier>{31d5d8ef-3702-43a4-86d5-948c718eaa85}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Backdrop">
-      <UniqueIdentifier>{b22455aa-a07c-4864-8f77-a6a620df33a7}</UniqueIdentifier>
     </Filter>
     <Filter Include="UI\Xaml\Control\HomePage">
       <UniqueIdentifier>{d1a2b3c4-e5f6-7890-abcd-ef1234567890}</UniqueIdentifier>
@@ -1269,23 +1198,8 @@
     <Filter Include="UI\Xaml\Control\HomePage\Header">
       <UniqueIdentifier>{a1b2c3d4-e5f6-7890-1234-567890abcdef}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Xaml\Media\Effects">
-      <UniqueIdentifier>{f0e1d2c3-b4a5-6789-0123-456789abcdef}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Pipelines">
-      <UniqueIdentifier>{a1b2c3d4-e5f6-7890-abcd-1234567890ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Visuals">
-      <UniqueIdentifier>{b2c3d4e5-f6a7-8901-bcde-2345678901bc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Brushes">
-      <UniqueIdentifier>{c3d4e5f6-a7b8-9012-cdef-3456789012cd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Shadows">
-      <UniqueIdentifier>{d4e5f6a7-b8c9-0123-defa-4567890123de}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="UI\Xaml\Media\Helpers">
-      <UniqueIdentifier>{e5f6a7b8-c9d0-1234-efab-5678901234ef}</UniqueIdentifier>
+    <Filter Include="UI\Xaml\Media">
+      <UniqueIdentifier>{d03f90b3-62e5-4262-96ef-2279167b1acb}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\RSS">
       <UniqueIdentifier>{10e84fea-0a8d-40c3-88ac-918f59810154}</UniqueIdentifier>
@@ -1385,6 +1299,7 @@
     <None Include="Assets\IP2Location\sprite.svg">
       <Filter>Assets\IP2Location</Filter>
     </None>
+    <None Include="Assets\Materials\NoiseAsset_256X256_PNG.png" />
     <None Include="Assets\IP2Location\dbip-country-lite.mmdb">
       <Filter>Assets\IP2Location</Filter>
     </None>

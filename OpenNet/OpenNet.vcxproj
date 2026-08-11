@@ -319,34 +319,8 @@
       <DependentUpon>UI\Xaml\Markup\UInt32Extension.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Effects\GaussianBlurEffect.h" />
-    <ClInclude Include="UI\Xaml\Media\Effects\PipelineEffect.h">
-      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Effects\EffectTypes.h">
-      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBuilder.h" />
-    <ClInclude Include="UI\Xaml\Media\Pipelines\PipelineBrush.h">
-      <DependentUpon>UI\Xaml\Media\Pipelines\PipelineBrush.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Visuals\PipelineVisualFactoryHelper.h" />
-    <ClInclude Include="UI\Xaml\Media\Visuals\VisualTypes.h">
-      <DependentUpon>UI\Xaml\Media\Visuals\Visuals.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Shadows\AttachedCardShadow.h">
-      <DependentUpon>UI\Xaml\Media\Shadows\AttachedCardShadow.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClInclude>
-    <ClInclude Include="UI\Xaml\Media\Helpers\AsyncMutex.h" />
-    <ClInclude Include="UI\Xaml\Media\Helpers\CompositionExtensions.h" />
-    <ClInclude Include="UI\Xaml\Media\Helpers\SurfaceLoader.h" />
-    <ClInclude Include="UI\Xaml\Media\Brushes\BrushTypes.h">
-      <DependentUpon>UI\Xaml\Media\Brushes\Brushes.idl</DependentUpon>
+    <ClInclude Include="UI\Xaml\Media\AcrylicBrush.h">
+      <DependentUpon>UI\Xaml\Media\AcrylicBrush.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.h">
@@ -909,29 +883,8 @@
       <DependentUpon>UI\Xaml\Markup\UInt32Extension.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBuilder.cpp" />
-    <ClCompile Include="UI\Xaml\Media\Pipelines\PipelineBrush.cpp">
-      <DependentUpon>UI\Xaml\Media\Pipelines\PipelineBrush.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Effects\PipelineEffect.cpp">
-      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Effects\EffectTypes.cpp">
-      <DependentUpon>UI\Xaml\Media\Effects\Effects.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Brushes\BrushTypes.cpp">
-      <DependentUpon>UI\Xaml\Media\Brushes\Brushes.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Shadows\AttachedCardShadow.cpp">
-      <DependentUpon>UI\Xaml\Media\Shadows\AttachedCardShadow.idl</DependentUpon>
-      <SubType>Code</SubType>
-    </ClCompile>
-    <ClCompile Include="UI\Xaml\Media\Visuals\VisualTypes.cpp">
-      <DependentUpon>UI\Xaml\Media\Visuals\Visuals.idl</DependentUpon>
+    <ClCompile Include="UI\Xaml\Media\AcrylicBrush.cpp">
+      <DependentUpon>UI\Xaml\Media\AcrylicBrush.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.xaml.cpp">
@@ -1266,20 +1219,7 @@
     <Midl Include="UI\Xaml\Markup\UInt32Extension.idl">
       <SubType>Code</SubType>
     </Midl>
-    <Midl Include="UI\Xaml\Media\Enums.idl" />
-    <Midl Include="UI\Xaml\Media\Shadows\AttachedCardShadow.idl">
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Visuals\Visuals.idl">
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Pipelines\PipelineBrush.idl">
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Effects\Effects.idl">
-      <SubType>Code</SubType>
-    </Midl>
-    <Midl Include="UI\Xaml\Media\Brushes\Brushes.idl">
+    <Midl Include="UI\Xaml\Media\AcrylicBrush.idl">
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Dialog\AddRSSFeedDialog.idl" />
@@ -1622,6 +1562,9 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="Assets\IP2Location\sprite.svg">
+      <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="Assets\Materials\NoiseAsset_256X256_PNG.png">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="Assets\ModelIcons\GitHub.dark.svg">
