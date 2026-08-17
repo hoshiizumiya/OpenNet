@@ -1,13 +1,12 @@
 ﻿module;
-#include <libtorrent/session.hpp>
-#include <libtorrent/add_torrent_params.hpp>
-#include <libtorrent/torrent_info.hpp>
-#include <libtorrent/write_resume_data.hpp>
-#include <libtorrent/read_resume_data.hpp>
-#include <libtorrent/session_params.hpp>
+#include "WindowsPlatform.h"
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/bencode.hpp>
+#include <libtorrent/bdecode.hpp>
 #include <libtorrent/entry.hpp>
-
+#include <libtorrent/error_code.hpp>
+#include "LibtorrentIncludeRestore.h"
 #include <sqlite3.h>
 
 module OpenNet.Core.torrentCore.TorrentStateManager;
@@ -181,17 +180,14 @@ namespace OpenNet::Core::Torrent
 		return true;
 	}
 
-	bool TorrentStateManager::SaveSessionState(lt::session& session)
+	bool TorrentStateManager::SaveSessionState(
+		std::vector<std::uint8_t> const& stateData)
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return false;
 
 		try
 		{
-			// Get session state and serialize it
-			lt::session_params params = session.session_state();
-			std::vector<char> buf = lt::write_session_params_buf(params, lt::session::save_dht_state);
-
 			const char* sql = R"(
 				INSERT OR REPLACE INTO session_state (id, state_data) VALUES (1, ?);
 			)";
@@ -200,7 +196,8 @@ namespace OpenNet::Core::Torrent
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
 
-			sqlite3_bind_blob(stmt, 1, buf.data(), static_cast<int>(buf.size()), SQLITE_TRANSIENT);
+			sqlite3_bind_blob(stmt, 1, stateData.data(),
+				static_cast<int>(stateData.size()), SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
@@ -214,26 +211,8 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	bool TorrentStateManager::LoadSessionState(lt::session& session)
-	{
-		auto params = LoadSessionParams();
-		if (!params)
-			return false;
-
-		try
-		{
-			session.apply_settings(params->settings);
-			session.set_dht_state(std::move(params->dht_state));
-			return true;
-		}
-		catch (std::exception const& ex)
-		{
-			OutputDebugStringA(("LoadSessionState error: " + std::string(ex.what()) + "\n").c_str());
-			return false;
-		}
-	}
-
-	std::optional<lt::session_params> TorrentStateManager::LoadSessionParams()
+	std::optional<std::vector<std::uint8_t>>
+	TorrentStateManager::LoadSessionStateData()
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return std::nullopt;
@@ -253,10 +232,11 @@ namespace OpenNet::Core::Torrent
 
 				if (data && size > 0)
 				{
-					lt::span<char const> buf(static_cast<char const*>(data), size);
-					lt::session_params params = lt::read_session_params(buf);
+					std::vector<std::uint8_t> result(
+						static_cast<std::uint8_t const*>(data),
+						static_cast<std::uint8_t const*>(data) + size);
 					sqlite3_finalize(stmt);
-					return params;
+					return result;
 				}
 			}
 
@@ -265,27 +245,27 @@ namespace OpenNet::Core::Torrent
 		}
 		catch (std::exception const& ex)
 		{
-			OutputDebugStringA(("LoadSessionParams error: " + std::string(ex.what()) + "\n").c_str());
+			OutputDebugStringA(("LoadSessionStateData error: " + std::string(ex.what()) + "\n").c_str());
 			return std::nullopt;
 		}
 	}
 
-	bool TorrentStateManager::SaveTaskResumeData(std::string const& taskId, lt::add_torrent_params const& params)
+	bool TorrentStateManager::SaveTaskResumeData(
+		std::string const& taskId,
+		std::vector<std::uint8_t> const& resumeData)
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return false;
 
 		try
 		{
-			// Serialize resume data using libtorrent's write_resume_data
-			std::vector<char> buf = lt::write_resume_data_buf(params);
-
 			const char* sql = "UPDATE tasks SET resume_data = ? WHERE task_id = ?;";
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
 
-			sqlite3_bind_blob(stmt, 1, buf.data(), static_cast<int>(buf.size()), SQLITE_TRANSIENT);
+			sqlite3_bind_blob(stmt, 1, resumeData.data(),
+				static_cast<int>(resumeData.size()), SQLITE_TRANSIENT);
 			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
@@ -300,7 +280,8 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	std::optional<lt::add_torrent_params> TorrentStateManager::LoadTaskResumeData(std::string const& taskId)
+	std::optional<std::vector<std::uint8_t>>
+	TorrentStateManager::LoadTaskResumeData(std::string const& taskId)
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return std::nullopt;
@@ -322,16 +303,11 @@ namespace OpenNet::Core::Torrent
 
 				if (data && size > 0)
 				{
-					lt::span<char const> buf(static_cast<char const*>(data), size);
-					lt::error_code ec;
-					lt::add_torrent_params params = lt::read_resume_data(buf, ec);
+					std::vector<std::uint8_t> result(
+						static_cast<std::uint8_t const*>(data),
+						static_cast<std::uint8_t const*>(data) + size);
 					sqlite3_finalize(stmt);
-
-					if (!ec)
-					{
-						return params;
-					}
-					OutputDebugStringA(("LoadTaskResumeData: read_resume_data failed for " + taskId + ": " + ec.message() + "\n").c_str());
+					return result;
 				}
 			}
 
@@ -778,10 +754,10 @@ namespace OpenNet::Core::Torrent
 				if (taskNode.type() != lt::bdecode_node::dict_t) continue;
 
 				TaskMetadata metadata;
-				metadata.taskId = taskNode.dict_find_string_value("task_id").to_string();
-				metadata.magnetUri = taskNode.dict_find_string_value("magnet_uri").to_string();
-				metadata.savePath = taskNode.dict_find_string_value("save_path").to_string();
-				metadata.name = taskNode.dict_find_string_value("name").to_string();
+				metadata.taskId = std::string(taskNode.dict_find_string_value("task_id"));
+				metadata.magnetUri = std::string(taskNode.dict_find_string_value("magnet_uri"));
+				metadata.savePath = std::string(taskNode.dict_find_string_value("save_path"));
+				metadata.name = std::string(taskNode.dict_find_string_value("name"));
 				metadata.addedTimestamp = taskNode.dict_find_int_value("added_timestamp");
 				metadata.totalSize = taskNode.dict_find_int_value("total_size");
 				metadata.downloadedSize = taskNode.dict_find_int_value("downloaded_size");

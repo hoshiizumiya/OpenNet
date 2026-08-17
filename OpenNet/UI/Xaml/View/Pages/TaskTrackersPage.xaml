@@ -6,11 +6,86 @@
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:effects="using:OpenNet.UI.Xaml.Control.Effect"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AnimatedNumber_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <ContentDialog
+                x:Name="EditTrackersDialog"
+                x:Uid="ViewTaskTrackersPageEditTrackersDialog"
+                CloseButtonText="Cancel"
+                DefaultButton="Primary"
+                PrimaryButtonText="Save"
+                Title="Edit trackers">
+                <TextBox
+                    x:Name="TrackerEditorTextBox"
+                    x:Uid="ViewTaskTrackersPageTrackerEditorTextBox"
+                    MinWidth="560"
+                    MinHeight="260"
+                    AcceptsReturn="True"
+                    PlaceholderText="One tracker URL per line"
+                    TextWrapping="NoWrap" />
+            </ContentDialog>
+
+            <ContentDialog
+                x:Name="TrackerMessageDialog"
+                x:Uid="ViewTaskTrackersPageMessageDialog"
+                CloseButtonText="Close" />
+
+            <ContentDialog
+                x:Name="RemoveTrackerDialog"
+                x:Uid="ViewTaskTrackersPageRemoveTrackerDialog"
+                CloseButtonText="Cancel"
+                DefaultButton="Close"
+                PrimaryButtonText="Remove"
+                Title="Remove tracker">
+                <TextBlock x:Name="RemoveTrackerUrlText" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+            </ContentDialog>
+
+            <ContentDialog
+                x:Name="ClearAllTrackerLogsDialog"
+                x:Uid="ViewTaskTrackersPageClearAllTrackerLogsDialog"
+                CloseButtonText="Cancel"
+                PrimaryButtonText="Clear all"
+                Title="Clear all tracker logs">
+                <TextBlock
+                    x:Uid="ViewTaskTrackersPageClearAllTrackerLogsMessage"
+                    Text="This clears in-memory tracker logs for every task."
+                    TextWrapping="Wrap" />
+            </ContentDialog>
+
+            <ContentDialog
+                x:Name="RemoveUnreachableTrackersDialog"
+                x:Uid="ViewTaskTrackersPageRemoveUnreachableTrackersDialog"
+                CloseButtonText="Cancel"
+                DefaultButton="Primary"
+                PrimaryButtonText="Remove"
+                Title="Remove unreachable trackers">
+                <StackPanel Spacing="10">
+                    <TextBlock
+                        x:Uid="ViewTaskTrackersPageRemoveUnreachablePromptText"
+                        Text="Remove all trackers that have reached the number of retries:"
+                        TextWrapping="Wrap" />
+                    <NumberBox
+                        x:Name="UnreachableRetriesNumberBox"
+                        Maximum="255"
+                        Minimum="1"
+                        SpinButtonPlacementMode="Inline"
+                        ValidationMode="InvalidInputOverwritten"
+                        Value="3" />
+                </StackPanel>
+            </ContentDialog>
+        </ResourceDictionary>
+    </Page.Resources>
 
     <Grid Padding="0,8,0,0">
         <ListView x:Name="TrackersListView" SelectionMode="Single">
@@ -23,6 +98,7 @@
                         Text="Edit trackers..." />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
+						x:Name="UpdateTrackerMenuItem"
                         x:Uid="ViewTaskTrackersPageText2"
                         AutomationProperties.AutomationId="ViewTaskTrackersPageText2"
                         Click="UpdateTracker_Click"
@@ -61,12 +137,6 @@
                         Text="Remove all unreachable trackers..." />
                 </MenuFlyout>
             </ListView.ContextFlyout>
-            <ListView.ItemContainerTransitions>
-                <TransitionCollection>
-                    <AddDeleteThemeTransition />
-                    <RepositionThemeTransition />
-                </TransitionCollection>
-            </ListView.ItemContainerTransitions>
             <ListView.Header>
                 <Border
                     Padding="8,4,0,4"
@@ -257,7 +327,16 @@
                         HorizontalAlignment="Left"
                         Loaded="TrackerDataRow_Loaded"
                         RightTapped="TrackerRow_RightTapped">
-                        <TextBlock Text="{x:Bind URL, Mode=OneWay}" TextTrimming="CharacterEllipsis">
+                        <labs:DataRow.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </labs:DataRow.Resources>
+                        <TextBlock
+                            MaxLines="1"
+                            Text="{x:Bind URL, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap">
                             <ToolTipService.ToolTip>
                                 <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind URL, Mode=OneWay}" />
                             </ToolTipService.ToolTip>
@@ -269,12 +348,16 @@
                             Tag="{x:Bind}">
                             <FontIcon FontSize="14" Glyph="&#xE946;" />
                         </Button>
-                        <TextBlock Text="{x:Bind Retries, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind TimeRemaining, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Seeders, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Leechers, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <TextBlock Text="{x:Bind Status, Mode=OneWay}" TextTrimming="CharacterEllipsis">
+                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Retries, Mode=OneWay}" />
+                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind TimeRemaining, Mode=OneWay}" />
+                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Seeders, Mode=OneWay}" />
+                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Leechers, Mode=OneWay}" />
+                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Downloaded, Mode=OneWay}" />
+                        <TextBlock
+                            MaxLines="1"
+                            Text="{x:Bind Status, Mode=OneWay}"
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap">
                             <ToolTipService.ToolTip>
                                 <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Status, Mode=OneWay}" />
                             </ToolTipService.ToolTip>

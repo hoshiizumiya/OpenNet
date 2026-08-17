@@ -349,6 +349,11 @@
                             </TransitionCollection>
                         </muxc:TreeViewItem.Transitions>
                         <labs:DataRow HorizontalAlignment="Left" Loaded="PeerDataRow_Loaded">
+                            <labs:DataRow.Resources>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="VerticalAlignment" Value="Center" />
+                                </Style>
+                            </labs:DataRow.Resources>
                             <TextBlock Text="{x:Bind IP, Mode=OneWay}" />
                             <Grid ColumnSpacing="6">
                                 <Grid.ColumnDefinitions>

@@ -49,6 +49,7 @@ export namespace OpenNet::Core::Aria2
 		void PauseAll(bool Force = false);
 		void ResumeAll();
 		void ClearList();
+		void SaveSession();
 
 		void Pause(std::string const& Gid, bool Force = false);
 		void Resume(std::string const& Gid);
@@ -59,7 +60,8 @@ export namespace OpenNet::Core::Aria2
 		std::string AddUriWithOptions(
 			std::string const& Source,
 			std::string const& Dir = {},
-			std::string const& OutFileName = {});
+			std::string const& OutFileName = {},
+			std::uint32_t ConnectionsPerServer = 8);
 
 		std::mutex& InstanceLock();
 

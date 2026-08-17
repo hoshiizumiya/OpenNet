@@ -503,6 +503,75 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		SetValue(s_historyBufferScreensProperty, box_value(value));
 	}
 
+	bool LiveGraph::IsAutoScaleEnabled() const
+	{
+		std::scoped_lock lock(m_graphMutex);
+		return m_isAutoScaleEnabled;
+	}
+
+	void LiveGraph::IsAutoScaleEnabled(bool const value)
+	{
+		std::scoped_lock lock(m_graphMutex);
+		m_isAutoScaleEnabled = value;
+		m_currentValueMaximum = value
+			? std::max(m_minimumValueMaximum, m_currentValueMaximum)
+			: std::max(m_minimumValueMaximum, m_valueMaximum);
+		m_lowScaleSince.reset();
+		m_currentLineY.reset();
+		m_lastHighlightedRevision = 0;
+	}
+
+	bool LiveGraph::IsSeriesGridEnabled() const
+	{
+		std::scoped_lock lock(m_graphMutex);
+		return m_isSeriesGridEnabled;
+	}
+
+	void LiveGraph::IsSeriesGridEnabled(bool const value)
+	{
+		std::scoped_lock lock(m_graphMutex);
+		m_isSeriesGridEnabled = value;
+		m_currentLineY.reset();
+		m_lastHighlightedRevision = 0;
+	}
+
+	double LiveGraph::ValueMaximum() const
+	{
+		std::scoped_lock lock(m_graphMutex);
+		return m_valueMaximum;
+	}
+
+	void LiveGraph::ValueMaximum(double const value)
+	{
+		std::scoped_lock lock(m_graphMutex);
+		m_valueMaximum = std::max(m_minimumValueMaximum, value);
+		if (!m_isAutoScaleEnabled)
+			m_currentValueMaximum = m_valueMaximum;
+		m_currentLineY.reset();
+		m_lastHighlightedRevision = 0;
+	}
+
+	double LiveGraph::MinimumValueMaximum() const
+	{
+		std::scoped_lock lock(m_graphMutex);
+		return m_minimumValueMaximum;
+	}
+
+	void LiveGraph::MinimumValueMaximum(double const value)
+	{
+		std::scoped_lock lock(m_graphMutex);
+		m_minimumValueMaximum = std::max(0.000001, value);
+		m_valueMaximum = std::max(m_valueMaximum, m_minimumValueMaximum);
+		m_currentValueMaximum = std::max(
+			m_currentValueMaximum, m_minimumValueMaximum);
+	}
+
+	double LiveGraph::CurrentValueMaximum() const
+	{
+		std::scoped_lock lock(m_graphMutex);
+		return m_currentValueMaximum;
+	}
+
 	IInspectable LiveGraph::HighlightLineContent()
 	{
 		return GetValue(s_highlightLineContentProperty);
@@ -883,8 +952,6 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 		auto const widthDelta =
 			hasWidthChange ? newWidth - oldWidth : 0.0f;
-		auto const scaleY =
-			hasHeightChange ? newHeight / oldHeight : 1.0f;
 		std::optional<float> resizedLineY;
 		{
 			std::scoped_lock lock(m_graphMutex);
@@ -896,19 +963,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				// anchored to the new right edge when the control width changes.
 				polygon->OffsetX += widthDelta;
 
-				if (hasHeightChange)
-				{
-					for (auto& point : polygon->Points)
-					{
-						point.y *= scaleY;
-					}
-					polygon->CurrentY *= scaleY;
-				}
 			}
 
 			if (hasHeightChange && m_currentLineY)
 			{
-				*m_currentLineY *= scaleY;
+				*m_currentLineY = ValueToY(
+					m_polygons.empty() ? 0.0f : m_polygons.front()->CurrentValue,
+					newHeight);
 				resizedLineY = *m_currentLineY;
 			}
 		}
@@ -961,9 +1022,25 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		return distance / static_cast<float>(seconds);
 	}
 
-	float LiveGraph::NormalizeY(float percent, float height)
+	float LiveGraph::ValueToY(float const value, float const height) const
 	{
-		return height - (percent / 100.0f) * height;
+		auto const maximum = std::max(m_minimumValueMaximum, m_currentValueMaximum);
+		auto const normalized = std::clamp(
+			static_cast<double>(value) / maximum, 0.0, 1.0);
+		return height * static_cast<float>(1.0 - normalized);
+	}
+
+	double LiveGraph::NiceValueMaximum(double const value)
+	{
+		if (!std::isfinite(value) || value <= 0.0)
+			return 1.0;
+		auto const exponent = std::floor(std::log10(value));
+		auto const magnitude = std::pow(10.0, exponent);
+		auto const fraction = value / magnitude;
+		auto const niceFraction = fraction <= 1.0 ? 1.0
+			: fraction <= 2.0 ? 2.0
+			: fraction <= 5.0 ? 5.0 : 10.0;
+		return niceFraction * magnitude;
 	}
 
 	void LiveGraph::AddDynamicPoint(
@@ -984,7 +1061,6 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 
 		auto const canvasSize = m_canvas.Size();
-		auto const height = static_cast<float>(canvasSize.Height);
 		auto const canvasWidth = static_cast<float>(canvasSize.Width);
 
 		std::scoped_lock lock(m_graphMutex);
@@ -1007,12 +1083,21 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		auto const startX =
 			polygon->Points.empty()
 			? canvasWidth
-			: polygon->Points.back().x + point.Space();
-		auto const y = NormalizeY(point.Value(), height);
+			: polygon->Points.back().X + point.Space();
+		auto const value = std::max(0.0f, point.Value());
+		if (m_isAutoScaleEnabled && value > m_currentValueMaximum)
+		{
+			m_currentValueMaximum = NiceValueMaximum(std::max(
+				m_minimumValueMaximum,
+				static_cast<double>(value) * 1.10));
+			m_lowScaleSince.reset();
+			m_currentLineY.reset();
+			m_lastHighlightedRevision = 0;
+		}
 
-		polygon->CurrentY = y;
+		polygon->CurrentValue = value;
 		++polygon->Revision;
-		polygon->Points.push_back({ startX, y });
+		polygon->Points.push_back({ startX, value });
 
 		// The original per-point cursor reaches one-past-the-end while waiting
 		// for more live data. Re-arm it at the newly appended point so the
@@ -1049,7 +1134,6 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 
 		auto const canvasSize = m_canvas.Size();
-		auto const height = static_cast<float>(canvasSize.Height);
 		auto currentX = static_cast<float>(canvasSize.Width) + 10.0f;
 
 		auto polygon = std::make_shared<UserPolygon>();
@@ -1063,9 +1147,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				continue;
 			}
 
-			auto const y = NormalizeY(point.Value(), height);
-			polygon->Points.push_back({ currentX, y });
-			polygon->CurrentY = y;
+			auto const value = std::max(0.0f, point.Value());
+			polygon->Points.push_back({ currentX, value });
+			polygon->CurrentValue = value;
 			currentX += point.Space();
 		}
 
@@ -1235,7 +1319,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 					{
 						for (auto const& point : polygon->Points)
 						{
-							auto const screenX = point.x + polygon->OffsetX;
+							auto const screenX = point.X + polygon->OffsetX;
 							if (screenX < 0.0f || screenX > canvasWidth)
 							{
 								continue;
@@ -1243,23 +1327,25 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 							if (!targetLineY)
 							{
-								targetLineY = point.y;
+								targetLineY = ValueToY(
+									point.Value,
+									static_cast<float>(m_canvas.Size().Height));
 							}
 							else if (
 								m_highlightLineBehavior ==
 								OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
 								HigherPointAcrossGraphs &&
-								point.y < *targetLineY)
+								ValueToY(point.Value, static_cast<float>(m_canvas.Size().Height)) < *targetLineY)
 							{
-								targetLineY = point.y;
+								targetLineY = ValueToY(point.Value, static_cast<float>(m_canvas.Size().Height));
 							}
 							else if (
 								m_highlightLineBehavior ==
 								OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::
 								LowerPointAcrossGraphs &&
-								point.y > *targetLineY)
+								ValueToY(point.Value, static_cast<float>(m_canvas.Size().Height)) > *targetLineY)
 							{
-								targetLineY = point.y;
+								targetLineY = ValueToY(point.Value, static_cast<float>(m_canvas.Size().Height));
 							}
 						}
 					}
@@ -1280,7 +1366,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 						{
 							auto const& polygon = m_polygons[m_currentPolygonIndex];
 							while (m_currentPointIndex < polygon->Points.size()
-								   && polygon->Points[m_currentPointIndex].x
+							   && polygon->Points[m_currentPointIndex].X
 								   + polygon->OffsetX < 0.0f)
 							{
 								++m_currentPointIndex;
@@ -1295,12 +1381,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 							}
 
 							auto const& point = polygon->Points[m_currentPointIndex];
-							if (point.x + polygon->OffsetX > canvasWidth)
+							if (point.X + polygon->OffsetX > canvasWidth)
 							{
 								return;
 							}
 
-							auto const targetY = point.y;
+							auto const targetY = ValueToY(
+								point.Value,
+								static_cast<float>(m_canvas.Size().Height));
 							auto const shouldMove =
 								!m_currentLineY ||
 								(m_highlightLineBehavior ==
@@ -1335,7 +1423,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 							for (auto point = polygon->Points.rbegin();
 								 point != polygon->Points.rend(); ++point)
 							{
-								auto const screenX = point->x + polygon->OffsetX;
+								auto const screenX = point->X + polygon->OffsetX;
 								if (screenX >= 0.0f && screenX <= canvasWidth)
 								{
 									if (m_lastHighlightedRevision != polygon->Revision)
@@ -1344,7 +1432,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 										// Publish every new sample even if adaptive scaling leaves
 										// it at the same normalized Y coordinate. Its real value
 										// and formatted unit may still have changed.
-										publishLine(point->y, true);
+									publishLine(ValueToY(
+										point->Value,
+										static_cast<float>(m_canvas.Size().Height)), true);
 									}
 									return;
 								}
@@ -1358,7 +1448,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 						{
 							auto const& polygon = m_polygons[m_currentPolygonIndex];
 							while (m_currentPointIndex < polygon->Points.size()
-								   && polygon->Points[m_currentPointIndex].x
+							   && polygon->Points[m_currentPointIndex].X
 								   + polygon->OffsetX < 0.0f)
 							{
 								++m_currentPointIndex;
@@ -1372,11 +1462,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 							}
 
 							auto const& point = polygon->Points[m_currentPointIndex];
-							if (point.x + polygon->OffsetX > canvasWidth)
+							if (point.X + polygon->OffsetX > canvasWidth)
 							{
 								return;
 							}
-							publishLine(point.y);
+							publishLine(ValueToY(
+								point.Value,
+								static_cast<float>(m_canvas.Size().Height)));
 							++m_currentPointIndex;
 							return;
 						}
@@ -1418,24 +1510,33 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			}
 
 			CanvasPathBuilder pathBuilder(drawingSession);
-			auto const startX = polygon->Points.front().x + polygon->OffsetX;
+			auto const startX = polygon->Points.front().X + polygon->OffsetX;
+			auto const startY = ValueToY(polygon->Points.front().Value, height);
 			pathBuilder.BeginFigure({ startX, height });
-			pathBuilder.AddLine({ startX, polygon->Points.front().y });
+			pathBuilder.AddLine({ startX, startY });
 
 			if (polygon->IsRounded)
 			{
-				auto previous = polygon->Points.front();
+				auto previous = float2{
+					polygon->Points.front().X,
+					startY };
 				constexpr auto smoothness = 0.25f;
 
 				for (size_t index = 1; index < polygon->Points.size(); ++index)
 				{
-					auto const current = polygon->Points[index];
-					auto const next =
+					auto const currentPoint = polygon->Points[index];
+					auto const current = float2{
+						currentPoint.X, ValueToY(currentPoint.Value, height) };
+					auto const nextPoint =
 						index + 1 < polygon->Points.size()
 						? polygon->Points[index + 1]
-						: current;
-					auto const prior =
+						: currentPoint;
+					auto const next = float2{
+						nextPoint.X, ValueToY(nextPoint.Value, height) };
+					auto const priorPoint =
 						polygon->Points[index >= 2 ? index - 2 : 0];
+					auto const prior = float2{
+						priorPoint.X, ValueToY(priorPoint.Value, height) };
 
 					float2 controlPoint1
 					{
@@ -1461,11 +1562,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				{
 					auto const point = polygon->Points[index];
 					pathBuilder.AddLine(
-						{ point.x + polygon->OffsetX, point.y });
+						{ point.X + polygon->OffsetX,
+						  ValueToY(point.Value, height) });
 				}
 			}
 
-			auto endX = polygon->Points.back().x + polygon->OffsetX;
+			auto endX = polygon->Points.back().X + polygon->OffsetX;
 			auto const live = m_livePolygons.find(polygon->Key);
 			auto const isLive =
 				live != m_livePolygons.end() && live->second == polygon;
@@ -1474,7 +1576,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 				// Hold the latest live value to the right edge between samples.
 				// Otherwise a blank strip grows until the next point arrives.
 				endX = width;
-				pathBuilder.AddLine({ endX, polygon->Points.back().y });
+				pathBuilder.AddLine({
+					endX, ValueToY(polygon->Points.back().Value, height) });
 			}
 			pathBuilder.AddLine({ endX, height });
 			pathBuilder.EndFigure(CanvasFigureLoop::Open);
@@ -1537,6 +1640,121 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 	}
 
+	void LiveGraph::DrawSeriesGrid(
+		CanvasDrawingSession const& drawingSession,
+		float const width,
+		float const height)
+	{
+		auto const seriesCount = m_polygons.size();
+		if (seriesCount == 0 || width <= 0.0f || height <= 0.0f)
+			return;
+
+		auto const columns = std::max<std::size_t>(
+			1, static_cast<std::size_t>(std::ceil(std::sqrt(
+				static_cast<double>(seriesCount)))));
+		auto const rows = (seriesCount + columns - 1) / columns;
+		constexpr float gap = 4.0f;
+		auto const cellWidth = std::max(
+			1.0f, (width - gap * static_cast<float>(columns - 1))
+			/ static_cast<float>(columns));
+		auto const cellHeight = std::max(
+			1.0f, (height - gap * static_cast<float>(rows - 1))
+			/ static_cast<float>(rows));
+
+		for (std::size_t index = 0; index < seriesCount; ++index)
+		{
+			auto const left = static_cast<float>(index % columns)
+				* (cellWidth + gap);
+			auto const top = static_cast<float>(index / columns)
+				* (cellHeight + gap);
+			for (int division = 0; division <= 4; ++division)
+			{
+				auto const y = top + cellHeight * division / 4.0f;
+				drawingSession.DrawLine(
+					left, y, left + cellWidth, y, m_drawColor, 1.0f);
+			}
+			for (int division = 0; division <= 4; ++division)
+			{
+				auto const x = left + cellWidth * division / 4.0f;
+				drawingSession.DrawLine(
+					x, top, x, top + cellHeight, m_drawColor, 1.0f);
+			}
+
+			auto const& polygon = m_polygons[index];
+			if (polygon->Points.empty())
+				continue;
+
+			std::vector<float2> visiblePoints;
+			visiblePoints.reserve(polygon->Points.size());
+			for (auto const& point : polygon->Points)
+			{
+				auto const screenX = point.X + polygon->OffsetX;
+				if (screenX < 0.0f || screenX > width)
+					continue;
+				visiblePoints.push_back({
+					left + (screenX / width) * cellWidth,
+					top + ValueToY(point.Value, cellHeight) });
+			}
+			if (visiblePoints.empty())
+				continue;
+
+			auto const live = m_livePolygons.find(polygon->Key);
+			auto const isLive = live != m_livePolygons.end()
+				&& live->second == polygon;
+			if (isLive && visiblePoints.back().x < left + cellWidth)
+			{
+				visiblePoints.push_back({
+					left + cellWidth, visiblePoints.back().y });
+			}
+
+			CanvasPathBuilder pathBuilder(drawingSession);
+			pathBuilder.BeginFigure({ visiblePoints.front().x, top + cellHeight });
+			pathBuilder.AddLine(visiblePoints.front());
+			for (std::size_t pointIndex = 1;
+				 pointIndex < visiblePoints.size(); ++pointIndex)
+			{
+				pathBuilder.AddLine(visiblePoints[pointIndex]);
+			}
+			pathBuilder.AddLine({ visiblePoints.back().x, top + cellHeight });
+			pathBuilder.EndFigure(CanvasFigureLoop::Open);
+			auto const geometry = CanvasGeometry::CreatePath(pathBuilder);
+			pathBuilder.Close();
+
+			auto const brushIterator = m_polygonBrushes.find(polygon->Key);
+			if (brushIterator == m_polygonBrushes.end() || !brushIterator->second)
+				continue;
+			auto brushData = get_self<GraphBrushData>(brushIterator->second);
+			if (brushData->IsDisposed())
+				continue;
+			try
+			{
+				auto const brush = brushData->Brush();
+				auto const opacityBrush = brushData->OpacityBrush();
+				auto const borderBrush = brushData->BorderBrush();
+				if (brush && opacityBrush)
+					drawingSession.FillGeometry(geometry, brush, opacityBrush);
+				else if (brush)
+					drawingSession.FillGeometry(geometry, brush);
+				if (borderBrush)
+				{
+					auto const strokeStyle = brushData->StrokeStyle();
+					if (strokeStyle)
+						drawingSession.DrawGeometry(
+							geometry, borderBrush,
+							brushData->StrokeWidth(), strokeStyle);
+					else
+						drawingSession.DrawGeometry(
+							geometry, borderBrush,
+							brushData->StrokeWidth());
+				}
+			}
+			catch (hresult_error const&)
+			{
+				// Device loss can invalidate a brush between frames.
+			}
+		}
+	}
+
 	void LiveGraph::OnDraw(
 		ICanvasAnimatedControl const& sender,
 		CanvasAnimatedDrawEventArgs const& args)
@@ -1572,10 +1790,18 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			m_backgroundScrollPosition = 0.0;
 		}
 
-		DrawBackground(drawingSession, width, height);
 		UpdatePolygonsOffset(scrollDelta, width);
-		DrawUserPolygons(drawingSession, width, height);
-		UpdateHighlightLine();
+		UpdateValueScale(width);
+		if (m_isSeriesGridEnabled)
+		{
+			DrawSeriesGrid(drawingSession, width, height);
+		}
+		else
+		{
+			DrawBackground(drawingSession, width, height);
+			DrawUserPolygons(drawingSession, width, height);
+			UpdateHighlightLine();
+		}
 	}
 
 	void LiveGraph::DrawBackground(
@@ -1676,7 +1902,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 					* m_historyBufferScreens;
 				std::size_t removeCount{};
 				while (removeCount + 2 < polygon->Points.size()
-					   && polygon->Points[removeCount + 1].x
+				   && polygon->Points[removeCount + 1].X
 					   + polygon->OffsetX < retentionBoundary)
 				{
 					++removeCount;
@@ -1706,7 +1932,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			}
 
 			if (!polygon->Points.empty() &&
-				polygon->Points.back().x + polygon->OffsetX < 0.0f)
+			polygon->Points.back().X + polygon->OffsetX < 0.0f)
 			{
 				if (isLive)
 				{
@@ -1723,6 +1949,65 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			{
 				++iterator;
 			}
+		}
+	}
+
+	void LiveGraph::UpdateValueScale(float const canvasWidth)
+	{
+		if (!m_isAutoScaleEnabled)
+		{
+			m_currentValueMaximum = std::max(
+				m_minimumValueMaximum, m_valueMaximum);
+			return;
+		}
+
+		double visiblePeak{};
+		for (auto const& polygon : m_polygons)
+		{
+			for (auto const& point : polygon->Points)
+			{
+				auto const x = point.X + polygon->OffsetX;
+				if (x >= 0.0f && x <= canvasWidth)
+					visiblePeak = std::max(visiblePeak, static_cast<double>(point.Value));
+			}
+		}
+
+		auto const requested = NiceValueMaximum(std::max(
+			m_minimumValueMaximum, visiblePeak * 1.10));
+		auto const now = std::chrono::steady_clock::now();
+		bool changed{};
+		if (requested > m_currentValueMaximum)
+		{
+			m_currentValueMaximum = requested;
+			m_lowScaleSince.reset();
+			changed = true;
+		}
+		// NiceValueMaximum advances through 1/2/5/10 tiers. A normal downward
+		// transition (for example 10 -> 5 or 2 -> 1) is therefore exactly one
+		// half, not less than one half. Using a strict comparison permanently
+		// pinned the graph to the higher tier after a visible spike had left the
+		// window, making ordinary traffic look like a flat line.
+		else if (requested <= m_currentValueMaximum * 0.5)
+		{
+			if (!m_lowScaleSince)
+				m_lowScaleSince = now;
+			else if (now - *m_lowScaleSince >= std::chrono::seconds(10))
+			{
+				m_currentValueMaximum = std::max(
+					m_minimumValueMaximum, requested);
+				m_lowScaleSince.reset();
+				changed = true;
+			}
+		}
+		else
+		{
+			m_lowScaleSince.reset();
+		}
+
+		if (changed)
+		{
+			m_currentLineY.reset();
+			m_lastHighlightedRevision = 0;
 		}
 	}
 

@@ -100,7 +100,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// StartCommand: Resume the selected task (or initialize the torrent core if not yet running)
 		m_startCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
-			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+                        .ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			co_await winrt::resume_background();
 			auto self = weak.get();
@@ -197,13 +197,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						if (auto current = weak.get())
 						{
-							selectedTask.State(
-								selectedTask.ProgressPercent() >= 100.0
-								? winrt::OpenNet::ViewModels::
-								DownloadTaskState::Completed
-								: winrt::OpenNet::ViewModels::
-								DownloadTaskState::Paused);
-							current->RebuildFiltered();
+                                                        selectedTask.State(
+                                                                selectedTask.ProgressPercent() >= 100.0
+                                                                ? winrt::OpenNet::ViewModels::
+                                                                DownloadTaskState::Completed
+                                                                : winrt::OpenNet::ViewModels::
+                                                                DownloadTaskState::Paused);
+								selectedTask.DownloadRate(L"0 B/s");
+								selectedTask.UploadRate(L"0 B/s");
+								selectedTask.DownloadSpeedKB(0);
+                                                        current->RebuildFiltered();
 						}
 					});
 				}
@@ -215,7 +218,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// DeleteCommand: Delete only the selected task (not all tasks)
 		// Uses AsyncCommandBuilder to avoid blocking the STA thread with Aria2 HTTP calls.
 		m_deleteCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
-			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const& parameter) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			auto self = weak.get();
 			if (!self) co_return;
@@ -225,8 +228,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (!selectedTask) co_return;
 
 			auto taskId = winrt::to_string(selectedTask.TaskId());
-			auto taskType = selectedTask.TaskType();
-			auto gid = winrt::to_string(selectedTask.Gid());
+                        auto taskType = selectedTask.TaskType();
+                        auto gid = winrt::to_string(selectedTask.Gid());
+			bool const deleteDownloadedFiles = parameter
+				? winrt::unbox_value_or<bool>(parameter, false)
+				: false;
+			bool deletionSucceeded = true;
+			winrt::hstring deletionError;
+			// Block queued progress callbacks before leaving the UI thread. The set is
+			// otherwise read by FindOrCreateHttpItem on the dispatcher thread.
+			if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http && !gid.empty())
+			{
+				self->m_deletedGids.insert(gid);
+			}
 
 			// Do backend removal on a background thread to avoid STA blocking
 			co_await winrt::resume_background();
@@ -237,7 +251,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 					auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 					if (core && !taskId.empty())
 					{
-						core->RemoveTorrent(taskId, false);
+						core->RemoveTorrent(taskId, deleteDownloadedFiles);
 					}
 					auto* stateMgr = ::OpenNet::Core::P2PManager::Instance().StateManager();
 					if (stateMgr && !taskId.empty())
@@ -252,67 +266,57 @@ namespace winrt::OpenNet::ViewModels::implementation
 				}
 				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
 				{
-					// Mark GID as deleted BEFORE cancelling, so callbacks won't
-					// re-create the task via FindOrCreateHttpItem.
-					if (!gid.empty())
-					{
-						self->m_deletedGids.insert(gid);
-					}
-
 					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
+					auto recordId = taskId;
+					if (recordId.empty() && !gid.empty())
+					{
+						recordId = dlMgr.GetRecordIdForGid(gid);
+					}
 					if (!gid.empty())
 					{
-						// First cancel the active download (aria2.remove),
-						// then clean up the result (aria2.removeDownloadResult).
-						try
-						{
-							dlMgr.CancelHttpDownload(gid);
-						}
-						catch (...)
-						{
-						}
-						try
-						{
-							dlMgr.RemoveHttpDownload(gid);
-						}
-						catch (...)
-						{
-						}
+						dlMgr.DeleteHttpDownload(gid, deleteDownloadedFiles);
 					}
 					// Delete the persisted HTTP download record.
 					// TaskId now holds the stable recordId (not GID).
 					auto& httpState = ::OpenNet::Core::HttpStateManager::Instance();
-					if (!taskId.empty())
+					if (!recordId.empty())
 					{
-						httpState.DeleteRecord(taskId);
-					}
-					else if (!gid.empty())
-					{
-						// Fallback: look up recordId from GID mapping
-						auto recordId = dlMgr.GetRecordIdForGid(gid);
-						if (!recordId.empty())
-						{
-							httpState.DeleteRecord(recordId);
-						}
+						httpState.DeleteRecord(recordId);
 					}
 					// Clean up speed graph persistence
-					if (!taskId.empty())
+					if (!recordId.empty())
 					{
-						::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(taskId);
+						::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(recordId);
 					}
 				}
 			}
 			catch (const std::exception& ex)
 			{
+				deletionSucceeded = false;
+				deletionError = winrt::to_hstring(ex.what());
 				OutputDebugStringW((L"DeleteCommand backend error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
 			}
 			catch (...)
 			{
+				deletionSucceeded = false;
+				deletionError = L"The download engine did not release the task or its files.";
 			}
 
 			// Back to UI thread for observable collection mutation
 			auto dispatcher = self->m_dispatcher;
 			if (!dispatcher) co_return;
+			if (!deletionSucceeded)
+			{
+				dispatcher.TryEnqueue([weak, gid, deletionError]()
+				{
+					if (auto current = weak.get())
+					{
+						if (!gid.empty()) current->m_deletedGids.erase(gid);
+						current->m_taskDeletionFailed(*current, deletionError);
+					}
+				});
+				co_return;
+			}
 			dispatcher.TryEnqueue([weak, selectedTask]()
 			{
 				auto self = weak.get();
@@ -795,7 +799,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 					item.Name(name);
 				}
 				auto const previousState = item.State();
-				auto const nextState = e.isPaused
+				auto const nextState = e.isChecking
+					? winrt::OpenNet::ViewModels::DownloadTaskState::Checking
+					: e.isPaused
 					? (e.isFinished
 					   ? winrt::OpenNet::ViewModels::DownloadTaskState::Completed
 					   : winrt::OpenNet::ViewModels::DownloadTaskState::Paused)

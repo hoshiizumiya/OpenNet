@@ -172,6 +172,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		if (args.PropertyName() == L"SelectedTask")
 		{
+			m_lastTaskId.clear();
+			m_hasTrackerSnapshot = false;
 			RefreshTrackerList();
 		}
 	}
@@ -371,6 +373,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskTrackersPage::TrackerMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const&)
 	{
 		auto const hasSelection = !SelectedTrackerUrl().empty();
+		auto const selectedTask = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
+		auto const state = selectedTask
+			? selectedTask.State()
+			: winrt::OpenNet::ViewModels::DownloadTaskState::Pending;
+		auto const canAnnounce = hasSelection
+			&& (state == winrt::OpenNet::ViewModels::DownloadTaskState::Downloading
+				|| state == winrt::OpenNet::ViewModels::DownloadTaskState::Seeding);
+		UpdateTrackerMenuItem().IsEnabled(canAnnounce);
 		if (auto menu = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>())
 		{
 			for (auto const& entry : menu.Items())
@@ -379,8 +389,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>())
 				{
 					auto const text = item.Text();
-					if (text == L"Update tracker" || text == L"Remove tracker"
-						|| text == L"View log" || text == L"Clear log")
+					if (item != UpdateTrackerMenuItem()
+						&& (text == L"Remove tracker"
+							|| text == L"View log" || text == L"Clear log"))
 						item.IsEnabled(hasSelection);
 				}
 			}
@@ -427,35 +438,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			co_return;
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		auto const detail = core->GetTorrentDetail(taskId);
-		winrt::Microsoft::UI::Xaml::Controls::TextBox editor;
-		editor.AcceptsReturn(true);
-		editor.TextWrapping(winrt::Microsoft::UI::Xaml::TextWrapping::NoWrap);
-		editor.MinWidth(560);
-		editor.MinHeight(260);
-		editor.PlaceholderText(ResourceGetString(L"ViewTaskTrackersPageTrackerUrlPlaceholder"));
 		winrt::hstring existingText;
 		for (auto const& tracker : detail.trackers)
 		{
 			if (!existingText.empty()) existingText = existingText + L"\r\n";
 			existingText = existingText + winrt::to_hstring(tracker.url);
 		}
-		editor.Text(existingText);
-
-		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		TrackerEditorTextBox().Text(existingText);
+		auto dialog = EditTrackersDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageEditTrackersTitle")));
-		dialog.Content(editor);
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 			co_return;
 
 		std::vector<std::string> requested;
 		std::unordered_set<std::string> unique;
-		std::istringstream lines(winrt::to_string(editor.Text()));
+		std::istringstream lines(winrt::to_string(TrackerEditorTextBox().Text()));
 		std::string line;
 		winrt::hstring invalid;
 		while (std::getline(lines, line))
@@ -480,12 +478,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (!invalid.empty())
 		{
-			winrt::Microsoft::UI::Xaml::Controls::ContentDialog error;
+			auto error = TrackerMessageDialog();
 			error.XamlRoot(XamlRoot());
-			error.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 			error.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageInvalidTrackerUrlTitle")));
 			error.Content(winrt::box_value(invalid));
-			error.CloseButtonText(ResourceGetString(L"CommonClose"));
 			co_await error.ShowAsync();
 			co_return;
 		}
@@ -510,6 +506,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskTrackersPage::UpdateTracker_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		if (!m_viewModel || !m_viewModel.SelectedTask()) return;
+		auto const state = m_viewModel.SelectedTask().State();
+		if (state != winrt::OpenNet::ViewModels::DownloadTaskState::Downloading
+			&& state != winrt::OpenNet::ViewModels::DownloadTaskState::Seeding)
+			return;
 		std::string taskId;
 		winrt::hstring taskName;
 		auto const url = SelectedTrackerUrl();
@@ -525,14 +526,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::hstring taskName;
 		auto const url = SelectedTrackerUrl();
 		if (url.empty() || !TryGetTaskContext(taskId, taskName)) co_return;
-		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		auto dialog = RemoveTrackerDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageRemoveTrackerTitle")));
-		dialog.Content(winrt::box_value(url));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Close);
+		RemoveTrackerUrlText().Text(url);
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 			co_return;
@@ -569,14 +565,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string taskId;
 		winrt::hstring taskName;
 		if (!TryGetTaskContext(taskId, taskName)) co_return;
-		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		auto dialog = ClearAllTrackerLogsDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageClearAllLogsTitle")));
-		dialog.Content(winrt::box_value(
-			L"This clears in-memory tracker logs for every task."));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		if (co_await dialog.ShowAsync()
 			== winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 		{
@@ -592,35 +582,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string taskId;
 		winrt::hstring taskName;
 		if (!TryGetTaskContext(taskId, taskName)) co_return;
-		winrt::Microsoft::UI::Xaml::Controls::StackPanel content;
-		content.Spacing(10);
-		winrt::Microsoft::UI::Xaml::Controls::TextBlock prompt;
-		prompt.Text(ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachablePrompt"));
-		prompt.TextWrapping(TextWrapping::Wrap);
-		winrt::Microsoft::UI::Xaml::Controls::NumberBox retries;
-		retries.Minimum(1);
-		retries.Maximum(255);
-		retries.Value(3);
-		retries.ValidationMode(
-			winrt::Microsoft::UI::Xaml::Controls::NumberBoxValidationMode::
-			InvalidInputOverwritten);
-		retries.SpinButtonPlacementMode(
-			winrt::Microsoft::UI::Xaml::Controls::NumberBoxSpinButtonPlacementMode::Compact);
-		content.Children().Append(prompt);
-		content.Children().Append(retries);
-		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
+		auto dialog = RemoveUnreachableTrackersDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachableTitle")));
-		dialog.Content(content);
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 			co_return;
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		auto const detail = core->GetTorrentDetail(taskId);
-		auto const rawThreshold = retries.Value();
+		auto const rawThreshold = UnreachableRetriesNumberBox().Value();
 		if (std::isnan(rawThreshold)) co_return;
 		auto const threshold = std::clamp(
 			static_cast<int>(std::round(rawThreshold)), 1, 255);
@@ -666,6 +635,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
+		if (taskId != m_lastTaskId)
+		{
+			m_lastTaskId = taskId;
+			m_hasTrackerSnapshot = false;
+		}
+		auto const nowSteady = std::chrono::steady_clock::now();
+		if (m_hasTrackerSnapshot && m_lastTrackerSnapshotHash == 0
+			&& nowSteady - m_lastTrackerRefresh < std::chrono::seconds(5))
+		{
+			return;
+		}
 
 		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
@@ -676,10 +656,41 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
+		// Some imported torrents and legacy custom-tracker settings may contain
+		// an entire newline-delimited tracker list in one libtorrent URL field.
+		// Rendering that value directly makes a single DataRow hundreds of pixels
+		// tall. Flatten it to actual tracker rows before sorting or virtualization.
+		decltype(detail.trackers) normalizedTrackers;
+		for (auto const& tracker : detail.trackers)
+		{
+			std::istringstream lines{ tracker.url };
+			std::string url;
+			while (std::getline(lines, url))
+			{
+				url = Trim(std::move(url));
+				if (url.empty()) continue;
+				auto normalized = tracker;
+				normalized.url = std::move(url);
+				normalizedTrackers.push_back(std::move(normalized));
+			}
+		}
+		detail.trackers = std::move(normalizedTrackers);
+		// libtorrent may expose the same announce URL more than once for
+		// different internal endpoint/hash states. The table represents a tracker
+		// URL, so fold exact duplicates before updating the realized rows.
+		std::unordered_set<std::string> trackerUrls;
+		std::erase_if(detail.trackers, [&trackerUrls](auto const& tracker)
+		{
+			return !trackerUrls.insert(tracker.url).second;
+		});
 
 		if (detail.trackers.empty())
 		{
-			m_trackerItems.Clear();
+			if (!m_hasTrackerSnapshot || m_lastTrackerSnapshotHash != 0)
+				m_trackerItems.Clear();
+			m_hasTrackerSnapshot = true;
+			m_lastTrackerSnapshotHash = 0;
+			m_lastTrackerRefresh = nowSteady;
 			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
 		}
@@ -715,6 +726,40 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			});
 		}
 
+		std::size_t snapshotHash = detail.trackers.size();
+		auto combineHash = [&snapshotHash](auto const& value)
+		{
+			snapshotHash ^= std::hash<std::decay_t<decltype(value)>>{}(value)
+				+ 0x9e3779b9u + (snapshotHash << 6) + (snapshotHash >> 2);
+		};
+		for (auto const& tracker : detail.trackers)
+		{
+			combineHash(tracker.url);
+			combineHash(tracker.tier);
+			combineHash(tracker.numPeers);
+			combineHash(tracker.retries);
+			combineHash(tracker.nextAnnounceSeconds);
+			combineHash(tracker.seeders);
+			combineHash(tracker.leechers);
+			combineHash(tracker.downloaded);
+			combineHash(tracker.status);
+			combineHash(tracker.message);
+			if (auto const latest = p2p.TorrentCore()->GetLatestTrackerLog(
+				taskId, tracker.url))
+			{
+				combineHash(latest->timestamp);
+				combineHash(latest->content);
+			}
+		}
+		if (m_hasTrackerSnapshot && snapshotHash == m_lastTrackerSnapshotHash)
+		{
+			m_lastTrackerRefresh = nowSteady;
+			return;
+		}
+		m_hasTrackerSnapshot = true;
+		m_lastTrackerSnapshotHash = snapshotHash;
+		m_lastTrackerRefresh = nowSteady;
+
 		for (std::uint32_t index = 0;
 			 index < static_cast<std::uint32_t>(detail.trackers.size());
 			 ++index)
@@ -722,29 +767,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto const& tracker = detail.trackers[index];
 			auto const trackerUrl = winrt::to_hstring(tracker.url);
 			winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
-			std::uint32_t existingIndex = index;
-			while (existingIndex < m_trackerItems.Size())
+			if (index < m_trackerItems.Size())
 			{
-				auto candidate = m_trackerItems.GetAt(existingIndex)
+				item = m_trackerItems.GetAt(index)
 					.try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>();
-				if (candidate && candidate.URL() == trackerUrl)
-				{
-					item = candidate;
-					break;
-				}
-				++existingIndex;
 			}
-
-			if (item && existingIndex != index)
-			{
-				m_trackerItems.RemoveAt(existingIndex);
-				m_trackerItems.InsertAt(index, item);
-			}
-			else if (!item)
+			if (!item)
 			{
 				item = winrt::make<
 					winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
-				m_trackerItems.InsertAt(index, item);
+				if (index < m_trackerItems.Size())
+					m_trackerItems.SetAt(index, item);
+				else
+					m_trackerItems.Append(item);
 			}
 			item.URL(trackerUrl);
 			item.Tier(winrt::to_hstring(tracker.tier));

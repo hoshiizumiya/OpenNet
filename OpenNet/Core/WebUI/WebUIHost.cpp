@@ -5,6 +5,8 @@
 #define NOMINMAX
 #endif
 
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include "WebUIHost.h"
 #include "WebUIControl.h"
 
@@ -16,9 +18,7 @@
 #include <boost/beast/version.hpp>
 #include <boost/version.hpp>
 #include <libtorrent/settings_pack.hpp>
-#include <libtorrent/bencode.hpp>
-#include <libtorrent/create_torrent.hpp>
-#include <libtorrent/file_storage.hpp>
+#include "LibtorrentIncludeRestore.h"
 #include <nlohmann/json.hpp>
 
 #include <algorithm>
@@ -50,6 +50,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.RSS.RSSManager;
+import OpenNet.Core.Torrent.TorrentCreator;
 import OpenNet.Core.RSS.RSSTypes;
 import OpenNet.Core.TorrentSettings;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
@@ -1862,7 +1863,7 @@ namespace OpenNet::Core::WebUI
 			{
 				return JsonResponse(request, Json{
 					{"qt", "C++/WinRT"},
-					{"libtorrent", "2.0.11"},
+					{"libtorrent", "2.1.1"},
 					{"boost", BOOST_LIB_VERSION},
 					{"openssl", "OpenSSL"},
 					{"zlib", "zlib"},
@@ -2426,8 +2427,6 @@ namespace OpenNet::Core::WebUI
 				default:
 					break;
 			}
-			const bool queueingEnabled = settings.activeDownloads >= 0
-				|| settings.activeSeeds >= 0 || settings.activeLimit >= 0;
 			std::string apiKey;
 			std::string username;
 			{
@@ -2485,7 +2484,7 @@ namespace OpenNet::Core::WebUI
 				{"proxy_bittorrent", settings.proxyType != ::OpenNet::Core::ProxyType::None},
 				{"proxy_peer_connections", settings.proxyPeerConnections},
 				{"max_connec", settings.connectionsLimit},
-				{"queueing_enabled", queueingEnabled},
+				{"queueing_enabled", settings.queueingEnabled},
 				{"max_active_downloads", settings.activeDownloads},
 				{"max_active_uploads", settings.activeSeeds},
 				{"max_active_torrents", settings.activeLimit},
@@ -2826,14 +2825,7 @@ namespace OpenNet::Core::WebUI
 				}
 				if (parsed.contains("queueing_enabled"))
 				{
-					bool enabled = true;
-					setBoolean("queueing_enabled", enabled);
-					if (!enabled)
-					{
-						settings.activeDownloads = -1;
-						settings.activeSeeds = -1;
-						settings.activeLimit = -1;
-					}
+					setBoolean("queueing_enabled", settings.queueingEnabled);
 				}
 				if (parsed.contains("max_ratio_enabled"))
 				{
@@ -4140,7 +4132,7 @@ namespace OpenNet::Core::WebUI
 			const auto* core =
 				::OpenNet::Core::P2PManager::Instance().TorrentCore();
 			const auto statistics = core
-				? core->GetSessionStats()
+				? core->GetPerformanceStats()
 				: ::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats{};
 			const auto settings =
 				::OpenNet::Core::TorrentSettingsManager::Instance().Get();
@@ -4996,7 +4988,7 @@ namespace OpenNet::Core::WebUI
 			const auto* core =
 				::OpenNet::Core::P2PManager::Instance().TorrentCore();
 			const auto statistics = core
-				? core->GetSessionStats()
+				? core->GetPerformanceStats()
 				: ::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats{};
 			const auto settings =
 				::OpenNet::Core::TorrentSettingsManager::Instance().Get();
@@ -6013,36 +6005,31 @@ namespace OpenNet::Core::WebUI
 			};
 			try
 			{
-				libtorrent::file_storage storage;
-				const std::string source = PathUtf8(sourcePath);
-				libtorrent::add_files(storage, source);
-				if (storage.num_files() == 0)
-					throw std::runtime_error("No files found");
-				int pieceSize = parameters.contains("pieceSize")
+				::OpenNet::Core::Torrent::TorrentCreationOptions options;
+				options.sourcePath = sourcePath;
+				options.pieceSize = parameters.contains("pieceSize")
 					? static_cast<int>(
 						ParseInt64(parameters.at("pieceSize")).value_or(0))
 					: 0;
-				libtorrent::create_flags_t flags{};
 				const std::string format = parameters.contains("format")
 					? ToLower(parameters.at("format")) : "hybrid";
 				if (format == "v1")
-					flags |= libtorrent::create_torrent::v1_only;
+					options.format = ::OpenNet::Core::Torrent::TorrentFormat::V1;
 				else if (format == "v2")
-					flags |= libtorrent::create_torrent::v2_only;
-				libtorrent::create_torrent creator(storage, pieceSize, flags);
+					options.format = ::OpenNet::Core::Torrent::TorrentFormat::V2;
 				if (parameters.contains("private"))
-					creator.set_priv(ParseBool(parameters.at("private")));
+					options.privateTorrent = ParseBool(parameters.at("private"));
+				if (parameters.contains("ignoreDotFiles"))
+					options.ignoreDotFiles = ParseBool(parameters.at("ignoreDotFiles"));
 				if (parameters.contains("comment"))
-					creator.set_comment(parameters.at("comment").c_str());
-				creator.set_creator("OpenNet");
+					options.comment = parameters.at("comment");
 				if (parameters.contains("trackers"))
 				{
-					int tier = 0;
 					for (const auto& tracker :
 						 SplitValues(parameters.at("trackers"), '|'))
 					{
 						if (!tracker.empty())
-							creator.add_tracker(tracker, tier++);
+							options.trackers.push_back(tracker);
 					}
 				}
 				if (parameters.contains("urlSeeds"))
@@ -6051,21 +6038,13 @@ namespace OpenNet::Core::WebUI
 						 SplitValues(parameters.at("urlSeeds"), '|'))
 					{
 						if (!seed.empty())
-							creator.add_url_seed(seed);
+							options.urlSeeds.push_back(seed);
 					}
 				}
-				const auto base = std::filesystem::is_directory(sourcePath)
-					? sourcePath.parent_path() : sourcePath.parent_path();
-				libtorrent::error_code error;
-				libtorrent::set_piece_hashes(
-					creator, PathUtf8(base), error);
-				if (error)
-					throw std::runtime_error(error.message());
-				std::vector<char> encoded;
-				libtorrent::bencode(
-					std::back_inserter(encoded), creator.generate());
-				job.torrentData.assign(encoded.begin(), encoded.end());
-				job.status["pieceSize"] = creator.piece_length();
+				auto result = ::OpenNet::Core::Torrent::TorrentCreator::Create(options);
+				job.torrentData.assign(
+					reinterpret_cast<char const*>(result.data.data()), result.data.size());
+				job.status["pieceSize"] = result.pieceSize;
 				job.status["status"] = "Finished";
 				job.status["progress"] = 1.0;
 				job.status["timeFinished"] =
@@ -6118,18 +6097,16 @@ namespace OpenNet::Core::WebUI
 				::OpenNet::Core::P2PManager::Instance().TorrentCore();
 			if (!core || !core->IsRunning())
 				return;
-			auto liveSettings = settings;
 			if (m_speedLimitsMode.load())
 			{
-				liveSettings.downloadRateLimit =
-					m_altDownloadLimit.load();
-				liveSettings.uploadRateLimit =
-					m_altUploadLimit.load();
+				core->ReloadSettings(
+					m_altDownloadLimit.load(),
+					m_altUploadLimit.load());
 			}
-			libtorrent::settings_pack pack;
-			::OpenNet::Core::ApplyTorrentSettingsToSettingsPack(
-				liveSettings, pack);
-			core->ApplySettings(pack);
+			else
+			{
+				core->ReloadSettings();
+			}
 		}
 
 		mutable std::mutex m_stateMutex;

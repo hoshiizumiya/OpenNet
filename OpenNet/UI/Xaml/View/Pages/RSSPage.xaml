@@ -10,6 +10,31 @@
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <Flyout
+            x:Name="RSSPreviewFlyout"
+            Closed="RSSPreviewFlyout_Closed"
+            Opened="RSSPreviewFlyout_Opened"
+            Placement="RightEdgeAlignedTop">
+            <Border
+                x:Name="RSSPreviewHost"
+                CornerRadius="8"
+                PointerEntered="RSSPreviewHost_PointerEntered"
+                PointerExited="RSSPreviewHost_PointerExited">
+                <WebView2
+                    x:Name="RSSPreviewWebView"
+                    Width="640"
+                    Height="400" />
+            </Border>
+        </Flyout>
+
+        <ContentDialog
+            x:Name="RemoveFeedDialog"
+            DefaultButton="Close">
+            <TextBlock x:Name="RemoveFeedConfirmationText" TextWrapping="Wrap" />
+        </ContentDialog>
+    </Page.Resources>
+
     <Grid Padding="24" Background="{ThemeResource LayerFillColorDefaultBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -65,7 +90,7 @@
                         Maximum="10000"
                         Minimum="10"
                         SmallChange="10"
-                        SpinButtonPlacementMode="Compact"
+                        SpinButtonPlacementMode="Inline"
                         ValueChanged="MaxItemsPerFeedBox_ValueChanged" />
                 </StackPanel>
             </Grid>

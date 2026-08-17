@@ -819,6 +819,12 @@
   <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
     <value>添加种子后自动开始下载</value>
   </data>
+  <data name="DL_RecheckBeforeResume.Header" xml:space="preserve">
+    <value>恢复前重新校验</value>
+  </data>
+  <data name="DL_RecheckBeforeResume.Description" xml:space="preserve">
+    <value>暂停的种子恢复前校验全部分块；该操作可能需要较长时间</value>
+  </data>
   <data name="DL_MoveCompleted.Header" xml:space="preserve">
     <value>移动已完成下载</value>
   </data>
@@ -3858,6 +3864,24 @@
   <data name="CommonDelete" xml:space="preserve">
     <value>删除</value>
   </data>
+  <data name="TasksDeleteWarningTitle" xml:space="preserve">
+    <value>永久删除此任务？</value>
+  </data>
+  <data name="TasksDeleteWarningMessage" xml:space="preserve">
+    <value>该任务将从 OpenNet 中移除，此操作无法撤销。</value>
+  </data>
+  <data name="TasksDeleteDownloadedFiles" xml:space="preserve">
+    <value>同时删除磁盘上已下载的文件</value>
+  </data>
+  <data name="TasksDeleteFailedTitle" xml:space="preserve">
+    <value>无法删除任务</value>
+  </data>
+  <data name="TasksDeleteFailedMessage" xml:space="preserve">
+    <value>下载引擎尚未释放任务或文件。请暂停任务后重试。</value>
+  </data>
+  <data name="TaskStatusChecking" xml:space="preserve">
+    <value>正在校验文件</value>
+  </data>
   <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
     <value>选择了多个文件</value>
   </data>
@@ -4439,5 +4463,518 @@
   </data>
   <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
     <value>播放文件</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
+    <value>数字动画</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Description" xml:space="preserve">
+    <value>显示的数字发生变化时播放过渡动画</value>
+  </data>
+  <data name="TorrentCopyLocationDownloadFolder.Content" xml:space="preserve">
+    <value>下载目标文件夹</value>
+  </data>
+  <data name="TorrentCopyLocationContentFolder.Content" xml:space="preserve">
+    <value>种子内容文件夹</value>
+  </data>
+  <data name="TorrentCopyOverwriteTitle" xml:space="preserve">
+    <value>种子文件已存在</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessage" xml:space="preserve">
+    <value>同名 .torrent 文件已经存在，是否替换？</value>
+  </data>
+  <data name="TorrentCopyOverwritePrimary" xml:space="preserve">
+    <value>替换</value>
+  </data>
+  <data name="SettingsSearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜索设置</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Header" xml:space="preserve">
+    <value>最大对等节点列表</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Description" xml:space="preserve">
+    <value>每个种子保留的已知对等节点数量上限</value>
+  </data>
+  <data name="BT_PeerFingerprint.Header" xml:space="preserve">
+    <value>客户端指纹</value>
+  </data>
+  <data name="BT_PeerFingerprint.Description" xml:space="preserve">
+    <value>发送给对等节点的客户端标识字符串</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Header" xml:space="preserve">
+    <value>高级性能设置</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Description" xml:space="preserve">
+    <value>原生界面与 WebUI 共用的磁盘缓存、哈希和发送缓冲设置</value>
+  </data>
+  <data name="BT_HashingThreads.Header" xml:space="preserve">
+    <value>哈希线程数</value>
+  </data>
+  <data name="BT_FilePoolSize.Header" xml:space="preserve">
+    <value>文件池大小</value>
+  </data>
+  <data name="BT_DiskQueueSize.Header" xml:space="preserve">
+    <value>磁盘缓存与队列预算（KiB）</value>
+  </data>
+  <data name="BT_DiskQueueSize.Description" xml:space="preserve">
+    <value>libtorrent 磁盘 I/O 队列使用的内存预算；0 表示使用引擎默认值</value>
+  </data>
+  <data name="BT_PieceExtentAffinity.Header" xml:space="preserve">
+    <value>启用分块范围亲和性</value>
+  </data>
+  <data name="BT_UploadSuggestions.Header" xml:space="preserve">
+    <value>发送上传分块建议</value>
+  </data>
+  <data name="BT_SendBufferWatermark.Header" xml:space="preserve">
+    <value>发送缓冲高水位（KiB）</value>
+  </data>
+  <data name="BT_SendBufferLowWatermark.Header" xml:space="preserve">
+    <value>发送缓冲低水位（KiB）</value>
+  </data>
+  <data name="BT_SendBufferWatermarkFactor.Header" xml:space="preserve">
+    <value>发送缓冲水位系数（%）</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Header" xml:space="preserve">
+    <value>高级网络行为</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Description" xml:space="preserve">
+    <value>连接调度、套接字和对等节点策略</value>
+  </data>
+  <data name="BT_ConnectionSpeed.Header" xml:space="preserve">
+    <value>每秒发起连接数</value>
+  </data>
+  <data name="BT_SeedingOutgoingConnections.Header" xml:space="preserve">
+    <value>做种时允许主动连接</value>
+  </data>
+  <data name="BT_SocketSendBufferSize.Header" xml:space="preserve">
+    <value>套接字发送缓冲大小（KiB）</value>
+  </data>
+  <data name="BT_SocketReceiveBufferSize.Header" xml:space="preserve">
+    <value>套接字接收缓冲大小（KiB）</value>
+  </data>
+  <data name="BT_SocketBacklogSize.Header" xml:space="preserve">
+    <value>套接字等待队列大小</value>
+  </data>
+  <data name="BT_MixedMode.Header" xml:space="preserve">
+    <value>μTP/TCP 混合模式</value>
+  </data>
+  <data name="BT_HostnameCacheTtl.Header" xml:space="preserve">
+    <value>主机名缓存有效期（秒）</value>
+  </data>
+  <data name="BT_ValidateHttpsTrackers.Header" xml:space="preserve">
+    <value>验证 HTTPS Tracker 证书</value>
+  </data>
+  <data name="BT_SsrfMitigation.Header" xml:space="preserve">
+    <value>SSRF 防护</value>
+  </data>
+  <data name="BT_BlockPrivilegedPorts.Header" xml:space="preserve">
+    <value>阻止使用特权端口的节点</value>
+  </data>
+  <data name="BT_UploadSlotsBehavior.Header" xml:space="preserve">
+    <value>上传槽位行为</value>
+  </data>
+  <data name="BT_UploadChokingAlgorithm.Header" xml:space="preserve">
+    <value>上传阻塞算法</value>
+  </data>
+  <data name="BT_AdvancedTracker.Header" xml:space="preserve">
+    <value>高级 Tracker 行为</value>
+  </data>
+  <data name="BT_AdvancedTracker.Description" xml:space="preserve">
+    <value>通告身份、Tracker 并发和对等节点轮换</value>
+  </data>
+  <data name="BT_DhtBootstrapNodes.Header" xml:space="preserve">
+    <value>DHT 引导节点</value>
+  </data>
+  <data name="BT_AnnounceIp.Header" xml:space="preserve">
+    <value>向 Tracker 报告的 IP</value>
+  </data>
+  <data name="BT_AnnouncePort.Header" xml:space="preserve">
+    <value>向 Tracker 报告的端口</value>
+  </data>
+  <data name="BT_MaxConcurrentHttpAnnounces.Header" xml:space="preserve">
+    <value>HTTP 通告最大并发数</value>
+  </data>
+  <data name="BT_StopTrackerTimeout.Header" xml:space="preserve">
+    <value>停止 Tracker 超时（秒）</value>
+  </data>
+  <data name="BT_PeerTurnover.Header" xml:space="preserve">
+    <value>节点轮换断开比例（%）</value>
+  </data>
+  <data name="BT_PeerTurnoverCutoff.Header" xml:space="preserve">
+    <value>节点轮换阈值（%）</value>
+  </data>
+  <data name="BT_PeerTurnoverInterval.Header" xml:space="preserve">
+    <value>节点轮换间隔（秒）</value>
+  </data>
+  <data name="BT_RequestQueueSize.Header" xml:space="preserve">
+    <value>每个节点的最大未完成请求数</value>
+  </data>
+  <data name="BT_DownloadDefaults.Header" xml:space="preserve">
+    <value>下载默认设置</value>
+  </data>
+  <data name="BT_DownloadDefaults.Description" xml:space="preserve">
+    <value>新下载任务的默认行为</value>
+  </data>
+  <data name="BT_DefaultSavePath.Header" xml:space="preserve">
+    <value>默认保存路径</value>
+  </data>
+  <data name="BT_PreallocateStorage.Header" xml:space="preserve">
+    <value>预分配存储空间</value>
+  </data>
+  <data name="BT_AutoStartDownloads.Header" xml:space="preserve">
+    <value>自动开始下载</value>
+  </data>
+  <data name="BT_MoveCompleted.Header" xml:space="preserve">
+    <value>移动已完成下载</value>
+  </data>
+  <data name="BT_MoveCompletedPath.Header" xml:space="preserve">
+    <value>已完成任务移动路径</value>
+  </data>
+  <data name="SettingsGeneralSearchTags" xml:space="preserve">
+    <value>常规 通用 语言 更新 启动页 刷新 主题</value>
+  </data>
+  <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
+    <value>BitTorrent BT 种子 用户 协议 连接 加密 代理 缓存 磁盘 性能 WebTorrent</value>
+  </data>
+  <data name="SettingsNetworkSearchTags" xml:space="preserve">
+    <value>网络 端口 监听 IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT 代理</value>
+  </data>
+  <data name="SettingsTrackerSearchTags" xml:space="preserve">
+    <value>Tracker 追踪器 公告 订阅 自动 添加 列表</value>
+  </data>
+  <data name="SettingsIPFilterSearchTags" xml:space="preserve">
+    <value>IP 过滤 屏蔽 封禁 订阅 IPv4 IPv6</value>
+  </data>
+  <data name="SettingsClientFilterSearchTags" xml:space="preserve">
+    <value>客户端 过滤 用户 屏蔽 允许 规则</value>
+  </data>
+  <data name="SettingsDownloadSearchTags" xml:space="preserve">
+    <value>下载 路径 种子文件 保存 哈希 校验 aria2 线程 连接 删除文件</value>
+  </data>
+  <data name="SettingsWebUISearchTags" xml:space="preserve">
+    <value>Web UI 网页 远程 地址 端口 用户名 密码 语言 API 密钥 VueTorrent</value>
+  </data>
+  <data name="SettingsAppearanceSearchTags" xml:space="preserve">
+    <value>外观 主题 背景 图片 视频 云母 亚克力 字体 动画 数字 颜色</value>
+  </data>
+  <data name="SettingsAboutSearchTags" xml:space="preserve">
+    <value>关于 版本 许可 依赖 诊断 更新</value>
+  </data>
+  <data name="BT_UserAgentInput.PlaceholderText" xml:space="preserve">
+    <value>libtorrent/2.1.1</value>
+  </data>
+  <data name="BT_ProxyHostnameInput.PlaceholderText" xml:space="preserve">
+    <value>proxy.example.com</value>
+  </data>
+  <data name="BT_AdvancedSectionHeader.Text" xml:space="preserve">
+    <value>libtorrent 高级设置</value>
+  </data>
+  <data name="BT_PeerFingerprintInput.PlaceholderText" xml:space="preserve">
+    <value>-ON0100-</value>
+  </data>
+  <data name="BT_DefaultSavePathInput.PlaceholderText" xml:space="preserve">
+    <value>下载文件夹</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessageText.Text" xml:space="preserve">
+    <value>已存在同名 .torrent 文件，是否替换？</value>
+  </data>
+  <data name="TorrentTrackerListHeader.Text" xml:space="preserve">
+    <value>此任务的 Tracker 列表</value>
+  </data>
+  <data name="TorrentTrackerListDescription.Text" xml:space="preserve">
+    <value>每行填写一个 Tracker URL。磁力链接或 .torrent 文件中已有的 Tracker 会与已启用的自定义 Tracker 自动合并。</value>
+  </data>
+  <data name="TorrentTrackerListFooter.Text" xml:space="preserve">
+    <value>应用范围内的自定义 Tracker 开关和订阅在网络设置中管理。</value>
+  </data>
+  <data name="TaskCreateTorrentButton.Text" xml:space="preserve">
+    <value>制作种子...</value>
+  </data>
+  <data name="CreateTorrentTitle" xml:space="preserve">
+    <value>制作种子</value>
+  </data>
+  <data name="CreateTorrentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>创建</value>
+  </data>
+  <data name="CreateTorrentDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="CreateTorrentDescription.Text" xml:space="preserve">
+    <value>从本地文件或文件夹创建 BitTorrent 元数据文件。</value>
+  </data>
+  <data name="CreateTorrentSource.PlaceholderText" xml:space="preserve">
+    <value>源文件或文件夹</value>
+  </data>
+  <data name="CreateTorrentBrowseFile.Content" xml:space="preserve">
+    <value>文件...</value>
+  </data>
+  <data name="CreateTorrentBrowseFolder.Content" xml:space="preserve">
+    <value>文件夹...</value>
+  </data>
+  <data name="CreateTorrentFormatHybrid.Content" xml:space="preserve">
+    <value>混合格式（v1 + v2）</value>
+  </data>
+  <data name="CreateTorrentFormatV1.Content" xml:space="preserve">
+    <value>BitTorrent v1</value>
+  </data>
+  <data name="CreateTorrentFormatV2.Content" xml:space="preserve">
+    <value>BitTorrent v2</value>
+  </data>
+  <data name="CreateTorrentPrivate.Content" xml:space="preserve">
+    <value>私有种子</value>
+  </data>
+  <data name="CreateTorrentIgnoreDotFiles.Content" xml:space="preserve">
+    <value>忽略隐藏的点文件</value>
+  </data>
+  <data name="CreateTorrentComment.Header" xml:space="preserve">
+    <value>备注</value>
+  </data>
+  <data name="CreateTorrentComment.PlaceholderText" xml:space="preserve">
+    <value>可选备注</value>
+  </data>
+  <data name="CreateTorrentTrackers.Header" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="CreateTorrentTrackers.PlaceholderText" xml:space="preserve">
+    <value>每行一个 Tracker URL</value>
+  </data>
+  <data name="CreateTorrentSelectSource" xml:space="preserve">
+    <value>请先选择源文件或文件夹。</value>
+  </data>
+  <data name="CreateTorrentCreating" xml:space="preserve">
+    <value>正在计算文件哈希并制作种子...</value>
+  </data>
+  <data name="CreateTorrentComplete" xml:space="preserve">
+    <value>种子制作完成。</value>
+  </data>
+  <data name="CreateTorrentFailed" xml:space="preserve">
+    <value>无法制作种子。</value>
+  </data>
+  <data name="ThemesAppearanceSectionHeader.Text" xml:space="preserve">
+    <value>外观</value>
+  </data>
+  <data name="ThemesFontSectionHeader.Text" xml:space="preserve">
+    <value>字体</value>
+  </data>
+  <data name="AboutSectionHeader.Text" xml:space="preserve">
+    <value>关于</value>
+  </data>
+  <data name="AboutProductExpander.Header" xml:space="preserve">
+    <value>OpenNet for Windows</value>
+  </data>
+  <data name="AboutProductExpander.Description" xml:space="preserve">
+    <value>© 2026 Millennium Science Technology R-D Inst</value>
+  </data>
+  <data name="AboutVersionLabel.Text" xml:space="preserve">
+    <value>版本：</value>
+  </data>
+  <data name="AboutWASDKBuildCard.Header" xml:space="preserve">
+    <value>Windows App SDK 构建版本</value>
+  </data>
+  <data name="AboutWASDKRuntimeCard.Header" xml:space="preserve">
+    <value>Windows App SDK 运行时版本</value>
+  </data>
+  <data name="AboutWinUIEssentialBuildCard.Header" xml:space="preserve">
+    <value>WinUI Essentials 构建 SDK 版本</value>
+  </data>
+  <data name="AboutDependenciesHeader.Text" xml:space="preserve">
+    <value>依赖项与参考项目</value>
+  </data>
+  <data name="AboutWarrantyText.Text" xml:space="preserve">
+    <value>本代码和信息按“原样”提供，不作任何明示或默示担保。</value>
+  </data>
+  <data name="AboutLicenseSourceLink.Content" xml:space="preserve">
+    <value>许可证与源代码</value>
+  </data>
+  <data name="AboutProductionRole.Text" xml:space="preserve">
+    <value>制作 / 视觉设计</value>
+  </data>
+  <data name="AboutProgrammingRole.Text" xml:space="preserve">
+    <value>程序开发负责人</value>
+  </data>
+  <data name="AboutAIAssistantRole.Text" xml:space="preserve">
+    <value>AI 编程助手 / 顾问</value>
+  </data>
+  <data name="AboutFrameworkRole.Text" xml:space="preserve">
+    <value>软件框架</value>
+  </data>
+  <data name="AboutSpecialThanksRole.Text" xml:space="preserve">
+    <value>特别鸣谢</value>
+  </data>
+  <data name="AboutYouText.Text" xml:space="preserve">
+    <value>你！</value>
+  </data>
+  <data name="AboutHelpFeedbackLink.Content" xml:space="preserve">
+    <value>帮助与反馈</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Header" xml:space="preserve">
+    <value>OpenNet 开源项目</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Description" xml:space="preserve">
+    <value>基于 WinUI 3 的 OpenNet</value>
+  </data>
+  <data name="AboutJoinProjectLink.Content" xml:space="preserve">
+    <value>在 GitHub 上参与项目</value>
+  </data>
+  <data name="AboutGoToRepoText.Text" xml:space="preserve">
+    <value>前往代码仓库</value>
+  </data>
+  <data name="AboutLastCommitLabel.Text" xml:space="preserve">
+    <value>最后提交：</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.Title" xml:space="preserve">
+    <value>编辑 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerEditorTextBox.PlaceholderText" xml:space="preserve">
+    <value>每行输入一个 HTTP、HTTPS 或 UDP Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.Title" xml:space="preserve">
+    <value>删除 Tracker？</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.PrimaryButtonText" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.Title" xml:space="preserve">
+    <value>清除所有 Tracker 日志？</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsMessage.Text" xml:space="preserve">
+    <value>这将清除所有任务的内存中 Tracker 日志。</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.Title" xml:space="preserve">
+    <value>删除无法访问的 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePromptText.Text" xml:space="preserve">
+    <value>删除已达到重试次数上限的所有 Tracker：</value>
+  </data>
+  <data name="ViewTaskTrackersPageMessageDialog.CloseButtonText" xml:space="preserve">
+    <value>关闭</value>
+  </data>
+  <data name="DL_BrowseSavePath.Content" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+  <data name="DL_BrowseMovePath.Content" xml:space="preserve">
+    <value>浏览...</value>
+  </data>
+  <data name="DL_Aria2Connections.Header" xml:space="preserve">
+    <value>HTTP 下载连接数</value>
+  </data>
+  <data name="DL_Aria2Connections.Description" xml:space="preserve">
+    <value>每个 HTTP 下载任务使用的连接数</value>
+  </data>
+  <data name="RestartLanguageInfoBar.Title" xml:space="preserve">
+    <value>重启 OpenNet 以应用语言更改</value>
+  </data>
+  <data name="ViewThemeSettingFallbackColorCard.Title" xml:space="preserve">
+    <value>窗口失去焦点时的回退颜色</value>
+  </data>
+  <data name="ViewThemeSettingTintColorCard.Title" xml:space="preserve">
+    <value>色调颜色</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Header" xml:space="preserve">
+    <value>跟随应用语言</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Description" xml:space="preserve">
+    <value>使 Web UI 语言与 OpenNet 的应用语言保持同步。</value>
+  </data>
+  <data name="CF_EditPatternLabel.Text" xml:space="preserve">
+    <value>客户端模式</value>
+  </data>
+  <data name="CF_EditMatchTypeLabel.Text" xml:space="preserve">
+    <value>匹配类型</value>
+  </data>
+  <data name="CF_EditMatchContains.Content" xml:space="preserve">
+    <value>包含</value>
+  </data>
+  <data name="CF_EditMatchExact.Content" xml:space="preserve">
+    <value>完全匹配</value>
+  </data>
+  <data name="CF_EditMatchWildcard.Content" xml:space="preserve">
+    <value>通配符</value>
+  </data>
+  <data name="CF_EditMatchRegex.Content" xml:space="preserve">
+    <value>正则表达式</value>
+  </data>
+  <data name="CF_EditCaseSensitive.Header" xml:space="preserve">
+    <value>区分大小写</value>
+  </data>
+  <data name="CF_EditEnabled.Header" xml:space="preserve">
+    <value>已启用</value>
+  </data>
+  <data name="CF_EditDescriptionLabel.Text" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="CF_ImportHint.Text" xml:space="preserve">
+    <value>JSON 会保留每个规则选项。纯文本将每行导入为一条不区分大小写的“包含”规则。</value>
+  </data>
+  <data name="CF_ReplaceExisting.Content" xml:space="preserve">
+    <value>导入前替换全部现有规则</value>
+  </data>
+  <data name="CF_ClearRulesMessage.Text" xml:space="preserve">
+    <value>移除所有客户端过滤规则？此操作无法撤销。</value>
+  </data>
+  <data name="CF_DeleteRulePrompt" xml:space="preserve">
+    <value>删除此规则？</value>
+  </data>
+  <data name="IPF_EditSubscriptionEnabled.Content" xml:space="preserve">
+    <value>启用此来源</value>
+  </data>
+  <data name="IPF_EditRuleEntryLabel.Text" xml:space="preserve">
+    <value>IP 地址、CIDR 块或范围</value>
+  </data>
+  <data name="IPF_EditRuleDescriptionLabel.Text" xml:space="preserve">
+    <value>描述（可选）</value>
+  </data>
+  <data name="IPF_DeleteRulePrompt" xml:space="preserve">
+    <value>删除此规则？</value>
+  </data>
+  <data name="IPF_ClearAllRulesDialogMessage.Text" xml:space="preserve">
+    <value>确定要删除所有 IP 过滤规则吗？此操作无法撤销。</value>
+  </data>
+  <data name="BT_QueueingEnabled.Header" xml:space="preserve">
+    <value>启用 Torrent 队列</value>
+  </data>
+  <data name="BT_QueueingEnabled.Description" xml:space="preserve">
+    <value>限制同时活动的下载、做种和 Torrent 数量。关闭后不限制任务调度数量。</value>
+  </data>
+  <data name="BT_MixedModePreferTcp.Content" xml:space="preserve">
+    <value>优先 TCP</value>
+  </data>
+  <data name="BT_MixedModePeerProportional.Content" xml:space="preserve">
+    <value>按节点比例分配</value>
+  </data>
+  <data name="BT_UploadSlotsFixed.Content" xml:space="preserve">
+    <value>固定槽位</value>
+  </data>
+  <data name="BT_UploadSlotsRateBased.Content" xml:space="preserve">
+    <value>基于上传速率</value>
+  </data>
+  <data name="BT_UploadChokingRoundRobin.Content" xml:space="preserve">
+    <value>轮询</value>
+  </data>
+  <data name="BT_UploadChokingFastest.Content" xml:space="preserve">
+    <value>最快上传</value>
+  </data>
+  <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
+    <value>反吸血</value>
   </data>
 </root>

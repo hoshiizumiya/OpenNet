@@ -196,6 +196,7 @@
     </Page>
     <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\View\Windows\RSSBrowserWindow.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\AnimatedNumber_ResourceDictionary.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -287,6 +288,15 @@
     </Midl>
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl">
       <Filter>UI\Xaml\Control\Effect</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\Effect\AnimatedDigit.idl">
+      <Filter>UI\Xaml\Control\Effect</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\Effect\AnimatedNumber.idl">
+      <Filter>UI\Xaml\Control\Effect</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.idl">
+      <Filter>UI\Xaml\Behavior</Filter>
     </Midl>
     <Midl Include="UI\Xaml\Markup\UInt32Extension.idl">
       <Filter>UI\Xaml\Markup</Filter>
@@ -490,6 +500,9 @@
     <ClCompile Include="Core\Torrent\TrackerManager.cpp">
       <Filter>Core\Torrent</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Torrent\TorrentCreator.cpp">
+      <Filter>Core\Torrent</Filter>
+    </ClCompile>
     <ClCompile Include="Core\HttpStateManager.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -509,6 +522,15 @@
       <Filter>Core\GeoIP</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\Effect\TextMorphEffect.cpp" />
+    <ClCompile Include="UI\Xaml\Control\Effect\AnimatedDigit.cpp">
+      <Filter>UI\Xaml\Control\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Effect\AnimatedNumber.cpp">
+      <Filter>UI\Xaml\Control\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.cpp">
+      <Filter>UI\Xaml\Behavior</Filter>
+    </ClCompile>
     <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.ixx">
       <Filter>Core\ApplicationModel</Filter>
     </ClCompile>
@@ -566,6 +588,9 @@
     <ClCompile Include="Core\TorrentSettings.ixx">
       <Filter>Core</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Torrent\TorrentCreator.ixx">
+      <Filter>Core\Torrent</Filter>
+    </ClCompile>
     <ClCompile Include="Core\Utils\Message.ixx">
       <Filter>Core\Utils</Filter>
     </ClCompile>
@@ -618,7 +643,7 @@
       <Filter>UI\Xaml\Control\Card</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Behavior\Action\ShowTeachingTipAction.cpp">
-      <Filter>UI\Behavior\Action</Filter>
+      <Filter>UI\Xaml\Behavior\Action</Filter>
     </ClCompile>
     <ClCompile Include="Core\IO\Http\Proxy\HttpProxyUsingSystemProxy.ixx">
       <Filter>Core\IO\Http</Filter>
@@ -633,7 +658,7 @@
       <Filter>UI\Xaml\Markup</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Behavior\InvokeCommandOnLoadedBehavior.cpp">
-      <Filter>UI\Behavior</Filter>
+      <Filter>UI\Xaml\Behavior</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\Guide\GuideViewModel.cpp">
       <Filter>ViewModels\GuideView</Filter>
@@ -681,8 +706,12 @@
     <ClCompile Include="Extension\DependencyObjectExtensions.ixx" />
     <ClCompile Include="Extension\Predicates.ixx" />
     <ClCompile Include="Extension\FrameworkElementExtensions.ixx" />
-    <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
-    <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
+    <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx">
+      <Filter>UI\Xaml\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx">
+      <Filter>UI\Xaml\Behavior</Filter>
+    </ClCompile>
     <ClCompile Include="Core\WebUI\WebUIHost.cpp" />
     <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
     <ClCompile Include="Helpers\TemplateControlHelper.ixx" />
@@ -701,6 +730,12 @@
     </ClCompile>
     <ClCompile Include="Service\Notification\InfoBarOptions.cpp">
       <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="Service\Notification\InfoBarService.cpp">
+      <Filter>Service</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.cpp">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\InfoBarHelper.cpp" />
     <ClCompile Include="UI\Xaml\Control\IpEndpointInput.xaml.cpp">
@@ -730,6 +765,15 @@
     </ClInclude>
     <ClInclude Include="Service\Notification\InfoBarOptions.h">
       <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="Service\Notification\InfoBarService.h">
+      <Filter>Service</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.h">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTagRegister.h">
+      <Filter>UI\Xaml\View\Pages\SettingsPages</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\IpEndpointInput.xaml.h">
       <Filter>UI\Xaml\Control</Filter>
@@ -897,6 +941,15 @@
       <Filter>Web\Request\Builder</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Effect\TextMorphEffect.h" />
+    <ClInclude Include="UI\Xaml\Control\Effect\AnimatedDigit.h">
+      <Filter>UI\Xaml\Control\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Effect\AnimatedNumber.h">
+      <Filter>UI\Xaml\Control\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.h">
+      <Filter>UI\Xaml\Behavior</Filter>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Graph\LiveGraph.h">
       <Filter>UI\Xaml\Control\Graph</Filter>
     </ClInclude>
@@ -907,6 +960,11 @@
       <Filter>UI\Xaml\View\Pages</Filter>
     </ClInclude>
     <ClInclude Include="XamlWorkaround.h" />
+    <ClInclude Include="XamlGeneratedWorkaround.h" />
+    <ClInclude Include="winrt_module_imports.h" />
+    <ClInclude Include="WindowsPlatform.h" />
+    <ClInclude Include="LibtorrentIncludeGuard.h" />
+    <ClInclude Include="LibtorrentIncludeRestore.h" />
     <ClInclude Include="Web\WebView2\WebView2Version.h">
       <Filter>Web\WebView2</Filter>
     </ClInclude>
@@ -1261,10 +1319,10 @@
     <Filter Include="UI\Xaml\Markup">
       <UniqueIdentifier>{e8bba0d3-f42a-45cd-ae76-68fe530c7e0c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Behavior">
+    <Filter Include="UI\Xaml\Behavior">
       <UniqueIdentifier>{4d2e1f47-697a-4208-a477-a2d624a47c4c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="UI\Behavior\Action">
+    <Filter Include="UI\Xaml\Behavior\Action">
       <UniqueIdentifier>{937b2d47-bc68-40d9-850f-ea27f9dec424}</UniqueIdentifier>
     </Filter>
     <Filter Include="ViewModels\GuideView">
@@ -1290,9 +1348,6 @@
       <Filter>Assets\ModelIcons</Filter>
     </None>
     <None Include="OpenNet_TemporaryKey.pfx" />
-    <None Include="mvvm_framework\README.md">
-      <Filter>UI\Behavior</Filter>
-    </None>
     <None Include="Assets\IP2Location\IP2LOCATION-COUNTRY-MULTILINGUAL.CSV">
       <Filter>Assets\IP2Location</Filter>
     </None>
@@ -1315,6 +1370,7 @@
     <None Include="Assets\Rules\ipfilter2.txt">
       <Filter>Assets\Rules</Filter>
     </None>
+    <None Include="mvvm_framework\README.md" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

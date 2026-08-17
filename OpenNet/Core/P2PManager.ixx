@@ -31,6 +31,10 @@ export namespace OpenNet::Core
 		}
 		::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats
 			GetSessionStats();
+		::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats
+			GetPerformanceStats();
+		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>
+			GetTorrentPeers(std::string const& taskId);
 
 		// State manager access
 		::OpenNet::Core::Torrent::TorrentStateManager* StateManager() noexcept

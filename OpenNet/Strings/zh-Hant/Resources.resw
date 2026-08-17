@@ -819,6 +819,12 @@
   <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
     <value>新增 Torrent 後自動開始下載</value>
   </data>
+  <data name="DL_RecheckBeforeResume.Header" xml:space="preserve">
+    <value>恢復前重新校驗</value>
+  </data>
+  <data name="DL_RecheckBeforeResume.Description" xml:space="preserve">
+    <value>暫停的 Torrent 恢復前校驗全部分塊；此操作可能需要較長時間</value>
+  </data>
   <data name="DL_MoveCompleted.Header" xml:space="preserve">
     <value>移動已完成的下載</value>
   </data>
@@ -3858,6 +3864,24 @@
   <data name="CommonDelete" xml:space="preserve">
     <value>刪除</value>
   </data>
+  <data name="TasksDeleteWarningTitle" xml:space="preserve">
+    <value>永久刪除此工作？</value>
+  </data>
+  <data name="TasksDeleteWarningMessage" xml:space="preserve">
+    <value>此工作將從 OpenNet 移除，且無法復原。</value>
+  </data>
+  <data name="TasksDeleteDownloadedFiles" xml:space="preserve">
+    <value>同時刪除磁碟上已下載的檔案</value>
+  </data>
+  <data name="TasksDeleteFailedTitle" xml:space="preserve">
+    <value>無法刪除工作</value>
+  </data>
+  <data name="TasksDeleteFailedMessage" xml:space="preserve">
+    <value>下載引擎尚未釋放工作或檔案。請暫停工作後重試。</value>
+  </data>
+  <data name="TaskStatusChecking" xml:space="preserve">
+    <value>正在校驗檔案</value>
+  </data>
   <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
     <value>已選取多個檔案</value>
   </data>
@@ -4269,5 +4293,530 @@
   </data>
   <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" type="System.Resources.ResXNullRef, System.Windows.Forms">
     <value />
+  </data>
+  <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
+    <value>UPnP 租約期限 (秒)</value>
+  </data>
+  <data name="BT_UpnpLeaseDuration.Description" xml:space="preserve">
+    <value>0 表示永久對應；有限租約會在期限的 75% 時重新整理。</value>
+  </data>
+  <data name="WebUISettingsFrontendCard.Header" xml:space="preserve">
+    <value>前端</value>
+  </data>
+  <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
+    <value>兩個前端共用相同的 OpenNet/qBittorrent 相容 API 與設定儲存區。</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
+    <value>數字動畫</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Description" xml:space="preserve">
+    <value>顯示的數字變更時播放轉場動畫</value>
+  </data>
+  <data name="TorrentCopyLocationDownloadFolder.Content" xml:space="preserve">
+    <value>下載目標資料夾</value>
+  </data>
+  <data name="TorrentCopyLocationContentFolder.Content" xml:space="preserve">
+    <value>種子內容資料夾</value>
+  </data>
+  <data name="TorrentCopyOverwriteTitle" xml:space="preserve">
+    <value>種子檔案已存在</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessage" xml:space="preserve">
+    <value>同名 .torrent 檔案已經存在，是否取代？</value>
+  </data>
+  <data name="TorrentCopyOverwritePrimary" xml:space="preserve">
+    <value>取代</value>
+  </data>
+  <data name="SettingsSearchBox.PlaceholderText" xml:space="preserve">
+    <value>搜尋設定</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Header" xml:space="preserve">
+    <value>節點清單大小上限</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Description" xml:space="preserve">
+    <value>每個 Torrent 保留的已知節點數上限</value>
+  </data>
+  <data name="BT_PeerFingerprint.Header" xml:space="preserve">
+    <value>節點指紋</value>
+  </data>
+  <data name="BT_PeerFingerprint.Description" xml:space="preserve">
+    <value>傳送給節點的用戶端識別字串</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Header" xml:space="preserve">
+    <value>進階效能</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Description" xml:space="preserve">
+    <value>原生介面與 WebUI 共用的磁碟快取、雜湊及傳送緩衝區設定</value>
+  </data>
+  <data name="BT_HashingThreads.Header" xml:space="preserve">
+    <value>雜湊執行緒</value>
+  </data>
+  <data name="BT_FilePoolSize.Header" xml:space="preserve">
+    <value>檔案集區大小</value>
+  </data>
+  <data name="BT_DiskQueueSize.Header" xml:space="preserve">
+    <value>磁碟快取與佇列預算 (KiB)</value>
+  </data>
+  <data name="BT_DiskQueueSize.Description" xml:space="preserve">
+    <value>libtorrent 磁碟 I/O 佇列使用的記憶體預算；0 表示使用引擎預設值</value>
+  </data>
+  <data name="BT_PieceExtentAffinity.Header" xml:space="preserve">
+    <value>使用分塊範圍親和性</value>
+  </data>
+  <data name="BT_UploadSuggestions.Header" xml:space="preserve">
+    <value>傳送上傳分塊建議</value>
+  </data>
+  <data name="BT_SendBufferWatermark.Header" xml:space="preserve">
+    <value>傳送緩衝區水位 (KiB)</value>
+  </data>
+  <data name="BT_SendBufferLowWatermark.Header" xml:space="preserve">
+    <value>傳送緩衝區低水位 (KiB)</value>
+  </data>
+  <data name="BT_SendBufferWatermarkFactor.Header" xml:space="preserve">
+    <value>傳送緩衝區水位係數 (%)</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Header" xml:space="preserve">
+    <value>進階網路行為</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Description" xml:space="preserve">
+    <value>連線排程、Socket 與節點原則</value>
+  </data>
+  <data name="BT_ConnectionSpeed.Header" xml:space="preserve">
+    <value>每秒向外連線數</value>
+  </data>
+  <data name="BT_SeedingOutgoingConnections.Header" xml:space="preserve">
+    <value>做種時允許向外連線</value>
+  </data>
+  <data name="BT_SocketSendBufferSize.Header" xml:space="preserve">
+    <value>Socket 傳送緩衝區大小 (KiB)</value>
+  </data>
+  <data name="BT_SocketReceiveBufferSize.Header" xml:space="preserve">
+    <value>Socket 接收緩衝區大小 (KiB)</value>
+  </data>
+  <data name="BT_SocketBacklogSize.Header" xml:space="preserve">
+    <value>Socket 等候佇列大小</value>
+  </data>
+  <data name="BT_MixedMode.Header" xml:space="preserve">
+    <value>μTP/TCP 混合模式</value>
+  </data>
+  <data name="BT_HostnameCacheTtl.Header" xml:space="preserve">
+    <value>主機名稱快取 TTL (秒)</value>
+  </data>
+  <data name="BT_ValidateHttpsTrackers.Header" xml:space="preserve">
+    <value>驗證 HTTPS Tracker 憑證</value>
+  </data>
+  <data name="BT_SsrfMitigation.Header" xml:space="preserve">
+    <value>SSRF 緩解</value>
+  </data>
+  <data name="BT_BlockPrivilegedPorts.Header" xml:space="preserve">
+    <value>封鎖使用特權連接埠的節點</value>
+  </data>
+  <data name="BT_UploadSlotsBehavior.Header" xml:space="preserve">
+    <value>上傳插槽行為</value>
+  </data>
+  <data name="BT_UploadChokingAlgorithm.Header" xml:space="preserve">
+    <value>上傳阻塞演算法</value>
+  </data>
+  <data name="BT_AdvancedTracker.Header" xml:space="preserve">
+    <value>進階 Tracker 行為</value>
+  </data>
+  <data name="BT_AdvancedTracker.Description" xml:space="preserve">
+    <value>宣告識別、Tracker 並行數與節點輪替</value>
+  </data>
+  <data name="BT_DhtBootstrapNodes.Header" xml:space="preserve">
+    <value>DHT 啟動節點</value>
+  </data>
+  <data name="BT_AnnounceIp.Header" xml:space="preserve">
+    <value>向 Tracker 回報的 IP</value>
+  </data>
+  <data name="BT_AnnouncePort.Header" xml:space="preserve">
+    <value>向 Tracker 回報的連接埠</value>
+  </data>
+  <data name="BT_MaxConcurrentHttpAnnounces.Header" xml:space="preserve">
+    <value>HTTP 同時宣告上限</value>
+  </data>
+  <data name="BT_StopTrackerTimeout.Header" xml:space="preserve">
+    <value>停止 Tracker 逾時 (秒)</value>
+  </data>
+  <data name="BT_PeerTurnover.Header" xml:space="preserve">
+    <value>節點輪替中斷比例 (%)</value>
+  </data>
+  <data name="BT_PeerTurnoverCutoff.Header" xml:space="preserve">
+    <value>節點輪替臨界值 (%)</value>
+  </data>
+  <data name="BT_PeerTurnoverInterval.Header" xml:space="preserve">
+    <value>節點輪替間隔 (秒)</value>
+  </data>
+  <data name="BT_RequestQueueSize.Header" xml:space="preserve">
+    <value>每個節點的未完成要求上限</value>
+  </data>
+  <data name="BT_DownloadDefaults.Header" xml:space="preserve">
+    <value>下載預設值</value>
+  </data>
+  <data name="BT_DownloadDefaults.Description" xml:space="preserve">
+    <value>新下載工作的預設行為</value>
+  </data>
+  <data name="BT_DefaultSavePath.Header" xml:space="preserve">
+    <value>預設儲存路徑</value>
+  </data>
+  <data name="BT_PreallocateStorage.Header" xml:space="preserve">
+    <value>預先配置儲存空間</value>
+  </data>
+  <data name="BT_AutoStartDownloads.Header" xml:space="preserve">
+    <value>自動開始下載</value>
+  </data>
+  <data name="BT_MoveCompleted.Header" xml:space="preserve">
+    <value>移動已完成的下載</value>
+  </data>
+  <data name="BT_MoveCompletedPath.Header" xml:space="preserve">
+    <value>已完成下載的移動路徑</value>
+  </data>
+  <data name="SettingsGeneralSearchTags" xml:space="preserve">
+    <value>一般 通用 語言 更新 啟動頁 重新整理 主題</value>
+  </data>
+  <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
+    <value>BitTorrent BT 種子 使用者 協定 連線 加密 Proxy 快取 磁碟 效能 WebTorrent</value>
+  </data>
+  <data name="SettingsNetworkSearchTags" xml:space="preserve">
+    <value>網路 連接埠 監聽 IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT Proxy</value>
+  </data>
+  <data name="SettingsTrackerSearchTags" xml:space="preserve">
+    <value>Tracker 追蹤器 公告 訂閱 自動 新增 清單</value>
+  </data>
+  <data name="SettingsIPFilterSearchTags" xml:space="preserve">
+    <value>IP 篩選 封鎖 封禁 訂閱 IPv4 IPv6</value>
+  </data>
+  <data name="SettingsClientFilterSearchTags" xml:space="preserve">
+    <value>用戶端 篩選 使用者 封鎖 允許 規則</value>
+  </data>
+  <data name="SettingsDownloadSearchTags" xml:space="preserve">
+    <value>下載 路徑 種子檔案 儲存 雜湊 驗證 aria2 執行緒 連線 刪除檔案</value>
+  </data>
+  <data name="SettingsWebUISearchTags" xml:space="preserve">
+    <value>Web UI 網頁 遠端 位址 連接埠 使用者名稱 密碼 語言 API 金鑰 VueTorrent</value>
+  </data>
+  <data name="SettingsAppearanceSearchTags" xml:space="preserve">
+    <value>外觀 主題 背景 圖片 影片 雲母 壓克力 字型 動畫 數字 色彩</value>
+  </data>
+  <data name="SettingsAboutSearchTags" xml:space="preserve">
+    <value>關於 版本 授權 相依性 診斷 更新</value>
+  </data>
+  <data name="BT_UserAgentInput.PlaceholderText" xml:space="preserve">
+    <value>libtorrent/2.1.1</value>
+  </data>
+  <data name="BT_ProxyHostnameInput.PlaceholderText" xml:space="preserve">
+    <value>proxy.example.com</value>
+  </data>
+  <data name="BT_AdvancedSectionHeader.Text" xml:space="preserve">
+    <value>libtorrent 進階設定</value>
+  </data>
+  <data name="BT_PeerFingerprintInput.PlaceholderText" xml:space="preserve">
+    <value>-ON0100-</value>
+  </data>
+  <data name="BT_DefaultSavePathInput.PlaceholderText" xml:space="preserve">
+    <value>下載資料夾</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessageText.Text" xml:space="preserve">
+    <value>已存在同名 .torrent 檔案，是否取代？</value>
+  </data>
+  <data name="TorrentTrackerListHeader.Text" xml:space="preserve">
+    <value>此工作的 Tracker 清單</value>
+  </data>
+  <data name="TorrentTrackerListDescription.Text" xml:space="preserve">
+    <value>每行填寫一個 Tracker URL。磁力連結或 .torrent 檔案中已有的 Tracker 會與已啟用的自訂 Tracker 自動合併。</value>
+  </data>
+  <data name="TorrentTrackerListFooter.Text" xml:space="preserve">
+    <value>全應用程式的自訂 Tracker 開關與訂閱可在網路設定中管理。</value>
+  </data>
+  <data name="TaskCreateTorrentButton.Text" xml:space="preserve">
+    <value>製作種子...</value>
+  </data>
+  <data name="CreateTorrentTitle" xml:space="preserve">
+    <value>製作種子</value>
+  </data>
+  <data name="CreateTorrentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>建立</value>
+  </data>
+  <data name="CreateTorrentDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="CreateTorrentDescription.Text" xml:space="preserve">
+    <value>從本機檔案或資料夾建立 BitTorrent 中繼資料檔案。</value>
+  </data>
+  <data name="CreateTorrentSource.PlaceholderText" xml:space="preserve">
+    <value>來源檔案或資料夾</value>
+  </data>
+  <data name="CreateTorrentBrowseFile.Content" xml:space="preserve">
+    <value>檔案...</value>
+  </data>
+  <data name="CreateTorrentBrowseFolder.Content" xml:space="preserve">
+    <value>資料夾...</value>
+  </data>
+  <data name="CreateTorrentFormatHybrid.Content" xml:space="preserve">
+    <value>混合格式（v1 + v2）</value>
+  </data>
+  <data name="CreateTorrentFormatV1.Content" xml:space="preserve">
+    <value>BitTorrent v1</value>
+  </data>
+  <data name="CreateTorrentFormatV2.Content" xml:space="preserve">
+    <value>BitTorrent v2</value>
+  </data>
+  <data name="CreateTorrentPrivate.Content" xml:space="preserve">
+    <value>私人種子</value>
+  </data>
+  <data name="CreateTorrentIgnoreDotFiles.Content" xml:space="preserve">
+    <value>忽略隱藏點檔案</value>
+  </data>
+  <data name="CreateTorrentComment.Header" xml:space="preserve">
+    <value>註解</value>
+  </data>
+  <data name="CreateTorrentComment.PlaceholderText" xml:space="preserve">
+    <value>選填註解</value>
+  </data>
+  <data name="CreateTorrentTrackers.Header" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="CreateTorrentTrackers.PlaceholderText" xml:space="preserve">
+    <value>每行一個 Tracker URL</value>
+  </data>
+  <data name="CreateTorrentSelectSource" xml:space="preserve">
+    <value>請先選擇來源檔案或資料夾。</value>
+  </data>
+  <data name="CreateTorrentCreating" xml:space="preserve">
+    <value>正在計算檔案雜湊並製作種子...</value>
+  </data>
+  <data name="CreateTorrentComplete" xml:space="preserve">
+    <value>種子製作完成。</value>
+  </data>
+  <data name="CreateTorrentFailed" xml:space="preserve">
+    <value>無法製作種子。</value>
+  </data>
+  <data name="ThemesAppearanceSectionHeader.Text" xml:space="preserve">
+    <value>外觀</value>
+  </data>
+  <data name="ThemesFontSectionHeader.Text" xml:space="preserve">
+    <value>字型</value>
+  </data>
+  <data name="AboutSectionHeader.Text" xml:space="preserve">
+    <value>關於</value>
+  </data>
+  <data name="AboutProductExpander.Header" xml:space="preserve">
+    <value>OpenNet for Windows</value>
+  </data>
+  <data name="AboutProductExpander.Description" xml:space="preserve">
+    <value>© 2026 Millennium Science Technology R-D Inst</value>
+  </data>
+  <data name="AboutVersionLabel.Text" xml:space="preserve">
+    <value>版本：</value>
+  </data>
+  <data name="AboutWASDKBuildCard.Header" xml:space="preserve">
+    <value>Windows App SDK 建置版本</value>
+  </data>
+  <data name="AboutWASDKRuntimeCard.Header" xml:space="preserve">
+    <value>Windows App SDK 執行階段版本</value>
+  </data>
+  <data name="AboutWinUIEssentialBuildCard.Header" xml:space="preserve">
+    <value>WinUI Essentials 建置 SDK 版本</value>
+  </data>
+  <data name="AboutDependenciesHeader.Text" xml:space="preserve">
+    <value>相依性與參考專案</value>
+  </data>
+  <data name="AboutWarrantyText.Text" xml:space="preserve">
+    <value>本程式碼與資訊依「現狀」提供，不附任何明示或默示保證。</value>
+  </data>
+  <data name="AboutLicenseSourceLink.Content" xml:space="preserve">
+    <value>授權與原始碼</value>
+  </data>
+  <data name="AboutProductionRole.Text" xml:space="preserve">
+    <value>製作 / 視覺設計</value>
+  </data>
+  <data name="AboutProgrammingRole.Text" xml:space="preserve">
+    <value>程式開發負責人</value>
+  </data>
+  <data name="AboutAIAssistantRole.Text" xml:space="preserve">
+    <value>AI 程式設計助理 / 顧問</value>
+  </data>
+  <data name="AboutFrameworkRole.Text" xml:space="preserve">
+    <value>軟體框架</value>
+  </data>
+  <data name="AboutSpecialThanksRole.Text" xml:space="preserve">
+    <value>特別感謝</value>
+  </data>
+  <data name="AboutYouText.Text" xml:space="preserve">
+    <value>你！</value>
+  </data>
+  <data name="AboutHelpFeedbackLink.Content" xml:space="preserve">
+    <value>說明與意見反應</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Header" xml:space="preserve">
+    <value>OpenNet 開放原始碼</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Description" xml:space="preserve">
+    <value>基於 WinUI 3 的 OpenNet</value>
+  </data>
+  <data name="AboutJoinProjectLink.Content" xml:space="preserve">
+    <value>在 GitHub 參與專案</value>
+  </data>
+  <data name="AboutGoToRepoText.Text" xml:space="preserve">
+    <value>前往程式碼存放庫</value>
+  </data>
+  <data name="AboutLastCommitLabel.Text" xml:space="preserve">
+    <value>最後提交：</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.Title" xml:space="preserve">
+    <value>編輯 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>儲存</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerEditorTextBox.PlaceholderText" xml:space="preserve">
+    <value>每行輸入一個 HTTP、HTTPS 或 UDP Tracker URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.Title" xml:space="preserve">
+    <value>要移除 Tracker 嗎？</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.PrimaryButtonText" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.Title" xml:space="preserve">
+    <value>要清除所有 Tracker 記錄嗎？</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>全部清除</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsMessage.Text" xml:space="preserve">
+    <value>這將清除所有工作的記憶體內 Tracker 記錄。</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.Title" xml:space="preserve">
+    <value>移除無法連線的 Tracker</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>移除</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePromptText.Text" xml:space="preserve">
+    <value>移除所有已達到以下重試次數的 Tracker：</value>
+  </data>
+  <data name="ViewTaskTrackersPageMessageDialog.CloseButtonText" xml:space="preserve">
+    <value>關閉</value>
+  </data>
+  <data name="DL_BrowseSavePath.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="DL_BrowseMovePath.Content" xml:space="preserve">
+    <value>瀏覽...</value>
+  </data>
+  <data name="DL_Aria2Connections.Header" xml:space="preserve">
+    <value>HTTP 下載連線數</value>
+  </data>
+  <data name="DL_Aria2Connections.Description" xml:space="preserve">
+    <value>每個 HTTP 下載工作使用的連線數</value>
+  </data>
+  <data name="RestartLanguageInfoBar.Title" xml:space="preserve">
+    <value>重新啟動 OpenNet 以套用語言變更</value>
+  </data>
+  <data name="ViewThemeSettingFallbackColorCard.Title" xml:space="preserve">
+    <value>視窗失去焦點時的後備色彩</value>
+  </data>
+  <data name="ViewThemeSettingTintColorCard.Title" xml:space="preserve">
+    <value>色調色彩</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Header" xml:space="preserve">
+    <value>跟隨應用程式語言</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Description" xml:space="preserve">
+    <value>讓 Web UI 語言與 OpenNet 的應用程式語言保持同步。</value>
+  </data>
+  <data name="CF_EditPatternLabel.Text" xml:space="preserve">
+    <value>用戶端模式</value>
+  </data>
+  <data name="CF_EditMatchTypeLabel.Text" xml:space="preserve">
+    <value>比對類型</value>
+  </data>
+  <data name="CF_EditMatchContains.Content" xml:space="preserve">
+    <value>包含</value>
+  </data>
+  <data name="CF_EditMatchExact.Content" xml:space="preserve">
+    <value>完全比對</value>
+  </data>
+  <data name="CF_EditMatchWildcard.Content" xml:space="preserve">
+    <value>萬用字元</value>
+  </data>
+  <data name="CF_EditMatchRegex.Content" xml:space="preserve">
+    <value>規則運算式</value>
+  </data>
+  <data name="CF_EditCaseSensitive.Header" xml:space="preserve">
+    <value>區分大小寫</value>
+  </data>
+  <data name="CF_EditEnabled.Header" xml:space="preserve">
+    <value>已啟用</value>
+  </data>
+  <data name="CF_EditDescriptionLabel.Text" xml:space="preserve">
+    <value>描述</value>
+  </data>
+  <data name="CF_ImportHint.Text" xml:space="preserve">
+    <value>JSON 會保留每個規則選項。純文字將每行匯入為一條不區分大小寫的「包含」規則。</value>
+  </data>
+  <data name="CF_ReplaceExisting.Content" xml:space="preserve">
+    <value>匯入前取代全部現有規則</value>
+  </data>
+  <data name="CF_ClearRulesMessage.Text" xml:space="preserve">
+    <value>移除所有用戶端篩選規則？此操作無法復原。</value>
+  </data>
+  <data name="CF_DeleteRulePrompt" xml:space="preserve">
+    <value>刪除此規則？</value>
+  </data>
+  <data name="IPF_EditSubscriptionEnabled.Content" xml:space="preserve">
+    <value>啟用此來源</value>
+  </data>
+  <data name="IPF_EditRuleEntryLabel.Text" xml:space="preserve">
+    <value>IP 位址、CIDR 區塊或範圍</value>
+  </data>
+  <data name="IPF_EditRuleDescriptionLabel.Text" xml:space="preserve">
+    <value>描述（選填）</value>
+  </data>
+  <data name="IPF_DeleteRulePrompt" xml:space="preserve">
+    <value>刪除此規則？</value>
+  </data>
+  <data name="IPF_ClearAllRulesDialogMessage.Text" xml:space="preserve">
+    <value>確定要移除所有 IP 篩選規則嗎？此操作無法復原。</value>
+  </data>
+  <data name="BT_QueueingEnabled.Header" xml:space="preserve">
+    <value>啟用 Torrent 佇列</value>
+  </data>
+  <data name="BT_QueueingEnabled.Description" xml:space="preserve">
+    <value>限制同時活動的下載、做種和 Torrent 數量。關閉後不限制工作排程數量。</value>
+  </data>
+  <data name="BT_MixedModePreferTcp.Content" xml:space="preserve">
+    <value>優先 TCP</value>
+  </data>
+  <data name="BT_MixedModePeerProportional.Content" xml:space="preserve">
+    <value>按節點比例分配</value>
+  </data>
+  <data name="BT_UploadSlotsFixed.Content" xml:space="preserve">
+    <value>固定槽位</value>
+  </data>
+  <data name="BT_UploadSlotsRateBased.Content" xml:space="preserve">
+    <value>依上傳速率</value>
+  </data>
+  <data name="BT_UploadChokingRoundRobin.Content" xml:space="preserve">
+    <value>輪詢</value>
+  </data>
+  <data name="BT_UploadChokingFastest.Content" xml:space="preserve">
+    <value>最快上傳</value>
+  </data>
+  <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
+    <value>反吸血</value>
   </data>
 </root>

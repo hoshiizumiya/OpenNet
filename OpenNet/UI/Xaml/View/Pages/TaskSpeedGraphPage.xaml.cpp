@@ -16,6 +16,7 @@ import winrt.Windows.UI;
 using namespace winrt;
 using namespace winrt::Microsoft::Graphics::Canvas;
 using namespace winrt::Microsoft::Graphics::Canvas::UI::Xaml;
+using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
 using namespace winrt::OpenNet::UI::Xaml::Control::Graph;
 using namespace winrt::Windows::Foundation;
@@ -132,7 +133,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			static_cast<MetricMode>(selector.SelectedIndex()),
 			std::memory_order_relaxed);
 		ApplyGraphSettings();
-		m_dynamicScale.store(1024.0, std::memory_order_relaxed);
 		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
 		{
 			std::scoped_lock lock(m_sampleStateMutex);
@@ -235,20 +235,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			mode == MetricMode::CpuOverall
 			|| mode == MetricMode::CpuLogicalProcessors
 			|| mode == MetricMode::MemoryUsage;
-		double maximum = percentageMode
-			? 100.0
-			: *std::ranges::max_element(samples);
-		if (!percentageMode)
-		{
-			auto const previousScale =
-				m_dynamicScale.load(std::memory_order_relaxed);
-			auto const nextScale = std::max(
-				1024.0,
-				std::max(previousScale * 0.985, maximum * 1.20));
-			m_dynamicScale.store(nextScale, std::memory_order_relaxed);
-			maximum = nextScale;
-		}
-		m_highlightScale.store(maximum, std::memory_order_relaxed);
+		double maximum = 100.0;
 
 		{
 			std::scoped_lock lock(m_graphStateMutex);
@@ -264,11 +251,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				graph.AddDynamicPoint(
 					m_graphKeys[index],
 					GraphPoint{
-						NormalizeValue(samples[index], maximum),
+						static_cast<float>(std::max(0.0, samples[index])),
 						pointSpace },
 						m_smoothCurves.load(std::memory_order_relaxed));
 			}
+			maximum = graph.CurrentValueMaximum();
 		}
+		m_highlightScale.store(maximum, std::memory_order_relaxed);
 
 		hstring scaleText;
 		if (percentageMode)
@@ -283,7 +272,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			scaleText = FormatRate(maximum);
 		}
-		QueueMetricText(displayValues, scaleText);
+		QueueMetricText(
+			displayValues,
+			scaleText,
+			percentageMode ? hstring{ L"100%" } : scaleText);
 		if (mode == MetricMode::TransferSpeed && samples.size() > 1)
 		{
 			QueueUploadHighlight(samples[1], maximum);
@@ -311,7 +303,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			|| mode == MetricMode::CpuLogicalProcessors
 			|| mode == MetricMode::MemoryUsage)
 		{
-			HighlightValueText().Text(
+			HighlightValueText().Value(
 				hstring{ std::format(L"{:.1f}%", percentage) });
 			return;
 		}
@@ -325,8 +317,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (mode == MetricMode::TransferSpeed)
 		{
 			text = hstring{ L"↓ " } + text;
+			m_downloadHighlightY = value;
+			ArrangeTransferHighlightLabels(m_downloadHighlightY, m_uploadHighlightY);
 		}
-		HighlightValueText().Text(text);
+		HighlightValueText().Value(text);
 	}
 
 	void TaskSpeedGraphPage::ResetGraphSettings_Click(
@@ -382,8 +376,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::clamp(m_settings.HighlightBehaviorIndex(), 0, 4)));
 		graph.HighlightLineVisibility(
 			m_settings.HighlightEnabled()
+			&& m_mode.load(std::memory_order_relaxed)
+				!= MetricMode::CpuLogicalProcessors
 			? winrt::Microsoft::UI::Xaml::Visibility::Visible
 			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+		graph.IsSeriesGridEnabled(
+			m_mode.load(std::memory_order_relaxed)
+			== MetricMode::CpuLogicalProcessors);
 		if (!m_settings.HighlightEnabled()
 			|| m_mode.load(std::memory_order_relaxed) != MetricMode::TransferSpeed)
 		{
@@ -464,6 +463,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			return;
 		}
+		auto const mode = m_mode.load(std::memory_order_relaxed);
+		auto const percentageMode = mode == MetricMode::CpuOverall
+			|| mode == MetricMode::CpuLogicalProcessors
+			|| mode == MetricMode::MemoryUsage;
+		// Recreating a stream means a new metric/history. Reset the internal
+		// scaler without making ordinary appearance changes reset the scale.
+		graph.IsAutoScaleEnabled(false);
+		graph.MinimumValueMaximum(percentageMode ? 100.0 : 1024.0);
+		graph.ValueMaximum(percentageMode ? 100.0 : 1024.0);
+		graph.IsAutoScaleEnabled(!percentageMode);
+		graph.IsSeriesGridEnabled(mode == MetricMode::CpuLogicalProcessors);
 
 		for (auto const& key : m_graphKeys)
 		{
@@ -476,7 +486,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (std::size_t index = 0; index < seriesCount; ++index)
 		{
 			GraphBrushData brush{ nullptr };
-			switch (index)
+			if (mode == MetricMode::CpuLogicalProcessors)
+			{
+				brush = graph.GetBlueBrush(canvas);
+			}
+			else switch (index)
 			{
 				case 0: brush = graph.GetGreenBrush(canvas); break;
 				case 1: brush = graph.GetBlueBrush(canvas); break;
@@ -606,7 +620,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TaskSpeedGraphPage::SampleMetric()
 	{
 		std::scoped_lock sampleLock(m_sampleStateMutex);
-		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
 		auto const mode = m_mode.load(std::memory_order_relaxed);
 		if (mode == MetricMode::CpuOverall
 			|| mode == MetricMode::CpuLogicalProcessors)
@@ -671,11 +685,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			};
 		}
 
-		if (!core)
+		if (!p2p.IsTorrentCoreInitialized())
 		{
 			return {};
 		}
-		auto const stats = core->GetSessionStats();
+		auto const stats = p2p.GetPerformanceStats();
 		switch (mode)
 		{
 			case MetricMode::TransferSpeed:
@@ -759,33 +773,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	float TaskSpeedGraphPage::NormalizeValue(double value, double maximum)
-	{
-		if (maximum <= 0)
-		{
-			return 0.0f;
-		}
-		return std::clamp(
-			static_cast<float>(value * 100.0 / maximum),
-			0.0f,
-			100.0f);
-	}
-
 	void TaskSpeedGraphPage::QueueMetricText(
 		std::vector<hstring> const& values,
-		hstring const& scaleText)
+		hstring const& scaleText,
+		hstring const& axisMaximumText)
 	{
 		auto weak = get_weak();
 		auto copy = values;
-		DispatcherQueue().TryEnqueue([weak, values = std::move(copy), scaleText]
+		DispatcherQueue().TryEnqueue([weak, values = std::move(copy), scaleText, axisMaximumText]
 		{
 			if (auto self = weak.get())
 			{
-				self->PrimaryMetricValue().Text(
+				self->PrimaryMetricValue().Value(
 					values.empty() ? hstring{ L"—" } : values[0]);
-				self->SecondaryMetricValue().Text(
+				self->SecondaryMetricValue().Value(
 					values.size() > 1 ? values[1] : hstring{ L"—" });
-				self->ScaleMetricValue().Text(scaleText);
+				self->ScaleMetricValue().Value(scaleText);
+				self->AxisMaximumText().Value(axisMaximumText);
+				auto const graph = self->PerformanceGraph();
+				auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
+				auto const pixelsPerSecond = self->m_graphScrollPixelsPerSecond.load(
+					std::memory_order_relaxed);
+				if (canvas && pixelsPerSecond > 0.0)
+				{
+					auto const seconds = static_cast<int>(std::round(
+						canvas.Size().Width / pixelsPerSecond));
+					self->TimelineDurationText().Value(
+						winrt::to_hstring(std::max(1, seconds)) + L" s");
+				}
 			}
 		});
 	}
@@ -822,13 +837,36 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				}
 
 				auto const normalized = std::clamp(value / maximum, 0.0, 1.0);
-				self->UploadHighlightTransform().Y(height * (1.0 - normalized));
-				self->UploadHighlightValueText().Text(
+				self->m_uploadHighlightY = height * (1.0 - normalized);
+				self->UploadHighlightTransform().Y(self->m_uploadHighlightY);
+				self->UploadHighlightValueText().Value(
 					hstring{ L"↑ " } + TaskSpeedGraphPage::FormatRate(value));
 				self->UploadHighlightOverlay().Visibility(
 					winrt::Microsoft::UI::Xaml::Visibility::Visible);
+				self->ArrangeTransferHighlightLabels(
+					self->m_downloadHighlightY,
+					self->m_uploadHighlightY);
 			}
 		});
+	}
+
+	void TaskSpeedGraphPage::ArrangeTransferHighlightLabels(
+		double const downloadY, double const uploadY)
+	{
+		auto download = HighlightValueText().Parent().try_as<FrameworkElement>();
+		auto upload = UploadHighlightValueText().Parent().try_as<FrameworkElement>();
+		if (!download || !upload) return;
+
+		// Both values live on the right edge. When their horizontal lines are
+		// close, keep download above and upload below instead of allowing the
+		// badges to cover one another.
+		auto const overlaps = std::abs(downloadY - uploadY) < 34.0;
+		download.Margin(overlaps
+			? Thickness{ 0, -31, 10, 0 }
+			: Thickness{ 0, -15, 10, 0 });
+		upload.Margin(overlaps
+			? Thickness{ 0, 3, 10, 0 }
+			: Thickness{ 0, -15, 10, 0 });
 	}
 
 	hstring TaskSpeedGraphPage::FormatBytes(double value)

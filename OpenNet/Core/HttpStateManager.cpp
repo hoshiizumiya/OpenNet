@@ -323,6 +323,25 @@ namespace OpenNet::Core
         sqlite3_finalize(stmt);
     }
 
+    void HttpStateManager::UpdateRecordOutputPath(
+        std::string const& recordId,
+        std::string const& savePath,
+        std::string const& fileName)
+    {
+        std::lock_guard lock(m_mutex);
+        if (!m_db || recordId.empty() || savePath.empty() || fileName.empty()) return;
+
+        constexpr char sql[] =
+            "UPDATE http_downloads SET save_path = ?, file_name = ? WHERE record_id = ?;";
+        sqlite3_stmt* stmt = nullptr;
+        sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+        sqlite3_bind_text(stmt, 1, savePath.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 2, fileName.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, recordId.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }
+
     void HttpStateManager::UpdateRecordProgress(std::string const& recordId, int64_t completedSize, int64_t totalSize)
     {
         std::lock_guard lock(m_mutex);
@@ -388,16 +407,22 @@ namespace OpenNet::Core
         if (sqlite3_step(stmt) == SQLITE_ROW)
         {
             HttpDownloadRecord rec;
-            rec.recordId       = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-            rec.url            = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-            rec.savePath       = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-            rec.fileName       = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-            rec.name           = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
+            auto safeText = [&](int const column) -> char const*
+            {
+                auto const value = reinterpret_cast<char const*>(
+                    sqlite3_column_text(stmt, column));
+                return value ? value : "";
+            };
+            rec.recordId       = safeText(0);
+            rec.url            = safeText(1);
+            rec.savePath       = safeText(2);
+            rec.fileName       = safeText(3);
+            rec.name           = safeText(4);
             rec.addedTimestamp  = sqlite3_column_int64(stmt, 5);
             rec.totalSize      = sqlite3_column_int64(stmt, 6);
             rec.completedSize  = sqlite3_column_int64(stmt, 7);
             rec.status         = sqlite3_column_int(stmt, 8);
-            rec.lastGid        = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+            rec.lastGid        = safeText(9);
             rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
             result = std::move(rec);
         }

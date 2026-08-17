@@ -67,7 +67,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		int dhtNodes = 0;
 
 		auto const statistics =
-			::OpenNet::Core::P2PManager::Instance().GetSessionStats();
+			::OpenNet::Core::P2PManager::Instance().GetPerformanceStats();
 		downloadRate += static_cast<std::uint64_t>(
 			std::max<std::int64_t>(0, statistics.totalDownloadRate));
 		uploadRate += static_cast<std::uint64_t>(

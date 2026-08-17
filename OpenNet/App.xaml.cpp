@@ -7,7 +7,7 @@
 #include "UI/Xaml/View/Windows/DevWindow.xaml.h"
 #include "UI/Xaml/View/Windows/GuideWindow.xaml.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
-#include "UI/Xaml/View/InfoBarView.xaml.h"
+#include "Service/Notification/InfoBarService.h"
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
 #include "UI/Xaml/Control/Effect/TextMorphEffect.h"
 
@@ -393,7 +393,7 @@ namespace winrt::OpenNet::implementation
 				}
 				catch (winrt::hresult_error const& error)
 				{
-					winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 						L"Torrent file", error.message(),
 						Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error, 0);
 				}
@@ -627,7 +627,7 @@ namespace winrt::OpenNet::implementation
 			co_await ::OpenNet::Core::P2PManager::Instance()
 				.EnsureTorrentCoreInitializedAsync();
 			OutputDebugStringA("App: libtorrent core initialized\n");
-			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				ResourceGetString(L"AppBitTorrentEngine"),
 				ResourceGetString(L"AppLibtorrentInitialized"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Success,
@@ -638,7 +638,7 @@ namespace winrt::OpenNet::implementation
 			OutputDebugStringA((
 				"App: Failed to initialize libtorrent core: "
 				+ std::string(exception.what()) + "\n").c_str());
-			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				ResourceGetString(L"AppBitTorrentEngineFailed"),
 				to_hstring(exception.what()),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
@@ -647,7 +647,7 @@ namespace winrt::OpenNet::implementation
 		catch (...)
 		{
 			OutputDebugStringA("App: Failed to initialize libtorrent core\n");
-			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				ResourceGetString(L"AppBitTorrentEngineFailed"),
 				ResourceGetString(L"AppLibtorrentInitializationUnknownError"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
@@ -667,7 +667,7 @@ namespace winrt::OpenNet::implementation
 		catch (...)
 		{
 			OutputDebugStringA("App: Failed to initialize RSS Manager\n");
-			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				ResourceGetString(L"AppRSSServiceFailed"),
 				ResourceGetString(L"AppRSSBackgroundUpdatesFailed"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Warning,
@@ -698,8 +698,7 @@ namespace winrt::OpenNet::implementation
 				OutputDebugStringA("App: Failed to start WebUI Host\n");
 				dispatcher.TryEnqueue([]
 				{
-					winrt::OpenNet::UI::Xaml::View::implementation::
-						InfoBarView::Show(
+					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 							ResourceGetString(L"AppWebUIFailed"),
 							ResourceGetString(L"AppWebUIStartFailed"),
 							Microsoft::UI::Xaml::Controls::
@@ -711,8 +710,7 @@ namespace winrt::OpenNet::implementation
 			{
 				dispatcher.TryEnqueue([]
 				{
-					winrt::OpenNet::UI::Xaml::View::implementation::
-						InfoBarView::Show(
+					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 							ResourceGetString(L"AppWebUI"),
 							ResourceGetString(L"AppWebUIRunning"),
 							Microsoft::UI::Xaml::Controls::
@@ -726,7 +724,7 @@ namespace winrt::OpenNet::implementation
 			OutputDebugStringA((
 				"App: Failed to initialize WebUI: "
 				+ std::string(exception.what()) + "\n").c_str());
-			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				ResourceGetString(L"AppWebUIFailed"),
 				to_hstring(exception.what()),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
@@ -735,7 +733,7 @@ namespace winrt::OpenNet::implementation
 		catch (...)
 		{
 			OutputDebugStringA("App: Failed to initialize WebUI\n");
-			winrt::OpenNet::UI::Xaml::View::implementation::InfoBarView::Show(
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				ResourceGetString(L"AppWebUIFailed"),
 				ResourceGetString(L"AppWebUIUnknownStartError"),
 				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,

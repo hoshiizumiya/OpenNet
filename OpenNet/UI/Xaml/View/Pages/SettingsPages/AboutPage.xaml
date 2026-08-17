@@ -68,12 +68,12 @@
 
                 <StackPanel>
                     <TextBlock
-                        x:Uid="ViewAboutPageTextBlock"
+                        x:Uid="AboutSectionHeader"
                         Margin="0"
                         Text="About" />
 
                     <essential:SettingsExpander
-                        x:Uid="ViewAboutPageSettingsExpander"
+                        x:Uid="AboutProductExpander"
                         Margin="0,2,0,3"
                         Description="© 2026 Millennium Science Technology R-D Inst"
                         Header="OpenNet For Windows"
@@ -84,66 +84,60 @@
 
                         <StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
                             <TextBlock
-                                x:Uid="ViewAboutPageTextBlock"
+                                x:Uid="AboutVersionLabel"
                                 HorizontalTextAlignment="Right"
                                 Text="Version : " />
                             <TextBlock x:Name="VersionText" HorizontalTextAlignment="Right" />
                         </StackPanel>
 
                         <essential:SettingsExpander.Items>
-                            <essential:SettingsCard x:Uid="ViewAboutPageSettingsCard" Header="WindowsAppSDK build version">
+                            <essential:SettingsCard x:Uid="AboutWASDKBuildCard" Header="Windows App SDK build version">
                                 <TextBlock Text="{x:Bind local:AboutPage.WASDKReleaseVersion}" />
                             </essential:SettingsCard>
 
-                            <essential:SettingsCard x:Uid="ViewAboutPageSettingsCard" Header="WindowsAppSDK runtime version">
+                            <essential:SettingsCard x:Uid="AboutWASDKRuntimeCard" Header="Windows App SDK runtime version">
                                 <TextBlock Text="{x:Bind local:AboutPage.WASDKRuntimeVersion}" />
                             </essential:SettingsCard>
 
-                            <essential:SettingsCard x:Uid="ViewAboutPageSettingsCard" Header="WinUIEssential Build SDK version">
+                            <essential:SettingsCard x:Uid="AboutWinUIEssentialBuildCard" Header="WinUI Essentials build SDK version">
                                 <TextBlock Text="{x:Bind local:AboutPage.FormatVersion(essential:VersionInfo.WASDKReleaseMajor, essential:VersionInfo.WASDKReleaseMinor, essential:VersionInfo.WASDKReleasePatch, essential:VersionInfo.WASDKReleaseMajorMinor, essential:VersionInfo.WASDKReleaseChannel)}" />
                             </essential:SettingsCard>
 
                             <essential:SettingsCard ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock
-                                        x:Uid="ViewAboutPageTextBlock"
+                                        x:Uid="AboutDependenciesHeader"
                                         Margin="0,3,10,1"
                                         HorizontalAlignment="Left"
                                         FontSize="14"
                                         FontWeight="Thin"
                                         Text="Dependencies &amp; References" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
                                         Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
                                         Content="Windows App SDK"
                                         NavigateUri="https://aka.ms/windowsappsdk" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
                                         Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
                                         Content="Windows UI Library"
                                         NavigateUri="https://github.com/microsoft/microsoft-ui-xaml" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
                                         Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
                                         Content="Sample-Windows-CppWinRT"
                                         NavigateUri="https://github.com/CommunityToolkit/Sample-Windows-CppWinRT" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
                                         Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
                                         Content="C++/WinRT"
                                         NavigateUri="https://github.com/microsoft/cppwinrt" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
                                         Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
                                         Content="WinUI Essentials"
                                         NavigateUri="https://github.com/HO-COOH/WinUIEssentials" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
                                         Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
                                         Content="libtorrent"
@@ -160,12 +154,12 @@
                             <essential:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
                                     <TextBlock
-                                        x:Uid="ViewAboutPageTextBlock"
+                                        x:Uid="AboutWarrantyText"
                                         Margin="0,0,0,0"
                                         Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
                                         TextWrapping="Wrap" />
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
+                                        x:Uid="AboutLicenseSourceLink"
                                         Margin="-12,0,0,0"
                                         Content="License &amp; Source"
                                         NavigateUri="https://github.com/hoshiizumiya/OpenNet" />
@@ -206,56 +200,51 @@
                                     <StackPanel Grid.Column="0" Orientation="Vertical">
                                         <TextBlock Margin="0,6,0,1">
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
+                                                x:Uid="AboutProductionRole"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontWeight="Normal"
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Text="Production / Visual Design" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
                                                 Text="Hoshiizumiya" />
                                             <LineBreak /><LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
+                                                x:Uid="AboutProgrammingRole"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontWeight="Normal"
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Text="Programming Director" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
                                                 Text="Hoshiizumiya" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
                                                 Text="AlexAdas" />
                                             <LineBreak /><LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
+                                                x:Uid="AboutAIAssistantRole"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontWeight="Normal"
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Text="AI Programming Assistant / Consultant" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
                                                 Text="Chat-GPT" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
@@ -263,21 +252,19 @@
                                             <LineBreak />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
+                                                x:Uid="AboutFrameworkRole"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontWeight="Normal"
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Text="Software Framework" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
                                                 Text="AlexAdas" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontWeight="Medium"
                                                 Text="ㅤㅤㅤㅤ" />
                                         </TextBlock>
@@ -325,24 +312,22 @@
 
                                         <TextBlock Margin="0,12,0,1">
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
+                                                x:Uid="AboutSpecialThanksRole"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontWeight="Normal"
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Text="Special Thanks" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontWeight="Medium"
                                                 Text="AlexAdas" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
                                                 FontWeight="Medium"
                                                 Text="HO-COOH" />
                                             <LineBreak />
                                             <Run
-                                                x:Uid="ViewAboutPageRun"
+                                                x:Uid="AboutYouText"
                                                 FontFamily="/Assets/Fonts/GeosansLight.ttf#GeosansLight"
                                                 FontSize="22"
                                                 FontWeight="Black"
@@ -369,7 +354,7 @@
                                             Content="Visit Our Studio Website"
                                             NavigateUri="" />-->
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
+                                        x:Uid="AboutHelpFeedbackLink"
                                         Margin="-12,0,0,0"
                                         Content="Help &amp; Feedback"
                                         NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues" />
@@ -386,7 +371,7 @@
                     </essential:SettingsExpander>
 
                     <essential:SettingsExpander
-                        x:Uid="ViewAboutPageSettingsExpander"
+                        x:Uid="AboutOpenSourceExpander"
                         Margin="0,3,0,3"
                         Description="OpenNet for WinUI3"
                         Header="OpenNet in Open-source"
@@ -398,7 +383,7 @@
                             <essential:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
                                     <HyperlinkButton
-                                        x:Uid="ViewAboutPageHyperlinkButton"
+                                        x:Uid="AboutJoinProjectLink"
                                         Margin="-12,0,0,0"
                                         Content="Join the project on Github"
                                         NavigateUri="https://github.com/hoshiizumiya/OpenNet" />
@@ -414,7 +399,7 @@
                                 </essential:SettingsCard.HeaderIcon>
                                 <essential:SettingsCard.Header>
                                     <StackPanel Orientation="Horizontal" Spacing="20">
-                                        <TextBlock x:Uid="ViewAboutPageTextBlock" Text="Go to the repro" />
+                                        <TextBlock x:Uid="AboutGoToRepoText" Text="Go to the repository" />
                                         <essential:Shimmer
                                             Height="20"
                                             MinWidth="200"
@@ -443,7 +428,7 @@
                                                     <TextBlock Text="{x:Bind Issues, Mode=OneWay}" />
                                                 </StackPanel>
                                                 <TextBlock Margin="50,0,0,0" FontSize="10">
-                                                    <Run x:Uid="ViewAboutPageRun" Text="Last commit: " />
+                                                    <Run x:Uid="AboutLastCommitLabel" Text="Last commit: " />
                                                     <Run Text="{x:Bind CommitMessage, Mode=OneWay}" />
                                                     @<Run Text="{x:Bind UpdatedAt, Mode=OneWay}" />
                                                 </TextBlock>

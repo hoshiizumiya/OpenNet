@@ -819,6 +819,12 @@
   <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
     <value>Automatically start downloading after adding a torrent</value>
   </data>
+  <data name="DL_RecheckBeforeResume.Header" xml:space="preserve">
+    <value>Recheck before resuming</value>
+  </data>
+  <data name="DL_RecheckBeforeResume.Description" xml:space="preserve">
+    <value>Verify all pieces before a paused torrent resumes. This may take a long time.</value>
+  </data>
   <data name="DL_MoveCompleted.Header" xml:space="preserve">
     <value>Move Completed Downloads</value>
   </data>
@@ -3858,6 +3864,24 @@
   <data name="CommonDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
+  <data name="TasksDeleteWarningTitle" xml:space="preserve">
+    <value>Permanently delete this task?</value>
+  </data>
+  <data name="TasksDeleteWarningMessage" xml:space="preserve">
+    <value>The task will be removed from OpenNet. This action cannot be undone.</value>
+  </data>
+  <data name="TasksDeleteDownloadedFiles" xml:space="preserve">
+    <value>Also delete downloaded files from disk</value>
+  </data>
+  <data name="TasksDeleteFailedTitle" xml:space="preserve">
+    <value>Unable to delete task</value>
+  </data>
+  <data name="TasksDeleteFailedMessage" xml:space="preserve">
+    <value>The download engine did not release the task or its files. Pause the task and try again.</value>
+  </data>
+  <data name="TaskStatusChecking" xml:space="preserve">
+    <value>Checking files</value>
+  </data>
   <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
     <value>Multiple Files Selected</value>
   </data>
@@ -4439,5 +4463,518 @@
   </data>
   <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
     <value>Play File</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
+    <value>Animated numbers</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Description" xml:space="preserve">
+    <value>Animate displayed numbers when their values change</value>
+  </data>
+  <data name="TorrentCopyLocationDownloadFolder.Content" xml:space="preserve">
+    <value>Download target folder</value>
+  </data>
+  <data name="TorrentCopyLocationContentFolder.Content" xml:space="preserve">
+    <value>Torrent content folder</value>
+  </data>
+  <data name="TorrentCopyOverwriteTitle" xml:space="preserve">
+    <value>Torrent file already exists</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessage" xml:space="preserve">
+    <value>A .torrent file with the same name already exists. Replace it?</value>
+  </data>
+  <data name="TorrentCopyOverwritePrimary" xml:space="preserve">
+    <value>Replace</value>
+  </data>
+  <data name="SettingsSearchBox.PlaceholderText" xml:space="preserve">
+    <value>Search settings</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Header" xml:space="preserve">
+    <value>Maximum peer list size</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Description" xml:space="preserve">
+    <value>Maximum number of known peers kept for each torrent</value>
+  </data>
+  <data name="BT_PeerFingerprint.Header" xml:space="preserve">
+    <value>Peer fingerprint</value>
+  </data>
+  <data name="BT_PeerFingerprint.Description" xml:space="preserve">
+    <value>Client identification string sent to peers</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Header" xml:space="preserve">
+    <value>Advanced performance</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Description" xml:space="preserve">
+    <value>Disk cache, hashing and send-buffer settings shared by the native UI and WebUIs</value>
+  </data>
+  <data name="BT_HashingThreads.Header" xml:space="preserve">
+    <value>Hashing threads</value>
+  </data>
+  <data name="BT_FilePoolSize.Header" xml:space="preserve">
+    <value>File pool size</value>
+  </data>
+  <data name="BT_DiskQueueSize.Header" xml:space="preserve">
+    <value>Disk cache and queue budget (KiB)</value>
+  </data>
+  <data name="BT_DiskQueueSize.Description" xml:space="preserve">
+    <value>Memory budget used by libtorrent's disk I/O queue; 0 selects the engine default</value>
+  </data>
+  <data name="BT_PieceExtentAffinity.Header" xml:space="preserve">
+    <value>Use piece extent affinity</value>
+  </data>
+  <data name="BT_UploadSuggestions.Header" xml:space="preserve">
+    <value>Send upload piece suggestions</value>
+  </data>
+  <data name="BT_SendBufferWatermark.Header" xml:space="preserve">
+    <value>Send buffer watermark (KiB)</value>
+  </data>
+  <data name="BT_SendBufferLowWatermark.Header" xml:space="preserve">
+    <value>Send buffer low watermark (KiB)</value>
+  </data>
+  <data name="BT_SendBufferWatermarkFactor.Header" xml:space="preserve">
+    <value>Send buffer watermark factor (%)</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Header" xml:space="preserve">
+    <value>Advanced network behavior</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Description" xml:space="preserve">
+    <value>Connection scheduling, socket and peer policies</value>
+  </data>
+  <data name="BT_ConnectionSpeed.Header" xml:space="preserve">
+    <value>Outgoing connections per second</value>
+  </data>
+  <data name="BT_SeedingOutgoingConnections.Header" xml:space="preserve">
+    <value>Allow outgoing connections when seeding</value>
+  </data>
+  <data name="BT_SocketSendBufferSize.Header" xml:space="preserve">
+    <value>Socket send buffer size (KiB)</value>
+  </data>
+  <data name="BT_SocketReceiveBufferSize.Header" xml:space="preserve">
+    <value>Socket receive buffer size (KiB)</value>
+  </data>
+  <data name="BT_SocketBacklogSize.Header" xml:space="preserve">
+    <value>Socket backlog size</value>
+  </data>
+  <data name="BT_MixedMode.Header" xml:space="preserve">
+    <value>μTP/TCP mixed mode</value>
+  </data>
+  <data name="BT_HostnameCacheTtl.Header" xml:space="preserve">
+    <value>Hostname cache TTL (seconds)</value>
+  </data>
+  <data name="BT_ValidateHttpsTrackers.Header" xml:space="preserve">
+    <value>Validate HTTPS tracker certificates</value>
+  </data>
+  <data name="BT_SsrfMitigation.Header" xml:space="preserve">
+    <value>SSRF mitigation</value>
+  </data>
+  <data name="BT_BlockPrivilegedPorts.Header" xml:space="preserve">
+    <value>Block peers on privileged ports</value>
+  </data>
+  <data name="BT_UploadSlotsBehavior.Header" xml:space="preserve">
+    <value>Upload slots behavior</value>
+  </data>
+  <data name="BT_UploadChokingAlgorithm.Header" xml:space="preserve">
+    <value>Upload choking algorithm</value>
+  </data>
+  <data name="BT_AdvancedTracker.Header" xml:space="preserve">
+    <value>Advanced tracker behavior</value>
+  </data>
+  <data name="BT_AdvancedTracker.Description" xml:space="preserve">
+    <value>Announce identity, tracker concurrency and peer turnover</value>
+  </data>
+  <data name="BT_DhtBootstrapNodes.Header" xml:space="preserve">
+    <value>DHT bootstrap nodes</value>
+  </data>
+  <data name="BT_AnnounceIp.Header" xml:space="preserve">
+    <value>IP reported to trackers</value>
+  </data>
+  <data name="BT_AnnouncePort.Header" xml:space="preserve">
+    <value>Port reported to trackers</value>
+  </data>
+  <data name="BT_MaxConcurrentHttpAnnounces.Header" xml:space="preserve">
+    <value>Maximum concurrent HTTP announces</value>
+  </data>
+  <data name="BT_StopTrackerTimeout.Header" xml:space="preserve">
+    <value>Stop tracker timeout (seconds)</value>
+  </data>
+  <data name="BT_PeerTurnover.Header" xml:space="preserve">
+    <value>Peer turnover disconnect (%)</value>
+  </data>
+  <data name="BT_PeerTurnoverCutoff.Header" xml:space="preserve">
+    <value>Peer turnover threshold (%)</value>
+  </data>
+  <data name="BT_PeerTurnoverInterval.Header" xml:space="preserve">
+    <value>Peer turnover interval (seconds)</value>
+  </data>
+  <data name="BT_RequestQueueSize.Header" xml:space="preserve">
+    <value>Maximum outstanding requests per peer</value>
+  </data>
+  <data name="BT_DownloadDefaults.Header" xml:space="preserve">
+    <value>Download defaults</value>
+  </data>
+  <data name="BT_DownloadDefaults.Description" xml:space="preserve">
+    <value>Default behavior for new downloads</value>
+  </data>
+  <data name="BT_DefaultSavePath.Header" xml:space="preserve">
+    <value>Default save path</value>
+  </data>
+  <data name="BT_PreallocateStorage.Header" xml:space="preserve">
+    <value>Pre-allocate storage</value>
+  </data>
+  <data name="BT_AutoStartDownloads.Header" xml:space="preserve">
+    <value>Auto-start downloads</value>
+  </data>
+  <data name="BT_MoveCompleted.Header" xml:space="preserve">
+    <value>Move completed downloads</value>
+  </data>
+  <data name="BT_MoveCompletedPath.Header" xml:space="preserve">
+    <value>Move completed path</value>
+  </data>
+  <data name="SettingsGeneralSearchTags" xml:space="preserve">
+    <value>general language update startup refresh theme</value>
+  </data>
+  <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
+    <value>BitTorrent peer protocol connection encryption proxy cache disk performance WebTorrent</value>
+  </data>
+  <data name="SettingsNetworkSearchTags" xml:space="preserve">
+    <value>network port listen IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT proxy</value>
+  </data>
+  <data name="SettingsTrackerSearchTags" xml:space="preserve">
+    <value>tracker announce subscription automatic tracker list</value>
+  </data>
+  <data name="SettingsIPFilterSearchTags" xml:space="preserve">
+    <value>IP filter block ban subscription IPv4 IPv6</value>
+  </data>
+  <data name="SettingsClientFilterSearchTags" xml:space="preserve">
+    <value>client filter peer client block allow rule</value>
+  </data>
+  <data name="SettingsDownloadSearchTags" xml:space="preserve">
+    <value>download path torrent file save hash check verify aria2 thread connection delete file</value>
+  </data>
+  <data name="SettingsWebUISearchTags" xml:space="preserve">
+    <value>Web UI browser remote address port username password language API key VueTorrent</value>
+  </data>
+  <data name="SettingsAppearanceSearchTags" xml:space="preserve">
+    <value>appearance theme background image video mica acrylic font animation digit color</value>
+  </data>
+  <data name="SettingsAboutSearchTags" xml:space="preserve">
+    <value>about version license dependency diagnostics update</value>
+  </data>
+  <data name="BT_UserAgentInput.PlaceholderText" xml:space="preserve">
+    <value>libtorrent/2.1.1</value>
+  </data>
+  <data name="BT_ProxyHostnameInput.PlaceholderText" xml:space="preserve">
+    <value>proxy.example.com</value>
+  </data>
+  <data name="BT_AdvancedSectionHeader.Text" xml:space="preserve">
+    <value>Advanced libtorrent</value>
+  </data>
+  <data name="BT_PeerFingerprintInput.PlaceholderText" xml:space="preserve">
+    <value>-ON0100-</value>
+  </data>
+  <data name="BT_DefaultSavePathInput.PlaceholderText" xml:space="preserve">
+    <value>Downloads folder</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessageText.Text" xml:space="preserve">
+    <value>A .torrent file with the same name already exists. Replace it?</value>
+  </data>
+  <data name="TorrentTrackerListHeader.Text" xml:space="preserve">
+    <value>Tracker list for this task</value>
+  </data>
+  <data name="TorrentTrackerListDescription.Text" xml:space="preserve">
+    <value>One tracker URL per line. Trackers already present in the magnet or .torrent file and enabled custom trackers are merged automatically.</value>
+  </data>
+  <data name="TorrentTrackerListFooter.Text" xml:space="preserve">
+    <value>The app-wide custom tracker switch and subscriptions are managed in Network settings.</value>
+  </data>
+  <data name="TaskCreateTorrentButton.Text" xml:space="preserve">
+    <value>Create torrent...</value>
+  </data>
+  <data name="CreateTorrentTitle" xml:space="preserve">
+    <value>Create torrent</value>
+  </data>
+  <data name="CreateTorrentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="CreateTorrentDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CreateTorrentDescription.Text" xml:space="preserve">
+    <value>Create a BitTorrent metadata file from a local file or folder.</value>
+  </data>
+  <data name="CreateTorrentSource.PlaceholderText" xml:space="preserve">
+    <value>Source file or folder</value>
+  </data>
+  <data name="CreateTorrentBrowseFile.Content" xml:space="preserve">
+    <value>File...</value>
+  </data>
+  <data name="CreateTorrentBrowseFolder.Content" xml:space="preserve">
+    <value>Folder...</value>
+  </data>
+  <data name="CreateTorrentFormatHybrid.Content" xml:space="preserve">
+    <value>Hybrid (v1 + v2)</value>
+  </data>
+  <data name="CreateTorrentFormatV1.Content" xml:space="preserve">
+    <value>BitTorrent v1</value>
+  </data>
+  <data name="CreateTorrentFormatV2.Content" xml:space="preserve">
+    <value>BitTorrent v2</value>
+  </data>
+  <data name="CreateTorrentPrivate.Content" xml:space="preserve">
+    <value>Private torrent</value>
+  </data>
+  <data name="CreateTorrentIgnoreDotFiles.Content" xml:space="preserve">
+    <value>Ignore hidden dot files</value>
+  </data>
+  <data name="CreateTorrentComment.Header" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="CreateTorrentComment.PlaceholderText" xml:space="preserve">
+    <value>Optional comment</value>
+  </data>
+  <data name="CreateTorrentTrackers.Header" xml:space="preserve">
+    <value>Trackers</value>
+  </data>
+  <data name="CreateTorrentTrackers.PlaceholderText" xml:space="preserve">
+    <value>One tracker URL per line</value>
+  </data>
+  <data name="CreateTorrentSelectSource" xml:space="preserve">
+    <value>Select a source file or folder first.</value>
+  </data>
+  <data name="CreateTorrentCreating" xml:space="preserve">
+    <value>Hashing files and creating torrent...</value>
+  </data>
+  <data name="CreateTorrentComplete" xml:space="preserve">
+    <value>Torrent created successfully.</value>
+  </data>
+  <data name="CreateTorrentFailed" xml:space="preserve">
+    <value>Could not create torrent.</value>
+  </data>
+  <data name="ThemesAppearanceSectionHeader.Text" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="ThemesFontSectionHeader.Text" xml:space="preserve">
+    <value>Font</value>
+  </data>
+  <data name="AboutSectionHeader.Text" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="AboutProductExpander.Header" xml:space="preserve">
+    <value>OpenNet for Windows</value>
+  </data>
+  <data name="AboutProductExpander.Description" xml:space="preserve">
+    <value>© 2026 Millennium Science Technology R-D Inst</value>
+  </data>
+  <data name="AboutVersionLabel.Text" xml:space="preserve">
+    <value>Version: </value>
+  </data>
+  <data name="AboutWASDKBuildCard.Header" xml:space="preserve">
+    <value>Windows App SDK build version</value>
+  </data>
+  <data name="AboutWASDKRuntimeCard.Header" xml:space="preserve">
+    <value>Windows App SDK runtime version</value>
+  </data>
+  <data name="AboutWinUIEssentialBuildCard.Header" xml:space="preserve">
+    <value>WinUI Essentials build SDK version</value>
+  </data>
+  <data name="AboutDependenciesHeader.Text" xml:space="preserve">
+    <value>Dependencies &amp; references</value>
+  </data>
+  <data name="AboutWarrantyText.Text" xml:space="preserve">
+    <value>THIS CODE AND INFORMATION IS PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED.</value>
+  </data>
+  <data name="AboutLicenseSourceLink.Content" xml:space="preserve">
+    <value>License &amp; source</value>
+  </data>
+  <data name="AboutProductionRole.Text" xml:space="preserve">
+    <value>Production / Visual Design</value>
+  </data>
+  <data name="AboutProgrammingRole.Text" xml:space="preserve">
+    <value>Programming Director</value>
+  </data>
+  <data name="AboutAIAssistantRole.Text" xml:space="preserve">
+    <value>AI Programming Assistant / Consultant</value>
+  </data>
+  <data name="AboutFrameworkRole.Text" xml:space="preserve">
+    <value>Software Framework</value>
+  </data>
+  <data name="AboutSpecialThanksRole.Text" xml:space="preserve">
+    <value>Special Thanks</value>
+  </data>
+  <data name="AboutYouText.Text" xml:space="preserve">
+    <value>You!</value>
+  </data>
+  <data name="AboutHelpFeedbackLink.Content" xml:space="preserve">
+    <value>Help &amp; feedback</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Header" xml:space="preserve">
+    <value>OpenNet open source</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Description" xml:space="preserve">
+    <value>OpenNet for WinUI 3</value>
+  </data>
+  <data name="AboutJoinProjectLink.Content" xml:space="preserve">
+    <value>Join the project on GitHub</value>
+  </data>
+  <data name="AboutGoToRepoText.Text" xml:space="preserve">
+    <value>Go to the repository</value>
+  </data>
+  <data name="AboutLastCommitLabel.Text" xml:space="preserve">
+    <value>Last commit: </value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.Title" xml:space="preserve">
+    <value>Edit trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerEditorTextBox.PlaceholderText" xml:space="preserve">
+    <value>One HTTP, HTTPS or UDP tracker URL per line</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.Title" xml:space="preserve">
+    <value>Remove tracker?</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.Title" xml:space="preserve">
+    <value>Clear all tracker logs?</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Clear all</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsMessage.Text" xml:space="preserve">
+    <value>This clears in-memory tracker logs for every task.</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.Title" xml:space="preserve">
+    <value>Remove unreachable trackers</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePromptText.Text" xml:space="preserve">
+    <value>Remove all trackers that have reached the number of retries:</value>
+  </data>
+  <data name="ViewTaskTrackersPageMessageDialog.CloseButtonText" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="DL_BrowseSavePath.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="DL_BrowseMovePath.Content" xml:space="preserve">
+    <value>Browse...</value>
+  </data>
+  <data name="DL_Aria2Connections.Header" xml:space="preserve">
+    <value>HTTP download connections</value>
+  </data>
+  <data name="DL_Aria2Connections.Description" xml:space="preserve">
+    <value>Connections used for each HTTP download</value>
+  </data>
+  <data name="RestartLanguageInfoBar.Title" xml:space="preserve">
+    <value>Restart OpenNet to apply the language change</value>
+  </data>
+  <data name="ViewThemeSettingFallbackColorCard.Title" xml:space="preserve">
+    <value>Fallback color when the window loses focus</value>
+  </data>
+  <data name="ViewThemeSettingTintColorCard.Title" xml:space="preserve">
+    <value>Tint color</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Header" xml:space="preserve">
+    <value>Follow application language</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Description" xml:space="preserve">
+    <value>Keep the Web UI locale synchronized with OpenNet's application language.</value>
+  </data>
+  <data name="CF_EditPatternLabel.Text" xml:space="preserve">
+    <value>Client pattern</value>
+  </data>
+  <data name="CF_EditMatchTypeLabel.Text" xml:space="preserve">
+    <value>Match type</value>
+  </data>
+  <data name="CF_EditMatchContains.Content" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="CF_EditMatchExact.Content" xml:space="preserve">
+    <value>Exact</value>
+  </data>
+  <data name="CF_EditMatchWildcard.Content" xml:space="preserve">
+    <value>Wildcard</value>
+  </data>
+  <data name="CF_EditMatchRegex.Content" xml:space="preserve">
+    <value>Regular expression</value>
+  </data>
+  <data name="CF_EditCaseSensitive.Header" xml:space="preserve">
+    <value>Case sensitive</value>
+  </data>
+  <data name="CF_EditEnabled.Header" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="CF_EditDescriptionLabel.Text" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="CF_ImportHint.Text" xml:space="preserve">
+    <value>JSON preserves every rule option. Plain text imports one case-insensitive Contains rule per line.</value>
+  </data>
+  <data name="CF_ReplaceExisting.Content" xml:space="preserve">
+    <value>Replace all existing rules before importing</value>
+  </data>
+  <data name="CF_ClearRulesMessage.Text" xml:space="preserve">
+    <value>Remove every client filter rule? This cannot be undone.</value>
+  </data>
+  <data name="CF_DeleteRulePrompt" xml:space="preserve">
+    <value>Delete this rule?</value>
+  </data>
+  <data name="IPF_EditSubscriptionEnabled.Content" xml:space="preserve">
+    <value>Enable this source</value>
+  </data>
+  <data name="IPF_EditRuleEntryLabel.Text" xml:space="preserve">
+    <value>IP address, CIDR block, or range</value>
+  </data>
+  <data name="IPF_EditRuleDescriptionLabel.Text" xml:space="preserve">
+    <value>Description (optional)</value>
+  </data>
+  <data name="IPF_DeleteRulePrompt" xml:space="preserve">
+    <value>Delete this rule?</value>
+  </data>
+  <data name="IPF_ClearAllRulesDialogMessage.Text" xml:space="preserve">
+    <value>Are you sure you want to remove all IP filter rules? This action cannot be undone.</value>
+  </data>
+  <data name="BT_QueueingEnabled.Header" xml:space="preserve">
+    <value>Enable torrent queueing</value>
+  </data>
+  <data name="BT_QueueingEnabled.Description" xml:space="preserve">
+    <value>Limit the number of simultaneously active downloads, uploads, and torrents. Turn this off for unlimited scheduling.</value>
+  </data>
+  <data name="BT_MixedModePreferTcp.Content" xml:space="preserve">
+    <value>Prefer TCP</value>
+  </data>
+  <data name="BT_MixedModePeerProportional.Content" xml:space="preserve">
+    <value>Peer proportional</value>
+  </data>
+  <data name="BT_UploadSlotsFixed.Content" xml:space="preserve">
+    <value>Fixed slots</value>
+  </data>
+  <data name="BT_UploadSlotsRateBased.Content" xml:space="preserve">
+    <value>Upload rate based</value>
+  </data>
+  <data name="BT_UploadChokingRoundRobin.Content" xml:space="preserve">
+    <value>Round-robin</value>
+  </data>
+  <data name="BT_UploadChokingFastest.Content" xml:space="preserve">
+    <value>Fastest upload</value>
+  </data>
+  <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
+    <value>Anti-leech</value>
   </data>
 </root>

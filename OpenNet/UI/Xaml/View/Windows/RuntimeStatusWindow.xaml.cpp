@@ -1,8 +1,12 @@
-﻿#include <Windows.h>
+﻿#include <WinSock2.h>
+#include <Windows.h>
 #include <Psapi.h>
 #include <netfw.h>
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/version.hpp>
+#include "LibtorrentIncludeRestore.h"
 
 #include "XamlWorkaround.h"
 #include "RuntimeStatusWindow.xaml.h"
@@ -470,6 +474,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto const mapping = core
 			? core->GetPortMappingStatus()
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::PortMappingStatus{};
+		auto const runtimeSettings = core
+			? core->GetRuntimeSettings()
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::RuntimeSettingsSnapshot{};
 		auto const httpDown =
 			::OpenNet::Core::DownloadManager::Instance().TotalHttpDownloadSpeed();
 		auto const httpUp =
@@ -1056,17 +1063,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				L"{} queued; setting maximum {}",
 				FormatBytes(std::max<std::int64_t>(
 					0, metric("disk.queued_write_bytes"))),
-				FormatBytes(std::max(
-					0, core ? core->GetSettings().get_int(
-						libtorrent::settings_pack::max_queued_disk_bytes) : 0))));
+				FormatBytes(std::max(0, runtimeSettings.maxQueuedDiskBytes))));
 		row(
 			L"TCP/UDP socket buffers",
 			std::format(
 				L"Receive {}, send {} (0 means OS default)",
-				core ? core->GetSettings().get_int(
-					libtorrent::settings_pack::recv_socket_buffer_size) : 0,
-				core ? core->GetSettings().get_int(
-					libtorrent::settings_pack::send_socket_buffer_size) : 0));
+				runtimeSettings.receiveSocketBufferSize,
+				runtimeSettings.sendSocketBufferSize));
 		row(
 			L"Application model buffers",
 			L"STL/WinRT containers are included in heap/private memory totals");
@@ -1249,8 +1252,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			std::to_wstring(metric("dht.dht_allocated_observers")));
 		row(
 			L"DHT upload rate limit",
-			LimitText(core ? core->GetSettings().get_int(
-				libtorrent::settings_pack::dht_upload_rate_limit) : 0));
+			LimitText(runtimeSettings.dhtUploadRateLimit));
 		row(
 			L"uTP packets receive / send",
 			std::format(

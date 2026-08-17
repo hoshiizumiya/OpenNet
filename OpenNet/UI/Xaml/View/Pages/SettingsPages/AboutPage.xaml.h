@@ -1,11 +1,9 @@
 ﻿#pragma once
 #include "UI/Xaml/View/Pages/SettingsPages/AboutPage.g.h"
 #include "mvvm_framework/notify_property_changed.h"
-#include "ViewModels/MainViewModel.h"
 #include "ThirdParty/RepoInfo.h"
 
 import winrt.Windows.Web.Http;
-import std;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {

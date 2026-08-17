@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.XamlToolkit.Labs.WinUI;
+import winrt.OpenNet.UI.Xaml.Control.Effect;
 #include "UI/Xaml/View/Pages/TaskTrackersPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 
@@ -44,6 +45,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::hstring m_sortColumn;
 		int m_sortDirection{};
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
+		std::string m_lastTaskId;
+		std::size_t m_lastTrackerSnapshotHash{};
+		bool m_hasTrackerSnapshot{};
+		std::chrono::steady_clock::time_point m_lastTrackerRefresh{};
 
 		void Unsubscribe();
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);

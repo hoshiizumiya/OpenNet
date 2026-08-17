@@ -62,10 +62,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_pauseCommand;
 		}
-		winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand() const
+                winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand() const
 		{
 			return m_deleteCommand;
-		}
+                }
 		winrt::Microsoft::UI::Xaml::Input::ICommand ExportCommand() const
 		{
 			return m_exportCommand;
@@ -97,6 +97,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void AddTaskRequested(winrt::event_token const& token) noexcept
 		{
 			m_addTaskRequested.remove(token);
+		}
+		winrt::event_token TaskDeletionFailed(winrt::Windows::Foundation::EventHandler<winrt::hstring> const& handler)
+		{
+			return m_taskDeletionFailed.add(handler);
+		}
+		void TaskDeletionFailed(winrt::event_token const& token) noexcept
+		{
+			m_taskDeletionFailed.remove(token);
 		}
 
 		bool IsColNameLoad();
@@ -167,6 +175,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void RebuildFiltered();
 
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_addTaskRequested;
+		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_taskDeletionFailed;
 
 		// GIDs that were explicitly deleted ─ prevents OnHttpProgress/Finished
 		// from re-creating the task after deletion.

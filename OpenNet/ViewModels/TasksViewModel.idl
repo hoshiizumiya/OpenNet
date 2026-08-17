@@ -32,6 +32,7 @@ namespace OpenNet.ViewModels
 
 		// Event raised to request adding a task (string parameter can carry task name or data)
 		event Windows.Foundation.EventHandler<String> AddTaskRequested;
+		event Windows.Foundation.EventHandler<String> TaskDeletionFailed;
 
 		// Tasks column display flags
 		Boolean IsColNameLoad;

@@ -3,6 +3,7 @@
 
 #include "pch.h"
 #include <CppUnitTest.h>
+#include <format>
 #include <string>
 #include <windows.h>
 #include <shlobj_core.h>

@@ -49,6 +49,10 @@ export namespace OpenNet::Core
         std::string AddRecord(std::string const& url, std::string const& savePath, std::string const& fileName);
         void UpdateRecordGid(std::string const& recordId, std::string const& gid);
         void UpdateRecordName(std::string const& recordId, std::string const& name);
+        void UpdateRecordOutputPath(
+            std::string const& recordId,
+            std::string const& savePath,
+            std::string const& fileName);
         void UpdateRecordProgress(std::string const& recordId, int64_t completedSize, int64_t totalSize);
         void UpdateRecordStatus(std::string const& recordId, int status);
         void DeleteRecord(std::string const& recordId);

@@ -74,7 +74,7 @@
                             Header="Listen port"
                             Maximum="65535"
                             Minimum="1"
-                            SpinButtonPlacementMode="Hidden" />
+                            SpinButtonPlacementMode="Inline" />
                         <TextBlock
                             x:Uid="ViewNATDetectorWindowText4"
                             Grid.Row="1"

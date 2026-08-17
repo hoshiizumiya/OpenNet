@@ -21,6 +21,22 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
+        <ContentDialog
+            x:Name="TorrentCopyOverwriteDialog"
+            DefaultButton="Close">
+            <StackPanel Spacing="8">
+                <TextBlock
+                    x:Uid="TorrentCopyOverwriteMessageText"
+                    Text="A .torrent file with the same name already exists. Replace it?"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="TorrentCopyOverwritePathText"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    IsTextSelectionEnabled="True"
+                    TextWrapping="WrapWholeWords" />
+            </StackPanel>
+        </ContentDialog>
+
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
 
         <!--  Title Bar  -->
@@ -74,11 +90,11 @@
                 </Grid.RowDefinitions>
                 <StackPanel Margin="0,0,0,12" Spacing="4">
                     <TextBlock
-                        x:Uid="ViewTorrentCheckModalWindowTextBlock"
+                        x:Uid="TorrentTrackerListHeader"
                         FontWeight="SemiBold"
                         Text="Tracker list for this task" />
                     <TextBlock
-                        x:Uid="ViewTorrentCheckModalWindowTextBlock"
+                        x:Uid="TorrentTrackerListDescription"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="One tracker URL per line. Trackers already present in the magnet or .torrent file and enabled custom trackers are merged automatically."
                         TextWrapping="Wrap" />
@@ -93,7 +109,7 @@
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
                     TextWrapping="NoWrap" />
                 <TextBlock
-                    x:Uid="ViewTorrentCheckModalWindowTextBlock"
+                    x:Uid="TorrentTrackerListFooter"
                     Grid.Row="2"
                     Margin="0,8,0,0"
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -130,6 +146,18 @@
                     x:Name="SaveTorrentCopyCheckBox"
                     x:Uid="ViewTorrentCheckModalWindowCheckBoxText1"
                     Content="Save a .torrent copy to the download folder" />
+                <ComboBox
+                    x:Name="SaveTorrentCopyLocationComboBox"
+                    MinWidth="190"
+                    IsEnabled="{Binding IsChecked, ElementName=SaveTorrentCopyCheckBox, Mode=OneWay}"
+                    SelectedIndex="0">
+                    <ComboBoxItem
+                        x:Uid="TorrentCopyLocationDownloadFolder"
+                        Content="Download target folder" />
+                    <ComboBoxItem
+                        x:Uid="TorrentCopyLocationContentFolder"
+                        Content="Torrent content folder" />
+                </ComboBox>
             </StackPanel>
 
             <StackPanel

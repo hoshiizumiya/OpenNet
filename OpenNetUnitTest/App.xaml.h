@@ -6,7 +6,8 @@ namespace winrt::OpenNetUnitTest::implementation
 {
     struct App : AppT<App>
     {
-        App(PWSTR argv);
+        App();
+        App(PCWSTR argv);
 
         void OnLaunched(Microsoft::UI::Xaml::LaunchActivatedEventArgs const&);
 

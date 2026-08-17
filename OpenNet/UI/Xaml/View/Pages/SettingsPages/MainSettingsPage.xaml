@@ -21,6 +21,20 @@
         OpenPaneLength="200"
         PaneDisplayMode="Left"
         SelectionChanged="SettingsNavView_SelectionChanged">
+        <NavigationView.PaneCustomContent>
+            <AutoSuggestBox
+                x:Name="SettingsSearchBox"
+                x:Uid="SettingsSearchBox"
+                Margin="8,8,8,12"
+                AutomationProperties.AutomationId="SettingsSearchBox"
+                PlaceholderText="Search settings"
+                QuerySubmitted="SettingsSearchBox_QuerySubmitted"
+                TextChanged="SettingsSearchBox_TextChanged">
+                <AutoSuggestBox.QueryIcon>
+                    <SymbolIcon Symbol="Find" />
+                </AutoSuggestBox.QueryIcon>
+            </AutoSuggestBox>
+        </NavigationView.PaneCustomContent>
         <NavigationView.Header>
             <BreadcrumbBar
                 x:Name="MainSettingsPageBar"
@@ -77,6 +91,7 @@
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem
+                        x:Name="TrackerNavItem"
                         x:Uid="SettingsTrackerNavItem"
                         AutomationProperties.AutomationId="SettingsTrackerNavItem"
                         Content="Tracker"
@@ -86,6 +101,7 @@
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem
+                        x:Name="IPFilterNavItem"
                         x:Uid="SettingsIPFilterNavItem"
                         AutomationProperties.AutomationId="SettingsIPFilterNavItem"
                         Content="IP Filter"
@@ -95,6 +111,7 @@
                         </NavigationViewItem.Icon>
                     </NavigationViewItem>
                     <NavigationViewItem
+                        x:Name="ClientFilterNavItem"
                         x:Uid="ClientFilterNavItem"
                         AutomationProperties.AutomationId="ClientFilterNavItem"
                         Content="Client Filter"

@@ -1,7 +1,11 @@
-﻿#include <libtorrent/settings_pack.hpp>
+﻿#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
+#include <libtorrent/settings_pack.hpp>
+#include "LibtorrentIncludeRestore.h"
 
 #include "XamlWorkaround.h"
 #include "BittorrentSettingsPage.xaml.h"
+#include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp"
 #endif
@@ -19,8 +23,16 @@ namespace lt = libtorrent;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	static SettingsPageTagRegister<BittorrentSettingsPage> s_tags{
+		L"bittorrent", L"SettingsBitTorrentSearchTags" };
+	static SettingsPageTagRegister<BittorrentSettingsPage> s_networkTags{
+		L"network", L"SettingsNetworkSearchTags" };
+	static SettingsPageTagRegister<BittorrentSettingsPage> s_trackerTags{
+		L"tracker", L"SettingsTrackerSearchTags" };
 	BittorrentSettingsPage::BittorrentSettingsPage()
 	{
+		InitializeComponent();
+
 		Loaded([this](IInspectable const&, RoutedEventArgs const&)
 		{
 			LoadSettings();
@@ -49,26 +61,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto& mgr = ::OpenNet::Core::TorrentSettingsManager::Instance();
 		mgr.Load();
 		auto s = mgr.Get();
-
-		// If the session is running, prefer live values
-		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-		if (core && core->IsRunning())
-		{
-			try
-			{
-				auto pack = core->GetSettings();
-				auto live = ::OpenNet::Core::BuildTorrentSettingsFromPack(pack);
-				live.defaultSavePath = s.defaultSavePath;
-				live.preallocateStorage = s.preallocateStorage;
-				live.autoStartDownloads = s.autoStartDownloads;
-				live.moveCompletedEnabled = s.moveCompletedEnabled;
-				live.moveCompletedPath = s.moveCompletedPath;
-				s = live;
-			}
-			catch (...)
-			{ /* use persisted settings if live read fails */
-			}
-		}
 
 		// Back to UI thread to populate controls
 		co_await winrtplus::resume_foreground(dispatcher);
@@ -101,6 +93,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		AnnounceToAllTrackersToggle().IsOn(s.announceToAllTrackers);
 
 		// Limits
+		QueueingEnabledToggle().IsOn(s.queueingEnabled);
 		ActiveDownloadsNumberBox().Value(s.activeDownloads);
 		ActiveSeedsNumberBox().Value(s.activeSeeds);
 		ActiveLimitNumberBox().Value(s.activeLimit);
@@ -206,6 +199,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		s.announceToAllTrackers = AnnounceToAllTrackersToggle().IsOn();
 
 		// Limits
+		s.queueingEnabled = QueueingEnabledToggle().IsOn();
 		s.activeDownloads = static_cast<int>(ActiveDownloadsNumberBox().Value());
 		s.activeSeeds = static_cast<int>(ActiveSeedsNumberBox().Value());
 		s.activeLimit = static_cast<int>(ActiveLimitNumberBox().Value());
@@ -299,9 +293,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (core && core->IsRunning())
 		{
-			lt::settings_pack pack;
-			::OpenNet::Core::ApplyTorrentSettingsToSettingsPack(s, pack);
-			core->ApplySettings(pack);
+			core->ReloadSettings();
 		}
 	}
 

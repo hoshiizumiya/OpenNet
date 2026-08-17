@@ -120,11 +120,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
-		m_refreshTimer.Interval(std::chrono::milliseconds(
+		m_configuredRefreshInterval = std::chrono::milliseconds(
 			std::clamp<std::int64_t>(
 				database.GetInt("ui", "refresh_interval_ms").value_or(1000),
 				100,
-				60000)));
+				60000));
+		m_refreshTimer.Interval(m_configuredRefreshInterval);
 		m_refreshTimer.Start();
 
 		RefreshPeerList();
@@ -132,6 +133,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPeersListPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
+		m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
 		if (m_refreshTimer)
 		{
 			m_refreshTimer.Stop();
@@ -158,6 +160,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			// Task changed — force full rebuild
 			m_lastTaskId.clear();
 			m_peerItems = nullptr;
+			m_forcePeerRefresh.store(true, std::memory_order_relaxed);
+			m_hasPeerSnapshot = false;
+			m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
 			RefreshPeerList();
 		}
 	}
@@ -184,6 +189,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_sortDirection = 1;
 		}
 		UpdateSortHeaders();
+		m_forcePeerRefresh.store(true, std::memory_order_relaxed);
 		RefreshPeerList();
 	}
 
@@ -429,6 +435,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPeersListPage::ResetPeerGroups()
 	{
+		m_hasPeerSnapshot = false;
 		m_peerItems = nullptr;
 		m_connectedGroup = nullptr;
 		m_connectingGroup = nullptr;
@@ -437,6 +444,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_lastActivePeers.clear();
 		m_disconnectingPeers.clear();
 		m_banIpPeers.clear();
+		m_cachedBannedPeerAddresses.clear();
 		if (auto tree = PeersTreeView())
 			tree.ItemsSource(nullptr);
 	}
@@ -698,11 +706,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return winrt::hstring{ text };
 	}
 
-	void TaskPeersListPage::RefreshPeerList()
+	winrt::fire_and_forget TaskPeersListPage::RefreshPeerList()
 	{
+		auto lifetime = get_strong();
 		auto listView = PeersTreeView();
 		auto emptyText = EmptyStateText();
-		if (!listView) return;
+		if (!listView) co_return;
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
@@ -710,7 +719,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
+			co_return;
 		}
 
 		auto selectedTask = m_viewModel.SelectedTask();
@@ -723,7 +732,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
+			co_return;
 		}
 
 		auto taskId = winrt::to_string(selectedTask.TaskId());
@@ -733,7 +742,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
+			co_return;
 		}
 
 		// If task changed, clear cached items
@@ -749,17 +758,125 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			listView.ItemsSource(nullptr);
 			ResetPeerGroups();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
+			co_return;
 		}
 
-		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
+		// An empty peer snapshot does not need a one-second background query plus
+		// a UI-queue hop. Recheck auxiliary state every five seconds; explicit
+		// task/sort/ban changes set m_forcePeerRefresh and bypass this throttle.
+		if (!m_forcePeerRefresh.load(std::memory_order_relaxed)
+			&& m_hasPeerSnapshot && m_lastPeerSnapshotHash == 0
+			&& std::chrono::steady_clock::now() - m_lastAuxiliaryRefresh
+				< std::chrono::seconds(5))
+		{
+			co_return;
+		}
+
+		if (m_refreshInFlight.exchange(true, std::memory_order_acq_rel))
+			co_return;
+
+		auto const forceRefresh =
+			m_forcePeerRefresh.exchange(false, std::memory_order_relaxed);
+		auto const generation =
+			m_refreshGeneration.load(std::memory_order_relaxed);
+		auto dispatcher = DispatcherQueue();
+		auto weak = get_weak();
+		co_await winrt::resume_background();
+		auto peers = ::OpenNet::Core::P2PManager::Instance()
+			.GetTorrentPeers(taskId);
+		if (!dispatcher.TryEnqueue(
+			[weak, taskId = std::move(taskId), peers = std::move(peers),
+			 forceRefresh, generation]() mutable
+			{
+				if (auto self = weak.get())
+				{
+					self->m_refreshInFlight.store(false, std::memory_order_release);
+					if (self->m_refreshGeneration.load(std::memory_order_relaxed)
+						!= generation)
+					{
+						return;
+					}
+					self->ApplyPeerSnapshot(
+						taskId, std::move(peers), forceRefresh);
+				}
+			}))
+		{
+			m_refreshInFlight.store(false, std::memory_order_release);
+		}
+	}
+
+	void TaskPeersListPage::ApplyPeerSnapshot(
+		std::string const& taskId,
+		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo> peers,
+		bool const forceRefresh)
+	{
+		if (taskId != m_lastTaskId)
+			return;
+		auto const emptyText = EmptyStateText();
+
+		// Keep zero reserved for the truly empty snapshot; this lets the timer
+		// avoid scheduling a background/UI round trip while the table is empty.
+		std::size_t snapshotHash = peers.empty() ? 0 : peers.size();
+		auto combineHash = [&snapshotHash](auto const& value)
+		{
+			snapshotHash ^= std::hash<std::decay_t<decltype(value)>>{}(value)
+				+ 0x9e3779b9u + (snapshotHash << 6) + (snapshotHash >> 2);
+		};
+		for (auto const& peer : peers)
+		{
+			combineHash(peer.ip);
+			combineHash(peer.port);
+			combineHash(peer.client);
+			combineHash(peer.downloadRateKB);
+			combineHash(peer.uploadRateKB);
+			combineHash(peer.totalDownloaded);
+			combineHash(peer.totalUploaded);
+			combineHash(peer.progress);
+			combineHash(peer.flags);
+			combineHash(peer.connectionType);
+			combineHash(peer.source);
+			combineHash(peer.isIncoming);
+			combineHash(peer.isConnecting);
+		}
+		auto const nowSteady = std::chrono::steady_clock::now();
+		if (!forceRefresh && m_hasPeerSnapshot
+			&& snapshotHash == m_lastPeerSnapshotHash
+			&& nowSteady - m_lastAuxiliaryRefresh < std::chrono::seconds(5))
+		{
+			return;
+		}
+		m_hasPeerSnapshot = true;
+		m_lastPeerSnapshotHash = snapshotHash;
+		if (m_refreshTimer)
+		{
+			auto const desiredInterval = peers.empty()
+				? (std::max)(m_configuredRefreshInterval,
+					std::chrono::milliseconds{ 5000 })
+				: m_configuredRefreshInterval;
+			if (m_refreshTimer.Interval() != desiredInterval)
+				m_refreshTimer.Interval(desiredInterval);
+		}
+		auto const refreshAuxiliaryData = forceRefresh
+			|| nowSteady - m_lastAuxiliaryRefresh >= std::chrono::seconds(5);
+		if (refreshAuxiliaryData)
+		{
+			m_lastAuxiliaryRefresh = nowSteady;
+		}
+
+		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
 
 		EnsurePeerGroups();
 
 		auto initializeEndpointItem =
 			[this](std::string const& ip, int port, auto const& item)
 		{
-			item.Address(winrt::to_hstring(ip));
+			auto const address = winrt::to_hstring(ip);
+			// Country lookup and SVG extraction are immutable for an endpoint. The
+			// peer rates change every sample, but redoing these operations every
+			// second caused the visible periodic UI hitch.
+			if (item.Address() == address && item.Port() == port)
+				return;
+			item.Address(address);
 			item.Port(port);
 			item.IP(PeerEndpointText(ip, port));
 			auto& geo = ::OpenNet::Core::GeoIPManager::Instance();
@@ -816,31 +933,46 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto& ipFilter = ::OpenNet::Core::IPFilterManager::Instance();
 		auto const now = std::chrono::duration_cast<std::chrono::seconds>(
 			std::chrono::system_clock::now().time_since_epoch()).count();
-		auto const activeBans = ipFilter.GetActiveBans(taskId);
+		auto const activeBans = refreshAuxiliaryData
+			? ipFilter.GetActiveBans(taskId)
+			: std::vector<::OpenNet::Core::IPBanEntry>{};
 		std::unordered_map<std::string, ::OpenNet::Core::IPBanEntry> bansByIp;
-		for (auto const& ban : activeBans)
-			bansByIp.emplace(ban.ip, ban);
+		if (refreshAuxiliaryData)
+		{
+			m_cachedBannedPeerAddresses.clear();
+			for (auto const& ban : activeBans)
+			{
+				bansByIp.emplace(ban.ip, ban);
+				m_cachedBannedPeerAddresses.insert(ban.ip);
+			}
+		}
+		else
+		{
+			for (auto const& address : m_cachedBannedPeerAddresses)
+				bansByIp.emplace(address, ::OpenNet::Core::IPBanEntry{});
+		}
 
 		std::unordered_map<std::string, ::OpenNet::Core::ClientFilterHit>
 			clientHitsByIp;
 		auto& clientFilter =
 			::OpenNet::Core::ClientFilterManager::Instance();
-		for (auto const& hit :
-			 clientFilter.GetRecentHits(500))
+		if (refreshAuxiliaryData)
 		{
-			clientHitsByIp.emplace(hit.ip, hit);
+			for (auto const& hit : clientFilter.GetRecentHits(500))
+				clientHitsByIp.emplace(hit.ip, hit);
 		}
 
 		auto previousActive = m_lastActivePeers;
 		auto previousBanPeers = m_banIpPeers;
 		// Rebuild this group from current ban sources on every refresh. This
 		// removes expired/disabled rules without leaving stale BanIP rows.
-		m_banIpPeers.clear();
+		if (refreshAuxiliaryData)
+			m_banIpPeers.clear();
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem>
 			currentPeers;
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connected;
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connecting;
-		for (auto const& peer : detail.peers)
+		for (auto const& peer : peers)
 		{
 			auto const key = PeerEndpointKey(peer.ip, peer.port);
 			auto item = previousActive.contains(key)
@@ -850,10 +982,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			updateItem(peer, item);
 			currentPeers.emplace(key, item);
 			m_disconnectingPeers.erase(key);
-			m_banIpPeers.erase(key);
-
 			if (!bansByIp.contains(peer.ip))
 			{
+				m_banIpPeers.erase(key);
 				if (peer.isConnecting)
 					connecting.push_back(item);
 				else
@@ -871,8 +1002,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 		}
 
-		auto peerEvents =
-			p2p.TorrentCore()->GetRecentPeerEvents(taskId);
+		auto peerEvents = refreshAuxiliaryData
+			? p2p.TorrentCore()->GetRecentPeerEvents(taskId)
+			: std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::PeerConnectionEvent>{};
 		std::unordered_map<
 			std::string, std::optional<::OpenNet::Core::IPRule>>
 			staticRuleMatches;
@@ -1111,6 +1243,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (id == 0)
 				throw std::runtime_error("failed to persist IP ban");
 			ipFilter.ApplyToSession();
+			m_forcePeerRefresh.store(true, std::memory_order_relaxed);
 			RefreshPeerList();
 			OutputDebugStringW(
 				(L"Banned peer IP: " + winrt::to_hstring(ip) + L"\n").c_str());
@@ -1156,6 +1289,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		auto& ipFilter = ::OpenNet::Core::IPFilterManager::Instance();
 		if (ipFilter.RemoveBan(winrt::to_string(peer.Address()), "manual"))
+		{
+			m_forcePeerRefresh.store(true, std::memory_order_relaxed);
 			RefreshPeerList();
+		}
 	}
 }

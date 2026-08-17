@@ -33,7 +33,6 @@
 
             <InfoBar
                 x:Name="StatusInfoBar"
-                x:Uid="WebUISettingsStatus"
                 IsClosable="False"
                 IsOpen="True"
                 Severity="Informational" />
@@ -68,7 +67,6 @@
                 </essential:SettingsCard.HeaderIcon>
                 <TextBox
                     x:Name="AddressTextBox"
-                    x:Uid="WebUISettingsAddress"
                     MinWidth="240"
                     AutomationProperties.AutomationId="WebUISettingsAddress"
                     PlaceholderText="127.0.0.1" />
@@ -83,12 +81,11 @@
                 </essential:SettingsCard.HeaderIcon>
                 <NumberBox
                     x:Name="PortNumberBox"
-                    x:Uid="WebUISettingsPort"
                     MinWidth="160"
                     AutomationProperties.AutomationId="WebUISettingsPort"
                     Maximum="65535"
                     Minimum="1"
-                    SpinButtonPlacementMode="Compact" />
+                    SpinButtonPlacementMode="Inline" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -100,7 +97,6 @@
                 </essential:SettingsCard.HeaderIcon>
                 <ToggleSwitch
                     x:Name="FollowApplicationLanguageToggle"
-                    x:Uid="WebUISettingsFollowLanguage"
                     AutomationProperties.AutomationId="WebUISettingsFollowLanguage"
                     Toggled="OnFollowApplicationLanguageToggled" />
             </essential:SettingsCard>
@@ -131,7 +127,6 @@
                 </essential:SettingsCard.HeaderIcon>
                 <TextBox
                     x:Name="UsernameTextBox"
-                    x:Uid="WebUISettingsUsername"
                     MinWidth="240"
                     AutomationProperties.AutomationId="WebUISettingsUsername" />
             </essential:SettingsCard>
@@ -145,7 +140,6 @@
                 </essential:SettingsCard.HeaderIcon>
                 <PasswordBox
                     x:Name="PasswordInput"
-                    x:Uid="WebUISettingsPassword"
                     MinWidth="240"
                     AutomationProperties.AutomationId="WebUISettingsPassword"
                     PasswordRevealMode="Peek" />
@@ -161,7 +155,6 @@
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <PasswordBox
                         x:Name="ApiKeyInput"
-                        x:Uid="WebUISettingsApiKey"
                         MinWidth="240"
                         AutomationProperties.AutomationId="WebUISettingsApiKey"
                         PasswordRevealMode="Peek" />

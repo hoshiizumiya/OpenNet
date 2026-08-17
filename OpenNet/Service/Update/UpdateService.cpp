@@ -20,8 +20,7 @@ using namespace winrt::Windows::Web::Http;
 
 namespace OpenNet::Service::Update
 {
-	IAsyncAction UpdateService::CheckUpdateAsync(
-		std::shared_ptr<CheckUpdateResult> result) const
+	IAsyncAction UpdateService::CheckUpdateAsync(std::shared_ptr<CheckUpdateResult> result) const
 	{
 		if (!result)
 		{

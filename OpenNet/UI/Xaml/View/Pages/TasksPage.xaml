@@ -11,19 +11,145 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     xmlns:ouxc="using:OpenNet.UI.Xaml.Control"
+    xmlns:ouxm="using:OpenNet.UI.Xaml.Media"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
     xmlns:vm="using:OpenNet.ViewModels"
     xmlns:xtlw="using:XamlToolkit.Labs.WinUI"
     xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
+    xmlns:xtwm="using:XamlToolkit.WinUI.Media"
     x:Uid="TasksPageRoot"
     Loaded="Loaded"
     mc:Ignorable="d">
 
-    <Grid Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}">
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition />
         </Grid.RowDefinitions>
+
+        <ContentDialog
+            x:Name="DeleteTaskDialog"
+            DefaultButton="Close">
+            <StackPanel Spacing="12">
+                <FontIcon
+                    FontSize="28"
+                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                    Glyph="&#xE7BA;" />
+                <TextBlock
+                    x:Name="DeleteTaskWarningText"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="DeleteTaskNameText"
+                    FontWeight="SemiBold"
+                    TextWrapping="Wrap" />
+                <CheckBox
+                    x:Name="DeleteDownloadedFilesCheckBox"
+                    IsChecked="False" />
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog
+            x:Name="CreateTorrentDialog"
+            x:Uid="CreateTorrentDialog"
+            DefaultButton="Primary"
+            PrimaryButtonClick="CreateTorrentDialog_PrimaryButtonClick"
+            PrimaryButtonText="Create"
+            CloseButtonText="Cancel">
+            <StackPanel MinWidth="480" Spacing="12">
+                <TextBlock
+                    x:Uid="CreateTorrentDescription"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Create a BitTorrent metadata file from a local file or folder."
+                    TextWrapping="Wrap" />
+                <Grid ColumnSpacing="8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBox
+                        x:Name="CreateTorrentSourceTextBox"
+                        x:Uid="CreateTorrentSource"
+                        IsReadOnly="True"
+                        PlaceholderText="Source file or folder" />
+                    <Button
+                        x:Uid="CreateTorrentBrowseFile"
+                        Grid.Column="1"
+                        Click="CreateTorrentBrowseFile_Click"
+                        Content="File..." />
+                    <Button
+                        x:Uid="CreateTorrentBrowseFolder"
+                        Grid.Column="2"
+                        Click="CreateTorrentBrowseFolder_Click"
+                        Content="Folder..." />
+                </Grid>
+                <ComboBox x:Name="CreateTorrentFormatComboBox" SelectedIndex="0">
+                    <ComboBoxItem x:Uid="CreateTorrentFormatHybrid" Content="Hybrid (v1 + v2)" />
+                    <ComboBoxItem x:Uid="CreateTorrentFormatV1" Content="BitTorrent v1" />
+                    <ComboBoxItem x:Uid="CreateTorrentFormatV2" Content="BitTorrent v2" />
+                </ComboBox>
+                <CheckBox
+                    x:Name="CreateTorrentPrivateCheckBox"
+                    x:Uid="CreateTorrentPrivate"
+                    Content="Private torrent" />
+                <CheckBox
+                    x:Name="CreateTorrentIgnoreDotFilesCheckBox"
+                    x:Uid="CreateTorrentIgnoreDotFiles"
+                    Content="Ignore hidden dot files"
+                    IsChecked="True" />
+                <TextBox
+                    x:Name="CreateTorrentCommentTextBox"
+                    x:Uid="CreateTorrentComment"
+                    Header="Comment"
+                    PlaceholderText="Optional comment" />
+                <TextBox
+                    x:Name="CreateTorrentTrackersTextBox"
+                    x:Uid="CreateTorrentTrackers"
+                    AcceptsReturn="True"
+                    Header="Trackers"
+                    MaxHeight="120"
+                    PlaceholderText="One tracker URL per line"
+                    TextWrapping="NoWrap" />
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ProgressRing
+                        x:Name="CreateTorrentProgressRing"
+                        Width="20"
+                        Height="20"
+                        IsActive="False"
+                        Visibility="Collapsed" />
+                    <TextBlock
+                        x:Name="CreateTorrentStatusText"
+                        VerticalAlignment="Center"
+                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </StackPanel>
+        </ContentDialog>
+
+        <ContentDialog
+            x:Name="MultipleTorrentFilesDialog"
+            DefaultButton="Primary">
+            <TextBlock x:Name="MultipleTorrentFilesPromptText" TextWrapping="Wrap" />
+        </ContentDialog>
+
+        <ContentDialog x:Name="HttpDownloadUnavailableDialog">
+            <TextBlock x:Name="HttpDownloadUnavailableText" TextWrapping="Wrap" />
+        </ContentDialog>
+
+        <ContentDialog
+            x:Name="RenameTaskDialog"
+            DefaultButton="Primary">
+            <TextBox
+                x:Name="RenameTaskTextBox"
+                AcceptsReturn="False" />
+        </ContentDialog>
+
+        <ContentDialog x:Name="DiskUsageDialog">
+            <TextBlock
+                x:Name="DiskUsageDetailsText"
+                IsTextSelectionEnabled="True"
+                TextWrapping="Wrap" />
+        </ContentDialog>
 
         <!--  SearchBox + CommandBar  -->
         <CommandBar
@@ -59,6 +185,12 @@
                             Click="MenuItemAddFromHttp_ClickAsync"
                             Icon="{essential:FontIcon Glyph=&#xE71B;}"
                             Text="HTTP Download" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem
+                            x:Uid="TaskCreateTorrentButton"
+                            Click="CreateTorrentMenuItem_Click"
+                            Icon="{essential:FontIcon Glyph=&#xE8A5;}"
+                            Text="Create torrent..." />
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
@@ -75,7 +207,7 @@
             <AppBarButton
                 x:Uid="TaskDeleteButton"
                 AutomationProperties.AutomationId="TaskDeleteButton"
-                Command="{x:Bind ViewModel.DeleteCommand}"
+                Click="DeleteTaskButton_ClickAsync"
                 Icon="{essential:FontIcon Glyph=&#xE74D;}" />
             <CommandBar.SecondaryCommands>
                 <AppBarButton
@@ -136,10 +268,15 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <!--  左侧筛选导航 / Left-side filter navigation  -->
-            <Border
-                Grid.Column="0"
-                Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
-                CornerRadius="8">
+            <Border Grid.Column="0" CornerRadius="8">
+                <Border.Background>
+                    <ouxm:AcrylicBrush
+                        FallbackColor="#2C2C2C"
+                        IsNoiseEnabled="False"
+                        TintColor="#2C2C2C"
+                        TintLuminosityOpacity="0.96"
+                        TintOpacity="0.15" />
+                </Border.Background>
                 <NavigationView
                     x:Name="FilterNavView"
                     essential:NavigationViewHelper.AcrylicWorkaround="True"
@@ -810,6 +947,11 @@
                         <DataTemplate x:DataType="vm:TaskViewModel">
                             <!--  We set HorizontalAlignment to Left here as we're not stretching our content with a star column  -->
                             <xtlw:DataRow HorizontalAlignment="Left" Loaded="TaskDataRow_Loaded">
+                                <xtlw:DataRow.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                    </Style>
+                                </xtlw:DataRow.Resources>
                                 <Grid ColumnSpacing="4">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto" />

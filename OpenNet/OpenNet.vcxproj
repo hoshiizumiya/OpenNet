@@ -31,6 +31,15 @@
     <!-- Self contained framework enables us to run in environments without deploying SDKs -->
     <!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
     <!-- <WindowsAppSdkUndockedRegFreeWinRTInitialize>true</WindowsAppSdkUndockedRegFreeWinRTInitialize> -->
+    <!-- Package configuration properties -->
+    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
+    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
+    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <AppxBundle>Never</AppxBundle>
+    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <ItemGroup Label="ProjectConfigurations">
@@ -93,7 +102,7 @@
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
-      <PreprocessorDefinitions>TORRENT_NO_DEPRECATE;TORRENT_LINKING_SHARED;NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>TORRENT_USE_ASSERTS;NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp23</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc11</LanguageStandard_C>
@@ -102,6 +111,7 @@
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdcpp23</LanguageStandard>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdc11</LanguageStandard_C>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalDependencies)</AdditionalDependencies>
@@ -114,17 +124,18 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
-      <PreprocessorDefinitions>TORRENT_NO_DEPRECATE;TORRENT_LINKING_SHARED;NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp23</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc11</LanguageStandard_C>
-      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreaded</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</FunctionLevelLinking>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdcpp23</LanguageStandard>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdc11</LanguageStandard_C>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</WholeProgramOptimization>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</WholeProgramOptimization>
+      <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -152,6 +163,8 @@
       <DependentUpon>Service\Notification\InfoBarOptions.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="Service\Notification\InfoBarService.cpp" />
+    <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.cpp" />
     <ClCompile Include="Service\Background\BackgroundMediaService.cpp" />
     <ClCompile Include="Service\Update\UpdateService.cpp" />
     <ClCompile Include="UI\Xaml\Behavior\Behavior.ixx" />
@@ -224,6 +237,7 @@
     <ClCompile Include="Core\RSS\RSSTypes.ixx" />
     <ClCompile Include="Core\Setting\SettingKeys.ixx" />
     <ClCompile Include="Core\TorrentSettings.ixx" />
+    <ClCompile Include="Core\Torrent\TorrentCreator.ixx" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.ixx" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataInfo.ixx" />
     <ClCompile Include="Core\Torrent\TrackerManager.ixx" />
@@ -273,6 +287,18 @@
       <DependentUpon>UI\Xaml\Control\Effect\TextMorphEffect.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.h">
+      <DependentUpon>UI\Xaml\Behavior\InfoBarDelayCloseBehavior.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Effect\AnimatedDigit.h">
+      <DependentUpon>UI\Xaml\Control\Effect\AnimatedDigit.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Effect\AnimatedNumber.h">
+      <DependentUpon>UI\Xaml\Control\Effect\AnimatedNumber.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Graph\LiveGraph.h">
       <DependentUpon>UI\Xaml\Control\Graph\LiveGraph.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -299,8 +325,11 @@
       <DependentUpon>Service\Notification\InfoBarOptions.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Service\Notification\InfoBarService.h" />
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.h" />
+    <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTagRegister.h" />
     <ClInclude Include="UI\Xaml\Control\InfoBarHelper.h">
-      <DependentUpon>UI\Xaml\Control\InfoBarHelper.cpp</DependentUpon>
+      <DependentUpon>UI\Xaml\Control\InfoBarHelper.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\IpEndpointInput.xaml.h">
@@ -312,7 +341,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\InfoBarTemplateSelector.h">
-      <DependentUpon>UI\Xaml\Control\InfoBarTemplateSelector.cpp</DependentUpon>
+      <DependentUpon>UI\Xaml\Control\InfoBarTemplateSelector.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Markup\UInt32Extension.h">
@@ -631,6 +660,11 @@
     <ClInclude Include="Web\WebView2\WebView2Version.h" />
     <ClInclude Include="Web\Request\Builder\GithubRequest.h" />
     <ClInclude Include="XamlWorkaround.h" />
+    <ClInclude Include="XamlGeneratedWorkaround.h" />
+    <ClInclude Include="winrt_module_imports.h" />
+    <ClInclude Include="WindowsPlatform.h" />
+    <ClInclude Include="LibtorrentIncludeGuard.h" />
+    <ClInclude Include="LibtorrentIncludeRestore.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -653,6 +687,7 @@
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\HeaderTile_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\HomePage\Header\AnimatedImage.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\AnimatedNumber_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\IpEndpointInput.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -826,6 +861,7 @@
     <ClCompile Include="Core\WebUI\WebUIHost.cpp" />
     <ClCompile Include="Core\torrentCore\TorrentMetadataFetcher.cpp" />
     <ClCompile Include="Core\Torrent\TrackerManager.cpp" />
+    <ClCompile Include="Core\Torrent\TorrentCreator.cpp" />
     <ClCompile Include="Core\Utils\Misc.cpp" />
     <ClCompile Include="Core\Utils\Message.cpp" />
     <ClCompile Include="Models\NameCultureInfoValue.cpp">
@@ -860,6 +896,15 @@
     <ClCompile Include="UI\Xaml\Control\Effect\TextMorphEffect.cpp">
       <DependentUpon>UI\Xaml\Control\Effect\TextMorphEffect.idl</DependentUpon>
       <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Effect\AnimatedDigit.cpp">
+      <DependentUpon>UI\Xaml\Control\Effect\AnimatedDigit.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.cpp">
+      <DependentUpon>UI\Xaml\Behavior\InfoBarDelayCloseBehavior.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Effect\AnimatedNumber.cpp">
+      <DependentUpon>UI\Xaml\Control\Effect\AnimatedNumber.idl</DependentUpon>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
       <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
@@ -1182,6 +1227,9 @@
     </Midl>
     <Midl Include="UI\Xaml\Control\CheckUpdateControl.idl" />
     <Midl Include="UI\Xaml\Control\Effect\TextMorphEffect.idl" />
+    <Midl Include="UI\Xaml\Control\Effect\AnimatedDigit.idl" />
+    <Midl Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.idl" />
+    <Midl Include="UI\Xaml\Control\Effect\AnimatedNumber.idl" />
     <Midl Include="UI\Xaml\Control\Graph\LiveGraph.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -1468,18 +1516,18 @@
       <TargetPath>WebUI\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
       <Link>WebUI\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</Link>
     </None>
-	<None Include="ThirdParty\VueTorrentWebUI\upstream\public\**\*">
-	  <DeploymentContent>true</DeploymentContent>
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  <TargetPath>WebUI\VueTorrent\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
-	  <Link>WebUI\VueTorrent\%(RecursiveDir)%(Filename)%(Extension)</Link>
-	</None>
-	<None Include="ThirdParty\VueTorrentWebUI\overrides\**\*">
-	  <DeploymentContent>true</DeploymentContent>
-	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-	  <TargetPath>WebUI\VueTorrent\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
-	  <Link>WebUI\VueTorrent\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</Link>
-	</None>
+    <None Include="ThirdParty\VueTorrentWebUI\upstream\public\**\*">
+      <DeploymentContent>true</DeploymentContent>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>WebUI\VueTorrent\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      <Link>WebUI\VueTorrent\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
+    <None Include="ThirdParty\VueTorrentWebUI\overrides\**\*">
+      <DeploymentContent>true</DeploymentContent>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>WebUI\VueTorrent\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+      <Link>WebUI\VueTorrent\opennet-overrides\%(RecursiveDir)%(Filename)%(Extension)</Link>
+    </None>
     <Image Include="Assets\AppIcons\BadgeLogo.scale-100.png" />
     <Image Include="Assets\AppIcons\BadgeLogo.scale-125.png" />
     <Image Include="Assets\AppIcons\BadgeLogo.scale-150.png" />
@@ -1650,15 +1698,6 @@
   </PropertyGroup>
   <PropertyGroup Label="Vcpkg">
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
-    <GenerateAppInstallerFile>True</GenerateAppInstallerFile>
-    <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
-    <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
-    <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
-    <AppxBundle>Never</AppxBundle>
-    <AppInstallerUri>\\NoneForNow</AppInstallerUri>
-    <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
     <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-custom</VcpkgTriplet>
     <VcpkgTriplet Condition="'$(Platform)'=='ARM64'">arm64-windows-custom</VcpkgTriplet>
   </PropertyGroup>
@@ -1668,8 +1707,8 @@
     <ItemGroup>
       <ClCompile Update="@(ClCompile)" Condition="'%(Filename)' == 'XamlTypeInfo.g' or '%(Filename)' == 'XamlTypeInfo.Impl.g' or '%(Filename)' == 'XamlMetaDataProvider' or '%(Filename)' == 'XamlLibMetadataProvider.g'">
         <PrecompiledHeader>NotUsing</PrecompiledHeader>
-        <!--Note that windows.h is placed before XamlWorkaround.h here, because the WinMain entry point generated by the XamlCompiler depends on windows.h.-->
-        <ForcedIncludeFiles>windows.h;$(MSBuildProjectDirectory)\XamlWorkaround.h</ForcedIncludeFiles>
+        <!-- windows.h must precede the generated-code workaround because the XamlCompiler WinMain depends on it. -->
+        <ForcedIncludeFiles>windows.h;$(MSBuildProjectDirectory)\XamlGeneratedWorkaround.h</ForcedIncludeFiles>
       </ClCompile>
     </ItemGroup>
   </Target>

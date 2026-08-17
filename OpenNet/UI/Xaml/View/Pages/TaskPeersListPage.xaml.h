@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import OpenNet.ViewModels.ObservableMixin;
+import OpenNet.Core.torrentCore.LibtorrentHandle;
 import winrt.XamlToolkit.Labs.WinUI;
 import winrt.XamlToolkit.WinUI.Animations;
 import winrt.XamlToolkit.WinUI.Behaviors;
@@ -61,12 +62,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_lastActivePeers;
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_disconnectingPeers;
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_banIpPeers;
+		std::unordered_set<std::string> m_cachedBannedPeerAddresses;
 		std::string m_flagSprite;
 		std::unordered_map<std::string, winrt::hstring> m_flagSvgCache;
 		winrt::hstring m_sortColumn;
 		int m_sortDirection{};
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 		bool m_rowLayoutSynchronizationQueued{};
+		std::atomic_bool m_refreshInFlight{};
+		std::atomic_bool m_forcePeerRefresh{ true };
+		std::atomic_uint64_t m_refreshGeneration{};
+		std::size_t m_lastPeerSnapshotHash{};
+		bool m_hasPeerSnapshot{};
+		std::chrono::steady_clock::time_point m_lastAuxiliaryRefresh{};
+		std::chrono::milliseconds m_configuredRefreshInterval{ 1000 };
 
 		// Track last known task id to detect task change
 		std::string m_lastTaskId;
@@ -74,7 +83,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void Unsubscribe();
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
 										winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
-		void RefreshPeerList();
+		winrt::fire_and_forget RefreshPeerList();
+		void ApplyPeerSnapshot(
+			std::string const& taskId,
+			std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo> peers,
+			bool forceRefresh);
 		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender,
 								winrt::Windows::Foundation::IInspectable const& args);
 		void BanSelectedPeer(std::int64_t durationSeconds);

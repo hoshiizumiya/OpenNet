@@ -17,6 +17,7 @@ namespace OpenNet.ViewModels
         Paused = 3,
         Completed = 4,
         Failed = 5,
+        Checking = 6,
     };
 
     [default_interface]

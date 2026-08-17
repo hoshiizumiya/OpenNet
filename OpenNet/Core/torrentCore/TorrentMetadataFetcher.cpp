@@ -1,5 +1,7 @@
 ﻿module;
 
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_handle.hpp>
@@ -9,6 +11,9 @@
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/torrent_status.hpp>
 #include <libtorrent/create_torrent.hpp>
+#include <libtorrent/load_torrent.hpp>
+#include <libtorrent/write_resume_data.hpp>
+#include "LibtorrentIncludeRestore.h"
 
 module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 
@@ -20,6 +25,31 @@ using namespace std::chrono_literals;
 
 namespace OpenNet::Core::Torrent
 {
+    struct TorrentMetadataFetcher::Impl
+    {
+        std::unique_ptr<lt::session> ownedSession;
+        lt::torrent_handle handle;
+        std::mutex mutex;
+        std::atomic<bool> isFetching{ false };
+        std::atomic<bool> cancelled{ false };
+        std::atomic<bool> metadataReceived{ false };
+        std::atomic<bool> metadataFailed{ false };
+        MetadataProgressCallback progressCallback;
+        std::optional<TorrentMetadataInfo> result;
+        std::string errorMessage;
+    };
+
+#define m_ownedSession m_impl->ownedSession
+#define m_handle m_impl->handle
+#define m_mutex m_impl->mutex
+#define m_isFetching m_impl->isFetching
+#define m_cancelled m_impl->cancelled
+#define m_metadataReceived m_impl->metadataReceived
+#define m_metadataFailed m_impl->metadataFailed
+#define m_progressCallback m_impl->progressCallback
+#define m_result m_impl->result
+#define m_errorMessage m_impl->errorMessage
+
     // Helper function to convert info_hash to hex string
     static std::string InfoHashToHex(lt::info_hash_t const& ih)
     {
@@ -32,21 +62,22 @@ namespace OpenNet::Core::Torrent
     {
         try
         {
-            auto info = handle.torrent_file();
-            if (!info || !info->is_valid())
+            auto params = handle.get_resume_data(
+                lt::torrent_handle::save_info_dict);
+            if (!params.ti || !params.ti->is_valid())
             {
                 return;
             }
 
-            lt::create_torrent torrent(*info);
-            auto bytes = torrent.generate_buf();
+            auto bytes = lt::write_torrent_file_buf(
+                params, lt::write_flags::allow_missing_piece_layer);
             auto directory = std::filesystem::path(
                 winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW())
                 / L"Torrents";
             std::filesystem::create_directories(directory);
 
             std::wstring stem = winrt::to_hstring(
-                InfoHashToHex(info->info_hashes())).c_str();
+                InfoHashToHex(params.ti->info_hashes())).c_str();
             for (auto& ch : stem)
             {
                 if (ch == L'<' || ch == L'>' || ch == L':' || ch == L'"'
@@ -71,13 +102,12 @@ namespace OpenNet::Core::Torrent
     }
 
     TorrentMetadataFetcher::TorrentMetadataFetcher()
-    {
-    }
+        : m_impl(std::make_unique<Impl>()) {}
 
     TorrentMetadataFetcher::~TorrentMetadataFetcher()
     {
         Cancel();
-        if (auto session = Session())
+        if (auto session = m_ownedSession.get())
         {
             try
             {
@@ -91,24 +121,9 @@ namespace OpenNet::Core::Torrent
         }
     }
 
-    lt::session* TorrentMetadataFetcher::Session() const noexcept
-    {
-        return m_sharedSession ? m_sharedSession : m_ownedSession.get();
-    }
-
-    void TorrentMetadataFetcher::UseSharedSession(lt::session* session)
-    {
-        if (m_isFetching.load())
-        {
-            return;
-        }
-        m_ownedSession.reset();
-        m_sharedSession = session;
-    }
-
     bool TorrentMetadataFetcher::InitializeSession()
     {
-        if (Session()) return true;
+        if (m_ownedSession) return true;
 
         try
         {
@@ -233,7 +248,7 @@ namespace OpenNet::Core::Torrent
             atp.flags &= ~lt::torrent_flags::paused;
 
             // Add torrent
-            auto session = Session();
+            auto session = m_ownedSession.get();
             if (!session)
             {
                 throw std::runtime_error("Torrent session is unavailable");
@@ -349,10 +364,15 @@ namespace OpenNet::Core::Torrent
         return m_result;
     }
 
+    bool TorrentMetadataFetcher::IsFetching() const noexcept
+    {
+        return m_isFetching.load();
+    }
+
     void TorrentMetadataFetcher::ProcessAlerts()
     {
-        auto session = Session();
-        if (!session || m_sharedSession) return;
+        auto session = m_ownedSession.get();
+        if (!session) return;
 
         std::vector<lt::alert*> alerts;
         session->pop_alerts(&alerts);
@@ -380,7 +400,9 @@ namespace OpenNet::Core::Torrent
         }
     }
 
-    TorrentMetadataInfo TorrentMetadataFetcher::ExtractMetadata(lt::torrent_handle const& handle)
+    template<typename TTorrentHandle>
+    TorrentMetadataInfo TorrentMetadataFetcher::ExtractMetadata(
+        TTorrentHandle const& handle)
     {
         TorrentMetadataInfo info;
 
@@ -390,7 +412,9 @@ namespace OpenNet::Core::Torrent
         try
         {
             auto status = handle.status();
-            auto ti = handle.torrent_file();
+            auto params = handle.get_resume_data(
+                lt::torrent_handle::save_info_dict);
+            auto ti = params.ti;
 
             if (!ti)
                 return info;
@@ -401,15 +425,15 @@ namespace OpenNet::Core::Torrent
             info.pieceLength = static_cast<int>(ti->piece_length());
             info.numPieces = ti->num_pieces();
             info.isPrivate = ti->priv();
-            info.comment = ti->comment();
-            info.creator = ti->creator();
-            info.creationDate = static_cast<int64_t>(ti->creation_date());
+            info.comment = params.comment;
+            info.creator = params.created_by;
+            info.creationDate = static_cast<int64_t>(params.creation_date);
 
             // Info hash
             info.infoHash = InfoHashToHex(ti->info_hashes());
 
             // Files
-            auto const& fs = ti->files();
+            auto const& fs = ti->layout();
             for (lt::file_index_t i{ 0 }; i < fs.end_file(); ++i)
             {
                 TorrentFileInfo fileInfo;
@@ -458,25 +482,28 @@ namespace OpenNet::Core::Torrent
     {
         try
         {
-            lt::torrent_info ti(filePath);
+            auto params = lt::load_torrent_file(filePath);
+            auto const ti = params.ti;
+            if (!ti || !ti->is_valid())
+                return std::nullopt;
             TorrentMetadataInfo info;
 
             // Basic info
-            info.name = ti.name();
-            info.totalSize = ti.total_size();
-            info.pieceLength = static_cast<int>(ti.piece_length());
-            info.numPieces = ti.num_pieces();
-            info.isPrivate = ti.priv();
-            info.comment = ti.comment();
-            info.creator = ti.creator();
-            info.creationDate = static_cast<int64_t>(ti.creation_date());
+            info.name = ti->name();
+            info.totalSize = ti->total_size();
+            info.pieceLength = static_cast<int>(ti->piece_length());
+            info.numPieces = ti->num_pieces();
+            info.isPrivate = ti->priv();
+            info.comment = params.comment;
+            info.creator = params.created_by;
+            info.creationDate = static_cast<int64_t>(params.creation_date);
 
             // Info hash
             // Info hash
-            info.infoHash = InfoHashToHex(ti.info_hashes());
+            info.infoHash = InfoHashToHex(ti->info_hashes());
 
             // Files
-            auto const& fs = ti.files();
+            auto const& fs = ti->layout();
             for (lt::file_index_t i{ 0 }; i < fs.end_file(); ++i)
             {
                 TorrentFileInfo fileInfo;
@@ -489,17 +516,15 @@ namespace OpenNet::Core::Torrent
             }
 
             // Trackers
-            auto const& trackerTiers = ti.trackers();
-            for (auto const& tracker : trackerTiers)
+            for (auto const& tracker : params.trackers)
             {
-                info.trackers.push_back(tracker.url);
+                info.trackers.push_back(tracker);
             }
 
             // Web seeds
-            auto const& seeds = ti.web_seeds();
-            for (auto const& seed : seeds)
+            for (auto const& seed : params.url_seeds)
             {
-                info.webSeeds.push_back(seed.url);
+                info.webSeeds.push_back(seed);
             }
 
             return info;

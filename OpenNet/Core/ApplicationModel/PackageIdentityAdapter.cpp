@@ -2,6 +2,7 @@
 
 #include <windows.h>
 #include <PathCch.h>
+#include <WindowsAppSDK-VersionInfo.h>
 // Link with Version.lib for GetFileVersionInfo* and VerQueryValue
 #pragma comment(lib, "Version.lib")
 #pragma comment(lib, "Pathcch.lib")
@@ -87,6 +88,22 @@ namespace OpenNet::Core::ApplicationModel
 		});
 
 		return version;
+	}
+
+	winrt::hstring PackageIdentityAdapter::GetWindowsAppSdkReleaseVersion()
+	{
+		return winrt::hstring{ std::format(
+			L"{}.{}.{}.{}-{}",
+			WINDOWSAPPSDK_RELEASE_MAJOR,
+			WINDOWSAPPSDK_RELEASE_MINOR,
+			WINDOWSAPPSDK_RELEASE_PATCH,
+			WINDOWSAPPSDK_RELEASE_MAJORMINOR,
+			WINDOWSAPPSDK_RELEASE_CHANNEL_W) };
+	}
+
+	winrt::hstring PackageIdentityAdapter::GetWindowsAppSdkRuntimeVersion()
+	{
+		return WINDOWSAPPSDK_RUNTIME_VERSION_DOTQUADSTRING_W;
 	}
 
 	std::wstring PackageIdentityAdapter::GetAppDirectory()

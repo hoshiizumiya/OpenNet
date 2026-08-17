@@ -174,6 +174,16 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		double HistoryBufferScreens();
 		void HistoryBufferScreens(double value);
 
+		bool IsAutoScaleEnabled() const;
+		void IsAutoScaleEnabled(bool value);
+		bool IsSeriesGridEnabled() const;
+		void IsSeriesGridEnabled(bool value);
+		double ValueMaximum() const;
+		void ValueMaximum(double value);
+		double MinimumValueMaximum() const;
+		void MinimumValueMaximum(double value);
+		double CurrentValueMaximum() const;
+
 		winrt::Windows::Foundation::IInspectable HighlightLineContent();
 		void HighlightLineContent(winrt::Windows::Foundation::IInspectable const& value);
 
@@ -234,11 +244,17 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			L"ms-appx:///UI/Xaml/Control/Graph/LiveGraph_ResourceDictionary.xaml";
 
 	private:
+		struct UserPoint
+		{
+			float X{};
+			float Value{};
+		};
+
 		struct UserPolygon
 		{
-			std::vector<winrt::Windows::Foundation::Numerics::float2> Points;
+			std::vector<UserPoint> Points;
 			float OffsetX{};
-			float CurrentY{};
+			float CurrentValue{};
 			std::uint64_t Revision{};
 			winrt::hstring Key;
 			bool IsRounded{};
@@ -309,13 +325,19 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			winrt::Microsoft::Graphics::Canvas::CanvasDrawingSession const& drawingSession,
 			float width,
 			float height);
+		void DrawSeriesGrid(
+			winrt::Microsoft::Graphics::Canvas::CanvasDrawingSession const& drawingSession,
+			float width,
+			float height);
 		void DrawBackground(
 			winrt::Microsoft::Graphics::Canvas::CanvasDrawingSession const& drawingSession,
 			float width,
 			float height);
 		void UpdatePolygonsOffset(float scrollDelta, float canvasWidth);
+		void UpdateValueScale(float canvasWidth);
+		float ValueToY(float value, float height) const;
+		static double NiceValueMaximum(double value);
 
-		static float NormalizeY(float percent, float height);
 		static float CalculateSpeed(
 			float distance,
 			winrt::Windows::Foundation::TimeSpan const& time);
@@ -355,7 +377,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		std::unordered_map<
 			winrt::hstring,
 			OpenNet::UI::Xaml::Control::Graph::GraphBrushData> m_polygonBrushes;
-		std::mutex m_graphMutex;
+		mutable std::mutex m_graphMutex;
 
 		winrt::Windows::UI::Color m_drawColor{};
 		winrt::Windows::UI::Color m_clearColor{};
@@ -364,6 +386,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		float m_crossSpacing{ 30.0f };
 		float m_dotSpacing{ 6.0f };
 		float m_historyBufferScreens{ 1.0f };
+		bool m_isAutoScaleEnabled{};
+		bool m_isSeriesGridEnabled{};
+		double m_valueMaximum{ 100.0 };
+		double m_minimumValueMaximum{ 1.0 };
+		double m_currentValueMaximum{ 100.0 };
+		std::optional<std::chrono::steady_clock::time_point> m_lowScaleSince;
 		std::optional<float> m_currentLineY;
 		std::uint64_t m_lastHighlightedRevision{};
 		winrt::Windows::Foundation::TimeSpan m_highlightLineAnimationDuration{

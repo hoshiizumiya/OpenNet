@@ -77,6 +77,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		tab->WebView.VerticalAlignment(VerticalAlignment::Stretch);
 		tab->WebView.MinWidth(1);
 		tab->WebView.MinHeight(1);
+		tab->WebView.Loaded([weak = get_weak(), id = tab->Id](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				if (auto loadedTab = self->FindTab(id))
+				{
+					self->InitializeWebViewAsync(std::move(loadedTab));
+				}
+			}
+		});
 
 		tab->Item = TabViewItem{};
 		tab->Item.Tag(box_value(tab->Id));
@@ -89,13 +99,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		tab->Item.Content(tab->WebView);
 		m_tabs.emplace_back(tab);
 
-		// Add and select synchronously. AddNewTab is always called by a XAML/WebView
-		// event on this Window's UI thread; queueing this work allowed BrowserHost's
-		// Loaded event to race ahead and initialize a WebView that was not yet in the
-		// visual tree.
-		BrowserTabView().TabItems().Append(tab->Item);
-		BrowserTabView().SelectedItem(tab->Item);
-		if (m_browserHostLoaded) InitializeWebViewAsync(std::move(tab));
+		// Queue the insertion through TabView's dispatcher. The selected content is
+		// realized on the following layout pass; the WebView.Loaded handler above is
+		// the authoritative point at which CoreWebView2 may be created.
+		auto weak = get_weak();
+		auto item = tab->Item;
+		if (!BrowserTabView().DispatcherQueue().TryEnqueue(
+			[weak, item]()
+			{
+				if (auto self = weak.get())
+				{
+					self->BrowserTabView().TabItems().Append(item);
+					self->BrowserTabView().SelectedItem(item);
+				}
+			}))
+		{
+			BrowserTabView().TabItems().Append(item);
+			BrowserTabView().SelectedItem(item);
+		}
 	}
 
 	void RSSBrowserWindow::BrowserHost_Loaded(IInspectable const&, RoutedEventArgs const&)
@@ -104,9 +125,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		SynchronizeBrowserViewport({
 			static_cast<float>(BrowserHost().ActualWidth()),
 			static_cast<float>(BrowserHost().ActualHeight()) });
-		// TabView only realizes the selected content presenter. Initializing hidden
-		// tabs here can create a controller with a zero-sized/unattached visual.
-		if (auto tab = CurrentTab()) InitializeWebViewAsync(std::move(tab));
+		// The selected WebView's Loaded event starts initialization after TabView has
+		// realized its content presenter.
 	}
 
 	void RSSBrowserWindow::BrowserHost_SizeChanged(
@@ -121,19 +141,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (size.Width <= 0 || size.Height <= 0) return;
 		BrowserTabView().Width(size.Width);
 		BrowserTabView().Height(size.Height);
-		// Explicitly resize each WebView as well. This mirrors the Docs Gallery
-		// workaround and also updates inactive tabs before they are selected.
-		for (auto const& tab : m_tabs)
-		{
-			if (!tab || !tab->WebView) continue;
-			tab->WebView.Width(size.Width);
-			tab->WebView.Height(std::max(1.0f, size.Height - 48.0f));
-		}
 	}
 
 	winrt::fire_and_forget RSSBrowserWindow::InitializeWebViewAsync(std::shared_ptr<RSSBrowserTab> tab)
 	{
-		if (!tab || tab->InitializationStarted) co_return;
+		if (!tab || tab->InitializationStarted || !tab->WebView.IsLoaded()) co_return;
 		tab->InitializationStarted = true;
 		auto lifetime = get_strong();
 		try
@@ -305,7 +317,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			SynchronizeBrowserViewport({
 				static_cast<float>(BrowserHost().ActualWidth()),
 				static_cast<float>(BrowserHost().ActualHeight()) });
-			if (auto tab = CurrentTab()) InitializeWebViewAsync(std::move(tab));
+			if (auto tab = CurrentTab(); tab && tab->WebView.IsLoaded())
+			{
+				InitializeWebViewAsync(std::move(tab));
+			}
 		}
 		UpdateNavigationState();
 	}

@@ -292,13 +292,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 
 		if (auto core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
 		{
-			auto pack = core->GetSettings();
-			pack.set_int(
-				download
-				? libtorrent::settings_pack::download_rate_limit
-				: libtorrent::settings_pack::upload_rate_limit,
-				bytesPerSecond);
-			core->ApplySettings(pack);
+			core->ReloadSettings();
 		}
 		UpdateTransferLimitChecks(
 			settings.downloadRateLimit,

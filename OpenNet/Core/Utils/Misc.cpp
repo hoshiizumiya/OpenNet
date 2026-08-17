@@ -28,10 +28,14 @@
 module;
 
 #include <iomanip>
+#include <WinSock2.h>
 #include <windows.h>
 
 #include <boost/version.hpp>
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/version.hpp>
+#include "LibtorrentIncludeRestore.h"
 #include <openssl/crypto.h>
 #include <openssl/opensslv.h>
 #include <zlib.h>

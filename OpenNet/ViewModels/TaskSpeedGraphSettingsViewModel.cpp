@@ -349,6 +349,22 @@ namespace winrt::OpenNet::ViewModels::implementation
 				.value_or(DefaultScrollDuration));
 		SampleIntervalMilliseconds(
 			database.GetDouble(SettingsCategory, "sample_interval").value_or(DefaultSampleInterval));
+		if (database.GetInt(SettingsCategory, "timeline_defaults_version").value_or(0) < 1
+			&& m_horizontalScrollDistance == 6.0
+			&& m_horizontalScrollDurationMilliseconds == 100.0
+			&& m_sampleIntervalMilliseconds == 100.0)
+		{
+			HorizontalScrollDistance(DefaultScrollDistance);
+			HorizontalScrollDurationMilliseconds(DefaultScrollDuration);
+			SampleIntervalMilliseconds(DefaultSampleInterval);
+			database.SetDouble(SettingsCategory,
+				"scroll_distance", m_horizontalScrollDistance);
+			database.SetDouble(SettingsCategory,
+				"scroll_duration", m_horizontalScrollDurationMilliseconds);
+			database.SetDouble(SettingsCategory,
+				"sample_interval", m_sampleIntervalMilliseconds);
+			database.SetInt(SettingsCategory, "timeline_defaults_version", 1);
+		}
 		SmoothCurves(
 			database.GetBool(SettingsCategory, "smooth_curves").value_or(DefaultSmoothCurves));
 		HighlightEnabled(
@@ -401,6 +417,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			"scroll_duration",
 			m_horizontalScrollDurationMilliseconds);
 		database.SetDouble(SettingsCategory, "sample_interval", m_sampleIntervalMilliseconds);
+		database.SetInt(SettingsCategory, "timeline_defaults_version", 1);
 		database.SetBool(SettingsCategory, "smooth_curves", m_smoothCurves);
 		database.SetBool(SettingsCategory, "highlight_enabled", m_highlightEnabled);
 		database.SetInt(SettingsCategory, "highlight_behavior", m_highlightBehaviorIndex);

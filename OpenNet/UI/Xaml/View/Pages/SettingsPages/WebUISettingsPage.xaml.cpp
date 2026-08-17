@@ -1,5 +1,6 @@
 ﻿#include "XamlWorkaround.h"
 #include "WebUISettingsPage.xaml.h"
+#include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/WebUISettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/WebUISettingsPage.g.cpp"
 #endif
@@ -21,6 +22,8 @@ using namespace winrt::Windows::ApplicationModel::DataTransfer;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	static SettingsPageTagRegister<WebUISettingsPage> s_tags{
+		L"webui", L"SettingsWebUISearchTags" };
 	namespace
 	{
 		constexpr std::string_view Category = "webui_host";

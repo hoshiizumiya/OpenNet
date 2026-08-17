@@ -290,7 +290,7 @@
                         Maximum="65535"
                         Minimum="1"
                         PlaceholderText="Port"
-                        SpinButtonPlacementMode="Compact"
+                        SpinButtonPlacementMode="Inline"
                         Value="6881" />
                     <Button
                         x:Name="TestPortButton"

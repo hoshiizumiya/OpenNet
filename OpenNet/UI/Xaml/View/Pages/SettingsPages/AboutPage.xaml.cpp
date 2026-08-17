@@ -1,9 +1,8 @@
 ﻿#include <windows.h>
-#include <WindowsAppSDK-VersionInfo.h>
-#include "Web/Request/Builder/GithubRequest.h"
-
 #include "XamlWorkaround.h"
+#include "Web/Request/Builder/GithubRequest.h"
 #include "AboutPage.xaml.h"
+#include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/AboutPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/AboutPage.g.cpp"
 #endif
@@ -23,6 +22,8 @@ using namespace ::mvvm;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	static SettingsPageTagRegister<AboutPage> s_tags{
+		L"about", L"SettingsAboutSearchTags" };
 	AboutPage::AboutPage()
 	{
 		loadRepoInfos();
@@ -45,19 +46,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	winrt::hstring AboutPage::WASDKReleaseVersion()
 	{
-		return winrt::hstring{ std::format(
-			L"{}.{}.{}.{}-{}",
-			WINDOWSAPPSDK_RELEASE_MAJOR,
-			WINDOWSAPPSDK_RELEASE_MINOR,
-			WINDOWSAPPSDK_RELEASE_PATCH,
-			WINDOWSAPPSDK_RELEASE_MAJORMINOR,
-			WINDOWSAPPSDK_RELEASE_CHANNEL_W
-		) };
+		return ::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetWindowsAppSdkReleaseVersion();
 	}
 
 	winrt::hstring AboutPage::WASDKRuntimeVersion()
 	{
-		return WINDOWSAPPSDK_RUNTIME_VERSION_DOTQUADSTRING_W;
+		return ::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetWindowsAppSdkRuntimeVersion();
 	}
 
 	winrt::hstring AboutPage::FormatVersion(

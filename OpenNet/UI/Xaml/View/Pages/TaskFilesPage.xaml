@@ -12,6 +12,12 @@
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
+    <Page.Resources>
+        <ContentDialog x:Name="RenameFileDialog" DefaultButton="Primary">
+            <TextBox x:Name="RenameFileTextBox" />
+        </ContentDialog>
+    </Page.Resources>
+
     <Grid Padding="0,8,0,0">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -186,6 +192,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:FileDisplayItem">
                     <labs:DataRow HorizontalAlignment="Left" Loaded="FileDataRow_Loaded">
+                        <labs:DataRow.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </labs:DataRow.Resources>
                         <TextBlock Text="{x:Bind Path, Mode=OneWay}" TextTrimming="CharacterEllipsis">
                             <ToolTipService.ToolTip>
                                 <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Path, Mode=OneWay}" />

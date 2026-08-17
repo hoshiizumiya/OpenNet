@@ -21,7 +21,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_peers = L"-";
 		// Initialize the speed graph data with a valid PointCollection
 		// WinRT PointCollection defaults to nullptr; must be explicitly created
-		m_speedGraphData.Points(); // Force initialization
+		(void)m_speedGraphData.Points(); // Force initialization
 	}
 
 	winrt::Microsoft::UI::Xaml::Media::PointCollection TaskViewModel::SpeedGraphPoints()
@@ -33,8 +33,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		try
 		{
-			m_speedGraphData.SetSpeed(percent, speedKB * 1024);  // Convert KB to bytes for internal representation
-			RaisePropertyChanged(L"SpeedGraphPoints");
+			auto& points = m_speedGraphData.Points();
+			auto const pointCount = points.Size();
+			(void)m_speedGraphData.SetSpeed(
+				percent, speedKB * 1024);  // Convert KB to bytes for internal representation
+			if (points.Size() != pointCount)
+			{
+				RaisePropertyChanged(L"SpeedGraphPoints");
+			}
 
 			// Persist at each 1% boundary
 			int intPercent = static_cast<int>(percent);

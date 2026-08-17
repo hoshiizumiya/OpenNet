@@ -1,10 +1,6 @@
-﻿module;
+﻿export module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 
-#include <libtorrent/fwd.hpp>
-#include <libtorrent/torrent_handle.hpp>
-
-export module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
-
+import std;
 import OpenNet.Core.torrentCore.TorrentMetadataInfo;
 import winrt.Windows.Foundation;
 
@@ -34,15 +30,11 @@ export namespace OpenNet::Core::Torrent
         // Set progress callback
         void SetProgressCallback(MetadataProgressCallback callback);
 
-        // Reuse the application's long-lived libtorrent session. This avoids a
-        // cold DHT table for every metadata preview window.
-        void UseSharedSession(libtorrent::session* session);
-
         // Cancel ongoing fetch operation
         void Cancel();
 
         // Check if currently fetching
-        bool IsFetching() const { return m_isFetching.load(); }
+        bool IsFetching() const noexcept;
 
         // Get the result after fetch completes (use after FetchMetadataAsync)
         std::optional<TorrentMetadataInfo> GetResult() const;
@@ -60,25 +52,13 @@ export namespace OpenNet::Core::Torrent
         bool InitializeSession();
 
         // Extract metadata from torrent handle
-        TorrentMetadataInfo ExtractMetadata(libtorrent::torrent_handle const& handle);
+        TorrentMetadataInfo ExtractMetadata(auto const& handle);
 
         // Alert processing
         void ProcessAlerts();
 
-        libtorrent::session* Session() const noexcept;
-        std::unique_ptr<libtorrent::session> m_ownedSession;
-        libtorrent::session* m_sharedSession{ nullptr };
-        libtorrent::torrent_handle m_handle;
-
-        std::mutex m_mutex;
-        std::atomic<bool> m_isFetching{ false };
-        std::atomic<bool> m_cancelled{ false };
-        std::atomic<bool> m_metadataReceived{ false };
-        std::atomic<bool> m_metadataFailed{ false };
-
-        MetadataProgressCallback m_progressCallback;
-        std::optional<TorrentMetadataInfo> m_result;
-        std::string m_errorMessage;
+        struct Impl;
+        std::unique_ptr<Impl> m_impl;
     };
 
 } // namespace OpenNet::Core::Torrent

@@ -19,6 +19,7 @@
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
+#include "Service/Notification/InfoBarService.h"
 
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
@@ -28,6 +29,7 @@ import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.torrentCore.TorrentStateManager;
+import OpenNet.Core.Torrent.TorrentCreator;
 import OpenNet.Extension.DependencyObjectExtensions;
 import OpenNet.Factory.Window;
 import OpenNet.Helpers.ColumnWidthHelper;
@@ -322,6 +324,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Subscribe to AddTaskRequested event (currently not used, but kept for compatibility)
 		m_addTaskToken = m_viewModel.AddTaskRequested({ this, &TasksPage::OnAddTaskRequested });
+		m_taskDeletionFailedToken = m_viewModel.TaskDeletionFailed(
+			{ this, &TasksPage::OnTaskDeletionFailed });
 
 		Unloaded([this](IInspectable const&, RoutedEventArgs const&)
 		{
@@ -334,6 +338,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (m_viewModel && m_addTaskToken.value)
 		{
 			m_viewModel.AddTaskRequested(m_addTaskToken);
+		}
+		if (m_viewModel && m_taskDeletionFailedToken.value)
+		{
+			m_viewModel.TaskDeletionFailed(m_taskDeletionFailedToken);
 		}
 		if (m_viewModel && m_filteredTasksChangedToken.value)
 		{
@@ -578,24 +586,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto files = co_await picker.PickMultipleFilesAsync();
 			if (files.Size() > 1)
 			{
-				ContentDialog multiFileCheckDialog = ContentDialog();
+				auto multiFileCheckDialog = MultipleTorrentFilesDialog();
 				multiFileCheckDialog.XamlRoot(control.XamlRoot());
-				multiFileCheckDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 				multiFileCheckDialog.RequestedTheme(control.ActualTheme());
-
-				Microsoft::Windows::ApplicationModel::Resources::ResourceLoader resourceLoader = Microsoft::Windows::ApplicationModel::Resources::ResourceLoader();
-				// resourceLoader.GetString(L"MultipleFilesSelectedMessage");
 				multiFileCheckDialog.Title(box_value(ResourceGetString(L"ViewTasksPageMultipleFilesSelectedTitle")));
-				multiFileCheckDialog.Content(box_value(ResourceGetString(L"ViewTasksPageMultipleFilesSelectedPrompt")));
+				MultipleTorrentFilesPromptText().Text(
+					ResourceGetString(L"ViewTasksPageMultipleFilesSelectedPrompt"));
 
 				multiFileCheckDialog.PrimaryButtonText(ResourceGetString(L"ViewTasksPageCheckInNewWindows"));
-				auto btnStyle = Microsoft::UI::Xaml::Style(xaml_typename<Button>());
-				auto baseStyle = Microsoft::UI::Xaml::Application::Current().Resources().Lookup(box_value(L"DefaultButtonStyle")).as<winrt::Microsoft::UI::Xaml::Style>();
-
-				btnStyle.BasedOn(baseStyle);
-				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::WidthProperty(), box_value(800.0)));
-				// btnStyle.Setters().Append(Setter(Microsoft::UI::Xaml::FrameworkElement::MaxWidthProperty(), box_value(1800.0)));
-				multiFileCheckDialog.PrimaryButtonStyle(btnStyle);
 				multiFileCheckDialog.SecondaryButtonText(ResourceGetString(L"ViewTasksPageAddToList"));
 				multiFileCheckDialog.DefaultButton(ContentDialogButton::Primary);
 				multiFileCheckDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
@@ -675,12 +673,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 						}
 						else
 						{
-							// Show error: aria2 not available
-							ContentDialog errorDialog;
+							auto errorDialog = HttpDownloadUnavailableDialog();
 							errorDialog.XamlRoot(this->XamlRoot());
-							errorDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 							errorDialog.Title(box_value(ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableTitle")));
-							errorDialog.Content(box_value(ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableMessage")));
+							HttpDownloadUnavailableText().Text(
+								ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableMessage"));
 							errorDialog.CloseButtonText(ResourceGetString(L"CommonOk"));
 							co_await errorDialog.ShowAsync();
 						}
@@ -1239,7 +1236,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		StartTaskMenuItem().IsEnabled(hasSelection && !isActive);
 		StopTaskMenuItem().IsEnabled(hasSelection && isActive);
 		PreviewTaskMenuItem().IsEnabled(isBitTorrent && hasPreview);
-		UpdateTrackerMenuItem().IsEnabled(isBitTorrent && detail.has_value());
+		UpdateTrackerMenuItem().IsEnabled(
+			isBitTorrent && detail.has_value() && isActive);
 		SuperSeedModeMenuItem().IsEnabled(
 			isBitTorrent && detail.has_value() && task.ProgressPercent() >= 100.0);
 		SuperSeedModeMenuItem().IsChecked(
@@ -1416,7 +1414,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
 			{
-				core->ForceRecheck(winrt::to_string(task.TaskId()));
+				if (core->ForceRecheck(winrt::to_string(task.TaskId())))
+				{
+					task.State(winrt::OpenNet::ViewModels::DownloadTaskState::Checking);
+					task.DownloadRate(L"0 B/s");
+					task.UploadRate(L"0 B/s");
+				}
 			}
 		}
 	}
@@ -1461,16 +1464,191 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::DeleteTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::DeleteTaskMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		if (m_viewModel && m_viewModel.SelectedTask())
+		if (!m_viewModel || !m_viewModel.SelectedTask()) co_return;
+
+		auto const dialog = DeleteTaskDialog();
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(box_value(ResourceGetString(L"TasksDeleteWarningTitle")));
+		dialog.PrimaryButtonText(ResourceGetString(L"CommonDelete"));
+		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
+		DeleteTaskWarningText().Text(ResourceGetString(L"TasksDeleteWarningMessage"));
+		DeleteTaskNameText().Text(m_viewModel.SelectedTask().Name());
+		DeleteDownloadedFilesCheckBox().Content(
+			box_value(ResourceGetString(L"TasksDeleteDownloadedFiles")));
+		DeleteDownloadedFilesCheckBox().IsChecked(false);
+
+		if (co_await dialog.ShowAsync() == ContentDialogResult::Primary)
 		{
 			auto command = m_viewModel.DeleteCommand();
 			if (command && command.CanExecute(nullptr))
 			{
-				command.Execute(nullptr);
+				auto const checked = DeleteDownloadedFilesCheckBox().IsChecked();
+				command.Execute(box_value(checked && checked.Value()));
 			}
 		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TasksPage::CreateTorrentBrowseFile_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		FileOpenPicker picker(XamlRoot().ContentIslandEnvironment().AppWindowId());
+		picker.ViewMode(PickerViewMode::List);
+		picker.SuggestedStartLocation(PickerLocationId::Downloads);
+		picker.FileTypeFilter().Append(L"*");
+		if (auto file = co_await picker.PickSingleFileAsync())
+		{
+			CreateTorrentSourceTextBox().Text(file.Path());
+			CreateTorrentStatusText().Text(L"");
+		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TasksPage::CreateTorrentBrowseFolder_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		FolderPicker picker(XamlRoot().ContentIslandEnvironment().AppWindowId());
+		picker.SuggestedStartLocation(PickerLocationId::Downloads);
+		if (auto folder = co_await picker.PickSingleFolderAsync())
+		{
+			CreateTorrentSourceTextBox().Text(folder.Path());
+			CreateTorrentStatusText().Text(L"");
+		}
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TasksPage::CreateTorrentMenuItem_Click(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		auto const dialog = CreateTorrentDialog();
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(box_value(ResourceGetString(L"CreateTorrentTitle")));
+		CreateTorrentStatusText().Text(L"");
+		co_await dialog.ShowAsync();
+	}
+
+	void TasksPage::CreateTorrentDialog_PrimaryButtonClick(
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& dialog,
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args)
+	{
+		auto deferral = args.GetDeferral();
+		args.Cancel(true);
+		[getStrong = get_strong(), dialog, args, deferral]()
+			-> winrt::Windows::Foundation::IAsyncAction
+		{
+			auto const sourceText = getStrong->CreateTorrentSourceTextBox().Text();
+			if (sourceText.empty())
+			{
+				getStrong->CreateTorrentStatusText().Text(
+					ResourceGetString(L"CreateTorrentSelectSource"));
+				deferral.Complete();
+				co_return;
+			}
+
+			FileSavePicker picker(
+				getStrong->XamlRoot().ContentIslandEnvironment().AppWindowId());
+			picker.SuggestedStartLocation(PickerLocationId::Downloads);
+			picker.SuggestedFileName(
+				std::filesystem::path{ sourceText.c_str() }.filename().wstring());
+			picker.DefaultFileExtension(L".torrent");
+			auto fileTypes = winrt::single_threaded_vector<hstring>();
+			fileTypes.Append(L".torrent");
+			picker.FileTypeChoices().Insert(L"BitTorrent file", fileTypes);
+			auto file = co_await picker.PickSaveFileAsync();
+			if (!file)
+			{
+				deferral.Complete();
+				co_return;
+			}
+
+			::OpenNet::Core::Torrent::TorrentCreationOptions options;
+			options.sourcePath = std::filesystem::path{ sourceText.c_str() };
+			switch (getStrong->CreateTorrentFormatComboBox().SelectedIndex())
+			{
+			case 1:
+				options.format = ::OpenNet::Core::Torrent::TorrentFormat::V1;
+				break;
+			case 2:
+				options.format = ::OpenNet::Core::Torrent::TorrentFormat::V2;
+				break;
+			default:
+				options.format = ::OpenNet::Core::Torrent::TorrentFormat::Hybrid;
+				break;
+			}
+			options.privateTorrent = getStrong->CreateTorrentPrivateCheckBox().IsChecked().GetBoolean();
+			options.ignoreDotFiles = getStrong->CreateTorrentIgnoreDotFilesCheckBox().IsChecked().GetBoolean();
+			options.comment = winrt::to_string(getStrong->CreateTorrentCommentTextBox().Text());
+			std::wistringstream trackerLines{
+				getStrong->CreateTorrentTrackersTextBox().Text().c_str() };
+			for (std::wstring line; std::getline(trackerLines, line);)
+			{
+				auto const first = line.find_first_not_of(L" \t\r");
+				if (first == std::wstring::npos) continue;
+				auto const last = line.find_last_not_of(L" \t\r");
+				options.trackers.push_back(winrt::to_string(
+					winrt::hstring{ line.substr(first, last - first + 1) }));
+			}
+
+			dialog.IsPrimaryButtonEnabled(false);
+			getStrong->CreateTorrentProgressRing().IsActive(true);
+			getStrong->CreateTorrentProgressRing().Visibility(Visibility::Visible);
+			getStrong->CreateTorrentStatusText().Text(
+				ResourceGetString(L"CreateTorrentCreating"));
+			winrt::apartment_context uiContext;
+			auto const target = std::filesystem::path{ file.Path().c_str() };
+			winrt::hstring failureMessage;
+			try
+			{
+				co_await winrt::resume_background();
+				auto creation = ::OpenNet::Core::Torrent::TorrentCreator::Create(options);
+				::OpenNet::Core::Torrent::TorrentCreator::WriteFile(target, creation);
+			}
+			catch (std::exception const& exception)
+			{
+				failureMessage = winrt::to_hstring(exception.what());
+			}
+			co_await uiContext;
+			dialog.IsPrimaryButtonEnabled(true);
+			getStrong->CreateTorrentProgressRing().IsActive(false);
+			getStrong->CreateTorrentProgressRing().Visibility(Visibility::Collapsed);
+			if (failureMessage.empty())
+			{
+				getStrong->CreateTorrentStatusText().Text(
+					ResourceGetString(L"CreateTorrentComplete"));
+				args.Cancel(false);
+			}
+			else
+			{
+				getStrong->CreateTorrentStatusText().Text(
+					ResourceGetString(L"CreateTorrentFailed") + L" " + failureMessage);
+			}
+			deferral.Complete();
+		}();
+	}
+
+	void TasksPage::OnTaskDeletionFailed(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::hstring const&)
+	{
+		::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+			ResourceGetString(L"TasksDeleteFailedTitle"),
+			ResourceGetString(L"TasksDeleteFailedMessage"),
+			winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
+			10000);
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TasksPage::DeleteTaskButton_ClickAsync(
+		winrt::Windows::Foundation::IInspectable const& sender,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		co_await DeleteTaskMenuItem_Click(sender, args);
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::RenameTaskMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*args*/)
@@ -1483,18 +1661,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto task = m_viewModel.SelectedTask();
 		auto currentName = task.Name();
 
-		// Build rename dialog
-		TextBox inputBox;
+		auto inputBox = RenameTaskTextBox();
 		inputBox.Text(currentName);
 		inputBox.PlaceholderText(ResourceGetString(L"ViewTasksPageRenamePlaceholder"));
-		inputBox.AcceptsReturn(false);
 		inputBox.SelectAll();
 
-		ContentDialog renameDialog;
+		auto renameDialog = RenameTaskDialog();
 		renameDialog.XamlRoot(this->XamlRoot());
-		renameDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		renameDialog.Title(box_value(ResourceGetString(L"CommonRename")));
-		renameDialog.Content(inputBox);
 		renameDialog.PrimaryButtonText(ResourceGetString(L"CommonOk"));
 		renameDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		renameDialog.DefaultButton(ContentDialogButton::Primary);
@@ -1721,21 +1895,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto const used = total.QuadPart - free.QuadPart;
-		TextBlock details;
-		details.IsTextSelectionEnabled(true);
-		details.TextWrapping(TextWrapping::Wrap);
-		details.Text(
+		DiskUsageDetailsText().Text(
 			ResourceGetString(L"ViewTasksPageDiskUsageLocation") + L" " + winrt::hstring{ path.c_str() } + L"\n" +
 			ResourceGetString(L"ViewTasksPageDiskUsageTaskSize") + L" " + task.Size() + L"\n" +
 			ResourceGetString(L"ViewTasksPageDiskUsageUsedOnVolume") + L" " + FormatByteCount(used) + L"\n" +
 			ResourceGetString(L"ViewTasksPageDiskUsageFreeOnVolume") + L" " + FormatByteCount(free.QuadPart) + L"\n" +
 			ResourceGetString(L"ViewTasksPageDiskUsageTotalCapacity") + L" " + FormatByteCount(total.QuadPart));
 
-		ContentDialog dialog;
+		auto dialog = DiskUsageDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Microsoft::UI::Xaml::Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).try_as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(box_value(ResourceGetString(L"ViewTasksPageDiskUsageInformationTitle")));
-		dialog.Content(details);
 		dialog.CloseButtonText(ResourceGetString(L"CommonClose"));
 		co_await dialog.ShowAsync();
 	}

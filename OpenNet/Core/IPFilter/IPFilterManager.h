@@ -168,6 +168,9 @@ namespace OpenNet::Core
 
 		/// Build an lt::ip_filter from all stored rules.
 		libtorrent::ip_filter BuildFilter() const;
+		/// Build the complete runtime filter, including temporary bans and
+		/// client-name blocks. This type remains in the conventional C++ layer.
+		libtorrent::ip_filter BuildSessionFilter() const;
 
 		/// Build the filter and apply it to the running libtorrent session.
 		/// Persisted rules respect the IP-filter switch. Runtime addresses

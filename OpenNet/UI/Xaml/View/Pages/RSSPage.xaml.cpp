@@ -25,51 +25,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		m_viewModel = winrt::make<ViewModels::implementation::RSSViewModel>();
 		InitializeComponent();
-		m_previewWebView = WebView2{};
-		m_previewWebView.Width(640);
-		m_previewWebView.Height(400);
-		m_previewHost = Border{};
-		winrt::Microsoft::UI::Xaml::CornerRadius previewCornerRadius{};
-		previewCornerRadius.TopLeft = 8.0;
-		previewCornerRadius.TopRight = 8.0;
-		previewCornerRadius.BottomRight = 8.0;
-		previewCornerRadius.BottomLeft = 8.0;
-		m_previewHost.CornerRadius(previewCornerRadius);
-		m_previewHost.Child(m_previewWebView);
-		m_previewFlyout = Flyout{};
-		m_previewFlyout.Placement(
-			winrt::Microsoft::UI::Xaml::Controls::Primitives::
-			FlyoutPlacementMode::RightEdgeAlignedTop);
-		m_previewFlyout.Content(m_previewHost);
-		m_previewFlyout.Opened([weak = get_weak()](auto const&, auto const&)
-		{
-			if (auto self = weak.get()) self->m_previewOpen = true;
-		});
-		m_previewFlyout.Closed([weak = get_weak()](auto const&, auto const&)
-		{
-			if (auto self = weak.get())
-			{
-				self->m_previewOpen = false;
-				self->m_previewPointerOverFlyout = false;
-				if (!self->m_previewPointerOverItem) self->m_previewTarget = nullptr;
-			}
-		});
-		m_previewHost.PointerEntered([weak = get_weak()](auto const&, auto const&)
-		{
-			if (auto self = weak.get())
-			{
-				self->m_previewPointerOverFlyout = true;
-				if (self->m_previewCloseTimer) self->m_previewCloseTimer.Stop();
-			}
-		});
-		m_previewHost.PointerExited([weak = get_weak()](auto const&, auto const&)
-		{
-			if (auto self = weak.get())
-			{
-				self->m_previewPointerOverFlyout = false;
-				if (self->m_previewCloseTimer) self->m_previewCloseTimer.Start();
-			}
-		});
+		m_previewWebView = RSSPreviewWebView();
+		m_previewHost = RSSPreviewHost();
+		m_previewFlyout = RSSPreviewFlyout();
 		m_previewTimer = DispatcherQueue().CreateTimer();
 		m_previewTimer.IsRepeating(false);
 		m_previewTimer.Interval(std::chrono::milliseconds(225));
@@ -78,7 +36,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (auto self = weak.get(); self && self->m_previewTarget
 				&& self->m_previewPointerOverItem)
 			{
-				self->m_previewFlyout.ShowAt(self->m_previewTarget);
+				winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutShowOptions options;
+				options.Placement(winrt::Microsoft::UI::Xaml::Controls::Primitives::
+					FlyoutPlacementMode::RightEdgeAlignedTop);
+				options.ShowMode(winrt::Microsoft::UI::Xaml::Controls::Primitives::
+					FlyoutShowMode::Transient);
+				self->m_previewFlyout.ShowAt(self->m_previewTarget, options);
 			}
 		});
 		m_previewCloseTimer = DispatcherQueue().CreateTimer();
@@ -126,6 +89,32 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				self->m_previewPointerOverItem = false;
 			}
 		});
+	}
+
+	void RSSPage::RSSPreviewFlyout_Opened(IInspectable const&, IInspectable const&)
+	{
+		m_previewOpen = true;
+	}
+
+	void RSSPage::RSSPreviewFlyout_Closed(IInspectable const&, IInspectable const&)
+	{
+		m_previewOpen = false;
+		m_previewPointerOverFlyout = false;
+		if (!m_previewPointerOverItem) m_previewTarget = nullptr;
+	}
+
+	void RSSPage::RSSPreviewHost_PointerEntered(
+		IInspectable const&, Input::PointerRoutedEventArgs const&)
+	{
+		m_previewPointerOverFlyout = true;
+		if (m_previewCloseTimer) m_previewCloseTimer.Stop();
+	}
+
+	void RSSPage::RSSPreviewHost_PointerExited(
+		IInspectable const&, Input::PointerRoutedEventArgs const&)
+	{
+		m_previewPointerOverFlyout = false;
+		if (m_previewCloseTimer) m_previewCloseTimer.Start();
 	}
 
 	RSSPage::~RSSPage()
@@ -459,9 +448,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		try
 		{
-			ContentDialog dialog;
+			auto dialog = RemoveFeedDialog();
 			dialog.Title(box_value(ResourceGetString(L"ViewRSSPageRemoveFeedTitle")));
-			dialog.Content(box_value(ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationPrefix") + feed.Title() + ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationSuffix")));
+			RemoveFeedConfirmationText().Text(
+				ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationPrefix") +
+				feed.Title() +
+				ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationSuffix"));
 			dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
 			dialog.SecondaryButtonText(ResourceGetString(L"CommonCancel"));
 			dialog.DefaultButton(ContentDialogButton::Secondary);

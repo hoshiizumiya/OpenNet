@@ -114,7 +114,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 				auto* torrentCore = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 				if (torrentCore && torrentCore->IsRunning())
 				{
-					auto stats = torrentCore->GetSessionStats();
+					auto stats = torrentCore->GetPerformanceStats();
 					btDl = static_cast<std::uint64_t>(stats.totalDownloadRate);
 					btUl = static_cast<std::uint64_t>(stats.totalUploadRate);
 					peersCount = stats.numPeers;

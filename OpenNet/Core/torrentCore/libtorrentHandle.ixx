@@ -1,17 +1,4 @@
-﻿// 直接包含 libtorrent 头，避免与 inline namespace 冲突
-// forward declarations  前置声明
-// Forward declaring types from the libtorrent namespace is discouraged as it may break in future releases.Instead include libtorrent / fwd.hpp for forward declarations of all public types in libtorrent.
-// 不建议在 libtorrent 命名空间中提前声明类型，因为这可能在未来的版本中出现问题。相反，应包含 libtorrent / fwd.hpp 以声明 libtorrent 中所有公共类型的提前声明。
-module;
-
-#include <libtorrent/fwd.hpp>
-#include <libtorrent/session.hpp>
-#include <libtorrent/alert.hpp>
-#include <libtorrent/settings_pack.hpp>
-#include <libtorrent/socket.hpp>
-#include <libtorrent/torrent_handle.hpp>
-
-export module OpenNet.Core.torrentCore.LibtorrentHandle;
+﻿export module OpenNet.Core.torrentCore.LibtorrentHandle;
 
 import std;
 import OpenNet.Core.torrentCore.TorrentStateManager;
@@ -40,6 +27,7 @@ export namespace OpenNet::Core::Torrent
 			int knownSeeds{ -1 };
 			std::string name;
 			bool isPaused{};
+			bool isChecking{};
 			bool isFinished{};
 			bool isSeeding{};
 		};
@@ -88,34 +76,32 @@ export namespace OpenNet::Core::Torrent
 		void SaveAllResumeData();
 
 		// Set the state manager for persistence
-		void SetStateManager(TorrentStateManager* stateManager) noexcept
-		{
-			m_stateManager = stateManager;
-		}
+		void SetStateManager(TorrentStateManager* stateManager) noexcept;
 
 		void SetProgressCallback(ProgressCallback cb);
 		void SetFinishedCallback(FinishedCallback cb);
 		void SetErrorCallback(ErrorCallback cb);
 
-		bool IsRunning() const noexcept
-		{
-			return m_running.load();
-		}
-
-		libtorrent::session* NativeSession() const noexcept
-		{
-			return m_session.get();
-		}
+		bool IsRunning() const noexcept;
 
 		// Get the task ID for a torrent name
 		std::string GetTaskIdByName(std::string const& name) const;
 
-		// Session settings access
-		libtorrent::settings_pack GetSettings() const;
-		void ApplySettings(libtorrent::settings_pack const& pack);
+		// Rebuild and apply the live libtorrent settings from OpenNet's persisted
+		// TorrentSettings. Third-party settings_pack types stay implementation-only.
+		void ReloadSettings(
+			std::optional<int> downloadRateOverride = std::nullopt,
+			std::optional<int> uploadRateOverride = std::nullopt);
+		void ReloadIpFilter();
 
-		// IP filter
-		void SetIpFilter(libtorrent::ip_filter const& filter);
+		struct RuntimeSettingsSnapshot
+		{
+			int maxQueuedDiskBytes{};
+			int receiveSocketBufferSize{};
+			int sendSocketBufferSize{};
+			int dhtUploadRateLimit{};
+		};
+		RuntimeSettingsSnapshot GetRuntimeSettings() const;
 
 		// -----------------------------------------------------------
 		//  Session-level statistics (aggregated across all torrents)
@@ -155,6 +141,9 @@ export namespace OpenNet::Core::Torrent
 
 		};
 		SessionStats GetSessionStats() const;
+		// Alert-backed counters for high-frequency UI graphs. This avoids
+		// enumerating every torrent on the caller thread for each sample.
+		SessionStats GetPerformanceStats() const;
 
 		// Complete session_stats_alert snapshot for diagnostics. This is kept
 		// separate from SessionStats so normal UI polling does not copy hundreds
@@ -186,15 +175,21 @@ export namespace OpenNet::Core::Torrent
 			std::string client;
 			int downloadRateKB{};
 			int uploadRateKB{};
-			int64_t totalDownloaded{};
-			int64_t totalUploaded{};
+			std::int64_t totalDownloaded{};
+			std::int64_t totalUploaded{};
 			double progress{};
-			uint32_t flags{};         // libtorrent peer_info::flags (bitmask)
+			std::uint32_t flags{};    // libtorrent peer_info::flags (bitmask)
 			int connectionType{};     // 0=standard_bittorrent, 1=web_seed, 2=http_seed
 			int source{};             // libtorrent peer_info::source_flags bitmask
 			bool isIncoming{};        // true if peer initiated the connection
 			bool isConnecting{};      // connecting or waiting for handshake
 		};
+
+		// Lightweight snapshot used by the peer table.  Unlike
+		// GetTorrentDetail(), this does not query trackers, files, piece
+		// priorities or file progress.
+		std::vector<TorrentPeerInfo> GetTorrentPeers(
+			std::string const& taskId) const;
 
 		struct TorrentTrackerInfo
 		{
@@ -220,8 +215,8 @@ export namespace OpenNet::Core::Torrent
 		struct TorrentFileEntry
 		{
 			std::string path;
-			int64_t size{};           // file size in bytes
-			int64_t bytesCompleted{}; // bytes downloaded so far
+			std::int64_t size{};           // file size in bytes
+			std::int64_t bytesCompleted{}; // bytes downloaded so far
 			int priority{ 4 };          // 0=skip, 1=low, 4=normal, 7=high
 			int fileIndex{};
 			int firstPiece{};
@@ -244,13 +239,13 @@ export namespace OpenNet::Core::Torrent
 			std::int64_t creationTimestamp{};
 			std::int64_t activeTimeSeconds{};
 			std::int64_t seedingTimeSeconds{};
-			int64_t totalSize{};
-			int64_t totalDone{};
-			int64_t totalUploaded{};
-			int64_t sessionDownloaded{};
-			int64_t sessionUploaded{};
-			int64_t allTimeDownloaded{};
-			int64_t allTimeUploaded{};
+			std::int64_t totalSize{};
+			std::int64_t totalDone{};
+			std::int64_t totalUploaded{};
+			std::int64_t sessionDownloaded{};
+			std::int64_t sessionUploaded{};
+			std::int64_t allTimeDownloaded{};
+			std::int64_t allTimeUploaded{};
 			int pieceSize{};
 			int piecesNum{};
 			int downloadRate{};
@@ -309,7 +304,7 @@ export namespace OpenNet::Core::Torrent
 			std::string const& taskId) const;
 
 		// Force re-check (hash verify) a torrent
-		void ForceRecheck(std::string const& taskId);
+		bool ForceRecheck(std::string const& taskId);
 
 		// Force an immediate tracker announce
 		void ForceReannounce(std::string const& taskId);
@@ -388,84 +383,31 @@ export namespace OpenNet::Core::Torrent
 		int GetTorrentCount() const;
 
 	private:
+		// Implementation-only helpers use abbreviated templates so the exported
+		// declaration does not name libtorrent types. They are instantiated only
+		// in libtorrentHandle.cpp.
 		void AlertLoop();
-		void DispatchAlerts(std::vector<libtorrent::alert*> const& alerts);
-		void ConfigureDefaultSettings(libtorrent::settings_pack& pack);
-		void HandleSaveResumeDataAlert(libtorrent::save_resume_data_alert const* alert);
-		void HandleSaveResumeDataFailedAlert(libtorrent::save_resume_data_failed_alert const* alert);
-		void RequestResumeDataForTorrent(libtorrent::torrent_handle const& handle);
+		void DispatchAlerts(auto const& alerts);
+		void ConfigureDefaultSettings(auto& pack);
+		void HandleSaveResumeDataAlert(auto const* alert);
+		void HandleSaveResumeDataFailedAlert(auto const* alert);
+		void RequestResumeDataForTorrent(auto const& handle);
 		void EnforceClientFilters();
 		void RecordPeerEvent(
-			libtorrent::torrent_handle const& handle,
-			libtorrent::tcp::endpoint const& endpoint,
+			auto const& handle,
+			auto const& endpoint,
 			std::string reason,
 			bool isBan);
-		void ClearPeerEvent(
-			libtorrent::torrent_handle const& handle,
-			libtorrent::tcp::endpoint const& endpoint);
+		void ClearPeerEvent(auto const& handle, auto const& endpoint);
 		void RecordTrackerLog(
-			libtorrent::torrent_handle const& handle,
+			auto const& handle,
 			std::string const& trackerUrl,
 			std::string content,
 			bool isError = false);
-
-		std::unique_ptr<libtorrent::session> m_session;
-		std::optional<libtorrent::session_proxy> m_sessionProxy;
-		std::atomic<bool> m_running{ false };
-		std::thread m_thread;
-
-		std::mutex m_cbMutex;
-		ProgressCallback m_progressCb;
-		FinishedCallback m_finishedCb;
-		ErrorCallback m_errorCb;
-
-		std::atomic<bool> m_stopRequested{ false };
-		std::atomic<int> m_pendingResumeDataCount{ 0 };  // outstanding save_resume_data requests
-		std::unordered_map<std::string, lt::torrent_handle> m_taskIdToHandle;
-		std::unordered_map<lt::torrent_handle, std::string, std::hash<lt::torrent_handle>> m_handleToTaskId;
-		mutable std::mutex m_torrentMapMutex;
-		TorrentStateManager* m_stateManager{ nullptr };
-		mutable std::mutex m_peerEventMutex;
-		std::unordered_map<std::string, std::deque<PeerConnectionEvent>> m_peerEvents;
-		mutable std::mutex m_trackerLogMutex;
-		std::unordered_map<std::string,
-			std::unordered_map<std::string, std::deque<TrackerLogEntry>>>
-			m_trackerLogs;
-
-		// Cached DHT node count (updated via dht_stats_alert)
-		std::atomic<int> m_cachedDhtNodeCount{ 0 };
-
-		mutable std::mutex m_portMappingMutex;
-		PortMappingStatus m_portMappingStatus;
-		mutable std::mutex m_listenStateMutex;
-		std::string m_lastListenError;
-
-		// Cached session-level counters (updated via session_stats_alert)
-		mutable std::mutex m_sessionStatsMutex;
-		std::int64_t m_sessionTotalDownload{};
-		std::int64_t m_sessionTotalUpload{};
-		std::int64_t m_sessionDiskBlocksInUse{};
-		std::int64_t m_sessionDhtBytesReceived{};
-		std::int64_t m_sessionDhtBytesSent{};
-		std::unordered_map<std::string, std::int64_t> m_sessionMetricValues;
-		int m_sessionStatsMetricIdxRecvBytes{ -1 };
-		int m_sessionStatsMetricIdxSentBytes{ -1 };
-		int m_sessionStatsMetricIdxDhtNodes{ -1 };
-		int m_sessionStatsMetricIdxDiskBlocksInUse{ -1 };
-		int m_sessionStatsMetricIdxDhtBytesReceived{ -1 };
-		int m_sessionStatsMetricIdxDhtBytesSent{ -1 };
-		bool m_sessionStatsMetricsResolved{ false };
-
-		// Time-gated stats requests to avoid self-excitation in AlertLoop
-		std::chrono::steady_clock::time_point m_lastTorrentUpdateRequest{
-			std::chrono::steady_clock::now() };
-		std::chrono::steady_clock::time_point m_lastStatsRequest{ std::chrono::steady_clock::now() };
-		std::chrono::steady_clock::time_point m_lastClientFilterCheck{
-			std::chrono::steady_clock::now() };
-		std::chrono::steady_clock::time_point m_lastIpFilterMaintenance{
-			std::chrono::steady_clock::now() };
-
 		void ResolveSessionStatsMetricIndices();
+
+		struct Impl;
+		std::unique_ptr<Impl> m_impl;
 	};
 
 }

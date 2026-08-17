@@ -197,7 +197,7 @@
                     Style="{StaticResource SettingsGroupHeaderStyle}"
                     Text="Version and update" />
 
-                <essential:SettingsExpander x:Name="VersionCheck" x:Uid="VersionCheck">
+                <essential:SettingsExpander x:Name="VersionCheck">
                     <essential:SettingsExpander.Header>
                         <ouxc:CheckUpdateControl
                             x:Name="UpdateStatusControl"
@@ -323,7 +323,7 @@
                         Header="Milliseconds"
                         Maximum="60000"
                         Minimum="100"
-                        SpinButtonPlacementMode="Compact"
+                        SpinButtonPlacementMode="Inline"
                         ValueChanged="GuiRefreshIntervalBox_ValueChanged"
                         Value="1000" />
                 </essential:SettingsCard>

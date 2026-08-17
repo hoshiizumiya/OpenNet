@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:card="using:OpenNet.UI.Xaml.Control.Card"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:effects="using:OpenNet.UI.Xaml.Control.Effect"
     xmlns:essential="using:WinUI3Package"
     xmlns:graph="using:OpenNet.UI.Xaml.Control.Graph"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -15,7 +16,12 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/SettingsStyle_ResourceDictionary.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/SettingsStyle_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AnimatedNumber_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid Padding="12" RowSpacing="10">
@@ -140,7 +146,7 @@
                                                     Maximum="500"
                                                     Minimum="0.1"
                                                     SmallChange="1"
-                                                    SpinButtonPlacementMode="Compact"
+                                                    SpinButtonPlacementMode="Inline"
                                                     Value="{x:Bind Settings.HorizontalScrollDistance, Mode=TwoWay}" />
                                                 <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit" Text="Pixels" />
                                             </Grid>
@@ -159,7 +165,7 @@
                                                     Maximum="5000"
                                                     Minimum="1"
                                                     SmallChange="25"
-                                                    SpinButtonPlacementMode="Compact"
+                                                    SpinButtonPlacementMode="Inline"
                                                     Value="{x:Bind Settings.HorizontalScrollDurationMilliseconds, Mode=TwoWay}" />
                                                 <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxTimeUnit" Text="Milliseconds" />
                                             </Grid>
@@ -178,7 +184,7 @@
                                                     Maximum="5000"
                                                     Minimum="16"
                                                     SmallChange="25"
-                                                    SpinButtonPlacementMode="Compact"
+                                                    SpinButtonPlacementMode="Inline"
                                                     Value="{x:Bind Settings.SampleIntervalMilliseconds, Mode=TwoWay}" />
                                                 <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxTimeUnit" Text="Milliseconds" />
                                             </Grid>
@@ -194,7 +200,7 @@
                                                 Maximum="4"
                                                 Minimum="0"
                                                 SmallChange="0.25"
-                                                SpinButtonPlacementMode="Compact"
+                                                SpinButtonPlacementMode="Inline"
                                                 Value="{x:Bind Settings.HistoryBufferScreens, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                         <essential:SettingsCard
@@ -235,7 +241,7 @@
                                                     Maximum="2000"
                                                     Minimum="0"
                                                     SmallChange="50"
-                                                    SpinButtonPlacementMode="Compact"
+                                                    SpinButtonPlacementMode="Inline"
                                                     Value="{x:Bind Settings.HighlightAnimationMilliseconds, Mode=TwoWay}" />
                                                 <TextBlock x:Uid="ViewTaskSpeedGraphPageNumberBoxTimeUnit" Text="Milliseconds" />
                                             </Grid>
@@ -269,7 +275,7 @@
                                                 Width="150"
                                                 Maximum="200"
                                                 Minimum="2"
-                                                SpinButtonPlacementMode="Compact"
+                                                SpinButtonPlacementMode="Inline"
                                                 Value="{x:Bind Settings.CrossSpacing, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                         <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageDotSpacingSettingsCard" Header="Dot spacing">
@@ -277,7 +283,7 @@
                                                 Width="150"
                                                 Maximum="200"
                                                 Minimum="2"
-                                                SpinButtonPlacementMode="Compact"
+                                                SpinButtonPlacementMode="Inline"
                                                 Value="{x:Bind Settings.DotSpacing, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                         <essential:SettingsCard
@@ -356,7 +362,7 @@
                                                 Maximum="12"
                                                 Minimum="0.5"
                                                 SmallChange="0.5"
-                                                SpinButtonPlacementMode="Compact"
+                                                SpinButtonPlacementMode="Inline"
                                                 Value="{x:Bind Settings.StrokeWidth, Mode=TwoWay}" />
                                         </essential:SettingsCard>
                                         <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard" Header="Gradient fill">
@@ -445,12 +451,12 @@
                                 Text="DHT receive" />
                         </essential:Case>
                     </essential:SwitchPresenter>
-                    <TextBlock
+                    <effects:AnimatedNumber
                         x:Name="PrimaryMetricValue"
                         x:Uid="ViewTaskSpeedGraphPageTextBlock"
                         FontSize="18"
                         FontWeight="SemiBold"
-                        Text="0 B/s" />
+                        Value="0 B/s" />
                 </StackPanel>
             </Border>
             <Border
@@ -505,11 +511,11 @@
                                 Text="DHT send" />
                         </essential:Case>
                     </essential:SwitchPresenter>
-                    <TextBlock
+                    <effects:AnimatedNumber
                         x:Name="SecondaryMetricValue"
                         FontSize="18"
                         FontWeight="SemiBold"
-                        Text="0 B/s" />
+                        Value="0 B/s" />
                 </StackPanel>
             </Border>
             <Border
@@ -524,11 +530,11 @@
                         x:Uid="TaskSpeedGraph_GraphScale"
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="Graph scale" />
-                    <TextBlock
+                    <effects:AnimatedNumber
                         x:Name="ScaleMetricValue"
                         FontSize="18"
                         FontWeight="SemiBold"
-                        Text="Auto" />
+                        Value="Auto" />
                 </StackPanel>
             </Border>
         </Grid>
@@ -564,7 +570,7 @@
                                 X1="0"
                                 X2="10000" />
                             <Border
-                                Margin="0,-30,10,0"
+                                Margin="0,-15,10,0"
                                 Padding="8,3"
                                 HorizontalAlignment="Right"
                                 VerticalAlignment="Top"
@@ -572,14 +578,45 @@
                                 BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                                 BorderThickness="1"
                                 CornerRadius="4">
-                                <TextBlock
+                                <effects:AnimatedNumber
                                     x:Name="HighlightValueText"
                                     FontSize="12"
-                                    Text="—" />
+                                    Value="—" />
                             </Border>
                         </Grid>
                     </graph:LiveGraph.HighlightLineContent>
                 </graph:LiveGraph>
+
+                <ContentPresenter
+                    Margin="8,7,0,0"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Content="{Binding SelectedItem.Content, ElementName=MetricSelector, Mode=OneWay}"
+                    FontSize="12"
+                    IsHitTestVisible="False" />
+                <effects:AnimatedNumber
+                    x:Name="AxisMaximumText"
+                    Margin="0,8,10,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Top"
+                    FontSize="12"
+                    IsHitTestVisible="False"
+                    Value="—" />
+                <effects:AnimatedNumber
+                    x:Name="TimelineDurationText"
+                    Margin="8,0,0,6"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Bottom"
+                    FontSize="12"
+                    IsHitTestVisible="False"
+                    Value="60 s" />
+                <TextBlock
+                    Margin="0,0,8,6"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Bottom"
+                    FontSize="12"
+                    IsHitTestVisible="False"
+                    Text="0" />
 
                 <!--
                     LiveGraph has one movable highlight presenter. Transfer Speed
@@ -601,18 +638,18 @@
                         X1="0"
                         X2="10000" />
                     <Border
-                        Margin="10,-30,0,0"
+                        Margin="0,-15,10,0"
                         Padding="8,3"
-                        HorizontalAlignment="Left"
+                        HorizontalAlignment="Right"
                         VerticalAlignment="Top"
                         Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
                         BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
                         BorderThickness="1"
                         CornerRadius="4">
-                        <TextBlock
+                        <effects:AnimatedNumber
                             x:Name="UploadHighlightValueText"
                             FontSize="12"
-                            Text="↑ —" />
+                            Value="↑ —" />
                     </Border>
                 </Grid>
             </Grid>

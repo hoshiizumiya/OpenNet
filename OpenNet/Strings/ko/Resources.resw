@@ -819,6 +819,12 @@
   <data name="DL_AutoStartDownloads.Description" xml:space="preserve">
     <value>토렌트를 추가하면 자동으로 다운로드를 시작합니다</value>
   </data>
+  <data name="DL_RecheckBeforeResume.Header" xml:space="preserve">
+    <value>재개 전에 다시 검사</value>
+  </data>
+  <data name="DL_RecheckBeforeResume.Description" xml:space="preserve">
+    <value>일시 중지된 토렌트를 재개하기 전에 모든 조각을 확인합니다. 시간이 오래 걸릴 수 있습니다.</value>
+  </data>
   <data name="DL_MoveCompleted.Header" xml:space="preserve">
     <value>완료된 다운로드 이동</value>
   </data>
@@ -3822,6 +3828,24 @@
   <data name="CommonDelete" xml:space="preserve">
     <value>삭제</value>
   </data>
+  <data name="TasksDeleteWarningTitle" xml:space="preserve">
+    <value>이 작업을 영구적으로 삭제하시겠습니까?</value>
+  </data>
+  <data name="TasksDeleteWarningMessage" xml:space="preserve">
+    <value>작업이 OpenNet에서 제거됩니다. 이 작업은 되돌릴 수 없습니다.</value>
+  </data>
+  <data name="TasksDeleteDownloadedFiles" xml:space="preserve">
+    <value>다운로드한 파일도 디스크에서 삭제</value>
+  </data>
+  <data name="TasksDeleteFailedTitle" xml:space="preserve">
+    <value>작업을 삭제할 수 없음</value>
+  </data>
+  <data name="TasksDeleteFailedMessage" xml:space="preserve">
+    <value>다운로드 엔진이 작업 또는 파일을 해제하지 않았습니다. 작업을 일시 중지하고 다시 시도하세요.</value>
+  </data>
+  <data name="TaskStatusChecking" xml:space="preserve">
+    <value>파일 확인 중</value>
+  </data>
   <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
     <value>여러 파일 선택됨</value>
   </data>
@@ -4226,5 +4250,530 @@
   </data>
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>없음</value>
+  </data>
+  <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
+    <value>UPnP 임대 기간 (초)</value>
+  </data>
+  <data name="BT_UpnpLeaseDuration.Description" xml:space="preserve">
+    <value>0은 영구 매핑입니다. 제한된 임대는 기간의 75%에서 갱신됩니다.</value>
+  </data>
+  <data name="WebUISettingsFrontendCard.Header" xml:space="preserve">
+    <value>프런트엔드</value>
+  </data>
+  <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
+    <value>두 프런트엔드는 동일한 OpenNet/qBittorrent 호환 API와 설정 저장소를 사용합니다.</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
+    <value>숫자 애니메이션</value>
+  </data>
+  <data name="ViewThemesSettingsPageAnimatedDigitsCard.Description" xml:space="preserve">
+    <value>표시된 숫자 값이 변경될 때 애니메이션을 적용합니다</value>
+  </data>
+  <data name="TorrentCopyLocationDownloadFolder.Content" xml:space="preserve">
+    <value>다운로드 대상 폴더</value>
+  </data>
+  <data name="TorrentCopyLocationContentFolder.Content" xml:space="preserve">
+    <value>토렌트 콘텐츠 폴더</value>
+  </data>
+  <data name="TorrentCopyOverwriteTitle" xml:space="preserve">
+    <value>토렌트 파일이 이미 있습니다</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessage" xml:space="preserve">
+    <value>같은 이름의 .torrent 파일이 이미 있습니다. 바꾸시겠습니까?</value>
+  </data>
+  <data name="TorrentCopyOverwritePrimary" xml:space="preserve">
+    <value>바꾸기</value>
+  </data>
+  <data name="SettingsSearchBox.PlaceholderText" xml:space="preserve">
+    <value>설정 검색</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Header" xml:space="preserve">
+    <value>최대 피어 목록 크기</value>
+  </data>
+  <data name="BT_MaxPeerListSize.Description" xml:space="preserve">
+    <value>Torrent마다 보관할 알려진 피어의 최대 수</value>
+  </data>
+  <data name="BT_PeerFingerprint.Header" xml:space="preserve">
+    <value>피어 지문</value>
+  </data>
+  <data name="BT_PeerFingerprint.Description" xml:space="preserve">
+    <value>피어에 전송하는 클라이언트 식별 문자열</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Header" xml:space="preserve">
+    <value>고급 성능</value>
+  </data>
+  <data name="BT_AdvancedPerformance.Description" xml:space="preserve">
+    <value>기본 UI와 WebUI가 공유하는 디스크 캐시, 해시 및 전송 버퍼 설정</value>
+  </data>
+  <data name="BT_HashingThreads.Header" xml:space="preserve">
+    <value>해시 스레드</value>
+  </data>
+  <data name="BT_FilePoolSize.Header" xml:space="preserve">
+    <value>파일 풀 크기</value>
+  </data>
+  <data name="BT_DiskQueueSize.Header" xml:space="preserve">
+    <value>디스크 캐시 및 큐 예산 (KiB)</value>
+  </data>
+  <data name="BT_DiskQueueSize.Description" xml:space="preserve">
+    <value>libtorrent 디스크 I/O 큐가 사용하는 메모리 예산이며 0은 엔진 기본값입니다</value>
+  </data>
+  <data name="BT_PieceExtentAffinity.Header" xml:space="preserve">
+    <value>조각 범위 선호도 사용</value>
+  </data>
+  <data name="BT_UploadSuggestions.Header" xml:space="preserve">
+    <value>업로드 조각 제안 전송</value>
+  </data>
+  <data name="BT_SendBufferWatermark.Header" xml:space="preserve">
+    <value>전송 버퍼 워터마크 (KiB)</value>
+  </data>
+  <data name="BT_SendBufferLowWatermark.Header" xml:space="preserve">
+    <value>전송 버퍼 낮은 워터마크 (KiB)</value>
+  </data>
+  <data name="BT_SendBufferWatermarkFactor.Header" xml:space="preserve">
+    <value>전송 버퍼 워터마크 계수 (%)</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Header" xml:space="preserve">
+    <value>고급 네트워크 동작</value>
+  </data>
+  <data name="BT_AdvancedNetwork.Description" xml:space="preserve">
+    <value>연결 예약, 소켓 및 피어 정책</value>
+  </data>
+  <data name="BT_ConnectionSpeed.Header" xml:space="preserve">
+    <value>초당 발신 연결 수</value>
+  </data>
+  <data name="BT_SeedingOutgoingConnections.Header" xml:space="preserve">
+    <value>시딩 중 발신 연결 허용</value>
+  </data>
+  <data name="BT_SocketSendBufferSize.Header" xml:space="preserve">
+    <value>소켓 전송 버퍼 크기 (KiB)</value>
+  </data>
+  <data name="BT_SocketReceiveBufferSize.Header" xml:space="preserve">
+    <value>소켓 수신 버퍼 크기 (KiB)</value>
+  </data>
+  <data name="BT_SocketBacklogSize.Header" xml:space="preserve">
+    <value>소켓 백로그 크기</value>
+  </data>
+  <data name="BT_MixedMode.Header" xml:space="preserve">
+    <value>μTP/TCP 혼합 모드</value>
+  </data>
+  <data name="BT_HostnameCacheTtl.Header" xml:space="preserve">
+    <value>호스트 이름 캐시 TTL (초)</value>
+  </data>
+  <data name="BT_ValidateHttpsTrackers.Header" xml:space="preserve">
+    <value>HTTPS 트래커 인증서 검증</value>
+  </data>
+  <data name="BT_SsrfMitigation.Header" xml:space="preserve">
+    <value>SSRF 완화</value>
+  </data>
+  <data name="BT_BlockPrivilegedPorts.Header" xml:space="preserve">
+    <value>권한 포트를 사용하는 피어 차단</value>
+  </data>
+  <data name="BT_UploadSlotsBehavior.Header" xml:space="preserve">
+    <value>업로드 슬롯 동작</value>
+  </data>
+  <data name="BT_UploadChokingAlgorithm.Header" xml:space="preserve">
+    <value>업로드 초킹 알고리즘</value>
+  </data>
+  <data name="BT_AdvancedTracker.Header" xml:space="preserve">
+    <value>고급 트래커 동작</value>
+  </data>
+  <data name="BT_AdvancedTracker.Description" xml:space="preserve">
+    <value>Announce 식별, 트래커 동시성 및 피어 교체</value>
+  </data>
+  <data name="BT_DhtBootstrapNodes.Header" xml:space="preserve">
+    <value>DHT 부트스트랩 노드</value>
+  </data>
+  <data name="BT_AnnounceIp.Header" xml:space="preserve">
+    <value>트래커에 보고할 IP</value>
+  </data>
+  <data name="BT_AnnouncePort.Header" xml:space="preserve">
+    <value>트래커에 보고할 포트</value>
+  </data>
+  <data name="BT_MaxConcurrentHttpAnnounces.Header" xml:space="preserve">
+    <value>최대 동시 HTTP announce 수</value>
+  </data>
+  <data name="BT_StopTrackerTimeout.Header" xml:space="preserve">
+    <value>트래커 중지 제한 시간 (초)</value>
+  </data>
+  <data name="BT_PeerTurnover.Header" xml:space="preserve">
+    <value>피어 교체 연결 끊기 비율 (%)</value>
+  </data>
+  <data name="BT_PeerTurnoverCutoff.Header" xml:space="preserve">
+    <value>피어 교체 임계값 (%)</value>
+  </data>
+  <data name="BT_PeerTurnoverInterval.Header" xml:space="preserve">
+    <value>피어 교체 간격 (초)</value>
+  </data>
+  <data name="BT_RequestQueueSize.Header" xml:space="preserve">
+    <value>피어당 최대 미처리 요청 수</value>
+  </data>
+  <data name="BT_DownloadDefaults.Header" xml:space="preserve">
+    <value>다운로드 기본값</value>
+  </data>
+  <data name="BT_DownloadDefaults.Description" xml:space="preserve">
+    <value>새 다운로드의 기본 동작</value>
+  </data>
+  <data name="BT_DefaultSavePath.Header" xml:space="preserve">
+    <value>기본 저장 경로</value>
+  </data>
+  <data name="BT_PreallocateStorage.Header" xml:space="preserve">
+    <value>저장 공간 미리 할당</value>
+  </data>
+  <data name="BT_AutoStartDownloads.Header" xml:space="preserve">
+    <value>다운로드 자동 시작</value>
+  </data>
+  <data name="BT_MoveCompleted.Header" xml:space="preserve">
+    <value>완료된 다운로드 이동</value>
+  </data>
+  <data name="BT_MoveCompletedPath.Header" xml:space="preserve">
+    <value>완료된 다운로드 이동 경로</value>
+  </data>
+  <data name="SettingsGeneralSearchTags" xml:space="preserve">
+    <value>일반 언어 업데이트 시작 페이지 새로 고침 테마</value>
+  </data>
+  <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
+    <value>BitTorrent 피어 프로토콜 연결 암호화 프록시 캐시 디스크 성능 WebTorrent</value>
+  </data>
+  <data name="SettingsNetworkSearchTags" xml:space="preserve">
+    <value>네트워크 포트 수신 IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT 프록시</value>
+  </data>
+  <data name="SettingsTrackerSearchTags" xml:space="preserve">
+    <value>트래커 알림 구독 자동 트래커 목록</value>
+  </data>
+  <data name="SettingsIPFilterSearchTags" xml:space="preserve">
+    <value>IP 필터 차단 금지 구독 IPv4 IPv6</value>
+  </data>
+  <data name="SettingsClientFilterSearchTags" xml:space="preserve">
+    <value>클라이언트 필터 피어 차단 허용 규칙</value>
+  </data>
+  <data name="SettingsDownloadSearchTags" xml:space="preserve">
+    <value>다운로드 경로 토렌트 파일 저장 해시 검사 검증 aria2 스레드 연결 파일 삭제</value>
+  </data>
+  <data name="SettingsWebUISearchTags" xml:space="preserve">
+    <value>Web UI 브라우저 원격 주소 포트 사용자 이름 암호 언어 API 키 VueTorrent</value>
+  </data>
+  <data name="SettingsAppearanceSearchTags" xml:space="preserve">
+    <value>모양 테마 배경 이미지 비디오 Mica Acrylic 글꼴 애니메이션 숫자 색상</value>
+  </data>
+  <data name="SettingsAboutSearchTags" xml:space="preserve">
+    <value>정보 버전 라이선스 종속성 진단 업데이트</value>
+  </data>
+  <data name="BT_UserAgentInput.PlaceholderText" xml:space="preserve">
+    <value>libtorrent/2.1.1</value>
+  </data>
+  <data name="BT_ProxyHostnameInput.PlaceholderText" xml:space="preserve">
+    <value>proxy.example.com</value>
+  </data>
+  <data name="BT_AdvancedSectionHeader.Text" xml:space="preserve">
+    <value>고급 libtorrent 설정</value>
+  </data>
+  <data name="BT_PeerFingerprintInput.PlaceholderText" xml:space="preserve">
+    <value>-ON0100-</value>
+  </data>
+  <data name="BT_DefaultSavePathInput.PlaceholderText" xml:space="preserve">
+    <value>다운로드 폴더</value>
+  </data>
+  <data name="TorrentCopyOverwriteMessageText.Text" xml:space="preserve">
+    <value>같은 이름의 .torrent 파일이 이미 있습니다. 바꾸시겠습니까?</value>
+  </data>
+  <data name="TorrentTrackerListHeader.Text" xml:space="preserve">
+    <value>이 작업의 트래커 목록</value>
+  </data>
+  <data name="TorrentTrackerListDescription.Text" xml:space="preserve">
+    <value>한 줄에 하나의 트래커 URL을 입력하세요. 마그넷 또는 .torrent 파일의 트래커와 활성화된 사용자 지정 트래커가 자동으로 병합됩니다.</value>
+  </data>
+  <data name="TorrentTrackerListFooter.Text" xml:space="preserve">
+    <value>앱 전체 사용자 지정 트래커와 구독은 네트워크 설정에서 관리합니다.</value>
+  </data>
+  <data name="TaskCreateTorrentButton.Text" xml:space="preserve">
+    <value>토렌트 만들기...</value>
+  </data>
+  <data name="CreateTorrentTitle" xml:space="preserve">
+    <value>토렌트 만들기</value>
+  </data>
+  <data name="CreateTorrentDialog.PrimaryButtonText" xml:space="preserve">
+    <value>만들기</value>
+  </data>
+  <data name="CreateTorrentDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="CreateTorrentDescription.Text" xml:space="preserve">
+    <value>로컬 파일 또는 폴더에서 BitTorrent 메타데이터 파일을 만듭니다.</value>
+  </data>
+  <data name="CreateTorrentSource.PlaceholderText" xml:space="preserve">
+    <value>원본 파일 또는 폴더</value>
+  </data>
+  <data name="CreateTorrentBrowseFile.Content" xml:space="preserve">
+    <value>파일...</value>
+  </data>
+  <data name="CreateTorrentBrowseFolder.Content" xml:space="preserve">
+    <value>폴더...</value>
+  </data>
+  <data name="CreateTorrentFormatHybrid.Content" xml:space="preserve">
+    <value>하이브리드 (v1 + v2)</value>
+  </data>
+  <data name="CreateTorrentFormatV1.Content" xml:space="preserve">
+    <value>BitTorrent v1</value>
+  </data>
+  <data name="CreateTorrentFormatV2.Content" xml:space="preserve">
+    <value>BitTorrent v2</value>
+  </data>
+  <data name="CreateTorrentPrivate.Content" xml:space="preserve">
+    <value>비공개 토렌트</value>
+  </data>
+  <data name="CreateTorrentIgnoreDotFiles.Content" xml:space="preserve">
+    <value>숨김 점 파일 무시</value>
+  </data>
+  <data name="CreateTorrentComment.Header" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="CreateTorrentComment.PlaceholderText" xml:space="preserve">
+    <value>선택적 설명</value>
+  </data>
+  <data name="CreateTorrentTrackers.Header" xml:space="preserve">
+    <value>트래커</value>
+  </data>
+  <data name="CreateTorrentTrackers.PlaceholderText" xml:space="preserve">
+    <value>한 줄에 하나의 트래커 URL</value>
+  </data>
+  <data name="CreateTorrentSelectSource" xml:space="preserve">
+    <value>먼저 원본 파일 또는 폴더를 선택하세요.</value>
+  </data>
+  <data name="CreateTorrentCreating" xml:space="preserve">
+    <value>파일을 해시하고 토렌트를 만드는 중...</value>
+  </data>
+  <data name="CreateTorrentComplete" xml:space="preserve">
+    <value>토렌트를 만들었습니다.</value>
+  </data>
+  <data name="CreateTorrentFailed" xml:space="preserve">
+    <value>토렌트를 만들 수 없습니다.</value>
+  </data>
+  <data name="ThemesAppearanceSectionHeader.Text" xml:space="preserve">
+    <value>모양</value>
+  </data>
+  <data name="ThemesFontSectionHeader.Text" xml:space="preserve">
+    <value>글꼴</value>
+  </data>
+  <data name="AboutSectionHeader.Text" xml:space="preserve">
+    <value>정보</value>
+  </data>
+  <data name="AboutProductExpander.Header" xml:space="preserve">
+    <value>Windows용 OpenNet</value>
+  </data>
+  <data name="AboutProductExpander.Description" xml:space="preserve">
+    <value>© 2026 Millennium Science Technology R-D Inst</value>
+  </data>
+  <data name="AboutVersionLabel.Text" xml:space="preserve">
+    <value>버전: </value>
+  </data>
+  <data name="AboutWASDKBuildCard.Header" xml:space="preserve">
+    <value>Windows App SDK 빌드 버전</value>
+  </data>
+  <data name="AboutWASDKRuntimeCard.Header" xml:space="preserve">
+    <value>Windows App SDK 런타임 버전</value>
+  </data>
+  <data name="AboutWinUIEssentialBuildCard.Header" xml:space="preserve">
+    <value>WinUI Essentials 빌드 SDK 버전</value>
+  </data>
+  <data name="AboutDependenciesHeader.Text" xml:space="preserve">
+    <value>종속성 및 참조</value>
+  </data>
+  <data name="AboutWarrantyText.Text" xml:space="preserve">
+    <value>이 코드와 정보는 명시적이거나 묵시적인 어떠한 보증도 없이 있는 그대로 제공됩니다.</value>
+  </data>
+  <data name="AboutLicenseSourceLink.Content" xml:space="preserve">
+    <value>라이선스 및 소스</value>
+  </data>
+  <data name="AboutProductionRole.Text" xml:space="preserve">
+    <value>제작 / 비주얼 디자인</value>
+  </data>
+  <data name="AboutProgrammingRole.Text" xml:space="preserve">
+    <value>프로그래밍 디렉터</value>
+  </data>
+  <data name="AboutAIAssistantRole.Text" xml:space="preserve">
+    <value>AI 프로그래밍 도우미 / 컨설턴트</value>
+  </data>
+  <data name="AboutFrameworkRole.Text" xml:space="preserve">
+    <value>소프트웨어 프레임워크</value>
+  </data>
+  <data name="AboutSpecialThanksRole.Text" xml:space="preserve">
+    <value>특별 감사</value>
+  </data>
+  <data name="AboutYouText.Text" xml:space="preserve">
+    <value>당신!</value>
+  </data>
+  <data name="AboutHelpFeedbackLink.Content" xml:space="preserve">
+    <value>도움말 및 피드백</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Header" xml:space="preserve">
+    <value>OpenNet 오픈 소스</value>
+  </data>
+  <data name="AboutOpenSourceExpander.Description" xml:space="preserve">
+    <value>WinUI 3용 OpenNet</value>
+  </data>
+  <data name="AboutJoinProjectLink.Content" xml:space="preserve">
+    <value>GitHub에서 프로젝트 참여</value>
+  </data>
+  <data name="AboutGoToRepoText.Text" xml:space="preserve">
+    <value>리포지토리로 이동</value>
+  </data>
+  <data name="AboutLastCommitLabel.Text" xml:space="preserve">
+    <value>마지막 커밋: </value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.Title" xml:space="preserve">
+    <value>트래커 편집</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>저장</value>
+  </data>
+  <data name="ViewTaskTrackersPageEditTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ViewTaskTrackersPageTrackerEditorTextBox.PlaceholderText" xml:space="preserve">
+    <value>한 줄에 하나의 HTTP, HTTPS 또는 UDP 트래커 URL</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.Title" xml:space="preserve">
+    <value>트래커를 제거할까요?</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.PrimaryButtonText" xml:space="preserve">
+    <value>제거</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveTrackerDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.Title" xml:space="preserve">
+    <value>모든 트래커 로그를 지울까요?</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.PrimaryButtonText" xml:space="preserve">
+    <value>모두 지우기</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ViewTaskTrackersPageClearAllTrackerLogsMessage.Text" xml:space="preserve">
+    <value>모든 작업의 메모리 내 트래커 로그를 지웁니다.</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.Title" xml:space="preserve">
+    <value>접근할 수 없는 트래커 제거</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.PrimaryButtonText" xml:space="preserve">
+    <value>제거</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachableTrackersDialog.CloseButtonText" xml:space="preserve">
+    <value>취소</value>
+  </data>
+  <data name="ViewTaskTrackersPageRemoveUnreachablePromptText.Text" xml:space="preserve">
+    <value>다음 재시도 횟수에 도달한 모든 트래커 제거:</value>
+  </data>
+  <data name="ViewTaskTrackersPageMessageDialog.CloseButtonText" xml:space="preserve">
+    <value>닫기</value>
+  </data>
+  <data name="DL_BrowseSavePath.Content" xml:space="preserve">
+    <value>찾아보기...</value>
+  </data>
+  <data name="DL_BrowseMovePath.Content" xml:space="preserve">
+    <value>찾아보기...</value>
+  </data>
+  <data name="DL_Aria2Connections.Header" xml:space="preserve">
+    <value>HTTP 다운로드 연결 수</value>
+  </data>
+  <data name="DL_Aria2Connections.Description" xml:space="preserve">
+    <value>각 HTTP 다운로드에 사용할 연결 수</value>
+  </data>
+  <data name="RestartLanguageInfoBar.Title" xml:space="preserve">
+    <value>언어 변경을 적용하려면 OpenNet을 다시 시작하세요</value>
+  </data>
+  <data name="ViewThemeSettingFallbackColorCard.Title" xml:space="preserve">
+    <value>창이 포커스를 잃을 때의 대체 색</value>
+  </data>
+  <data name="ViewThemeSettingTintColorCard.Title" xml:space="preserve">
+    <value>색조 색</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Header" xml:space="preserve">
+    <value>앱 언어 따르기</value>
+  </data>
+  <data name="WebUISettingsFollowLanguageCard.Description" xml:space="preserve">
+    <value>Web UI 언어를 OpenNet 앱 언어와 동기화합니다.</value>
+  </data>
+  <data name="CF_EditPatternLabel.Text" xml:space="preserve">
+    <value>클라이언트 패턴</value>
+  </data>
+  <data name="CF_EditMatchTypeLabel.Text" xml:space="preserve">
+    <value>일치 유형</value>
+  </data>
+  <data name="CF_EditMatchContains.Content" xml:space="preserve">
+    <value>포함</value>
+  </data>
+  <data name="CF_EditMatchExact.Content" xml:space="preserve">
+    <value>정확히 일치</value>
+  </data>
+  <data name="CF_EditMatchWildcard.Content" xml:space="preserve">
+    <value>와일드카드</value>
+  </data>
+  <data name="CF_EditMatchRegex.Content" xml:space="preserve">
+    <value>정규식</value>
+  </data>
+  <data name="CF_EditCaseSensitive.Header" xml:space="preserve">
+    <value>대/소문자 구분</value>
+  </data>
+  <data name="CF_EditEnabled.Header" xml:space="preserve">
+    <value>사용</value>
+  </data>
+  <data name="CF_EditDescriptionLabel.Text" xml:space="preserve">
+    <value>설명</value>
+  </data>
+  <data name="CF_ImportHint.Text" xml:space="preserve">
+    <value>JSON은 모든 규칙 옵션을 유지합니다. 일반 텍스트는 줄마다 대/소문자를 구분하지 않는 포함 규칙으로 가져옵니다.</value>
+  </data>
+  <data name="CF_ReplaceExisting.Content" xml:space="preserve">
+    <value>가져오기 전에 기존 규칙 모두 바꾸기</value>
+  </data>
+  <data name="CF_ClearRulesMessage.Text" xml:space="preserve">
+    <value>모든 클라이언트 필터 규칙을 제거하시겠습니까? 이 작업은 실행 취소할 수 없습니다.</value>
+  </data>
+  <data name="CF_DeleteRulePrompt" xml:space="preserve">
+    <value>이 규칙을 삭제하시겠습니까?</value>
+  </data>
+  <data name="IPF_EditSubscriptionEnabled.Content" xml:space="preserve">
+    <value>이 원본 사용</value>
+  </data>
+  <data name="IPF_EditRuleEntryLabel.Text" xml:space="preserve">
+    <value>IP 주소, CIDR 블록 또는 범위</value>
+  </data>
+  <data name="IPF_EditRuleDescriptionLabel.Text" xml:space="preserve">
+    <value>설명(선택 사항)</value>
+  </data>
+  <data name="IPF_DeleteRulePrompt" xml:space="preserve">
+    <value>이 규칙을 삭제하시겠습니까?</value>
+  </data>
+  <data name="IPF_ClearAllRulesDialogMessage.Text" xml:space="preserve">
+    <value>모든 IP 필터 규칙을 제거하시겠습니까? 이 작업은 취소할 수 없습니다.</value>
+  </data>
+  <data name="BT_QueueingEnabled.Header" xml:space="preserve">
+    <value>Torrent 대기열 사용</value>
+  </data>
+  <data name="BT_QueueingEnabled.Description" xml:space="preserve">
+    <value>동시에 활성화되는 다운로드, 업로드 및 Torrent 수를 제한합니다. 제한 없이 예약하려면 끄세요.</value>
+  </data>
+  <data name="BT_MixedModePreferTcp.Content" xml:space="preserve">
+    <value>TCP 우선</value>
+  </data>
+  <data name="BT_MixedModePeerProportional.Content" xml:space="preserve">
+    <value>피어 비례</value>
+  </data>
+  <data name="BT_UploadSlotsFixed.Content" xml:space="preserve">
+    <value>고정 슬롯</value>
+  </data>
+  <data name="BT_UploadSlotsRateBased.Content" xml:space="preserve">
+    <value>업로드 속도 기반</value>
+  </data>
+  <data name="BT_UploadChokingRoundRobin.Content" xml:space="preserve">
+    <value>라운드 로빈</value>
+  </data>
+  <data name="BT_UploadChokingFastest.Content" xml:space="preserve">
+    <value>가장 빠른 업로드</value>
+  </data>
+  <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
+    <value>안티 리치</value>
   </data>
 </root>

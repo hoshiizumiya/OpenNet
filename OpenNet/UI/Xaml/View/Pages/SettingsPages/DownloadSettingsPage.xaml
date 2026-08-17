@@ -40,8 +40,8 @@
                         LostFocus="OnSettingChanged" />
                     <Button
                         x:Name="BrowseSavePathButton"
-                        x:Uid="CommonContentBrowse"
-                        AutomationProperties.AutomationId="CommonContentBrowse"
+                        x:Uid="DL_BrowseSavePath"
+                        AutomationProperties.AutomationId="DL_BrowseSavePath"
                         Click="BrowseSavePathButton_Click"
                         Content="Browse..." />
                 </StackPanel>
@@ -64,6 +64,29 @@
                 <ToggleSwitch x:Name="AutoStartDownloadsToggle" Toggled="OnSettingChanged" />
             </essential:SettingsCard>
 
+			<essential:SettingsCard x:Uid="DL_RecheckBeforeResume">
+				<essential:SettingsCard.HeaderIcon>
+					<FontIcon Glyph="&#xE9D5;" />
+				</essential:SettingsCard.HeaderIcon>
+				<ToggleSwitch x:Name="RecheckBeforeResumeToggle" Toggled="OnSettingChanged" />
+			</essential:SettingsCard>
+
+            <essential:SettingsCard
+                x:Uid="DL_Aria2Connections"
+                Description="Connections used for each HTTP download"
+                Header="HTTP download connections">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE968;" />
+                </essential:SettingsCard.HeaderIcon>
+                <NumberBox
+                    x:Name="Aria2ConnectionsNumberBox"
+                    Maximum="16"
+                    Minimum="1"
+                    SmallChange="1"
+                    SpinButtonPlacementMode="Inline"
+                    ValueChanged="OnSettingChanged" />
+            </essential:SettingsCard>
+
             <essential:SettingsExpander x:Uid="DL_MoveCompleted">
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE8DE;" />
@@ -80,8 +103,8 @@
                                 LostFocus="OnSettingChanged" />
                             <Button
                                 x:Name="BrowseMovePathButton"
-                                x:Uid="CommonContentBrowse"
-                                AutomationProperties.AutomationId="CommonContentBrowse"
+                                x:Uid="DL_BrowseMovePath"
+                                AutomationProperties.AutomationId="DL_BrowseMovePath"
                                 Click="BrowseMovePathButton_Click"
                                 Content="Browse..." />
                         </StackPanel>

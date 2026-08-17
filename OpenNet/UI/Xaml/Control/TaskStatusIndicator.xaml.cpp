@@ -84,6 +84,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 				stateName = L"Failed";
 				resourceKey = L"TaskStatusFailed";
 				break;
+			case 6: // DownloadTaskState::Checking
+				stateName = L"Checking";
+				resourceKey = L"TaskStatusChecking";
+				break;
 			default:
 				break;
 		}

@@ -560,13 +560,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const context = GetSelectedFileContext();
 		if (!context) co_return;
 
-		winrt::Microsoft::UI::Xaml::Controls::TextBox input;
+		auto dialog = RenameFileDialog();
+		auto input = RenameFileTextBox();
 		input.Text(context->relativePath.filename().wstring());
 		input.SelectAll();
-		winrt::Microsoft::UI::Xaml::Controls::ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskFilesPageRenameFileTitle")));
-		dialog.Content(input);
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonRename"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(

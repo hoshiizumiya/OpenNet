@@ -480,7 +480,7 @@
                             Header="Port"
                             Maximum="65535"
                             Minimum="1"
-                            SpinButtonPlacementMode="Compact" />
+                            SpinButtonPlacementMode="Inline" />
                         <TextBox
                             x:Name="WebUIUserNameBox"
                             x:Uid="GuideWebUIUsername"
@@ -525,7 +525,7 @@
                         Header="Refresh interval (milliseconds)"
                         Maximum="60000"
                         Minimum="100"
-                        SpinButtonPlacementMode="Compact"
+                        SpinButtonPlacementMode="Inline"
                         Value="1000" />
                 </StackPanel>
             </essential:Case>

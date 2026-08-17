@@ -177,6 +177,16 @@ void OpenNet::Core::Aria2::Aria2Instance::ClearList()
 	}
 }
 
+void OpenNet::Core::Aria2::Aria2Instance::SaveSession()
+{
+	nlohmann::json params;
+	params.push_back("token:" + m_ServerToken);
+	if ("\"OK\"" != SimpleJsonRpcCall("aria2.saveSession", params.dump(2)))
+	{
+		throw winrt::hresult_error();
+	}
+}
+
 void OpenNet::Core::Aria2::Aria2Instance::Pause(std::string const& Gid, bool Force)
 {
 	nlohmann::json params;
@@ -229,7 +239,8 @@ std::string OpenNet::Core::Aria2::Aria2Instance::AddUri(std::string const& Sourc
 std::string OpenNet::Core::Aria2::Aria2Instance::AddUriWithOptions(
 	std::string const& Source,
 	std::string const& Dir,
-	std::string const& OutFileName)
+	std::string const& OutFileName,
+	std::uint32_t const ConnectionsPerServer)
 {
 	nlohmann::json params;
 	params.push_back("token:" + m_ServerToken);
@@ -243,6 +254,9 @@ std::string OpenNet::Core::Aria2::Aria2Instance::AddUriWithOptions(
 		options["dir"] = Dir;
 	if (!OutFileName.empty())
 		options["out"] = OutFileName;
+	auto const connections = std::clamp(ConnectionsPerServer, 1u, 16u);
+	options["split"] = std::to_string(connections);
+	options["max-connection-per-server"] = std::to_string(connections);
 	params.push_back(options);
 
 	return SimpleJsonRpcCall("aria2.addUri", params.dump(2));

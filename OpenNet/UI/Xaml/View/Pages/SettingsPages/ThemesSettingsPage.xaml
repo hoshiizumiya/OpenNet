@@ -34,7 +34,7 @@
             </essential:SettingsCard>-->
 
             <TextBlock
-                x:Uid="ViewThemesSettingsPageTextBlock"
+                x:Uid="ThemesAppearanceSectionHeader"
                 Padding="10"
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                 Text="Appearance" />
@@ -144,6 +144,20 @@
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>
 
+            <essential:SettingsCard
+                x:Uid="ViewThemesSettingsPageAnimatedDigitsCard"
+                Description="Animate TextBlock values when their numeric content changes"
+                Header="Animated numbers"
+                IsClickEnabled="False">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE9D2;" />
+                </essential:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    x:Name="AnimatedDigitsSwitch"
+                    IsOn="False"
+                    Toggled="AnimatedDigitsSwitch_Toggled" />
+            </essential:SettingsCard>
+
             <!--  图片背景  -->
             <essential:SettingsExpander
                 x:Name="ImageBackgroundExpander"
@@ -242,7 +256,7 @@
                             Header="Minutes"
                             Maximum="1440"
                             Minimum="1"
-                            SpinButtonPlacementMode="Compact"
+                            SpinButtonPlacementMode="Inline"
                             ValueChanged="BackgroundRotationMinutesBox_ValueChanged" />
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>
@@ -340,7 +354,7 @@
             </essential:SettingsExpander>
 
             <TextBlock
-                x:Uid="ViewThemesSettingsPageTextBlock"
+                x:Uid="ThemesFontSectionHeader"
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                 Text="Font" />
 

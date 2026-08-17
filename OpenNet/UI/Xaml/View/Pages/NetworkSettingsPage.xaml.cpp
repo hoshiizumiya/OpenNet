@@ -1,5 +1,6 @@
 ﻿#include "XamlWorkaround.h"
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/NetworkSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.g.cpp"
 #endif
@@ -14,6 +15,12 @@ using namespace Microsoft::UI::Xaml;
 using namespace Microsoft::UI::Xaml::Controls;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Foundation::Collections;
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
+{
+	static SettingsPageTagRegister<NetworkSettingsPage> s_tags{
+		L"tracker", L"SettingsTrackerSearchTags" };
+}
 
 namespace
 {
@@ -260,14 +267,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			::OpenNet::Core::P2PManager::Instance().TorrentCore();
 			core && core->IsRunning())
 		{
-			auto pack = core->GetSettings();
-			pack.set_str(
-				libtorrent::settings_pack::listen_interfaces,
-				listenInterfaces);
-			pack.set_bool(
-				libtorrent::settings_pack::listen_system_port_fallback,
-				false);
-			core->ApplySettings(pack);
+			core->ReloadSettings();
 			core->RefreshPortMappings();
 			ActualListenStatusText().Text(
 				ResourceGetString(L"ViewNetworkSettingsPageApplyingEndpointConfiguration"));

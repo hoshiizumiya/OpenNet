@@ -5,8 +5,11 @@
  *
  * LICENSE:   The MIT License
  */
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/address.hpp>
+#include "LibtorrentIncludeRestore.h"
 #include <sqlite3.h>
 #include <Windows.h>
 #include <algorithm>
@@ -1125,14 +1128,8 @@ namespace OpenNet::Core
 		return filter;
 	}
 
-	void IPFilterManager::ApplyToSession()
+	lt::ip_filter IPFilterManager::BuildSessionFilter() const
 	{
-		// Keep independently triggered IP-rule and client-rule updates ordered,
-		// so a slower older snapshot cannot overwrite a newer client block set.
-		std::lock_guard applyLock(m_applyMutex);
-		auto* core = P2PManager::Instance().TorrentCore();
-		if (!core || !core->IsRunning()) return;
-
 		lt::ip_filter filter;
 		if (IsEnabled())
 		{
@@ -1161,7 +1158,17 @@ namespace OpenNet::Core
 			if (!error)
 				filter.add_rule(address, address, lt::ip_filter::blocked);
 		}
-		core->SetIpFilter(filter);
+		return filter;
+	}
+
+	void IPFilterManager::ApplyToSession()
+	{
+		// Keep independently triggered IP-rule and client-rule updates ordered,
+		// so a slower older snapshot cannot overwrite a newer client block set.
+		std::lock_guard applyLock(m_applyMutex);
+		auto* core = P2PManager::Instance().TorrentCore();
+		if (!core || !core->IsRunning()) return;
+		core->ReloadIpFilter();
 	}
 
 	bool IPFilterManager::IsEnabled() const

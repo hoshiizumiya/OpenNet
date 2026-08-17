@@ -104,7 +104,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void OpenTaskFileMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void ManualHashCheckMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction SaveTorrentAsMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void DeleteTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction DeleteTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction DeleteTaskButton_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction RenameTaskMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void MoveTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void OpenTaskLocationMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -120,6 +121,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IAsyncAction MenuItemAddFromLink_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction MenuItemAddFromHttp_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction CreateTorrentMenuItem_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction CreateTorrentBrowseFile_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		winrt::Windows::Foundation::IAsyncAction CreateTorrentBrowseFolder_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void CreateTorrentDialog_PrimaryButtonClick(
+			winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender,
+			winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args);
 
 		void ViewTasksPagePortTestAppBarButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void ViewTasksPageSettingsAppBarButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -147,6 +154,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool m_taskTabViewTabWidthModeInitialized{};
 
 		winrt::event_token m_addTaskToken{};
+		winrt::event_token m_taskDeletionFailedToken{};
 
 		static constexpr std::string_view TaskTabStateKey =	"TasksPage.TaskTabs";
 		bool m_restoringTabViewState{ true };
@@ -154,6 +162,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Handle when ViewModel requests adding a new task
 		winrt::Windows::Foundation::IAsyncAction OnAddTaskRequested(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const&);
+		void OnTaskDeletionFailed(winrt::Windows::Foundation::IInspectable const&, winrt::hstring const& message);
 
 		// Process the torrent link and open the metadata check window
 		void ProcessAndShowTorrentMetadataWindow(winrt::hstring const& torrentLink);

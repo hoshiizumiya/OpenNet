@@ -34,7 +34,7 @@
             Header="Port"
             Maximum="65535"
             Minimum="0"
-            SpinButtonPlacementMode="Compact"
+            SpinButtonPlacementMode="Inline"
             ValueChanged="PortNumberBox_ValueChanged" />
 
         <StackPanel

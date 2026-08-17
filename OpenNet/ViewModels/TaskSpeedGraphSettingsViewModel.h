@@ -61,9 +61,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 		static constexpr int32_t DefaultBackgroundModeIndex = 1;
 		static constexpr double DefaultDotSpacing = 14.0;
 		static constexpr double DefaultCrossSpacing = 30.0;
-		static constexpr double DefaultScrollDistance = 6.0;
-		static constexpr double DefaultScrollDuration = 100.0;
-		static constexpr double DefaultSampleInterval = 100.0;
+		// One data point per second over roughly one minute at common graph
+		// widths, matching the cadence used by Task Manager.
+		static constexpr double DefaultScrollDistance = 20.0;
+		static constexpr double DefaultScrollDuration = 1000.0;
+		static constexpr double DefaultSampleInterval = 1000.0;
 		static constexpr bool DefaultSmoothCurves = true;
 		static constexpr bool DefaultHighlightEnabled = true;
 		static constexpr int32_t DefaultHighlightBehaviorIndex = 4;

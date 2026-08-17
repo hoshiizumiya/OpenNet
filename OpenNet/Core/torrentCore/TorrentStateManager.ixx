@@ -1,9 +1,6 @@
-﻿module;
-#include <libtorrent/fwd.hpp>
-#include <libtorrent/add_torrent_params.hpp>
-#include <libtorrent/session.hpp>
+﻿export module OpenNet.Core.torrentCore.TorrentStateManager;
 
-export module OpenNet.Core.torrentCore.TorrentStateManager;
+import std;
 
 export namespace OpenNet::Core::Torrent
 {
@@ -38,14 +35,17 @@ export namespace OpenNet::Core::Torrent
 		// Get the storage base path (LocalFolder)
 		std::wstring GetStoragePath() const;
 
-		// Session state operations
-		bool SaveSessionState(libtorrent::session& session);
-		std::optional<libtorrent::session_params> LoadSessionParams();
-		bool LoadSessionState(libtorrent::session& session);
+		// Opaque persistence boundary: libtorrent owns the encoding, while this
+		// module stores bytes without exporting third-party ABI or templates.
+		bool SaveSessionState(std::vector<std::uint8_t> const& stateData);
+		std::optional<std::vector<std::uint8_t>> LoadSessionStateData();
 
 		// Task resume data operations
-		bool SaveTaskResumeData(std::string const& taskId, libtorrent::add_torrent_params const& params);
-		std::optional<libtorrent::add_torrent_params> LoadTaskResumeData(std::string const& taskId);
+		bool SaveTaskResumeData(
+			std::string const& taskId,
+			std::vector<std::uint8_t> const& resumeData);
+		std::optional<std::vector<std::uint8_t>> LoadTaskResumeData(
+			std::string const& taskId);
 
 		// Task metadata operations
 		bool SaveTaskMetadata(TaskMetadata const& metadata);

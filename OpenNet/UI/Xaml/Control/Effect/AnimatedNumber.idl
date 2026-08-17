@@ -1,0 +1,10 @@
+namespace OpenNet.UI.Xaml.Control.Effect
+{
+    [bindable]
+    [default_interface]
+    runtimeclass AnimatedNumber : Microsoft.UI.Xaml.Controls.Control
+    {
+        AnimatedNumber();
+        String Value;
+    }
+}

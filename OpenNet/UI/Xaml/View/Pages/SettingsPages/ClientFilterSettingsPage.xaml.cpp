@@ -1,5 +1,6 @@
 ﻿#include "XamlWorkaround.h"
 #include "ClientFilterSettingsPage.xaml.h"
+#include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ClientFilterSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/ClientFilterSettingsPage.g.cpp"
 #endif
@@ -19,6 +20,8 @@ using namespace winrt::Windows::Foundation;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	static SettingsPageTagRegister<ClientFilterSettingsPage> s_tags{
+		L"clientfilter", L"SettingsClientFilterSearchTags" };
 	namespace
 	{
 		constexpr std::size_t MaxVisibleRules = 1000;
@@ -404,59 +407,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		TextBlock patternLabel;
-		patternLabel.Text(ResourceGetString(L"ViewClientFilterSettingsPagePatternLabel"));
-		TextBox patternBox;
-		patternBox.Text(winrt::to_hstring(selected->pattern));
-		patternBox.MinWidth(460);
-
-		TextBlock matchLabel;
-		matchLabel.Text(ResourceGetString(L"ViewClientFilterSettingsPageMatchTypeLabel"));
-		ComboBox matchBox;
-		matchBox.HorizontalAlignment(HorizontalAlignment::Stretch);
-		matchBox.Items().Append(winrt::box_value(L"Contains"));
-		matchBox.Items().Append(winrt::box_value(L"Exact"));
-		matchBox.Items().Append(winrt::box_value(L"Wildcard"));
-		matchBox.Items().Append(winrt::box_value(L"Regular expression"));
-		matchBox.SelectedIndex(static_cast<int>(selected->matchType));
-
-		ToggleSwitch caseToggle;
-		caseToggle.Header(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageCaseSensitive")));
-		caseToggle.IsOn(selected->caseSensitive);
-
-		ToggleSwitch enabledToggle;
-		enabledToggle.Header(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageEnabled")));
-		enabledToggle.IsOn(selected->enabled);
-
-		TextBlock descriptionLabel;
-		descriptionLabel.Text(ResourceGetString(L"ViewClientFilterSettingsPageDescriptionLabel"));
-		TextBox descriptionBox;
-		descriptionBox.Text(winrt::to_hstring(selected->description));
-
-		StackPanel editor;
-		editor.Spacing(8);
-		editor.Children().Append(patternLabel);
-		editor.Children().Append(patternBox);
-		editor.Children().Append(matchLabel);
-		editor.Children().Append(matchBox);
-		editor.Children().Append(caseToggle);
-		editor.Children().Append(enabledToggle);
-		editor.Children().Append(descriptionLabel);
-		editor.Children().Append(descriptionBox);
-
-		ContentDialog dialog;
+		auto dialog = EditRuleDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageEditRuleTitle")));
-		dialog.Content(editor);
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(ContentDialogButton::Primary);
+		EditPatternTextBox().Text(winrt::to_hstring(selected->pattern));
+		EditMatchTypeComboBox().SelectedIndex(static_cast<int>(selected->matchType));
+		EditCaseSensitiveToggle().IsOn(selected->caseSensitive);
+		EditEnabledToggle().IsOn(selected->enabled);
+		EditDescriptionTextBox().Text(winrt::to_hstring(selected->description));
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 
-		auto const pattern = TrimCopy(winrt::to_string(patternBox.Text()));
-		auto const matchType = MatchTypeFromIndex(matchBox.SelectedIndex());
+		auto const pattern = TrimCopy(winrt::to_string(EditPatternTextBox().Text()));
+		auto const matchType = MatchTypeFromIndex(EditMatchTypeComboBox().SelectedIndex());
 		std::string error;
 		if (!::OpenNet::Core::ClientFilterManager::ValidatePattern(
 			pattern, matchType, &error))
@@ -473,9 +438,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			selected->id,
 			pattern,
 			matchType,
-			caseToggle.IsOn(),
-			enabledToggle.IsOn(),
-			TrimCopy(winrt::to_string(descriptionBox.Text()))))
+			EditCaseSensitiveToggle().IsOn(),
+			EditEnabledToggle().IsOn(),
+			TrimCopy(winrt::to_string(EditDescriptionTextBox().Text()))))
 		{
 			ShowStatus(
 				L"The rule could not be updated. It may duplicate another rule.",
@@ -495,13 +460,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		ContentDialog dialog;
+		auto dialog = DeleteRuleDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageDeleteRuleTitle")));
-		dialog.Content(winrt::box_value(
-			winrt::hstring{ L"Delete this rule?\n\n" } +
-			winrt::to_hstring(selected->pattern)));
+		DeleteRuleMessageText().Text(
+			ResourceGetString(L"CF_DeleteRulePrompt") + L"\n\n" +
+			winrt::to_hstring(selected->pattern));
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonDelete"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Close);
@@ -519,30 +483,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		auto strong = get_strong();
 
-		CheckBox replaceCheck;
-		replaceCheck.Content(winrt::box_value(
-			L"Replace all existing rules before importing"));
-		TextBlock hint;
-		hint.Text(
-			L"JSON preserves every rule option. Plain text imports one "
-			L"case-insensitive Contains rule per line.");
-		hint.TextWrapping(TextWrapping::Wrap);
-		StackPanel options;
-		options.Spacing(8);
-		options.Children().Append(hint);
-		options.Children().Append(replaceCheck);
-
-		ContentDialog optionsDialog;
+		auto optionsDialog = ImportRulesDialog();
 		optionsDialog.XamlRoot(XamlRoot());
-		optionsDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		optionsDialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageImportRulesTitle")));
-		optionsDialog.Content(options);
 		optionsDialog.PrimaryButtonText(ResourceGetString(L"ViewClientFilterSettingsPageChooseFile"));
 		optionsDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		optionsDialog.DefaultButton(ContentDialogButton::Primary);
 		if (co_await optionsDialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
-		auto const checked = replaceCheck.IsChecked();
+		auto const checked = ReplaceExistingRulesCheckBox().IsChecked();
 		auto const replaceExisting = checked && checked.Value();
 
 		FileOpenPicker picker(
@@ -638,12 +587,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
-		ContentDialog dialog;
+		auto dialog = ClearRulesDialog();
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageClearRulesTitle")));
-		dialog.Content(winrt::box_value(
-			L"Remove every client filter rule? This cannot be undone."));
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		dialog.DefaultButton(ContentDialogButton::Close);

@@ -9,6 +9,7 @@
 #endif
 
 #include "MainSettingsPage.xaml.h"
+#include "SettingsPageTagRegister.h"
 #include "MainWindow.xaml.h"
 
 import OpenNet.Core.Utils.Message;
@@ -39,6 +40,8 @@ using namespace winrt::Windows::Foundation::Collections;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	static SettingsPageTagRegister<SettingsPage> s_tags{
+		L"general", L"SettingsGeneralSearchTags" };
 	namespace
 	{
 		winrt::hstring CurrentLocalDateTimeText()

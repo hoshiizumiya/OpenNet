@@ -119,7 +119,7 @@
                                 Grid.ColumnSpan="2"
                                 AutomationProperties.AutomationId="TorrentCheckGeneralPage_CreateSubfolderCheckBox"
                                 Content="Create subfolder"
-                                IsChecked="True" />
+                                IsChecked="{x:Bind ViewModel.CreateSubfolder, Mode=TwoWay}" />
                         </Grid>
                     </StackPanel>
                 </Border>

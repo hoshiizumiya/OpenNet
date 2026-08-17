@@ -64,6 +64,9 @@ export namespace OpenNet::Core
 		void ResumeHttpDownload(std::string const& gid);
 		void CancelHttpDownload(std::string const& gid);
 		void RemoveHttpDownload(std::string const& gid);
+		void DeleteHttpDownload(
+			std::string const& gid,
+			bool deleteDownloadedFiles);
 
 		// Bulk operations
 		void PauseAllHttp();

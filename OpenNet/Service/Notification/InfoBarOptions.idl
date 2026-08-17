@@ -1,4 +1,4 @@
-namespace OpenNet.Service.Notification
+﻿namespace OpenNet.Service.Notification
 {
     [default_interface]
     runtimeclass InfoBarOptions

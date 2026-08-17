@@ -7,6 +7,8 @@
  */
 module OpenNet.Core.DownloadManager;
 
+import OpenNet.Core.AppSettingsDatabase;
+
 namespace OpenNet::Core
 {
 	using namespace std::chrono_literals;
@@ -161,15 +163,16 @@ namespace OpenNet::Core
 
 		try
 		{
-			std::string gid;
-			if (dir.empty() && fileName.empty())
-			{
-				gid = m_aria2->AddUri(url);
-			}
-			else
-			{
-				gid = m_aria2->AddUriWithOptions(url, dir, fileName);
-			}
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
+			auto& database = AppSettingsDatabase::Instance();
+			database.Initialize();
+			auto const connections = static_cast<std::uint32_t>(std::clamp<std::int64_t>(
+				database.GetInt(AppSettingsDatabase::CAT_DOWNLOAD,
+					"aria2_connections_per_server", 8), 1, 16));
+			// Always use the options form.  The common URL-only path used to call
+			// AddUri() and silently ignored the user's connection/thread setting.
+			auto const gid = m_aria2->AddUriWithOptions(
+				url, dir, fileName, connections);
 
 			// Persist the download record
 			if (!gid.empty())
@@ -217,6 +220,7 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->Pause(gid);
 		}
 		catch (...)
@@ -230,6 +234,7 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->Resume(gid);
 		}
 		catch (...)
@@ -243,6 +248,7 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->Cancel(gid);
 		}
 		catch (...)
@@ -256,10 +262,186 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->Remove(gid);
 		}
 		catch (...)
 		{
+		}
+	}
+
+	void DownloadManager::DeleteHttpDownload(
+		std::string const& gid, bool const deleteDownloadedFiles)
+	{
+		if (gid.empty())
+		{
+			return;
+		}
+		bool const engineAvailable = IsAria2Available();
+		if (!engineAvailable)
+		{
+			// Do not delete only the SQLite row while download.session still owns the
+			// task: aria2 would restore it on the next launch. Keep the task intact and
+			// let the UI report a retryable failure instead.
+			throw std::runtime_error("aria2 is not available; the task was not deleted");
+		}
+		std::lock_guard rpcLock(m_aria2->InstanceLock());
+
+		std::vector<std::filesystem::path> downloadedFiles;
+		std::vector<std::filesystem::path> controlFiles;
+		try
+		{
+			auto const information = m_aria2->GetTaskInformation(gid);
+			for (auto const& file : information.Files)
+			{
+				if (file.Path.empty()) continue;
+				auto path = std::filesystem::path{ winrt::to_hstring(file.Path).c_str() };
+				downloadedFiles.push_back(path);
+				path += L".aria2";
+				controlFiles.push_back(std::move(path));
+			}
+			// Aria2 may have resolved a server-provided file name after the task was
+			// created. Persist that actual path before forceRemove makes tellStatus
+			// unavailable, so a later retry can still clean a temporarily locked file.
+			if (!downloadedFiles.empty())
+			{
+				if (auto const record = HttpStateManager::Instance().FindByGid(gid))
+				{
+					auto const& path = downloadedFiles.front();
+					HttpStateManager::Instance().UpdateRecordOutputPath(
+						record->recordId,
+						winrt::to_string(winrt::hstring{ path.parent_path().wstring() }),
+						winrt::to_string(winrt::hstring{ path.filename().wstring() }));
+				}
+			}
+		}
+		catch (...) { }
+		// A previous delete attempt may already have removed the aria2 result while
+		// Windows still held the output file open. Keep the SQLite record until all
+		// file operations succeed so a retry can reconstruct the output path.
+		if (downloadedFiles.empty())
+		{
+			if (auto const record = HttpStateManager::Instance().FindByGid(gid))
+			{
+				auto const& leafName = record->fileName.empty() ? record->name : record->fileName;
+				if (!record->savePath.empty() && !leafName.empty())
+				{
+					auto path = std::filesystem::path{
+						winrt::to_hstring(record->savePath).c_str() }
+						/ std::filesystem::path{ winrt::to_hstring(leafName).c_str() };
+					downloadedFiles.push_back(path);
+					path += L".aria2";
+					controlFiles.push_back(std::move(path));
+				}
+			}
+		}
+
+		// NanaGet uses forceRemove for active tasks and removeDownloadResult for
+		// stopped tasks. Aria2 moves a cancelled task to the stopped list
+		// asynchronously, so wait briefly before removing its result.
+		bool reachedStoppedList = false;
+		try { m_aria2->Cancel(gid, true); } catch (...) { }
+		for (int attempt = 0; attempt < 20; ++attempt)
+		{
+			try
+			{
+				auto const status = m_aria2->GetTaskInformation(gid).Status;
+				if (status == Aria2::DownloadStatus::Removed
+					|| status == Aria2::DownloadStatus::Complete
+					|| status == Aria2::DownloadStatus::Error)
+				{
+					reachedStoppedList = true;
+					break;
+				}
+			}
+			catch (...)
+			{
+				// tellStatus fails after removeDownloadResult. Treat this as already gone.
+				reachedStoppedList = true;
+				break;
+			}
+			std::this_thread::sleep_for(std::chrono::milliseconds(50));
+		}
+		if (!reachedStoppedList)
+		{
+			throw std::runtime_error("aria2 did not stop the task before deletion");
+		}
+
+		bool resultRemoved = false;
+		for (int attempt = 0; attempt < 20 && !resultRemoved; ++attempt)
+		{
+			try
+			{
+				m_aria2->Remove(gid);
+				resultRemoved = true;
+			}
+			catch (...)
+			{
+				try
+				{
+					(void)m_aria2->GetTaskInformation(gid);
+				}
+				catch (...)
+				{
+					resultRemoved = true;
+				}
+				if (!resultRemoved)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				}
+			}
+		}
+		if (!resultRemoved)
+		{
+			throw std::runtime_error("aria2 did not remove the stopped task result");
+		}
+		m_aria2->SaveSession();
+
+		auto removeWithRetry = [](std::filesystem::path const& path, bool const directory)
+		{
+			for (int attempt = 0; attempt < 30; ++attempt)
+			{
+				std::error_code error;
+				auto const exists = std::filesystem::exists(path, error);
+				if (error)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+					continue;
+				}
+				if (!exists) return;
+				if (directory)
+					std::filesystem::remove_all(path, error);
+				else
+					std::filesystem::remove(path, error);
+				if (!error) return;
+				std::this_thread::sleep_for(std::chrono::milliseconds(100));
+			}
+			throw std::filesystem::filesystem_error(
+				"aria2 released the task but the download file is still locked",
+				path, std::make_error_code(std::errc::device_or_resource_busy));
+		};
+
+		for (auto const& path : controlFiles)
+		{
+			removeWithRetry(path, false);
+		}
+		if (deleteDownloadedFiles)
+		{
+			for (auto const& path : downloadedFiles)
+			{
+				std::error_code error;
+				auto const isDirectory = std::filesystem::is_directory(path, error);
+				removeWithRetry(path, !error && isDirectory);
+			}
+		}
+
+		// The refresh thread owns its own task snapshot. Forget local identity caches
+		// only after engine/session/file cleanup succeeded so a failed deletion can
+		// still be retried from the persisted record.
+		{
+			std::lock_guard lock(m_mutex);
+			m_gidToRecordId.erase(gid);
+			m_knownGids.erase(gid);
 		}
 	}
 
@@ -269,6 +451,7 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->PauseAll();
 		}
 		catch (...)
@@ -282,6 +465,7 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->ResumeAll();
 		}
 		catch (...)
@@ -295,6 +479,7 @@ namespace OpenNet::Core
 			return;
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->ClearList();
 		}
 		catch (...)
@@ -368,6 +553,7 @@ namespace OpenNet::Core
 	{
 		try
 		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			m_aria2->RefreshInformation();
 
 			// Update global speed stats
@@ -380,11 +566,13 @@ namespace OpenNet::Core
 			HttpProgressCallback progressCb;
 			HttpFinishedCallback finishedCb;
 			HttpErrorCallback errorCb;
+			std::set<std::string> knownGids;
 			{
 				std::lock_guard lock(m_mutex);
 				progressCb = m_progressCb;
 				finishedCb = m_finishedCb;
 				errorCb = m_errorCb;
+				knownGids = m_knownGids;
 			}
 
 			std::set<std::string> currentGids;
@@ -440,7 +628,7 @@ namespace OpenNet::Core
 				// Fire completion / error callbacks
 				if (task.Status == Aria2::DownloadStatus::Complete)
 				{
-					if (m_knownGids.count(gid) == 0)
+					if (!knownGids.contains(gid))
 					{
 						// Persist completed status
 						std::string recordId;
@@ -457,7 +645,7 @@ namespace OpenNet::Core
 				}
 				else if (task.Status == Aria2::DownloadStatus::Error)
 				{
-					if (m_knownGids.count(gid) == 0)
+					if (!knownGids.contains(gid))
 					{
 						// Persist failed status
 						std::string recordId;

@@ -1,9 +1,12 @@
-#include "pch.h"
+﻿#include "XamlWorkaround.h"
 #include "App.xaml.h"
 #include "MainWindow.xaml.h"
 
 #include "CppUnitTest.h"
 #include <winrt/Microsoft.VisualStudio.TestPlatform.TestExecutor.WinRTCore.h>
+
+
+import winrt.Microsoft.VisualStudio.TestPlatform.TestExecutor.WinRTCore;
 
 using namespace winrt::Microsoft::UI::Xaml;
 
@@ -12,7 +15,12 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNetUnitTest::implementation
 {
-    App::App(PWSTR argv)
+    App::App()
+        : App(L"")
+    {
+    }
+
+    App::App(PCWSTR argv)
     {
         m_args = argv;
 

@@ -3,6 +3,7 @@
     x:Class="OpenNet.UI.Xaml.View.InfoBarView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:behavior="using:OpenNet.UI.Xaml.Behavior"
     xmlns:control="using:OpenNet.UI.Xaml.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
@@ -19,27 +20,34 @@
 
             <DataTemplate x:Key="InfoBarTemplate" x:DataType="notification:InfoBarOptions">
                 <InfoBar
-                    Title="{x:Bind Title, Mode=OneTime}"
-                    control:InfoBarHelper.IsTextSelectionEnabled="{x:Bind IsTextSelectionEnabled, Mode=OneTime}"
+                    Title="{Binding Title}"
+                    control:InfoBarHelper.IsTextSelectionEnabled="{Binding IsTextSelectionEnabled}"
                     Closed="OnInfoBarClosed"
-                    Content="{x:Bind Content, Mode=OneTime}"
+                    Content="{Binding Content}"
                     IsOpen="True"
-                    Message="{x:Bind Message, Mode=OneTime}"
-                    Severity="{x:Bind Severity, Mode=OneTime}" />
+                    Message="{Binding Message}"
+                    Severity="{Binding Severity}">
+                    <interactivity:Interaction.Behaviors>
+                        <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{Binding MilliSecondsDelay}" />
+                    </interactivity:Interaction.Behaviors>
+                </InfoBar>
             </DataTemplate>
 
             <DataTemplate x:Key="InfoBarWithActionButtonTemplate" x:DataType="notification:InfoBarOptions">
                 <InfoBar
-                    Title="{x:Bind Title, Mode=OneTime}"
-                    control:InfoBarHelper.IsTextSelectionEnabled="{x:Bind IsTextSelectionEnabled, Mode=OneTime}"
+                    Title="{Binding Title}"
+                    control:InfoBarHelper.IsTextSelectionEnabled="{Binding IsTextSelectionEnabled}"
                     Closed="OnInfoBarClosed"
-                    Content="{x:Bind Content, Mode=OneTime}"
+                    Content="{Binding Content}"
                     IsOpen="True"
-                    Message="{x:Bind Message, Mode=OneTime}"
-                    Severity="{x:Bind Severity, Mode=OneTime}">
+                    Message="{Binding Message}"
+                    Severity="{Binding Severity}">
                     <InfoBar.ActionButton>
-                        <Button Command="{x:Bind ActionButtonCommand, Mode=OneTime}" Content="{x:Bind ActionButtonContent, Mode=OneTime}" />
+                        <Button Command="{Binding ActionButtonCommand}" Content="{Binding ActionButtonContent}" />
                     </InfoBar.ActionButton>
+                    <interactivity:Interaction.Behaviors>
+                        <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{Binding MilliSecondsDelay}" />
+                    </interactivity:Interaction.Behaviors>
                 </InfoBar>
             </DataTemplate>
 
@@ -60,14 +68,12 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <Grid
-        x:Name="VisibilityRoot"
-        Margin="16"
-        HorizontalAlignment="Right"
-        VerticalAlignment="Bottom"
-        Visibility="Collapsed">
+    <Grid x:Name="VisibilityRoot" Visibility="Collapsed">
         <Border
             x:Name="ShowButtonBorder"
+            Margin="16"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             labs:TransitionHelper.Id="Body"
             Background="{ThemeResource SystemControlAcrylicElementBrush}"
             BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
@@ -106,20 +112,43 @@
             x:Name="InfoBarItemsBorder"
             Width="460"
             MaxHeight="560"
+            Margin="16"
             Padding="12"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Bottom"
             labs:TransitionHelper.Id="Body"
             Background="{ThemeResource SystemControlAcrylicElementBrush}"
             BorderBrush="{ThemeResource SurfaceStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="{ThemeResource OverlayCornerRadius}"
             Visibility="Collapsed">
-            <Grid RowSpacing="10">
+            <Grid RowSpacing="16">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <Grid ColumnSpacing="8">
+                <ScrollView>
+                    <ItemsControl
+                        x:Name="InfoBarItemsControl"
+                        MaxWidth="480"
+                        ItemTemplateSelector="{StaticResource InfoBarTemplateSelector}"
+                        ItemsSource="{x:Bind InfoBars, Mode=OneWay}">
+                        <ItemsControl.ItemContainerTransitions>
+                            <TransitionCollection>
+                                <AddDeleteThemeTransition />
+                                <RepositionThemeTransition />
+                            </TransitionCollection>
+                        </ItemsControl.ItemContainerTransitions>
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Spacing="8" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                    </ItemsControl>
+                </ScrollView>
+
+                <Grid Grid.Row="1" ColumnSpacing="8">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition />
                         <ColumnDefinition Width="Auto" />
@@ -160,24 +189,6 @@
                     </StackPanel>
                 </Grid>
 
-                <ScrollView Grid.Row="1">
-                    <ItemsControl
-                        x:Name="InfoBarItemsControl"
-                        ItemTemplateSelector="{StaticResource InfoBarTemplateSelector}"
-                        ItemsSource="{x:Bind InfoBars, Mode=OneWay}">
-                        <ItemsControl.ItemContainerTransitions>
-                            <TransitionCollection>
-                                <AddDeleteThemeTransition />
-                                <RepositionThemeTransition />
-                            </TransitionCollection>
-                        </ItemsControl.ItemContainerTransitions>
-                        <ItemsControl.ItemsPanel>
-                            <ItemsPanelTemplate>
-                                <StackPanel Spacing="8" />
-                            </ItemsPanelTemplate>
-                        </ItemsControl.ItemsPanel>
-                    </ItemsControl>
-                </ScrollView>
             </Grid>
         </Border>
     </Grid>

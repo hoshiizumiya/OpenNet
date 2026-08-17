@@ -98,6 +98,11 @@
         Windows.Foundation.TimeSpan HorizontalScrollDuration;
         Windows.Foundation.TimeSpan HighlightLineAnimationDuration;
         Double HistoryBufferScreens;
+        Boolean IsAutoScaleEnabled;
+        Boolean IsSeriesGridEnabled;
+        Double ValueMaximum;
+        Double MinimumValueMaximum;
+        Double CurrentValueMaximum{ get; };
         Object HighlightLineContent;
 
         String RegisterGraphBrush(GraphBrushData brushData);

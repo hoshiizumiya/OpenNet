@@ -24,6 +24,24 @@ namespace OpenNet::Core
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats{};
 	}
 
+	::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats
+		P2PManager::GetPerformanceStats()
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->GetPerformanceStats()
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats{};
+	}
+
+	std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>
+		P2PManager::GetTorrentPeers(std::string const& taskId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->GetTorrentPeers(taskId)
+			: std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>{};
+	}
+
 	// 确保核心已经完成初始化
 	IAsyncAction P2PManager::EnsureTorrentCoreInitializedAsync()
 	{

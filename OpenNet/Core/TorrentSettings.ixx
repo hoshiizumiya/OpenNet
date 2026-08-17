@@ -44,7 +44,7 @@ export namespace OpenNet::Core
 		// Port 0 lets the OS choose an actually available port. Fixed ports entered
 		// by the user are not silently replaced when binding fails.
 		std::string listenInterfaces{ "0.0.0.0:0,[::]:0" };
-		int connectionsLimit{ 200 };
+		int connectionsLimit{ 500 };
 		bool enableIncomingTcp{ true };
 		bool enableOutgoingTcp{ true };
 		bool enableIncomingUtp{ true };
@@ -72,6 +72,7 @@ export namespace OpenNet::Core
 		int stopTrackerTimeout{ 5 };
 
 		// ----- Limits -----
+		bool queueingEnabled{ true };
 		int activeDownloads{ 3 };
 		int activeSeeds{ 5 };
 		int activeLimit{ 15 };
@@ -109,11 +110,17 @@ export namespace OpenNet::Core
 		int uploadChokingAlgorithm{ 1 };
 
 		// ----- Disk I/O -----
-		int aioThreads{ 4 };
+		int aioThreads{ 10 };
 		int hashingThreads{ 1 };
-		int filePoolSize{ 40 };
-		int checkingMemUsage{ 256 };
-		int diskQueueSize{ 1024 * 1024 };
+		int filePoolSize{ 100 };
+		// MiB exposed by the native and Web UIs. libtorrent stores this setting
+		// as a count of 16 KiB blocks, so the settings_pack boundary multiplies
+		// and divides by 64.
+		int checkingMemUsage{ 32 };
+		// libtorrent 2.x counts bytes here. OpenNet deliberately keeps more
+		// pending I/O than the old 1 MiB default so a brief storage stall does
+		// not starve a high-throughput network connection.
+		int diskQueueSize{ 100 * 1024 * 1024 };
 		bool pieceExtentAffinity{ false };
 		bool uploadSuggestions{ false };
 		int sendBufferWatermark{ 500 };
@@ -134,13 +141,16 @@ export namespace OpenNet::Core
 		bool proxyTrackerConnections{ true };
 
 		// ----- Identity -----
-		std::string userAgent{ "libtorrent/2.0.11" };
+		std::string userAgent{ "libtorrent/2.1.1" };
 		std::string peerFingerprint{ "-ON0100-" }; // OpenNet client ID
 
 		// ----- Download Defaults -----
 		std::wstring defaultSavePath; // empty = user's Downloads folder
 		bool preallocateStorage{ false };
 		bool autoStartDownloads{ true };
+		// When enabled, resuming a stopped torrent verifies all pieces first.
+		// The default is deliberately off because a full recheck can be costly.
+		bool recheckBeforeResume{ false };
 		bool moveCompletedEnabled{ false };
 		std::wstring moveCompletedPath;
 	};
@@ -183,24 +193,4 @@ export namespace OpenNet::Core
 		bool m_loaded{ false };
 	};
 
-	// ---------------------------------------------------------------
-	//  Free functions – map TorrentSettings <-> libtorrent settings_pack
-	//  (implementations in TorrentSettings.cpp)
-	// ---------------------------------------------------------------
-} // namespace OpenNet::Core
-
-// Forward-declare libtorrent type to avoid pulling in heavy headers.
-export namespace libtorrent
-{
-	struct settings_pack;
-}
-
-export namespace OpenNet::Core
-{
-	void ApplyTorrentSettingsToSettingsPack(
-		TorrentSettings const& settings,
-		libtorrent::settings_pack& pack);
-
-	TorrentSettings BuildTorrentSettingsFromPack(
-		libtorrent::settings_pack const& pack);
 } // namespace OpenNet::Core

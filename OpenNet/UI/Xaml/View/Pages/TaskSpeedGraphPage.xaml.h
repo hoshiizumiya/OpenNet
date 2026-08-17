@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.OpenNet.UI.Xaml.Control.Graph;
+import winrt.OpenNet.UI.Xaml.Control.Effect;
 #include "UI/Xaml/View/Pages/TaskSpeedGraphPage.g.h"
 #include "ViewModels/TaskSpeedGraphSettingsViewModel.h"
 
@@ -58,11 +59,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::size_t RequiredSeriesCount() const;
 		std::vector<float> SampleProcessorUsage();
 		std::pair<std::vector<double>, std::vector<winrt::hstring>> SampleMetric();
-		float NormalizeValue(double value, double maximum);
 		void QueueMetricText(
 			std::vector<winrt::hstring> const& values,
-			winrt::hstring const& scaleText);
+			winrt::hstring const& scaleText,
+			winrt::hstring const& axisMaximumText);
 		void QueueUploadHighlight(double value, double maximum);
+		void ArrangeTransferHighlightLabels(double downloadY, double uploadY);
 		static winrt::hstring FormatBytes(double value);
 		static winrt::hstring FormatRate(double value);
 
@@ -81,8 +83,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::chrono::steady_clock::time_point m_previousDhtSample{};
 		double m_lastDhtReceivedRate{};
 		double m_lastDhtSentRate{};
-		std::atomic<double> m_dynamicScale{ 1024.0 };
 		std::atomic<double> m_highlightScale{ 100.0 };
+		double m_downloadHighlightY{};
+		double m_uploadHighlightY{};
 		std::atomic<double> m_sampleElapsedSeconds{};
 		std::atomic<double> m_graphSampleIntervalSeconds{ 0.1 };
 		std::atomic<double> m_graphScrollPixelsPerSecond{ 60.0 };

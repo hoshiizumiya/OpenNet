@@ -10,6 +10,8 @@
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
 #include "FontCustomizePage.xaml.h"
 #include "Service/Background/BackgroundMediaService.h"
+#include "UI/Xaml/Control/Effect/AnimatedDigit.h"
+#include "SettingsPageTagRegister.h"
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ThemeHelper;
@@ -27,10 +29,13 @@ using namespace winrt::Microsoft::UI::Xaml::Media::Animation;
 namespace
 {
 	constexpr auto kBackdropUseFallbackKey         = "backdrop_use_fallback";
+	constexpr auto kAnimatedDigitsKey              = "animated_digits_enabled";
 }
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
+	static SettingsPageTagRegister<ThemesSettingsPage> s_tags{
+		L"appearance", L"SettingsAppearanceSearchTags" };
 	ThemesSettingsPage::ThemesSettingsPage()
 	{
 		Loaded([this](IInspectable const&, RoutedEventArgs const&)
@@ -62,6 +67,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ImageOpacitySlider().Value(mediaOptions.ImageOpacity);
 		BackdropFallbackSwitch().IsOn(useFallback);
 		ApplyBackgroundToSecondaryWindowsSwitch().IsOn(applyBackgroundToSecondaryWindows);
+		AnimatedDigitsSwitch().IsOn(db.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
+			kAnimatedDigitsKey).value_or(false));
 		ImageModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.ImageMode));
 		VideoModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.VideoMode));
 		VideoStretchComboBox().SelectedIndex(mediaOptions.VideoStretch);
@@ -217,6 +225,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			::OpenNet::Helpers::kApplyBackgroundToSecondaryWindowsKey,
 			ApplyBackgroundToSecondaryWindowsSwitch().IsOn());
 		ApplyBackdropFromSelection();
+	}
+
+	void ThemesSettingsPage::AnimatedDigitsSwitch_Toggled(
+		IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		auto const enabled = AnimatedDigitsSwitch().IsOn();
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
+			kAnimatedDigitsKey,
+			enabled);
+		winrt::OpenNet::UI::Xaml::Control::Effect::implementation::
+			AnimatedDigit::AnimationsEnabled(enabled);
 	}
 
 	winrt::Windows::Foundation::IAsyncAction ThemesSettingsPage::SetImageButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)

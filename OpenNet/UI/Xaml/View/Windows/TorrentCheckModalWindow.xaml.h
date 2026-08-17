@@ -51,6 +51,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void NavigateToGeneralPage();
 		void MergeTrackerList(std::vector<std::string> const& trackers);
 		std::vector<std::string> GetTaskTrackers();
+		winrt::Windows::Foundation::IAsyncOperation<bool>
+			ConfirmTorrentCopyOverwriteAsync();
 
 		// Start the actual download with current settings
 		winrt::Windows::Foundation::IAsyncAction StartDownloadAsync();

@@ -28,6 +28,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void RSSItem_RightTapped(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const&);
 		void RSSItem_PointerEntered(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
 		void RSSItem_PointerExited(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
+		void RSSPreviewFlyout_Opened(::winrt::Windows::Foundation::IInspectable const&, ::winrt::Windows::Foundation::IInspectable const&);
+		void RSSPreviewFlyout_Closed(::winrt::Windows::Foundation::IInspectable const&, ::winrt::Windows::Foundation::IInspectable const&);
+		void RSSPreviewHost_PointerEntered(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
+		void RSSPreviewHost_PointerExited(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
 		void ItemDoubleClickActionBox_SelectionChanged(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&);
 		void LinkOpenBehaviorBox_SelectionChanged(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&);
 		void MaxItemsPerFeedBox_ValueChanged(Microsoft::UI::Xaml::Controls::NumberBox const& sender, Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);

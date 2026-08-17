@@ -31,6 +31,8 @@ export namespace OpenNet::Core::ApplicationModel
 	public:
 		static bool HasPackageIdentity();
 		static Version GetAppVersion();
+		static winrt::hstring GetWindowsAppSdkReleaseVersion();
+		static winrt::hstring GetWindowsAppSdkRuntimeVersion();
 		static std::wstring GetAppDirectory();
 		static winrt::hstring GetFamilyName();
 		static std::wstring GetPublisherId();

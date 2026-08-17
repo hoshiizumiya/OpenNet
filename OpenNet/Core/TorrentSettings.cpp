@@ -6,8 +6,11 @@
  * LICENSE:   The MIT License
  */
 module;
+#include "LibtorrentIncludeGuard.h"
+#include <libtorrent/sha1_hash.hpp>
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/session.hpp> // for proxy_type_t
+#include "LibtorrentIncludeRestore.h"
 
 module OpenNet.Core.TorrentSettings;
 
@@ -131,6 +134,7 @@ namespace OpenNet::Core
 			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "stopTrackerTimeout", s.stopTrackerTimeout);
 
 			// Limits (Torrent category)
+			db.SetBool(AppSettingsDatabase::CAT_TORRENT, "queueingEnabled", s.queueingEnabled);
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads", s.activeDownloads);
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds", s.activeSeeds);
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit", s.activeLimit);
@@ -198,8 +202,10 @@ namespace OpenNet::Core
 			db.SetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath", s.defaultSavePath);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage", s.preallocateStorage);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads", s.autoStartDownloads);
+			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "recheckBeforeResume", s.recheckBeforeResume);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled", s.moveCompletedEnabled);
 			db.SetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "performanceDefaultsVersion", 1);
 		}
 		catch (std::exception const& ex)
 		{
@@ -255,6 +261,15 @@ namespace OpenNet::Core
 			s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
 			s.activeSeeds = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds").value_or(s.activeSeeds));
 			s.activeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit").value_or(s.activeLimit));
+			auto const storedQueueing = db.GetBool(
+				AppSettingsDatabase::CAT_TORRENT, "queueingEnabled");
+			s.queueingEnabled = storedQueueing.value_or(
+				s.activeDownloads >= 0 || s.activeSeeds >= 0 || s.activeLimit >= 0);
+			// Migrate the former WebUI representation, where disabling queueing
+			// destroyed all three configured limits by storing -1 in each field.
+			if (s.activeDownloads < 0) s.activeDownloads = 3;
+			if (s.activeSeeds < 0) s.activeSeeds = 5;
+			if (s.activeLimit < 0) s.activeLimit = 15;
 
 			// Speed limits
 			s.downloadRateLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit").value_or(s.downloadRateLimit));
@@ -291,7 +306,48 @@ namespace OpenNet::Core
 			s.hashingThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "hashingThreads").value_or(s.hashingThreads));
 			s.filePoolSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "filePoolSize").value_or(s.filePoolSize));
 			s.checkingMemUsage = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "checkingMemUsage").value_or(s.checkingMemUsage));
-			s.diskQueueSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "diskQueueSize").value_or(s.diskQueueSize));
+			s.diskQueueSize = static_cast<int>(db.GetInt(
+				AppSettingsDatabase::CAT_DISK_IO, "diskQueueSize")
+				.value_or(s.diskQueueSize));
+			auto const performanceDefaultsVersion = db.GetInt(
+				AppSettingsDatabase::CAT_TORRENT,
+				"performanceDefaultsVersion").value_or(0);
+			if (performanceDefaultsVersion < 1)
+			{
+				// One-time migration of the former built-in defaults.  The
+				// version marker prevents a later explicit 1 MiB choice from
+				// being rewritten on every launch.
+				if (s.connectionsLimit == 200) s.connectionsLimit = 500;
+				if (s.aioThreads == 4) s.aioThreads = 10;
+				if (s.filePoolSize == 40) s.filePoolSize = 100;
+				if (s.diskQueueSize == 1024 * 1024)
+					s.diskQueueSize = 100 * 1024 * 1024;
+				// Persist the migrated values before advancing the marker. Otherwise
+				// a later launch would retain the old database values while skipping
+				// this migration permanently.
+				db.SetInt(AppSettingsDatabase::CAT_CONNECTION,
+					"connectionsLimit", s.connectionsLimit);
+				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
+					"aioThreads", s.aioThreads);
+				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
+					"filePoolSize", s.filePoolSize);
+				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
+					"diskQueueSize", s.diskQueueSize);
+				db.SetInt(
+					AppSettingsDatabase::CAT_TORRENT,
+					"performanceDefaultsVersion", 1);
+			}
+			if (performanceDefaultsVersion < 2)
+			{
+				// Older builds labelled this value as MiB but passed it directly as
+				// libtorrent's 16 KiB block count. Migrate the former built-in 256
+				// value (4 MiB effective) to qBittorrent's 32 MiB default.
+				if (s.checkingMemUsage == 256) s.checkingMemUsage = 32;
+				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
+					"checkingMemUsage", s.checkingMemUsage);
+				db.SetInt(AppSettingsDatabase::CAT_TORRENT,
+					"performanceDefaultsVersion", 2);
+			}
 			s.pieceExtentAffinity = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "pieceExtentAffinity").value_or(s.pieceExtentAffinity);
 			s.uploadSuggestions = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "uploadSuggestions").value_or(s.uploadSuggestions);
 			s.sendBufferWatermark = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermark").value_or(s.sendBufferWatermark));
@@ -319,6 +375,7 @@ namespace OpenNet::Core
 			s.defaultSavePath = db.GetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "defaultSavePath").value_or(s.defaultSavePath);
 			s.preallocateStorage = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "preallocateStorage").value_or(s.preallocateStorage);
 			s.autoStartDownloads = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "autoStartDownloads").value_or(s.autoStartDownloads);
+			s.recheckBeforeResume = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "recheckBeforeResume").value_or(s.recheckBeforeResume);
 			s.moveCompletedEnabled = db.GetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled").value_or(s.moveCompletedEnabled);
 			s.moveCompletedPath = db.GetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath").value_or(s.moveCompletedPath);
 
@@ -373,9 +430,12 @@ namespace OpenNet::Core
 		pack.set_int(lt::settings_pack::stop_tracker_timeout, s.stopTrackerTimeout);
 
 		// Limits
-		pack.set_int(lt::settings_pack::active_downloads, s.activeDownloads);
-		pack.set_int(lt::settings_pack::active_seeds, s.activeSeeds);
-		pack.set_int(lt::settings_pack::active_limit, s.activeLimit);
+		pack.set_int(lt::settings_pack::active_downloads,
+			s.queueingEnabled ? s.activeDownloads : -1);
+		pack.set_int(lt::settings_pack::active_seeds,
+			s.queueingEnabled ? s.activeSeeds : -1);
+		pack.set_int(lt::settings_pack::active_limit,
+			s.queueingEnabled ? s.activeLimit : -1);
 
 		// Speed limits
 		pack.set_int(lt::settings_pack::download_rate_limit, s.downloadRateLimit);
@@ -407,7 +467,8 @@ namespace OpenNet::Core
 		pack.set_int(lt::settings_pack::aio_threads, s.aioThreads);
 		pack.set_int(lt::settings_pack::hashing_threads, s.hashingThreads);
 		pack.set_int(lt::settings_pack::file_pool_size, s.filePoolSize);
-		pack.set_int(lt::settings_pack::checking_mem_usage, s.checkingMemUsage);
+		pack.set_int(lt::settings_pack::checking_mem_usage,
+			std::max(1, s.checkingMemUsage) * 64);
 		pack.set_int(lt::settings_pack::max_queued_disk_bytes, s.diskQueueSize);
 		pack.set_bool(lt::settings_pack::piece_extent_affinity, s.pieceExtentAffinity);
 		pack.set_int(lt::settings_pack::suggest_mode, s.uploadSuggestions
@@ -502,9 +563,13 @@ namespace OpenNet::Core
 		s.maxConcurrentHttpAnnounces = pack.get_int(lt::settings_pack::max_concurrent_http_announces);
 		s.stopTrackerTimeout = pack.get_int(lt::settings_pack::stop_tracker_timeout);
 
-		s.activeDownloads = pack.get_int(lt::settings_pack::active_downloads);
-		s.activeSeeds = pack.get_int(lt::settings_pack::active_seeds);
-		s.activeLimit = pack.get_int(lt::settings_pack::active_limit);
+		auto const activeDownloads = pack.get_int(lt::settings_pack::active_downloads);
+		auto const activeSeeds = pack.get_int(lt::settings_pack::active_seeds);
+		auto const activeLimit = pack.get_int(lt::settings_pack::active_limit);
+		s.queueingEnabled = activeDownloads >= 0 || activeSeeds >= 0 || activeLimit >= 0;
+		if (activeDownloads >= 0) s.activeDownloads = activeDownloads;
+		if (activeSeeds >= 0) s.activeSeeds = activeSeeds;
+		if (activeLimit >= 0) s.activeLimit = activeLimit;
 
 		s.downloadRateLimit = pack.get_int(lt::settings_pack::download_rate_limit);
 		s.uploadRateLimit = pack.get_int(lt::settings_pack::upload_rate_limit);
@@ -533,7 +598,8 @@ namespace OpenNet::Core
 		s.aioThreads = pack.get_int(lt::settings_pack::aio_threads);
 		s.hashingThreads = pack.get_int(lt::settings_pack::hashing_threads);
 		s.filePoolSize = pack.get_int(lt::settings_pack::file_pool_size);
-		s.checkingMemUsage = pack.get_int(lt::settings_pack::checking_mem_usage);
+		s.checkingMemUsage = std::max(1,
+			pack.get_int(lt::settings_pack::checking_mem_usage) / 64);
 		s.diskQueueSize = pack.get_int(lt::settings_pack::max_queued_disk_bytes);
 		s.pieceExtentAffinity = pack.get_bool(lt::settings_pack::piece_extent_affinity);
 		s.uploadSuggestions = pack.get_int(lt::settings_pack::suggest_mode)
