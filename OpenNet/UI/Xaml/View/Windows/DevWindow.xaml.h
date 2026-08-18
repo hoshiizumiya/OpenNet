@@ -12,6 +12,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		void OpenLiveGraphTestWindow_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void TriggerXamlException_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void SendAppNotify_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		winrt::fire_and_forget OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 	};
 }

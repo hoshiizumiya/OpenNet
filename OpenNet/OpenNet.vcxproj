@@ -325,7 +325,7 @@
       <DependentUpon>Service\Notification\InfoBarOptions.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
-    <ClInclude Include="Service\Notification\InfoBarService.h" />
+    <ClCompile Include="Service\Notification\InfoBarService.ixx" />
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.h" />
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTagRegister.h" />
     <ClInclude Include="UI\Xaml\Control\InfoBarHelper.h">

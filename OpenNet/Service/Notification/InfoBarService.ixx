@@ -1,12 +1,14 @@
-﻿#pragma once
+﻿module;
+#include "XamlWorkaround.h"
+
+export module OpenNet.Service.Notification.InfoBarService;
 
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.OpenNet.Service.Notification;
 import winrt.Windows.Foundation.Collections;
 
-#include "Service/Notification/InfoBarOptions.h"
-
-namespace OpenNet::Service::Notification
+export namespace OpenNet::Service::Notification
 {
 	class IInfoBarService
 	{

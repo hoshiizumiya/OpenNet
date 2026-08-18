@@ -20,33 +20,33 @@
 
             <DataTemplate x:Key="InfoBarTemplate" x:DataType="notification:InfoBarOptions">
                 <InfoBar
-                    Title="{Binding Title}"
-                    control:InfoBarHelper.IsTextSelectionEnabled="{Binding IsTextSelectionEnabled}"
+                    Title="{x:Bind Title}"
+                    control:InfoBarHelper.IsTextSelectionEnabled="{x:Bind IsTextSelectionEnabled}"
                     Closed="OnInfoBarClosed"
-                    Content="{Binding Content}"
+                    Content="{x:Bind Content}"
                     IsOpen="True"
-                    Message="{Binding Message}"
-                    Severity="{Binding Severity}">
+                    Message="{x:Bind Message}"
+                    Severity="{x:Bind Severity}">
                     <interactivity:Interaction.Behaviors>
-                        <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{Binding MilliSecondsDelay}" />
+                        <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{x:Bind MilliSecondsDelay}" />
                     </interactivity:Interaction.Behaviors>
                 </InfoBar>
             </DataTemplate>
 
             <DataTemplate x:Key="InfoBarWithActionButtonTemplate" x:DataType="notification:InfoBarOptions">
                 <InfoBar
-                    Title="{Binding Title}"
-                    control:InfoBarHelper.IsTextSelectionEnabled="{Binding IsTextSelectionEnabled}"
+                    Title="{x:Bind Title}"
+                    control:InfoBarHelper.IsTextSelectionEnabled="{x:Bind IsTextSelectionEnabled}"
                     Closed="OnInfoBarClosed"
-                    Content="{Binding Content}"
+                    Content="{x:Bind Content}"
                     IsOpen="True"
-                    Message="{Binding Message}"
-                    Severity="{Binding Severity}">
+                    Message="{x:Bind Message}"
+                    Severity="{x:Bind Severity}">
                     <InfoBar.ActionButton>
-                        <Button Command="{Binding ActionButtonCommand}" Content="{Binding ActionButtonContent}" />
+                        <Button Command="{x:Bind ActionButtonCommand}" Content="{x:Bind ActionButtonContent}" />
                     </InfoBar.ActionButton>
                     <interactivity:Interaction.Behaviors>
-                        <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{Binding MilliSecondsDelay}" />
+                        <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{x:Bind MilliSecondsDelay}" />
                     </interactivity:Interaction.Behaviors>
                 </InfoBar>
             </DataTemplate>

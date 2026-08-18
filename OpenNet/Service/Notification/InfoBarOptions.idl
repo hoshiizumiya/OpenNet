@@ -1,7 +1,7 @@
 ﻿namespace OpenNet.Service.Notification
 {
     [default_interface]
-    runtimeclass InfoBarOptions
+    runtimeclass InfoBarOptions : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         InfoBarOptions();
         Microsoft.UI.Xaml.Controls.InfoBarSeverity Severity;

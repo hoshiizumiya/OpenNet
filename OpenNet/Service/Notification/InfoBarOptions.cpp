@@ -13,7 +13,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 
 	void InfoBarOptions::Severity(Microsoft::UI::Xaml::Controls::InfoBarSeverity value) noexcept
 	{
-		m_severity = value;
+		SetProperty(m_severity, value, L"Severity");
 	}
 
 	hstring InfoBarOptions::Title() const
@@ -22,7 +22,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 	}
 	void InfoBarOptions::Title(hstring const& value)
 	{
-		m_title = value;
+		SetProperty(m_title, value, L"Title");
 	}
 	hstring InfoBarOptions::Message() const
 	{
@@ -30,7 +30,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 	}
 	void InfoBarOptions::Message(hstring const& value)
 	{
-		m_message = value;
+		SetProperty(m_message, value, L"Message");
 	}
 
 	Windows::Foundation::IInspectable InfoBarOptions::Content() const
@@ -40,7 +40,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 
 	void InfoBarOptions::Content(Windows::Foundation::IInspectable const& value)
 	{
-		m_content = value;
+		SetProperty(m_content, value, L"Content");
 	}
 
 	Windows::Foundation::IInspectable InfoBarOptions::ActionButtonContent() const
@@ -50,7 +50,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 
 	void InfoBarOptions::ActionButtonContent(Windows::Foundation::IInspectable const& value)
 	{
-		m_actionButtonContent = value;
+		SetProperty(m_actionButtonContent, value, L"ActionButtonContent");
 	}
 
 	Microsoft::UI::Xaml::Input::ICommand InfoBarOptions::ActionButtonCommand() const
@@ -60,7 +60,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 
 	void InfoBarOptions::ActionButtonCommand(Microsoft::UI::Xaml::Input::ICommand const& value)
 	{
-		m_actionButtonCommand = value;
+		SetProperty(m_actionButtonCommand, value, L"ActionButtonCommand");
 	}
 
 	std::uint32_t InfoBarOptions::MilliSecondsDelay() const noexcept
@@ -70,7 +70,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 
 	void InfoBarOptions::MilliSecondsDelay(std::uint32_t value) noexcept
 	{
-		m_milliSecondsDelay = value;
+		SetProperty(m_milliSecondsDelay, value, L"MilliSecondsDelay");
 	}
 
 	bool InfoBarOptions::IsTextSelectionEnabled() const noexcept

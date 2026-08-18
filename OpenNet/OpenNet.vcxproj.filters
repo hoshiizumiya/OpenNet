@@ -752,6 +752,9 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\InfoBarTemplateSelector.cpp" />
     <ClCompile Include="Helpers\TabViewStateHelper.ixx" />
+    <ClCompile Include="Service\Notification\InfoBarService.ixx">
+      <Filter>Service</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Service\Background\BackgroundMediaService.h">
@@ -764,9 +767,6 @@
       <Filter>Service</Filter>
     </ClInclude>
     <ClInclude Include="Service\Notification\InfoBarOptions.h">
-      <Filter>Service</Filter>
-    </ClInclude>
-    <ClInclude Include="Service\Notification\InfoBarService.h">
       <Filter>Service</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.h">

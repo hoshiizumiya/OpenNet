@@ -19,7 +19,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	DevWindow::DevWindow()
 	{
-		InitializeComponent();
 		ExtendsContentIntoTitleBar(true);
 		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
 		Closed([this](auto const&, auto const&)
@@ -28,27 +27,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		});
 	}
 
-	void DevWindow::OpenLiveGraphTestWindow_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		RoutedEventArgs const&)
+	void DevWindow::OpenLiveGraphTestWindow_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		auto window = winrt::make<LiveGraphTestWindow>();
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 
-	void DevWindow::TriggerXamlException_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		RoutedEventArgs const&)
+	void DevWindow::TriggerXamlException_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		throw hresult_error(
 			E_FAIL,
 			L"Manually triggered XAML exception for testing purposes.");
 	}
 
-	fire_and_forget DevWindow::OpenOperationProgressDialog_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		RoutedEventArgs const&)
+	void DevWindow::SendAppNotify_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+	}
+
+	fire_and_forget DevWindow::OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		auto progressDialog =
 			::OpenNet::Factory::ContentDialog::OperationProgressDialog(

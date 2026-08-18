@@ -2,11 +2,11 @@
 
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Media;
+import winrt.OpenNet.Service.Notification;
 import winrt.Windows.Foundation.Collections;
 import winrt.XamlToolkit.Labs.WinUI;
+import OpenNet.Service.Notification.InfoBarService;
 
-#include "Service/Notification/InfoBarOptions.h"
-#include "Service/Notification/InfoBarService.h"
 #include "UI/Xaml/View/InfoBarView.g.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::implementation

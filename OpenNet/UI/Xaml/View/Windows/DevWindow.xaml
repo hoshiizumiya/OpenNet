@@ -66,6 +66,11 @@
                         Click="TriggerXamlException_Click"
                         Content="Trigger exception" />
                 </essential:SettingsCard>
+
+                <essential:SettingsCard Description="Send a test notification in the InfoBar." Header="Send a notification in the app">
+                    <Button Click="SendAppNotify_Click" Content="Send App Notify" />
+                </essential:SettingsCard>
+
             </StackPanel>
         </ScrollViewer>
     </Grid>

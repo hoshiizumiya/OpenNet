@@ -7,11 +7,11 @@
 #endif
 
 #include "Core/IPFilter/IPFilterManager.h"
-#include "Service/Notification/InfoBarService.h"
 #include "SettingsPageTagRegister.h"
 
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Utils.Message;
+import OpenNet.Service.Notification.InfoBarService;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Content;

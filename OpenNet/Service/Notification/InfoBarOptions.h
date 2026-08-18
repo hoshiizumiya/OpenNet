@@ -2,11 +2,17 @@
 
 #include "Service/Notification/InfoBarOptions.g.h"
 
+import OpenNet.ViewModels.ObservableMixin;
+
 namespace winrt::OpenNet::Service::Notification::implementation
 {
-	struct InfoBarOptions : InfoBarOptionsT<InfoBarOptions>
+	struct InfoBarOptions : InfoBarOptionsT<InfoBarOptions>, ::OpenNet::ViewModels::ObservableMixin<InfoBarOptions>
 	{
 		InfoBarOptions() = default;
+
+		// Make mixin helpers visible
+		using ::OpenNet::ViewModels::ObservableMixin<InfoBarOptions>::SetProperty;
+		using ::OpenNet::ViewModels::ObservableMixin<InfoBarOptions>::RaisePropertyChanged;
 
 		winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity Severity() const noexcept;
 		void Severity(winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity value) noexcept;

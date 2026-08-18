@@ -1,4 +1,4 @@
-namespace OpenNet.UI.Xaml.Behavior
+﻿namespace OpenNet.UI.Xaml.Behavior
 {
     [default_interface]
     runtimeclass InfoBarDelayCloseBehavior : Microsoft.UI.Xaml.DependencyObject, XamlToolkit.WinUI.Interactivity.IBehavior

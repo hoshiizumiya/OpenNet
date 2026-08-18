@@ -7,7 +7,6 @@
 #include "UI/Xaml/View/Windows/DevWindow.xaml.h"
 #include "UI/Xaml/View/Windows/GuideWindow.xaml.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
-#include "Service/Notification/InfoBarService.h"
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
 #include "UI/Xaml/Control/Effect/TextMorphEffect.h"
 
@@ -25,6 +24,7 @@ import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Service.Notification.InfoBarService;
 import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Windows.Storage;

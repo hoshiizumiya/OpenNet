@@ -19,7 +19,6 @@
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
-#include "Service/Notification/InfoBarService.h"
 
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
@@ -36,6 +35,7 @@ import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.Helpers.ControlLengthHelper;
 import OpenNet.Helpers.TabViewStateHelper;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Service.Notification.InfoBarService;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import winrt.OpenNet.UI.Xaml.View.Pages.SettingsPages;

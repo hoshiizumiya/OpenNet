@@ -1,5 +1,6 @@
-﻿#include "XamlWorkaround.h"
-#include "Service/Notification/InfoBarService.h"
+﻿module;
+
+module OpenNet.Service.Notification.InfoBarService;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
@@ -8,8 +9,7 @@ namespace
 {
 	struct ActionCommand : winrt::implements<ActionCommand, winrt::Microsoft::UI::Xaml::Input::ICommand>
 	{
-		explicit ActionCommand(std::function<void()> action)
-			: m_action(std::move(action))
+		explicit ActionCommand(std::function<void()> action) : m_action(std::move(action))
 		{
 		}
 
@@ -26,9 +26,7 @@ namespace
 			}
 		}
 
-		event_token CanExecuteChanged(
-			Windows::Foundation::EventHandler<
-			Windows::Foundation::IInspectable> const& handler)
+		event_token CanExecuteChanged(Windows::Foundation::EventHandler<Windows::Foundation::IInspectable> const& handler)
 		{
 			return m_canExecuteChanged.add(handler);
 		}
@@ -40,8 +38,7 @@ namespace
 
 	private:
 		std::function<void()> m_action;
-		event<Windows::Foundation::EventHandler<
-			Windows::Foundation::IInspectable>> m_canExecuteChanged;
+		event<Windows::Foundation::EventHandler<Windows::Foundation::IInspectable>> m_canExecuteChanged;
 	};
 }
 
@@ -53,8 +50,7 @@ namespace OpenNet::Service::Notification
 		return instance;
 	}
 
-	void InfoBarService::AttachDispatcher(
-		Microsoft::UI::Dispatching::DispatcherQueue const& dispatcher)
+	void InfoBarService::AttachDispatcher(Microsoft::UI::Dispatching::DispatcherQueue const& dispatcher)
 	{
 		std::vector<PendingInfoBar> pending;
 		{
@@ -112,8 +108,7 @@ namespace OpenNet::Service::Notification
 			return;
 		}
 
-		auto sharedNotification =
-			std::make_shared<PendingInfoBar>(std::move(notification));
+		auto sharedNotification = std::make_shared<PendingInfoBar>(std::move(notification));
 		if (!dispatcher.TryEnqueue([this, sharedNotification]() mutable
 		{
 			Enqueue(std::move(*sharedNotification));
@@ -150,8 +145,8 @@ namespace OpenNet::Service::Notification
 			auto weakOptions = make_weak(options);
 			options.ActionButtonCommand(make<ActionCommand>(
 				[this,
-				 weakOptions,
-				 action = std::move(notification.Action)]() mutable
+				weakOptions,
+				action = std::move(notification.Action)]() mutable
 			{
 				action();
 				if (auto item = weakOptions.get())
@@ -179,8 +174,10 @@ namespace OpenNet::Service::Notification
 			return;
 		}
 
-		dispatcher.TryEnqueue(
-			[this, options]() { RemoveOnDispatcher(options); });
+		dispatcher.TryEnqueue([this, options]()
+		{
+			RemoveOnDispatcher(options);
+		});
 	}
 
 	void InfoBarService::RemoveOnDispatcher(InfoBarOptions const& options)
