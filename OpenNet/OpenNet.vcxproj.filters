@@ -1149,6 +1149,8 @@
     <Image Include="Assets\GuideLocalization\crowdin-symbol-cDark-64.png" />
     <Image Include="Assets\GuideLocalization\crowdin-symbol-cWhite-64.png" />
     <Image Include="Assets\GuideLocalization\MSTRDI-64.png" />
+    <Image Include="Assets\GuideLocalization\chatgpt-symbol.svg" />
+    <Image Include="Assets\GuideLocalization\chatgpt-symbol-description.svg" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

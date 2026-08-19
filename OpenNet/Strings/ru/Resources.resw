@@ -3571,9 +3571,6 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>Font</value>
   </data>
-  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
-    <value>Приоритет</value>
-  </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>Источник</value>
   </data>

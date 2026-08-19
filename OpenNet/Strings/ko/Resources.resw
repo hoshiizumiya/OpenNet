@@ -3570,9 +3570,6 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>글꼴</value>
   </data>
-  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
-    <value>우선순위</value>
-  </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>소스</value>
   </data>

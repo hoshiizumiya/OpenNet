@@ -518,7 +518,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		e.Handled(true);
 	}
 
-	void MainView::NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e)
+	void MainView::NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& /*e*/)
 	{
 		Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ShowAttachedFlyout(sender.as<FrameworkElement>());
 	}

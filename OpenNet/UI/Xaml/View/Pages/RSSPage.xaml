@@ -15,22 +15,28 @@
             x:Name="RSSPreviewFlyout"
             Closed="RSSPreviewFlyout_Closed"
             Opened="RSSPreviewFlyout_Opened"
-            Placement="RightEdgeAlignedTop">
-            <Border
-                x:Name="RSSPreviewHost"
-                CornerRadius="8"
-                PointerEntered="RSSPreviewHost_PointerEntered"
-                PointerExited="RSSPreviewHost_PointerExited">
+            Placement="Right"
+            ShowMode="Transient">
+            <Flyout.FlyoutPresenterStyle>
+                <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                    <Setter Property="MaxWidth" Value="Infinity" />
+                    <Setter Property="IsTabStop" Value="True" />
+                    <Setter Property="TabNavigation" Value="Cycle" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                </Style>
+            </Flyout.FlyoutPresenterStyle>
+            <Border CornerRadius="8">
                 <WebView2
                     x:Name="RSSPreviewWebView"
-                    Width="640"
-                    Height="400" />
+                    Width="1500"
+                    Height="2000"
+                    essential:UIElementExtension.ClipToBounds="True" />
             </Border>
         </Flyout>
 
-        <ContentDialog
-            x:Name="RemoveFeedDialog"
-            DefaultButton="Close">
+        <ContentDialog x:Name="RemoveFeedDialog" DefaultButton="Close">
             <TextBlock x:Name="RemoveFeedConfirmationText" TextWrapping="Wrap" />
         </ContentDialog>
     </Page.Resources>
@@ -125,14 +131,6 @@
                     Grid.Column="1"
                     Orientation="Horizontal"
                     Spacing="4">
-                    <ComboBox
-                        x:Name="ItemDoubleClickActionBox"
-                        MinWidth="160"
-                        Header="Double-click action"
-                        SelectionChanged="ItemDoubleClickActionBox_SelectionChanged">
-                        <ComboBoxItem Content="Add to tasks" />
-                        <ComboBoxItem Content="Show details" />
-                    </ComboBox>
                     <Button
                         x:Name="AddFeedButton"
                         Padding="8"
@@ -190,6 +188,7 @@
                             </StackPanel>
                             <ToggleSwitch
                                 Grid.Column="1"
+                                MinWidth="0"
                                 IsOn="{x:Bind Enabled, Mode=TwoWay}"
                                 OffContent=""
                                 OnContent="" />
@@ -239,7 +238,7 @@
                         Padding="8"
                         Click="FeedSettingsButton_Click"
                         IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
-                        <ToolTipService.ToolTip>                        
+                        <ToolTipService.ToolTip>
                             <ToolTip
                                 x:Uid="ViewRSSPageFeedSetting"
                                 essential:ToolTipHelper.AcrylicWorkaround="True"
@@ -251,7 +250,7 @@
                         Padding="8"
                         Click="RemoveFeedButton_Click"
                         IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
-                        <ToolTipService.ToolTip>                        
+                        <ToolTipService.ToolTip>
                             <ToolTip
                                 x:Uid="ViewRSSPageRemoveFeed"
                                 essential:ToolTipHelper.AcrylicWorkaround="True"
@@ -298,7 +297,6 @@
                             ColumnSpacing="12"
                             DoubleTapped="RSSItem_DoubleTapped"
                             PointerEntered="RSSItem_PointerEntered"
-                            PointerExited="RSSItem_PointerExited"
                             RightTapped="RSSItem_RightTapped"
                             Tag="{x:Bind}">
                             <Grid.ColumnDefinitions>
@@ -333,7 +331,7 @@
                                 Padding="8"
                                 Click="DownloadItemButton_Click"
                                 Tag="{x:Bind}">
-                                <ToolTipService.ToolTip>                                
+                                <ToolTipService.ToolTip>
                                     <ToolTip
                                         x:Uid="CommonContentDownload"
                                         essential:ToolTipHelper.AcrylicWorkaround="True"

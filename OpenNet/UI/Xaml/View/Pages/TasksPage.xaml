@@ -1056,13 +1056,14 @@
                                     Text="{x:Bind Seeds, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}" />
-                                <ToolTipService.ToolTip>
-                                    <ToolTip
-                                        x:Uid="ViewTasksPagePeersToolTip"
-                                        essential:ToolTipHelper.AcrylicWorkaround="True"
-                                        Content="Connected seeds / connected peers [all known seeds / all known peers]" />
-                                </ToolTipService.ToolTip>
+                                    Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}">                                
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip
+                                            x:Uid="ViewTasksPagePeersToolTip"
+                                            essential:ToolTipHelper.AcrylicWorkaround="True"
+                                            Content="Connected seeds / connected peers [all known seeds / all known peers]" />
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                             </xtlw:DataRow>
                         </DataTemplate>
                     </ListView.ItemTemplate>

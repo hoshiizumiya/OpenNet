@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "UI/Xaml/View/Pages/RSSPage.g.h"
 #include "ViewModels/RSSViewModel.h"
 #include "UI/Xaml/View/Dialog/AddRSSFeedDialog.xaml.h"
@@ -10,9 +10,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	struct RSSPage : RSSPageT<RSSPage>
 	{
 		RSSPage();
-		~RSSPage();
 
-		OpenNet::ViewModels::RSSViewModel ViewModel() const { return m_viewModel; }
+		OpenNet::ViewModels::RSSViewModel ViewModel() const
+		{
+			return m_viewModel;
+		}
 
 		// Event handlers
 		void AddFeedButton_Click(::winrt::Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -27,12 +29,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void RSSItem_DoubleTapped(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const&);
 		void RSSItem_RightTapped(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const&);
 		void RSSItem_PointerEntered(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
-		void RSSItem_PointerExited(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
 		void RSSPreviewFlyout_Opened(::winrt::Windows::Foundation::IInspectable const&, ::winrt::Windows::Foundation::IInspectable const&);
 		void RSSPreviewFlyout_Closed(::winrt::Windows::Foundation::IInspectable const&, ::winrt::Windows::Foundation::IInspectable const&);
-		void RSSPreviewHost_PointerEntered(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
-		void RSSPreviewHost_PointerExited(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const&);
-		void ItemDoubleClickActionBox_SelectionChanged(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&);
 		void LinkOpenBehaviorBox_SelectionChanged(::winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&);
 		void MaxItemsPerFeedBox_ValueChanged(Microsoft::UI::Xaml::Controls::NumberBox const& sender, Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
 
@@ -47,10 +45,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		OpenNet::ViewModels::RSSViewModel m_viewModel{ nullptr };
 		Microsoft::UI::Xaml::Controls::Flyout m_previewFlyout{ nullptr };
-		Microsoft::UI::Xaml::Controls::WebView2 m_previewWebView{ nullptr };
-		Microsoft::UI::Xaml::Controls::Border m_previewHost{ nullptr };
-		Microsoft::UI::Dispatching::DispatcherQueueTimer m_previewTimer{ nullptr };
-		Microsoft::UI::Dispatching::DispatcherQueueTimer m_previewCloseTimer{ nullptr };
 		Microsoft::UI::Xaml::FrameworkElement m_previewTarget{ nullptr };
 		winrt::OpenNet::UI::Xaml::View::Windows::RSSBrowserWindow m_browserWindow{ nullptr };
 		winrt::hstring m_previewUrl;
@@ -58,10 +52,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool m_previewPointerOverFlyout{};
 		bool m_previewOpen{};
 		bool m_loadingSettings{ true };
+		int32_t m_previousSelectedIndex{ };
+		bool m_enableWebViewPreview{ };
 	};
 }
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::factory_implementation
 {
-	struct RSSPage : RSSPageT<RSSPage, implementation::RSSPage> {};
+	struct RSSPage : RSSPageT<RSSPage, implementation::RSSPage>
+	{
+	};
 }

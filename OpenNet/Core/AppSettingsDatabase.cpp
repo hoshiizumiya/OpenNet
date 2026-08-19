@@ -212,6 +212,19 @@ namespace OpenNet::Core
 		return *val != 0;
 	}
 
+	std::optional<bool> AppSettingsDatabase::GetBool(std::string const& category,
+													 std::string const& key,
+													 bool default_value)
+	{
+		auto val = GetInt(category, key);
+		if (!val)
+		{
+			SetBool(category, key, default_value);
+			return default_value;
+		}
+		return *val != 0;
+	}
+
 	void AppSettingsDatabase::Delete(std::string const& category,
 									 std::string const& key)
 	{

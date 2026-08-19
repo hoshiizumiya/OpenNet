@@ -28,8 +28,9 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		void ApplyTransferLimit(bool download, int bytesPerSecond);
 		void UpdateTransferLimitChecks(int downloadLimit, int uploadLimit);
 	public:
-		NotifyIconContextMenu();
+		NotifyIconContextMenu() = default;
 		~NotifyIconContextMenu();
+		void InitializeComponent();
 
 		// Tray icon control
 		void ExitApplication();

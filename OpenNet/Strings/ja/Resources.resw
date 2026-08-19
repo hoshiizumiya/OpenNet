@@ -3570,9 +3570,6 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>フォント</value>
   </data>
-  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
-    <value>優先度</value>
-  </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>ソース</value>
   </data>

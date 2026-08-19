@@ -28,12 +28,6 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace winrt::OpenNet::UI::Shell::implementation
 {
-	NotifyIconContextMenu::NotifyIconContextMenu()
-	{
-		InitializeComponent();
-		LoadToggleSettings();
-	}
-
 	NotifyIconContextMenu::~NotifyIconContextMenu()
 	{
 		try
@@ -54,6 +48,12 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			}
 			m_floatingWindow = nullptr;
 		}
+	}
+
+	void NotifyIconContextMenu::InitializeComponent()
+	{
+		NotifyIconContextMenuT::InitializeComponent();
+		LoadToggleSettings();
 	}
 
 	void NotifyIconContextMenu::ExitApplication()
@@ -86,8 +86,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		m_loadingToggleSettings = true;
 		try
 		{
-			auto values = winrt::Microsoft::Windows::Storage::ApplicationData::
-				GetDefault().LocalSettings().Values();
+			auto values = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings().Values();
 			auto read = [&values](wchar_t const* key, bool fallback)
 			{
 				return values.HasKey(key)
@@ -106,13 +105,10 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 		m_loadingToggleSettings = false;
 
-		auto& torrentSettingsManager =
-			::OpenNet::Core::TorrentSettingsManager::Instance();
+		auto& torrentSettingsManager = ::OpenNet::Core::TorrentSettingsManager::Instance();
 		torrentSettingsManager.Load();
 		auto const torrentSettings = torrentSettingsManager.Get();
-		UpdateTransferLimitChecks(
-			torrentSettings.downloadRateLimit,
-			torrentSettings.uploadRateLimit);
+		UpdateTransferLimitChecks(torrentSettings.downloadRateLimit, torrentSettings.uploadRateLimit);
 
 		SetClipboardCaptureEnabled(CaptureClipboardToggle().IsChecked());
 		if (FloatingWindowToggle().IsChecked())
@@ -123,8 +119,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	void NotifyIconContextMenu::SaveToggleSetting(
-		wchar_t const* key, bool value)
+	void NotifyIconContextMenu::SaveToggleSetting(wchar_t const* key, bool value)
 	{
 		if (m_loadingToggleSettings)
 		{
@@ -140,8 +135,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::RunBulkOperationAsync(hstring operation)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::RunBulkOperationAsync(hstring operation)
 	{
 		auto strong = get_strong();
 		try
@@ -244,8 +238,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::OpenAddDialogAsync(hstring kind)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::OpenAddDialogAsync(hstring kind)
 	{
 		auto strong = get_strong();
 		try
@@ -273,8 +266,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		co_await implementation->ShowAddTaskDialogAsync(kind);
 	}
 
-	void NotifyIconContextMenu::ApplyTransferLimit(
-		bool download, int bytesPerSecond)
+	void NotifyIconContextMenu::ApplyTransferLimit(bool download, int bytesPerSecond)
 	{
 		auto& settingsManager =
 			::OpenNet::Core::TorrentSettingsManager::Instance();
@@ -299,8 +291,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			settings.uploadRateLimit);
 	}
 
-	void NotifyIconContextMenu::UpdateTransferLimitChecks(
-		int downloadLimit, int uploadLimit)
+	void NotifyIconContextMenu::UpdateTransferLimitChecks(int downloadLimit, int uploadLimit)
 	{
 		DownloadLimitUnlimited().IsChecked(downloadLimit == 0);
 		DownloadLimit1MiB().IsChecked(downloadLimit == 1048576);
@@ -315,49 +306,32 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		UploadLimit10MiB().IsChecked(uploadLimit == 10485760);
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::StartDownloadingAll_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::StartDownloadingAll_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await RunBulkOperationAsync(L"start-download");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::StartUploadingAll_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::StartUploadingAll_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await RunBulkOperationAsync(L"start-upload");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::StopAllTasks_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::StopAllTasks_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await RunBulkOperationAsync(L"stop");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::SuspendAllActiveTasks_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::SuspendAllActiveTasks_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await RunBulkOperationAsync(L"suspend");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::ResumeLastSuspendedTasks_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::ResumeLastSuspendedTasks_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await RunBulkOperationAsync(L"resume-suspended");
 	}
 
-	void NotifyIconContextMenu::TransferLimit_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void NotifyIconContextMenu::TransferLimit_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto item = sender.try_as<FrameworkElement>();
 		if (!item)
@@ -383,44 +357,29 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::OpenTorrentFile_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::OpenTorrentFile_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await OpenAddDialogAsync(L"file");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::AddTorrentFromUrl_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::AddTorrentFromUrl_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await OpenAddDialogAsync(L"url");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::HttpDownload_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::HttpDownload_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await OpenAddDialogAsync(L"http");
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		NotifyIconContextMenu::HttpBatchDownload_Click(
-			winrt::Windows::Foundation::IInspectable const&,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::HttpBatchDownload_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		co_await OpenAddDialogAsync(L"http-batch");
 	}
 
-	void NotifyIconContextMenu::SchedulerToggle_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void NotifyIconContextMenu::SchedulerToggle_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		SaveToggleSetting(
-			L"Tray.EnableScheduler", SchedulerToggle().IsChecked());
+		SaveToggleSetting(L"Tray.EnableScheduler", SchedulerToggle().IsChecked());
 	}
 
 	void NotifyIconContextMenu::SetClipboardCaptureEnabled(bool enabled)
@@ -437,10 +396,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			return;
 		}
 		auto weak = get_weak();
-		m_clipboardRevoker =
-			winrt::Windows::ApplicationModel::DataTransfer::Clipboard::
-			ContentChanged(winrt::auto_revoke,
-						   [weak](auto const&, auto const&)
+		m_clipboardRevoker = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged(winrt::auto_revoke, [weak](auto const&, auto const&)
 		{
 			if (auto self = weak.get())
 			{
@@ -449,30 +405,60 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		});
 	}
 
-	winrt::fire_and_forget
-		NotifyIconContextMenu::HandleClipboardChangedAsync()
+	winrt::fire_and_forget NotifyIconContextMenu::HandleClipboardChangedAsync()
 	{
 		auto strong = get_strong();
 		auto dispatcher = DispatcherQueue();
 		co_await winrtplus::resume_foreground(dispatcher);
-		if (m_clipboardDialogOpen
-			|| winrt::OpenNet::implementation::App::s_isExiting.load())
+		if (m_clipboardDialogOpen || winrt::OpenNet::implementation::App::s_isExiting.load())
 		{
 			co_return;
 		}
 
 		try
 		{
-			auto content =
-				winrt::Windows::ApplicationModel::DataTransfer::Clipboard::
-				GetContent();
-			if (!content.Contains(
-				winrt::Windows::ApplicationModel::DataTransfer::
-				StandardDataFormats::Text()))
+			auto content = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
+			if (!content.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
 			{
 				co_return;
 			}
-			auto text = co_await content.GetTextAsync();
+			winrt::hstring text;
+
+			bool retrying = false;
+			std::chrono::steady_clock::time_point deadline{};
+
+			while (true)
+			{
+				if (retrying)
+				{
+					if (std::chrono::steady_clock::now() >= deadline)
+					{
+						break;
+					}
+
+					co_await winrt::resume_after(200ms);
+
+					if (std::chrono::steady_clock::now() >= deadline)
+					{
+						break;
+					}
+				}
+
+				try
+				{
+					text = co_await content.GetTextAsync();
+					break;
+				}
+				catch (...)
+				{
+					if (!retrying)
+					{
+						retrying = true;
+						deadline = std::chrono::steady_clock::now() + 10s;
+					}
+				}
+			}
+
 			std::wstring normalized{ text.c_str() };
 			auto const first = normalized.find_first_not_of(L" \t\r\n");
 			if (first == std::wstring::npos)
@@ -483,14 +469,10 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			normalized = normalized.substr(first, last - first + 1);
 			text = winrt::hstring{ normalized };
 			std::wstring lower(text);
-			std::transform(
-				lower.begin(), lower.end(), lower.begin(), ::towlower);
+			std::transform(lower.begin(), lower.end(), lower.begin(), ::towlower);
 			const bool torrent = lower.starts_with(L"magnet:");
-			const bool http = lower.starts_with(L"http://")
-				|| lower.starts_with(L"https://")
-				|| lower.starts_with(L"ftp://");
-			if ((!torrent && !http)
-				|| text == m_lastCapturedClipboardUrl)
+			const bool http = lower.starts_with(L"http://") || lower.starts_with(L"https://") || lower.starts_with(L"ftp://");
+			if ((!torrent && !http) || text == m_lastCapturedClipboardUrl)
 			{
 				co_return;
 			}
@@ -527,9 +509,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	void NotifyIconContextMenu::CaptureClipboardToggle_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void NotifyIconContextMenu::CaptureClipboardToggle_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_loadingToggleSettings)
 		{
@@ -540,17 +520,12 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		SetClipboardCaptureEnabled(enabled);
 	}
 
-	void NotifyIconContextMenu::TrayBalloonToggle_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void NotifyIconContextMenu::TrayBalloonToggle_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		SaveToggleSetting(
-			L"Tray.BalloonEnabled", TrayBalloonToggle().IsChecked());
+		SaveToggleSetting(L"Tray.BalloonEnabled", TrayBalloonToggle().IsChecked());
 	}
 
-	void NotifyIconContextMenu::FloatingWindowToggle_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void NotifyIconContextMenu::FloatingWindowToggle_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (m_loadingToggleSettings)
 		{
@@ -561,8 +536,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		SaveToggleSetting(L"Tray.FloatingWindowEnabled", enabled);
 		if (enabled && !m_floatingWindow)
 		{
-			auto floating =
-				winrt::OpenNet::UI::Xaml::View::Windows::InfoOverlayWindow();
+			auto floating =	winrt::OpenNet::UI::Xaml::View::Windows::InfoOverlayWindow();
 			m_floatingWindow = floating;
 			auto weak = get_weak();
 			floating.Closed([weak](auto const&, auto const&)
@@ -592,16 +566,12 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	void NotifyIconContextMenu::FloatingWindowSettings_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	void NotifyIconContextMenu::FloatingWindowSettings_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
 	{
 		Options_Click(sender, args);
 	}
 
-	void NotifyIconContextMenu::Options_Click(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void NotifyIconContextMenu::Options_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		try
 		{
@@ -614,8 +584,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		{
 			return;
 		}
-		if (auto mainWindow = winrt::OpenNet::implementation::App::window
-			.try_as<winrt::OpenNet::MainWindow>())
+		if (auto mainWindow = winrt::OpenNet::implementation::App::window.try_as<winrt::OpenNet::MainWindow>())
 		{
 			mainWindow.Navigate(L"settings");
 		}

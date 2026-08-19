@@ -81,31 +81,31 @@
                                 Text="Auto Size All Columns' Width to Fit" />
                             <MenuFlyoutSeparator />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageToggleMenuItem"
+                                x:Uid="FileHeader_Path"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Path"
                                 Text="File" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageToggleMenuItem"
+                                x:Uid="FileHeader_Size"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Size"
                                 Text="Size" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageToggleMenuItem"
+                                x:Uid="FileHeader_Progress"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Progress"
                                 Text="Progress" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageToggleMenuItem"
+                                x:Uid="FileHeader_Done"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Done"
                                 Text="Done" />
                             <ToggleMenuFlyoutItem
-                                x:Uid="ViewTaskFilesPageToggleMenuItem"
+                                x:Uid="FileHeader_Priority"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
                                 Tag="Priority"
@@ -120,7 +120,7 @@
                     <interactivity:Interaction.Behaviors>
                         <behaviors:StickyHeaderBehavior />
                     </interactivity:Interaction.Behaviors>
-                    <labs:DataTable ColumnSpacing="16">
+                    <labs:DataTable ColumnSpacing="16" Loaded="DataTable_Loaded">
                         <labs:DataColumn x:Name="ColFileName" CanResize="True">
                             <Button
                                 x:Name="SortFileNameButton"

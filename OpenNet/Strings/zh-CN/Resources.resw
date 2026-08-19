@@ -3606,9 +3606,6 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>Font</value>
   </data>
-  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
-    <value>优先级</value>
-  </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>来源</value>
   </data>

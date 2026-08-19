@@ -18,6 +18,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// ComboBox selection changed for file priority
 		void FilePriority_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
+		void DataTable_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		void ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -49,11 +50,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 
 		void Unsubscribe();
-		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
-										winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
+		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void RefreshFileList();
-		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender,
-								winrt::Windows::Foundation::IInspectable const& args);
+		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void UpdateSortHeaders();
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);

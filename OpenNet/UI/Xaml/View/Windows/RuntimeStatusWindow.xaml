@@ -107,17 +107,21 @@
                             <labs:DataRow>
                                 <TextBlock
                                     VerticalAlignment="Center"
-                                    essential:ToolTipHelper.AcrylicWorkaround="True"
                                     FontWeight="Normal"
                                     Text="{x:Bind Name, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    ToolTipService.ToolTip="{x:Bind Name}" />
+                                    TextTrimming="CharacterEllipsis">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Name}" />
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                                 <TextBlock
                                     VerticalAlignment="Center"
-                                    essential:ToolTipHelper.AcrylicWorkaround="True"
                                     Text="{x:Bind Value, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    ToolTipService.ToolTip="{x:Bind Value}" />
+                                    TextTrimming="CharacterEllipsis">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Value}" />
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
                             </labs:DataRow>
                         </TreeViewItem>
                     </DataTemplate>

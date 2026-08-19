@@ -76,6 +76,8 @@ export namespace OpenNet::Core
 		/// Get a boolean setting
 		std::optional<bool> GetBool(std::string const& category, std::string const& key) const;
 
+		std::optional<bool> GetBool(std::string const& category, std::string const& key, bool default_value);
+
 		/// Delete a setting
 		void Delete(std::string const& category, std::string const& key);
 

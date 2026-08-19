@@ -1584,6 +1584,8 @@
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-200.png" />
     <Image Include="Assets\AppIcons\Wide310x150Logo.scale-400.png" />
     <Image Include="Assets\AppIcons\win3264.ico" />
+    <Image Include="Assets\GuideLocalization\chatgpt-symbol-description.svg" />
+    <Image Include="Assets\GuideLocalization\chatgpt-symbol.svg" />
     <Image Include="Assets\GuideLocalization\crowdin-symbol-cDark-64.png" />
     <Image Include="Assets\GuideLocalization\crowdin-symbol-cWhite-64.png" />
     <Image Include="Assets\GuideLocalization\MSTRDI-64.png" />

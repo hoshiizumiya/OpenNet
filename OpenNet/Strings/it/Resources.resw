@@ -3570,9 +3570,6 @@
   <data name="ViewThemesSettingsPageTextBlock.Text" xml:space="preserve">
     <value>Carattere</value>
   </data>
-  <data name="ViewTaskFilesPageToggleMenuItem.Text" xml:space="preserve">
-    <value>Priorità</value>
-  </data>
   <data name="ViewTaskPeersListPageToggleMenuItem.Text" xml:space="preserve">
     <value>Sorgente</value>
   </data>
