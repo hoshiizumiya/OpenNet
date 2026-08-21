@@ -127,8 +127,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 		try
 		{
-			winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault()
-				.LocalSettings().Values().Insert(key, box_value(value));
+			winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings().Values().Insert(key, box_value(value));
 		}
 		catch (...)
 		{
@@ -254,22 +253,18 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			co_return;
 		}
 
-		auto mainWindow = winrt::OpenNet::implementation::App::window
-			.try_as<winrt::OpenNet::MainWindow>();
+		auto mainWindow = winrt::OpenNet::implementation::App::window.try_as<winrt::OpenNet::MainWindow>();
 		if (!mainWindow)
 		{
 			co_return;
 		}
-		auto implementation =
-			winrt::get_self<winrt::OpenNet::implementation::MainWindow>(
-				mainWindow);
+		auto implementation = winrt::get_self<winrt::OpenNet::implementation::MainWindow>(mainWindow);
 		co_await implementation->ShowAddTaskDialogAsync(kind);
 	}
 
 	void NotifyIconContextMenu::ApplyTransferLimit(bool download, int bytesPerSecond)
 	{
-		auto& settingsManager =
-			::OpenNet::Core::TorrentSettingsManager::Instance();
+		auto& settingsManager =	::OpenNet::Core::TorrentSettingsManager::Instance();
 		settingsManager.Load();
 		auto settings = settingsManager.Get();
 		if (download)
@@ -286,9 +281,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		{
 			core->ReloadSettings();
 		}
-		UpdateTransferLimitChecks(
-			settings.downloadRateLimit,
-			settings.uploadRateLimit);
+		UpdateTransferLimitChecks(settings.downloadRateLimit, settings.uploadRateLimit);
 	}
 
 	void NotifyIconContextMenu::UpdateTransferLimitChecks(int downloadLimit, int uploadLimit)
@@ -490,10 +483,8 @@ namespace winrt::OpenNet::UI::Shell::implementation
 				}
 				if (winrt::OpenNet::implementation::App::CreateSetMainWindow())
 				{
-					auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::
-						TorrentCheckModalWindow>(text);
-					::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
-						*checkWindow);
+					auto checkWindow = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::TorrentCheckModalWindow>(text);
+					::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(*checkWindow);
 					checkWindow->Activate();
 				}
 			}
@@ -545,8 +536,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 				{
 					self->m_floatingWindow = nullptr;
 					self->FloatingWindowToggle().IsChecked(false);
-					self->SaveToggleSetting(
-						L"Tray.FloatingWindowEnabled", false);
+					self->SaveToggleSetting(L"Tray.FloatingWindowEnabled", false);
 				}
 			});
 			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(floating);

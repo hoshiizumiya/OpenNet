@@ -104,10 +104,8 @@ namespace winrt::OpenNet::implementation
 			::OpenNet::ViewModels::Guide::GuideState::Language);
 		if (guideState < ::OpenNet::ViewModels::Guide::GuideState::Completed)
 		{
-			guideWindow = winrt::make<
-				winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
-			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
-				guideWindow);
+			guideWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(guideWindow);
 			guideWindow.Activate();
 			return;
 		}
@@ -224,8 +222,7 @@ namespace winrt::OpenNet::implementation
 		StartIPFilterSubscriptionUpdates();
 
 #if _DEBUG
-		auto devWindow = winrt::make<
-			winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
+		auto devWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(devWindow);
 		devWindow.Activate();
 #endif
@@ -242,8 +239,7 @@ namespace winrt::OpenNet::implementation
 
 	void App::StartIPFilterSubscriptionUpdates()
 	{
-		using SubscriptionPage = winrt::OpenNet::UI::Xaml::View::Pages::
-			SettingsPages::implementation::IPFilterSettingsPage;
+		using SubscriptionPage = winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation::IPFilterSettingsPage;
 		(void)SubscriptionPage::RunSubscriptionUpdateAsync(false, true);
 
 		if (s_ipFilterSubscriptionTimer)
@@ -315,8 +311,7 @@ namespace winrt::OpenNet::implementation
 	}
 
 	/// <summary>
-	AppActivationSnapshot App::SnapshotActivation(
-		winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
+	AppActivationSnapshot App::SnapshotActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const& args)
 	{
 		AppActivationSnapshot snapshot;
 		snapshot.Kind = args.Kind();
@@ -324,8 +319,7 @@ namespace winrt::OpenNet::implementation
 
 		if (snapshot.Kind == ExtendedActivationKind::Launch)
 		{
-			if (auto launchArgs = data.try_as<
-				winrt::Windows::ApplicationModel::Activation::ILaunchActivatedEventArgs>())
+			if (auto launchArgs = data.try_as<winrt::Windows::ApplicationModel::Activation::ILaunchActivatedEventArgs>())
 			{
 				snapshot.LaunchArguments = launchArgs.Arguments();
 			}
@@ -394,8 +388,7 @@ namespace winrt::OpenNet::implementation
 				catch (winrt::hresult_error const& error)
 				{
 					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-						L"Torrent file", error.message(),
-						Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error, 0);
+						::OpenNet::Service::Notification::InfoBarMessage::Error(L"Torrent file", error.message()));
 				}
 			}
 
@@ -628,10 +621,8 @@ namespace winrt::OpenNet::implementation
 				.EnsureTorrentCoreInitializedAsync();
 			OutputDebugStringA("App: libtorrent core initialized\n");
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceGetString(L"AppBitTorrentEngine"),
-				ResourceGetString(L"AppLibtorrentInitialized"),
-				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Success,
-				3500);
+				::OpenNet::Service::Notification::InfoBarMessage::Success(
+					ResourceGetString(L"AppBitTorrentEngine"), ResourceGetString(L"AppLibtorrentInitialized")));
 		}
 		catch (std::exception const& exception)
 		{
@@ -639,19 +630,15 @@ namespace winrt::OpenNet::implementation
 				"App: Failed to initialize libtorrent core: "
 				+ std::string(exception.what()) + "\n").c_str());
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceGetString(L"AppBitTorrentEngineFailed"),
-				to_hstring(exception.what()),
-				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
-				0);
+				::OpenNet::Service::Notification::InfoBarMessage::Error(
+					ResourceGetString(L"AppBitTorrentEngineFailed"), to_hstring(exception.what())));
 		}
 		catch (...)
 		{
 			OutputDebugStringA("App: Failed to initialize libtorrent core\n");
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceGetString(L"AppBitTorrentEngineFailed"),
-				ResourceGetString(L"AppLibtorrentInitializationUnknownError"),
-				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
-				0);
+				::OpenNet::Service::Notification::InfoBarMessage::Error(
+					ResourceGetString(L"AppBitTorrentEngineFailed"), ResourceGetString(L"AppLibtorrentInitializationUnknownError")));
 		}
 	}
 
@@ -668,10 +655,8 @@ namespace winrt::OpenNet::implementation
 		{
 			OutputDebugStringA("App: Failed to initialize RSS Manager\n");
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceGetString(L"AppRSSServiceFailed"),
-				ResourceGetString(L"AppRSSBackgroundUpdatesFailed"),
-				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Warning,
-				0);
+				::OpenNet::Service::Notification::InfoBarMessage::Warning(
+					ResourceGetString(L"AppRSSServiceFailed"), ResourceGetString(L"AppRSSBackgroundUpdatesFailed")));
 		}
 	}
 
@@ -699,11 +684,8 @@ namespace winrt::OpenNet::implementation
 				dispatcher.TryEnqueue([]
 				{
 					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-							ResourceGetString(L"AppWebUIFailed"),
-							ResourceGetString(L"AppWebUIStartFailed"),
-							Microsoft::UI::Xaml::Controls::
-							InfoBarSeverity::Error,
-							0);
+						::OpenNet::Service::Notification::InfoBarMessage::Error(
+							ResourceGetString(L"AppWebUIFailed"), ResourceGetString(L"AppWebUIStartFailed")));
 				});
 			}
 			else
@@ -711,11 +693,8 @@ namespace winrt::OpenNet::implementation
 				dispatcher.TryEnqueue([]
 				{
 					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-							ResourceGetString(L"AppWebUI"),
-							ResourceGetString(L"AppWebUIRunning"),
-							Microsoft::UI::Xaml::Controls::
-							InfoBarSeverity::Success,
-							4500);
+						::OpenNet::Service::Notification::InfoBarMessage::Success(
+							ResourceGetString(L"AppWebUI"), ResourceGetString(L"AppWebUIRunning")));
 				});
 			}
 		}
@@ -725,19 +704,15 @@ namespace winrt::OpenNet::implementation
 				"App: Failed to initialize WebUI: "
 				+ std::string(exception.what()) + "\n").c_str());
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceGetString(L"AppWebUIFailed"),
-				to_hstring(exception.what()),
-				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
-				0);
+				::OpenNet::Service::Notification::InfoBarMessage::Error(
+					ResourceGetString(L"AppWebUIFailed"), to_hstring(exception.what())));
 		}
 		catch (...)
 		{
 			OutputDebugStringA("App: Failed to initialize WebUI\n");
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceGetString(L"AppWebUIFailed"),
-				ResourceGetString(L"AppWebUIUnknownStartError"),
-				Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error,
-				0);
+				::OpenNet::Service::Notification::InfoBarMessage::Error(
+					ResourceGetString(L"AppWebUIFailed"), ResourceGetString(L"AppWebUIUnknownStartError")));
 		}
 	}
 

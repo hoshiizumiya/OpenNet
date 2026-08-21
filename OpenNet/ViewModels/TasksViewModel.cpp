@@ -100,7 +100,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// StartCommand: Resume the selected task (or initialize the torrent core if not yet running)
 		m_startCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
-                        .ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
+			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			co_await winrt::resume_background();
 			auto self = weak.get();
@@ -197,16 +197,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						if (auto current = weak.get())
 						{
-                                                        selectedTask.State(
-                                                                selectedTask.ProgressPercent() >= 100.0
-                                                                ? winrt::OpenNet::ViewModels::
-                                                                DownloadTaskState::Completed
-                                                                : winrt::OpenNet::ViewModels::
-                                                                DownloadTaskState::Paused);
-								selectedTask.DownloadRate(L"0 B/s");
-								selectedTask.UploadRate(L"0 B/s");
-								selectedTask.DownloadSpeedKB(0);
-                                                        current->RebuildFiltered();
+							selectedTask.State(
+								selectedTask.ProgressPercent() >= 100.0
+								? winrt::OpenNet::ViewModels::
+								DownloadTaskState::Completed
+								: winrt::OpenNet::ViewModels::
+								DownloadTaskState::Paused);
+							selectedTask.DownloadRate(L"0 B/s");
+							selectedTask.UploadRate(L"0 B/s");
+							selectedTask.DownloadSpeedKB(0);
+							current->RebuildFiltered();
 						}
 					});
 				}
@@ -228,8 +228,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (!selectedTask) co_return;
 
 			auto taskId = winrt::to_string(selectedTask.TaskId());
-                        auto taskType = selectedTask.TaskType();
-                        auto gid = winrt::to_string(selectedTask.Gid());
+			auto taskType = selectedTask.TaskType();
+			auto gid = winrt::to_string(selectedTask.Gid());
 			bool const deleteDownloadedFiles = parameter
 				? winrt::unbox_value_or<bool>(parameter, false)
 				: false;
@@ -300,6 +300,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				deletionSucceeded = false;
 				deletionError = L"The download engine did not release the task or its files.";
+			}
+			if (deletionSucceeded && !taskId.empty())
+			{
+				std::lock_guard lock(self->m_progressSnapshotMutex);
+				self->m_progressSnapshots.erase(taskId);
 			}
 
 			// Back to UI thread for observable collection mutation
@@ -453,6 +458,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::Shutdown()
 	{
+		{
+			std::lock_guard lock(m_progressSnapshotMutex);
+			m_progressSnapshots.clear();
+		}
 		::OpenNet::Core::DownloadManager::Instance().Shutdown();
 	}
 
@@ -469,12 +478,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			for (auto const& task : tasks)
 			{
-				details.emplace(task.taskId, core->GetTorrentDetail(task.taskId));
+				details.emplace(task.taskId, core->GetTorrentSummary(task.taskId));
 			}
 		}
 
 		dispatcher.TryEnqueue([weak = get_weak(), tasks = std::move(tasks),
-			details = std::move(details)]()
+							  details = std::move(details)]()
 		{
 			if (auto self = weak.get())
 			{
@@ -577,11 +586,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 						vm.DownloadSize(L"-");
 						vm.TotalDownloadSize(friendlyUnit(task.downloadedSize));
 						vm.UploadSize(L"-");
-						vm.TotalUploadSize(L"-");
-						vm.ShareRatio(L"0.00");
+						vm.TotalUploadSize(friendlyUnit(task.uploadedSize));
+						vm.ShareRatio(FormatRatio(static_cast<std::uint64_t>((std::max)(std::int64_t{}, task.uploadedSize)), static_cast<std::uint64_t>((std::max)(std::int64_t{}, task.downloadedSize))));
+						vm.CompletedDate(task.completedTimestamp > 0 ? FormatTimestamp(task.completedTimestamp) : L"-");
 						vm.Seeds(L"-");
 						vm.Peers(L"-");
-						vm.CompletedDate(L"-");
 					}
 				}
 				self->RebuildFiltered();
@@ -771,6 +780,21 @@ namespace winrt::OpenNet::ViewModels::implementation
 			L"{:.2f}", static_cast<double>(uploaded) / downloaded) };
 	}
 
+	static winrt::hstring FormatRateConstraint(int const currentRateKB, int const maximumBytes, int const minimumBytes)
+	{
+		auto formatLimit = [](int const bytes)
+		{
+			if (bytes >= 1024 * 1024)
+				return winrt::hstring{ std::format(L"{:.1f} MiB/s", static_cast<double>(bytes) / (1024.0 * 1024.0)) };
+			return winrt::hstring{ std::format(L"{} KiB/s", bytes / 1024) };
+		};
+
+		std::wstring value{ to_hstring_rate(currentRateKB).c_str() };
+		if (minimumBytes > 0) value += L" > " + std::wstring{ formatLimit(minimumBytes).c_str() };
+		if (maximumBytes > 0) value += L" < " + std::wstring{ formatLimit(maximumBytes).c_str() };
+		return winrt::hstring{ value };
+	}
+
 	static winrt::hstring FormatSeedsPeers(
 		int connectedSeeds, int connectedPeers, int knownSeeds, int knownPeers)
 	{
@@ -783,6 +807,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::OnProgress(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
 	{
+		{
+			std::lock_guard lock(m_progressSnapshotMutex);
+			auto const previous = m_progressSnapshots.find(e.taskId);
+			if (previous != m_progressSnapshots.end() && previous->second == e) return;
+			m_progressSnapshots.insert_or_assign(e.taskId, e);
+		}
+
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
 			return;
@@ -810,8 +841,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 					   : winrt::OpenNet::ViewModels::DownloadTaskState::Downloading);
 				item.State(nextState);
 				item.Progress(to_hstring_percent(e.progressPercent));
-				item.DownloadRate(to_hstring_rate(e.downloadRateKB));
-				item.UploadRate(to_hstring_rate(e.uploadRateKB));
+				item.DownloadRate(FormatRateConstraint(e.downloadRateKB, e.downloadLimit, 0));
+				item.UploadRate(FormatRateConstraint(e.uploadRateKB, e.uploadLimit, e.minimumUploadRate));
 				item.Size(FormatByteSize(static_cast<std::uint64_t>((std::max)(
 					std::int64_t{}, e.totalSize))));
 				item.DownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(

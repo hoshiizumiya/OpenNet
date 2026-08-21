@@ -370,9 +370,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		SetStatusMessage(ResourceGetString(L"ViewRSSViewModelDownloadStarted") + L" " + item.Title());
 	}
 
-	void RSSViewModel::UpdateFeedSettings(OpenNet::ViewModels::RSSFeedViewModel const& feed)
+	bool RSSViewModel::UpdateFeedSettings(OpenNet::ViewModels::RSSFeedViewModel const& feed)
 	{
-		if (!feed) return;
+		if (!feed) return false;
 
 		RSSSubscription sub;
 		sub.id = std::wstring(feed.Id().c_str());
@@ -387,7 +387,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		if (RSSManager::Instance().UpdateSubscription(sub))
 		{
 			SetStatusMessage(ResourceGetString(L"ViewRSSViewModelFeedSettingsUpdated"));
+			return true;
 		}
+
+		return false;
 	}
 
 	winrt::event_token RSSViewModel::PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)

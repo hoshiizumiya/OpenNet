@@ -5,6 +5,7 @@
 #include "ViewModels/TorrentMetadataViewModel.h"
 
 import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
+import OpenNet.Core.torrentCore.LibtorrentHandle;
 import winrt.OpenNet.ViewModels;
 import winrt.Windows.Foundation;
 
@@ -18,13 +19,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			winrt::OpenNet::ViewModels::TaskViewModel const& task);
 
 		// Properties for XAML binding
-		winrt::OpenNet::ViewModels::TorrentMetadataViewModel MetadataViewModel() const { return m_metadataViewModel; }
-		bool IsLoading() const { return m_isLoading; }
-		winrt::hstring LoadingStatus() const { return m_loadingStatus; }
-		int LoadingProgress() const { return m_loadingProgress; }
-		bool HasError() const { return m_hasError; }
-		winrt::hstring ErrorMessage() const { return m_errorMessage; }
-		bool MetadataReady() const { return m_metadataReady; }
+		winrt::OpenNet::ViewModels::TorrentMetadataViewModel MetadataViewModel() const
+		{
+			return m_metadataViewModel;
+		}
+		bool IsLoading() const
+		{
+			return m_isLoading;
+		}
+		winrt::hstring LoadingStatus() const
+		{
+			return m_loadingStatus;
+		}
+		int LoadingProgress() const
+		{
+			return m_loadingProgress;
+		}
+		bool HasError() const
+		{
+			return m_hasError;
+		}
+		winrt::hstring ErrorMessage() const
+		{
+			return m_errorMessage;
+		}
+		bool MetadataReady() const
+		{
+			return m_metadataReady;
+		}
 
 		// Event handlers
 		void SetWindowOwner();
@@ -35,12 +57,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		// Button handlers
 		void StartDownloadButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void ApplyTaskSettingsButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void CancelButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
 		void InitializeWindow();
-		void LoadExistingTask(
-			winrt::OpenNet::ViewModels::TaskViewModel const& task);
+		void LoadExistingTask(winrt::OpenNet::ViewModels::TaskViewModel const& task);
+		void PopulateTaskSettings(::OpenNet::Core::Torrent::LibtorrentHandle::TorrentTaskSettings const& settings);
 		void StartParseMetadata();
 		winrt::Windows::Foundation::IAsyncAction ParseTorrentMetadataAsync();
 

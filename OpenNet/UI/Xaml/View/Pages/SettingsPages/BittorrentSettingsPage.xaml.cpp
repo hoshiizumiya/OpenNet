@@ -86,11 +86,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		EnableLsdToggle().IsOn(s.enableLsd);
 		EnableUpnpToggle().IsOn(s.enableUpnp);
 		EnableNatpmpToggle().IsOn(s.enableNatpmp);
+		ApplyIpFilterToDhtToggle().IsOn(s.applyIpFilterToDht);
 		UpnpLeaseDurationNumberBox().Value(s.upnpLeaseDuration);
+		NatPmpGatewayTextBox().Text(winrt::to_hstring(s.natPmpGateway));
+		NatPmpLeaseDurationNumberBox().Value(s.natPmpLeaseDuration);
 
 		// Tracker
 		AnnounceToAllTiersToggle().IsOn(s.announceToAllTiers);
 		AnnounceToAllTrackersToggle().IsOn(s.announceToAllTrackers);
+		EnableWebTorrentToggle().IsOn(s.enableWebTorrent);
+		WebTorrentStunServerTextBox().Text(winrt::to_hstring(s.webTorrentStunServer));
+		MaxWebTorrentOffersNumberBox().Value(s.maxWebTorrentOffers);
+		WebTorrentConnectionTimeoutNumberBox().Value(s.webTorrentConnectionTimeout);
+		MinWebSocketAnnounceIntervalNumberBox().Value(s.minWebSocketAnnounceInterval);
 
 		// Limits
 		QueueingEnabledToggle().IsOn(s.queueingEnabled);
@@ -114,6 +122,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Disk I/O
 		AioThreadsNumberBox().Value(s.aioThreads);
 		CheckingMemUsageNumberBox().Value(s.checkingMemUsage);
+		DisableV1HashesForHybridToggle().IsOn(s.disableV1HashesForHybrid);
+		PartFileDirectoryTextBox().Text(winrt::to_hstring(s.partFileDirectory));
+		MaxTorrentDirectoryDepthNumberBox().Value(s.maxTorrentDirectoryDepth);
 
 		// Identity
 		UserAgentTextBox().Text(winrt::to_hstring(s.userAgent));
@@ -130,6 +141,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ProxyPasswordBox().Password(winrt::to_hstring(s.proxyPassword));
 		ProxyPeerConnectionsToggle().IsOn(s.proxyPeerConnections);
 		ProxyTrackerConnectionsToggle().IsOn(s.proxyTrackerConnections);
+		ProxySendHostInConnectToggle().IsOn(s.proxySendHostInConnect);
+		EnableI2pToggle().IsOn(s.enableI2p);
+		I2pHostnameTextBox().Text(winrt::to_hstring(s.i2pHostname));
+		I2pPortNumberBox().Value(s.i2pPort);
+		AllowI2pMixedToggle().IsOn(s.allowI2pMixed);
+		I2pInboundQuantityNumberBox().Value(s.i2pInboundQuantity);
+		I2pOutboundQuantityNumberBox().Value(s.i2pOutboundQuantity);
+		I2pInboundLengthNumberBox().Value(s.i2pInboundLength);
+		I2pOutboundLengthNumberBox().Value(s.i2pOutboundLength);
+		I2pInboundVarianceNumberBox().Value(s.i2pInboundLengthVariance);
+		I2pOutboundVarianceNumberBox().Value(s.i2pOutboundLengthVariance);
 
 		// Advanced libtorrent
 		MaxPeerListSizeNumberBox().Value(s.maxPeerListSize);
@@ -154,6 +176,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		BlockPrivilegedPortsToggle().IsOn(s.blockPeersOnPrivilegedPorts);
 		UploadSlotsBehaviorComboBox().SelectedIndex(s.uploadSlotsBehavior);
 		UploadChokingAlgorithmComboBox().SelectedIndex(s.uploadChokingAlgorithm);
+		UnchokeSlotsLimitNumberBox().Value(s.unchokeSlotsLimit);
+		AlertQueueSizeNumberBox().Value(s.alertQueueSize);
 		DhtBootstrapNodesTextBox().Text(winrt::to_hstring(s.dhtBootstrapNodes));
 		AnnounceIpTextBox().Text(winrt::to_hstring(s.announceIp));
 		AnnouncePortNumberBox().Value(s.announcePort);
@@ -191,12 +215,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		s.enableLsd = EnableLsdToggle().IsOn();
 		s.enableUpnp = EnableUpnpToggle().IsOn();
 		s.enableNatpmp = EnableNatpmpToggle().IsOn();
+		s.applyIpFilterToDht = ApplyIpFilterToDhtToggle().IsOn();
+		s.natPmpGateway = winrt::to_string(NatPmpGatewayTextBox().Text());
+		s.natPmpLeaseDuration = static_cast<int>(NatPmpLeaseDurationNumberBox().Value());
 		s.upnpLeaseDuration = static_cast<int>(
 			UpnpLeaseDurationNumberBox().Value());
 
 		// Tracker
 		s.announceToAllTiers = AnnounceToAllTiersToggle().IsOn();
 		s.announceToAllTrackers = AnnounceToAllTrackersToggle().IsOn();
+		s.enableWebTorrent = EnableWebTorrentToggle().IsOn();
+		s.webTorrentStunServer = winrt::to_string(WebTorrentStunServerTextBox().Text());
+		s.maxWebTorrentOffers = static_cast<int>(MaxWebTorrentOffersNumberBox().Value());
+		s.webTorrentConnectionTimeout = static_cast<int>(WebTorrentConnectionTimeoutNumberBox().Value());
+		s.minWebSocketAnnounceInterval = static_cast<int>(MinWebSocketAnnounceIntervalNumberBox().Value());
 
 		// Limits
 		s.queueingEnabled = QueueingEnabledToggle().IsOn();
@@ -220,6 +252,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Disk I/O
 		s.aioThreads = static_cast<int>(AioThreadsNumberBox().Value());
 		s.checkingMemUsage = static_cast<int>(CheckingMemUsageNumberBox().Value());
+		s.disableV1HashesForHybrid = DisableV1HashesForHybridToggle().IsOn();
+		s.partFileDirectory = winrt::to_string(PartFileDirectoryTextBox().Text());
+		s.maxTorrentDirectoryDepth = static_cast<int>(MaxTorrentDirectoryDepthNumberBox().Value());
 
 		// Identity
 		s.userAgent = winrt::to_string(UserAgentTextBox().Text());
@@ -238,6 +273,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		s.proxyPassword = winrt::to_string(ProxyPasswordBox().Password());
 		s.proxyPeerConnections = ProxyPeerConnectionsToggle().IsOn();
 		s.proxyTrackerConnections = ProxyTrackerConnectionsToggle().IsOn();
+		s.proxySendHostInConnect = ProxySendHostInConnectToggle().IsOn();
+		s.enableI2p = EnableI2pToggle().IsOn();
+		s.i2pHostname = winrt::to_string(I2pHostnameTextBox().Text());
+		s.i2pPort = static_cast<int>(I2pPortNumberBox().Value());
+		s.allowI2pMixed = AllowI2pMixedToggle().IsOn();
+		s.i2pInboundQuantity = static_cast<int>(I2pInboundQuantityNumberBox().Value());
+		s.i2pOutboundQuantity = static_cast<int>(I2pOutboundQuantityNumberBox().Value());
+		s.i2pInboundLength = static_cast<int>(I2pInboundLengthNumberBox().Value());
+		s.i2pOutboundLength = static_cast<int>(I2pOutboundLengthNumberBox().Value());
+		s.i2pInboundLengthVariance = static_cast<int>(I2pInboundVarianceNumberBox().Value());
+		s.i2pOutboundLengthVariance = static_cast<int>(I2pOutboundVarianceNumberBox().Value());
 
 		// Advanced libtorrent
 		s.maxPeerListSize = static_cast<int>(MaxPeerListSizeNumberBox().Value());
@@ -262,6 +308,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		s.blockPeersOnPrivilegedPorts = BlockPrivilegedPortsToggle().IsOn();
 		s.uploadSlotsBehavior = std::max(0, UploadSlotsBehaviorComboBox().SelectedIndex());
 		s.uploadChokingAlgorithm = std::max(0, UploadChokingAlgorithmComboBox().SelectedIndex());
+		s.unchokeSlotsLimit = static_cast<int>(UnchokeSlotsLimitNumberBox().Value());
+		s.alertQueueSize = static_cast<int>(AlertQueueSizeNumberBox().Value());
 		s.dhtBootstrapNodes = winrt::to_string(DhtBootstrapNodesTextBox().Text());
 		s.announceIp = winrt::to_string(AnnounceIpTextBox().Text());
 		s.announcePort = static_cast<int>(AnnouncePortNumberBox().Value());

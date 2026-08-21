@@ -437,9 +437,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!TryGetTaskContext(taskId, taskName))
 			co_return;
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-		auto const detail = core->GetTorrentDetail(taskId);
+		auto const trackers = core->GetTorrentTrackers(taskId);
 		winrt::hstring existingText;
-		for (auto const& tracker : detail.trackers)
+		for (auto const& tracker : trackers)
 		{
 			if (!existingText.empty()) existingText = existingText + L"\r\n";
 			existingText = existingText + winrt::to_hstring(tracker.url);
@@ -487,7 +487,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		std::unordered_set<std::string> current;
-		for (auto const& tracker : detail.trackers) current.insert(tracker.url);
+		for (auto const& tracker : trackers) current.insert(tracker.url);
 		std::vector<std::string> removed;
 		for (auto const& value : current)
 			if (!unique.contains(value)) removed.push_back(value);
@@ -588,13 +588,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 			co_return;
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-		auto const detail = core->GetTorrentDetail(taskId);
+		auto const trackers = core->GetTorrentTrackers(taskId);
 		auto const rawThreshold = UnreachableRetriesNumberBox().Value();
 		if (std::isnan(rawThreshold)) co_return;
 		auto const threshold = std::clamp(
 			static_cast<int>(std::round(rawThreshold)), 1, 255);
 		std::vector<std::string> removed;
-		for (auto const& tracker : detail.trackers)
+		for (auto const& tracker : trackers)
 			if (tracker.retries >= threshold) removed.push_back(tracker.url);
 		if (!removed.empty())
 		{
@@ -655,13 +655,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
-		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
+		auto trackers = p2p.TorrentCore()->GetTorrentTrackers(taskId);
 		// Some imported torrents and legacy custom-tracker settings may contain
 		// an entire newline-delimited tracker list in one libtorrent URL field.
 		// Rendering that value directly makes a single DataRow hundreds of pixels
 		// tall. Flatten it to actual tracker rows before sorting or virtualization.
-		decltype(detail.trackers) normalizedTrackers;
-		for (auto const& tracker : detail.trackers)
+		decltype(trackers) normalizedTrackers;
+		for (auto const& tracker : trackers)
 		{
 			std::istringstream lines{ tracker.url };
 			std::string url;
@@ -674,17 +674,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				normalizedTrackers.push_back(std::move(normalized));
 			}
 		}
-		detail.trackers = std::move(normalizedTrackers);
+		trackers = std::move(normalizedTrackers);
 		// libtorrent may expose the same announce URL more than once for
 		// different internal endpoint/hash states. The table represents a tracker
 		// URL, so fold exact duplicates before updating the realized rows.
 		std::unordered_set<std::string> trackerUrls;
-		std::erase_if(detail.trackers, [&trackerUrls](auto const& tracker)
+		std::erase_if(trackers, [&trackerUrls](auto const& tracker)
 		{
 			return !trackerUrls.insert(tracker.url).second;
 		});
 
-		if (detail.trackers.empty())
+		if (trackers.empty())
 		{
 			if (!m_hasTrackerSnapshot || m_lastTrackerSnapshotHash != 0)
 				m_trackerItems.Clear();
@@ -699,7 +699,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			auto const direction = m_sortDirection;
 			auto const column = m_sortColumn;
-			std::stable_sort(detail.trackers.begin(), detail.trackers.end(),
+			std::stable_sort(trackers.begin(), trackers.end(),
 							 [direction, column](auto const& left, auto const& right)
 			{
 				auto ascending = [&]()
@@ -726,13 +726,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			});
 		}
 
-		std::size_t snapshotHash = detail.trackers.size();
+		std::size_t snapshotHash = trackers.size();
 		auto combineHash = [&snapshotHash](auto const& value)
 		{
 			snapshotHash ^= std::hash<std::decay_t<decltype(value)>>{}(value)
-				+ 0x9e3779b9u + (snapshotHash << 6) + (snapshotHash >> 2);
+				+0x9e3779b9u + (snapshotHash << 6) + (snapshotHash >> 2);
 		};
-		for (auto const& tracker : detail.trackers)
+		for (auto const& tracker : trackers)
 		{
 			combineHash(tracker.url);
 			combineHash(tracker.tier);
@@ -761,10 +761,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_lastTrackerRefresh = nowSteady;
 
 		for (std::uint32_t index = 0;
-			 index < static_cast<std::uint32_t>(detail.trackers.size());
+			 index < static_cast<std::uint32_t>(trackers.size());
 			 ++index)
 		{
-			auto const& tracker = detail.trackers[index];
+			auto const& tracker = trackers[index];
 			auto const trackerUrl = winrt::to_hstring(tracker.url);
 			winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
 			if (index < m_trackerItems.Size())
@@ -800,7 +800,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				item.Status(winrt::to_hstring(tracker.status));
 			item.Message(winrt::to_hstring(tracker.message));
 		}
-		while (m_trackerItems.Size() > detail.trackers.size())
+		while (m_trackerItems.Size() > trackers.size())
 			m_trackerItems.RemoveAtEnd();
 
 		if (emptyPanel) emptyPanel.Visibility(Visibility::Collapsed);

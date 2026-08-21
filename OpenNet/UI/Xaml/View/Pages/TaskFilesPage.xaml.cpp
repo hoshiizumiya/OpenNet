@@ -317,7 +317,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
-		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
+		auto detail = p2p.TorrentCore()->GetTorrentFilesSnapshot(taskId);
 
 		if (detail.files.empty())
 		{
@@ -414,7 +414,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const taskId = winrt::to_string(m_viewModel.SelectedTask().TaskId());
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (!core || taskId.empty()) return std::nullopt;
-		auto const detail = core->GetTorrentDetail(taskId);
+		auto const detail = core->GetTorrentFilesSnapshot(taskId);
 		for (auto const& file : detail.files)
 		{
 			if (file.fileIndex != item.FileIndex()) continue;
@@ -565,7 +565,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore()) return;
 
 		// Get current file list to build accurate priority vector
-		auto detail = p2p.TorrentCore()->GetTorrentDetail(taskId);
+		auto detail = p2p.TorrentCore()->GetTorrentFilesSnapshot(taskId);
 		if (detail.files.empty()) return;
 
 		std::vector<int> priorities;

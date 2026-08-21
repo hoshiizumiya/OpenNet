@@ -4,13 +4,13 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="ViewDialogRSSFeedSettingsDialog"
     x:Uid="RSSFeedSettingsDialog"
     Title="Feed Settings"
     DefaultButton="Primary"
-    Loaded="DialogLoaded"
     PrimaryButtonClick="OnPrimaryButtonClick"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
@@ -41,6 +41,13 @@
                 Minimum="5"
                 SpinButtonPlacementMode="Inline" />
             <ToggleSwitch
+                x:Name="SettingsEnabledToggle"
+                x:Uid="RSSSettingsEnabledToggle"
+                AutomationProperties.AutomationId="RSSSettingsEnabledToggle"
+                Header="Feed enabled"
+                OffContent="Disabled"
+                OnContent="Enabled" />
+            <ToggleSwitch
                 x:Name="SettingsAutoDownloadToggle"
                 x:Uid="RSSSettingsAutoDownloadToggle"
                 AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
@@ -55,16 +62,27 @@
                 PlaceholderText="e.g., 1080p|720p" />
             <ComboBox
                 x:Name="ItemDoubleClickActionBox"
+                x:Uid="RSSSettingsDoubleClickActionBox"
                 MinWidth="160"
-                Header="Double-click action"
-                SelectionChanged="ItemDoubleClickActionBox_SelectionChanged">
-                <ComboBoxItem Content="Add to tasks" />
-                <ComboBoxItem Content="Show details" />
+                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                AutomationProperties.AutomationId="RSSSettingsDoubleClickActionBox"
+                Header="Double-click action">
+                <ComboBoxItem x:Uid="RSSSettingsDoubleClickAddToTasks" Content="Add to tasks" />
+                <ComboBoxItem x:Uid="RSSSettingsDoubleClickShowDetails" Content="Show details" />
             </ComboBox>
             <ToggleSwitch
                 x:Name="IsShowWebViewPreviewFlyout"
-                AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
+                x:Uid="RSSSettingsWebViewPreviewToggle"
+                AutomationProperties.AutomationId="RSSSettingsWebViewPreviewToggle"
                 Header="Show WebView Preview" />
+            <InfoBar
+                x:Name="SettingsValidationInfoBar"
+                x:Uid="RSSSettingsValidationInfoBar"
+                Title="Invalid feed settings"
+                IsClosable="False"
+                IsOpen="False"
+                Message="Enter a valid HTTP or HTTPS feed URL."
+                Severity="Error" />
         </StackPanel>
     </ScrollViewer>
 </ContentDialog>

@@ -91,10 +91,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			constexpr std::string_view currentHost = "bcr.pbh-btn.com";
 			auto lower = url;
 			std::transform(lower.begin(), lower.end(), lower.begin(),
-				[](unsigned char ch)
-				{
-					return static_cast<char>(std::tolower(ch));
-				});
+						   [](unsigned char ch)
+			{
+				return static_cast<char>(std::tolower(ch));
+			});
 			auto const position = lower.find(legacyHost);
 			if (position != std::string::npos)
 				url.replace(position, legacyHost.size(), currentHost);
@@ -184,11 +184,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (force && notify)
 			{
-				::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-					ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"),
-					ResourceText(L"IPF_NoEnabledSubscriptions", L"No enabled subscription sources."),
-					InfoBarSeverity::Warning,
-					6000);
+				auto notification = ::OpenNet::Service::Notification::InfoBarMessage::Warning(
+					ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"), ResourceText(L"IPF_NoEnabledSubscriptions", L"No enabled subscription sources."));
+				notification.DelayMilliseconds = 6000;
+				::OpenNet::Service::Notification::InfoBarService::Instance().Show(std::move(notification));
 			}
 			co_return;
 		}
@@ -335,11 +334,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				: failed > 0
 				? InfoBarSeverity::Warning
 				: InfoBarSeverity::Success;
-			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
-				ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"),
-				winrt::hstring{ summary },
+			::OpenNet::Service::Notification::InfoBarMessage notification{
 				severity,
-				succeeded == 0 ? 0 : 8000);
+				ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"),
+				winrt::hstring{ summary } };
+			notification.DelayMilliseconds = succeeded == 0 ? 0 : 8000;
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(std::move(notification));
 		}
 	}
 

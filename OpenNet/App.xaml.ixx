@@ -16,8 +16,7 @@ export namespace winrt::OpenNet::implementation
 {
 	struct AppActivationSnapshot
 	{
-		winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind Kind{
-			winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::Launch };
+		winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind Kind{ winrt::Microsoft::Windows::AppLifecycle::ExtendedActivationKind::Launch };
 		winrt::hstring LaunchArguments;
 		std::vector<winrt::hstring> TorrentPaths;
 	};
@@ -33,8 +32,7 @@ export namespace winrt::OpenNet::implementation
 		static void CompleteFirstRun();
 
 		static bool CreateSetMainWindow();
-		static AppActivationSnapshot SnapshotActivation(
-			winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);
+		static AppActivationSnapshot SnapshotActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);
 		static void HandleActivation(AppActivationSnapshot const&);
 
 		static inline winrt::Microsoft::UI::Xaml::Window window{ nullptr };
@@ -61,12 +59,9 @@ export namespace winrt::OpenNet::implementation
 		static inline bool s_isHandlingClose{ false };
 		static inline std::atomic_bool s_enginesShutdown{ false };
 		static inline std::atomic_bool s_mainExperienceStarted{ false };
-		static inline winrt::Microsoft::Windows::AppLifecycle::AppInstance
-			s_appInstance{ nullptr };
+		static inline winrt::Microsoft::Windows::AppLifecycle::AppInstance s_appInstance{ nullptr };
 		static inline winrt::event_token s_activatedToken{};
-		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue
-			s_uiDispatcher{ nullptr };
-		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer
-			s_ipFilterSubscriptionTimer{ nullptr };
+		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue s_uiDispatcher{ nullptr };
+		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer s_ipFilterSubscriptionTimer{ nullptr };
 	};
 }

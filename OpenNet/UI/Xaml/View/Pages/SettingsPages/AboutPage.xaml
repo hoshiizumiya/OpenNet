@@ -268,48 +268,6 @@
                                                 FontWeight="Medium"
                                                 Text="ㅤㅤㅤㅤ" />
                                         </TextBlock>
-
-                                        <!--<StackPanel HorizontalAlignment="Right" Orientation="Horizontal">
-                                            <TextBlock
-                                                Margin="0,1,0,1"
-                                                HorizontalAlignment="Right"
-                                                CenterPoint="10,12,0"
-                                                FontWeight="Medium"
-                                                Rotation="0"
-                                                Text="都"  x:Uid="ViewAboutPageTextBlock"/>
-                                            <TextBlock
-                                                Margin="0,1,1,1"
-                                                HorizontalAlignment="Right"
-                                                CenterPoint="10,14,0"
-                                                FontWeight="Medium"
-                                                Rotation="90"
-                                                Text="筑"  x:Uid="ViewAboutPageTextBlock"/>
-                                            <TextBlock
-                                                Margin="1,-2,0,1"
-                                                HorizontalAlignment="Right"
-                                                CenterPoint="10,14,0"
-                                                FontWeight="Medium"
-                                                Rotation="180"
-                                                Text="は"  x:Uid="ViewAboutPageTextBlock"/>
-                                            <TextBlock
-                                                Margin="0,1,1,1"
-                                                HorizontalAlignment="Right"
-                                                CenterPoint="10,14,0"
-                                                FontWeight="Medium"
-                                                Rotation="0"
-                                                Text="る"  x:Uid="ViewAboutPageTextBlock"/>
-                                            <TextBlock
-                                                Margin="-4,1,0,1"
-                                                HorizontalAlignment="Right"
-                                                CenterPoint="10,14,0"
-                                                FontWeight="Medium"
-                                                Rotation="90"
-                                                Text="か"  x:Uid="ViewAboutPageTextBlock"/>
-                                        </StackPanel>-->
-
-                                        <!--<TextBlock Text="Software Tester" FontSize="14" FontWeight="Thin" HorizontalAlignment="Right" Margin="0,6,0,1" x:Uid="ViewAboutPageTextBlock"/>
-                                    <TextBlock Text="" FontWeight="Medium" HorizontalAlignment="Right" Margin="0,1,0,1"/>-->
-
                                         <TextBlock Margin="0,12,0,1">
                                             <Run
                                                 x:Uid="AboutSpecialThanksRole"

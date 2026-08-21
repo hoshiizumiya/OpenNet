@@ -30,6 +30,11 @@ export namespace OpenNet::Core::Torrent
 			bool isChecking{};
 			bool isFinished{};
 			bool isSeeding{};
+			int downloadLimit{};
+			int uploadLimit{};
+			int minimumUploadRate{};
+
+			bool operator==(ProgressEvent const&) const = default;
 		};
 
 		typedef std::function<void(ProgressEvent const&)> ProgressCallback;
@@ -135,6 +140,7 @@ export namespace OpenNet::Core::Torrent
 			int numPeers{};
 			int numSeeds{};
 			int dhtNodes{};
+			std::int64_t internalBannedIps{};
 			int listenPort{};                 // primary listen port (0 if not listening)
 			bool isListening{};
 			std::string listenError;
@@ -183,6 +189,7 @@ export namespace OpenNet::Core::Torrent
 			int source{};             // libtorrent peer_info::source_flags bitmask
 			bool isIncoming{};        // true if peer initiated the connection
 			bool isConnecting{};      // connecting or waiting for handshake
+			bool isI2p{};
 		};
 
 		// Lightweight snapshot used by the peer table.  Unlike
@@ -272,6 +279,9 @@ export namespace OpenNet::Core::Torrent
 		};
 
 		TorrentDetailInfo GetTorrentDetail(std::string const& taskId) const;
+		TorrentDetailInfo GetTorrentSummary(std::string const& taskId) const;
+		std::vector<TorrentTrackerInfo> GetTorrentTrackers(std::string const& taskId) const;
+		TorrentDetailInfo GetTorrentFilesSnapshot(std::string const& taskId) const;
 
 		struct PeerConnectionEvent
 		{
@@ -300,6 +310,7 @@ export namespace OpenNet::Core::Torrent
 
 		TorrentPieceInfo GetTorrentPieceInfo(
 			std::string const& taskId) const;
+		TorrentPieceInfo GetTorrentPieceSummary(std::string const& taskId) const;
 		std::vector<std::uint8_t> ExportTorrentFile(
 			std::string const& taskId) const;
 
@@ -328,6 +339,26 @@ export namespace OpenNet::Core::Torrent
 		int GetTorrentUploadLimit(std::string const& taskId) const;
 		void SetTorrentDownloadLimit(std::string const& taskId, int limit);
 		void SetTorrentUploadLimit(std::string const& taskId, int limit);
+
+		struct TorrentTaskSettings
+		{
+			int downloadLimit{};
+			int uploadLimit{};
+			int minimumUploadRate{};
+			int maxConnections{ -1 };
+			int maxUploads{ -1 };
+			bool enableDht{ true };
+			bool enableLsd{ true };
+			bool enablePex{ true };
+			bool applyIpFilter{ true };
+			bool sequentialDownload{};
+			bool superSeeding{};
+			bool forceStart{};
+			bool uploadMode{};
+			bool shareMode{};
+		};
+		TorrentTaskSettings GetTorrentTaskSettings(std::string const& taskId) const;
+		bool SetTorrentTaskSettings(std::string const& taskId, TorrentTaskSettings const& settings);
 
 		void AddTrackers(
 			std::string const& taskId,
@@ -405,6 +436,7 @@ export namespace OpenNet::Core::Torrent
 			std::string content,
 			bool isError = false);
 		void ResolveSessionStatsMetricIndices();
+		TorrentDetailInfo GetTorrentDetailImpl(std::string const& taskId, bool includePeers, bool includeTrackers, bool includeFiles) const;
 
 		struct Impl;
 		std::unique_ptr<Impl> m_impl;

@@ -498,6 +498,33 @@
   <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
     <value>例如：1080p|720p</value>
   </data>
+  <data name="RSSSettingsEnabledToggle.Header" xml:space="preserve">
+    <value>启用订阅</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OnContent" xml:space="preserve">
+    <value>已启用</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OffContent" xml:space="preserve">
+    <value>已禁用</value>
+  </data>
+  <data name="RSSSettingsDoubleClickActionBox.Header" xml:space="preserve">
+    <value>双击操作</value>
+  </data>
+  <data name="RSSSettingsDoubleClickAddToTasks.Content" xml:space="preserve">
+    <value>添加到任务</value>
+  </data>
+  <data name="RSSSettingsDoubleClickShowDetails.Content" xml:space="preserve">
+    <value>显示详情</value>
+  </data>
+  <data name="RSSSettingsWebViewPreviewToggle.Header" xml:space="preserve">
+    <value>显示 WebView 预览</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Title" xml:space="preserve">
+    <value>订阅设置无效</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Message" xml:space="preserve">
+    <value>请输入有效的 HTTP 或 HTTPS 订阅地址。</value>
+  </data>
   <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
     <value>删除订阅源</value>
   </data>
@@ -4630,7 +4657,7 @@
     <value>常规 通用 语言 更新 启动页 刷新 主题</value>
   </data>
   <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
-    <value>BitTorrent BT 种子 用户 协议 连接 加密 代理 缓存 磁盘 性能 WebTorrent</value>
+    <value>BitTorrent BT 种子 用户 协议 连接 加密 代理 缓存 磁盘 性能 WebTorrent WebRTC STUN I2P NAT-PMP</value>
   </data>
   <data name="SettingsNetworkSearchTags" xml:space="preserve">
     <value>网络 端口 监听 IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT 代理</value>
@@ -4973,5 +5000,185 @@
   </data>
   <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
     <value>反吸血</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Header" xml:space="preserve">
+    <value>将 IP 过滤器应用到 DHT</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Description" xml:space="preserve">
+    <value>拒绝 DHT 流量和路由表中被过滤的地址。</value>
+  </data>
+  <data name="BT_WebTorrent.Header" xml:space="preserve">
+    <value>WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrent.Description" xml:space="preserve">
+    <value>启用由 WebSocket Tracker 通告的 WebRTC 节点。</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Header" xml:space="preserve">
+    <value>WebTorrent STUN 服务器</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Description" xml:space="preserve">
+    <value>用于 ICE 穿透的 hostname:port 格式 STUN 端点。</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Header" xml:space="preserve">
+    <value>WebTorrent 提议上限</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Description" xml:space="preserve">
+    <value>每次 Tracker 通告的 WebRTC 提议及并发协商上限。</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Header" xml:space="preserve">
+    <value>WebTorrent 连接超时</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Description" xml:space="preserve">
+    <value>等待 WebRTC 连接的秒数。</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Header" xml:space="preserve">
+    <value>WebSocket 最短通告间隔</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Description" xml:space="preserve">
+    <value>可接受的 WebSocket Tracker 最短通告间隔（秒）。</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Header" xml:space="preserve">
+    <value>混合种子跳过 v1 哈希</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Description" xml:space="preserve">
+    <value>混合种子仅验证 v2 SHA-256 哈希，以减少磁盘 I/O 和 CPU 占用。</value>
+  </data>
+  <data name="BT_PartFileDirectory.Header" xml:space="preserve">
+    <value>Part-file 目录</value>
+  </data>
+  <data name="BT_PartFileDirectory.Description" xml:space="preserve">
+    <value>用于保存已跳过文件所对应部分数据的可选相对子目录。</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Header" xml:space="preserve">
+    <value>种子目录最大深度</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Description" xml:space="preserve">
+    <value>拒绝文件树嵌套深度超过此值的种子元数据。</value>
+  </data>
+  <data name="BT_Proxy_I2p.Content" xml:space="preserve">
+    <value>I2P 代理</value>
+  </data>
+  <data name="BT_NatPmpGateway.Header" xml:space="preserve">
+    <value>NAT-PMP 网关</value>
+  </data>
+  <data name="BT_NatPmpLeaseDuration.Header" xml:space="preserve">
+    <value>NAT-PMP 租约时长（秒）</value>
+  </data>
+  <data name="BT_ProxySendHostInConnect.Header" xml:space="preserve">
+    <value>在 HTTP CONNECT 中发送主机名</value>
+  </data>
+  <data name="BT_I2p.Header" xml:space="preserve">
+    <value>I2P</value>
+  </data>
+  <data name="BT_I2pHostname.Header" xml:space="preserve">
+    <value>I2P SAM 主机</value>
+  </data>
+  <data name="BT_I2pPort.Header" xml:space="preserve">
+    <value>I2P SAM 端口</value>
+  </data>
+  <data name="BT_I2pMixedMode.Header" xml:space="preserve">
+    <value>允许混合 I2P 与互联网节点</value>
+  </data>
+  <data name="BT_I2pInboundQuantity.Header" xml:space="preserve">
+    <value>I2P 入站隧道数量</value>
+  </data>
+  <data name="BT_I2pOutboundQuantity.Header" xml:space="preserve">
+    <value>I2P 出站隧道数量</value>
+  </data>
+  <data name="BT_I2pInboundLength.Header" xml:space="preserve">
+    <value>I2P 入站隧道长度</value>
+  </data>
+  <data name="BT_I2pOutboundLength.Header" xml:space="preserve">
+    <value>I2P 出站隧道长度</value>
+  </data>
+  <data name="BT_I2pInboundVariance.Header" xml:space="preserve">
+    <value>I2P 入站长度变化量</value>
+  </data>
+  <data name="BT_I2pOutboundVariance.Header" xml:space="preserve">
+    <value>I2P 出站长度变化量</value>
+  </data>
+  <data name="BT_I2p.Description" xml:space="preserve">
+    <value>通过 SAM 网桥启用 I2P 种子；I2P PEX 由 libtorrent 2.1 处理。</value>
+  </data>
+  <data name="TorrentTaskLimitsSection.Text" xml:space="preserve">
+    <value>任务限制</value>
+  </data>
+  <data name="TorrentTaskDownloadLimit.Header" xml:space="preserve">
+    <value>最大下载速率（KiB/s）</value>
+  </data>
+  <data name="TorrentTaskUploadLimit.Header" xml:space="preserve">
+    <value>最大上传速率（KiB/s）</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRate.Header" xml:space="preserve">
+    <value>首选最小上传速率（KiB/s）</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Title" xml:space="preserve">
+    <value>最小速率目标</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Message" xml:space="preserve">
+    <value>libtorrent 不提供硬性的最小速率保证。OpenNet 会保存该目标并显示在任务行中；实际速率仍取决于节点需求和全局限制。</value>
+  </data>
+  <data name="TorrentTaskMaxConnections.Header" xml:space="preserve">
+    <value>最大连接数</value>
+  </data>
+  <data name="TorrentTaskMaxUploads.Header" xml:space="preserve">
+    <value>最大上传槽位</value>
+  </data>
+  <data name="TorrentTaskDiscoverySection.Text" xml:space="preserve">
+    <value>节点发现与任务行为</value>
+  </data>
+  <data name="TorrentTaskEnableDht.Header" xml:space="preserve">
+    <value>为此任务使用 DHT</value>
+  </data>
+  <data name="TorrentTaskEnableLsd.Header" xml:space="preserve">
+    <value>为此任务使用本地节点发现</value>
+  </data>
+  <data name="TorrentTaskEnablePex.Header" xml:space="preserve">
+    <value>为此任务使用节点交换</value>
+  </data>
+  <data name="TorrentTaskApplyIpFilter.Header" xml:space="preserve">
+    <value>应用 IP 过滤器</value>
+  </data>
+  <data name="TorrentTaskSequentialDownload.Header" xml:space="preserve">
+    <value>顺序下载</value>
+  </data>
+  <data name="TorrentTaskSuperSeeding.Header" xml:space="preserve">
+    <value>超级做种</value>
+  </data>
+  <data name="TorrentTaskForceStart.Header" xml:space="preserve">
+    <value>强制启动并绕过队列</value>
+  </data>
+  <data name="TorrentTaskUploadMode.Header" xml:space="preserve">
+    <value>仅上传模式</value>
+  </data>
+  <data name="TorrentTaskShareMode.Header" xml:space="preserve">
+    <value>分享模式</value>
+  </data>
+  <data name="TorrentTaskSettingsStatus.Title" xml:space="preserve">
+    <value>任务设置</value>
+  </data>
+  <data name="TorrentTaskApplySettingsButton.Content" xml:space="preserve">
+    <value>应用</value>
+  </data>
+  <data name="TorrentTaskSettingsApplied" xml:space="preserve">
+    <value>任务设置已应用。</value>
+  </data>
+  <data name="TorrentTaskSettingsApplyFailed" xml:space="preserve">
+    <value>无法应用任务设置。</value>
+  </data>
+  <data name="TorrentTaskSettingsInvalidLimits" xml:space="preserve">
+    <value>速率值无效，或最小上传目标高于最大上传限制。</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Header" xml:space="preserve">
+    <value>全局上传槽位</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Description" xml:space="preserve">
+    <value>全局同时解除阻塞的节点上限；-1 表示无限制。</value>
+  </data>
+  <data name="BT_AlertQueueSize.Header" xml:space="preserve">
+    <value>警报队列容量</value>
+  </data>
+  <data name="BT_AlertQueueSize.Description" xml:space="preserve">
+    <value>libtorrent 丢弃低优先级警报前允许积压的最大警报数。</value>
   </data>
 </root>

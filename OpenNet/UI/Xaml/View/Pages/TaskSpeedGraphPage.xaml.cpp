@@ -69,17 +69,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskSpeedGraphPage::TaskSpeedGraphPage()
 	{
-		m_settings = winrt::make<
-			winrt::OpenNet::ViewModels::implementation::
-			TaskSpeedGraphSettingsViewModel>();
+		m_settings = winrt::make<winrt::OpenNet::ViewModels::implementation::TaskSpeedGraphSettingsViewModel>();
 		m_settings.Initialize();
 		InitializeComponent();
 		m_isInitialized = true;
 		m_settingsPropertyChangedToken = m_settings.PropertyChanged(
 			[weak = get_weak()](
 				IInspectable const& sender,
-				winrt::Microsoft::UI::Xaml::Data::
-				PropertyChangedEventArgs const& args)
+				winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
 		{
 			if (auto self = weak.get())
 			{
@@ -87,12 +84,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 		});
 		ApplyGraphSettings();
-		if (auto const selector = MetricSelector();
-			selector && selector.SelectedIndex() >= 0)
+		if (auto const selector = MetricSelector();	selector && selector.SelectedIndex() >= 0)
 		{
-			m_mode.store(
-				static_cast<MetricMode>(selector.SelectedIndex()),
-				std::memory_order_relaxed);
+			m_mode.store(static_cast<MetricMode>(selector.SelectedIndex()), std::memory_order_relaxed);
 		}
 	}
 
@@ -111,15 +105,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		DisposeBrushes();
 	}
 
-	winrt::OpenNet::ViewModels::TaskSpeedGraphSettingsViewModel
-		TaskSpeedGraphPage::Settings() const
+	winrt::OpenNet::ViewModels::TaskSpeedGraphSettingsViewModel	TaskSpeedGraphPage::Settings() const
 	{
 		return m_settings;
 	}
 
-	void TaskSpeedGraphPage::MetricSelector_SelectionChanged(
-		IInspectable const& sender,
-		SelectionChangedEventArgs const&)
+	void TaskSpeedGraphPage::MetricSelector_SelectionChanged(IInspectable const& sender, SelectionChangedEventArgs const&)
 	{
 		auto const selector = sender.try_as<ComboBox>();
 		if (!m_isInitialized
@@ -129,9 +120,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
-		m_mode.store(
-			static_cast<MetricMode>(selector.SelectedIndex()),
-			std::memory_order_relaxed);
+		m_mode.store(static_cast<MetricMode>(selector.SelectedIndex()), std::memory_order_relaxed);
 		ApplyGraphSettings();
 		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
 		{
@@ -154,16 +143,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskSpeedGraphPage::PerformanceGraph_CreateResources(
-		IInspectable const&,
-		CanvasAnimatedControl const& canvas)
+	void TaskSpeedGraphPage::PerformanceGraph_CreateResources(IInspectable const&, CanvasAnimatedControl const& canvas)
 	{
 		RecreateGraphStreams(canvas);
 	}
 
-	void TaskSpeedGraphPage::Page_Loaded(
-		IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskSpeedGraphPage::Page_Loaded(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		ApplyGraphSettings();
 		if (!m_rebuildOnLoaded.exchange(false, std::memory_order_acq_rel))
@@ -184,42 +169,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskSpeedGraphPage::Page_Unloaded(
-		IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskSpeedGraphPage::Page_Unloaded(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		m_graphActive.store(false, std::memory_order_release);
 		m_rebuildOnLoaded.store(true, std::memory_order_release);
-		UploadHighlightOverlay().Visibility(
-			winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+		UploadHighlightOverlay().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 	}
 
-	void TaskSpeedGraphPage::PerformanceGraph_Draw(
-		IInspectable const&,
-		LiveGraphEventArgs const& args)
+	void TaskSpeedGraphPage::PerformanceGraph_Draw(IInspectable const&, LiveGraphEventArgs const& args)
 	{
 		if (!m_graphActive.load(std::memory_order_acquire))
 		{
 			return;
 		}
 
-		auto frameSeconds = std::chrono::duration<double>(
-			args.DrawEventArgs().Timing().ElapsedTime).count();
+		auto frameSeconds = std::chrono::duration<double>(args.DrawEventArgs().Timing().ElapsedTime).count();
 		if (!std::isfinite(frameSeconds) || frameSeconds < 0.0)
 		{
 			frameSeconds = 0.0;
 		}
 		frameSeconds = std::min(frameSeconds, 0.25);
-		auto const sampleElapsed =
-			m_sampleElapsedSeconds.load(std::memory_order_relaxed)
-			+ frameSeconds;
-		auto const sampleIntervalSeconds =
-			m_graphSampleIntervalSeconds.load(std::memory_order_relaxed);
+		auto const sampleElapsed = m_sampleElapsedSeconds.load(std::memory_order_relaxed) + frameSeconds;
+		auto const sampleIntervalSeconds = m_graphSampleIntervalSeconds.load(std::memory_order_relaxed);
 		if (sampleElapsed < sampleIntervalSeconds)
 		{
-			m_sampleElapsedSeconds.store(
-				sampleElapsed,
-				std::memory_order_relaxed);
+			m_sampleElapsedSeconds.store(sampleElapsed, std::memory_order_relaxed);
 			return;
 		}
 		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
@@ -241,8 +215,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::scoped_lock lock(m_graphStateMutex);
 			auto graph = PerformanceGraph();
 			auto const count = std::min(samples.size(), m_graphKeys.size());
-			auto const scrollPixelsPerSecond =
-				m_graphScrollPixelsPerSecond.load(std::memory_order_relaxed);
+			auto const scrollPixelsPerSecond = m_graphScrollPixelsPerSecond.load(std::memory_order_relaxed);
 			auto const pointSpace = static_cast<float>(std::max(
 				0.001,
 				scrollPixelsPerSecond * sampleElapsed));
@@ -282,9 +255,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskSpeedGraphPage::PerformanceGraph_HighlightLineUpdated(
-		IInspectable const&,
-		float value)
+	void TaskSpeedGraphPage::PerformanceGraph_HighlightLineUpdated(IInspectable const&, float value)
 	{
 		auto const graph = PerformanceGraph();
 		auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
@@ -303,14 +274,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			|| mode == MetricMode::CpuLogicalProcessors
 			|| mode == MetricMode::MemoryUsage)
 		{
-			HighlightValueText().Value(
-				hstring{ std::format(L"{:.1f}%", percentage) });
+			HighlightValueText().Value(hstring{ std::format(L"{:.1f}%", percentage) });
 			return;
 		}
 
-		auto const actualValue =
-			static_cast<double>(percentage) / 100.0
-			* m_highlightScale.load(std::memory_order_relaxed);
+		auto const actualValue = static_cast<double>(percentage) / 100.0 * m_highlightScale.load(std::memory_order_relaxed);
 		auto text = mode == MetricMode::DiskCache
 			? FormatBytes(actualValue)
 			: FormatRate(actualValue);
@@ -323,9 +291,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		HighlightValueText().Value(text);
 	}
 
-	void TaskSpeedGraphPage::ResetGraphSettings_Click(
-		IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskSpeedGraphPage::ResetGraphSettings_Click(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		m_settings.ResetDefaults();
 	}
@@ -338,61 +304,38 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
-		auto const scrollDurationSeconds =
-			m_settings.HorizontalScrollDurationMilliseconds() / 1000.0;
-		m_graphSampleIntervalSeconds.store(
-			m_settings.SampleIntervalMilliseconds() / 1000.0,
-			std::memory_order_relaxed);
-		m_graphScrollPixelsPerSecond.store(
-			scrollDurationSeconds > 0.0
-			? m_settings.HorizontalScrollDistance()
-			/ scrollDurationSeconds
-			: 0.0,
-			std::memory_order_relaxed);
-		m_graphStrokeWidth.store(
-			static_cast<float>(m_settings.StrokeWidth()),
-			std::memory_order_relaxed);
-		m_smoothCurves.store(
-			m_settings.SmoothCurves(),
-			std::memory_order_relaxed);
-		m_fillEnabled.store(
-			m_settings.FillEnabled(),
-			std::memory_order_relaxed);
-		m_borderEnabled.store(
-			m_settings.BorderEnabled(),
-			std::memory_order_relaxed);
+		auto const scrollDurationSeconds = m_settings.HorizontalScrollDurationMilliseconds() / 1000.0;
+		m_graphSampleIntervalSeconds.store(m_settings.SampleIntervalMilliseconds() / 1000.0, std::memory_order_relaxed);
+		m_graphScrollPixelsPerSecond.store(scrollDurationSeconds > 0.0 ? m_settings.HorizontalScrollDistance() / scrollDurationSeconds : 0.0, std::memory_order_relaxed);
+		m_graphStrokeWidth.store(static_cast<float>(m_settings.StrokeWidth()), std::memory_order_relaxed);
+		m_smoothCurves.store(m_settings.SmoothCurves(), std::memory_order_relaxed);
+		m_fillEnabled.store(m_settings.FillEnabled(), std::memory_order_relaxed);
+		m_borderEnabled.store(m_settings.BorderEnabled(), std::memory_order_relaxed);
 
-		graph.BackgroundMode(static_cast<LiveGraphBackgroundMode>(
-			std::clamp(m_settings.BackgroundModeIndex(), 0, 2)));
+		graph.BackgroundMode(static_cast<LiveGraphBackgroundMode>(std::clamp(m_settings.BackgroundModeIndex(), 0, 2)));
 		graph.DotSpacing(m_settings.DotSpacing());
 		graph.CrossSpacing(m_settings.CrossSpacing());
-		graph.HorizontalScrollDistance(
-			m_settings.HorizontalScrollDistance());
-		graph.HorizontalScrollDuration(
-			std::chrono::duration_cast<TimeSpan>(std::chrono::milliseconds{
-				static_cast<std::int64_t>(
-					m_settings.HorizontalScrollDurationMilliseconds()) }));
-		graph.HighlightLineBehavior(static_cast<HighlightLineBehavior>(
-			std::clamp(m_settings.HighlightBehaviorIndex(), 0, 4)));
+		graph.HorizontalScrollDistance(m_settings.HorizontalScrollDistance());
+		graph.HorizontalScrollDuration(std::chrono::duration_cast<TimeSpan>(std::chrono::milliseconds
+																			{
+																				static_cast<std::int64_t>(m_settings.HorizontalScrollDurationMilliseconds())
+																			}));
+		graph.HighlightLineBehavior(static_cast<HighlightLineBehavior>(std::clamp(m_settings.HighlightBehaviorIndex(), 0, 4)));
 		graph.HighlightLineVisibility(
 			m_settings.HighlightEnabled()
 			&& m_mode.load(std::memory_order_relaxed)
-				!= MetricMode::CpuLogicalProcessors
+			!= MetricMode::CpuLogicalProcessors
 			? winrt::Microsoft::UI::Xaml::Visibility::Visible
 			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
-		graph.IsSeriesGridEnabled(
-			m_mode.load(std::memory_order_relaxed)
-			== MetricMode::CpuLogicalProcessors);
-		if (!m_settings.HighlightEnabled()
-			|| m_mode.load(std::memory_order_relaxed) != MetricMode::TransferSpeed)
+		graph.IsSeriesGridEnabled(m_mode.load(std::memory_order_relaxed) == MetricMode::CpuLogicalProcessors);
+		if (!m_settings.HighlightEnabled() || m_mode.load(std::memory_order_relaxed) != MetricMode::TransferSpeed)
 		{
-			UploadHighlightOverlay().Visibility(
-				winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+			UploadHighlightOverlay().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 		}
-		graph.HighlightLineAnimationDuration(
-			std::chrono::duration_cast<TimeSpan>(std::chrono::milliseconds{
-				static_cast<std::int64_t>(
-					m_settings.HighlightAnimationMilliseconds()) }));
+		graph.HighlightLineAnimationDuration(std::chrono::duration_cast<TimeSpan>(std::chrono::milliseconds
+																				  {
+																					  static_cast<std::int64_t>(m_settings.HighlightAnimationMilliseconds())
+																				  }));
 		graph.HistoryBufferScreens(m_settings.HistoryBufferScreens());
 
 		if (m_settings.UseCustomCanvasColors())
@@ -426,9 +369,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskSpeedGraphPage::OnSettingsPropertyChanged(
-		IInspectable const&,
-		winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
+	void TaskSpeedGraphPage::OnSettingsPropertyChanged(IInspectable const&, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
 	{
 		ApplyGraphSettings();
 		auto const propertyName = args.PropertyName();
@@ -448,8 +389,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskSpeedGraphPage::RecreateGraphStreams(
-		CanvasAnimatedControl const& canvas)
+	void TaskSpeedGraphPage::RecreateGraphStreams(CanvasAnimatedControl const& canvas)
 	{
 		if (!canvas)
 		{
@@ -575,8 +515,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return {};
 		}
 
-		auto const actualCount =
-			std::min<std::size_t>(current.size(), returned / sizeof(current.front()));
+		auto const actualCount = std::min<std::size_t>(current.size(), returned / sizeof(current.front()));
 		std::vector<float> values(actualCount, 0.0f);
 		if (m_previousProcessorTimes.size() == actualCount)
 		{
@@ -616,8 +555,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return values;
 	}
 
-	std::pair<std::vector<double>, std::vector<hstring>>
-		TaskSpeedGraphPage::SampleMetric()
+	std::pair<std::vector<double>, std::vector<hstring>> TaskSpeedGraphPage::SampleMetric()
 	{
 		std::scoped_lock sampleLock(m_sampleStateMutex);
 		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
@@ -714,9 +652,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				};
 
 			case MetricMode::LongTermSeeding:
-				return {
-					std::vector<double>{
-						static_cast<double>(stats.longTermSeedingUploadRate) },
+				return
+				{
+					std::vector<double>
+						{
+							static_cast<double>(stats.longTermSeedingUploadRate)
+						},
 					std::vector<hstring>{
 						FormatRate(stats.longTermSeedingUploadRate),
 						hstring{ L"Finished and seeding tasks" } }
@@ -731,11 +672,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					m_previousDhtSent = stats.dhtBytesSent;
 					m_previousDhtSample = now;
 				}
-				else if (stats.dhtBytesReceived != m_previousDhtReceived
-						 || stats.dhtBytesSent != m_previousDhtSent)
+				else if (stats.dhtBytesReceived != m_previousDhtReceived || stats.dhtBytesSent != m_previousDhtSent)
 				{
-					double const seconds =
-						std::chrono::duration<double>(now - m_previousDhtSample).count();
+					double const seconds = std::chrono::duration<double>(now - m_previousDhtSample).count();
 					if (seconds > 0)
 					{
 						auto const receivedDelta = std::max<std::int64_t>(
@@ -744,21 +683,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 						auto const sentDelta = std::max<std::int64_t>(
 							0,
 							stats.dhtBytesSent - m_previousDhtSent);
-						m_lastDhtReceivedRate =
-							receivedDelta / seconds;
-						m_lastDhtSentRate =
-							sentDelta / seconds;
+						m_lastDhtReceivedRate =	receivedDelta / seconds;
+						m_lastDhtSentRate =	sentDelta / seconds;
 					}
 					m_previousDhtReceived = stats.dhtBytesReceived;
 					m_previousDhtSent = stats.dhtBytesSent;
 					m_previousDhtSample = now;
 				}
-				return {
-					std::vector<double>{
+				return
+				{
+					std::vector<double>
+					{
 						std::max(0.0, m_lastDhtReceivedRate),
 						std::max(0.0, m_lastDhtSentRate)
 					},
-					std::vector<hstring>{
+					std::vector<hstring>
+					{
 						FormatRate(std::max(0.0, m_lastDhtReceivedRate)),
 						hstring{ std::format(
 							L"{} · {} nodes",
@@ -792,22 +732,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				self->AxisMaximumText().Value(axisMaximumText);
 				auto const graph = self->PerformanceGraph();
 				auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
-				auto const pixelsPerSecond = self->m_graphScrollPixelsPerSecond.load(
-					std::memory_order_relaxed);
+				auto const pixelsPerSecond = self->m_graphScrollPixelsPerSecond.load(std::memory_order_relaxed);
 				if (canvas && pixelsPerSecond > 0.0)
 				{
 					auto const seconds = static_cast<int>(std::round(
 						canvas.Size().Width / pixelsPerSecond));
-					self->TimelineDurationText().Value(
-						winrt::to_hstring(std::max(1, seconds)) + L" s");
+					self->TimelineDurationText().Value(winrt::to_hstring(std::max(1, seconds)) + L" s");
 				}
 			}
 		});
 	}
 
-	void TaskSpeedGraphPage::QueueUploadHighlight(
-		double value,
-		double maximum)
+	void TaskSpeedGraphPage::QueueUploadHighlight(double value, double maximum)
 	{
 		if (!std::isfinite(value) || !std::isfinite(maximum) || maximum <= 0.0)
 		{
@@ -850,8 +786,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 	}
 
-	void TaskSpeedGraphPage::ArrangeTransferHighlightLabels(
-		double const downloadY, double const uploadY)
+	void TaskSpeedGraphPage::ArrangeTransferHighlightLabels(double const downloadY, double const uploadY)
 	{
 		auto download = HighlightValueText().Parent().try_as<FrameworkElement>();
 		auto upload = UploadHighlightValueText().Parent().try_as<FrameworkElement>();
@@ -862,11 +797,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// badges to cover one another.
 		auto const overlaps = std::abs(downloadY - uploadY) < 34.0;
 		download.Margin(overlaps
-			? Thickness{ 0, -31, 10, 0 }
-			: Thickness{ 0, -15, 10, 0 });
+						? Thickness{ 0, -31, 10, 0 }
+		: Thickness{ 0, -15, 10, 0 });
 		upload.Margin(overlaps
-			? Thickness{ 0, 3, 10, 0 }
-			: Thickness{ 0, -15, 10, 0 });
+					  ? Thickness{ 0, 3, 10, 0 }
+		: Thickness{ 0, -15, 10, 0 });
 	}
 
 	hstring TaskSpeedGraphPage::FormatBytes(double value)

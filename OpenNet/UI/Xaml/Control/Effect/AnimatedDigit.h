@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "UI/Xaml/Control/Effect/AnimatedDigit.g.h"
 
@@ -18,8 +18,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		winrt::hstring CurrentValue() const;
 		winrt::hstring NextValue() const;
 
-		winrt::event_token PropertyChanged(
-			winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
+		winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);
 		void PropertyChanged(winrt::event_token const& token) noexcept;
 
 		static bool AnimationsEnabled() noexcept;

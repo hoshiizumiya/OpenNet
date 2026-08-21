@@ -57,6 +57,9 @@ export namespace OpenNet::Core
 		bool enableLsd{ true };
 		bool enableUpnp{ true };
 		bool enableNatpmp{ true };
+		bool applyIpFilterToDht{ true };
+		std::string natPmpGateway;
+		int natPmpLeaseDuration{ 3600 };
 		// 0 requests a permanent UPnP lease. Besides matching qBittorrent's
 		// conservative default, this avoids an expired-timer retry storm while a
 		// slow router is still answering a lease refresh request.
@@ -70,9 +73,14 @@ export namespace OpenNet::Core
 		int announcePort{ 0 };
 		int maxConcurrentHttpAnnounces{ 50 };
 		int stopTrackerTimeout{ 5 };
+		bool enableWebTorrent{ true };
+		std::string webTorrentStunServer{ "stun.l.google.com:19302" };
+		int minWebSocketAnnounceInterval{ 60 };
+		int webTorrentConnectionTimeout{ 120 };
+		int maxWebTorrentOffers{ 10 };
 
 		// ----- Limits -----
-		bool queueingEnabled{ true };
+		bool queueingEnabled{ false };
 		int activeDownloads{ 3 };
 		int activeSeeds{ 5 };
 		int activeLimit{ 15 };
@@ -108,6 +116,8 @@ export namespace OpenNet::Core
 		int requestQueueSize{ 500 };
 		int uploadSlotsBehavior{ 0 };
 		int uploadChokingAlgorithm{ 1 };
+		int unchokeSlotsLimit{ 20 };
+		int alertQueueSize{ 1000000 };
 
 		// ----- Disk I/O -----
 		int aioThreads{ 10 };
@@ -126,6 +136,9 @@ export namespace OpenNet::Core
 		int sendBufferWatermark{ 500 };
 		int sendBufferLowWatermark{ 10 };
 		int sendBufferWatermarkFactor{ 50 };
+		bool disableV1HashesForHybrid{ false };
+		std::string partFileDirectory;
+		int maxTorrentDirectoryDepth{ 100 };
 
 		// ----- Encryption -----
 		EncryptionPolicy encryptionPolicy{ EncryptionPolicy::Enabled };
@@ -139,6 +152,19 @@ export namespace OpenNet::Core
 		std::string proxyPassword;
 		bool proxyPeerConnections{ true };
 		bool proxyTrackerConnections{ true };
+		bool proxySendHostInConnect{ false };
+
+		// ----- I2P -----
+		bool enableI2p{ false };
+		std::string i2pHostname{ "127.0.0.1" };
+		int i2pPort{ 7656 };
+		bool allowI2pMixed{ false };
+		int i2pInboundQuantity{ 3 };
+		int i2pOutboundQuantity{ 3 };
+		int i2pInboundLength{ 3 };
+		int i2pOutboundLength{ 3 };
+		int i2pInboundLengthVariance{ 0 };
+		int i2pOutboundLengthVariance{ 0 };
 
 		// ----- Identity -----
 		std::string userAgent{ "libtorrent/2.1.1" };

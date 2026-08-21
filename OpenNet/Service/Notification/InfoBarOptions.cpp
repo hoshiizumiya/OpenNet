@@ -13,7 +13,7 @@ namespace winrt::OpenNet::Service::Notification::implementation
 
 	void InfoBarOptions::Severity(Microsoft::UI::Xaml::Controls::InfoBarSeverity value) noexcept
 	{
-		SetProperty(m_severity, value, L"Severity");
+		if (SetProperty(m_severity, value, L"Severity")) RaisePropertyChanged(L"IsTextSelectionEnabled");
 	}
 
 	hstring InfoBarOptions::Title() const

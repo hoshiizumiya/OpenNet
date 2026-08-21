@@ -122,6 +122,9 @@ namespace OpenNet::Core
 			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd", s.enableLsd);
 			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp", s.enableUpnp);
 			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp", s.enableNatpmp);
+			db.SetBool(AppSettingsDatabase::CAT_DISCOVERY, "applyIpFilterToDht", s.applyIpFilterToDht);
+			db.SetString(AppSettingsDatabase::CAT_DISCOVERY, "natPmpGateway", s.natPmpGateway);
+			db.SetInt(AppSettingsDatabase::CAT_DISCOVERY, "natPmpLeaseDuration", s.natPmpLeaseDuration);
 			db.SetInt(AppSettingsDatabase::CAT_DISCOVERY, "upnpLeaseDuration", s.upnpLeaseDuration);
 
 			// Tracker
@@ -132,6 +135,11 @@ namespace OpenNet::Core
 			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "announcePort", s.announcePort);
 			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "maxConcurrentHttpAnnounces", s.maxConcurrentHttpAnnounces);
 			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "stopTrackerTimeout", s.stopTrackerTimeout);
+			db.SetBool(AppSettingsDatabase::CAT_TRACKER, "enableWebTorrent", s.enableWebTorrent);
+			db.SetString(AppSettingsDatabase::CAT_TRACKER, "webTorrentStunServer", s.webTorrentStunServer);
+			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "minWebSocketAnnounceInterval", s.minWebSocketAnnounceInterval);
+			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "webTorrentConnectionTimeout", s.webTorrentConnectionTimeout);
+			db.SetInt(AppSettingsDatabase::CAT_TRACKER, "maxWebTorrentOffers", s.maxWebTorrentOffers);
 
 			// Limits (Torrent category)
 			db.SetBool(AppSettingsDatabase::CAT_TORRENT, "queueingEnabled", s.queueingEnabled);
@@ -168,6 +176,8 @@ namespace OpenNet::Core
 			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "requestQueueSize", s.requestQueueSize);
 			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadSlotsBehavior", s.uploadSlotsBehavior);
 			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadChokingAlgorithm", s.uploadChokingAlgorithm);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "unchokeSlotsLimit", s.unchokeSlotsLimit);
+			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "alertQueueSize", s.alertQueueSize);
 
 			// Disk I/O
 			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads", s.aioThreads);
@@ -180,6 +190,9 @@ namespace OpenNet::Core
 			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermark", s.sendBufferWatermark);
 			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferLowWatermark", s.sendBufferLowWatermark);
 			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermarkFactor", s.sendBufferWatermarkFactor);
+			db.SetBool(AppSettingsDatabase::CAT_DISK_IO, "disableV1HashesForHybrid", s.disableV1HashesForHybrid);
+			db.SetString(AppSettingsDatabase::CAT_DISK_IO, "partFileDirectory", s.partFileDirectory);
+			db.SetInt(AppSettingsDatabase::CAT_DISK_IO, "maxTorrentDirectoryDepth", s.maxTorrentDirectoryDepth);
 
 			// Encryption
 			db.SetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy", static_cast<int>(s.encryptionPolicy));
@@ -193,6 +206,17 @@ namespace OpenNet::Core
 			db.SetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword", s.proxyPassword);
 			db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections", s.proxyPeerConnections);
 			db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections", s.proxyTrackerConnections);
+			db.SetBool(AppSettingsDatabase::CAT_PROXY, "proxySendHostInConnect", s.proxySendHostInConnect);
+			db.SetBool(AppSettingsDatabase::CAT_PROXY, "enableI2p", s.enableI2p);
+			db.SetString(AppSettingsDatabase::CAT_PROXY, "i2pHostname", s.i2pHostname);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pPort", s.i2pPort);
+			db.SetBool(AppSettingsDatabase::CAT_PROXY, "allowI2pMixed", s.allowI2pMixed);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pInboundQuantity", s.i2pInboundQuantity);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pOutboundQuantity", s.i2pOutboundQuantity);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pInboundLength", s.i2pInboundLength);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pOutboundLength", s.i2pOutboundLength);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pInboundLengthVariance", s.i2pInboundLengthVariance);
+			db.SetInt(AppSettingsDatabase::CAT_PROXY, "i2pOutboundLengthVariance", s.i2pOutboundLengthVariance);
 
 			// Identity
 			db.SetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent", s.userAgent);
@@ -205,7 +229,7 @@ namespace OpenNet::Core
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "recheckBeforeResume", s.recheckBeforeResume);
 			db.SetBool(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedEnabled", s.moveCompletedEnabled);
 			db.SetStringW(AppSettingsDatabase::CAT_DOWNLOAD, "moveCompletedPath", s.moveCompletedPath);
-			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "performanceDefaultsVersion", 1);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "performanceDefaultsVersion", 2);
 		}
 		catch (std::exception const& ex)
 		{
@@ -244,6 +268,9 @@ namespace OpenNet::Core
 			s.enableLsd = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableLsd").value_or(s.enableLsd);
 			s.enableUpnp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableUpnp").value_or(s.enableUpnp);
 			s.enableNatpmp = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "enableNatpmp").value_or(s.enableNatpmp);
+			s.applyIpFilterToDht = db.GetBool(AppSettingsDatabase::CAT_DISCOVERY, "applyIpFilterToDht").value_or(s.applyIpFilterToDht);
+			s.natPmpGateway = db.GetString(AppSettingsDatabase::CAT_DISCOVERY, "natPmpGateway").value_or(s.natPmpGateway);
+			s.natPmpLeaseDuration = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISCOVERY, "natPmpLeaseDuration").value_or(s.natPmpLeaseDuration));
 			s.upnpLeaseDuration = static_cast<int>(db.GetInt(
 				AppSettingsDatabase::CAT_DISCOVERY, "upnpLeaseDuration")
 				.value_or(s.upnpLeaseDuration));
@@ -256,6 +283,11 @@ namespace OpenNet::Core
 			s.announcePort = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "announcePort").value_or(s.announcePort));
 			s.maxConcurrentHttpAnnounces = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "maxConcurrentHttpAnnounces").value_or(s.maxConcurrentHttpAnnounces));
 			s.stopTrackerTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "stopTrackerTimeout").value_or(s.stopTrackerTimeout));
+			s.enableWebTorrent = db.GetBool(AppSettingsDatabase::CAT_TRACKER, "enableWebTorrent").value_or(s.enableWebTorrent);
+			s.webTorrentStunServer = db.GetString(AppSettingsDatabase::CAT_TRACKER, "webTorrentStunServer").value_or(s.webTorrentStunServer);
+			s.minWebSocketAnnounceInterval = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "minWebSocketAnnounceInterval").value_or(s.minWebSocketAnnounceInterval));
+			s.webTorrentConnectionTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "webTorrentConnectionTimeout").value_or(s.webTorrentConnectionTimeout));
+			s.maxWebTorrentOffers = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TRACKER, "maxWebTorrentOffers").value_or(s.maxWebTorrentOffers));
 
 			// Limits
 			s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
@@ -300,6 +332,8 @@ namespace OpenNet::Core
 			s.requestQueueSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "requestQueueSize").value_or(s.requestQueueSize));
 			s.uploadSlotsBehavior = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadSlotsBehavior").value_or(s.uploadSlotsBehavior));
 			s.uploadChokingAlgorithm = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "uploadChokingAlgorithm").value_or(s.uploadChokingAlgorithm));
+			s.unchokeSlotsLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "unchokeSlotsLimit").value_or(s.unchokeSlotsLimit));
+			s.alertQueueSize = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "alertQueueSize").value_or(s.alertQueueSize));
 
 			// Disk I/O
 			s.aioThreads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "aioThreads").value_or(s.aioThreads));
@@ -326,13 +360,13 @@ namespace OpenNet::Core
 				// a later launch would retain the old database values while skipping
 				// this migration permanently.
 				db.SetInt(AppSettingsDatabase::CAT_CONNECTION,
-					"connectionsLimit", s.connectionsLimit);
+						  "connectionsLimit", s.connectionsLimit);
 				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
-					"aioThreads", s.aioThreads);
+						  "aioThreads", s.aioThreads);
 				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
-					"filePoolSize", s.filePoolSize);
+						  "filePoolSize", s.filePoolSize);
 				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
-					"diskQueueSize", s.diskQueueSize);
+						  "diskQueueSize", s.diskQueueSize);
 				db.SetInt(
 					AppSettingsDatabase::CAT_TORRENT,
 					"performanceDefaultsVersion", 1);
@@ -344,15 +378,18 @@ namespace OpenNet::Core
 				// value (4 MiB effective) to qBittorrent's 32 MiB default.
 				if (s.checkingMemUsage == 256) s.checkingMemUsage = 32;
 				db.SetInt(AppSettingsDatabase::CAT_DISK_IO,
-					"checkingMemUsage", s.checkingMemUsage);
+						  "checkingMemUsage", s.checkingMemUsage);
 				db.SetInt(AppSettingsDatabase::CAT_TORRENT,
-					"performanceDefaultsVersion", 2);
+						  "performanceDefaultsVersion", 2);
 			}
 			s.pieceExtentAffinity = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "pieceExtentAffinity").value_or(s.pieceExtentAffinity);
 			s.uploadSuggestions = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "uploadSuggestions").value_or(s.uploadSuggestions);
 			s.sendBufferWatermark = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermark").value_or(s.sendBufferWatermark));
 			s.sendBufferLowWatermark = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferLowWatermark").value_or(s.sendBufferLowWatermark));
 			s.sendBufferWatermarkFactor = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "sendBufferWatermarkFactor").value_or(s.sendBufferWatermarkFactor));
+			s.disableV1HashesForHybrid = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "disableV1HashesForHybrid").value_or(s.disableV1HashesForHybrid);
+			s.partFileDirectory = db.GetString(AppSettingsDatabase::CAT_DISK_IO, "partFileDirectory").value_or(s.partFileDirectory);
+			s.maxTorrentDirectoryDepth = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_DISK_IO, "maxTorrentDirectoryDepth").value_or(s.maxTorrentDirectoryDepth));
 
 			// Encryption
 			s.encryptionPolicy = static_cast<EncryptionPolicy>(db.GetInt(AppSettingsDatabase::CAT_ENCRYPTION, "encryptionPolicy").value_or(static_cast<int>(s.encryptionPolicy)));
@@ -366,6 +403,17 @@ namespace OpenNet::Core
 			s.proxyPassword = db.GetString(AppSettingsDatabase::CAT_PROXY, "proxyPassword").value_or(s.proxyPassword);
 			s.proxyPeerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyPeerConnections").value_or(s.proxyPeerConnections);
 			s.proxyTrackerConnections = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxyTrackerConnections").value_or(s.proxyTrackerConnections);
+			s.proxySendHostInConnect = db.GetBool(AppSettingsDatabase::CAT_PROXY, "proxySendHostInConnect").value_or(s.proxySendHostInConnect);
+			s.enableI2p = db.GetBool(AppSettingsDatabase::CAT_PROXY, "enableI2p").value_or(s.enableI2p);
+			s.i2pHostname = db.GetString(AppSettingsDatabase::CAT_PROXY, "i2pHostname").value_or(s.i2pHostname);
+			s.i2pPort = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pPort").value_or(s.i2pPort));
+			s.allowI2pMixed = db.GetBool(AppSettingsDatabase::CAT_PROXY, "allowI2pMixed").value_or(s.allowI2pMixed);
+			s.i2pInboundQuantity = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pInboundQuantity").value_or(s.i2pInboundQuantity));
+			s.i2pOutboundQuantity = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pOutboundQuantity").value_or(s.i2pOutboundQuantity));
+			s.i2pInboundLength = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pInboundLength").value_or(s.i2pInboundLength));
+			s.i2pOutboundLength = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pOutboundLength").value_or(s.i2pOutboundLength));
+			s.i2pInboundLengthVariance = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pInboundLengthVariance").value_or(s.i2pInboundLengthVariance));
+			s.i2pOutboundLengthVariance = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_PROXY, "i2pOutboundLengthVariance").value_or(s.i2pOutboundLengthVariance));
 
 			// Identity
 			s.userAgent = db.GetString(AppSettingsDatabase::CAT_IDENTITY, "userAgent").value_or(s.userAgent);
@@ -417,6 +465,9 @@ namespace OpenNet::Core
 		pack.set_bool(lt::settings_pack::enable_lsd, s.enableLsd);
 		pack.set_bool(lt::settings_pack::enable_upnp, s.enableUpnp);
 		pack.set_bool(lt::settings_pack::enable_natpmp, s.enableNatpmp);
+		pack.set_bool(lt::settings_pack::apply_filter_to_dht, s.applyIpFilterToDht);
+		pack.set_str(lt::settings_pack::natpmp_gateway, s.natPmpGateway);
+		pack.set_int(lt::settings_pack::natpmp_lease_duration, s.natPmpLeaseDuration);
 		pack.set_int(lt::settings_pack::upnp_lease_duration,
 					 std::max(0, s.upnpLeaseDuration));
 
@@ -428,14 +479,18 @@ namespace OpenNet::Core
 		pack.set_int(lt::settings_pack::announce_port, s.announcePort);
 		pack.set_int(lt::settings_pack::max_concurrent_http_announces, s.maxConcurrentHttpAnnounces);
 		pack.set_int(lt::settings_pack::stop_tracker_timeout, s.stopTrackerTimeout);
+		pack.set_str(lt::settings_pack::webtorrent_stun_server, s.webTorrentStunServer);
+		pack.set_int(lt::settings_pack::min_websocket_announce_interval, s.minWebSocketAnnounceInterval);
+		pack.set_int(lt::settings_pack::webtorrent_connection_timeout, s.webTorrentConnectionTimeout);
+		pack.set_int(lt::settings_pack::max_webtorrent_offers, s.enableWebTorrent ? std::max(1, s.maxWebTorrentOffers) : 0);
 
 		// Limits
 		pack.set_int(lt::settings_pack::active_downloads,
-			s.queueingEnabled ? s.activeDownloads : -1);
+					 s.queueingEnabled ? s.activeDownloads : -1);
 		pack.set_int(lt::settings_pack::active_seeds,
-			s.queueingEnabled ? s.activeSeeds : -1);
+					 s.queueingEnabled ? s.activeSeeds : -1);
 		pack.set_int(lt::settings_pack::active_limit,
-			s.queueingEnabled ? s.activeLimit : -1);
+					 s.queueingEnabled ? s.activeLimit : -1);
 
 		// Speed limits
 		pack.set_int(lt::settings_pack::download_rate_limit, s.downloadRateLimit);
@@ -462,13 +517,15 @@ namespace OpenNet::Core
 		pack.set_int(lt::settings_pack::max_out_request_queue, s.requestQueueSize);
 		pack.set_int(lt::settings_pack::choking_algorithm, s.uploadSlotsBehavior);
 		pack.set_int(lt::settings_pack::seed_choking_algorithm, s.uploadChokingAlgorithm);
+		pack.set_int(lt::settings_pack::unchoke_slots_limit, s.unchokeSlotsLimit);
+		pack.set_int(lt::settings_pack::alert_queue_size, s.alertQueueSize);
 
 		// Disk I/O
 		pack.set_int(lt::settings_pack::aio_threads, s.aioThreads);
 		pack.set_int(lt::settings_pack::hashing_threads, s.hashingThreads);
 		pack.set_int(lt::settings_pack::file_pool_size, s.filePoolSize);
 		pack.set_int(lt::settings_pack::checking_mem_usage,
-			std::max(1, s.checkingMemUsage) * 64);
+					 std::max(1, s.checkingMemUsage) * 64);
 		pack.set_int(lt::settings_pack::max_queued_disk_bytes, s.diskQueueSize);
 		pack.set_bool(lt::settings_pack::piece_extent_affinity, s.pieceExtentAffinity);
 		pack.set_int(lt::settings_pack::suggest_mode, s.uploadSuggestions
@@ -508,6 +565,16 @@ namespace OpenNet::Core
 		pack.set_str(lt::settings_pack::proxy_password, s.proxyPassword);
 		pack.set_bool(lt::settings_pack::proxy_peer_connections, s.proxyPeerConnections);
 		pack.set_bool(lt::settings_pack::proxy_tracker_connections, s.proxyTrackerConnections);
+		pack.set_bool(lt::settings_pack::proxy_send_host_in_connect, s.proxySendHostInConnect);
+		pack.set_str(lt::settings_pack::i2p_hostname, s.enableI2p ? s.i2pHostname : "");
+		pack.set_int(lt::settings_pack::i2p_port, s.i2pPort);
+		pack.set_bool(lt::settings_pack::allow_i2p_mixed, s.allowI2pMixed);
+		pack.set_int(lt::settings_pack::i2p_inbound_quantity, s.i2pInboundQuantity);
+		pack.set_int(lt::settings_pack::i2p_outbound_quantity, s.i2pOutboundQuantity);
+		pack.set_int(lt::settings_pack::i2p_inbound_length, s.i2pInboundLength);
+		pack.set_int(lt::settings_pack::i2p_outbound_length, s.i2pOutboundLength);
+		pack.set_int(lt::settings_pack::i2p_inbound_length_variance, s.i2pInboundLengthVariance);
+		pack.set_int(lt::settings_pack::i2p_outbound_length_variance, s.i2pOutboundLengthVariance);
 
 		// Identity
 		pack.set_str(lt::settings_pack::user_agent, s.userAgent);
@@ -526,6 +593,7 @@ namespace OpenNet::Core
 					 lt::alert_category::tracker |
 					 lt::alert_category::stats |
 					 lt::alert_category::dht |
+					 lt::alert_category::ip_block |
 					 lt::alert_category::port_mapping);
 
 		// Seeding limits are per-torrent in libtorrent; share_ratio_limit / seed_time_limit
@@ -553,6 +621,9 @@ namespace OpenNet::Core
 		s.enableLsd = pack.get_bool(lt::settings_pack::enable_lsd);
 		s.enableUpnp = pack.get_bool(lt::settings_pack::enable_upnp);
 		s.enableNatpmp = pack.get_bool(lt::settings_pack::enable_natpmp);
+		s.applyIpFilterToDht = pack.get_bool(lt::settings_pack::apply_filter_to_dht);
+		s.natPmpGateway = pack.get_str(lt::settings_pack::natpmp_gateway);
+		s.natPmpLeaseDuration = pack.get_int(lt::settings_pack::natpmp_lease_duration);
 		s.upnpLeaseDuration = pack.get_int(lt::settings_pack::upnp_lease_duration);
 
 		s.announceToAllTiers = pack.get_bool(lt::settings_pack::announce_to_all_tiers);
@@ -562,6 +633,11 @@ namespace OpenNet::Core
 		s.announcePort = pack.get_int(lt::settings_pack::announce_port);
 		s.maxConcurrentHttpAnnounces = pack.get_int(lt::settings_pack::max_concurrent_http_announces);
 		s.stopTrackerTimeout = pack.get_int(lt::settings_pack::stop_tracker_timeout);
+		s.webTorrentStunServer = pack.get_str(lt::settings_pack::webtorrent_stun_server);
+		s.minWebSocketAnnounceInterval = pack.get_int(lt::settings_pack::min_websocket_announce_interval);
+		s.webTorrentConnectionTimeout = pack.get_int(lt::settings_pack::webtorrent_connection_timeout);
+		s.maxWebTorrentOffers = pack.get_int(lt::settings_pack::max_webtorrent_offers);
+		s.enableWebTorrent = s.maxWebTorrentOffers > 0;
 
 		auto const activeDownloads = pack.get_int(lt::settings_pack::active_downloads);
 		auto const activeSeeds = pack.get_int(lt::settings_pack::active_seeds);
@@ -594,12 +670,14 @@ namespace OpenNet::Core
 		s.requestQueueSize = pack.get_int(lt::settings_pack::max_out_request_queue);
 		s.uploadSlotsBehavior = pack.get_int(lt::settings_pack::choking_algorithm);
 		s.uploadChokingAlgorithm = pack.get_int(lt::settings_pack::seed_choking_algorithm);
+		s.unchokeSlotsLimit = pack.get_int(lt::settings_pack::unchoke_slots_limit);
+		s.alertQueueSize = pack.get_int(lt::settings_pack::alert_queue_size);
 
 		s.aioThreads = pack.get_int(lt::settings_pack::aio_threads);
 		s.hashingThreads = pack.get_int(lt::settings_pack::hashing_threads);
 		s.filePoolSize = pack.get_int(lt::settings_pack::file_pool_size);
 		s.checkingMemUsage = std::max(1,
-			pack.get_int(lt::settings_pack::checking_mem_usage) / 64);
+									  pack.get_int(lt::settings_pack::checking_mem_usage) / 64);
 		s.diskQueueSize = pack.get_int(lt::settings_pack::max_queued_disk_bytes);
 		s.pieceExtentAffinity = pack.get_bool(lt::settings_pack::piece_extent_affinity);
 		s.uploadSuggestions = pack.get_int(lt::settings_pack::suggest_mode)
@@ -635,6 +713,17 @@ namespace OpenNet::Core
 		s.proxyPassword = pack.get_str(lt::settings_pack::proxy_password);
 		s.proxyPeerConnections = pack.get_bool(lt::settings_pack::proxy_peer_connections);
 		s.proxyTrackerConnections = pack.get_bool(lt::settings_pack::proxy_tracker_connections);
+		s.proxySendHostInConnect = pack.get_bool(lt::settings_pack::proxy_send_host_in_connect);
+		s.i2pHostname = pack.get_str(lt::settings_pack::i2p_hostname);
+		s.enableI2p = !s.i2pHostname.empty();
+		s.i2pPort = pack.get_int(lt::settings_pack::i2p_port);
+		s.allowI2pMixed = pack.get_bool(lt::settings_pack::allow_i2p_mixed);
+		s.i2pInboundQuantity = pack.get_int(lt::settings_pack::i2p_inbound_quantity);
+		s.i2pOutboundQuantity = pack.get_int(lt::settings_pack::i2p_outbound_quantity);
+		s.i2pInboundLength = pack.get_int(lt::settings_pack::i2p_inbound_length);
+		s.i2pOutboundLength = pack.get_int(lt::settings_pack::i2p_outbound_length);
+		s.i2pInboundLengthVariance = pack.get_int(lt::settings_pack::i2p_inbound_length_variance);
+		s.i2pOutboundLengthVariance = pack.get_int(lt::settings_pack::i2p_outbound_length_variance);
 
 		// Seeding
 		int ratioRaw = pack.get_int(lt::settings_pack::share_ratio_limit);

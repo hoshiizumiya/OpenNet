@@ -62,10 +62,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_pauseCommand;
 		}
-                winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand() const
+		winrt::Microsoft::UI::Xaml::Input::ICommand DeleteCommand() const
 		{
 			return m_deleteCommand;
-                }
+		}
 		winrt::Microsoft::UI::Xaml::Input::ICommand ExportCommand() const
 		{
 			return m_exportCommand;
@@ -180,6 +180,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// GIDs that were explicitly deleted ─ prevents OnHttpProgress/Finished
 		// from re-creating the task after deletion.
 		std::unordered_set<std::string> m_deletedGids;
+		std::mutex m_progressSnapshotMutex;
+		std::unordered_map<std::string, ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent> m_progressSnapshots;
 
 		bool m_isColNameLoad{ true };
 		bool m_isColSizeLoad{ true };

@@ -499,6 +499,33 @@
   <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
     <value>например, 1080p|720p</value>
   </data>
+  <data name="RSSSettingsEnabledToggle.Header" xml:space="preserve">
+    <value>Канал включён</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OnContent" xml:space="preserve">
+    <value>Включено</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OffContent" xml:space="preserve">
+    <value>Отключено</value>
+  </data>
+  <data name="RSSSettingsDoubleClickActionBox.Header" xml:space="preserve">
+    <value>Действие двойного щелчка</value>
+  </data>
+  <data name="RSSSettingsDoubleClickAddToTasks.Content" xml:space="preserve">
+    <value>Добавить в задачи</value>
+  </data>
+  <data name="RSSSettingsDoubleClickShowDetails.Content" xml:space="preserve">
+    <value>Показать сведения</value>
+  </data>
+  <data name="RSSSettingsWebViewPreviewToggle.Header" xml:space="preserve">
+    <value>Показывать предпросмотр WebView</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Title" xml:space="preserve">
+    <value>Недопустимые параметры канала</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Message" xml:space="preserve">
+    <value>Введите допустимый URL-адрес канала HTTP или HTTPS.</value>
+  </data>
   <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
     <value>Удалить ленту</value>
   </data>
@@ -4430,7 +4457,7 @@
     <value>общие язык обновление запуск интервал тема</value>
   </data>
   <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
-    <value>BitTorrent пир протокол соединение шифрование прокси кэш диск производительность WebTorrent</value>
+    <value>BitTorrent пир протокол соединение шифрование прокси кэш диск производительность WebTorrent WebRTC STUN I2P NAT-PMP</value>
   </data>
   <data name="SettingsNetworkSearchTags" xml:space="preserve">
     <value>сеть порт прослушивание IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT прокси</value>
@@ -4773,5 +4800,185 @@
   </data>
   <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
     <value>Антилич</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Header" xml:space="preserve">
+    <value>Применять IP-фильтр к DHT</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Description" xml:space="preserve">
+    <value>Отклоняет отфильтрованные адреса в трафике DHT и таблице маршрутизации.</value>
+  </data>
+  <data name="BT_WebTorrent.Header" xml:space="preserve">
+    <value>WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrent.Description" xml:space="preserve">
+    <value>Включает узлы WebRTC, объявленные трекерами WebSocket.</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Header" xml:space="preserve">
+    <value>STUN-сервер WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Description" xml:space="preserve">
+    <value>Конечная точка STUN в формате имя:порт для обхода NAT с помощью ICE.</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Header" xml:space="preserve">
+    <value>Максимум предложений WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Description" xml:space="preserve">
+    <value>Ограничивает предложения WebRTC на одно объявление и параллельные согласования.</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Header" xml:space="preserve">
+    <value>Тайм-аут подключения WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Description" xml:space="preserve">
+    <value>Время ожидания подключения WebRTC в секундах.</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Header" xml:space="preserve">
+    <value>Минимальный интервал объявления WebSocket</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Description" xml:space="preserve">
+    <value>Минимальный допустимый интервал объявления WebSocket-трекера в секундах.</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Header" xml:space="preserve">
+    <value>Пропускать хеши v1 гибридных торрентов</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Description" xml:space="preserve">
+    <value>Проверяет только хеши v2 SHA-256, сокращая дисковый ввод-вывод и нагрузку ЦП.</value>
+  </data>
+  <data name="BT_PartFileDirectory.Header" xml:space="preserve">
+    <value>Каталог частичных файлов</value>
+  </data>
+  <data name="BT_PartFileDirectory.Description" xml:space="preserve">
+    <value>Необязательный относительный подкаталог для частичных данных пропущенных файлов.</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Header" xml:space="preserve">
+    <value>Максимальная глубина каталогов торрента</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Description" xml:space="preserve">
+    <value>Отклоняет метаданные, дерево файлов которых глубже этого значения.</value>
+  </data>
+  <data name="BT_Proxy_I2p.Content" xml:space="preserve">
+    <value>Прокси I2P</value>
+  </data>
+  <data name="BT_NatPmpGateway.Header" xml:space="preserve">
+    <value>Шлюз NAT-PMP</value>
+  </data>
+  <data name="BT_NatPmpLeaseDuration.Header" xml:space="preserve">
+    <value>Срок аренды NAT-PMP (секунды)</value>
+  </data>
+  <data name="BT_ProxySendHostInConnect.Header" xml:space="preserve">
+    <value>Отправлять имя узла в HTTP CONNECT</value>
+  </data>
+  <data name="BT_I2p.Header" xml:space="preserve">
+    <value>I2P</value>
+  </data>
+  <data name="BT_I2pHostname.Header" xml:space="preserve">
+    <value>Узел SAM I2P</value>
+  </data>
+  <data name="BT_I2pPort.Header" xml:space="preserve">
+    <value>Порт SAM I2P</value>
+  </data>
+  <data name="BT_I2pMixedMode.Header" xml:space="preserve">
+    <value>Разрешить смешивание узлов I2P и Интернета</value>
+  </data>
+  <data name="BT_I2pInboundQuantity.Header" xml:space="preserve">
+    <value>Число входящих туннелей I2P</value>
+  </data>
+  <data name="BT_I2pOutboundQuantity.Header" xml:space="preserve">
+    <value>Число исходящих туннелей I2P</value>
+  </data>
+  <data name="BT_I2pInboundLength.Header" xml:space="preserve">
+    <value>Длина входящих туннелей I2P</value>
+  </data>
+  <data name="BT_I2pOutboundLength.Header" xml:space="preserve">
+    <value>Длина исходящих туннелей I2P</value>
+  </data>
+  <data name="BT_I2pInboundVariance.Header" xml:space="preserve">
+    <value>Разброс длины входящих туннелей I2P</value>
+  </data>
+  <data name="BT_I2pOutboundVariance.Header" xml:space="preserve">
+    <value>Разброс длины исходящих туннелей I2P</value>
+  </data>
+  <data name="BT_I2p.Description" xml:space="preserve">
+    <value>Включает торренты I2P через мост SAM; I2P PEX обрабатывается libtorrent 2.1.</value>
+  </data>
+  <data name="TorrentTaskLimitsSection.Text" xml:space="preserve">
+    <value>Ограничения задачи</value>
+  </data>
+  <data name="TorrentTaskDownloadLimit.Header" xml:space="preserve">
+    <value>Максимальная скорость загрузки (КиБ/с)</value>
+  </data>
+  <data name="TorrentTaskUploadLimit.Header" xml:space="preserve">
+    <value>Максимальная скорость отдачи (КиБ/с)</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRate.Header" xml:space="preserve">
+    <value>Предпочтительная минимальная скорость отдачи (КиБ/с)</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Title" xml:space="preserve">
+    <value>Целевая минимальная скорость</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Message" xml:space="preserve">
+    <value>libtorrent не гарантирует жёсткую минимальную скорость. OpenNet сохраняет цель и показывает её в строке задачи; фактическая скорость зависит от спроса узлов и глобальных ограничений.</value>
+  </data>
+  <data name="TorrentTaskMaxConnections.Header" xml:space="preserve">
+    <value>Максимум соединений</value>
+  </data>
+  <data name="TorrentTaskMaxUploads.Header" xml:space="preserve">
+    <value>Максимум слотов отдачи</value>
+  </data>
+  <data name="TorrentTaskDiscoverySection.Text" xml:space="preserve">
+    <value>Поиск узлов и поведение</value>
+  </data>
+  <data name="TorrentTaskEnableDht.Header" xml:space="preserve">
+    <value>Использовать DHT для этой задачи</value>
+  </data>
+  <data name="TorrentTaskEnableLsd.Header" xml:space="preserve">
+    <value>Использовать локальный поиск узлов</value>
+  </data>
+  <data name="TorrentTaskEnablePex.Header" xml:space="preserve">
+    <value>Использовать обмен узлами</value>
+  </data>
+  <data name="TorrentTaskApplyIpFilter.Header" xml:space="preserve">
+    <value>Применять IP-фильтр</value>
+  </data>
+  <data name="TorrentTaskSequentialDownload.Header" xml:space="preserve">
+    <value>Последовательная загрузка</value>
+  </data>
+  <data name="TorrentTaskSuperSeeding.Header" xml:space="preserve">
+    <value>Суперсидирование</value>
+  </data>
+  <data name="TorrentTaskForceStart.Header" xml:space="preserve">
+    <value>Принудительный запуск вне очереди</value>
+  </data>
+  <data name="TorrentTaskUploadMode.Header" xml:space="preserve">
+    <value>Режим только отдачи</value>
+  </data>
+  <data name="TorrentTaskShareMode.Header" xml:space="preserve">
+    <value>Режим совместного доступа</value>
+  </data>
+  <data name="TorrentTaskSettingsStatus.Title" xml:space="preserve">
+    <value>Параметры задачи</value>
+  </data>
+  <data name="TorrentTaskApplySettingsButton.Content" xml:space="preserve">
+    <value>Применить</value>
+  </data>
+  <data name="TorrentTaskSettingsApplied" xml:space="preserve">
+    <value>Параметры задачи применены.</value>
+  </data>
+  <data name="TorrentTaskSettingsApplyFailed" xml:space="preserve">
+    <value>Не удалось применить параметры задачи.</value>
+  </data>
+  <data name="TorrentTaskSettingsInvalidLimits" xml:space="preserve">
+    <value>Значения скорости недопустимы либо минимальная цель отдачи превышает максимальное ограничение.</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Header" xml:space="preserve">
+    <value>Глобальные слоты отдачи</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Description" xml:space="preserve">
+    <value>Максимальное число одновременно разблокированных узлов; -1 — без ограничения.</value>
+  </data>
+  <data name="BT_AlertQueueSize.Header" xml:space="preserve">
+    <value>Ёмкость очереди оповещений</value>
+  </data>
+  <data name="BT_AlertQueueSize.Description" xml:space="preserve">
+    <value>Максимум ожидающих оповещений libtorrent до отбрасывания низкоприоритетных.</value>
   </data>
 </root>

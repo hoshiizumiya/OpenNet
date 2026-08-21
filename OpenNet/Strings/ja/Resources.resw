@@ -498,6 +498,33 @@
   <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
     <value>例: 1080p|720p</value>
   </data>
+  <data name="RSSSettingsEnabledToggle.Header" xml:space="preserve">
+    <value>フィードを有効にする</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OnContent" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OffContent" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="RSSSettingsDoubleClickActionBox.Header" xml:space="preserve">
+    <value>ダブルクリック時の操作</value>
+  </data>
+  <data name="RSSSettingsDoubleClickAddToTasks.Content" xml:space="preserve">
+    <value>タスクに追加</value>
+  </data>
+  <data name="RSSSettingsDoubleClickShowDetails.Content" xml:space="preserve">
+    <value>詳細を表示</value>
+  </data>
+  <data name="RSSSettingsWebViewPreviewToggle.Header" xml:space="preserve">
+    <value>WebView プレビューを表示</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Title" xml:space="preserve">
+    <value>フィード設定が無効です</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Message" xml:space="preserve">
+    <value>有効な HTTP または HTTPS のフィード URL を入力してください。</value>
+  </data>
   <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
     <value>フィードを削除</value>
   </data>
@@ -4436,7 +4463,7 @@
     <value>一般 言語 更新 起動ページ 更新間隔 テーマ</value>
   </data>
   <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
-    <value>BitTorrent ピア プロトコル 接続 暗号化 プロキシ キャッシュ ディスク パフォーマンス WebTorrent</value>
+    <value>BitTorrent ピア プロトコル 接続 暗号化 プロキシ キャッシュ ディスク パフォーマンス WebTorrent WebRTC STUN I2P NAT-PMP</value>
   </data>
   <data name="SettingsNetworkSearchTags" xml:space="preserve">
     <value>ネットワーク ポート リッスン IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT プロキシ</value>
@@ -4779,5 +4806,185 @@
   </data>
   <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
     <value>アンチリーチ</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Header" xml:space="preserve">
+    <value>IP フィルターを DHT に適用</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Description" xml:space="preserve">
+    <value>DHT 通信およびルーティング項目でフィルター対象のアドレスを拒否します。</value>
+  </data>
+  <data name="BT_WebTorrent.Header" xml:space="preserve">
+    <value>WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrent.Description" xml:space="preserve">
+    <value>WebSocket トラッカーが通知する WebRTC ピアを有効にします。</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Header" xml:space="preserve">
+    <value>WebTorrent STUN サーバー</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Description" xml:space="preserve">
+    <value>ICE トラバーサルに使用する hostname:port 形式の STUN エンドポイントです。</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Header" xml:space="preserve">
+    <value>WebTorrent オファーの上限</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Description" xml:space="preserve">
+    <value>トラッカー通知ごとの WebRTC オファー数と同時ネゴシエーション数の上限です。</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Header" xml:space="preserve">
+    <value>WebTorrent 接続タイムアウト</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Description" xml:space="preserve">
+    <value>WebRTC 接続を待機する秒数です。</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Header" xml:space="preserve">
+    <value>WebSocket 最小通知間隔</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Description" xml:space="preserve">
+    <value>WebSocket トラッカーで受け入れる最小通知間隔（秒）です。</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Header" xml:space="preserve">
+    <value>ハイブリッド Torrent の v1 ハッシュを省略</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Description" xml:space="preserve">
+    <value>v2 SHA-256 のみを検証し、ディスク I/O と CPU 使用量を削減します。</value>
+  </data>
+  <data name="BT_PartFileDirectory.Header" xml:space="preserve">
+    <value>パートファイル ディレクトリ</value>
+  </data>
+  <data name="BT_PartFileDirectory.Description" xml:space="preserve">
+    <value>スキップしたファイルの部分データを保存する任意の相対サブディレクトリです。</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Header" xml:space="preserve">
+    <value>Torrent ディレクトリの最大深度</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Description" xml:space="preserve">
+    <value>ファイルツリーの深さがこの値を超える Torrent メタデータを拒否します。</value>
+  </data>
+  <data name="BT_Proxy_I2p.Content" xml:space="preserve">
+    <value>I2P プロキシ</value>
+  </data>
+  <data name="BT_NatPmpGateway.Header" xml:space="preserve">
+    <value>NAT-PMP ゲートウェイ</value>
+  </data>
+  <data name="BT_NatPmpLeaseDuration.Header" xml:space="preserve">
+    <value>NAT-PMP リース期間（秒）</value>
+  </data>
+  <data name="BT_ProxySendHostInConnect.Header" xml:space="preserve">
+    <value>HTTP CONNECT でホスト名を送信</value>
+  </data>
+  <data name="BT_I2p.Header" xml:space="preserve">
+    <value>I2P</value>
+  </data>
+  <data name="BT_I2pHostname.Header" xml:space="preserve">
+    <value>I2P SAM ホスト</value>
+  </data>
+  <data name="BT_I2pPort.Header" xml:space="preserve">
+    <value>I2P SAM ポート</value>
+  </data>
+  <data name="BT_I2pMixedMode.Header" xml:space="preserve">
+    <value>I2P とインターネット ピアの混在を許可</value>
+  </data>
+  <data name="BT_I2pInboundQuantity.Header" xml:space="preserve">
+    <value>I2P 受信トンネル数</value>
+  </data>
+  <data name="BT_I2pOutboundQuantity.Header" xml:space="preserve">
+    <value>I2P 送信トンネル数</value>
+  </data>
+  <data name="BT_I2pInboundLength.Header" xml:space="preserve">
+    <value>I2P 受信トンネル長</value>
+  </data>
+  <data name="BT_I2pOutboundLength.Header" xml:space="preserve">
+    <value>I2P 送信トンネル長</value>
+  </data>
+  <data name="BT_I2pInboundVariance.Header" xml:space="preserve">
+    <value>I2P 受信長の変動</value>
+  </data>
+  <data name="BT_I2pOutboundVariance.Header" xml:space="preserve">
+    <value>I2P 送信長の変動</value>
+  </data>
+  <data name="BT_I2p.Description" xml:space="preserve">
+    <value>SAM ブリッジ経由の I2P Torrent を有効にします。I2P PEX は libtorrent 2.1 が処理します。</value>
+  </data>
+  <data name="TorrentTaskLimitsSection.Text" xml:space="preserve">
+    <value>タスクの制限</value>
+  </data>
+  <data name="TorrentTaskDownloadLimit.Header" xml:space="preserve">
+    <value>最大ダウンロード速度（KiB/s）</value>
+  </data>
+  <data name="TorrentTaskUploadLimit.Header" xml:space="preserve">
+    <value>最大アップロード速度（KiB/s）</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRate.Header" xml:space="preserve">
+    <value>優先する最小アップロード速度（KiB/s）</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Title" xml:space="preserve">
+    <value>最小速度の目標</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Message" xml:space="preserve">
+    <value>libtorrent は厳密な最小速度を保証しません。OpenNet は目標を保存してタスク行に表示しますが、実速度はピアの需要と全体制限に依存します。</value>
+  </data>
+  <data name="TorrentTaskMaxConnections.Header" xml:space="preserve">
+    <value>最大接続数</value>
+  </data>
+  <data name="TorrentTaskMaxUploads.Header" xml:space="preserve">
+    <value>最大アップロード スロット</value>
+  </data>
+  <data name="TorrentTaskDiscoverySection.Text" xml:space="preserve">
+    <value>ピア検出と動作</value>
+  </data>
+  <data name="TorrentTaskEnableDht.Header" xml:space="preserve">
+    <value>このタスクで DHT を使用</value>
+  </data>
+  <data name="TorrentTaskEnableLsd.Header" xml:space="preserve">
+    <value>このタスクでローカル ピア検出を使用</value>
+  </data>
+  <data name="TorrentTaskEnablePex.Header" xml:space="preserve">
+    <value>このタスクでピア交換を使用</value>
+  </data>
+  <data name="TorrentTaskApplyIpFilter.Header" xml:space="preserve">
+    <value>IP フィルターを適用</value>
+  </data>
+  <data name="TorrentTaskSequentialDownload.Header" xml:space="preserve">
+    <value>順次ダウンロード</value>
+  </data>
+  <data name="TorrentTaskSuperSeeding.Header" xml:space="preserve">
+    <value>スーパーシード</value>
+  </data>
+  <data name="TorrentTaskForceStart.Header" xml:space="preserve">
+    <value>強制開始してキューを無視</value>
+  </data>
+  <data name="TorrentTaskUploadMode.Header" xml:space="preserve">
+    <value>アップロード専用モード</value>
+  </data>
+  <data name="TorrentTaskShareMode.Header" xml:space="preserve">
+    <value>共有モード</value>
+  </data>
+  <data name="TorrentTaskSettingsStatus.Title" xml:space="preserve">
+    <value>タスク設定</value>
+  </data>
+  <data name="TorrentTaskApplySettingsButton.Content" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="TorrentTaskSettingsApplied" xml:space="preserve">
+    <value>タスク設定を適用しました。</value>
+  </data>
+  <data name="TorrentTaskSettingsApplyFailed" xml:space="preserve">
+    <value>タスク設定を適用できませんでした。</value>
+  </data>
+  <data name="TorrentTaskSettingsInvalidLimits" xml:space="preserve">
+    <value>速度の値が無効か、最小アップロード目標が最大アップロード制限を超えています。</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Header" xml:space="preserve">
+    <value>グローバル アップロード スロット</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Description" xml:space="preserve">
+    <value>全体で同時にアンチョークするピアの上限です。-1 は無制限です。</value>
+  </data>
+  <data name="BT_AlertQueueSize.Header" xml:space="preserve">
+    <value>アラート キュー容量</value>
+  </data>
+  <data name="BT_AlertQueueSize.Description" xml:space="preserve">
+    <value>低優先度アラートが破棄されるまで保持する libtorrent アラートの上限です。</value>
   </data>
 </root>

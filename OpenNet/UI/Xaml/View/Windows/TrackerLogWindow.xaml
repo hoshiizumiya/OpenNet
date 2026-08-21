@@ -102,6 +102,11 @@
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="vm:TrackerLogDisplayItem">
                     <labs:DataRow HorizontalAlignment="Stretch">
+                        <labs:DataRow.Resources>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="VerticalAlignment" Value="Center" />
+                            </Style>
+                        </labs:DataRow.Resources>
                         <TextBlock
                             Margin="12,4,0,4"
                             Text="{x:Bind Time, Mode=OneWay}"

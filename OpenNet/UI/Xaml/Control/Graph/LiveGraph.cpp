@@ -661,9 +661,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 	}
 
-	void LiveGraph::OnClearColorChanged(
-		DependencyObject const& dependencyObject,
-		DependencyPropertyChangedEventArgs const& args)
+	void LiveGraph::OnClearColorChanged(DependencyObject const& dependencyObject, DependencyPropertyChangedEventArgs const& args)
 	{
 		auto self = GetSelf(dependencyObject);
 		{
@@ -674,16 +672,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		self->UpdateClearColor();
 	}
 
-	void LiveGraph::OnHorizontalScrollChanged(
-		DependencyObject const& dependencyObject,
-		DependencyPropertyChangedEventArgs const&)
+	void LiveGraph::OnHorizontalScrollChanged(DependencyObject const& dependencyObject, DependencyPropertyChangedEventArgs const&)
 	{
 		GetSelf(dependencyObject)->UpdateHorizontalScrollSpeed();
 	}
 
-	void LiveGraph::OnHighlightLineAnimationDurationChanged(
-		DependencyObject const& dependencyObject,
-		DependencyPropertyChangedEventArgs const& args)
+	void LiveGraph::OnHighlightLineAnimationDurationChanged(DependencyObject const& dependencyObject, DependencyPropertyChangedEventArgs const& args)
 	{
 		auto self = GetSelf(dependencyObject);
 		auto duration = unbox_value<TimeSpan>(args.NewValue());
@@ -695,9 +689,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		self->m_highlightLineAnimationDuration = duration;
 	}
 
-	void LiveGraph::OnHistoryBufferScreensChanged(
-		DependencyObject const& dependencyObject,
-		DependencyPropertyChangedEventArgs const& args)
+	void LiveGraph::OnHistoryBufferScreensChanged(DependencyObject const& dependencyObject, DependencyPropertyChangedEventArgs const& args)
 	{
 		auto self = GetSelf(dependencyObject);
 		auto const screens = std::clamp(
@@ -708,9 +700,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		self->m_historyBufferScreens = static_cast<float>(screens);
 	}
 
-	void LiveGraph::OnHighlightLineContentChanged(
-		DependencyObject const& dependencyObject,
-		DependencyPropertyChangedEventArgs const& args)
+	void LiveGraph::OnHighlightLineContentChanged(DependencyObject const& dependencyObject, DependencyPropertyChangedEventArgs const& args)
 	{
 		auto self = GetSelf(dependencyObject);
 		std::scoped_lock lock(self->m_graphMutex);
@@ -835,8 +825,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 	}
 
-	hstring LiveGraph::RegisterGraphBrush(
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData)
+	hstring LiveGraph::RegisterGraphBrush(OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData)
 	{
 		auto key = to_hstring(GuidHelper::CreateNewGuid());
 		std::scoped_lock lock(m_graphMutex);
@@ -844,9 +833,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		return key;
 	}
 
-	void LiveGraph::UpdateGraphBrush(
-		hstring const& key,
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData)
+	void LiveGraph::UpdateGraphBrush(hstring const& key, OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData)
 	{
 		std::scoped_lock lock(m_graphMutex);
 		m_polygonBrushes.insert_or_assign(key, brushData);
@@ -890,16 +877,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 	}
 
-	void LiveGraph::OnCreateResources(
-		CanvasAnimatedControl const& sender,
-		CanvasCreateResourcesEventArgs const&)
+	void LiveGraph::OnCreateResources(CanvasAnimatedControl const& sender, CanvasCreateResourcesEventArgs const&)
 	{
 		m_createResources(*this, sender);
 	}
 
-	void LiveGraph::OnActualThemeChanged(
-		FrameworkElement const&,
-		IInspectable const&)
+	void LiveGraph::OnActualThemeChanged(FrameworkElement const&, IInspectable const&)
 	{
 		UpdateDrawColor();
 	}
@@ -920,9 +903,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		m_drawColor = color;
 	}
 
-	void LiveGraph::OnSizeChanged(
-		IInspectable const&,
-		SizeChangedEventArgs const& args)
+	void LiveGraph::OnSizeChanged(IInspectable const&, SizeChangedEventArgs const& args)
 	{
 		ResizeGraphPoints(
 			static_cast<float>(args.NewSize().Width),
@@ -1043,9 +1024,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		return niceFraction * magnitude;
 	}
 
-	void LiveGraph::AddDynamicPoint(
-		hstring const& key,
-		OpenNet::UI::Xaml::Control::Graph::GraphPoint const& point)
+	void LiveGraph::AddDynamicPoint(hstring const& key, OpenNet::UI::Xaml::Control::Graph::GraphPoint const& point)
 	{
 		AddDynamicPoint(key, point, false);
 	}
@@ -1116,9 +1095,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		}
 	}
 
-	void LiveGraph::AddStaticPoints(
-		hstring const& key,
-		IIterable<OpenNet::UI::Xaml::Control::Graph::GraphPoint> const& points)
+	void LiveGraph::AddStaticPoints(hstring const& key, IIterable<OpenNet::UI::Xaml::Control::Graph::GraphPoint> const& points)
 	{
 		AddStaticPoints(key, points, false);
 	}
@@ -1366,7 +1343,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 						{
 							auto const& polygon = m_polygons[m_currentPolygonIndex];
 							while (m_currentPointIndex < polygon->Points.size()
-							   && polygon->Points[m_currentPointIndex].X
+								   && polygon->Points[m_currentPointIndex].X
 								   + polygon->OffsetX < 0.0f)
 							{
 								++m_currentPointIndex;
@@ -1432,9 +1409,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 										// Publish every new sample even if adaptive scaling leaves
 										// it at the same normalized Y coordinate. Its real value
 										// and formatted unit may still have changed.
-									publishLine(ValueToY(
-										point->Value,
-										static_cast<float>(m_canvas.Size().Height)), true);
+										publishLine(ValueToY(
+											point->Value,
+											static_cast<float>(m_canvas.Size().Height)), true);
 									}
 									return;
 								}
@@ -1448,7 +1425,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 						{
 							auto const& polygon = m_polygons[m_currentPolygonIndex];
 							while (m_currentPointIndex < polygon->Points.size()
-							   && polygon->Points[m_currentPointIndex].X
+								   && polygon->Points[m_currentPointIndex].X
 								   + polygon->OffsetX < 0.0f)
 							{
 								++m_currentPointIndex;
@@ -1902,7 +1879,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 					* m_historyBufferScreens;
 				std::size_t removeCount{};
 				while (removeCount + 2 < polygon->Points.size()
-				   && polygon->Points[removeCount + 1].X
+					   && polygon->Points[removeCount + 1].X
 					   + polygon->OffsetX < retentionBoundary)
 				{
 					++removeCount;
@@ -1932,7 +1909,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			}
 
 			if (!polygon->Points.empty() &&
-			polygon->Points.back().X + polygon->OffsetX < 0.0f)
+				polygon->Points.back().X + polygon->OffsetX < 0.0f)
 			{
 				if (isLive)
 				{

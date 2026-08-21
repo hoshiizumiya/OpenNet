@@ -87,6 +87,9 @@ namespace OpenNet::Core::Torrent
 		}
 
 		m_db = db;
+		sqlite3_exec(db, "PRAGMA foreign_keys = ON;", nullptr, nullptr, nullptr);
+		sqlite3_exec(db, "PRAGMA journal_mode = WAL;", nullptr, nullptr, nullptr);
+		sqlite3_exec(db, "PRAGMA synchronous = NORMAL;", nullptr, nullptr, nullptr);
 
 		if (!CreateTables())
 		{
@@ -110,7 +113,13 @@ namespace OpenNet::Core::Torrent
 				added_timestamp INTEGER NOT NULL,
 				total_size INTEGER DEFAULT 0,
 				downloaded_size INTEGER DEFAULT 0,
+				uploaded_size INTEGER DEFAULT 0,
+				completed_timestamp INTEGER DEFAULT 0,
+				updated_timestamp INTEGER DEFAULT 0,
 				status INTEGER DEFAULT 0,
+				info_hash_v1 TEXT DEFAULT '',
+				info_hash_v2 TEXT DEFAULT '',
+				error_message TEXT DEFAULT '',
 				resume_data BLOB
 			);
 		)";
@@ -119,6 +128,26 @@ namespace OpenNet::Core::Torrent
 			CREATE TABLE IF NOT EXISTS session_state (
 				id INTEGER PRIMARY KEY CHECK (id = 1),
 				state_data BLOB
+			);
+		)";
+
+		const char* createTaskSettingsTable = R"(
+			CREATE TABLE IF NOT EXISTS task_settings (
+				task_id TEXT PRIMARY KEY REFERENCES tasks(task_id) ON DELETE CASCADE,
+				download_limit INTEGER NOT NULL DEFAULT 0,
+				upload_limit INTEGER NOT NULL DEFAULT 0,
+				minimum_upload_rate INTEGER NOT NULL DEFAULT 0,
+				max_connections INTEGER NOT NULL DEFAULT -1,
+				max_uploads INTEGER NOT NULL DEFAULT -1,
+				enable_dht INTEGER NOT NULL DEFAULT 1,
+				enable_lsd INTEGER NOT NULL DEFAULT 1,
+				enable_pex INTEGER NOT NULL DEFAULT 1,
+				apply_ip_filter INTEGER NOT NULL DEFAULT 1,
+				sequential_download INTEGER NOT NULL DEFAULT 0,
+				super_seeding INTEGER NOT NULL DEFAULT 0,
+				force_start INTEGER NOT NULL DEFAULT 0,
+				upload_mode INTEGER NOT NULL DEFAULT 0,
+				share_mode INTEGER NOT NULL DEFAULT 0
 			);
 		)";
 
@@ -133,6 +162,28 @@ namespace OpenNet::Core::Torrent
 			}
 			return false;
 		}
+
+		// Idempotent migrations for databases created by earlier OpenNet builds.
+		auto* database = static_cast<sqlite3*>(m_db);
+		sqlite3_exec(database, "ALTER TABLE tasks ADD COLUMN uploaded_size INTEGER DEFAULT 0;", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "ALTER TABLE tasks ADD COLUMN completed_timestamp INTEGER DEFAULT 0;", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "ALTER TABLE tasks ADD COLUMN updated_timestamp INTEGER DEFAULT 0;", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "ALTER TABLE tasks ADD COLUMN info_hash_v1 TEXT DEFAULT '';", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "ALTER TABLE tasks ADD COLUMN info_hash_v2 TEXT DEFAULT '';", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "ALTER TABLE tasks ADD COLUMN error_message TEXT DEFAULT '';", nullptr, nullptr, nullptr);
+		rc = sqlite3_exec(database, createTaskSettingsTable, nullptr, nullptr, &errMsg);
+		if (rc != SQLITE_OK)
+		{
+			if (errMsg)
+			{
+				OutputDebugStringA(("SQLite error creating task_settings table: " + std::string(errMsg) + "\n").c_str());
+				sqlite3_free(errMsg);
+			}
+			return false;
+		}
+		sqlite3_exec(database, "CREATE INDEX IF NOT EXISTS idx_tasks_status_updated ON tasks(status, updated_timestamp DESC);", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "CREATE UNIQUE INDEX IF NOT EXISTS idx_tasks_info_hash_v1 ON tasks(info_hash_v1) WHERE info_hash_v1 <> '';", nullptr, nullptr, nullptr);
+		sqlite3_exec(database, "CREATE UNIQUE INDEX IF NOT EXISTS idx_tasks_info_hash_v2 ON tasks(info_hash_v2) WHERE info_hash_v2 <> '';", nullptr, nullptr, nullptr);
 
 		// Older builds keyed progress rows by the mutable torrent name. A
 		// magnet therefore could leave a nameless metadata row beside the
@@ -197,7 +248,7 @@ namespace OpenNet::Core::Torrent
 			if (rc != SQLITE_OK) return false;
 
 			sqlite3_bind_blob(stmt, 1, stateData.data(),
-				static_cast<int>(stateData.size()), SQLITE_TRANSIENT);
+							  static_cast<int>(stateData.size()), SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
@@ -212,7 +263,7 @@ namespace OpenNet::Core::Torrent
 	}
 
 	std::optional<std::vector<std::uint8_t>>
-	TorrentStateManager::LoadSessionStateData()
+		TorrentStateManager::LoadSessionStateData()
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return std::nullopt;
@@ -259,14 +310,16 @@ namespace OpenNet::Core::Torrent
 
 		try
 		{
-			const char* sql = "UPDATE tasks SET resume_data = ? WHERE task_id = ?;";
+			const char* sql = "UPDATE tasks SET resume_data = ?, updated_timestamp = ? WHERE task_id = ?;";
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
 
 			sqlite3_bind_blob(stmt, 1, resumeData.data(),
-				static_cast<int>(resumeData.size()), SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+							  static_cast<int>(resumeData.size()), SQLITE_TRANSIENT);
+			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(stmt, 2, updatedTimestamp);
+			sqlite3_bind_text(stmt, 3, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
@@ -281,7 +334,7 @@ namespace OpenNet::Core::Torrent
 	}
 
 	std::optional<std::vector<std::uint8_t>>
-	TorrentStateManager::LoadTaskResumeData(std::string const& taskId)
+		TorrentStateManager::LoadTaskResumeData(std::string const& taskId)
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return std::nullopt;
@@ -329,9 +382,26 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			const char* sql = R"(
-				INSERT OR REPLACE INTO tasks 
-				(task_id, magnet_uri, save_path, name, added_timestamp, total_size, downloaded_size, status, resume_data)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+				INSERT INTO tasks (
+					task_id, magnet_uri, save_path, name, added_timestamp,
+					total_size, downloaded_size, uploaded_size, completed_timestamp,
+					updated_timestamp, status, info_hash_v1, info_hash_v2,
+					error_message, resume_data)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				ON CONFLICT(task_id) DO UPDATE SET
+					magnet_uri = excluded.magnet_uri,
+					save_path = excluded.save_path,
+					name = excluded.name,
+					total_size = excluded.total_size,
+					downloaded_size = excluded.downloaded_size,
+					uploaded_size = excluded.uploaded_size,
+					completed_timestamp = excluded.completed_timestamp,
+					updated_timestamp = excluded.updated_timestamp,
+					status = excluded.status,
+					info_hash_v1 = excluded.info_hash_v1,
+					info_hash_v2 = excluded.info_hash_v2,
+					error_message = excluded.error_message,
+					resume_data = COALESCE(excluded.resume_data, tasks.resume_data);
 			)";
 
 			sqlite3_stmt* stmt = nullptr;
@@ -345,15 +415,22 @@ namespace OpenNet::Core::Torrent
 			sqlite3_bind_int64(stmt, 5, metadata.addedTimestamp);
 			sqlite3_bind_int64(stmt, 6, metadata.totalSize);
 			sqlite3_bind_int64(stmt, 7, metadata.downloadedSize);
-			sqlite3_bind_int(stmt, 8, metadata.status);
+			sqlite3_bind_int64(stmt, 8, metadata.uploadedSize);
+			sqlite3_bind_int64(stmt, 9, metadata.completedTimestamp);
+			auto const updatedTimestamp = metadata.updatedTimestamp > 0 ? metadata.updatedTimestamp : std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(stmt, 10, updatedTimestamp);
+			sqlite3_bind_int(stmt, 11, metadata.status);
+			sqlite3_bind_text(stmt, 12, metadata.infoHashV1.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 13, metadata.infoHashV2.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_text(stmt, 14, metadata.errorMessage.c_str(), -1, SQLITE_TRANSIENT);
 
 			if (metadata.resumeData.empty())
 			{
-				sqlite3_bind_null(stmt, 9);
+				sqlite3_bind_null(stmt, 15);
 			}
 			else
 			{
-				sqlite3_bind_blob(stmt, 9, metadata.resumeData.data(),
+				sqlite3_bind_blob(stmt, 15, metadata.resumeData.data(),
 								  static_cast<int>(metadata.resumeData.size()), SQLITE_TRANSIENT);
 			}
 
@@ -377,8 +454,10 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			const char* sql = R"(
-				SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
-					   total_size, downloaded_size, status, resume_data 
+				SELECT task_id, magnet_uri, save_path, name, added_timestamp,
+					   total_size, downloaded_size, uploaded_size, completed_timestamp,
+					   updated_timestamp, status, info_hash_v1, info_hash_v2,
+					   error_message, resume_data
 				FROM tasks WHERE task_id = ?;
 			)";
 
@@ -405,10 +484,19 @@ namespace OpenNet::Core::Torrent
 				metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
 				metadata.totalSize = sqlite3_column_int64(stmt, 5);
 				metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
-				metadata.status = sqlite3_column_int(stmt, 7);
+				metadata.uploadedSize = sqlite3_column_int64(stmt, 7);
+				metadata.completedTimestamp = sqlite3_column_int64(stmt, 8);
+				metadata.updatedTimestamp = sqlite3_column_int64(stmt, 9);
+				metadata.status = sqlite3_column_int(stmt, 10);
+				auto const hashV1 = sqlite3_column_text(stmt, 11);
+				auto const hashV2 = sqlite3_column_text(stmt, 12);
+				auto const errorText = sqlite3_column_text(stmt, 13);
+				metadata.infoHashV1 = hashV1 ? reinterpret_cast<char const*>(hashV1) : "";
+				metadata.infoHashV2 = hashV2 ? reinterpret_cast<char const*>(hashV2) : "";
+				metadata.errorMessage = errorText ? reinterpret_cast<char const*>(errorText) : "";
 
-				const void* blobData = sqlite3_column_blob(stmt, 8);
-				int blobSize = sqlite3_column_bytes(stmt, 8);
+				const void* blobData = sqlite3_column_blob(stmt, 14);
+				int blobSize = sqlite3_column_bytes(stmt, 14);
 				if (blobData && blobSize > 0)
 				{
 					metadata.resumeData.assign(
@@ -440,8 +528,10 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			const char* sql = R"(
-				SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
-					   total_size, downloaded_size, status, resume_data 
+				SELECT task_id, magnet_uri, save_path, name, added_timestamp,
+					   total_size, downloaded_size, uploaded_size, completed_timestamp,
+					   updated_timestamp, status, info_hash_v1, info_hash_v2,
+					   error_message, resume_data
 				FROM tasks ORDER BY added_timestamp DESC;
 			)";
 
@@ -465,10 +555,19 @@ namespace OpenNet::Core::Torrent
 				metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
 				metadata.totalSize = sqlite3_column_int64(stmt, 5);
 				metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
-				metadata.status = sqlite3_column_int(stmt, 7);
+				metadata.uploadedSize = sqlite3_column_int64(stmt, 7);
+				metadata.completedTimestamp = sqlite3_column_int64(stmt, 8);
+				metadata.updatedTimestamp = sqlite3_column_int64(stmt, 9);
+				metadata.status = sqlite3_column_int(stmt, 10);
+				auto const hashV1 = sqlite3_column_text(stmt, 11);
+				auto const hashV2 = sqlite3_column_text(stmt, 12);
+				auto const errorText = sqlite3_column_text(stmt, 13);
+				metadata.infoHashV1 = hashV1 ? reinterpret_cast<char const*>(hashV1) : "";
+				metadata.infoHashV2 = hashV2 ? reinterpret_cast<char const*>(hashV2) : "";
+				metadata.errorMessage = errorText ? reinterpret_cast<char const*>(errorText) : "";
 
-				const void* blobData = sqlite3_column_blob(stmt, 8);
-				int blobSize = sqlite3_column_bytes(stmt, 8);
+				const void* blobData = sqlite3_column_blob(stmt, 14);
+				int blobSize = sqlite3_column_bytes(stmt, 14);
 				if (blobData && blobSize > 0)
 				{
 					metadata.resumeData.assign(
@@ -488,6 +587,94 @@ namespace OpenNet::Core::Torrent
 		}
 
 		return tasks;
+	}
+
+	bool TorrentStateManager::SaveTaskSettings(TaskSettingsMetadata const& settings)
+	{
+		std::lock_guard lock(m_dbMutex);
+		if (!m_db || settings.taskId.empty()) return false;
+		constexpr char sql[] = R"(
+			INSERT INTO task_settings (
+				task_id, download_limit, upload_limit, minimum_upload_rate,
+				max_connections, max_uploads, enable_dht, enable_lsd, enable_pex,
+				apply_ip_filter, sequential_download, super_seeding, force_start,
+				upload_mode, share_mode)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			ON CONFLICT(task_id) DO UPDATE SET
+				download_limit = excluded.download_limit,
+				upload_limit = excluded.upload_limit,
+				minimum_upload_rate = excluded.minimum_upload_rate,
+				max_connections = excluded.max_connections,
+				max_uploads = excluded.max_uploads,
+				enable_dht = excluded.enable_dht,
+				enable_lsd = excluded.enable_lsd,
+				enable_pex = excluded.enable_pex,
+				apply_ip_filter = excluded.apply_ip_filter,
+				sequential_download = excluded.sequential_download,
+				super_seeding = excluded.super_seeding,
+				force_start = excluded.force_start,
+				upload_mode = excluded.upload_mode,
+				share_mode = excluded.share_mode;
+		)";
+		sqlite3_stmt* statement = nullptr;
+		if (sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &statement, nullptr) != SQLITE_OK) return false;
+		sqlite3_bind_text(statement, 1, settings.taskId.c_str(), -1, SQLITE_TRANSIENT);
+		sqlite3_bind_int(statement, 2, settings.downloadLimit);
+		sqlite3_bind_int(statement, 3, settings.uploadLimit);
+		sqlite3_bind_int(statement, 4, settings.minimumUploadRate);
+		sqlite3_bind_int(statement, 5, settings.maxConnections);
+		sqlite3_bind_int(statement, 6, settings.maxUploads);
+		sqlite3_bind_int(statement, 7, settings.enableDht);
+		sqlite3_bind_int(statement, 8, settings.enableLsd);
+		sqlite3_bind_int(statement, 9, settings.enablePex);
+		sqlite3_bind_int(statement, 10, settings.applyIpFilter);
+		sqlite3_bind_int(statement, 11, settings.sequentialDownload);
+		sqlite3_bind_int(statement, 12, settings.superSeeding);
+		sqlite3_bind_int(statement, 13, settings.forceStart);
+		sqlite3_bind_int(statement, 14, settings.uploadMode);
+		sqlite3_bind_int(statement, 15, settings.shareMode);
+		auto const result = sqlite3_step(statement) == SQLITE_DONE;
+		sqlite3_finalize(statement);
+		return result;
+	}
+
+	std::optional<TaskSettingsMetadata> TorrentStateManager::LoadTaskSettings(std::string const& taskId)
+	{
+		std::lock_guard lock(m_dbMutex);
+		if (!m_db || taskId.empty()) return std::nullopt;
+		constexpr char sql[] = R"(
+			SELECT download_limit, upload_limit, minimum_upload_rate,
+				   max_connections, max_uploads, enable_dht, enable_lsd, enable_pex,
+				   apply_ip_filter, sequential_download, super_seeding, force_start,
+				   upload_mode, share_mode
+			FROM task_settings WHERE task_id = ?;
+		)";
+		sqlite3_stmt* statement = nullptr;
+		if (sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &statement, nullptr) != SQLITE_OK) return std::nullopt;
+		sqlite3_bind_text(statement, 1, taskId.c_str(), -1, SQLITE_TRANSIENT);
+		if (sqlite3_step(statement) != SQLITE_ROW)
+		{
+			sqlite3_finalize(statement);
+			return std::nullopt;
+		}
+		TaskSettingsMetadata settings;
+		settings.taskId = taskId;
+		settings.downloadLimit = sqlite3_column_int(statement, 0);
+		settings.uploadLimit = sqlite3_column_int(statement, 1);
+		settings.minimumUploadRate = sqlite3_column_int(statement, 2);
+		settings.maxConnections = sqlite3_column_int(statement, 3);
+		settings.maxUploads = sqlite3_column_int(statement, 4);
+		settings.enableDht = sqlite3_column_int(statement, 5) != 0;
+		settings.enableLsd = sqlite3_column_int(statement, 6) != 0;
+		settings.enablePex = sqlite3_column_int(statement, 7) != 0;
+		settings.applyIpFilter = sqlite3_column_int(statement, 8) != 0;
+		settings.sequentialDownload = sqlite3_column_int(statement, 9) != 0;
+		settings.superSeeding = sqlite3_column_int(statement, 10) != 0;
+		settings.forceStart = sqlite3_column_int(statement, 11) != 0;
+		settings.uploadMode = sqlite3_column_int(statement, 12) != 0;
+		settings.shareMode = sqlite3_column_int(statement, 13) != 0;
+		sqlite3_finalize(statement);
+		return settings;
 	}
 
 	bool TorrentStateManager::DeleteTask(std::string const& taskId)
@@ -523,13 +710,15 @@ namespace OpenNet::Core::Torrent
 
 		try
 		{
-			const char* sql = "UPDATE tasks SET status = ? WHERE task_id = ?;";
+			const char* sql = "UPDATE tasks SET status = ?, updated_timestamp = ? WHERE task_id = ?;";
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
 
 			sqlite3_bind_int(stmt, 1, status);
-			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(stmt, 2, updatedTimestamp);
+			sqlite3_bind_text(stmt, 3, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
@@ -543,20 +732,25 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	bool TorrentStateManager::UpdateTaskProgress(std::string const& taskId, int64_t downloadedSize)
+	bool TorrentStateManager::UpdateTaskProgress(std::string const& taskId, std::int64_t const downloadedSize, std::int64_t const uploadedSize, std::int64_t const completedTimestamp)
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return false;
 
 		try
 		{
-			const char* sql = "UPDATE tasks SET downloaded_size = ? WHERE task_id = ?;";
+			const char* sql = "UPDATE tasks SET downloaded_size = ?, uploaded_size = ?, completed_timestamp = CASE WHEN ? > 0 THEN ? ELSE completed_timestamp END, updated_timestamp = ? WHERE task_id = ?;";
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
 
 			sqlite3_bind_int64(stmt, 1, downloadedSize);
-			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+			sqlite3_bind_int64(stmt, 2, uploadedSize);
+			sqlite3_bind_int64(stmt, 3, completedTimestamp);
+			sqlite3_bind_int64(stmt, 4, completedTimestamp);
+			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(stmt, 5, updatedTimestamp);
+			sqlite3_bind_text(stmt, 6, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
@@ -577,13 +771,15 @@ namespace OpenNet::Core::Torrent
 
 		try
 		{
-			const char* sql = "UPDATE tasks SET name = ? WHERE task_id = ?;";
+			const char* sql = "UPDATE tasks SET name = ?, updated_timestamp = ? WHERE task_id = ?;";
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
 
 			sqlite3_bind_text(stmt, 1, name.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_bind_text(stmt, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(stmt, 2, updatedTimestamp);
+			sqlite3_bind_text(stmt, 3, taskId.c_str(), -1, SQLITE_TRANSIENT);
 
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
@@ -606,8 +802,7 @@ namespace OpenNet::Core::Torrent
 
 		try
 		{
-			constexpr char sql[] =
-				"UPDATE tasks SET save_path = ? WHERE task_id = ?;";
+			constexpr char sql[] = "UPDATE tasks SET save_path = ?, updated_timestamp = ? WHERE task_id = ?;";
 			sqlite3_stmt* statement = nullptr;
 			int result = sqlite3_prepare_v2(
 				static_cast<sqlite3*>(m_db), sql, -1, &statement, nullptr);
@@ -615,8 +810,10 @@ namespace OpenNet::Core::Torrent
 
 			sqlite3_bind_text(
 				statement, 1, savePath.c_str(), -1, SQLITE_TRANSIENT);
+			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(statement, 2, updatedTimestamp);
 			sqlite3_bind_text(
-				statement, 2, taskId.c_str(), -1, SQLITE_TRANSIENT);
+				statement, 3, taskId.c_str(), -1, SQLITE_TRANSIENT);
 			result = sqlite3_step(statement);
 			sqlite3_finalize(statement);
 			return result == SQLITE_DONE;
@@ -641,8 +838,10 @@ namespace OpenNet::Core::Torrent
 
 			// Inline query to avoid recursive locking
 			const char* sql = R"(
-				SELECT task_id, magnet_uri, save_path, name, added_timestamp, 
-					   total_size, downloaded_size, status, resume_data 
+				SELECT task_id, magnet_uri, save_path, name, added_timestamp,
+					   total_size, downloaded_size, uploaded_size, completed_timestamp,
+					   updated_timestamp, status, info_hash_v1, info_hash_v2,
+					   error_message, resume_data
 				FROM tasks ORDER BY added_timestamp DESC;
 			)";
 
@@ -666,10 +865,19 @@ namespace OpenNet::Core::Torrent
 				metadata.addedTimestamp = sqlite3_column_int64(stmt, 4);
 				metadata.totalSize = sqlite3_column_int64(stmt, 5);
 				metadata.downloadedSize = sqlite3_column_int64(stmt, 6);
-				metadata.status = sqlite3_column_int(stmt, 7);
+				metadata.uploadedSize = sqlite3_column_int64(stmt, 7);
+				metadata.completedTimestamp = sqlite3_column_int64(stmt, 8);
+				metadata.updatedTimestamp = sqlite3_column_int64(stmt, 9);
+				metadata.status = sqlite3_column_int(stmt, 10);
+				auto const hashV1 = sqlite3_column_text(stmt, 11);
+				auto const hashV2 = sqlite3_column_text(stmt, 12);
+				auto const errorText = sqlite3_column_text(stmt, 13);
+				metadata.infoHashV1 = hashV1 ? reinterpret_cast<char const*>(hashV1) : "";
+				metadata.infoHashV2 = hashV2 ? reinterpret_cast<char const*>(hashV2) : "";
+				metadata.errorMessage = errorText ? reinterpret_cast<char const*>(errorText) : "";
 
-				const void* blobData = sqlite3_column_blob(stmt, 8);
-				int blobSize = sqlite3_column_bytes(stmt, 8);
+				const void* blobData = sqlite3_column_blob(stmt, 14);
+				int blobSize = sqlite3_column_bytes(stmt, 14);
 				if (blobData && blobSize > 0)
 				{
 					metadata.resumeData.assign(
@@ -699,7 +907,13 @@ namespace OpenNet::Core::Torrent
 				taskEntry["added_timestamp"] = task.addedTimestamp;
 				taskEntry["total_size"] = task.totalSize;
 				taskEntry["downloaded_size"] = task.downloadedSize;
+				taskEntry["uploaded_size"] = task.uploadedSize;
+				taskEntry["completed_timestamp"] = task.completedTimestamp;
+				taskEntry["updated_timestamp"] = task.updatedTimestamp;
 				taskEntry["status"] = task.status;
+				taskEntry["info_hash_v1"] = task.infoHashV1;
+				taskEntry["info_hash_v2"] = task.infoHashV2;
+				taskEntry["error_message"] = task.errorMessage;
 
 				if (!task.resumeData.empty())
 				{
@@ -707,6 +921,24 @@ namespace OpenNet::Core::Torrent
 						reinterpret_cast<const char*>(task.resumeData.data()),
 						task.resumeData.size()
 					);
+				}
+				if (auto const settings = LoadTaskSettings(task.taskId))
+				{
+					auto& values = taskEntry["task_settings"];
+					values["download_limit"] = settings->downloadLimit;
+					values["upload_limit"] = settings->uploadLimit;
+					values["minimum_upload_rate"] = settings->minimumUploadRate;
+					values["max_connections"] = settings->maxConnections;
+					values["max_uploads"] = settings->maxUploads;
+					values["enable_dht"] = settings->enableDht;
+					values["enable_lsd"] = settings->enableLsd;
+					values["enable_pex"] = settings->enablePex;
+					values["apply_ip_filter"] = settings->applyIpFilter;
+					values["sequential_download"] = settings->sequentialDownload;
+					values["super_seeding"] = settings->superSeeding;
+					values["force_start"] = settings->forceStart;
+					values["upload_mode"] = settings->uploadMode;
+					values["share_mode"] = settings->shareMode;
 				}
 
 				taskList.push_back(std::move(taskEntry));
@@ -732,6 +964,7 @@ namespace OpenNet::Core::Torrent
 	{
 		// Read file first without lock, then save to database
 		std::vector<TaskMetadata> tasksToImport;
+		std::vector<TaskSettingsMetadata> settingsToImport;
 
 		try
 		{
@@ -761,7 +994,13 @@ namespace OpenNet::Core::Torrent
 				metadata.addedTimestamp = taskNode.dict_find_int_value("added_timestamp");
 				metadata.totalSize = taskNode.dict_find_int_value("total_size");
 				metadata.downloadedSize = taskNode.dict_find_int_value("downloaded_size");
+				metadata.uploadedSize = taskNode.dict_find_int_value("uploaded_size");
+				metadata.completedTimestamp = taskNode.dict_find_int_value("completed_timestamp");
+				metadata.updatedTimestamp = taskNode.dict_find_int_value("updated_timestamp");
 				metadata.status = static_cast<int>(taskNode.dict_find_int_value("status"));
+				metadata.infoHashV1 = std::string(taskNode.dict_find_string_value("info_hash_v1"));
+				metadata.infoHashV2 = std::string(taskNode.dict_find_string_value("info_hash_v2"));
+				metadata.errorMessage = std::string(taskNode.dict_find_string_value("error_message"));
 
 				auto resumeStr = taskNode.dict_find_string_value("resume_data");
 				if (!resumeStr.empty())
@@ -776,6 +1015,27 @@ namespace OpenNet::Core::Torrent
 				if (metadata.taskId.empty())
 				{
 					metadata.taskId = GenerateTaskId();
+				}
+				auto const settingsNode = taskNode.dict_find_dict("task_settings");
+				if (settingsNode)
+				{
+					TaskSettingsMetadata settings;
+					settings.taskId = metadata.taskId;
+					settings.downloadLimit = static_cast<int>(settingsNode.dict_find_int_value("download_limit"));
+					settings.uploadLimit = static_cast<int>(settingsNode.dict_find_int_value("upload_limit"));
+					settings.minimumUploadRate = static_cast<int>(settingsNode.dict_find_int_value("minimum_upload_rate"));
+					settings.maxConnections = static_cast<int>(settingsNode.dict_find_int_value("max_connections", -1));
+					settings.maxUploads = static_cast<int>(settingsNode.dict_find_int_value("max_uploads", -1));
+					settings.enableDht = settingsNode.dict_find_int_value("enable_dht", 1) != 0;
+					settings.enableLsd = settingsNode.dict_find_int_value("enable_lsd", 1) != 0;
+					settings.enablePex = settingsNode.dict_find_int_value("enable_pex", 1) != 0;
+					settings.applyIpFilter = settingsNode.dict_find_int_value("apply_ip_filter", 1) != 0;
+					settings.sequentialDownload = settingsNode.dict_find_int_value("sequential_download") != 0;
+					settings.superSeeding = settingsNode.dict_find_int_value("super_seeding") != 0;
+					settings.forceStart = settingsNode.dict_find_int_value("force_start") != 0;
+					settings.uploadMode = settingsNode.dict_find_int_value("upload_mode") != 0;
+					settings.shareMode = settingsNode.dict_find_int_value("share_mode") != 0;
+					settingsToImport.push_back(std::move(settings));
 				}
 
 				tasksToImport.push_back(std::move(metadata));
@@ -792,6 +1052,7 @@ namespace OpenNet::Core::Torrent
 		{
 			SaveTaskMetadata(metadata);
 		}
+		for (auto const& settings : settingsToImport) SaveTaskSettings(settings);
 
 		return true;
 	}

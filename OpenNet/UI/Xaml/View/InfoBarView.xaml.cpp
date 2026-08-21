@@ -35,12 +35,14 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 
 		auto weak = get_weak();
 		SubscribeInfoBars();
+		SynchronizeState();
 		Loaded([weak](auto const&, auto const&)
 		{
 			if (auto self = weak.get())
 			{
 				self->SubscribeInfoBars();
 				self->UpdateBadge();
+				self->SynchronizeState();
 			}
 		});
 		Unloaded([weak](auto const&, auto const&)
@@ -100,7 +102,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 	void InfoBarView::OnInfoBarsVectorChanged(Windows::Foundation::Collections::IObservableVector<OpenNet::Service::Notification::InfoBarOptions> const&, Windows::Foundation::Collections::IVectorChangedEventArgs const& args)
 	{
 		UpdateBadge();
-		HandleInfoBarsCollectionChangedAsync(args.CollectionChange() == Windows::Foundation::Collections::CollectionChange::ItemInserted);
+		auto const version = ++m_transitionVersion;
+		HandleInfoBarsCollectionChangedAsync(args.CollectionChange() == Windows::Foundation::Collections::CollectionChange::ItemInserted, version);
 	}
 
 	void InfoBarView::UnsubscribeInfoBars()
@@ -122,7 +125,19 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		}
 	}
 
-	winrt::fire_and_forget InfoBarView::HandleInfoBarsCollectionChangedAsync(bool added)
+	void InfoBarView::SynchronizeState()
+	{
+		if (m_infoBars.Size() == 0)
+		{
+			++m_transitionVersion;
+			VisibilityRoot().Visibility(Visibility::Collapsed);
+			return;
+		}
+		auto const version = ++m_transitionVersion;
+		HandleInfoBarsCollectionChangedAsync(true, version);
+	}
+
+	winrt::fire_and_forget InfoBarView::HandleInfoBarsCollectionChangedAsync(bool added, std::uint64_t const version)
 	{
 		auto strong = get_strong();
 
@@ -160,7 +175,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 			}
 		}
 
-		if (m_infoBars.Size() == 0)
+		if (version == m_transitionVersion && m_infoBars.Size() == 0)
 		{
 			if (transition)
 			{
@@ -204,10 +219,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		m_clearTimer.IsRepeating(true);
 		m_clearTimer.Interval(std::chrono::milliseconds(50));
 		m_clearTimer.Tick(
-			[weak](auto const& sender, auto const&)
+			[weak](Microsoft::UI::Dispatching::DispatcherQueueTimer const& timer, IInspectable const&)
 		{
-			auto timer = sender.as<
-				Microsoft::UI::Dispatching::DispatcherQueueTimer>();
 			if (auto self = weak.get())
 			{
 				try

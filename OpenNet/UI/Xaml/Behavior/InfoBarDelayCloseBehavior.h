@@ -21,9 +21,12 @@ namespace winrt::OpenNet::UI::Xaml::Behavior::implementation
 		void OnAssociatedObjectUnloaded() override;
 	private:
 		void Stop();
+		void UnsubscribeClosed();
 		void OnInfoBarClosed(Microsoft::UI::Xaml::Controls::InfoBar const& sender, Microsoft::UI::Xaml::Controls::InfoBarClosedEventArgs const& args);
 
 		winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_timer{ nullptr };
+		winrt::event_token m_closedToken{};
+		bool m_closedSubscribed{};
 	};
 }
 

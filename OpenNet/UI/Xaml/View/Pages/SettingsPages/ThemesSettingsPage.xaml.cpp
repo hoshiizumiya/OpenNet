@@ -227,8 +227,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ApplyBackdropFromSelection();
 	}
 
-	void ThemesSettingsPage::AnimatedDigitsSwitch_Toggled(
-		IInspectable const&, RoutedEventArgs const&)
+	void ThemesSettingsPage::AnimatedDigitsSwitch_Toggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		if (m_isInitializing) return;
 		auto const enabled = AnimatedDigitsSwitch().IsOn();
@@ -236,8 +235,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
 			kAnimatedDigitsKey,
 			enabled);
-		winrt::OpenNet::UI::Xaml::Control::Effect::implementation::
-			AnimatedDigit::AnimationsEnabled(enabled);
+		winrt::OpenNet::UI::Xaml::Control::Effect::implementation::AnimatedDigit::AnimationsEnabled(enabled);
 	}
 
 	winrt::Windows::Foundation::IAsyncAction ThemesSettingsPage::SetImageButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)

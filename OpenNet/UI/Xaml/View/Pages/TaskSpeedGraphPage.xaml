@@ -101,6 +101,11 @@
                 <FontIcon Glyph="&#xE713;" />
                 <Button.Flyout>
                     <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="Right">
+                        <Flyout.FlyoutPresenterStyle>
+                            <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                <Setter Property="MaxWidth" Value="Infinity" />
+                            </Style>
+                        </Flyout.FlyoutPresenterStyle>
                         <ScrollViewer
                             HorizontalContentAlignment="Stretch"
                             HorizontalScrollBarVisibility="Auto"
@@ -222,7 +227,10 @@
                                     <ToggleSwitch IsOn="{x:Bind Settings.HighlightEnabled, Mode=TwoWay}" />
                                     <essential:SettingsExpander.Items>
                                         <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageSettingsCard" Header="Point selection">
-                                            <ComboBox Width="210" SelectedIndex="{x:Bind Settings.HighlightBehaviorIndex, Mode=TwoWay}">
+                                            <ComboBox
+                                                Width="210"
+                                                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                                SelectedIndex="{x:Bind Settings.HighlightBehaviorIndex, Mode=TwoWay}">
                                                 <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries" Content="Highest across all series" />
                                                 <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries" Content="Lowest across all series" />
                                                 <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries" Content="Highest in each series" />
@@ -264,7 +272,10 @@
                                     </essential:SettingsExpander.HeaderIcon>
                                     <essential:SettingsExpander.Items>
                                         <essential:SettingsCard x:Uid="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard" Header="Background pattern">
-                                            <ComboBox Width="150" SelectedIndex="{x:Bind Settings.BackgroundModeIndex, Mode=TwoWay}">
+                                            <ComboBox
+                                                Width="150"
+                                                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                                SelectedIndex="{x:Bind Settings.BackgroundModeIndex, Mode=TwoWay}">
                                                 <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemNone" Content="None" />
                                                 <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemCross" Content="Cross" />
                                                 <ComboBoxItem x:Uid="ViewTaskSpeedGraphPageComboBoxItemDot" Content="Dot" />
@@ -453,7 +464,6 @@
                     </essential:SwitchPresenter>
                     <effects:AnimatedNumber
                         x:Name="PrimaryMetricValue"
-                        x:Uid="ViewTaskSpeedGraphPageTextBlock"
                         FontSize="18"
                         FontWeight="SemiBold"
                         Value="0 B/s" />

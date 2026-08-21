@@ -1,4 +1,4 @@
-module;
+﻿module;
 
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
@@ -10,6 +10,8 @@ module;
 #include "LibtorrentIncludeGuard.h"
 #include <libtorrent/bencode.hpp>
 #include <libtorrent/create_torrent.hpp>
+#include <libtorrent/pread_disk_io.hpp>
+#include <libtorrent/settings_pack.hpp>
 #include "LibtorrentIncludeRestore.h"
 
 #include <Windows.h>
@@ -17,6 +19,7 @@ module;
 module OpenNet.Core.Torrent.TorrentCreator;
 
 import std;
+import OpenNet.Core.TorrentSettings;
 
 namespace OpenNet::Core::Torrent
 {
@@ -66,21 +69,24 @@ namespace OpenNet::Core::Torrent
 		libtorrent::create_flags_t flags{};
 		switch (options.format)
 		{
-		case TorrentFormat::V1:
-			flags |= libtorrent::create_torrent::v1_only;
-			break;
-		case TorrentFormat::V2:
-			flags |= libtorrent::create_torrent::v2_only;
-			break;
-		case TorrentFormat::Hybrid:
-			break;
+			case TorrentFormat::V1:
+				flags |= libtorrent::create_torrent::v1_only;
+				break;
+			case TorrentFormat::V2:
+				flags |= libtorrent::create_torrent::v2_only;
+				break;
+			case TorrentFormat::Hybrid:
+				break;
 		}
 
 		auto const source = PathUtf8(options.sourcePath);
 		auto files = options.ignoreDotFiles
 			? libtorrent::list_files(
 				source,
-				[](std::string const& path) { return !IsDotPath(path); },
+				[](std::string const& path)
+		{
+			return !IsDotPath(path);
+		},
 				flags)
 			: libtorrent::list_files(source, flags);
 		if (files.empty()) throw std::runtime_error("No files were found in the source path");
@@ -101,8 +107,12 @@ namespace OpenNet::Core::Torrent
 		}
 
 		libtorrent::error_code error;
-		libtorrent::set_piece_hashes(
-			creator, PathUtf8(options.sourcePath.parent_path()), error);
+		auto const torrentSettings = ::OpenNet::Core::TorrentSettingsManager::Instance().Get();
+		libtorrent::settings_pack hashingSettings;
+		hashingSettings.set_int(libtorrent::settings_pack::aio_threads, std::max(1, torrentSettings.aioThreads));
+		hashingSettings.set_int(libtorrent::settings_pack::hashing_threads, std::max(1, torrentSettings.hashingThreads));
+		libtorrent::set_piece_hashes(creator, PathUtf8(options.sourcePath.parent_path()), hashingSettings, libtorrent::pread_disk_io_constructor, [](libtorrent::piece_index_t)
+		{}, error);
 		if (error) throw std::runtime_error(error.message());
 
 		std::vector<char> encoded;

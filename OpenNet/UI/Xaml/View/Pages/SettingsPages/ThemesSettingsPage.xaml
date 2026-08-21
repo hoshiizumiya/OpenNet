@@ -154,7 +154,7 @@
                 </essential:SettingsCard.HeaderIcon>
                 <ToggleSwitch
                     x:Name="AnimatedDigitsSwitch"
-                    IsOn="False"
+                    IsOn="True"
                     Toggled="AnimatedDigitsSwitch_Toggled" />
             </essential:SettingsCard>
 

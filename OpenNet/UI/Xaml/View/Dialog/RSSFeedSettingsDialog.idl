@@ -13,7 +13,10 @@ namespace OpenNet.UI.Xaml.View.Dialog
 		String FeedUrl{ get; };
 		String FeedSavePath{ get; };
 		Int32 UpdateIntervalMinutes{ get; };
+		Boolean Enabled{ get; };
 		Boolean AutoDownload{ get; };
 		String FilterPattern{ get; };
+		Int32 ItemDoubleClickAction{ get; };
+		Boolean EnableWebViewPreview{ get; };
 	}
 }

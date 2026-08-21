@@ -420,13 +420,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_rowLayoutSynchronizationQueued = true;
 		auto weak = get_weak();
 		if (!DispatcherQueue().TryEnqueue([weak]()
+		{
+			if (auto self = weak.get())
 			{
-				if (auto self = weak.get())
-				{
-					self->m_rowLayoutSynchronizationQueued = false;
-					self->SynchronizePeerRows();
-				}
-			}))
+				self->m_rowLayoutSynchronizationQueued = false;
+				self->SynchronizePeerRows();
+			}
+		}))
 		{
 			m_rowLayoutSynchronizationQueued = false;
 			SynchronizePeerRows();
@@ -610,8 +610,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return winrt::hstring{ result };
 	}
 
-	static winrt::hstring FormatConnectionType(int connType)
+	static winrt::hstring FormatConnectionType(int connType, bool isI2p)
 	{
+		if (isI2p) return L"I2P";
 		// 0_bit = 1, 1_bit = 2, 2_bit = 4 in libtorrent bitfield flags
 		switch (connType)
 		{
@@ -644,6 +645,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	static winrt::hstring PeerEndpointText(std::string const& ip, int port)
 	{
+		if (port <= 0) return winrt::to_hstring(ip);
 		if (ip.find(':') != std::string::npos)
 		{
 			return L"[" + winrt::to_hstring(ip) + L"]:"
@@ -767,7 +769,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_forcePeerRefresh.load(std::memory_order_relaxed)
 			&& m_hasPeerSnapshot && m_lastPeerSnapshotHash == 0
 			&& std::chrono::steady_clock::now() - m_lastAuxiliaryRefresh
-				< std::chrono::seconds(5))
+			< std::chrono::seconds(5))
 		{
 			co_return;
 		}
@@ -786,20 +788,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			.GetTorrentPeers(taskId);
 		if (!dispatcher.TryEnqueue(
 			[weak, taskId = std::move(taskId), peers = std::move(peers),
-			 forceRefresh, generation]() mutable
+			forceRefresh, generation]() mutable
+		{
+			if (auto self = weak.get())
 			{
-				if (auto self = weak.get())
+				self->m_refreshInFlight.store(false, std::memory_order_release);
+				if (self->m_refreshGeneration.load(std::memory_order_relaxed)
+					!= generation)
 				{
-					self->m_refreshInFlight.store(false, std::memory_order_release);
-					if (self->m_refreshGeneration.load(std::memory_order_relaxed)
-						!= generation)
-					{
-						return;
-					}
-					self->ApplyPeerSnapshot(
-						taskId, std::move(peers), forceRefresh);
+					return;
 				}
-			}))
+				self->ApplyPeerSnapshot(
+					taskId, std::move(peers), forceRefresh);
+			}
+		}))
 		{
 			m_refreshInFlight.store(false, std::memory_order_release);
 		}
@@ -820,7 +822,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto combineHash = [&snapshotHash](auto const& value)
 		{
 			snapshotHash ^= std::hash<std::decay_t<decltype(value)>>{}(value)
-				+ 0x9e3779b9u + (snapshotHash << 6) + (snapshotHash >> 2);
+				+0x9e3779b9u + (snapshotHash << 6) + (snapshotHash >> 2);
 		};
 		for (auto const& peer : peers)
 		{
@@ -837,6 +839,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			combineHash(peer.source);
 			combineHash(peer.isIncoming);
 			combineHash(peer.isConnecting);
+			combineHash(peer.isI2p);
 		}
 		auto const nowSteady = std::chrono::steady_clock::now();
 		if (!forceRefresh && m_hasPeerSnapshot
@@ -851,7 +854,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			auto const desiredInterval = peers.empty()
 				? (std::max)(m_configuredRefreshInterval,
-					std::chrono::milliseconds{ 5000 })
+							 std::chrono::milliseconds{ 5000 })
 				: m_configuredRefreshInterval;
 			if (m_refreshTimer.Interval() != desiredInterval)
 				m_refreshTimer.Interval(desiredInterval);
@@ -907,7 +910,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.PeerStatus(FormatPeerStatus(peer.flags));
 			item.Reason(L"");
 			item.ConnectionTime(L"-");
-			item.Protocol(FormatConnectionType(peer.connectionType));
+			item.Protocol(FormatConnectionType(peer.connectionType, peer.isI2p));
 			item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
 			item.Source(FormatPeerSource(peer.source));
 		};

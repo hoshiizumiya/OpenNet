@@ -39,10 +39,14 @@ namespace winrt::OpenNet::UI::Xaml::Behavior::implementation
 		auto infoBar = AssociatedObject();
 		auto const delay = MilliSecondsDelay();
 
-		if (!infoBar || delay == 0)
+		if (!infoBar)
 		{
 			return;
 		}
+		UnsubscribeClosed();
+		m_closedToken = infoBar.Closed({ this, &InfoBarDelayCloseBehavior::OnInfoBarClosed });
+		m_closedSubscribed = true;
+		if (delay == 0) return;
 
 		m_timer = infoBar.DispatcherQueue().CreateTimer();
 		m_timer.IsRepeating(false);
@@ -70,8 +74,22 @@ namespace winrt::OpenNet::UI::Xaml::Behavior::implementation
 	void InfoBarDelayCloseBehavior::OnAssociatedObjectUnloaded()
 	{
 		Stop();
+		UnsubscribeClosed();
 	}
 
+	void InfoBarDelayCloseBehavior::OnInfoBarClosed(InfoBar const&, InfoBarClosedEventArgs const&)
+	{
+		Stop();
+		UnsubscribeClosed();
+	}
+
+	void InfoBarDelayCloseBehavior::UnsubscribeClosed()
+	{
+		if (!m_closedSubscribed) return;
+		if (auto infoBar = AssociatedObject()) infoBar.Closed(m_closedToken);
+		m_closedSubscribed = false;
+		m_closedToken = {};
+	}
 
 	void InfoBarDelayCloseBehavior::Stop()
 	{

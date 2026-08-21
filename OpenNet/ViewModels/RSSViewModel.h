@@ -195,7 +195,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void RefreshFeed(hstring const& feedId);
 		void RefreshAllFeeds();
 		void DownloadItem(OpenNet::ViewModels::RSSItemViewModel const& item);
-		void UpdateFeedSettings(OpenNet::ViewModels::RSSFeedViewModel const& feed);
+		bool UpdateFeedSettings(OpenNet::ViewModels::RSSFeedViewModel const& feed);
 		void SetStatusMessage(hstring const& message);
 
 		winrt::event_token PropertyChanged(Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler);

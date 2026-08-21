@@ -1892,6 +1892,7 @@ namespace OpenNet::Core::WebUI
 						"proxy_password", "proxy_bittorrent",
 						"proxy_peer_connections", "encryption",
 						"max_connec", "dl_limit", "up_limit",
+						"max_uploads", "alert_queue_size",
 						"alt_dl_limit", "alt_up_limit", "dht", "lsd",
 						"anonymous_mode", "queueing_enabled",
 						"max_active_downloads",
@@ -1914,6 +1915,17 @@ namespace OpenNet::Core::WebUI
 						"peer_turnover", "peer_turnover_cutoff",
 						"peer_turnover_interval", "request_queue_size",
 						"dht_bootstrap_nodes",
+						"apply_ip_filter_to_dht", "webtorrent_enabled",
+						"webtorrent_stun_server", "max_webtorrent_offers",
+						"webtorrent_connection_timeout",
+						"min_websocket_announce_interval",
+						"disable_v1_hashes_for_hybrid", "part_file_directory",
+						"max_torrent_directory_depth",
+						"natpmp_gateway", "natpmp_lease_duration",
+						"proxy_send_host_in_connect", "i2p_enabled", "i2p_address",
+						"i2p_port", "i2p_mixed_mode", "i2p_inbound_quantity",
+						"i2p_outbound_quantity", "i2p_inbound_length",
+						"i2p_outbound_length",
 						"enable_multi_connections_from_same_ip",
 						"announce_to_all_trackers", "announce_to_all_tiers",
 						"confirm_torrent_deletion", "status_bar_external_ip",
@@ -1929,6 +1941,7 @@ namespace OpenNet::Core::WebUI
 						"portValue", "upnpCheckbox",
 						"UPnPLeaseDuration",
 						"maxConnectionsCheckbox", "maxConnectionsValue",
+						"maxUploadsCheckbox", "max_uploads_value",
 						"peer_proxy_type_select", "peer_proxy_host_text",
 						"peer_proxy_port_value", "peer_proxy_auth_checkbox",
 						"peer_proxy_username_text", "peer_proxy_password_text",
@@ -1958,6 +1971,10 @@ namespace OpenNet::Core::WebUI
 						"dhtBootstrapNodes",
 						"allowMultipleConnectionsFromTheSameIPAddress",
 						"announceAllTrackers", "announceAllTiers",
+						"i2pEnabledCheckbox", "i2pAddress", "i2pPort",
+						"i2pMixedMode", "i2pInboundQuantity",
+						"i2pOutboundQuantity", "i2pInboundLength",
+						"i2pOutboundLength",
 						"webuiAddressValue", "webuiPortValue",
 						"webui_username_text", "webui_password_text",
 						"WebUIAPIKeyText", "webUIAPIKeyCopyButton",
@@ -2424,6 +2441,9 @@ namespace OpenNet::Core::WebUI
 				case ::OpenNet::Core::ProxyType::Http:
 					proxyType = "HTTP";
 					break;
+				case ::OpenNet::Core::ProxyType::I2pProxy:
+					proxyType = "I2P";
+					break;
 				default:
 					break;
 			}
@@ -2467,12 +2487,20 @@ namespace OpenNet::Core::WebUI
 				{"delete_torrent_content_files", false},
 				{"dht", settings.enableDht},
 				{"dht_bootstrap_nodes", settings.dhtBootstrapNodes},
+				{"apply_ip_filter_to_dht", settings.applyIpFilterToDht},
+				{"webtorrent_enabled", settings.enableWebTorrent},
+				{"webtorrent_stun_server", settings.webTorrentStunServer},
+				{"max_webtorrent_offers", settings.maxWebTorrentOffers},
+				{"webtorrent_connection_timeout", settings.webTorrentConnectionTimeout},
+				{"min_websocket_announce_interval", settings.minWebSocketAnnounceInterval},
 				// OpenNet currently has no independent PEX preference. Keep the
 				// qBittorrent-only control disabled instead of reporting fake state.
 				{"pex", false},
 				{"lsd", settings.enableLsd},
 				{"upnp", settings.enableUpnp || settings.enableNatpmp},
 				{"upnp_lease_duration", settings.upnpLeaseDuration},
+				{"natpmp_gateway", settings.natPmpGateway},
+				{"natpmp_lease_duration", settings.natPmpLeaseDuration},
 				{"anonymous_mode", settings.anonymousMode},
 				{"encryption", encryption},
 				{"proxy_type", proxyType},
@@ -2483,7 +2511,18 @@ namespace OpenNet::Core::WebUI
 				{"proxy_password", settings.proxyPassword},
 				{"proxy_bittorrent", settings.proxyType != ::OpenNet::Core::ProxyType::None},
 				{"proxy_peer_connections", settings.proxyPeerConnections},
+				{"proxy_send_host_in_connect", settings.proxySendHostInConnect},
+				{"i2p_enabled", settings.enableI2p},
+				{"i2p_address", settings.i2pHostname},
+				{"i2p_port", settings.i2pPort},
+				{"i2p_mixed_mode", settings.allowI2pMixed},
+				{"i2p_inbound_quantity", settings.i2pInboundQuantity},
+				{"i2p_outbound_quantity", settings.i2pOutboundQuantity},
+				{"i2p_inbound_length", settings.i2pInboundLength},
+				{"i2p_outbound_length", settings.i2pOutboundLength},
 				{"max_connec", settings.connectionsLimit},
+				{"max_uploads", settings.unchokeSlotsLimit},
+				{"alert_queue_size", settings.alertQueueSize},
 				{"queueing_enabled", settings.queueingEnabled},
 				{"max_active_downloads", settings.activeDownloads},
 				{"max_active_uploads", settings.activeSeeds},
@@ -2505,6 +2544,9 @@ namespace OpenNet::Core::WebUI
 				{"file_pool_size", settings.filePoolSize},
 				{"checking_memory_use", settings.checkingMemUsage},
 				{"disk_queue_size", settings.diskQueueSize},
+				{"disable_v1_hashes_for_hybrid", settings.disableV1HashesForHybrid},
+				{"part_file_directory", settings.partFileDirectory},
+				{"max_torrent_directory_depth", settings.maxTorrentDirectoryDepth},
 				{"enable_piece_extent_affinity", settings.pieceExtentAffinity},
 				{"enable_upload_suggestions", settings.uploadSuggestions},
 				{"send_buffer_watermark", settings.sendBufferWatermark},
@@ -2734,10 +2776,20 @@ namespace OpenNet::Core::WebUI
 				setInteger("max_active_uploads", settings.activeSeeds, -1);
 				setInteger("max_active_torrents", settings.activeLimit, -1);
 				setInteger("max_connec", settings.connectionsLimit, -1);
+				setInteger("max_uploads", settings.unchokeSlotsLimit, -1);
+				setInteger("alert_queue_size", settings.alertQueueSize, 1000);
 				setBoolean("dht", settings.enableDht);
 				setString("dht_bootstrap_nodes", settings.dhtBootstrapNodes);
+				setBoolean("apply_ip_filter_to_dht", settings.applyIpFilterToDht);
+				setBoolean("webtorrent_enabled", settings.enableWebTorrent);
+				setString("webtorrent_stun_server", settings.webTorrentStunServer);
+				setInteger("max_webtorrent_offers", settings.maxWebTorrentOffers, 1);
+				setInteger("webtorrent_connection_timeout", settings.webTorrentConnectionTimeout, 5);
+				setInteger("min_websocket_announce_interval", settings.minWebSocketAnnounceInterval, 1);
 				setBoolean("lsd", settings.enableLsd);
 				setInteger("upnp_lease_duration", settings.upnpLeaseDuration);
+				setString("natpmp_gateway", settings.natPmpGateway);
+				setInteger("natpmp_lease_duration", settings.natPmpLeaseDuration);
 				if (parsed.contains("upnp"))
 				{
 					bool enabled = settings.enableUpnp || settings.enableNatpmp;
@@ -2762,6 +2814,9 @@ namespace OpenNet::Core::WebUI
 				setInteger("file_pool_size", settings.filePoolSize, 1);
 				setInteger("checking_memory_use", settings.checkingMemUsage, 1);
 				setInteger("disk_queue_size", settings.diskQueueSize);
+				setBoolean("disable_v1_hashes_for_hybrid", settings.disableV1HashesForHybrid);
+				setString("part_file_directory", settings.partFileDirectory);
+				setInteger("max_torrent_directory_depth", settings.maxTorrentDirectoryDepth, 1);
 				setBoolean("enable_piece_extent_affinity", settings.pieceExtentAffinity);
 				setBoolean("enable_upload_suggestions", settings.uploadSuggestions);
 				setInteger("send_buffer_watermark", settings.sendBufferWatermark);
@@ -2851,6 +2906,15 @@ namespace OpenNet::Core::WebUI
 				setString("proxy_username", settings.proxyUsername);
 				setString("proxy_password", settings.proxyPassword);
 				setBoolean("proxy_peer_connections", settings.proxyPeerConnections);
+				setBoolean("proxy_send_host_in_connect", settings.proxySendHostInConnect);
+				setBoolean("i2p_enabled", settings.enableI2p);
+				setString("i2p_address", settings.i2pHostname);
+				setInteger("i2p_port", settings.i2pPort, 1);
+				setBoolean("i2p_mixed_mode", settings.allowI2pMixed);
+				setInteger("i2p_inbound_quantity", settings.i2pInboundQuantity, 1);
+				setInteger("i2p_outbound_quantity", settings.i2pOutboundQuantity, 1);
+				setInteger("i2p_inbound_length", settings.i2pInboundLength);
+				setInteger("i2p_outbound_length", settings.i2pOutboundLength);
 				if (parsed.contains("proxy_type") || parsed.contains("proxy_auth_enabled")
 					|| parsed.contains("proxy_bittorrent"))
 				{
@@ -2878,6 +2942,8 @@ namespace OpenNet::Core::WebUI
 						settings.proxyType = authenticated
 						? ::OpenNet::Core::ProxyType::HttpPassword
 						: ::OpenNet::Core::ProxyType::Http;
+					else if (type == "I2P")
+						settings.proxyType = ::OpenNet::Core::ProxyType::I2pProxy;
 					else
 						throw std::invalid_argument("Unsupported proxy_type");
 				}
@@ -4100,7 +4166,7 @@ namespace OpenNet::Core::WebUI
 
 			for (const auto& task : manager.GetAllTasks())
 			{
-				const auto detail = core->GetTorrentDetail(task.taskId);
+				const auto detail = core->GetTorrentSummary(task.taskId);
 				if (detail.taskId.empty())
 					continue;
 				auto torrent = SerializeTorrent(task, detail);
@@ -4369,13 +4435,15 @@ namespace OpenNet::Core::WebUI
 			for (const auto& peer : torrent->second.peers)
 			{
 				const bool ipv6 = peer.ip.find(':') != std::string::npos;
-				const std::string address = ipv6
+				const std::string address = peer.port <= 0
+					? peer.ip
+					: ipv6
 					? ("[" + peer.ip + "]:" + std::to_string(peer.port))
 					: (peer.ip + ":" + std::to_string(peer.port));
-				std::string connection = "BT";
-				if (peer.connectionType == 1)
+				std::string connection = peer.isI2p ? "I2P" : "BT";
+				if (!peer.isI2p && peer.connectionType == 2)
 					connection = "Web";
-				else if (peer.connectionType == 2)
+				else if (!peer.isI2p && peer.connectionType == 4)
 					connection = "HTTP";
 				const double contribution =
 					(peer.totalUploaded > 0)
@@ -4383,7 +4451,7 @@ namespace OpenNet::Core::WebUI
 					/ std::max<std::int64_t>(
 						1, peer.totalDownloaded)
 					: 0.0;
-				auto countryCode = geo.LookupCountryCode(peer.ip);
+				auto countryCode = peer.isI2p ? std::string{} : geo.LookupCountryCode(peer.ip);
 				std::ranges::transform(
 					countryCode,
 					countryCode.begin(),
@@ -4391,10 +4459,10 @@ namespace OpenNet::Core::WebUI
 				{
 					return static_cast<char>(std::tolower(value));
 				});
-				auto const country = geo.LookupCountryName(peer.ip);
+				auto const country = peer.isI2p ? std::string{} : geo.LookupCountryName(peer.ip);
 				hasCountryData = hasCountryData
 					|| !countryCode.empty();
-				peers[address] = Json{
+				Json peerValue{
 					{"client", peer.client},
 					{"peer_id_client", peer.client},
 					{"progress", std::clamp(peer.progress, 0.0, 1.0)},
@@ -4418,6 +4486,8 @@ namespace OpenNet::Core::WebUI
 					{"country_code", std::move(countryCode)},
 					{"country", country}
 				};
+				if (peer.isI2p) peerValue["i2p_dest"] = peer.ip;
+				peers[address] = std::move(peerValue);
 			}
 			return JsonResponse(request, Json{
 				{"rid", NextResponseId(sessionId)},
@@ -4611,7 +4681,7 @@ namespace OpenNet::Core::WebUI
 			}
 			for (const auto& task : tasks)
 			{
-				const auto detail = core->GetTorrentDetail(task.taskId);
+				const auto detail = core->GetTorrentSummary(task.taskId);
 				if (requested.contains(detail.apiHash)
 					|| requested.contains(detail.infoHashV1)
 					|| requested.contains(task.taskId))

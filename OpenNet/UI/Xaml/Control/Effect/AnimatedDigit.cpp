@@ -1,4 +1,4 @@
-#include "XamlWorkaround.h"
+﻿#include "XamlWorkaround.h"
 #include "AnimatedDigit.h"
 #if __has_include("UI/Xaml/Control/Effect/AnimatedDigit.g.cpp")
 #include "UI/Xaml/Control/Effect/AnimatedDigit.g.cpp"
@@ -19,6 +19,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		constexpr auto AnimatedDigitsSetting = "animated_digits_enabled";
 		std::atomic_bool s_animationsEnabled{};
 		std::once_flag s_loadSetting;
+		std::mutex s_instancesMutex;
+		std::vector<winrt::weak_ref<AnimatedDigit>> s_instances;
 
 		bool IsDigit(std::int32_t const value) noexcept
 		{
@@ -33,6 +35,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		m_increaseNextAnimation = GetTemplateChild(L"IncreaseNextDigitTranslateAnimation").try_as<DoubleAnimation>();
 		m_decreaseCurrentAnimation = GetTemplateChild(L"DecreaseCurrentDigitTranslateAnimation").try_as<DoubleAnimation>();
 		m_decreaseNextAnimation = GetTemplateChild(L"DecreaseNextDigitTranslateAnimation").try_as<DoubleAnimation>();
+		{
+			std::lock_guard lock(s_instancesMutex);
+			std::erase_if(s_instances, [](auto const& instance)
+			{
+				return !instance.get();
+			});
+			s_instances.emplace_back(get_weak());
+		}
 		ApplyValue(false);
 	}
 
@@ -48,7 +58,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		m_isFirst = false;
 	}
 
-	std::int32_t AnimatedDigit::Value() const noexcept { return m_value; }
+	std::int32_t AnimatedDigit::Value() const noexcept
+	{
+		return m_value;
+	}
 
 	void AnimatedDigit::ApplyValue(bool const animate, std::int32_t const previousValue)
 	{
@@ -142,9 +155,12 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 				database.Initialize();
 				s_animationsEnabled.store(database.GetBool(
 					::OpenNet::Core::AppSettingsDatabase::CAT_UI,
-					AnimatedDigitsSetting).value_or(false), std::memory_order_relaxed);
+					AnimatedDigitsSetting).value_or(true), std::memory_order_relaxed);
 			}
-			catch (...) { s_animationsEnabled.store(false, std::memory_order_relaxed); }
+			catch (...)
+			{
+				s_animationsEnabled.store(true, std::memory_order_relaxed);
+			}
 		});
 		return s_animationsEnabled.load(std::memory_order_relaxed);
 	}
@@ -153,5 +169,20 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 	{
 		(void)AnimationsEnabled();
 		s_animationsEnabled.store(enabled, std::memory_order_relaxed);
+		if (enabled) return;
+
+		std::vector<winrt::com_ptr<AnimatedDigit>> instances;
+		{
+			std::lock_guard lock(s_instancesMutex);
+			for (auto const& weak : s_instances)
+			{
+				if (auto instance = weak.get()) instances.push_back(std::move(instance));
+			}
+			std::erase_if(s_instances, [](auto const& instance)
+			{
+				return !instance.get();
+			});
+		}
+		for (auto const& instance : instances) instance->ApplyValue(false);
 	}
 }

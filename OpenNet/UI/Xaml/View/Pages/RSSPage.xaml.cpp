@@ -319,14 +319,40 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			if (result == ContentDialogResult::Primary)
 			{
+				auto const previousTitle = feed.Title();
+				auto const previousUrl = feed.Url();
+				auto const previousSavePath = feed.SavePath();
+				auto const previousInterval = feed.UpdateIntervalMinutes();
+				auto const previousEnabled = feed.Enabled();
+				auto const previousAutoDownload = feed.AutoDownload();
+				auto const previousFilter = feed.FilterPattern();
+
 				feed.Title(dialog.FeedTitle());
 				feed.Url(dialog.FeedUrl());
 				feed.SavePath(dialog.FeedSavePath());
 				feed.UpdateIntervalMinutes(dialog.UpdateIntervalMinutes());
+				feed.Enabled(dialog.Enabled());
 				feed.AutoDownload(dialog.AutoDownload());
 				feed.FilterPattern(dialog.FilterPattern());
 
-				m_viewModel.UpdateFeedSettings(feed);
+				if (!m_viewModel.UpdateFeedSettings(feed))
+				{
+					feed.Title(previousTitle);
+					feed.Url(previousUrl);
+					feed.SavePath(previousSavePath);
+					feed.UpdateIntervalMinutes(previousInterval);
+					feed.Enabled(previousEnabled);
+					feed.AutoDownload(previousAutoDownload);
+					feed.FilterPattern(previousFilter);
+					co_return;
+				}
+
+				m_previousSelectedIndex = dialog.ItemDoubleClickAction();
+				m_enableWebViewPreview = dialog.EnableWebViewPreview();
+				if (!m_enableWebViewPreview && m_previewOpen) RSSPreviewFlyout().Hide();
+				auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+				database.SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "item_double_click_action", m_previousSelectedIndex);
+				database.SetBool(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "enable_webview_preview", m_enableWebViewPreview);
 			}
 		}
 		catch (winrt::hresult_error const& ex)

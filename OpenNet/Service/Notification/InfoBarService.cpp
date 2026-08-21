@@ -7,6 +7,28 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace
 {
+	std::uint32_t EstimateReadingTime(winrt::hstring const& text)
+	{
+		std::size_t cjkCount{};
+		std::size_t englishWordCount{};
+		bool inEnglishWord{};
+		for (auto const value : text)
+		{
+			if (value >= 0x4e00 && value <= 0x9fff) ++cjkCount;
+			auto const isEnglishLetter = (value >= L'A' && value <= L'Z') || (value >= L'a' && value <= L'z');
+			if (isEnglishLetter && !inEnglishWord) ++englishWordCount;
+			inEnglishWord = isEnglishLetter;
+		}
+		auto const seconds = static_cast<double>(cjkCount) / 250.0 * 60.0 + static_cast<double>(englishWordCount) / 200.0 * 60.0;
+		return static_cast<std::uint32_t>(std::ceil(seconds * 1000.0));
+	}
+
+	std::uint32_t DefaultDelay(InfoBarSeverity const severity, winrt::hstring const& title, winrt::hstring const& message)
+	{
+		if (severity == InfoBarSeverity::Error) return 0;
+		return 5000 + EstimateReadingTime(title) + EstimateReadingTime(message);
+	}
+
 	struct ActionCommand : winrt::implements<ActionCommand, winrt::Microsoft::UI::Xaml::Input::ICommand>
 	{
 		explicit ActionCommand(std::function<void()> action) : m_action(std::move(action))
@@ -44,6 +66,41 @@ namespace
 
 namespace OpenNet::Service::Notification
 {
+	InfoBarMessage InfoBarMessage::Error(hstring const& message)
+	{
+		return { InfoBarSeverity::Error, {}, message, nullptr, nullptr, nullptr, 0 };
+	}
+
+	InfoBarMessage InfoBarMessage::Error(hstring const& title, hstring const& message)
+	{
+		return { InfoBarSeverity::Error, title, message, nullptr, nullptr, nullptr, 0 };
+	}
+
+	InfoBarMessage InfoBarMessage::Information(hstring const& message)
+	{
+		return { InfoBarSeverity::Informational, {}, message };
+	}
+
+	InfoBarMessage InfoBarMessage::Success(hstring const& message)
+	{
+		return { InfoBarSeverity::Success, {}, message };
+	}
+
+	InfoBarMessage InfoBarMessage::Success(hstring const& title, hstring const& message)
+	{
+		return { InfoBarSeverity::Success, title, message };
+	}
+
+	InfoBarMessage InfoBarMessage::Warning(hstring const& message)
+	{
+		return { InfoBarSeverity::Warning, {}, message };
+	}
+
+	InfoBarMessage InfoBarMessage::Warning(hstring const& title, hstring const& message)
+	{
+		return { InfoBarSeverity::Warning, title, message };
+	}
+
 	InfoBarService& InfoBarService::Instance() noexcept
 	{
 		static InfoBarService instance;
@@ -52,7 +109,7 @@ namespace OpenNet::Service::Notification
 
 	void InfoBarService::AttachDispatcher(Microsoft::UI::Dispatching::DispatcherQueue const& dispatcher)
 	{
-		std::vector<PendingInfoBar> pending;
+		std::vector<InfoBarMessage> pending;
 		{
 			std::scoped_lock lock(m_mutex);
 			m_dispatcher = dispatcher;
@@ -75,6 +132,39 @@ namespace OpenNet::Service::Notification
 		return m_infoBars;
 	}
 
+	void InfoBarService::Show(InfoBarMessage message)
+	{
+		if (message.DelayMilliseconds == std::numeric_limits<std::uint32_t>::max())
+			message.DelayMilliseconds = DefaultDelay(message.Severity, message.Title, message.Message);
+
+		Microsoft::UI::Dispatching::DispatcherQueue dispatcher{ nullptr };
+		{
+			std::scoped_lock lock(m_mutex);
+			if (!m_dispatcher || !m_infoBars)
+			{
+				m_pending.emplace_back(std::move(message));
+				return;
+			}
+			dispatcher = m_dispatcher;
+		}
+
+		if (dispatcher.HasThreadAccess())
+		{
+			Enqueue(std::move(message));
+			return;
+		}
+
+		auto sharedMessage = std::make_shared<InfoBarMessage>(std::move(message));
+		if (!dispatcher.TryEnqueue([this, sharedMessage]() mutable
+		{
+			Enqueue(std::move(*sharedMessage));
+		}))
+		{
+			std::scoped_lock lock(m_mutex);
+			m_pending.emplace_back(std::move(*sharedMessage));
+		}
+	}
+
 	void InfoBarService::Show(
 		hstring const& title,
 		hstring const& message,
@@ -83,43 +173,17 @@ namespace OpenNet::Service::Notification
 		hstring const& actionText,
 		std::function<void()> action)
 	{
-		PendingInfoBar notification{
-			title,
-			message,
-			severity,
-			delayMilliseconds,
-			actionText,
-			std::move(action) };
-
-		Microsoft::UI::Dispatching::DispatcherQueue dispatcher{ nullptr };
+		InfoBarMessage notification{ severity, title, message };
+		notification.DelayMilliseconds = delayMilliseconds;
+		if (!actionText.empty() && action)
 		{
-			std::scoped_lock lock(m_mutex);
-			if (!m_dispatcher || !m_infoBars)
-			{
-				m_pending.emplace_back(std::move(notification));
-				return;
-			}
-			dispatcher = m_dispatcher;
+			notification.ActionButtonContent = box_value(actionText);
+			notification.ActionButtonCommand = make<ActionCommand>(std::move(action));
 		}
-
-		if (dispatcher.HasThreadAccess())
-		{
-			Enqueue(std::move(notification));
-			return;
-		}
-
-		auto sharedNotification = std::make_shared<PendingInfoBar>(std::move(notification));
-		if (!dispatcher.TryEnqueue([this, sharedNotification]() mutable
-		{
-			Enqueue(std::move(*sharedNotification));
-		}))
-		{
-			std::scoped_lock lock(m_mutex);
-			m_pending.emplace_back(std::move(*sharedNotification));
-		}
+		Show(std::move(notification));
 	}
 
-	void InfoBarService::Enqueue(PendingInfoBar notification)
+	void InfoBarService::Enqueue(InfoBarMessage notification)
 	{
 		Collection collection{ nullptr };
 		{
@@ -137,24 +201,10 @@ namespace OpenNet::Service::Notification
 		options.Title(notification.Title);
 		options.Message(notification.Message);
 		options.Severity(notification.Severity);
+		options.Content(notification.Content);
+		options.ActionButtonContent(notification.ActionButtonContent);
+		options.ActionButtonCommand(notification.ActionButtonCommand);
 		options.MilliSecondsDelay(notification.DelayMilliseconds);
-
-		if (!notification.ActionText.empty() && notification.Action)
-		{
-			options.ActionButtonContent(box_value(notification.ActionText));
-			auto weakOptions = make_weak(options);
-			options.ActionButtonCommand(make<ActionCommand>(
-				[this,
-				weakOptions,
-				action = std::move(notification.Action)]() mutable
-			{
-				action();
-				if (auto item = weakOptions.get())
-				{
-					Remove(item);
-				}
-			}));
-		}
 
 		// Match the reference notification stack: newest notifications appear at
 		// the top, while Clear All removes the oldest item from the tail first.

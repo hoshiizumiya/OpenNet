@@ -498,6 +498,33 @@
   <data name="RSSSettingsFilterTextBox.PlaceholderText" xml:space="preserve">
     <value>e.g., 1080p|720p</value>
   </data>
+  <data name="RSSSettingsEnabledToggle.Header" xml:space="preserve">
+    <value>Feed enabled</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OnContent" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="RSSSettingsEnabledToggle.OffContent" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="RSSSettingsDoubleClickActionBox.Header" xml:space="preserve">
+    <value>Double-click action</value>
+  </data>
+  <data name="RSSSettingsDoubleClickAddToTasks.Content" xml:space="preserve">
+    <value>Add to tasks</value>
+  </data>
+  <data name="RSSSettingsDoubleClickShowDetails.Content" xml:space="preserve">
+    <value>Show details</value>
+  </data>
+  <data name="RSSSettingsWebViewPreviewToggle.Header" xml:space="preserve">
+    <value>Show WebView preview</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Title" xml:space="preserve">
+    <value>Invalid feed settings</value>
+  </data>
+  <data name="RSSSettingsValidationInfoBar.Message" xml:space="preserve">
+    <value>Enter a valid HTTP or HTTPS feed URL.</value>
+  </data>
   <data name="RSSRemoveFeedDialog.Title" xml:space="preserve">
     <value>Remove Feed</value>
   </data>
@@ -4630,7 +4657,7 @@
     <value>general language update startup refresh theme</value>
   </data>
   <data name="SettingsBitTorrentSearchTags" xml:space="preserve">
-    <value>BitTorrent peer protocol connection encryption proxy cache disk performance WebTorrent</value>
+    <value>BitTorrent peer protocol connection encryption proxy cache disk performance WebTorrent WebRTC STUN I2P NAT-PMP</value>
   </data>
   <data name="SettingsNetworkSearchTags" xml:space="preserve">
     <value>network port listen IPv4 IPv6 TCP uTP UPnP NAT-PMP DHT proxy</value>
@@ -4973,5 +5000,185 @@
   </data>
   <data name="BT_UploadChokingAntiLeech.Content" xml:space="preserve">
     <value>Anti-leech</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Header" xml:space="preserve">
+    <value>Apply IP filter to DHT</value>
+  </data>
+  <data name="BT_ApplyIpFilterToDht.Description" xml:space="preserve">
+    <value>Reject filtered addresses in DHT traffic and routing entries.</value>
+  </data>
+  <data name="BT_WebTorrent.Header" xml:space="preserve">
+    <value>WebTorrent</value>
+  </data>
+  <data name="BT_WebTorrent.Description" xml:space="preserve">
+    <value>Enable WebRTC peers announced by WebSocket trackers.</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Header" xml:space="preserve">
+    <value>WebTorrent STUN server</value>
+  </data>
+  <data name="BT_WebTorrentStunServer.Description" xml:space="preserve">
+    <value>STUN endpoint in hostname:port format used for ICE traversal.</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Header" xml:space="preserve">
+    <value>Maximum WebTorrent offers</value>
+  </data>
+  <data name="BT_WebTorrentOffers.Description" xml:space="preserve">
+    <value>Maximum WebRTC offers per tracker announce and concurrent negotiations.</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Header" xml:space="preserve">
+    <value>WebTorrent connection timeout</value>
+  </data>
+  <data name="BT_WebTorrentTimeout.Description" xml:space="preserve">
+    <value>Time in seconds to wait for a WebRTC connection.</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Header" xml:space="preserve">
+    <value>Minimum WebSocket announce interval</value>
+  </data>
+  <data name="BT_WebSocketAnnounceInterval.Description" xml:space="preserve">
+    <value>Minimum accepted WebSocket tracker announce interval in seconds.</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Header" xml:space="preserve">
+    <value>Skip v1 hashes for hybrid torrents</value>
+  </data>
+  <data name="BT_DisableV1HashesForHybrid.Description" xml:space="preserve">
+    <value>Validate hybrid torrents with v2 SHA-256 hashes only to reduce disk I/O and CPU use.</value>
+  </data>
+  <data name="BT_PartFileDirectory.Header" xml:space="preserve">
+    <value>Part-file directory</value>
+  </data>
+  <data name="BT_PartFileDirectory.Description" xml:space="preserve">
+    <value>Optional relative subdirectory for partial data belonging to skipped files.</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Header" xml:space="preserve">
+    <value>Maximum torrent directory depth</value>
+  </data>
+  <data name="BT_MaxTorrentDirectoryDepth.Description" xml:space="preserve">
+    <value>Reject torrent metadata whose file tree exceeds this nesting depth.</value>
+  </data>
+  <data name="BT_Proxy_I2p.Content" xml:space="preserve">
+    <value>I2P proxy</value>
+  </data>
+  <data name="BT_NatPmpGateway.Header" xml:space="preserve">
+    <value>NAT-PMP gateway</value>
+  </data>
+  <data name="BT_NatPmpLeaseDuration.Header" xml:space="preserve">
+    <value>NAT-PMP lease duration (seconds)</value>
+  </data>
+  <data name="BT_ProxySendHostInConnect.Header" xml:space="preserve">
+    <value>Send host name in HTTP CONNECT</value>
+  </data>
+  <data name="BT_I2p.Header" xml:space="preserve">
+    <value>I2P</value>
+  </data>
+  <data name="BT_I2pHostname.Header" xml:space="preserve">
+    <value>I2P SAM host</value>
+  </data>
+  <data name="BT_I2pPort.Header" xml:space="preserve">
+    <value>I2P SAM port</value>
+  </data>
+  <data name="BT_I2pMixedMode.Header" xml:space="preserve">
+    <value>Allow mixed I2P and Internet peers</value>
+  </data>
+  <data name="BT_I2pInboundQuantity.Header" xml:space="preserve">
+    <value>I2P inbound tunnel quantity</value>
+  </data>
+  <data name="BT_I2pOutboundQuantity.Header" xml:space="preserve">
+    <value>I2P outbound tunnel quantity</value>
+  </data>
+  <data name="BT_I2pInboundLength.Header" xml:space="preserve">
+    <value>I2P inbound tunnel length</value>
+  </data>
+  <data name="BT_I2pOutboundLength.Header" xml:space="preserve">
+    <value>I2P outbound tunnel length</value>
+  </data>
+  <data name="BT_I2pInboundVariance.Header" xml:space="preserve">
+    <value>I2P inbound length variance</value>
+  </data>
+  <data name="BT_I2pOutboundVariance.Header" xml:space="preserve">
+    <value>I2P outbound length variance</value>
+  </data>
+  <data name="BT_I2p.Description" xml:space="preserve">
+    <value>Enable I2P torrents through a SAM bridge; I2P PEX is handled by libtorrent 2.1.</value>
+  </data>
+  <data name="TorrentTaskLimitsSection.Text" xml:space="preserve">
+    <value>Task limits</value>
+  </data>
+  <data name="TorrentTaskDownloadLimit.Header" xml:space="preserve">
+    <value>Maximum download rate (KiB/s)</value>
+  </data>
+  <data name="TorrentTaskUploadLimit.Header" xml:space="preserve">
+    <value>Maximum upload rate (KiB/s)</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRate.Header" xml:space="preserve">
+    <value>Preferred minimum upload rate (KiB/s)</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Title" xml:space="preserve">
+    <value>Minimum rate target</value>
+  </data>
+  <data name="TorrentTaskMinimumUploadRateInfo.Message" xml:space="preserve">
+    <value>libtorrent has no hard minimum-rate guarantee. OpenNet stores this target and shows it in the task row; the engine still depends on peer demand and global limits.</value>
+  </data>
+  <data name="TorrentTaskMaxConnections.Header" xml:space="preserve">
+    <value>Maximum connections</value>
+  </data>
+  <data name="TorrentTaskMaxUploads.Header" xml:space="preserve">
+    <value>Maximum upload slots</value>
+  </data>
+  <data name="TorrentTaskDiscoverySection.Text" xml:space="preserve">
+    <value>Peer discovery and behavior</value>
+  </data>
+  <data name="TorrentTaskEnableDht.Header" xml:space="preserve">
+    <value>Use DHT for this task</value>
+  </data>
+  <data name="TorrentTaskEnableLsd.Header" xml:space="preserve">
+    <value>Use local peer discovery for this task</value>
+  </data>
+  <data name="TorrentTaskEnablePex.Header" xml:space="preserve">
+    <value>Use peer exchange for this task</value>
+  </data>
+  <data name="TorrentTaskApplyIpFilter.Header" xml:space="preserve">
+    <value>Apply IP filter</value>
+  </data>
+  <data name="TorrentTaskSequentialDownload.Header" xml:space="preserve">
+    <value>Sequential download</value>
+  </data>
+  <data name="TorrentTaskSuperSeeding.Header" xml:space="preserve">
+    <value>Super seeding</value>
+  </data>
+  <data name="TorrentTaskForceStart.Header" xml:space="preserve">
+    <value>Force start and bypass queue</value>
+  </data>
+  <data name="TorrentTaskUploadMode.Header" xml:space="preserve">
+    <value>Upload-only mode</value>
+  </data>
+  <data name="TorrentTaskShareMode.Header" xml:space="preserve">
+    <value>Share mode</value>
+  </data>
+  <data name="TorrentTaskSettingsStatus.Title" xml:space="preserve">
+    <value>Task settings</value>
+  </data>
+  <data name="TorrentTaskApplySettingsButton.Content" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="TorrentTaskSettingsApplied" xml:space="preserve">
+    <value>Task settings applied.</value>
+  </data>
+  <data name="TorrentTaskSettingsApplyFailed" xml:space="preserve">
+    <value>Task settings could not be applied.</value>
+  </data>
+  <data name="TorrentTaskSettingsInvalidLimits" xml:space="preserve">
+    <value>The rate values are invalid, or the minimum upload target is greater than the maximum upload limit.</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Header" xml:space="preserve">
+    <value>Global upload slots</value>
+  </data>
+  <data name="BT_UnchokeSlotsLimit.Description" xml:space="preserve">
+    <value>Maximum peers unchoked globally; -1 is unlimited.</value>
+  </data>
+  <data name="BT_AlertQueueSize.Header" xml:space="preserve">
+    <value>Alert queue capacity</value>
+  </data>
+  <data name="BT_AlertQueueSize.Description" xml:space="preserve">
+    <value>Maximum pending libtorrent alerts before low-priority alerts may be dropped.</value>
   </data>
 </root>

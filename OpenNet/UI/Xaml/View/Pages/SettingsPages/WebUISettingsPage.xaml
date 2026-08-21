@@ -47,6 +47,7 @@
                 <ComboBox
                     x:Name="FrontendComboBox"
                     MinWidth="220"
+                    essential:ComboBoxHelper.AcrylicWorkaround="True"
                     SelectedIndex="0">
                     <ComboBoxItem Content="qBittorrent WebUI" />
                     <ComboBoxItem Content="VueTorrent (WinUI theme)" />

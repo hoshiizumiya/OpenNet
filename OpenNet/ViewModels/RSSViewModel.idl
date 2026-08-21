@@ -56,7 +56,7 @@
 		void RefreshFeed(String feedId);
 		void RefreshAllFeeds();
 		void DownloadItem(RSSItemViewModel item);
-		void UpdateFeedSettings(RSSFeedViewModel feed);
+		Boolean UpdateFeedSettings(RSSFeedViewModel feed);
 		void SetStatusMessage(String message);
 	}
 }

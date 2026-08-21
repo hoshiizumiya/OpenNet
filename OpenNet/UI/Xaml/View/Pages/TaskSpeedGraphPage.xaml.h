@@ -48,13 +48,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::uint64_t User{};
 		};
 
-		void RecreateGraphStreams(
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
+		void RecreateGraphStreams(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
 		void ApplyGraphSettings();
 		void ApplyBrushStrokeWidth();
-		void OnSettingsPropertyChanged(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
+		void OnSettingsPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void DisposeBrushes() noexcept;
 		std::size_t RequiredSeriesCount() const;
 		std::vector<float> SampleProcessorUsage();
@@ -69,8 +66,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		static winrt::hstring FormatRate(double value);
 
 		bool m_isInitialized{};
-		winrt::OpenNet::ViewModels::TaskSpeedGraphSettingsViewModel
-			m_settings{ nullptr };
+		winrt::OpenNet::ViewModels::TaskSpeedGraphSettingsViewModel m_settings{ nullptr };
 		winrt::event_token m_settingsPropertyChangedToken{};
 		std::atomic<MetricMode> m_mode{ MetricMode::TransferSpeed };
 		std::mutex m_graphStateMutex;
@@ -100,8 +96,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::factory_implementation
 {
-	struct TaskSpeedGraphPage :
-		TaskSpeedGraphPageT<TaskSpeedGraphPage, implementation::TaskSpeedGraphPage>
+	struct TaskSpeedGraphPage : TaskSpeedGraphPageT<TaskSpeedGraphPage, implementation::TaskSpeedGraphPage>
 	{
 	};
 }

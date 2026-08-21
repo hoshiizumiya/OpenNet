@@ -105,6 +105,11 @@
                             IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
                             ItemsSource="{x:Bind Children}">
                             <labs:DataRow>
+                                <labs:DataRow.Resources>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="VerticalAlignment" Value="Center" />
+                                    </Style>
+                                </labs:DataRow.Resources>
                                 <TextBlock
                                     VerticalAlignment="Center"
                                     FontWeight="Normal"

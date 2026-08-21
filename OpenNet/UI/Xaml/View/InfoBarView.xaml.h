@@ -27,13 +27,15 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		void OnInfoBarsVectorChanged(winrt::Windows::Foundation::Collections::IObservableVector<OpenNet::Service::Notification::InfoBarOptions> const&, winrt::Windows::Foundation::Collections::IVectorChangedEventArgs const& args);
 		void SubscribeInfoBars();
 		void UnsubscribeInfoBars();
-		winrt::fire_and_forget HandleInfoBarsCollectionChangedAsync(bool added);
+		void SynchronizeState();
+		winrt::fire_and_forget HandleInfoBarsCollectionChangedAsync(bool added, std::uint64_t version);
 		void UpdateBadge();
 
 		winrt::Windows::Foundation::Collections::IObservableVector<OpenNet::Service::Notification::InfoBarOptions> m_infoBars{ nullptr };
 		winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer	m_clearTimer{ nullptr };
 		winrt::event_token m_infoBarsChangedToken{};
 		bool m_infoBarsSubscribed{};
+		std::uint64_t m_transitionVersion{};
 	};
 }
 

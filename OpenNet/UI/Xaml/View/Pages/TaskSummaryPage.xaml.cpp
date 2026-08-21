@@ -131,8 +131,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto const taskId = to_string(task.TaskId());
-		auto const detail = core->GetTorrentDetail(taskId);
-		auto const pieces = core->GetTorrentPieceInfo(taskId);
+		auto const detail = core->GetTorrentSummary(taskId);
+		auto const pieces = core->GetTorrentPieceSummary(taskId);
 		auto const progress = detail.progressPpm / 10000.0;
 		TaskSpeedGraph().SetSpeed(
 			progress,
@@ -153,13 +153,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		UploadSpeedText().Text(FormatRate(detail.uploadRate));
 		TimeElapsedText().Text(FormatDuration(detail.activeTimeSeconds));
 		SeedingTimeText().Text(FormatDuration(detail.seedingTimeSeconds));
+		auto const downloadLimit = core->GetTorrentDownloadLimit(taskId);
+		auto const uploadLimit = core->GetTorrentUploadLimit(taskId);
 		DownloadLimitText().Text(
-			core->GetTorrentDownloadLimit(taskId) > 0
-			? FormatRate(core->GetTorrentDownloadLimit(taskId))
+			downloadLimit > 0
+			? FormatRate(downloadLimit)
 			: hstring{ L"Unlimited" });
 		UploadLimitText().Text(
-			core->GetTorrentUploadLimit(taskId) > 0
-			? FormatRate(core->GetTorrentUploadLimit(taskId))
+			uploadLimit > 0
+			? FormatRate(uploadLimit)
 			: hstring{ L"Unlimited" });
 		SeedsText().Text(
 			detail.numComplete >= 0

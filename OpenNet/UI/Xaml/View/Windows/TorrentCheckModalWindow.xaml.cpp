@@ -114,7 +114,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		DownloadOptionsPanel().Visibility(Visibility::Collapsed);
 		StartDownloadButton().Visibility(Visibility::Collapsed);
 		CloseButton().Content(box_value(ResourceGetString(L"CommonClose")));
-		TrackerListTextBox().IsReadOnly(true);
+		AdvancedSelectorBarItem().Visibility(Visibility::Visible);
+		ApplyTaskSettingsButton().Visibility(Visibility::Visible);
 
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (!core)
@@ -125,6 +126,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		auto const taskId = winrt::to_string(task.TaskId());
 		auto const detail = core->GetTorrentDetail(taskId);
+		PopulateTaskSettings(core->GetTorrentTaskSettings(taskId));
 		if (detail.name.empty() && detail.infoHash.empty() && detail.files.empty())
 		{
 			ShowError(ResourceGetString(L"ViewTorrentCheckModalWindowMetadataUnavailable"));
@@ -168,6 +170,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel.SavePath(winrt::to_hstring(detail.savePath));
 		m_metadataViewModel.MetadataStatus(L"Current task metadata");
 		NavigateToGeneralPage();
+	}
+
+	void TorrentCheckModalWindow::PopulateTaskSettings(::OpenNet::Core::Torrent::LibtorrentHandle::TorrentTaskSettings const& settings)
+	{
+		TaskDownloadLimitNumberBox().Value(settings.downloadLimit / 1024.0);
+		TaskUploadLimitNumberBox().Value(settings.uploadLimit / 1024.0);
+		TaskMinimumUploadRateNumberBox().Value(settings.minimumUploadRate / 1024.0);
+		TaskMaxConnectionsNumberBox().Value(settings.maxConnections);
+		TaskMaxUploadsNumberBox().Value(settings.maxUploads);
+		TaskEnableDhtToggle().IsOn(settings.enableDht);
+		TaskEnableLsdToggle().IsOn(settings.enableLsd);
+		TaskEnablePexToggle().IsOn(settings.enablePex);
+		TaskApplyIpFilterToggle().IsOn(settings.applyIpFilter);
+		TaskSequentialDownloadToggle().IsOn(settings.sequentialDownload);
+		TaskSuperSeedingToggle().IsOn(settings.superSeeding);
+		TaskForceStartToggle().IsOn(settings.forceStart);
+		TaskUploadModeToggle().IsOn(settings.uploadMode);
+		TaskShareModeToggle().IsOn(settings.shareMode);
 	}
 
 	void TorrentCheckModalWindow::StartParseMetadata()
@@ -426,7 +446,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		TrackerListTextBox().Text(text);
 	}
 
-        std::vector<std::string> TorrentCheckModalWindow::GetTaskTrackers()
+	std::vector<std::string> TorrentCheckModalWindow::GetTaskTrackers()
 	{
 		std::vector<std::string> trackers;
 		if (!TrackerListTextBox())
@@ -455,7 +475,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	}
 
 	IAsyncOperation<bool>
-	TorrentCheckModalWindow::ConfirmTorrentCopyOverwriteAsync()
+		TorrentCheckModalWindow::ConfirmTorrentCopyOverwriteAsync()
 	{
 		auto const checked = SaveTorrentCopyCheckBox().IsChecked();
 		if (!checked || !checked.Value() || !m_metadataReady)
@@ -468,46 +488,46 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			stem = m_metadataViewModel.InfoHash().c_str();
 		}
-                for (auto& ch : stem)
-                {
-                        if (ch == L'<' || ch == L'>' || ch == L':' || ch == L'"'
-                                || ch == L'/' || ch == L'\\' || ch == L'|'
-                                || ch == L'?' || ch == L'*' || ch < L' ')
-                        {
-                                ch = L'_';
-                        }
-                }
-                while (!stem.empty() && (stem.back() == L'.' || stem.back() == L' '))
-                {
-                        stem.pop_back();
-                }
+		for (auto& ch : stem)
+		{
+			if (ch == L'<' || ch == L'>' || ch == L':' || ch == L'"'
+				|| ch == L'/' || ch == L'\\' || ch == L'|'
+				|| ch == L'?' || ch == L'*' || ch < L' ')
+			{
+				ch = L'_';
+			}
+		}
+		while (!stem.empty() && (stem.back() == L'.' || stem.back() == L' '))
+		{
+			stem.pop_back();
+		}
 		if (stem.empty()) stem = L"torrent";
 
-                auto targetDirectory = std::filesystem::path{
-                        m_metadataViewModel.SavePath().c_str() };
-                auto const copyLocation =
-                        SaveTorrentCopyLocationComboBox().SelectedIndex();
-                bool hasContentDirectory = false;
-                for (auto const& file : m_metadataViewModel.Files())
-                {
-                        auto const path = std::wstring{ file.FilePath().c_str() };
-                        if (path.find(L'/') != std::wstring::npos
-                                || path.find(L'\\') != std::wstring::npos)
-                        {
-                                hasContentDirectory = true;
-                                break;
-                        }
-                }
-                if (copyLocation == 1 && hasContentDirectory)
-                {
-                        targetDirectory /= stem;
-                }
-                auto const targetFile = targetDirectory / (stem + L".torrent");
-                std::error_code error;
-                if (!std::filesystem::exists(targetFile, error) || error)
-                {
-                        co_return true;
-                }
+		auto targetDirectory = std::filesystem::path{
+				m_metadataViewModel.SavePath().c_str() };
+		auto const copyLocation =
+			SaveTorrentCopyLocationComboBox().SelectedIndex();
+		bool hasContentDirectory = false;
+		for (auto const& file : m_metadataViewModel.Files())
+		{
+			auto const path = std::wstring{ file.FilePath().c_str() };
+			if (path.find(L'/') != std::wstring::npos
+				|| path.find(L'\\') != std::wstring::npos)
+			{
+				hasContentDirectory = true;
+				break;
+			}
+		}
+		if (copyLocation == 1 && hasContentDirectory)
+		{
+			targetDirectory /= stem;
+		}
+		auto const targetFile = targetDirectory / (stem + L".torrent");
+		std::error_code error;
+		if (!std::filesystem::exists(targetFile, error) || error)
+		{
+			co_return true;
+		}
 
 		auto const dialog = TorrentCopyOverwriteDialog();
 		dialog.XamlRoot(GridRoot().XamlRoot());
@@ -519,16 +539,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		TorrentCopyOverwritePathText().Text(winrt::hstring{ targetFile.c_str() });
 		if (co_await dialog.ShowAsync() !=
 			ContentDialogResult::Primary)
-                {
-                        co_return false;
-                }
+		{
+			co_return false;
+		}
 
-                auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
-                settingsDb.Initialize();
-                settingsDb.SetStringW(
-                        ::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
-                        "torrentCopyOverwritePath",
-                        targetFile.lexically_normal().wstring());
+		auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		settingsDb.Initialize();
+		settingsDb.SetStringW(
+			::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+			"torrentCopyOverwritePath",
+			targetFile.lexically_normal().wstring());
 		co_return true;
 	}
 
@@ -580,18 +600,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 			bool success = false;
 			auto taskTrackers = GetTaskTrackers();
-                        auto const startChecked = StartImmediatelyCheckBox().IsChecked();
-                        auto const startImmediately = startChecked && startChecked.Value();
-                        auto const saveChecked = SaveTorrentCopyCheckBox().IsChecked();
-                        auto const saveTorrentCopy = saveChecked && saveChecked.Value();
+			auto const startChecked = StartImmediatelyCheckBox().IsChecked();
+			auto const startImmediately = startChecked && startChecked.Value();
+			auto const saveChecked = SaveTorrentCopyCheckBox().IsChecked();
+			auto const saveTorrentCopy = saveChecked && saveChecked.Value();
 			settingsDb.SetBool(
 				::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
-                                "saveTorrentCopyToDownloadDirectory",
-                                saveTorrentCopy);
-                        settingsDb.SetInt(
-                                ::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
-                                "torrentCopyLocation",
-                                SaveTorrentCopyLocationComboBox().SelectedIndex());
+				"saveTorrentCopyToDownloadDirectory",
+				saveTorrentCopy);
+			settingsDb.SetInt(
+				::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+				"torrentCopyLocation",
+				SaveTorrentCopyLocationComboBox().SelectedIndex());
 
 			// Determine if it's a magnet link or a torrent file
 			if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsMagnetLink(torrentSource))
@@ -663,6 +683,66 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		StartDownloadAsync().Completed([](auto const&, auto const&)
 		{});
+	}
+
+	void TorrentCheckModalWindow::ApplyTaskSettingsButton_Click(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (!m_existingTaskMode || !m_taskViewModel) return;
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		if (!core) return;
+
+		auto const downloadLimit = TaskDownloadLimitNumberBox().Value();
+		auto const uploadLimit = TaskUploadLimitNumberBox().Value();
+		auto const minimumUploadRate = TaskMinimumUploadRateNumberBox().Value();
+		if (!std::isfinite(downloadLimit) || !std::isfinite(uploadLimit) || !std::isfinite(minimumUploadRate) || (uploadLimit > 0.0 && minimumUploadRate > uploadLimit))
+		{
+			TaskSettingsStatusInfoBar().Severity(InfoBarSeverity::Error);
+			TaskSettingsStatusInfoBar().Message(ResourceGetString(L"TorrentTaskSettingsInvalidLimits"));
+			TaskSettingsStatusInfoBar().IsOpen(true);
+			return;
+		}
+
+		::OpenNet::Core::Torrent::LibtorrentHandle::TorrentTaskSettings settings;
+		settings.downloadLimit = static_cast<int>(downloadLimit * 1024.0);
+		settings.uploadLimit = static_cast<int>(uploadLimit * 1024.0);
+		settings.minimumUploadRate = static_cast<int>(minimumUploadRate * 1024.0);
+		settings.maxConnections = static_cast<int>(TaskMaxConnectionsNumberBox().Value());
+		settings.maxUploads = static_cast<int>(TaskMaxUploadsNumberBox().Value());
+		settings.enableDht = TaskEnableDhtToggle().IsOn();
+		settings.enableLsd = TaskEnableLsdToggle().IsOn();
+		settings.enablePex = TaskEnablePexToggle().IsOn();
+		settings.applyIpFilter = TaskApplyIpFilterToggle().IsOn();
+		settings.sequentialDownload = TaskSequentialDownloadToggle().IsOn();
+		settings.superSeeding = TaskSuperSeedingToggle().IsOn();
+		settings.forceStart = TaskForceStartToggle().IsOn();
+		settings.uploadMode = TaskUploadModeToggle().IsOn();
+		settings.shareMode = TaskShareModeToggle().IsOn();
+		auto const taskId = winrt::to_string(m_taskViewModel.TaskId());
+		auto const applied = core->SetTorrentTaskSettings(taskId, settings);
+		if (applied)
+		{
+			auto const detail = core->GetTorrentDetail(taskId);
+			auto const desiredTrackers = GetTaskTrackers();
+			std::unordered_set<std::string> currentTrackerSet;
+			for (auto const& tracker : detail.trackers) currentTrackerSet.insert(tracker.url);
+			std::unordered_set<std::string> desiredTrackerSet(desiredTrackers.begin(), desiredTrackers.end());
+			std::vector<std::string> removedTrackers;
+			for (auto const& tracker : currentTrackerSet)
+			{
+				if (!desiredTrackerSet.contains(tracker)) removedTrackers.push_back(tracker);
+			}
+			std::vector<std::string> addedTrackers;
+			for (auto const& tracker : desiredTrackers)
+			{
+				if (!currentTrackerSet.contains(tracker)) addedTrackers.push_back(tracker);
+			}
+			if (!removedTrackers.empty()) core->RemoveTrackers(taskId, removedTrackers);
+			if (!addedTrackers.empty()) core->AddTrackers(taskId, addedTrackers);
+			PopulateTaskSettings(core->GetTorrentTaskSettings(taskId));
+		}
+		TaskSettingsStatusInfoBar().Severity(applied ? InfoBarSeverity::Success : InfoBarSeverity::Error);
+		TaskSettingsStatusInfoBar().Message(ResourceGetString(applied ? L"TorrentTaskSettingsApplied" : L"TorrentTaskSettingsApplyFailed"));
+		TaskSettingsStatusInfoBar().IsOpen(true);
 	}
 
 	void TorrentCheckModalWindow::CancelButton_Click(
@@ -740,9 +820,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		m_selectedTabIndex = selectedIndex;
 
+		TrackersPanel().Visibility(Visibility::Collapsed);
+		AdvancedPanel().Visibility(Visibility::Collapsed);
+		TorrentCheckFrame().Visibility(Visibility::Collapsed);
 		if (selectedIndex == 0)
 		{
-			TrackersPanel().Visibility(Visibility::Collapsed);
 			TorrentCheckFrame().Visibility(Visibility::Visible);
 			if (auto frame = TorrentCheckFrame())
 			{
@@ -752,28 +834,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 					m_metadataViewModel);
 			}
 		}
+		else if (selectedIndex == 1)
+		{
+			TrackersPanel().Visibility(Visibility::Visible);
+		}
 		else
 		{
-			TorrentCheckFrame().Visibility(Visibility::Collapsed);
-			TrackersPanel().Visibility(Visibility::Visible);
+			AdvancedPanel().Visibility(Visibility::Visible);
 		}
 	}
 
 	void TorrentCheckModalWindow::TorrentCreateGrid_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		LoadExistingTask(m_taskViewModel);
+		if (m_existingTaskMode) LoadExistingTask(m_taskViewModel);
 
 		auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		settingsDb.Initialize();
-                SaveTorrentCopyCheckBox().IsChecked(settingsDb.GetBool(
+		SaveTorrentCopyCheckBox().IsChecked(settingsDb.GetBool(
 			::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
-                        "saveTorrentCopyToDownloadDirectory").value_or(false));
-                SaveTorrentCopyLocationComboBox().SelectedIndex(
-                        static_cast<int>(std::clamp<std::int64_t>(
-                                settingsDb.GetInt(
-                                        ::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
-                                        "torrentCopyLocation").value_or(0),
-                                0, 1)));
+			"saveTorrentCopyToDownloadDirectory").value_or(false));
+		SaveTorrentCopyLocationComboBox().SelectedIndex(
+			static_cast<int>(std::clamp<std::int64_t>(
+				settingsDb.GetInt(
+					::OpenNet::Core::AppSettingsDatabase::CAT_TORRENT,
+					"torrentCopyLocation").value_or(0),
+				0, 1)));
 
 		NavigateToGeneralPage();
 		if (!m_existingTaskMode)

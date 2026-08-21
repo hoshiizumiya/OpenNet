@@ -13,6 +13,7 @@
     <Page.Resources>
         <Flyout
             x:Name="RSSPreviewFlyout"
+            essential:FlyoutHelper.AcrylicWorkaround="True"
             Closed="RSSPreviewFlyout_Closed"
             Opened="RSSPreviewFlyout_Opened"
             Placement="Right"

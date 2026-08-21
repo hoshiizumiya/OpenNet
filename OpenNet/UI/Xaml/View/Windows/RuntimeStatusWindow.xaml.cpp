@@ -842,6 +842,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				utpPeers,
 				proxyPeers));
 		row(
+			L"WebTorrent / WebRTC",
+			torrentSettings.enableWebTorrent
+			? std::format(
+				L"Enabled; STUN {}; {} offers; {} s timeout",
+				to_hstring(torrentSettings.webTorrentStunServer).c_str(),
+				torrentSettings.maxWebTorrentOffers,
+				torrentSettings.webTorrentConnectionTimeout)
+			: L"Disabled");
+		row(
+			L"I2P / PEX",
+			torrentSettings.enableI2p
+			? std::format(L"Enabled via {}:{}; mixed mode {}", to_hstring(torrentSettings.i2pHostname).c_str(), torrentSettings.i2pPort, torrentSettings.allowI2pMixed ? L"enabled" : L"disabled")
+			: L"Disabled");
+		row(L"Internal peer bans", std::to_wstring(stats.internalBannedIps));
+		row(
 			L"HTTP connection activity",
 			std::format(
 				L"{} active / {} waiting tasks (Aria2 reports tasks, not sockets)",

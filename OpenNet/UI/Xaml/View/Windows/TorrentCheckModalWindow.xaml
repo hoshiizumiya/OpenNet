@@ -21,9 +21,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ContentDialog
-            x:Name="TorrentCopyOverwriteDialog"
-            DefaultButton="Close">
+        <ContentDialog x:Name="TorrentCopyOverwriteDialog" DefaultButton="Close">
             <StackPanel Spacing="8">
                 <TextBlock
                     x:Uid="TorrentCopyOverwriteMessageText"
@@ -62,8 +60,12 @@
                     IsSelected="True"
                     Text="General" />
                 <SelectorBarItem x:Uid="ViewTorrentCheckModalWindowSelectorBarItem" Text="Trackers" />
-                <!--<SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced" Text="Advanced"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced"/>
-                <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher" Text="Publisher"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher"/>
+                <SelectorBarItem
+                    x:Name="AdvancedSelectorBarItem"
+                    x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced"
+                    Text="Advanced"
+                    Visibility="Collapsed" />
+                <!--<SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher" Text="Publisher"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Publisher"/>
                 <SelectorBarItem x:Uid="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder" Text="Download Order"  AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_DownloadOrder"/>-->
             </SelectorBar.Items>
         </SelectorBar>
@@ -116,6 +118,99 @@
                     Text="The app-wide custom tracker switch and subscriptions are managed in Network settings."
                     TextWrapping="Wrap" />
             </Grid>
+            <ScrollViewer
+                x:Name="AdvancedPanel"
+                Padding="16,0,16,16"
+                Visibility="Collapsed">
+                <StackPanel
+                    MaxWidth="1000"
+                    HorizontalAlignment="Stretch"
+                    Spacing="4">
+                    <TextBlock
+                        x:Uid="TorrentTaskLimitsSection"
+                        Margin="1,16,0,6"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="Task limits" />
+                    <essential:SettingsCard x:Uid="TorrentTaskDownloadLimit">
+                        <NumberBox
+                            x:Name="TaskDownloadLimitNumberBox"
+                            Maximum="104857600"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskUploadLimit">
+                        <NumberBox
+                            x:Name="TaskUploadLimitNumberBox"
+                            Maximum="104857600"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskMinimumUploadRate">
+                        <NumberBox
+                            x:Name="TaskMinimumUploadRateNumberBox"
+                            Maximum="104857600"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <InfoBar
+                        x:Uid="TorrentTaskMinimumUploadRateInfo"
+                        IsClosable="False"
+                        IsOpen="True"
+                        Severity="Informational" />
+                    <essential:SettingsCard x:Uid="TorrentTaskMaxConnections">
+                        <NumberBox
+                            x:Name="TaskMaxConnectionsNumberBox"
+                            Maximum="65535"
+                            Minimum="-1"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskMaxUploads">
+                        <NumberBox
+                            x:Name="TaskMaxUploadsNumberBox"
+                            Maximum="65535"
+                            Minimum="-1"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <TextBlock
+                        x:Uid="TorrentTaskDiscoverySection"
+                        Margin="1,16,0,6"
+                        Style="{StaticResource BodyStrongTextBlockStyle}"
+                        Text="Peer discovery and behavior" />
+                    <essential:SettingsCard x:Uid="TorrentTaskEnableDht">
+                        <ToggleSwitch x:Name="TaskEnableDhtToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskEnableLsd">
+                        <ToggleSwitch x:Name="TaskEnableLsdToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskEnablePex">
+                        <ToggleSwitch x:Name="TaskEnablePexToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskApplyIpFilter">
+                        <ToggleSwitch x:Name="TaskApplyIpFilterToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskSequentialDownload">
+                        <ToggleSwitch x:Name="TaskSequentialDownloadToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskSuperSeeding">
+                        <ToggleSwitch x:Name="TaskSuperSeedingToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskForceStart">
+                        <ToggleSwitch x:Name="TaskForceStartToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskUploadMode">
+                        <ToggleSwitch x:Name="TaskUploadModeToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="TorrentTaskShareMode">
+                        <ToggleSwitch x:Name="TaskShareModeToggle" />
+                    </essential:SettingsCard>
+                    <InfoBar
+                        x:Name="TaskSettingsStatusInfoBar"
+                        x:Uid="TorrentTaskSettingsStatus"
+                        IsClosable="True"
+                        IsOpen="False"
+                        Severity="Success" />
+                </StackPanel>
+            </ScrollViewer>
         </Grid>
 
         <!--  Bottom Action Bar  -->
@@ -149,14 +244,11 @@
                 <ComboBox
                     x:Name="SaveTorrentCopyLocationComboBox"
                     MinWidth="190"
+                    essential:ComboBoxHelper.AcrylicWorkaround="True"
                     IsEnabled="{Binding IsChecked, ElementName=SaveTorrentCopyCheckBox, Mode=OneWay}"
                     SelectedIndex="0">
-                    <ComboBoxItem
-                        x:Uid="TorrentCopyLocationDownloadFolder"
-                        Content="Download target folder" />
-                    <ComboBoxItem
-                        x:Uid="TorrentCopyLocationContentFolder"
-                        Content="Torrent content folder" />
+                    <ComboBoxItem x:Uid="TorrentCopyLocationDownloadFolder" Content="Download target folder" />
+                    <ComboBoxItem x:Uid="TorrentCopyLocationContentFolder" Content="Torrent content folder" />
                 </ComboBox>
             </StackPanel>
 
@@ -164,6 +256,13 @@
                 Grid.Column="1"
                 Orientation="Horizontal"
                 Spacing="8">
+                <Button
+                    x:Name="ApplyTaskSettingsButton"
+                    x:Uid="TorrentTaskApplySettingsButton"
+                    Click="ApplyTaskSettingsButton_Click"
+                    Content="Apply"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Visibility="Collapsed" />
                 <Button
                     x:Name="StartDownloadButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"

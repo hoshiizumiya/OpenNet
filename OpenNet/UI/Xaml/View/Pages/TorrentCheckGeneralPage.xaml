@@ -442,6 +442,11 @@
                                                     IsExpanded="{x:Bind IsExpanded, Mode=TwoWay}"
                                                     ItemsSource="{x:Bind Children}">
                                                     <labs:DataRow CanDrag="False">
+                                                        <labs:DataRow.Resources>
+                                                            <Style TargetType="TextBlock">
+                                                                <Setter Property="VerticalAlignment" Value="Center" />
+                                                            </Style>
+                                                        </labs:DataRow.Resources>
                                                         <!--  File name with icon  -->
                                                         <Grid ColumnSpacing="8">
                                                             <Grid.ColumnDefinitions>

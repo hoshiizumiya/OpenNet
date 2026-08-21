@@ -14,8 +14,33 @@ export namespace OpenNet::Core::Torrent
 		std::int64_t addedTimestamp{};     // When the task was added
 		std::int64_t totalSize{};          // Total size in bytes
 		std::int64_t downloadedSize{};     // Downloaded size in bytes
+		std::int64_t uploadedSize{};
+		std::int64_t completedTimestamp{};
+		std::int64_t updatedTimestamp{};
 		int status{};                 // Task status: 0=pending, 1=downloading, 2=paused, 3=completed, 4=failed
+		std::string infoHashV1;
+		std::string infoHashV2;
+		std::string errorMessage;
 		std::vector<uint8_t> resumeData; // libtorrent resume data blob
+	};
+
+	struct TaskSettingsMetadata
+	{
+		std::string taskId;
+		int downloadLimit{};
+		int uploadLimit{};
+		int minimumUploadRate{};
+		int maxConnections{ -1 };
+		int maxUploads{ -1 };
+		bool enableDht{ true };
+		bool enableLsd{ true };
+		bool enablePex{ true };
+		bool applyIpFilter{ true };
+		bool sequentialDownload{};
+		bool superSeeding{};
+		bool forceStart{};
+		bool uploadMode{};
+		bool shareMode{};
 	};
 
 	// Manages libtorrent session state and resume data persistence
@@ -51,9 +76,11 @@ export namespace OpenNet::Core::Torrent
 		bool SaveTaskMetadata(TaskMetadata const& metadata);
 		std::optional<TaskMetadata> LoadTaskMetadata(std::string const& taskId);
 		std::vector<TaskMetadata> LoadAllTasks();
+		bool SaveTaskSettings(TaskSettingsMetadata const& settings);
+		std::optional<TaskSettingsMetadata> LoadTaskSettings(std::string const& taskId);
 		bool DeleteTask(std::string const& taskId);
 		bool UpdateTaskStatus(std::string const& taskId, int status);
-		bool UpdateTaskProgress(std::string const& taskId, int64_t downloadedSize);
+		bool UpdateTaskProgress(std::string const& taskId, std::int64_t downloadedSize, std::int64_t uploadedSize, std::int64_t completedTimestamp);
 		bool UpdateTaskName(std::string const& taskId, std::string const& name);
 		bool UpdateTaskSavePath(std::string const& taskId, std::string const& savePath);
 

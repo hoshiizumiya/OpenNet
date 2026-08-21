@@ -79,8 +79,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		void StrokeWidth(float value);
 
 		winrt::Microsoft::Graphics::Canvas::Geometry::CanvasStrokeStyle StrokeStyle() const;
-		void StrokeStyle(
-			winrt::Microsoft::Graphics::Canvas::Geometry::CanvasStrokeStyle const& value);
+		void StrokeStyle(winrt::Microsoft::Graphics::Canvas::Geometry::CanvasStrokeStyle const& value);
 
 		bool IsDisposed() const noexcept;
 		void Dispose() noexcept;
@@ -96,20 +95,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 
 	struct LiveGraphEventArgs : LiveGraphEventArgsT<LiveGraphEventArgs>
 	{
-		LiveGraphEventArgs(
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl const& canvasAnimatedControl,
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs const& drawEventArgs);
+		LiveGraphEventArgs(winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl const& canvasAnimatedControl, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs const& drawEventArgs);
 
-		winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl
-			CanvasAnimatedControl() const;
-		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs
-			DrawEventArgs() const;
+		winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl CanvasAnimatedControl() const;
+		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs DrawEventArgs() const;
 
 	private:
-		winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl
-			m_canvasAnimatedControl{ nullptr };
-		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs
-			m_drawEventArgs{ nullptr };
+		winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl m_canvasAnimatedControl{ nullptr };
+		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs m_drawEventArgs{ nullptr };
 	};
 
 	struct LiveGraph :
@@ -138,15 +131,13 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		static winrt::Microsoft::UI::Xaml::DependencyProperty HighlightLineContentProperty();
 
 		OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior HighlightLineBehavior();
-		void HighlightLineBehavior(
-			OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior value);
+		void HighlightLineBehavior(OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior value);
 
 		winrt::Microsoft::UI::Xaml::Visibility HighlightLineVisibility();
 		void HighlightLineVisibility(winrt::Microsoft::UI::Xaml::Visibility value);
 
 		OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode BackgroundMode();
-		void BackgroundMode(
-			OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode value);
+		void BackgroundMode(OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode value);
 
 		double DotSpacing();
 		void DotSpacing(double value);
@@ -155,12 +146,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		void CrossSpacing(double value);
 
 		winrt::Windows::Foundation::IReference<winrt::Windows::UI::Color> BackgroundColor();
-		void BackgroundColor(
-			winrt::Windows::Foundation::IReference<winrt::Windows::UI::Color> const& value);
+		void BackgroundColor(winrt::Windows::Foundation::IReference<winrt::Windows::UI::Color> const& value);
 
 		winrt::Windows::Foundation::IReference<winrt::Windows::UI::Color> ClearColor();
-		void ClearColor(
-			winrt::Windows::Foundation::IReference<winrt::Windows::UI::Color> const& value);
+		void ClearColor(winrt::Windows::Foundation::IReference<winrt::Windows::UI::Color> const& value);
 
 		double HorizontalScrollDistance();
 		void HorizontalScrollDistance(double value);
@@ -187,11 +176,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		winrt::Windows::Foundation::IInspectable HighlightLineContent();
 		void HighlightLineContent(winrt::Windows::Foundation::IInspectable const& value);
 
-		winrt::hstring RegisterGraphBrush(
-			OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData);
-		void UpdateGraphBrush(
-			winrt::hstring const& key,
-			OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData);
+		winrt::hstring RegisterGraphBrush(OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData);
+		void UpdateGraphBrush(winrt::hstring const& key, OpenNet::UI::Xaml::Control::Graph::GraphBrushData const& brushData);
 		void ResetDynamicGraph(winrt::hstring const& key);
 
 		void AddDynamicPoint(
@@ -211,37 +197,23 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			OpenNet::UI::Xaml::Control::Graph::GraphPoint> const& points,
 			bool isRounded);
 
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetCustomBrush(
-			winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator,
-			winrt::array_view<winrt::Windows::UI::Color const> colors);
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetGreenBrush(
-			winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetRedBrush(
-			winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetBlueBrush(
-			winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
-		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetPurpleBrush(
-			winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
+		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetCustomBrush(winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator, winrt::array_view<winrt::Windows::UI::Color const> colors);
+		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetGreenBrush(winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetRedBrush(winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
+		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetBlueBrush(winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
+		OpenNet::UI::Xaml::Control::Graph::GraphBrushData GetPurpleBrush(winrt::Microsoft::Graphics::Canvas::ICanvasResourceCreator const& resourceCreator);
 
-		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl
-			GetCanvasAnimatedControl();
+		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl	GetCanvasAnimatedControl();
 
-		winrt::event_token HighlightLineUpdated(
-			winrt::Windows::Foundation::EventHandler<float> const& handler);
+		winrt::event_token HighlightLineUpdated(winrt::Windows::Foundation::EventHandler<float> const& handler);
 		void HighlightLineUpdated(winrt::event_token const& token) noexcept;
 
-		winrt::event_token Draw(
-			winrt::Windows::Foundation::EventHandler<
-			OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs> const& handler);
+		winrt::event_token Draw(winrt::Windows::Foundation::EventHandler<OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs> const& handler);
 		void Draw(winrt::event_token const& token) noexcept;
 
-		winrt::event_token CreateResources(
-			winrt::Windows::Foundation::EventHandler<
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl> const& handler);
+		winrt::event_token CreateResources(winrt::Windows::Foundation::EventHandler<winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl> const& handler);
 		void CreateResources(winrt::event_token const& token) noexcept;
 
-		constexpr static auto ResourceUri =
-			L"ms-appx:///UI/Xaml/Control/Graph/LiveGraph_ResourceDictionary.xaml";
+		constexpr static auto ResourceUri =	L"ms-appx:///UI/Xaml/Control/Graph/LiveGraph_ResourceDictionary.xaml";
 
 	private:
 		struct UserPoint
@@ -260,56 +232,24 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 			bool IsRounded{};
 		};
 
-		static void OnHighlightLineBehaviorChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnHighlightLineVisibilityChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnBackgroundModeChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnDotSpacingChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnCrossSpacingChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnBackgroundColorChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnClearColorChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnHorizontalScrollChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnHighlightLineAnimationDurationChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnHistoryBufferScreensChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
-		static void OnHighlightLineContentChanged(
-			winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject,
-			winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHighlightLineBehaviorChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHighlightLineVisibilityChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnBackgroundModeChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnDotSpacingChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnCrossSpacingChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnBackgroundColorChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnClearColorChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHorizontalScrollChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHighlightLineAnimationDurationChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHistoryBufferScreensChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+		static void OnHighlightLineContentChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& dependencyObject, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
 
 		void DetachCanvasHandlers();
-		void OnActualThemeChanged(
-			winrt::Microsoft::UI::Xaml::FrameworkElement const& sender,
-			winrt::Windows::Foundation::IInspectable const& args);
-		void OnSizeChanged(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& args);
-		void OnUnloaded(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void OnCreateResources(
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& sender,
-			winrt::Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesEventArgs const& args);
-		void OnDraw(
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl const& sender,
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs const& args);
+		void OnActualThemeChanged(winrt::Microsoft::UI::Xaml::FrameworkElement const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void OnSizeChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& args);
+		void OnUnloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void OnCreateResources(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::CanvasCreateResourcesEventArgs const& args);
+		void OnDraw(winrt::Microsoft::Graphics::Canvas::UI::Xaml::ICanvasAnimatedControl const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedDrawEventArgs const& args);
 
 		void UpdateDrawColor();
 		void UpdateClearColor();
@@ -338,34 +278,20 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		float ValueToY(float value, float height) const;
 		static double NiceValueMaximum(double value);
 
-		static float CalculateSpeed(
-			float distance,
-			winrt::Windows::Foundation::TimeSpan const& time);
+		static float CalculateSpeed(float distance, winrt::Windows::Foundation::TimeSpan const& time);
 
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_highlightLineBehaviorProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_highlightLineVisibilityProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_backgroundModeProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_dotSpacingProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_crossSpacingProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_backgroundColorProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_clearColorProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_horizontalScrollDistanceProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_horizontalScrollDurationProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_highlightLineAnimationDurationProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_historyBufferScreensProperty{ nullptr };
-		static inline winrt::Microsoft::UI::Xaml::DependencyProperty
-			s_highlightLineContentProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_highlightLineBehaviorProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_highlightLineVisibilityProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_backgroundModeProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_dotSpacingProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_crossSpacingProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_backgroundColorProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_clearColorProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_horizontalScrollDistanceProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_horizontalScrollDurationProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_highlightLineAnimationDurationProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_historyBufferScreensProperty{ nullptr };
+		static inline winrt::Microsoft::UI::Xaml::DependencyProperty s_highlightLineContentProperty{ nullptr };
 
 		winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl m_canvas{ nullptr };
 		winrt::Microsoft::UI::Xaml::Controls::Grid m_hostGrid{ nullptr };
@@ -394,17 +320,16 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		std::optional<std::chrono::steady_clock::time_point> m_lowScaleSince;
 		std::optional<float> m_currentLineY;
 		std::uint64_t m_lastHighlightedRevision{};
-		winrt::Windows::Foundation::TimeSpan m_highlightLineAnimationDuration{
-			std::chrono::duration_cast<winrt::Windows::Foundation::TimeSpan>(
-				std::chrono::milliseconds{ 300 }) };
-		OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior
-			m_highlightLineBehavior{
-				OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::EachPoint };
-		OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode
-			m_backgroundMode{
-				OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode::Cross };
-		winrt::Microsoft::UI::Xaml::Visibility
-			m_highlightLineVisibility{ winrt::Microsoft::UI::Xaml::Visibility::Visible };
+		winrt::Windows::Foundation::TimeSpan m_highlightLineAnimationDuration
+		{
+			std::chrono::duration_cast<winrt::Windows::Foundation::TimeSpan>(std::chrono::milliseconds
+																			 {
+																				 300
+																			 })
+		};
+		OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior m_highlightLineBehavior{ OpenNet::UI::Xaml::Control::Graph::HighlightLineBehavior::EachPoint };
+		OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode m_backgroundMode{ OpenNet::UI::Xaml::Control::Graph::LiveGraphBackgroundMode::Cross };
+		winrt::Microsoft::UI::Xaml::Visibility m_highlightLineVisibility{ winrt::Microsoft::UI::Xaml::Visibility::Visible };
 		winrt::Windows::Foundation::IInspectable m_highlightLineContent{ nullptr };
 		size_t m_currentPolygonIndex{};
 		size_t m_currentPointIndex{};
@@ -416,14 +341,9 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::implementation
 		winrt::event_token m_unloadedToken{};
 		winrt::event_token m_loadedToken{};
 
-		winrt::event<winrt::Windows::Foundation::EventHandler<float>>
-			m_highlightLineUpdated;
-		winrt::event<winrt::Windows::Foundation::EventHandler<
-			OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs>>
-			m_draw;
-		winrt::event<winrt::Windows::Foundation::EventHandler<
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl>>
-			m_createResources;
+		winrt::event<winrt::Windows::Foundation::EventHandler<float>> m_highlightLineUpdated;
+		winrt::event<winrt::Windows::Foundation::EventHandler<OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs>> m_draw;
+		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl>>	m_createResources;
 
 		constexpr static auto CanvasPartName = L"PART_Canvas";
 		constexpr static auto HostGridPartName = L"PART_HostGrid";
@@ -441,8 +361,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Graph::factory_implementation
 	{
 	};
 
-	struct LiveGraphEventArgs :
-		LiveGraphEventArgsT<LiveGraphEventArgs, implementation::LiveGraphEventArgs>
+	struct LiveGraphEventArgs :	LiveGraphEventArgsT<LiveGraphEventArgs, implementation::LiveGraphEventArgs>
 	{
 	};
 
