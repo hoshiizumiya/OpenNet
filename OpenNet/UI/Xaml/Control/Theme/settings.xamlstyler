@@ -1,0 +1,6 @@
+{
+  "KeepFirstAttributeOnSameLine": true,
+  "MaxAttributeCharactersPerLine": 0,
+  "MaxAttributesPerLine": 10,
+  "AttributesTolerance": 10
+}

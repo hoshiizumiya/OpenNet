@@ -5,8 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:essential="using:WinUI3Package"
     xmlns:effects="using:OpenNet.UI.Xaml.Control.Effect"
+    xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -17,15 +17,16 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AnimatedNumber_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <ContentDialog
                 x:Name="EditTrackersDialog"
                 x:Uid="ViewTaskTrackersPageEditTrackersDialog"
+                Title="Edit trackers"
                 CloseButtonText="Cancel"
                 DefaultButton="Primary"
-                PrimaryButtonText="Save"
-                Title="Edit trackers">
+                PrimaryButtonText="Save">
                 <TextBox
                     x:Name="TrackerEditorTextBox"
                     x:Uid="ViewTaskTrackersPageTrackerEditorTextBox"
@@ -44,19 +45,22 @@
             <ContentDialog
                 x:Name="RemoveTrackerDialog"
                 x:Uid="ViewTaskTrackersPageRemoveTrackerDialog"
+                Title="Remove tracker"
                 CloseButtonText="Cancel"
                 DefaultButton="Close"
-                PrimaryButtonText="Remove"
-                Title="Remove tracker">
-                <TextBlock x:Name="RemoveTrackerUrlText" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+                PrimaryButtonText="Remove">
+                <TextBlock
+                    x:Name="RemoveTrackerUrlText"
+                    IsTextSelectionEnabled="True"
+                    TextWrapping="Wrap" />
             </ContentDialog>
 
             <ContentDialog
                 x:Name="ClearAllTrackerLogsDialog"
                 x:Uid="ViewTaskTrackersPageClearAllTrackerLogsDialog"
+                Title="Clear all tracker logs"
                 CloseButtonText="Cancel"
-                PrimaryButtonText="Clear all"
-                Title="Clear all tracker logs">
+                PrimaryButtonText="Clear all">
                 <TextBlock
                     x:Uid="ViewTaskTrackersPageClearAllTrackerLogsMessage"
                     Text="This clears in-memory tracker logs for every task."
@@ -66,10 +70,10 @@
             <ContentDialog
                 x:Name="RemoveUnreachableTrackersDialog"
                 x:Uid="ViewTaskTrackersPageRemoveUnreachableTrackersDialog"
+                Title="Remove unreachable trackers"
                 CloseButtonText="Cancel"
                 DefaultButton="Primary"
-                PrimaryButtonText="Remove"
-                Title="Remove unreachable trackers">
+                PrimaryButtonText="Remove">
                 <StackPanel Spacing="10">
                     <TextBlock
                         x:Uid="ViewTaskTrackersPageRemoveUnreachablePromptText"
@@ -98,7 +102,7 @@
                         Text="Edit trackers..." />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
-						x:Name="UpdateTrackerMenuItem"
+                        x:Name="UpdateTrackerMenuItem"
                         x:Uid="ViewTaskTrackersPageText2"
                         AutomationProperties.AutomationId="ViewTaskTrackersPageText2"
                         Click="UpdateTracker_Click"
@@ -140,7 +144,7 @@
             <ListView.Header>
                 <Border
                     Padding="8,4,0,4"
-                    Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+                    Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                     CornerRadius="4"
                     RightTapped="ColumnHeader_RightTapped">
                     <Border.ContextFlyout>

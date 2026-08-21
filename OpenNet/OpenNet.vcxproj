@@ -679,6 +679,7 @@
     </Page>
     <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Graph\LiveGraph_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\AcrylicBrush_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\Card_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\Color_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Card\HorizontalCard_ResourceDictionary.xaml" />

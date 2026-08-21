@@ -20,6 +20,13 @@
     x:Uid="TasksPageRoot"
     Loaded="Loaded"
     mc:Ignorable="d">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -269,15 +276,10 @@
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
             <!--  左侧筛选导航 / Left-side filter navigation  -->
-            <Border Grid.Column="0" CornerRadius="8">
-                <Border.Background>
-                    <ouxm:AcrylicBrush
-                        FallbackColor="#2C2C2C"
-                        IsNoiseEnabled="False"
-                        TintColor="#2C2C2C"
-                        TintLuminosityOpacity="0.96"
-                        TintOpacity="0.15" />
-                </Border.Background>
+            <Border
+                Grid.Column="0"
+                Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
+                CornerRadius="8">
                 <NavigationView
                     x:Name="FilterNavView"
                     essential:NavigationViewHelper.AcrylicWorkaround="True"
@@ -352,7 +354,7 @@
                     <ListView.Header>
                         <Border
                             Padding="8,4,0,4"
-                            Background="{ThemeResource SolidBackgroundFillColorTertiaryBrush}"
+                            Background="{ThemeResource AcrylicInAppFillColorDefaultBrush}"
                             CornerRadius="4"
                             RightTapped="TasksColumnHeader_RightTapped">
                             <interactivity:Interaction.Behaviors>
@@ -1056,7 +1058,7 @@
                                     Text="{x:Bind Seeds, Mode=OneWay}"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}">                                
+                                    Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}">
                                     <ToolTipService.ToolTip>
                                         <ToolTip
                                             x:Uid="ViewTasksPagePeersToolTip"

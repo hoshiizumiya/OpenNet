@@ -26,6 +26,7 @@
                 x:Name="SettingsSearchBox"
                 x:Uid="SettingsSearchBox"
                 Margin="8,8,8,12"
+                essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
                 AutomationProperties.AutomationId="SettingsSearchBox"
                 PlaceholderText="Search settings"
                 QuerySubmitted="SettingsSearchBox_QuerySubmitted"

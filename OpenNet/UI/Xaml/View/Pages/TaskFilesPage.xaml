@@ -13,9 +13,14 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ContentDialog x:Name="RenameFileDialog" DefaultButton="Primary">
-            <TextBox x:Name="RenameFileTextBox" />
-        </ContentDialog>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <ContentDialog x:Name="RenameFileDialog" DefaultButton="Primary">
+                <TextBox x:Name="RenameFileTextBox" />
+            </ContentDialog>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid Padding="0,8,0,0">

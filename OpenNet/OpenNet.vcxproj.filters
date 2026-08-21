@@ -184,19 +184,40 @@
     <Page Include="UI\Xaml\View\Windows\LiveGraphTestWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
-    <Page Include="UI\Xaml\View\ItemsCardPopupView.xaml" />
-    <Page Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml" />
-    <Page Include="UI\Xaml\View\Windows\RuntimeStatusWindow.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\Card_ResourceDictionary.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\Color_ResourceDictionary.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\SettingsStyle_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\View\ItemsCardPopupView.xaml">
+      <Filter>UI\Xaml\View</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\NATDetectorWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\RuntimeStatusWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\Card_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\Color_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\SettingsStyle_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
     <Page Include="UI\Xaml\Control\Graph\LiveGraph_ResourceDictionary.xaml">
       <Filter>UI\Xaml\Control\Graph</Filter>
     </Page>
-    <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
     <Page Include="UI\Xaml\View\Windows\RSSBrowserWindow.xaml" />
-    <Page Include="UI\Xaml\Control\Theme\AnimatedNumber_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\AnimatedNumber_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
+    <Page Include="UI\Xaml\Control\Theme\AcrylicBrush_ResourceDictionary.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -1412,6 +1433,7 @@
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.Dev.appxmanifest" />
+    <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
