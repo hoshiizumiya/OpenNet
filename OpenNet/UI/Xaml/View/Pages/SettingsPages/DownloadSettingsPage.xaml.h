@@ -11,16 +11,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		DownloadSettingsPage();
 
 		// Unified change handler
-		void OnSettingChanged(winrt::Windows::Foundation::IInspectable const& sender,
-							  winrt::Windows::Foundation::IInspectable const& args);
+		void OnSettingChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 
 		// Folder browse handlers
-		winrt::fire_and_forget BrowseSavePathButton_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		winrt::fire_and_forget BrowseMovePathButton_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::fire_and_forget BrowseSavePathButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		winrt::fire_and_forget BrowseMovePathButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
 		void LoadSettings();

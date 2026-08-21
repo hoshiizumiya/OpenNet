@@ -5,6 +5,8 @@
 #include "UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.g.cpp"
 #endif
 
+#include <include/ScopedButtonDisabler.hpp>
+
 import OpenNet.Core.TorrentSettings;
 import OpenNet.Core.AppSettingsDatabase;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -14,30 +16,29 @@ import winrt.Microsoft.Windows.Storage.Pickers;
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::UI::Xaml::Controls;
-using namespace winrt::Windows::Foundation;
 using namespace winrt::Microsoft::Windows::Storage::Pickers;
+using namespace winrt::Windows::Foundation;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-	static SettingsPageTagRegister<DownloadSettingsPage> s_tags{
-		L"download", L"SettingsDownloadSearchTags" };
+	static SettingsPageTagRegister<DownloadSettingsPage> s_tags{ L"download", L"SettingsDownloadSearchTags" };
 	DownloadSettingsPage::DownloadSettingsPage()
 	{
 		InitializeComponent();
 
 		Loaded([this](IInspectable const&, RoutedEventArgs const&)
-			   {
-				   LoadSettings();
-			   });
+		{
+			LoadSettings();
+		});
 
 		// Save settings when page unloads so TextBox LostFocus changes aren't lost
 		Unloaded([this](IInspectable const&, RoutedEventArgs const&)
-				 {
-					 if (!m_loading)
-					 {
-						 SaveSettings();
-					 }
-				 });
+		{
+			if (!m_loading)
+			{
+				SaveSettings();
+			}
+		});
 	}
 
 	void DownloadSettingsPage::LoadSettings()
@@ -56,7 +57,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		AutoStartDownloadsToggle().IsOn(s.autoStartDownloads);
 		RecheckBeforeResumeToggle().IsOn(s.recheckBeforeResume);
 		MoveCompletedToggle().IsOn(s.moveCompletedEnabled);
-                MoveCompletedPathTextBox().Text(s.moveCompletedPath);
+		MoveCompletedPathTextBox().Text(s.moveCompletedPath);
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
 		Aria2ConnectionsNumberBox().Value(static_cast<double>(database.GetInt(
@@ -82,22 +83,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		s.recheckBeforeResume = RecheckBeforeResumeToggle().IsOn();
 		s.moveCompletedEnabled = MoveCompletedToggle().IsOn();
 		s.moveCompletedPath = MoveCompletedPathTextBox().Text();
-                mgr.Set(s);
+		mgr.Set(s);
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
 		database.SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
-			"aria2_connections_per_server",
-			static_cast<std::int64_t>(std::clamp(
-				Aria2ConnectionsNumberBox().Value(), 1.0, 16.0)));
+						"aria2_connections_per_server",
+						static_cast<std::int64_t>(std::clamp(
+							Aria2ConnectionsNumberBox().Value(), 1.0, 16.0)));
 	}
 
-	winrt::fire_and_forget DownloadSettingsPage::BrowseSavePathButton_Click(IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget DownloadSettingsPage::BrowseSavePathButton_Click(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		co_await PickFolder(DefaultSavePathTextBox());
 	}
 
-	winrt::fire_and_forget DownloadSettingsPage::BrowseMovePathButton_Click(IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget DownloadSettingsPage::BrowseMovePathButton_Click(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		co_await PickFolder(MoveCompletedPathTextBox());
 	}
 

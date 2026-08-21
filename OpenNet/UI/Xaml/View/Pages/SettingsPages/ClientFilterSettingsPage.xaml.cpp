@@ -5,6 +5,8 @@
 #include "UI/Xaml/View/Pages/SettingsPages/ClientFilterSettingsPage.g.cpp"
 #endif
 
+#include <include/ScopedButtonDisabler.hpp>
+
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -20,8 +22,7 @@ using namespace winrt::Windows::Foundation;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-	static SettingsPageTagRegister<ClientFilterSettingsPage> s_tags{
-		L"clientfilter", L"SettingsClientFilterSearchTags" };
+	static SettingsPageTagRegister<ClientFilterSettingsPage> s_tags{ L"clientfilter", L"SettingsClientFilterSearchTags" };
 	namespace
 	{
 		constexpr std::size_t MaxVisibleRules = 1000;
@@ -260,16 +261,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		HistoryList().ItemsSource(m_hitItems);
 	}
 
-	void ClientFilterSettingsPage::ShowStatus(
-		winrt::hstring const& message, InfoBarSeverity severity)
+	void ClientFilterSettingsPage::ShowStatus(winrt::hstring const& message, InfoBarSeverity severity)
 	{
 		StatusInfoBar().Message(message);
 		StatusInfoBar().Severity(severity);
 		StatusInfoBar().IsOpen(true);
 	}
 
-	std::optional<::OpenNet::Core::ClientFilterRule>
-		ClientFilterSettingsPage::SelectedRule()
+	std::optional<::OpenNet::Core::ClientFilterRule> ClientFilterSettingsPage::SelectedRule()
 	{
 		auto const index = RulesList().SelectedIndex();
 		if (index < 0 ||
@@ -289,8 +288,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		DeleteSelectedRuleButton().IsEnabled(hasSelection);
 	}
 
-	void ClientFilterSettingsPage::OnEnableToggled(
-		IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnEnableToggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		if (m_loading)
 			return;
@@ -304,8 +302,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			InfoBarSeverity::Informational);
 	}
 
-	void ClientFilterSettingsPage::OnAddRuleClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnAddRuleClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto const pattern = TrimCopy(
 			winrt::to_string(PatternTextBox().Text()));
@@ -340,8 +337,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ShowStatus(L"Client filter rule added", InfoBarSeverity::Success);
 	}
 
-	void ClientFilterSettingsPage::OnTestClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnTestClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto const client = TrimCopy(
 			winrt::to_string(TestClientTextBox().Text()));
@@ -367,26 +363,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			winrt::to_hstring(MatchTypeName(matched->matchType)) + L")");
 	}
 
-	void ClientFilterSettingsPage::OnRefreshClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnRefreshClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		RefreshSnapshot();
 	}
 
-	void ClientFilterSettingsPage::OnRuleSearchTextChanged(
-		IInspectable const&, TextChangedEventArgs const&)
+	void ClientFilterSettingsPage::OnRuleSearchTextChanged(IInspectable const&, TextChangedEventArgs const&)
 	{
 		RebuildRuleItems();
 	}
 
-	void ClientFilterSettingsPage::OnRuleSelectionChanged(
-		IInspectable const&, SelectionChangedEventArgs const&)
+	void ClientFilterSettingsPage::OnRuleSelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		UpdateSelectionButtons();
 	}
 
-	void ClientFilterSettingsPage::OnToggleRuleClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnToggleRuleClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto const selected = SelectedRule();
 		if (!selected)
@@ -399,8 +391,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			InfoBarSeverity::Informational);
 	}
 
-	winrt::fire_and_forget ClientFilterSettingsPage::OnEditRuleClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget ClientFilterSettingsPage::OnEditRuleClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		auto const selected = SelectedRule();
@@ -409,6 +400,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = EditRuleDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageEditRuleTitle")));
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
@@ -452,8 +444,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ShowStatus(L"Rule updated", InfoBarSeverity::Success);
 	}
 
-	winrt::fire_and_forget ClientFilterSettingsPage::OnDeleteRuleClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget ClientFilterSettingsPage::OnDeleteRuleClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		auto const selected = SelectedRule();
@@ -462,6 +453,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = DeleteRuleDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageDeleteRuleTitle")));
 		DeleteRuleMessageText().Text(
 			ResourceGetString(L"CF_DeleteRulePrompt") + L"\n\n" +
@@ -478,13 +470,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ShowStatus(L"Rule deleted", InfoBarSeverity::Informational);
 	}
 
-	winrt::fire_and_forget ClientFilterSettingsPage::OnImportClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget ClientFilterSettingsPage::OnImportClick(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		auto strong = get_strong();
 
 		auto optionsDialog = ImportRulesDialog();
 		optionsDialog.XamlRoot(XamlRoot());
+		optionsDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		optionsDialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageImportRulesTitle")));
 		optionsDialog.PrimaryButtonText(ResourceGetString(L"ViewClientFilterSettingsPageChooseFile"));
 		optionsDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
@@ -494,8 +487,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const checked = ReplaceExistingRulesCheckBox().IsChecked();
 		auto const replaceExisting = checked && checked.Value();
 
-		FileOpenPicker picker(
-			XamlRoot().ContentIslandEnvironment().AppWindowId());
+		FileOpenPicker picker(XamlRoot().ContentIslandEnvironment().AppWindowId());
 		picker.SuggestedStartLocation(PickerLocationId::DocumentsLibrary);
 		picker.FileTypeFilter().Append(L".json");
 		picker.FileTypeFilter().Append(L".txt");
@@ -540,12 +532,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	winrt::fire_and_forget ClientFilterSettingsPage::OnExportClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget ClientFilterSettingsPage::OnExportClick(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		auto strong = get_strong();
-		FileSavePicker picker(
-			XamlRoot().ContentIslandEnvironment().AppWindowId());
+
+		FileSavePicker picker(XamlRoot().ContentIslandEnvironment().AppWindowId());
 		picker.SuggestedStartLocation(PickerLocationId::DocumentsLibrary);
 		picker.SuggestedFileName(L"client-filter-rules.json");
 		picker.DefaultFileExtension(L".json");
@@ -562,9 +554,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		bool saved = false;
 		try
 		{
-			auto const content =
-				::OpenNet::Core::ClientFilterManager::Instance().
-				ExportRules();
+			auto const content = ::OpenNet::Core::ClientFilterManager::Instance().ExportRules();
 			std::ofstream stream(
 				std::filesystem::path{ file.Path().c_str() },
 				std::ios::binary | std::ios::trunc);
@@ -583,12 +573,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			saved ? InfoBarSeverity::Success : InfoBarSeverity::Error);
 	}
 
-	winrt::fire_and_forget ClientFilterSettingsPage::OnClearRulesClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget ClientFilterSettingsPage::OnClearRulesClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		auto dialog = ClearRulesDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageClearRulesTitle")));
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
@@ -598,15 +588,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		::OpenNet::Core::ClientFilterManager::Instance().ClearRules();
 		RefreshSnapshot();
-		ShowStatus(L"All client filter rules cleared",
-				   InfoBarSeverity::Informational);
+		ShowStatus(L"All client filter rules cleared", InfoBarSeverity::Informational);
 	}
 
-	void ClientFilterSettingsPage::OnClearHistoryClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnClearHistoryClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		::OpenNet::Core::ClientFilterManager::Instance().
-			ClearHitHistory();
+		::OpenNet::Core::ClientFilterManager::Instance().ClearHitHistory();
 		RefreshSnapshot();
 		ShowStatus(L"Hit history cleared", InfoBarSeverity::Informational);
 	}

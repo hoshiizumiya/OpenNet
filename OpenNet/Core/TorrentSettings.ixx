@@ -44,7 +44,7 @@ export namespace OpenNet::Core
 		// Port 0 lets the OS choose an actually available port. Fixed ports entered
 		// by the user are not silently replaced when binding fails.
 		std::string listenInterfaces{ "0.0.0.0:0,[::]:0" };
-		int connectionsLimit{ 500 };
+		int connectionsLimit{ 9999 };
 		bool enableIncomingTcp{ true };
 		bool enableOutgoingTcp{ true };
 		bool enableIncomingUtp{ true };

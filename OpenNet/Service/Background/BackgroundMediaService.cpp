@@ -1,5 +1,4 @@
-﻿#include "pch.h"
-#include "BackgroundMediaService.h"
+﻿#include "BackgroundMediaService.h"
 
 import OpenNet.Core.AppSettingsDatabase;
 import winrt.Microsoft.Windows.Storage.Pickers;

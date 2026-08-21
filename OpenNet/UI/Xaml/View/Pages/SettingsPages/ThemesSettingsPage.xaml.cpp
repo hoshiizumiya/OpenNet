@@ -6,12 +6,13 @@
 #include "UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.cpp"
 #endif
 
+#include "FontCustomizePage.xaml.h"
+#include <include/ScopedButtonDisabler.hpp>
 #include "MainSettingsPage.xaml.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
-#include "FontCustomizePage.xaml.h"
 #include "Service/Background/BackgroundMediaService.h"
-#include "UI/Xaml/Control/Effect/AnimatedDigit.h"
 #include "SettingsPageTagRegister.h"
+#include "UI/Xaml/Control/Effect/AnimatedDigit.h"
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ThemeHelper;
@@ -238,12 +239,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		winrt::OpenNet::UI::Xaml::Control::Effect::implementation::AnimatedDigit::AnimationsEnabled(enabled);
 	}
 
-	winrt::Windows::Foundation::IAsyncAction ThemesSettingsPage::SetImageButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction ThemesSettingsPage::SetImageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		auto lifetime = get_strong();
 		using namespace ::OpenNet::Service::Background;
-		auto const mode = static_cast<BackgroundSourceMode>(
-			ImageModeComboBox().SelectedIndex());
+		auto const mode = static_cast<BackgroundSourceMode>(ImageModeComboBox().SelectedIndex());
 		if (mode == BackgroundSourceMode::None) co_return;
 		auto path = co_await GetBackgroundMediaService().PickSourceAsync(
 			XamlRoot().ContentIslandEnvironment().AppWindowId(),
@@ -280,18 +281,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::BackgroundRotationMinutesBox_ValueChanged(
-		NumberBox const& sender, NumberBoxValueChangedEventArgs const&)
+	void ThemesSettingsPage::BackgroundRotationMinutesBox_ValueChanged(NumberBox const& sender, NumberBoxValueChangedEventArgs const&)
 	{
 		if (m_isInitializing || std::isnan(sender.Value())) return;
 		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		ThemesSettingsPage::SetVideoButton_Click(
-			IInspectable const&, RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction ThemesSettingsPage::SetVideoButton_Click(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		auto lifetime = get_strong();
 		using namespace ::OpenNet::Service::Background;
 		auto const mode = static_cast<BackgroundSourceMode>(
@@ -308,8 +307,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::ClearVideoButton_Click(
-		IInspectable const&, RoutedEventArgs const&)
+	void ThemesSettingsPage::ClearVideoButton_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		VideoPathText().Text(L"");
 		PersistMediaOptions();
@@ -317,8 +315,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::VideoModeComboBox_SelectionChanged(
-		IInspectable const&, SelectionChangedEventArgs const&)
+	void ThemesSettingsPage::VideoModeComboBox_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		if (m_isInitializing) return;
 		PersistMediaOptions();
@@ -326,32 +323,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::VideoMutedSwitch_Toggled(
-		IInspectable const&, RoutedEventArgs const&)
+	void ThemesSettingsPage::VideoMutedSwitch_Toggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		if (m_isInitializing) return;
 		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::VideoLoopingSwitch_Toggled(
-		IInspectable const&, RoutedEventArgs const&)
+	void ThemesSettingsPage::VideoLoopingSwitch_Toggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		if (m_isInitializing) return;
 		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::VideoStretchComboBox_SelectionChanged(
-		IInspectable const&, SelectionChangedEventArgs const&)
+	void ThemesSettingsPage::VideoStretchComboBox_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		if (m_isInitializing) return;
 		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
 	}
 
-	void ThemesSettingsPage::VideoOpacitySlider_ValueChanged(
-		IInspectable const&, RangeBaseValueChangedEventArgs const&)
+	void ThemesSettingsPage::VideoOpacitySlider_ValueChanged(IInspectable const&, RangeBaseValueChangedEventArgs const&)
 	{
 		if (m_isInitializing) return;
 		PersistMediaOptions();

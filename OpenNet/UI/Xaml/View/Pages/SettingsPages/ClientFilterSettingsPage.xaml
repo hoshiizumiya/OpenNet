@@ -22,7 +22,10 @@
                 <TextBlock x:Uid="CF_EditPatternLabel" />
                 <TextBox x:Name="EditPatternTextBox" MinWidth="460" />
                 <TextBlock x:Uid="CF_EditMatchTypeLabel" />
-                <ComboBox x:Name="EditMatchTypeComboBox" HorizontalAlignment="Stretch">
+                <ComboBox
+                    x:Name="EditMatchTypeComboBox"
+                    HorizontalAlignment="Stretch"
+                    essential:ComboBoxHelper.AcrylicWorkaround="True">
                     <ComboBoxItem x:Uid="CF_EditMatchContains" />
                     <ComboBoxItem x:Uid="CF_EditMatchExact" />
                     <ComboBoxItem x:Uid="CF_EditMatchWildcard" />
@@ -36,7 +39,10 @@
         </ContentDialog>
 
         <ContentDialog x:Name="DeleteRuleDialog" DefaultButton="Close">
-            <TextBlock x:Name="DeleteRuleMessageText" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
+            <TextBlock
+                x:Name="DeleteRuleMessageText"
+                IsTextSelectionEnabled="True"
+                TextWrapping="Wrap" />
         </ContentDialog>
 
         <ContentDialog x:Name="ImportRulesDialog" DefaultButton="Primary">
@@ -122,6 +128,7 @@
                                     x:Uid="CF_MatchType"
                                     Grid.Column="1"
                                     HorizontalAlignment="Stretch"
+                                    essential:ComboBoxHelper.AcrylicWorkaround="True"
                                     AutomationProperties.AutomationId="CF_MatchType"
                                     SelectedIndex="0">
                                     <ComboBoxItem x:Uid="CF_MatchContains" />

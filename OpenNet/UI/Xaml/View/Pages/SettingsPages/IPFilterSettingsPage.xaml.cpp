@@ -8,6 +8,7 @@
 
 #include "Core/IPFilter/IPFilterManager.h"
 #include "SettingsPageTagRegister.h"
+#include <include/ScopedButtonDisabler.hpp>
 
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Utils.Message;
@@ -160,9 +161,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction
-		IPFilterSettingsPage::RunSubscriptionUpdateAsync(
-			bool force, bool notify)
+	winrt::Windows::Foundation::IAsyncAction IPFilterSettingsPage::RunSubscriptionUpdateAsync(bool force, bool notify)
 	{
 		if (s_subscriptionUpdateRunning.exchange(true))
 			co_return;
@@ -498,8 +497,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			value ? Visibility::Visible : Visibility::Collapsed);
 	}
 
-	std::optional<::OpenNet::Core::IPFilterSubscription>
-		IPFilterSettingsPage::SelectedSubscription()
+	std::optional<::OpenNet::Core::IPFilterSubscription> IPFilterSettingsPage::SelectedSubscription()
 	{
 		auto const index = SubscriptionList().SelectedIndex();
 		if (index < 0 || static_cast<std::size_t>(index) >= m_subscriptions.size())
@@ -507,8 +505,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		return m_subscriptions[static_cast<std::size_t>(index)];
 	}
 
-	void IPFilterSettingsPage::OnSubscriptionAutoUpdateToggled(
-		IInspectable const&, RoutedEventArgs const&)
+	void IPFilterSettingsPage::OnSubscriptionAutoUpdateToggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		if (m_loading)
 			return;
@@ -516,8 +513,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			SubscriptionAutoUpdateEnabled(SubscriptionAutoUpdateToggle().IsOn());
 	}
 
-	void IPFilterSettingsPage::OnSubscriptionModeChanged(
-		IInspectable const&, RoutedEventArgs const&)
+	void IPFilterSettingsPage::OnSubscriptionModeChanged(IInspectable const&, RoutedEventArgs const&)
 	{
 		if (m_loading)
 			return;
@@ -526,8 +522,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			SubscriptionReplaceExisting(checked && checked.Value());
 	}
 
-	void IPFilterSettingsPage::OnSubscriptionIntervalChanged(
-		IInspectable const&, NumberBoxValueChangedEventArgs const& args)
+	void IPFilterSettingsPage::OnSubscriptionIntervalChanged(IInspectable const&, NumberBoxValueChangedEventArgs const& args)
 	{
 		if (m_loading || !std::isfinite(args.NewValue()))
 			return;
@@ -536,8 +531,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				static_cast<std::int32_t>(std::round(args.NewValue())));
 	}
 
-	void IPFilterSettingsPage::OnAddSubscriptionClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void IPFilterSettingsPage::OnAddSubscriptionClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		std::istringstream stream(
 			winrt::to_string(SubscriptionUrlTextBox().Text()));
@@ -582,16 +576,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ShowStatus(winrt::hstring{ result }, InfoBarSeverity::Success);
 	}
 
-	void IPFilterSettingsPage::OnSubscriptionSelectionChanged(
-		IInspectable const&, SelectionChangedEventArgs const&)
+	void IPFilterSettingsPage::OnSubscriptionSelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		auto const selected = SelectedSubscription().has_value();
 		EditSubscriptionButton().IsEnabled(selected);
 		DeleteSubscriptionButton().IsEnabled(selected);
 	}
 
-	winrt::fire_and_forget IPFilterSettingsPage::OnEditSubscriptionClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget IPFilterSettingsPage::OnEditSubscriptionClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		auto selected = SelectedSubscription();
@@ -600,6 +592,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = EditSubscriptionDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(
 			ResourceText(L"IPF_EditSubscriptionTitle", L"Edit subscription")));
 		dialog.PrimaryButtonText(ResourceText(L"IPF_Save", L"Save"));
@@ -629,8 +622,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		LoadSubscriptionState();
 	}
 
-	winrt::fire_and_forget IPFilterSettingsPage::OnDeleteSubscriptionClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget IPFilterSettingsPage::OnDeleteSubscriptionClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		auto selected = SelectedSubscription();
@@ -639,6 +631,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = DeleteSubscriptionDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(
 			ResourceText(L"IPF_DeleteSubscriptionTitle", L"Delete subscription")));
 		DeleteSubscriptionUrlText().Text(winrt::to_hstring(selected->url));
@@ -651,8 +644,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		LoadSubscriptionState();
 	}
 
-	winrt::fire_and_forget IPFilterSettingsPage::OnUpdateSubscriptionsClick(
-		IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget IPFilterSettingsPage::OnUpdateSubscriptionsClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		SetSubscriptionBusy(true);
@@ -714,8 +706,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	winrt::fire_and_forget IPFilterSettingsPage::OnImportClick(IInspectable const&, RoutedEventArgs const&)
+	winrt::fire_and_forget IPFilterSettingsPage::OnImportClick(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		ScopedButtonDisabler disabler{ sender };
 		auto strong = get_strong();
 
 		// Create file picker using the WinUI 3 AppWindow-based API
@@ -804,12 +797,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			co_return;
 
 		auto const fileName = winrt::unbox_value<winrt::hstring>(button.Tag());
-		auto const path = RulesFolderPath() /
-			std::wstring{ fileName.c_str() };
+		auto const path = RulesFolderPath() / std::wstring{ fileName.c_str() };
 		try
 		{
-			auto file = co_await winrt::Windows::Storage::StorageFile::
-				GetFileFromPathAsync(winrt::hstring{ path.wstring() });
+			auto file = co_await winrt::Windows::Storage::StorageFile::GetFileFromPathAsync(winrt::hstring{ path.wstring() });
 			auto const launched = co_await winrt::Windows::System::Launcher::
 				LaunchFileAsync(file);
 			if (!launched)
@@ -860,6 +851,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = EditIpRuleDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewIPFilterSettingsPageEditRuleTitle")));
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
@@ -909,6 +901,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = DeleteIpRuleDialog();
 		dialog.XamlRoot(XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(winrt::box_value(ResourceGetString(L"ViewIPFilterSettingsPageDeleteRuleTitle")));
 		DeleteIpRuleMessageText().Text(
 			ResourceGetString(L"IPF_DeleteRulePrompt") + L"\n\n" +
@@ -933,6 +926,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto dialog = ClearAllIpRulesDialog();
 		dialog.XamlRoot(this->XamlRoot());
+		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		dialog.Title(box_value(ResourceGetString(L"ViewIPFilterSettingsPageClearAllRulesTitle")));
 		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
 		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));

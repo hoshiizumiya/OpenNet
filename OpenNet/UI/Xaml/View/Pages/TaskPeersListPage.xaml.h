@@ -16,6 +16,7 @@ import winrt.OpenNet.UI.Xaml.Control.HomePage.Header;
 import winrt.Microsoft.UI.Xaml.Controls.AnimatedVisuals;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Composition.SystemBackdrops;
+import winrt.Windows.UI.Xaml.Controls;
 import winrt.WinUI3Package.Svg;
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.h"
 #include "ViewModels/TasksViewModel.h"

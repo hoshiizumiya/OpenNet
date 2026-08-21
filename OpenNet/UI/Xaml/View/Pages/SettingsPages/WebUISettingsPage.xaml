@@ -50,7 +50,7 @@
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
                     SelectedIndex="0">
                     <ComboBoxItem Content="qBittorrent WebUI" />
-                    <ComboBoxItem Content="VueTorrent (WinUI theme)" />
+                    <ComboBoxItem Content="VueTorrent" />
                 </ComboBox>
             </essential:SettingsCard>
 
