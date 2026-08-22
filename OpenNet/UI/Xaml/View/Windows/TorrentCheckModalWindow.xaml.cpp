@@ -24,6 +24,7 @@ import winrt.Windows.Graphics;
 import winrtplus.Microsoft.UI.Interop;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Media.Animation;
+import winrt.OpenNet.UI.Xaml.View.Dialog;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -529,14 +530,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			co_return true;
 		}
 
-		auto const dialog = TorrentCopyOverwriteDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(GridRoot().XamlRoot());
-		dialog.Title(box_value(ResourceGetString(
-			L"TorrentCopyOverwriteTitle")));
-		dialog.PrimaryButtonText(ResourceGetString(
-			L"TorrentCopyOverwritePrimary"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		TorrentCopyOverwritePathText().Text(winrt::hstring{ targetFile.c_str() });
+		dialog.Configure(ResourceGetString(L"TorrentCopyOverwriteTitle"), ResourceGetString(L"TorrentCopyOverwriteMessageText.Text"), winrt::hstring{ targetFile.c_str() }, ResourceGetString(L"TorrentCopyOverwritePrimary"), ResourceGetString(L"CommonCancel"), true, false, {});
 		if (co_await dialog.ShowAsync() !=
 			ContentDialogResult::Primary)
 		{

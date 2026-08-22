@@ -218,6 +218,9 @@
     <Page Include="UI\Xaml\Control\Theme\AcrylicBrush_ResourceDictionary.xaml">
       <Filter>UI\Xaml\Control\Theme</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml">
+      <Filter>UI\Xaml\View\Dialog</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />

@@ -16,45 +16,6 @@
             TargetType="TextBlock">
             <Setter Property="Margin" Value="1,30,0,6" />
         </Style>
-
-        <ContentDialog x:Name="EditRuleDialog" DefaultButton="Primary">
-            <StackPanel Spacing="8">
-                <TextBlock x:Uid="CF_EditPatternLabel" />
-                <TextBox x:Name="EditPatternTextBox" MinWidth="460" />
-                <TextBlock x:Uid="CF_EditMatchTypeLabel" />
-                <ComboBox
-                    x:Name="EditMatchTypeComboBox"
-                    HorizontalAlignment="Stretch"
-                    essential:ComboBoxHelper.AcrylicWorkaround="True">
-                    <ComboBoxItem x:Uid="CF_EditMatchContains" />
-                    <ComboBoxItem x:Uid="CF_EditMatchExact" />
-                    <ComboBoxItem x:Uid="CF_EditMatchWildcard" />
-                    <ComboBoxItem x:Uid="CF_EditMatchRegex" />
-                </ComboBox>
-                <ToggleSwitch x:Name="EditCaseSensitiveToggle" x:Uid="CF_EditCaseSensitive" />
-                <ToggleSwitch x:Name="EditEnabledToggle" x:Uid="CF_EditEnabled" />
-                <TextBlock x:Uid="CF_EditDescriptionLabel" />
-                <TextBox x:Name="EditDescriptionTextBox" />
-            </StackPanel>
-        </ContentDialog>
-
-        <ContentDialog x:Name="DeleteRuleDialog" DefaultButton="Close">
-            <TextBlock
-                x:Name="DeleteRuleMessageText"
-                IsTextSelectionEnabled="True"
-                TextWrapping="Wrap" />
-        </ContentDialog>
-
-        <ContentDialog x:Name="ImportRulesDialog" DefaultButton="Primary">
-            <StackPanel Spacing="8">
-                <TextBlock x:Uid="CF_ImportHint" TextWrapping="Wrap" />
-                <CheckBox x:Name="ReplaceExistingRulesCheckBox" x:Uid="CF_ReplaceExisting" />
-            </StackPanel>
-        </ContentDialog>
-
-        <ContentDialog x:Name="ClearRulesDialog" DefaultButton="Close">
-            <TextBlock x:Uid="CF_ClearRulesMessage" TextWrapping="Wrap" />
-        </ContentDialog>
     </Page.Resources>
 
     <ScrollViewer>

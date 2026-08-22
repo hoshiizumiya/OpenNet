@@ -5,7 +5,6 @@
 #endif
 
 import OpenNet.Helpers.ThemeHelper;
-import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;

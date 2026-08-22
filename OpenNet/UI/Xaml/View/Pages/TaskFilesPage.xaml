@@ -17,9 +17,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <ContentDialog x:Name="RenameFileDialog" DefaultButton="Primary">
-                <TextBox x:Name="RenameFileTextBox" />
-            </ContentDialog>
         </ResourceDictionary>
     </Page.Resources>
 

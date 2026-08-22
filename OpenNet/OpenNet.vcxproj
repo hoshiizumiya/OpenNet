@@ -164,6 +164,10 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Service\Notification\InfoBarService.cpp" />
+    <ClCompile Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\CreateTorrentDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.cpp" />
     <ClCompile Include="Service\Background\BackgroundMediaService.cpp" />
     <ClCompile Include="Service\Update\UpdateService.cpp" />
@@ -326,6 +330,10 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClCompile Include="Service\Notification\InfoBarService.ixx" />
+    <ClInclude Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\CreateTorrentDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTag.h" />
     <ClInclude Include="UI\Xaml\View\Pages\SettingsPages\SettingsPageTagRegister.h" />
     <ClInclude Include="UI\Xaml\Control\InfoBarHelper.h">
@@ -372,6 +380,18 @@
     <ClInclude Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml.h">
       <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\ConfirmationDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\ConfirmationDialog.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\TextInputDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\TextInputDialog.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\NumberInputDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\NumberInputDialog.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Dialog\FilterEditorDialog.xaml.h">
+      <DependentUpon>UI\Xaml\View\Dialog\FilterEditorDialog.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\GuideView.xaml.h">
       <DependentUpon>UI\Xaml\View\GuideView.xaml</DependentUpon>
@@ -706,6 +726,9 @@
     <Page Include="UI\Xaml\View\Dialog\CloseToTrayDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml" />
     <Page Include="UI\Xaml\View\Dialog\TorrentMetaDataDownloadDialog.xaml">
       <SubType>Designer</SubType>
@@ -713,6 +736,10 @@
     <Page Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Dialog\ConfirmationDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\TextInputDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\NumberInputDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\FilterEditorDialog.xaml" />
     <Page Include="UI\Xaml\View\GuideView.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -951,6 +978,18 @@
     <ClCompile Include="UI\Xaml\View\Dialog\HttpDownloadDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\ConfirmationDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\ConfirmationDialog.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\TextInputDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\TextInputDialog.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\NumberInputDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\NumberInputDialog.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Dialog\FilterEditorDialog.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Dialog\FilterEditorDialog.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\GuideView.xaml.cpp">
       <DependentUpon>UI\Xaml\View\GuideView.xaml</DependentUpon>
@@ -1276,6 +1315,10 @@
       <DependentUpon>UI\Xaml\View\Dialog\CloseToTrayDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\CreateTorrentDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\CreateTorrentDialog.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\View\Dialog\RSSFeedSettingsDialog.idl">
       <DependentUpon>UI\Xaml\View\Dialog\RSSFeedSettingsDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1287,6 +1330,18 @@
     <Midl Include="UI\Xaml\View\Dialog\HttpDownloadDialog.idl">
       <DependentUpon>UI\Xaml\View\Dialog\HttpDownloadDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\ConfirmationDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\ConfirmationDialog.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\TextInputDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\TextInputDialog.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\NumberInputDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\NumberInputDialog.xaml</DependentUpon>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Dialog\FilterEditorDialog.idl">
+      <DependentUpon>UI\Xaml\View\Dialog\FilterEditorDialog.xaml</DependentUpon>
     </Midl>
     <Midl Include="UI\Xaml\View\GuideView.idl">
       <DependentUpon>UI\Xaml\View\GuideView.xaml</DependentUpon>

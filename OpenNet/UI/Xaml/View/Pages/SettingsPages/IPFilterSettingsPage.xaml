@@ -19,34 +19,6 @@
                 <Setter Property="Margin" Value="1,30,0,6" />
             </Style.Setters>
         </Style>
-
-        <ContentDialog x:Name="EditSubscriptionDialog" DefaultButton="Primary">
-            <StackPanel Spacing="10">
-                <TextBox x:Name="EditSubscriptionUrlTextBox" MinWidth="480" />
-                <CheckBox x:Name="EditSubscriptionEnabledCheckBox" x:Uid="IPF_EditSubscriptionEnabled" />
-            </StackPanel>
-        </ContentDialog>
-
-        <ContentDialog x:Name="DeleteSubscriptionDialog" DefaultButton="Close">
-            <TextBlock x:Name="DeleteSubscriptionUrlText" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
-        </ContentDialog>
-
-        <ContentDialog x:Name="EditIpRuleDialog" DefaultButton="Primary">
-            <StackPanel Spacing="8">
-                <TextBlock x:Uid="IPF_EditRuleEntryLabel" />
-                <TextBox x:Name="EditRuleEntryTextBox" MinWidth="460" />
-                <TextBlock x:Uid="IPF_EditRuleDescriptionLabel" />
-                <TextBox x:Name="EditRuleDescriptionTextBox" />
-            </StackPanel>
-        </ContentDialog>
-
-        <ContentDialog x:Name="DeleteIpRuleDialog" DefaultButton="Close">
-            <TextBlock x:Name="DeleteIpRuleMessageText" IsTextSelectionEnabled="True" TextWrapping="Wrap" />
-        </ContentDialog>
-
-        <ContentDialog x:Name="ClearAllIpRulesDialog" DefaultButton="Close">
-            <TextBlock x:Uid="IPF_ClearAllRulesDialogMessage" TextWrapping="Wrap" />
-        </ContentDialog>
     </Page.Resources>
 
     <ScrollViewer>

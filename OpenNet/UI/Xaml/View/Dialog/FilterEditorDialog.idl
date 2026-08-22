@@ -1,0 +1,20 @@
+﻿namespace OpenNet.UI.Xaml.View.Dialog
+{
+	[default_interface]
+	runtimeclass FilterEditorDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+	{
+		FilterEditorDialog();
+		void ConfigureClientRule(String title, String pattern, Int32 matchType, Boolean caseSensitive, Boolean enabled, String description, String primaryButtonText, String closeButtonText);
+		void ConfigureClientImport(String title, String hint, Boolean replaceExisting, String primaryButtonText, String closeButtonText);
+		void ConfigureSubscription(String title, String url, Boolean enabled, String primaryButtonText, String closeButtonText);
+		void ConfigureIpRule(String title, String entry, String description, String primaryButtonText, String closeButtonText);
+		String Pattern{ get; };
+		Int32 MatchType{ get; };
+		Boolean CaseSensitive{ get; };
+		Boolean Enabled{ get; };
+		String Description{ get; };
+		Boolean ReplaceExisting{ get; };
+		String Url{ get; };
+		String RuleEntry{ get; };
+	}
+}

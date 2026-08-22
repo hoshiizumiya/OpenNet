@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentDialog
+    x:Class="OpenNet.UI.Xaml.View.Dialog.FilterEditorDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="RootDialog"
+    DefaultButton="Primary"
+    Style="{StaticResource DefaultContentDialogStyle}"
+    mc:Ignorable="d">
+    <Grid>
+        <StackPanel
+            x:Name="ClientRulePanel"
+            Spacing="8"
+            Visibility="Collapsed">
+            <TextBlock x:Uid="CF_EditPatternLabel" />
+            <TextBox x:Name="PatternTextBox" MinWidth="460" />
+            <TextBlock x:Uid="CF_EditMatchTypeLabel" />
+            <ComboBox
+                x:Name="MatchTypeComboBox"
+                HorizontalAlignment="Stretch"
+                essential:ComboBoxHelper.AcrylicWorkaround="True">
+                <ComboBoxItem x:Uid="CF_EditMatchContains" />
+                <ComboBoxItem x:Uid="CF_EditMatchExact" />
+                <ComboBoxItem x:Uid="CF_EditMatchWildcard" />
+                <ComboBoxItem x:Uid="CF_EditMatchRegex" />
+            </ComboBox>
+            <ToggleSwitch x:Name="CaseSensitiveToggle" x:Uid="CF_EditCaseSensitive" />
+            <ToggleSwitch x:Name="EnabledToggle" x:Uid="CF_EditEnabled" />
+            <TextBlock x:Uid="CF_EditDescriptionLabel" />
+            <TextBox x:Name="DescriptionTextBox" />
+        </StackPanel>
+
+        <StackPanel
+            x:Name="ClientImportPanel"
+            Spacing="8"
+            Visibility="Collapsed">
+            <TextBlock x:Name="ImportHintText" TextWrapping="Wrap" />
+            <CheckBox x:Name="ReplaceExistingCheckBox" x:Uid="CF_ReplaceExisting" />
+        </StackPanel>
+
+        <StackPanel
+            x:Name="SubscriptionPanel"
+            Spacing="10"
+            Visibility="Collapsed">
+            <TextBox x:Name="SubscriptionUrlTextBox" MinWidth="480" />
+            <CheckBox x:Name="SubscriptionEnabledCheckBox" x:Uid="IPF_EditSubscriptionEnabled" />
+        </StackPanel>
+
+        <StackPanel
+            x:Name="IpRulePanel"
+            Spacing="8"
+            Visibility="Collapsed">
+            <TextBlock x:Uid="IPF_EditRuleEntryLabel" />
+            <TextBox x:Name="RuleEntryTextBox" MinWidth="460" />
+            <TextBlock x:Uid="IPF_EditRuleDescriptionLabel" />
+            <TextBox x:Name="RuleDescriptionTextBox" />
+        </StackPanel>
+    </Grid>
+</ContentDialog>

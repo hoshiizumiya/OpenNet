@@ -10,6 +10,7 @@ import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.RSS.RSSLinkResolver;
 import OpenNet.Core.Utils.Message;
+import winrt.OpenNet.UI.Xaml.View.Dialog;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Controls.Primitives;
 import winrt.Microsoft.UI.Xaml.Input;
@@ -374,15 +375,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		try
 		{
-			auto dialog = RemoveFeedDialog();
-			dialog.Title(box_value(ResourceGetString(L"ViewRSSPageRemoveFeedTitle")));
-			RemoveFeedConfirmationText().Text(
-				ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationPrefix") +
-				feed.Title() +
-				ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationSuffix"));
-			dialog.PrimaryButtonText(ResourceGetString(L"CommonRemove"));
-			dialog.SecondaryButtonText(ResourceGetString(L"CommonCancel"));
-			dialog.DefaultButton(ContentDialogButton::Secondary);
+			winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
+			dialog.Configure(ResourceGetString(L"ViewRSSPageRemoveFeedTitle"), ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationPrefix") + feed.Title() + ResourceGetString(L"ViewRSSPageRemoveFeedConfirmationSuffix"), {}, ResourceGetString(L"CommonRemove"), ResourceGetString(L"CommonCancel"), true, false, {});
 			dialog.XamlRoot(this->XamlRoot());
 
 			auto result = co_await dialog.ShowAsync();

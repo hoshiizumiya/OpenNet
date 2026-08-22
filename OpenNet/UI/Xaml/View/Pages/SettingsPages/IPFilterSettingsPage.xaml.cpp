@@ -12,6 +12,7 @@
 
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Utils.Message;
+import winrt.OpenNet.UI.Xaml.View.Dialog;
 import OpenNet.Service.Notification.InfoBarService;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -590,29 +591,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		auto dialog = EditSubscriptionDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::FilterEditorDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(
-			ResourceText(L"IPF_EditSubscriptionTitle", L"Edit subscription")));
-		dialog.PrimaryButtonText(ResourceText(L"IPF_Save", L"Save"));
-		dialog.CloseButtonText(ResourceText(L"IPF_Cancel", L"Cancel"));
-		EditSubscriptionUrlTextBox().Text(winrt::to_hstring(selected->url));
-		EditSubscriptionEnabledCheckBox().IsChecked(selected->enabled);
+		dialog.ConfigureSubscription(ResourceText(L"IPF_EditSubscriptionTitle", L"Edit subscription"), winrt::to_hstring(selected->url), selected->enabled, ResourceText(L"IPF_Save", L"Save"), ResourceText(L"IPF_Cancel", L"Cancel"));
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
-		if (!IsHttpSubscriptionUrl(EditSubscriptionUrlTextBox().Text()))
+		if (!IsHttpSubscriptionUrl(dialog.Url()))
 		{
 			ShowStatus(
 				ResourceText(L"IPF_InvalidSubscriptionUrl", L"Enter a valid HTTP or HTTPS URL."),
 				InfoBarSeverity::Warning);
 			co_return;
 		}
-		auto const checked = EditSubscriptionEnabledCheckBox().IsChecked();
 		if (!::OpenNet::Core::IPFilterManager::Instance().UpdateSubscription(
 			selected->id,
-			winrt::to_string(EditSubscriptionUrlTextBox().Text()),
-			checked && checked.Value()))
+			winrt::to_string(dialog.Url()),
+			dialog.Enabled()))
 		{
 			ShowStatus(
 				ResourceText(L"IPF_SubscriptionUpdateFailed", L"The subscription could not be saved."),
@@ -629,14 +623,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		auto dialog = DeleteSubscriptionDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(
-			ResourceText(L"IPF_DeleteSubscriptionTitle", L"Delete subscription")));
-		DeleteSubscriptionUrlText().Text(winrt::to_hstring(selected->url));
-		dialog.PrimaryButtonText(ResourceText(L"IPF_Delete", L"Delete"));
-		dialog.CloseButtonText(ResourceText(L"IPF_Cancel", L"Cancel"));
+		dialog.Configure(ResourceText(L"IPF_DeleteSubscriptionTitle", L"Delete subscription"), {}, winrt::to_hstring(selected->url), ResourceText(L"IPF_Delete", L"Delete"), ResourceText(L"IPF_Cancel", L"Cancel"), true, false, {});
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 		::OpenNet::Core::IPFilterManager::Instance().RemoveSubscription(
@@ -849,22 +838,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		auto const originalEntry = RuleEntry(*selected);
 
-		auto dialog = EditIpRuleDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::FilterEditorDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewIPFilterSettingsPageEditRuleTitle")));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		EditRuleEntryTextBox().Text(winrt::to_hstring(originalEntry));
-		EditRuleDescriptionTextBox().Text(L"");
-		if (selected->description != originalEntry)
-			EditRuleDescriptionTextBox().Text(winrt::to_hstring(selected->description));
+		auto const description = selected->description == originalEntry ? winrt::hstring{} : winrt::to_hstring(selected->description);
+		dialog.ConfigureIpRule(ResourceGetString(L"ViewIPFilterSettingsPageEditRuleTitle"), winrt::to_hstring(originalEntry), description, ResourceGetString(L"CommonSave"), ResourceGetString(L"CommonCancel"));
 
 		auto const result = co_await dialog.ShowAsync();
 		if (result != ContentDialogResult::Primary)
 			co_return;
 
-		auto const entry = TrimCopy(winrt::to_string(EditRuleEntryTextBox().Text()));
+		auto const entry = TrimCopy(winrt::to_string(dialog.RuleEntry()));
 		std::string first;
 		std::string last;
 		if (!::OpenNet::Core::IPFilterManager::ParseIPOrCIDR(
@@ -875,12 +858,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			co_return;
 		}
 
-		auto description = TrimCopy(winrt::to_string(EditRuleDescriptionTextBox().Text()));
-		if (description.empty())
-			description = entry;
+		auto updatedDescription = TrimCopy(winrt::to_string(dialog.Description()));
+		if (updatedDescription.empty()) updatedDescription = entry;
 
 		auto& mgr = ::OpenNet::Core::IPFilterManager::Instance();
-		if (!mgr.UpdateRule(selected->id, first, last, selected->flags, description))
+		if (!mgr.UpdateRule(selected->id, first, last, selected->flags, updatedDescription))
 		{
 			ShowStatus(L"The rule could not be updated. It may duplicate another rule.",
 					   InfoBarSeverity::Warning);
@@ -899,15 +881,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		auto dialog = DeleteIpRuleDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewIPFilterSettingsPageDeleteRuleTitle")));
-		DeleteIpRuleMessageText().Text(
-			ResourceGetString(L"IPF_DeleteRulePrompt") + L"\n\n" +
-			winrt::to_hstring(RuleEntry(*selected)));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonDelete"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
+		dialog.Configure(ResourceGetString(L"ViewIPFilterSettingsPageDeleteRuleTitle"), ResourceGetString(L"IPF_DeleteRulePrompt"), winrt::to_hstring(RuleEntry(*selected)), ResourceGetString(L"CommonDelete"), ResourceGetString(L"CommonCancel"), true, false, {});
 
 		auto const result = co_await dialog.ShowAsync();
 		if (result != ContentDialogResult::Primary)
@@ -924,12 +900,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		auto strong = get_strong();
 
-		auto dialog = ClearAllIpRulesDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(this->XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(box_value(ResourceGetString(L"ViewIPFilterSettingsPageClearAllRulesTitle")));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
+		dialog.Configure(ResourceGetString(L"ViewIPFilterSettingsPageClearAllRulesTitle"), ResourceGetString(L"IPF_ClearAllRulesDialogMessage.Text"), {}, ResourceGetString(L"CommonClearAll"), ResourceGetString(L"CommonCancel"), true, false, {});
 
 		auto result = co_await dialog.ShowAsync();
 		if (result != ContentDialogResult::Primary)

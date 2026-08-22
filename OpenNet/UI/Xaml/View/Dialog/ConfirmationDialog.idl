@@ -1,0 +1,10 @@
+﻿namespace OpenNet.UI.Xaml.View.Dialog
+{
+	[default_interface]
+	runtimeclass ConfirmationDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+	{
+		ConfirmationDialog();
+		void Configure(String title, String message, String details, String primaryButtonText, String closeButtonText, Boolean critical, Boolean showCheckBox, String checkBoxText);
+		Boolean IsChecked{ get; };
+	}
+}

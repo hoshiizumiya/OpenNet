@@ -94,6 +94,16 @@
                             essential:FlyoutHelper.AcrylicWorkaround="True"
                             LightDismissOverlayMode="On"
                             Placement="RightEdgeAlignedBottom">
+                            <Flyout.FlyoutPresenterStyle>
+                                <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
+                                    <Setter Property="BorderThickness" Value="0" />
+                                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                    <Setter Property="IsTabStop" Value="True" />
+                                    <Setter Property="MaxWidth" Value="Infinity" />
+                                    <Setter Property="Padding" Value="0" />
+                                    <Setter Property="TabNavigation" Value="Cycle" />
+                                </Style>
+                            </Flyout.FlyoutPresenterStyle>
                             <ouxv:ItemsCardPopupView />
                         </Flyout>
                     </FlyoutBase.AttachedFlyout>
@@ -146,6 +156,21 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
+
+            <!--  Notification Information  -->
+            <StackPanel
+                Orientation="Horizontal"
+                Spacing="6"
+                Visibility="{x:Bind ViewModel.HasNotification, Mode=OneWay}">
+                <FontIcon
+                    FontSize="12"
+                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                    Glyph="&#xE946;" />
+                <TextBlock
+                    FontSize="12"
+                    Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}"
+                    TextTrimming="CharacterEllipsis" />
+            </StackPanel>
 
             <!--  Speed Display  -->
             <StackPanel
@@ -311,21 +336,6 @@
                         Text="{x:Bind ViewModel.ListenPort, Mode=OneWay, FallbackValue='0'}" />
                 </StackPanel>
             </Button>
-
-            <!--  Notification Information  -->
-            <StackPanel
-                Orientation="Horizontal"
-                Spacing="6"
-                Visibility="{x:Bind ViewModel.HasNotification, Mode=OneWay}">
-                <FontIcon
-                    FontSize="12"
-                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                    Glyph="&#xE946;" />
-                <TextBlock
-                    FontSize="12"
-                    Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}"
-                    TextTrimming="CharacterEllipsis" />
-            </StackPanel>
         </Grid>
     </Grid>
 </Page>

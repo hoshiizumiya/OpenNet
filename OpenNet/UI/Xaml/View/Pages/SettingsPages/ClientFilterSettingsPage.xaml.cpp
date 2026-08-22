@@ -12,6 +12,7 @@ import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.Windows.Storage.Pickers;
 import OpenNet.Core.Utils.Message;
+import winrt.OpenNet.UI.Xaml.View.Dialog;
 import winrtplus_coroutine;
 
 using namespace winrt;
@@ -398,22 +399,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		auto dialog = EditRuleDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::FilterEditorDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageEditRuleTitle")));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonSave"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		EditPatternTextBox().Text(winrt::to_hstring(selected->pattern));
-		EditMatchTypeComboBox().SelectedIndex(static_cast<int>(selected->matchType));
-		EditCaseSensitiveToggle().IsOn(selected->caseSensitive);
-		EditEnabledToggle().IsOn(selected->enabled);
-		EditDescriptionTextBox().Text(winrt::to_hstring(selected->description));
+		dialog.ConfigureClientRule(ResourceGetString(L"ViewClientFilterSettingsPageEditRuleTitle"), winrt::to_hstring(selected->pattern), static_cast<int>(selected->matchType), selected->caseSensitive, selected->enabled, winrt::to_hstring(selected->description), ResourceGetString(L"CommonSave"), ResourceGetString(L"CommonCancel"));
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 
-		auto const pattern = TrimCopy(winrt::to_string(EditPatternTextBox().Text()));
-		auto const matchType = MatchTypeFromIndex(EditMatchTypeComboBox().SelectedIndex());
+		auto const pattern = TrimCopy(winrt::to_string(dialog.Pattern()));
+		auto const matchType = MatchTypeFromIndex(dialog.MatchType());
 		std::string error;
 		if (!::OpenNet::Core::ClientFilterManager::ValidatePattern(
 			pattern, matchType, &error))
@@ -430,9 +423,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			selected->id,
 			pattern,
 			matchType,
-			EditCaseSensitiveToggle().IsOn(),
-			EditEnabledToggle().IsOn(),
-			TrimCopy(winrt::to_string(EditDescriptionTextBox().Text()))))
+			dialog.CaseSensitive(),
+			dialog.Enabled(),
+			TrimCopy(winrt::to_string(dialog.Description()))))
 		{
 			ShowStatus(
 				L"The rule could not be updated. It may duplicate another rule.",
@@ -451,16 +444,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!selected)
 			co_return;
 
-		auto dialog = DeleteRuleDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageDeleteRuleTitle")));
-		DeleteRuleMessageText().Text(
-			ResourceGetString(L"CF_DeleteRulePrompt") + L"\n\n" +
-			winrt::to_hstring(selected->pattern));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonDelete"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(ContentDialogButton::Close);
+		dialog.Configure(ResourceGetString(L"ViewClientFilterSettingsPageDeleteRuleTitle"), ResourceGetString(L"CF_DeleteRulePrompt"), winrt::to_hstring(selected->pattern), ResourceGetString(L"CommonDelete"), ResourceGetString(L"CommonCancel"), true, false, {});
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 
@@ -475,17 +461,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ScopedButtonDisabler disabler{ sender };
 		auto strong = get_strong();
 
-		auto optionsDialog = ImportRulesDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::FilterEditorDialog optionsDialog;
 		optionsDialog.XamlRoot(XamlRoot());
-		optionsDialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		optionsDialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageImportRulesTitle")));
-		optionsDialog.PrimaryButtonText(ResourceGetString(L"ViewClientFilterSettingsPageChooseFile"));
-		optionsDialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		optionsDialog.DefaultButton(ContentDialogButton::Primary);
+		optionsDialog.ConfigureClientImport(ResourceGetString(L"ViewClientFilterSettingsPageImportRulesTitle"), ResourceGetString(L"CF_ImportHint.Text"), false, ResourceGetString(L"ViewClientFilterSettingsPageChooseFile"), ResourceGetString(L"CommonCancel"));
 		if (co_await optionsDialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
-		auto const checked = ReplaceExistingRulesCheckBox().IsChecked();
-		auto const replaceExisting = checked && checked.Value();
+		auto const replaceExisting = optionsDialog.ReplaceExisting();
 
 		FileOpenPicker picker(XamlRoot().ContentIslandEnvironment().AppWindowId());
 		picker.SuggestedStartLocation(PickerLocationId::DocumentsLibrary);
@@ -576,13 +557,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	winrt::fire_and_forget ClientFilterSettingsPage::OnClearRulesClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
-		auto dialog = ClearRulesDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Style(Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewClientFilterSettingsPageClearRulesTitle")));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonClearAll"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(ContentDialogButton::Close);
+		dialog.Configure(ResourceGetString(L"ViewClientFilterSettingsPageClearRulesTitle"), ResourceGetString(L"CF_ClearRulesMessage.Text"), {}, ResourceGetString(L"CommonClearAll"), ResourceGetString(L"CommonCancel"), true, false, {});
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 

@@ -20,12 +20,12 @@
             ShowMode="Transient">
             <Flyout.FlyoutPresenterStyle>
                 <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
-                    <Setter Property="MaxWidth" Value="Infinity" />
-                    <Setter Property="IsTabStop" Value="True" />
-                    <Setter Property="TabNavigation" Value="Cycle" />
                     <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="Padding" Value="0" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="IsTabStop" Value="True" />
+                    <Setter Property="MaxWidth" Value="Infinity" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="TabNavigation" Value="Cycle" />
                 </Style>
             </Flyout.FlyoutPresenterStyle>
             <Border CornerRadius="8">
@@ -36,10 +36,6 @@
                     essential:UIElementExtension.ClipToBounds="True" />
             </Border>
         </Flyout>
-
-        <ContentDialog x:Name="RemoveFeedDialog" DefaultButton="Close">
-            <TextBlock x:Name="RemoveFeedConfirmationText" TextWrapping="Wrap" />
-        </ContentDialog>
     </Page.Resources>
 
     <Grid Padding="24" Background="{ThemeResource LayerFillColorDefaultBrush}">

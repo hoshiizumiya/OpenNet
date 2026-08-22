@@ -14,6 +14,7 @@ import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import OpenNet.Core.Utils.Message;
+import winrt.OpenNet.UI.Xaml.View.Dialog;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -510,21 +511,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const context = GetSelectedFileContext();
 		if (!context) co_return;
 
-		auto dialog = RenameFileDialog();
-		auto input = RenameFileTextBox();
-		input.Text(context->relativePath.filename().wstring());
-		input.SelectAll();
+		winrt::OpenNet::UI::Xaml::View::Dialog::TextInputDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Title(winrt::box_value(ResourceGetString(L"ViewTaskFilesPageRenameFileTitle")));
-		dialog.PrimaryButtonText(ResourceGetString(L"CommonRename"));
-		dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
-		dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
+		dialog.Configure(ResourceGetString(L"ViewTaskFilesPageRenameFileTitle"), {}, winrt::hstring{ context->relativePath.filename().wstring() }, {}, ResourceGetString(L"CommonRename"), ResourceGetString(L"CommonCancel"), false);
 		if (co_await dialog.ShowAsync() != winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 		{
 			co_return;
 		}
 
-		auto const newName = std::wstring{ input.Text() };
+		auto const newName = std::wstring{ dialog.InputText() };
 		if (newName.empty() || newName == context->relativePath.filename().wstring() ||
 			newName.find_first_of(L"\\/:*?\"<>|") != std::wstring::npos)
 		{

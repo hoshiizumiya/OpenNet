@@ -22,9 +22,7 @@ export namespace OpenNet::Core::ExceptionService
 	class ExceptionHandling
 	{
 	public:
-		static void OnAppUnhandledException(
-			winrt::Windows::Foundation::IInspectable /*sender*/,
-			winrt::Microsoft::UI::Xaml::UnhandledExceptionEventArgs e)
+		static void OnAppUnhandledException(winrt::Windows::Foundation::IInspectable /*sender*/, winrt::Microsoft::UI::Xaml::UnhandledExceptionEventArgs e)
 		{
 #if defined _DEBUG && !defined DISABLE_XAML_GENERATED_BREAK_ON_UNHANDLED_EXCEPTION
 			if (IsDebuggerPresent())
@@ -74,9 +72,7 @@ export namespace OpenNet::Core::ExceptionService
 
 			// Creating another XAML window from inside UnhandledException can
 			// re-enter WinUI. Queue it so the failing callback can unwind first.
-			auto const dispatcher =
-				winrt::Microsoft::UI::Dispatching::DispatcherQueue::
-				GetForCurrentThread();
+			auto const dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 			if (!dispatcher || !dispatcher.TryEnqueue([capturedException]()
 			{
 				try

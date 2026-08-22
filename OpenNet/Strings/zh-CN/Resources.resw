@@ -4713,7 +4713,7 @@
   <data name="TaskCreateTorrentButton.Text" xml:space="preserve">
     <value>制作种子...</value>
   </data>
-  <data name="CreateTorrentTitle" xml:space="preserve">
+  <data name="CreateTorrentDialog.Title" xml:space="preserve">
     <value>制作种子</value>
   </data>
   <data name="CreateTorrentDialog.PrimaryButtonText" xml:space="preserve">

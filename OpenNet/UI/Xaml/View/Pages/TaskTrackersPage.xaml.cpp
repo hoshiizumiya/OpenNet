@@ -14,6 +14,7 @@ import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.WindowHelper;
+import winrt.OpenNet.UI.Xaml.View.Dialog;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -444,8 +445,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (!existingText.empty()) existingText = existingText + L"\r\n";
 			existingText = existingText + winrt::to_hstring(tracker.url);
 		}
-		TrackerEditorTextBox().Text(existingText);
-		auto dialog = EditTrackersDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::TextInputDialog dialog;
+		dialog.Configure(ResourceGetString(L"ViewTaskTrackersPageEditTrackersDialog.Title"), {}, existingText, ResourceGetString(L"ViewTaskTrackersPageTrackerEditorTextBox.PlaceholderText"), ResourceGetString(L"ViewTaskTrackersPageEditTrackersDialog.PrimaryButtonText"), ResourceGetString(L"ViewTaskTrackersPageEditTrackersDialog.CloseButtonText"), true);
 		dialog.XamlRoot(XamlRoot());
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
@@ -453,7 +454,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		std::vector<std::string> requested;
 		std::unordered_set<std::string> unique;
-		std::istringstream lines(winrt::to_string(TrackerEditorTextBox().Text()));
+		std::istringstream lines(winrt::to_string(dialog.InputText()));
 		std::string line;
 		winrt::hstring invalid;
 		while (std::getline(lines, line))
@@ -478,10 +479,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (!invalid.empty())
 		{
-			auto error = TrackerMessageDialog();
+			winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog error;
 			error.XamlRoot(XamlRoot());
-			error.Title(winrt::box_value(ResourceGetString(L"ViewTaskTrackersPageInvalidTrackerUrlTitle")));
-			error.Content(winrt::box_value(invalid));
+			error.Configure(ResourceGetString(L"ViewTaskTrackersPageInvalidTrackerUrlTitle"), {}, invalid, {}, ResourceGetString(L"ViewTaskTrackersPageMessageDialog.CloseButtonText"), false, false, {});
 			co_await error.ShowAsync();
 			co_return;
 		}
@@ -526,9 +526,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::hstring taskName;
 		auto const url = SelectedTrackerUrl();
 		if (url.empty() || !TryGetTaskContext(taskId, taskName)) co_return;
-		auto dialog = RemoveTrackerDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		RemoveTrackerUrlText().Text(url);
+		dialog.Configure(ResourceGetString(L"ViewTaskTrackersPageRemoveTrackerDialog.Title"), {}, url, ResourceGetString(L"ViewTaskTrackersPageRemoveTrackerDialog.PrimaryButtonText"), ResourceGetString(L"ViewTaskTrackersPageRemoveTrackerDialog.CloseButtonText"), true, false, {});
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 			co_return;
@@ -565,8 +565,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string taskId;
 		winrt::hstring taskName;
 		if (!TryGetTaskContext(taskId, taskName)) co_return;
-		auto dialog = ClearAllTrackerLogsDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
+		dialog.Configure(ResourceGetString(L"ViewTaskTrackersPageClearAllTrackerLogsDialog.Title"), ResourceGetString(L"ViewTaskTrackersPageClearAllTrackerLogsMessage.Text"), {}, ResourceGetString(L"ViewTaskTrackersPageClearAllTrackerLogsDialog.PrimaryButtonText"), ResourceGetString(L"ViewTaskTrackersPageClearAllTrackerLogsDialog.CloseButtonText"), true, false, {});
 		if (co_await dialog.ShowAsync()
 			== winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 		{
@@ -582,14 +583,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string taskId;
 		winrt::hstring taskName;
 		if (!TryGetTaskContext(taskId, taskName)) co_return;
-		auto dialog = RemoveUnreachableTrackersDialog();
+		winrt::OpenNet::UI::Xaml::View::Dialog::NumberInputDialog dialog;
 		dialog.XamlRoot(XamlRoot());
+		dialog.Configure(ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachableTrackersDialog.Title"), ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachablePromptText.Text"), 3, 1, 255, ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachableTrackersDialog.PrimaryButtonText"), ResourceGetString(L"ViewTaskTrackersPageRemoveUnreachableTrackersDialog.CloseButtonText"));
 		if (co_await dialog.ShowAsync()
 			!= winrt::Microsoft::UI::Xaml::Controls::ContentDialogResult::Primary)
 			co_return;
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		auto const trackers = core->GetTorrentTrackers(taskId);
-		auto const rawThreshold = UnreachableRetriesNumberBox().Value();
+		auto const rawThreshold = dialog.Value();
 		if (std::isnan(rawThreshold)) co_return;
 		auto const threshold = std::clamp(
 			static_cast<int>(std::round(rawThreshold)), 1, 255);

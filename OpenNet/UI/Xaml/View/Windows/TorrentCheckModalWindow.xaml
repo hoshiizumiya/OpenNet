@@ -21,20 +21,6 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <ContentDialog x:Name="TorrentCopyOverwriteDialog" DefaultButton="Close">
-            <StackPanel Spacing="8">
-                <TextBlock
-                    x:Uid="TorrentCopyOverwriteMessageText"
-                    Text="A .torrent file with the same name already exists. Replace it?"
-                    TextWrapping="Wrap" />
-                <TextBlock
-                    x:Name="TorrentCopyOverwritePathText"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    IsTextSelectionEnabled="True"
-                    TextWrapping="WrapWholeWords" />
-            </StackPanel>
-        </ContentDialog>
-
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
 
         <!--  Title Bar  -->

@@ -4512,7 +4512,7 @@
   <data name="TaskCreateTorrentButton.Text" xml:space="preserve">
     <value>Crea torrent...</value>
   </data>
-  <data name="CreateTorrentTitle" xml:space="preserve">
+  <data name="CreateTorrentDialog.Title" xml:space="preserve">
     <value>Crea torrent</value>
   </data>
   <data name="CreateTorrentDialog.PrimaryButtonText" xml:space="preserve">
