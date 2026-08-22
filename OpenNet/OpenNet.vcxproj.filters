@@ -61,6 +61,9 @@
     <Page Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
+	<Page Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml">
+	  <Filter>UI\Xaml\View\Windows</Filter>
+	</Page>
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>

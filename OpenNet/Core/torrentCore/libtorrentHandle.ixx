@@ -63,7 +63,8 @@ export namespace OpenNet::Core::Torrent
 			std::string const& savePath,
 			std::vector<int> const& filePriorities = {},
 			std::vector<std::string> const& extraTrackers = {},
-			bool startImmediately = true);
+			bool startImmediately = true,
+			bool seedMode = false);
 
 		// Resume torrent from saved state (returns task ID if successful)
 		std::string AddTorrentFromResumeData(std::string const& taskId);

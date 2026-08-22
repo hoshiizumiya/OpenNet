@@ -69,6 +69,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
+		EnableWebUIToggle().IsOn(database.GetBool(Category.data(), "enabled").value_or(true));
 		FrontendComboBox().SelectedIndex(
 			database.GetString(Category.data(), "frontend")
 			.value_or("qbittorrent") == "vuetorrent" ? 1 : 0);
@@ -98,14 +99,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			? applicationLocale
 			: storedLocale.value_or("en")));
 		LocaleTextBox().IsEnabled(!followApplicationLanguage);
-		UsernameTextBox().Text(to_hstring(
-			database.GetString(Category.data(), "username")
-			.value_or("admin")));
-		PasswordInput().Password(to_hstring(
-			database.GetString(Category.data(), "password")
-			.value_or("adminadmin")));
-		ApiKeyInput().Password(to_hstring(
-			database.GetString("webui_http", "api_key").value_or("")));
+		UsernameTextBox().Text(to_hstring(database.GetString(Category.data(), "username").value_or("admin")));
+		PasswordInput().Password(to_hstring(database.GetString(Category.data(), "password").value_or("adminadmin")));
+		ApiKeyInput().Password(to_hstring(database.GetString("webui_http", "api_key").value_or("")));
+		BypassLocalAuthToggle().IsOn(database.GetBool(Category.data(), "bypass_authentication_for_localhost").value_or(false));
+		SessionTimeoutNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "session_timeout_seconds").value_or(3600)));
+		SessionCountLimitNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "session_count_limit").value_or(10)));
+		MaxAuthFailuresNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "maximum_authentication_failures").value_or(5)));
+		BanDurationNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "ban_duration_seconds").value_or(3600)));
+		CsrfProtectionToggle().IsOn(database.GetBool(Category.data(), "csrf_protection").value_or(true));
+		HostValidationToggle().IsOn(database.GetBool(Category.data(), "host_header_validation").value_or(true));
+		SecureCookieToggle().IsOn(database.GetBool(Category.data(), "secure_cookie").value_or(false));
+		DomainListTextBox().Text(to_hstring(database.GetString(Category.data(), "domain_list").value_or("*")));
 		UpdateStatus();
 	}
 
@@ -144,6 +149,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		const auto password = to_string(PasswordInput().Password());
 		const auto apiKey = to_string(ApiKeyInput().Password());
 		const auto portValue = PortNumberBox().Value();
+		const bool enabled = EnableWebUIToggle().IsOn();
+		const bool bypassLocalAuth = BypassLocalAuthToggle().IsOn();
+		const bool csrfProtection = CsrfProtectionToggle().IsOn();
+		const bool hostValidation = HostValidationToggle().IsOn();
+		const bool secureCookie = SecureCookieToggle().IsOn();
+		const auto domainList = to_string(DomainListTextBox().Text());
+		const auto sessionTimeout = SessionTimeoutNumberBox().Value();
+		const auto sessionLimit = SessionCountLimitNumberBox().Value();
+		const auto maximumFailures = MaxAuthFailuresNumberBox().Value();
+		const auto banDuration = BanDurationNumberBox().Value();
 
 		try
 		{
@@ -165,6 +180,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 					"Password must contain at least 6 characters.");
 			if (!followApplicationLanguage && locale.empty())
 				throw std::invalid_argument("Locale cannot be empty.");
+			const auto validInteger = [](double value, double minimum, double maximum)
+			{
+				return std::isfinite(value) && value >= minimum && value <= maximum && std::floor(value) == value;
+			};
+			if (!validInteger(sessionTimeout, 0, 86400) || !validInteger(sessionLimit, 0, 1000) || !validInteger(maximumFailures, 0, 100) || !validInteger(banDuration, 1, 86400))
+				throw std::invalid_argument("Web UI session or authentication limits are invalid.");
+			if (hostValidation && domainList.empty()) throw std::invalid_argument("At least one allowed server domain is required when Host validation is enabled.");
 
 			auto& database =
 				::OpenNet::Core::AppSettingsDatabase::Instance();
@@ -185,6 +207,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				database.GetString(Category.data(), "password");
 			const auto oldApiKey =
 				database.GetString("webui_http", "api_key");
+			const auto oldEnabled = database.GetBool(Category.data(), "enabled");
+			const auto oldBypassLocalAuth = database.GetBool(Category.data(), "bypass_authentication_for_localhost");
+			const auto oldCsrfProtection = database.GetBool(Category.data(), "csrf_protection");
+			const auto oldHostValidation = database.GetBool(Category.data(), "host_header_validation");
+			const auto oldSecureCookie = database.GetBool(Category.data(), "secure_cookie");
+			const auto oldDomainList = database.GetString(Category.data(), "domain_list");
+			const auto oldSessionTimeout = database.GetInt(Category.data(), "session_timeout_seconds");
+			const auto oldSessionLimit = database.GetInt(Category.data(), "session_count_limit");
+			const auto oldMaximumFailures = database.GetInt(Category.data(), "maximum_authentication_failures");
+			const auto oldBanDuration = database.GetInt(Category.data(), "ban_duration_seconds");
 
 			database.SetString(Category.data(), "address", address);
 			database.SetString(Category.data(), "frontend", frontend);
@@ -198,15 +230,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			database.SetString(Category.data(), "username", username);
 			database.SetString(Category.data(), "password", password);
 			database.SetBool(Category.data(), "initialized", true);
+			database.SetBool(Category.data(), "enabled", enabled);
+			database.SetBool(Category.data(), "bypass_authentication_for_localhost", bypassLocalAuth);
+			database.SetBool(Category.data(), "csrf_protection", csrfProtection);
+			database.SetBool(Category.data(), "host_header_validation", hostValidation);
+			database.SetBool(Category.data(), "secure_cookie", secureCookie);
+			database.SetString(Category.data(), "domain_list", domainList);
+			database.SetInt(Category.data(), "session_timeout_seconds", static_cast<std::int64_t>(sessionTimeout));
+			database.SetInt(Category.data(), "session_count_limit", static_cast<std::int64_t>(sessionLimit));
+			database.SetInt(Category.data(), "maximum_authentication_failures", static_cast<std::int64_t>(maximumFailures));
+			database.SetInt(Category.data(), "ban_duration_seconds", static_cast<std::int64_t>(banDuration));
 			if (apiKey.empty())
 				database.Delete("webui_http", "api_key");
 			else
 				database.SetString("webui_http", "api_key", apiKey);
 
-			const bool applied =
-				::OpenNet::Core::WebUI::IsWebUIRunning()
-				? ::OpenNet::Core::WebUI::RestartWebUI()
-				: ::OpenNet::Core::WebUI::StartWebUI();
+			bool applied = true;
+			if (!enabled)
+				::OpenNet::Core::WebUI::StopWebUI();
+			else
+				applied = ::OpenNet::Core::WebUI::IsWebUIRunning() ? ::OpenNet::Core::WebUI::RestartWebUI() : ::OpenNet::Core::WebUI::StartWebUI();
 			if (!applied)
 			{
 				const auto restoreString = [&database](
@@ -233,14 +276,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				restoreString(Category.data(), "username", oldUsername);
 				restoreString(Category.data(), "password", oldPassword);
 				restoreString("webui_http", "api_key", oldApiKey);
-				::OpenNet::Core::WebUI::StartWebUI();
+				const auto restoreBool = [&database](const char* key, std::optional<bool> const& value)
+				{
+					if (value) database.SetBool(Category.data(), key, *value); else database.Delete(Category.data(), key);
+				};
+				const auto restoreInt = [&database](const char* key, std::optional<std::int64_t> const& value)
+				{
+					if (value) database.SetInt(Category.data(), key, *value); else database.Delete(Category.data(), key);
+				};
+				restoreBool("enabled", oldEnabled);
+				restoreBool("bypass_authentication_for_localhost", oldBypassLocalAuth);
+				restoreBool("csrf_protection", oldCsrfProtection);
+				restoreBool("host_header_validation", oldHostValidation);
+				restoreBool("secure_cookie", oldSecureCookie);
+				restoreString(Category.data(), "domain_list", oldDomainList);
+				restoreInt("session_timeout_seconds", oldSessionTimeout);
+				restoreInt("session_count_limit", oldSessionLimit);
+				restoreInt("maximum_authentication_failures", oldMaximumFailures);
+				restoreInt("ban_duration_seconds", oldBanDuration);
+				if (oldEnabled.value_or(true)) ::OpenNet::Core::WebUI::StartWebUI();
 				throw std::runtime_error(
 					"The address or port could not be opened. Previous settings were restored.");
 			}
 
-			UpdateStatus(
-				L"Settings saved. Web UI restarted at " + WebUIUrl(),
-				InfoBarSeverity::Success);
+			UpdateStatus(enabled ? L"Settings saved. Web UI restarted at " + WebUIUrl() : L"Settings saved. Web UI is disabled.", InfoBarSeverity::Success);
 		}
 		catch (std::exception const& exception)
 		{

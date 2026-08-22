@@ -73,8 +73,8 @@ namespace OpenNet::Core::WebUI
 	{
 		constexpr std::size_t MaxRequestBody = 32U * 1024U * 1024U;
 		constexpr std::size_t MaxStaticFile = 10U * 1024U * 1024U;
-		constexpr auto SessionLifetime = std::chrono::hours(1);
 		constexpr std::string_view ApiKeySession = "api-key";
+		constexpr std::string_view BypassSession = "local-bypass";
 		std::atomic<std::uint64_t> g_requestCount{};
 		std::atomic<std::uint64_t> g_requestBytes{};
 		std::atomic<std::uint64_t> g_responseBytes{};
@@ -1377,6 +1377,18 @@ namespace OpenNet::Core::WebUI
 				{
 					options.port = static_cast<std::uint16_t>(*port);
 				}
+				options.sessionTimeoutSeconds = static_cast<int>(database.GetInt("webui_host", "session_timeout_seconds").value_or(options.sessionTimeoutSeconds));
+				options.maximumAuthenticationFailures = static_cast<int>(database.GetInt("webui_host", "maximum_authentication_failures").value_or(options.maximumAuthenticationFailures));
+				options.banDurationSeconds = static_cast<int>(database.GetInt("webui_host", "ban_duration_seconds").value_or(options.banDurationSeconds));
+				options.sessionCountLimit = static_cast<std::size_t>((std::max<std::int64_t>)(0, database.GetInt("webui_host", "session_count_limit").value_or(static_cast<std::int64_t>(options.sessionCountLimit))));
+				options.bypassAuthenticationForLocalhost = database.GetBool("webui_host", "bypass_authentication_for_localhost").value_or(options.bypassAuthenticationForLocalhost);
+				options.csrfProtection = database.GetBool("webui_host", "csrf_protection").value_or(options.csrfProtection);
+				options.hostHeaderValidation = database.GetBool("webui_host", "host_header_validation").value_or(options.hostHeaderValidation);
+				options.secureCookie = database.GetBool("webui_host", "secure_cookie").value_or(options.secureCookie);
+				options.domainList = database.GetString("webui_host", "domain_list").value_or(options.domainList);
+				options.sessionTimeoutSeconds = std::clamp(options.sessionTimeoutSeconds, 0, 86400);
+				options.maximumAuthenticationFailures = std::clamp(options.maximumAuthenticationFailures, 0, 100);
+				options.banDurationSeconds = std::clamp(options.banDurationSeconds, 1, 86400);
 
 				const auto address = asio::ip::make_address(options.address);
 				m_context = std::make_unique<asio::io_context>(
@@ -1503,8 +1515,10 @@ namespace OpenNet::Core::WebUI
 
 		struct CreatorJob
 		{
+			std::mutex mutex;
 			Json status = Json::object();
 			std::string torrentData;
+			std::stop_source stopSource;
 		};
 
 		void StopUnlocked() noexcept
@@ -1534,6 +1548,7 @@ namespace OpenNet::Core::WebUI
 
 		bool ValidateHost(const Request& request) const
 		{
+			if (!m_options.hostHeaderValidation) return true;
 			const auto iterator = request.find(http::field::host);
 			if (iterator == request.end())
 				return false;
@@ -1541,14 +1556,23 @@ namespace OpenNet::Core::WebUI
 			const std::string port = ":" + std::to_string(m_options.port);
 			if (host.ends_with(port))
 				host.resize(host.size() - port.size());
-			return host == "localhost"
+			if (host == "localhost"
 				|| host == "127.0.0.1"
 				|| host == "[::1]"
-				|| host == ToLower(m_options.address);
+				|| host == ToLower(m_options.address)) return true;
+			auto domains = m_options.domainList;
+			std::ranges::replace(domains, ';', ',');
+			for (auto domain : SplitValues(domains, ','))
+			{
+				domain = ToLower(Trim(domain));
+				if (domain == "*" || domain == host) return true;
+			}
+			return false;
 		}
 
 		bool ValidateOrigin(const Request& request) const
 		{
+			if (!m_options.csrfProtection) return true;
 			const auto originIterator = request.find(http::field::origin);
 			if (originIterator == request.end() || originIterator->value().empty())
 				return true;
@@ -1567,8 +1591,10 @@ namespace OpenNet::Core::WebUI
 			return origin == ToLower(std::string(hostIterator->value()));
 		}
 
-		std::optional<std::string> Authenticate(const Request& request)
+		std::optional<std::string> Authenticate(const Request& request, const tcp::endpoint& endpoint)
 		{
+			if (m_options.bypassAuthenticationForLocalhost && endpoint.address().is_loopback())
+				return std::string(BypassSession);
 			if (const auto bearer = BearerToken(request))
 			{
 				std::scoped_lock lock(m_authMutex);
@@ -1637,9 +1663,11 @@ namespace OpenNet::Core::WebUI
 		void CleanupSessions(
 			const std::chrono::steady_clock::time_point now)
 		{
-			std::erase_if(m_sessions, [now](const auto& item)
+			if (m_options.sessionTimeoutSeconds == 0) return;
+			const auto lifetime = std::chrono::seconds(m_options.sessionTimeoutSeconds);
+			std::erase_if(m_sessions, [now, lifetime](const auto& item)
 			{
-				return (now - item.second.touched) > SessionLifetime;
+				return (now - item.second.touched) > lifetime;
 			});
 		}
 
@@ -1648,6 +1676,15 @@ namespace OpenNet::Core::WebUI
 			const auto now = std::chrono::steady_clock::now();
 			std::scoped_lock lock(m_sessionMutex);
 			CleanupSessions(now);
+			while (m_options.sessionCountLimit > 0 && m_sessions.size() >= m_options.sessionCountLimit)
+			{
+				const auto oldest = std::ranges::min_element(m_sessions, {}, [](const auto& item)
+				{
+					return item.second.touched;
+				});
+				if (oldest == m_sessions.end()) break;
+				m_sessions.erase(oldest);
+			}
 			std::string sessionId;
 			do
 			{
@@ -1702,8 +1739,8 @@ namespace OpenNet::Core::WebUI
 				};
 			}
 			++failure.attempts;
-			if (failure.attempts >= 5)
-				failure.bannedUntil = now + std::chrono::hours(1);
+			if (m_options.maximumAuthenticationFailures > 0 && failure.attempts >= m_options.maximumAuthenticationFailures)
+				failure.bannedUntil = now + std::chrono::seconds(m_options.banDurationSeconds);
 		}
 
 		void ClearLoginFailures(const std::string& client)
@@ -1744,7 +1781,7 @@ namespace OpenNet::Core::WebUI
 			if (!decodedPath)
 				return TextResponse(
 					request, http::status::bad_request, "Bad Request");
-			const auto sessionId = Authenticate(request);
+			const auto sessionId = Authenticate(request, endpoint);
 
 			if (decodedPath->starts_with("/api/v2/"))
 			{
@@ -1826,7 +1863,8 @@ namespace OpenNet::Core::WebUI
 				response.set(
 					http::field::set_cookie,
 					CookieName() + "=" + createdSession
-					+ "; Path=/; HttpOnly; SameSite=Lax");
+					+ "; Path=/; HttpOnly; SameSite=Lax"
+					+ (m_options.secureCookie ? "; Secure" : ""));
 				return response;
 			}
 
@@ -1931,7 +1969,12 @@ namespace OpenNet::Core::WebUI
 						"confirm_torrent_deletion", "status_bar_external_ip",
 						"performance_warning",
 						"web_ui_address", "web_ui_port",
-						"web_ui_username", "web_ui_password"
+						"web_ui_username", "web_ui_password",
+						"web_ui_session_timeout", "web_ui_max_auth_fail_count",
+						"web_ui_ban_duration", "web_ui_sessions_count_limit",
+						"bypass_local_auth", "web_ui_csrf_protection_enabled",
+						"web_ui_host_header_validation_enabled",
+						"web_ui_secure_cookie_enabled", "web_ui_domain_list"
 					})},
 					{"supportedControlIds", Json::array({
 						"locale_select", "confirmTorrentDeletion",
@@ -1977,6 +2020,11 @@ namespace OpenNet::Core::WebUI
 						"i2pOutboundLength",
 						"webuiAddressValue", "webuiPortValue",
 						"webui_username_text", "webui_password_text",
+						"webUISessionTimeoutInput", "webUIMaxAuthFailCountInput",
+						"webUIBanDurationInput", "webUISessionsCountLimitInput",
+						"bypass_local_auth_checkbox", "csrf_protection_checkbox",
+						"host_header_validation_checkbox", "secureCookieCheckbox",
+						"webuiDomainTextarea",
 						"WebUIAPIKeyText", "webUIAPIKeyCopyButton",
 						"webUIAPIKeyRotateButton", "webUIAPIKeyDeleteButton"
 					})},
@@ -2457,21 +2505,24 @@ namespace OpenNet::Core::WebUI
 			Json value{
 				{"app_instance_name", "OpenNet"},
 				{"locale", m_options.locale},
-				{"web_ui_session_timeout", 3600},
-				{"web_ui_max_auth_fail_count", 5},
-				{"web_ui_ban_duration", 3600},
+				{"web_ui_session_timeout", m_options.sessionTimeoutSeconds},
+				{"web_ui_max_auth_fail_count", m_options.maximumAuthenticationFailures},
+				{"web_ui_ban_duration", m_options.banDurationSeconds},
 				{"web_ui_port", m_options.port},
 				{"web_ui_address", m_options.address},
 				{"web_ui_upnp", false},
-				{"web_ui_csrf_protection_enabled", true},
-				{"web_ui_host_header_validation_enabled", true},
+				{"web_ui_csrf_protection_enabled", m_options.csrfProtection},
+				{"web_ui_host_header_validation_enabled", m_options.hostHeaderValidation},
 				{"web_ui_clickjacking_protection_enabled", true},
-				{"web_ui_secure_cookie_enabled", false},
+				{"web_ui_secure_cookie_enabled", m_options.secureCookie},
 				{"web_ui_https_enabled", false},
 				{"web_ui_reverse_proxy_enabled", false},
 				{"web_ui_use_custom_http_headers_enabled", false},
 				{"web_ui_username", std::move(username)},
 				{"web_ui_api_key", std::move(apiKey)},
+				{"bypass_local_auth", m_options.bypassAuthenticationForLocalhost},
+				{"web_ui_domain_list", m_options.domainList},
+				{"web_ui_sessions_count_limit", m_options.sessionCountLimit},
 				{"save_path", DefaultSavePath()},
 				{"preallocate_all", settings.preallocateStorage},
 				{"add_stopped_enabled", !settings.autoStartDownloads},
@@ -3058,6 +3109,42 @@ namespace OpenNet::Core::WebUI
 					::OpenNet::Core::AppSettingsDatabase::Instance()
 						.SetInt("webui_host", "port", value);
 					m_options.port = static_cast<std::uint16_t>(value);
+				}
+				const auto persistHostInteger = [this, &parsed](const char* preferenceKey, const char* databaseKey, int& destination, int minimum, int maximum)
+				{
+					if (!parsed.contains(preferenceKey)) return;
+					const auto& value = parsed.at(preferenceKey);
+					if (!value.is_number_integer()) throw std::invalid_argument(std::string(preferenceKey) + " must be an integer");
+					const auto number = value.get<std::int64_t>();
+					if (number < minimum || number > maximum) throw std::out_of_range(std::string(preferenceKey) + " is out of range");
+					destination = static_cast<int>(number);
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("webui_host", databaseKey, number);
+				};
+				persistHostInteger("web_ui_session_timeout", "session_timeout_seconds", m_options.sessionTimeoutSeconds, 0, 86400);
+				persistHostInteger("web_ui_max_auth_fail_count", "maximum_authentication_failures", m_options.maximumAuthenticationFailures, 0, 100);
+				persistHostInteger("web_ui_ban_duration", "ban_duration_seconds", m_options.banDurationSeconds, 1, 86400);
+				if (parsed.contains("web_ui_sessions_count_limit"))
+				{
+					int limit = static_cast<int>(m_options.sessionCountLimit);
+					persistHostInteger("web_ui_sessions_count_limit", "session_count_limit", limit, 0, 1000);
+					m_options.sessionCountLimit = static_cast<std::size_t>(limit);
+				}
+				const auto persistHostBoolean = [this, &parsed](const char* preferenceKey, const char* databaseKey, bool& destination)
+				{
+					if (!parsed.contains(preferenceKey)) return;
+					if (!parsed.at(preferenceKey).is_boolean()) throw std::invalid_argument(std::string(preferenceKey) + " must be a boolean");
+					destination = parsed.at(preferenceKey).get<bool>();
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetBool("webui_host", databaseKey, destination);
+				};
+				persistHostBoolean("bypass_local_auth", "bypass_authentication_for_localhost", m_options.bypassAuthenticationForLocalhost);
+				persistHostBoolean("web_ui_csrf_protection_enabled", "csrf_protection", m_options.csrfProtection);
+				persistHostBoolean("web_ui_host_header_validation_enabled", "host_header_validation", m_options.hostHeaderValidation);
+				persistHostBoolean("web_ui_secure_cookie_enabled", "secure_cookie", m_options.secureCookie);
+				if (parsed.contains("web_ui_domain_list"))
+				{
+					if (!parsed.at("web_ui_domain_list").is_string()) throw std::invalid_argument("web_ui_domain_list must be a string");
+					m_options.domainList = parsed.at("web_ui_domain_list").get<std::string>();
+					::OpenNet::Core::AppSettingsDatabase::Instance().SetString("webui_host", "domain_list", m_options.domainList);
 				}
 				if (parsed.contains("rss_max_articles_per_feed"))
 				{
@@ -5997,12 +6084,16 @@ namespace OpenNet::Core::WebUI
 						return TextResponse(
 							request, http::status::not_found,
 							"Creation task not found");
-					result.push_back(task->second.status);
+					std::scoped_lock taskLock(task->second->mutex);
+					result.push_back(task->second->status);
 				}
 				else
 				{
 					for (const auto& [id, task] : m_creatorJobs)
-						result.push_back(task.status);
+					{
+						std::scoped_lock taskLock(task->mutex);
+						result.push_back(task->status);
+					}
 				}
 				return JsonResponse(request, result);
 			}
@@ -6019,12 +6110,13 @@ namespace OpenNet::Core::WebUI
 					return TextResponse(
 						request, http::status::not_found,
 						"Creation task not found");
-				if (task->second.torrentData.empty())
+				std::scoped_lock taskLock(task->second->mutex);
+				if (task->second->torrentData.empty())
 					return TextResponse(
 						request, http::status::conflict,
 						"Torrent creation failed");
 				return BinaryResponse(
-					request, task->second.torrentData,
+					request, task->second->torrentData,
 					"application/x-bittorrent",
 					parameters.at("taskID") + ".torrent");
 			}
@@ -6038,11 +6130,16 @@ namespace OpenNet::Core::WebUI
 					return TextResponse(
 						request, http::status::bad_request,
 						"Missing parameter: taskID");
-				std::scoped_lock lock(m_creatorMutex);
-				if (m_creatorJobs.erase(parameters.at("taskID")) == 0)
-					return TextResponse(
-						request, http::status::not_found,
-						"Creation task not found");
+				std::shared_ptr<CreatorJob> task;
+				{
+					std::scoped_lock lock(m_creatorMutex);
+					const auto iterator = m_creatorJobs.find(parameters.at("taskID"));
+					if (iterator == m_creatorJobs.end())
+						return TextResponse(request, http::status::not_found, "Creation task not found");
+					task = std::move(iterator->second);
+					m_creatorJobs.erase(iterator);
+				}
+				task->stopSource.request_stop();
 				return EmptyResponse(request);
 			}
 			if (operation != "addTask" || !parameters.contains("sourcePath"))
@@ -6058,79 +6155,97 @@ namespace OpenNet::Core::WebUI
 					request, http::status::conflict,
 					"Source path does not exist");
 			const std::string taskId = RandomHex(16);
-			CreatorJob job;
+			auto job = std::make_shared<CreatorJob>();
 			const auto now = std::chrono::duration_cast<std::chrono::seconds>(
 				std::chrono::system_clock::now().time_since_epoch()).count();
-			job.status = Json{
+			job->status = Json{
 				{"taskID", taskId},
 				{"sourcePath", parameters.at("sourcePath")},
 				{"pieceSize", 0},
-				{"ignoreDotFiles", true},
+				{"ignoreDotfiles", true},
 				{"private", false},
 				{"format", parameters.contains("format")
 					? parameters.at("format") : "hybrid"},
 				{"timeAdded", now},
+				{"timeStarted", now},
 				{"status", "Running"},
 				{"progress", 0.0}
 			};
-			try
+			::OpenNet::Core::Torrent::TorrentCreationOptions options;
+			options.sourcePath = sourcePath;
+			options.pieceSize = parameters.contains("pieceSize")
+				? static_cast<int>(ParseInt64(parameters.at("pieceSize")).value_or(0)) : 0;
+			const std::string format = parameters.contains("format") ? ToLower(parameters.at("format")) : "hybrid";
+			if (format == "v1") options.format = ::OpenNet::Core::Torrent::TorrentFormat::V1;
+			else if (format == "v2") options.format = ::OpenNet::Core::Torrent::TorrentFormat::V2;
+			if (parameters.contains("private")) options.privateTorrent = ParseBool(parameters.at("private"));
+			if (parameters.contains("ignoreDotfiles")) options.ignoreDotFiles = ParseBool(parameters.at("ignoreDotfiles"));
+			else if (parameters.contains("ignoreDotFiles")) options.ignoreDotFiles = ParseBool(parameters.at("ignoreDotFiles"));
+			job->status["pieceSize"] = options.pieceSize;
+			job->status["private"] = options.privateTorrent;
+			job->status["ignoreDotfiles"] = options.ignoreDotFiles;
+			if (parameters.contains("comment")) options.comment = parameters.at("comment");
+			if (parameters.contains("source")) options.source = parameters.at("source");
+			if (parameters.contains("trackers"))
 			{
-				::OpenNet::Core::Torrent::TorrentCreationOptions options;
-				options.sourcePath = sourcePath;
-				options.pieceSize = parameters.contains("pieceSize")
-					? static_cast<int>(
-						ParseInt64(parameters.at("pieceSize")).value_or(0))
-					: 0;
-				const std::string format = parameters.contains("format")
-					? ToLower(parameters.at("format")) : "hybrid";
-				if (format == "v1")
-					options.format = ::OpenNet::Core::Torrent::TorrentFormat::V1;
-				else if (format == "v2")
-					options.format = ::OpenNet::Core::Torrent::TorrentFormat::V2;
-				if (parameters.contains("private"))
-					options.privateTorrent = ParseBool(parameters.at("private"));
-				if (parameters.contains("ignoreDotFiles"))
-					options.ignoreDotFiles = ParseBool(parameters.at("ignoreDotFiles"));
-				if (parameters.contains("comment"))
-					options.comment = parameters.at("comment");
-				if (parameters.contains("trackers"))
+				for (const auto& tracker : SplitValues(parameters.at("trackers"), '|'))
 				{
-					for (const auto& tracker :
-						 SplitValues(parameters.at("trackers"), '|'))
-					{
-						if (!tracker.empty())
-							options.trackers.push_back(tracker);
-					}
+					if (!tracker.empty()) options.trackers.push_back(tracker);
 				}
-				if (parameters.contains("urlSeeds"))
-				{
-					for (const auto& seed :
-						 SplitValues(parameters.at("urlSeeds"), '|'))
-					{
-						if (!seed.empty())
-							options.urlSeeds.push_back(seed);
-					}
-				}
-				auto result = ::OpenNet::Core::Torrent::TorrentCreator::Create(options);
-				job.torrentData.assign(
-					reinterpret_cast<char const*>(result.data.data()), result.data.size());
-				job.status["pieceSize"] = result.pieceSize;
-				job.status["status"] = "Finished";
-				job.status["progress"] = 1.0;
-				job.status["timeFinished"] =
-					std::chrono::duration_cast<std::chrono::seconds>(
-						std::chrono::system_clock::now()
-						.time_since_epoch()).count();
 			}
-			catch (const std::exception& exception)
+			if (parameters.contains("urlSeeds"))
 			{
-				job.status["status"] = "Failed";
-				job.status["errorMessage"] = exception.what();
+				for (const auto& seed : SplitValues(parameters.at("urlSeeds"), '|'))
+				{
+					if (!seed.empty()) options.urlSeeds.push_back(seed);
+				}
 			}
+			if (!options.comment.empty()) job->status["comment"] = options.comment;
+			if (!options.source.empty()) job->status["source"] = options.source;
+			if (!options.trackers.empty()) job->status["trackers"] = options.trackers;
+			if (!options.urlSeeds.empty()) job->status["urlSeeds"] = options.urlSeeds;
+			const auto targetPath = parameters.contains("torrentFilePath") ? PathFromUtf8(parameters.at("torrentFilePath")) : std::filesystem::path{};
+			if (!targetPath.empty()) job->status["torrentFilePath"] = parameters.at("torrentFilePath");
+			const bool startSeeding = parameters.contains("startSeeding") ? ParseBool(parameters.at("startSeeding")) : targetPath.empty();
 			{
 				std::scoped_lock lock(m_creatorMutex);
-				m_creatorJobs[taskId] = std::move(job);
+				m_creatorJobs[taskId] = job;
 			}
+			std::thread([job, taskId, options = std::move(options), targetPath, startSeeding]() mutable
+			{
+				bool apartmentInitialized{};
+				try
+				{
+					winrt::init_apartment(winrt::apartment_type::multi_threaded);
+					apartmentInitialized = true;
+					auto result = ::OpenNet::Core::Torrent::TorrentCreator::Create(options, [job](int completed, int total)
+					{
+						std::scoped_lock lock(job->mutex);
+						job->status["progress"] = total > 0 ? static_cast<double>(completed) / total : 0.0;
+					}, job->stopSource.get_token());
+					std::filesystem::path outputPath = targetPath;
+					if (startSeeding && outputPath.empty())
+						outputPath = std::filesystem::temp_directory_path() / "OpenNet" / "CreatedTorrents" / (taskId + ".torrent");
+					if (!outputPath.empty()) ::OpenNet::Core::Torrent::TorrentCreator::WriteFile(outputPath, result);
+					bool seedingStarted = true;
+					if (startSeeding && !job->stopSource.stop_requested())
+						seedingStarted = ::OpenNet::Core::P2PManager::Instance().AddTorrentFileAsync(outputPath.string(), options.sourcePath.parent_path().string(), {}, options.trackers, true, true).get();
+					std::scoped_lock lock(job->mutex);
+					job->torrentData.assign(reinterpret_cast<char const*>(result.data.data()), result.data.size());
+					job->status["pieceSize"] = result.pieceSize;
+					job->status["status"] = seedingStarted ? "Finished" : "Failed";
+					job->status["progress"] = 1.0;
+					if (!seedingStarted) job->status["errorMessage"] = "Torrent created, but the seeding task could not be added";
+					job->status["timeFinished"] = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+				}
+				catch (const std::exception& exception)
+				{
+					std::scoped_lock lock(job->mutex);
+					job->status["status"] = "Failed";
+					job->status["errorMessage"] = exception.what();
+				}
+				if (apartmentInitialized) winrt::uninit_apartment();
+			}).detach();
 			return JsonResponse(request, Json{ {"taskID", taskId} });
 		}
 
@@ -6232,7 +6347,7 @@ namespace OpenNet::Core::WebUI
 		std::atomic<int> m_nextSearchId{ 1 };
 
 		std::mutex m_creatorMutex;
-		std::unordered_map<std::string, CreatorJob> m_creatorJobs;
+		std::unordered_map<std::string, std::shared_ptr<CreatorJob>> m_creatorJobs;
 
 		const std::chrono::system_clock::time_point m_launchTime =
 			std::chrono::system_clock::now();
@@ -6292,6 +6407,11 @@ namespace OpenNet::Core::WebUI
 	bool StartWebUI()
 	{
 		return WebUIHost::Instance().Start();
+	}
+
+	void StopWebUI() noexcept
+	{
+		WebUIHost::Instance().Stop();
 	}
 
 	bool RestartWebUI()

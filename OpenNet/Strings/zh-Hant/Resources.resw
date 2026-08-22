@@ -5023,4 +5023,55 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>libtorrent 捨棄低優先級警示前允許累積的最大警示數。</value>
   </data>
+  <data name="CreateTorrentFormat.Header" xml:space="preserve">
+    <value>Torrent 格式</value>
+  </data>
+  <data name="CreateTorrentPieceSize.Header" xml:space="preserve">
+    <value>分塊大小</value>
+  </data>
+  <data name="CreateTorrentPieceSizeAuto.Content" xml:space="preserve">
+    <value>自動</value>
+  </data>
+  <data name="CreateTorrentStartSeeding.Content" xml:space="preserve">
+    <value>完成後立即做種</value>
+  </data>
+  <data name="CreateTorrentUrlSeeds.Header" xml:space="preserve">
+    <value>Web 種子 URL</value>
+  </data>
+  <data name="CreateTorrentUrlSeeds.PlaceholderText" xml:space="preserve">
+    <value>每行一個 Web 種子 URL</value>
+  </data>
+  <data name="CreateTorrentSourceField.Header" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="CreateTorrentSourceField.PlaceholderText" xml:space="preserve">
+    <value>可選的來源識別碼</value>
+  </data>
+  <data name="CreateTorrentProgressWindowTitleBar.Title" xml:space="preserve">
+    <value>正在製作 Torrent</value>
+  </data>
+  <data name="CreateTorrentProgressWindowTitleBar.Subtitle" xml:space="preserve">
+    <value>正在計算檔案雜湊</value>
+  </data>
+  <data name="CreateTorrentProgressDescription.Text" xml:space="preserve">
+    <value>正在建立 BitTorrent 中繼資料</value>
+  </data>
+  <data name="CreateTorrentProgressSourceLabel.Text" xml:space="preserve">
+    <value>來源</value>
+  </data>
+  <data name="CreateTorrentProgressTargetLabel.Text" xml:space="preserve">
+    <value>目標</value>
+  </data>
+  <data name="CreateTorrentProgressOpenFolder.Content" xml:space="preserve">
+    <value>開啟資料夾</value>
+  </data>
+  <data name="CreateTorrentCompleteSeedingFailed" xml:space="preserve">
+    <value>Torrent 已建立，但無法加入做種。</value>
+  </data>
+  <data name="CreateTorrentCanceling" xml:space="preserve">
+    <value>正在取消 Torrent 製作…</value>
+  </data>
+  <data name="CreateTorrentUnknownFailure" xml:space="preserve">
+    <value>製作 Torrent 時發生未知錯誤。</value>
+  </data>
 </root>

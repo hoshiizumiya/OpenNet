@@ -52,12 +52,7 @@ export namespace OpenNet::Core
 			std::vector<int> const& filePriorities = {},
 			std::vector<std::string> const& extraTrackers = {},
 			bool startImmediately = true);
-		winrt::Windows::Foundation::IAsyncOperation<bool> AddTorrentFileAsync(
-			std::string torrentFilePath,
-			std::string savePath,
-			std::vector<int> const& filePriorities = {},
-			std::vector<std::string> const& extraTrackers = {},
-			bool startImmediately = true);
+		winrt::Windows::Foundation::IAsyncOperation<bool> AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities = {}, std::vector<std::string> const& extraTrackers = {}, bool startImmediately = true, bool seedMode = false);
 
 		// Load all saved tasks and resume them
 		winrt::Windows::Foundation::IAsyncAction LoadAndResumeSavedTasksAsync();

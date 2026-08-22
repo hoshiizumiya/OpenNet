@@ -19,6 +19,15 @@ namespace OpenNet::Core::WebUI
 		std::string frontend{ "qbittorrent" };
 		std::filesystem::path assetRoot;
 		std::size_t workerThreads{ 2 };
+		int sessionTimeoutSeconds{ 3600 };
+		int maximumAuthenticationFailures{ 5 };
+		int banDurationSeconds{ 3600 };
+		std::size_t sessionCountLimit{ 10 };
+		bool bypassAuthenticationForLocalhost{};
+		bool csrfProtection{ true };
+		bool hostHeaderValidation{ true };
+		bool secureCookie{};
+		std::string domainList{ "*" };
 		std::function<void()> shutdownCallback;
 	};
 

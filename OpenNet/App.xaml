@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animations="using:XamlToolkit.WinUI.Animations"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet">
     <Application.Resources>
         <ResourceDictionary>
@@ -106,6 +107,12 @@
             </Style>
             <Style TargetType="UIElement">
                 <Setter Property="UseLayoutRounding" Value="False" />
+            </Style>
+            <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
+                <Setter Property="essential:ToolTipHelper.AcrylicWorkaround" Value="True" />
+            </Style>
+            <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+                <Setter Property="essential:ComboBoxHelper.AcrylicWorkaround" Value="True" />
             </Style>
 
         </ResourceDictionary>

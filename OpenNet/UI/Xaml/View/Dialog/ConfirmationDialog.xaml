@@ -8,6 +8,15 @@
     x:Name="RootDialog"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
+    <ContentDialog.Resources>
+        <Style
+            x:Key="CriticalDialogPrimaryButtonStyle"
+            BasedOn="{StaticResource AccentButtonStyle}"
+            TargetType="Button">
+            <Setter Property="Background" Value="{ThemeResource SystemFillColorCriticalBrush}" />
+            <Setter Property="Foreground" Value="{ThemeResource TextOnAccentFillColorPrimaryBrush}" />
+        </Style>
+    </ContentDialog.Resources>
     <StackPanel MinWidth="360" Spacing="12">
         <FontIcon
             x:Name="CriticalIcon"

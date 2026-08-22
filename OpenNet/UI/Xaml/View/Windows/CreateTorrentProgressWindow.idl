@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.View.Windows
+{
+	[default_interface]
+	runtimeclass CreateTorrentProgressWindow : WinUI3Package.WindowEx
+	{
+		CreateTorrentProgressWindow();
+	}
+}

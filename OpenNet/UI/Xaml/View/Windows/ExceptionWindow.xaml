@@ -12,7 +12,7 @@
     Height="520"
     MinWidth="640"
     MinHeight="420"
-    MaxWidth="1400"
+    MaxWidth="1800"
     MaxHeight="1000"
     IsAlwaysOnTop="True"
     IsMaximizable="True"

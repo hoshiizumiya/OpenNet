@@ -5181,4 +5181,103 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>Maximum pending libtorrent alerts before low-priority alerts may be dropped.</value>
   </data>
+  <data name="CreateTorrentFormat.Header" xml:space="preserve">
+    <value>Torrent format</value>
+  </data>
+  <data name="CreateTorrentPieceSize.Header" xml:space="preserve">
+    <value>Piece size</value>
+  </data>
+  <data name="CreateTorrentPieceSizeAuto.Content" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="CreateTorrentStartSeeding.Content" xml:space="preserve">
+    <value>Start seeding immediately</value>
+  </data>
+  <data name="CreateTorrentUrlSeeds.Header" xml:space="preserve">
+    <value>Web seed URLs</value>
+  </data>
+  <data name="CreateTorrentUrlSeeds.PlaceholderText" xml:space="preserve">
+    <value>One web seed URL per line</value>
+  </data>
+  <data name="CreateTorrentSourceField.Header" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="CreateTorrentSourceField.PlaceholderText" xml:space="preserve">
+    <value>Optional source identifier</value>
+  </data>
+  <data name="CreateTorrentProgressWindowTitleBar.Title" xml:space="preserve">
+    <value>Creating torrent</value>
+  </data>
+  <data name="CreateTorrentProgressWindowTitleBar.Subtitle" xml:space="preserve">
+    <value>Hashing files</value>
+  </data>
+  <data name="CreateTorrentProgressDescription.Text" xml:space="preserve">
+    <value>Creating BitTorrent metadata</value>
+  </data>
+  <data name="CreateTorrentProgressSourceLabel.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="CreateTorrentProgressTargetLabel.Text" xml:space="preserve">
+    <value>Target</value>
+  </data>
+  <data name="CreateTorrentProgressOpenFolder.Content" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="CreateTorrentCompleteSeedingFailed" xml:space="preserve">
+    <value>The torrent was created, but it could not be added for seeding.</value>
+  </data>
+  <data name="CreateTorrentCanceling" xml:space="preserve">
+    <value>Canceling torrent creation…</value>
+  </data>
+  <data name="CreateTorrentUnknownFailure" xml:space="preserve">
+    <value>An unknown error occurred while creating the torrent.</value>
+  </data>
+  <data name="WebUISettingsEnabledCard.Header" xml:space="preserve">
+    <value>Enable Web UI</value>
+  </data>
+  <data name="WebUISettingsEnabledCard.Description" xml:space="preserve">
+    <value>Allow browser and compatible API clients to connect to OpenNet.</value>
+  </data>
+  <data name="WebUISettingsSecurityHeader.Text" xml:space="preserve">
+    <value>Sessions and security</value>
+  </data>
+  <data name="WebUISettingsSessionExpander.Header" xml:space="preserve">
+    <value>Authentication policy</value>
+  </data>
+  <data name="WebUISettingsSessionExpander.Description" xml:space="preserve">
+    <value>Control local authentication, session lifetime and failed-login bans.</value>
+  </data>
+  <data name="WebUISettingsSessionTimeoutCard.Header" xml:space="preserve">
+    <value>Session timeout (seconds)</value>
+  </data>
+  <data name="WebUISettingsSessionLimitCard.Header" xml:space="preserve">
+    <value>Session count limit</value>
+  </data>
+  <data name="WebUISettingsMaxFailuresCard.Header" xml:space="preserve">
+    <value>Ban after consecutive failures</value>
+  </data>
+  <data name="WebUISettingsBanDurationCard.Header" xml:space="preserve">
+    <value>Ban duration (seconds)</value>
+  </data>
+  <data name="WebUISettingsRequestSecurityExpander.Header" xml:space="preserve">
+    <value>Request protection</value>
+  </data>
+  <data name="WebUISettingsRequestSecurityExpander.Description" xml:space="preserve">
+    <value>Protect browser sessions against forged requests and DNS rebinding.</value>
+  </data>
+  <data name="WebUISettingsHostValidationCard.Header" xml:space="preserve">
+    <value>Host header validation</value>
+  </data>
+  <data name="WebUISettingsSecureCookieCard.Header" xml:space="preserve">
+    <value>Secure cookie flag</value>
+  </data>
+  <data name="WebUISettingsDomainsCard.Header" xml:space="preserve">
+    <value>Allowed server domains</value>
+  </data>
+  <data name="WebUISettingsBypassLocalAuth.Header" xml:space="preserve">
+    <value>Bypass authentication on localhost</value>
+  </data>
+  <data name="WebUISettingsCsrfProtection.Header" xml:space="preserve">
+    <value>CSRF protection</value>
+  </data>
 </root>

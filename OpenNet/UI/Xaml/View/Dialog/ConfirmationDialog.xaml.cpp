@@ -25,6 +25,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		DetailsText().Text(details);
 		DetailsText().Visibility(details.empty() ? Visibility::Collapsed : Visibility::Visible);
 		PrimaryButtonText(primaryButtonText);
+		PrimaryButtonStyle(critical ? Resources().Lookup(box_value(L"CriticalDialogPrimaryButtonStyle")).as<Microsoft::UI::Xaml::Style>() : Microsoft::UI::Xaml::Style{ nullptr });
 		CloseButtonText(closeButtonText);
 		DefaultButton(primaryButtonText.empty() ? ContentDialogButton::Close : ContentDialogButton::Primary);
 		CriticalIcon().Visibility(critical ? Visibility::Visible : Visibility::Collapsed);

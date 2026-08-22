@@ -38,6 +38,16 @@
                 Severity="Informational" />
 
             <essential:SettingsCard
+                x:Uid="WebUISettingsEnabledCard"
+                Description="Allow browser and compatible API clients to connect to OpenNet."
+                Header="Enable Web UI">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE774;" />
+                </essential:SettingsCard.HeaderIcon>
+                <ToggleSwitch x:Name="EnableWebUIToggle" />
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
                 x:Uid="WebUISettingsFrontendCard"
                 Description="Both frontends use the same OpenNet/qBittorrent-compatible API and settings store."
                 Header="Frontend">
@@ -176,6 +186,81 @@
                         Content="Clear" />
                 </StackPanel>
             </essential:SettingsCard>
+
+            <TextBlock
+                x:Uid="WebUISettingsSecurityHeader"
+                Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                Text="Sessions and security" />
+
+            <essential:SettingsExpander
+                x:Uid="WebUISettingsSessionExpander"
+                Description="Control local authentication, session lifetime and failed-login bans."
+                Header="Authentication policy">
+                <essential:SettingsExpander.HeaderIcon>
+                    <FontIcon Glyph="&#xE72E;" />
+                </essential:SettingsExpander.HeaderIcon>
+                <ToggleSwitch
+                    x:Name="BypassLocalAuthToggle"
+                    x:Uid="WebUISettingsBypassLocalAuth"
+                    Header="Bypass authentication on localhost" />
+                <essential:SettingsExpander.Items>
+                    <essential:SettingsCard x:Uid="WebUISettingsSessionTimeoutCard" Header="Session timeout (seconds)">
+                        <NumberBox
+                            x:Name="SessionTimeoutNumberBox"
+                            Maximum="86400"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="WebUISettingsSessionLimitCard" Header="Session count limit">
+                        <NumberBox
+                            x:Name="SessionCountLimitNumberBox"
+                            Maximum="1000"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="WebUISettingsMaxFailuresCard" Header="Ban after consecutive failures">
+                        <NumberBox
+                            x:Name="MaxAuthFailuresNumberBox"
+                            Maximum="100"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="WebUISettingsBanDurationCard" Header="Ban duration (seconds)">
+                        <NumberBox
+                            x:Name="BanDurationNumberBox"
+                            Maximum="86400"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Inline" />
+                    </essential:SettingsCard>
+                </essential:SettingsExpander.Items>
+            </essential:SettingsExpander>
+
+            <essential:SettingsExpander
+                x:Uid="WebUISettingsRequestSecurityExpander"
+                Description="Protect browser sessions against forged requests and DNS rebinding."
+                Header="Request protection">
+                <essential:SettingsExpander.HeaderIcon>
+                    <FontIcon Glyph="&#xE83D;" />
+                </essential:SettingsExpander.HeaderIcon>
+                <ToggleSwitch
+                    x:Name="CsrfProtectionToggle"
+                    x:Uid="WebUISettingsCsrfProtection"
+                    Header="CSRF protection" />
+                <essential:SettingsExpander.Items>
+                    <essential:SettingsCard x:Uid="WebUISettingsHostValidationCard" Header="Host header validation">
+                        <ToggleSwitch x:Name="HostValidationToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="WebUISettingsSecureCookieCard" Header="Secure cookie flag">
+                        <ToggleSwitch x:Name="SecureCookieToggle" />
+                    </essential:SettingsCard>
+                    <essential:SettingsCard x:Uid="WebUISettingsDomainsCard" Header="Allowed server domains">
+                        <TextBox
+                            x:Name="DomainListTextBox"
+                            MinWidth="280"
+                            PlaceholderText="* or domain1;domain2" />
+                    </essential:SettingsCard>
+                </essential:SettingsExpander.Items>
+            </essential:SettingsExpander>
 
             <StackPanel
                 Margin="0,24,0,0"

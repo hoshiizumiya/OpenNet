@@ -1,4 +1,4 @@
-export module OpenNet.Core.Torrent.TorrentCreator;
+﻿export module OpenNet.Core.Torrent.TorrentCreator;
 
 import std;
 
@@ -19,6 +19,7 @@ export namespace OpenNet::Core::Torrent
 		bool privateTorrent{};
 		bool ignoreDotFiles{ true };
 		std::string comment;
+		std::string source;
 		std::vector<std::string> trackers;
 		std::vector<std::string> urlSeeds;
 	};
@@ -27,14 +28,14 @@ export namespace OpenNet::Core::Torrent
 	{
 		std::vector<std::uint8_t> data;
 		int pieceSize{};
+		int pieceCount{};
 	};
 
 	class TorrentCreator final
 	{
 	public:
-		static TorrentCreationResult Create(TorrentCreationOptions const& options);
-		static void WriteFile(
-			std::filesystem::path const& target,
-			TorrentCreationResult const& result);
+		using ProgressCallback = std::function<void(int completedPieces, int totalPieces)>;
+		static TorrentCreationResult Create(TorrentCreationOptions const& options, ProgressCallback progress = {}, std::stop_token stopToken = {});
+		static void WriteFile(std::filesystem::path const& target, TorrentCreationResult const& result);
 	};
 }

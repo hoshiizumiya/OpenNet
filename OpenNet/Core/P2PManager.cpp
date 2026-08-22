@@ -221,20 +221,14 @@ namespace OpenNet::Core
 			magnetUri, savePath, filePriorities, extraTrackers, startImmediately);
 	}
 
-	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(
-		std::string torrentFilePath,
-		std::string savePath,
-		std::vector<int> const& filePriorities,
-		std::vector<std::string> const& extraTrackers,
-		bool startImmediately)
+	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities, std::vector<std::string> const& extraTrackers, bool startImmediately, bool seedMode)
 	{
 		co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
 			.InitializeAsync();
 		co_await EnsureTorrentCoreInitializedAsync();
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
-		co_return m_torrentCore->AddTorrentFile(
-			torrentFilePath, savePath, filePriorities, extraTrackers, startImmediately);
+		co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities, extraTrackers, startImmediately, seedMode);
 	}
 
 	IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()

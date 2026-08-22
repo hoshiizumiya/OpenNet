@@ -1093,7 +1093,8 @@ namespace OpenNet::Core::Torrent
 		std::string const& savePath,
 		std::vector<int> const& filePriorities,
 		std::vector<std::string> const& extraTrackers,
-		bool startImmediately)
+		bool startImmediately,
+		bool seedMode)
 	{
 		if (!Initialize())
 			return false;
@@ -1109,8 +1110,10 @@ namespace OpenNet::Core::Torrent
 				throw std::runtime_error("torrent file has no info dictionary");
 			auto const torrentInfo = atp.ti;
 			atp.save_path = savePath;
-			// Remove seed_mode flag for downloads
-			atp.flags &= ~lt::torrent_flags::seed_mode;
+			if (seedMode)
+				atp.flags |= lt::torrent_flags::seed_mode;
+			else
+				atp.flags &= ~lt::torrent_flags::seed_mode;
 			if (!startImmediately)
 			{
 				atp.flags &= ~lt::torrent_flags::auto_managed;

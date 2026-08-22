@@ -16,5 +16,6 @@ namespace OpenNet::Core::WebUI
 	bool IsWebUIRunning() noexcept;
 	bool StartWebUI();
 	bool RestartWebUI();
+	void StopWebUI() noexcept;
 	WebUIRuntimeStats GetWebUIRuntimeStats() noexcept;
 }

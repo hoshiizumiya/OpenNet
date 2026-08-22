@@ -54,26 +54,54 @@
                             Click="MenuItemAddFromLink_ClickAsync"
                             Icon="{essential:FontIcon FontFamily=Segoe UI Emoji,
                                                       Glyph=&#x1F9F2;}"
-                            Text="From Magnet Link" />
+                            Text="From Magnet Link">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator
+                                    Key="O"
+                                    Invoked="TaskNewFromUrlKeyboardAccelerator_Invoked"
+                                    Modifiers="Control" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                         <MenuFlyoutItem
                             x:Name="MenuItemAddFromFile"
                             x:Uid="TaskNewFromFileButton"
                             Click="MenuItemAddFromFile_ClickAsync"
                             Icon="{essential:FontIcon Glyph=&#xE8E5;}"
-                            Text="From Bittorrent File" />
+                            Text="From Bittorrent File">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator
+                                    Key="O"
+                                    Invoked="TaskNewFromFileKeyboardAccelerator_Invoked"
+                                    Modifiers="Control, Shift" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
                             x:Name="MenuItemAddFromHttp"
                             x:Uid="TaskNewFromHttpButton"
                             Click="MenuItemAddFromHttp_ClickAsync"
                             Icon="{essential:FontIcon Glyph=&#xE71B;}"
-                            Text="HTTP Download" />
+                            Text="HTTP Download">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator
+                                    Key="N"
+                                    Invoked="TaskNewFromHttpKeyboardAccelerator_Invoked"
+                                    Modifiers="Control, Shift" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                         <MenuFlyoutSeparator />
                         <MenuFlyoutItem
                             x:Uid="TaskCreateTorrentButton"
                             Click="CreateTorrentMenuItem_Click"
                             Icon="{essential:FontIcon Glyph=&#xE8A5;}"
-                            Text="Create torrent..." />
+                            Text="Create torrent...">
+                            <MenuFlyoutItem.KeyboardAccelerators>
+                                <KeyboardAccelerator
+                                    Key="N"
+                                    Invoked="CreateTorrentKeyboardAccelerator_Invoked"
+                                    Modifiers="Control" />
+                            </MenuFlyoutItem.KeyboardAccelerators>
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
@@ -81,17 +109,41 @@
                 x:Uid="TaskStartButton"
                 AutomationProperties.AutomationId="TaskStartButton"
                 Command="{x:Bind ViewModel.StartCommand}"
-                Icon="{essential:FontIcon Glyph=&#xE768;}" />
+                Foreground="{ThemeResource SystemFillColorSuccessBrush}"
+                Icon="{essential:FontIcon Glyph=&#xE768;}">
+                <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="S"
+                        Invoked="TaskStartKeyboardAccelerator_Invoked"
+                        Modifiers="Control" />
+                </AppBarButton.KeyboardAccelerators>
+            </AppBarButton>
             <AppBarButton
                 x:Uid="TaskPauseButton"
                 AutomationProperties.AutomationId="TaskPauseButton"
                 Command="{x:Bind ViewModel.PauseCommand}"
-                Icon="{essential:FontIcon Glyph=&#xE769;}" />
+                Foreground="{ThemeResource SystemFillColorCautionBrush}"
+                Icon="{essential:FontIcon Glyph=&#xE769;}">
+                <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="P"
+                        Invoked="TaskPauseKeyboardAccelerator_Invoked"
+                        Modifiers="Control" />
+                </AppBarButton.KeyboardAccelerators>
+            </AppBarButton>
             <AppBarButton
                 x:Uid="TaskDeleteButton"
                 AutomationProperties.AutomationId="TaskDeleteButton"
                 Click="DeleteTaskButton_ClickAsync"
-                Icon="{essential:FontIcon Glyph=&#xE74D;}" />
+                Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                Icon="{essential:FontIcon Glyph=&#xE74D;}">
+                <AppBarButton.KeyboardAccelerators>
+                    <KeyboardAccelerator
+                        Key="Delete"
+                        Invoked="TaskDeleteKeyboardAccelerator_Invoked"
+                        Modifiers="None" />
+                </AppBarButton.KeyboardAccelerators>
+            </AppBarButton>
             <CommandBar.SecondaryCommands>
                 <AppBarButton
                     x:Uid="ViewTasksPagePortTestAppBarButton"

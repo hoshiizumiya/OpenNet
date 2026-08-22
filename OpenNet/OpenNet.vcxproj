@@ -1739,6 +1739,18 @@
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml" />
+    <ClCompile Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml</DependentUpon>
+    </ClCompile>
+    <ClInclude Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml</DependentUpon>
+    </ClInclude>
+    <Midl Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml</DependentUpon>
+    </Midl>
+  </ItemGroup>
   <PropertyGroup Condition="'$(DisableHasPackageAndPublishMenuAddedByProject)'!='true' and '$(EnableMsixTooling)'=='true'">
     <HasPackageAndPublishMenu>true</HasPackageAndPublishMenu>
   </PropertyGroup>

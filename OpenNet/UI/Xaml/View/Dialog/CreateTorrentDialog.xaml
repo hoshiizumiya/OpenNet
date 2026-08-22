@@ -15,76 +15,115 @@
     PrimaryButtonText="Create"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
-    <StackPanel MinWidth="480" Spacing="12">
-        <TextBlock
-            x:Uid="CreateTorrentDescription"
-            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-            Text="Create a BitTorrent metadata file from a local file or folder."
-            TextWrapping="Wrap" />
-        <Grid ColumnSpacing="8">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+    <ScrollViewer MaxHeight="680" VerticalScrollBarVisibility="Auto">
+        <StackPanel
+            MinWidth="480"
+            Padding="0,0,12,0"
+            Spacing="12">
+            <TextBlock
+                x:Uid="CreateTorrentDescription"
+                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                Text="Create a BitTorrent metadata file from a local file or folder."
+                TextWrapping="Wrap" />
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="CreateTorrentSourceTextBox"
+                    x:Uid="CreateTorrentSource"
+                    IsReadOnly="True"
+                    PlaceholderText="Source file or folder" />
+                <Button
+                    x:Uid="CreateTorrentBrowseFile"
+                    Grid.Column="1"
+                    Click="CreateTorrentBrowseFile_Click"
+                    Content="File..." />
+                <Button
+                    x:Uid="CreateTorrentBrowseFolder"
+                    Grid.Column="2"
+                    Click="CreateTorrentBrowseFolder_Click"
+                    Content="Folder..." />
+            </Grid>
+            <ComboBox
+                x:Name="CreateTorrentFormatComboBox"
+                x:Uid="CreateTorrentFormat"
+                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                Header="Torrent format"
+                SelectedIndex="0">
+                <ComboBoxItem x:Uid="CreateTorrentFormatHybrid" Content="Hybrid (v1 + v2)" />
+                <ComboBoxItem x:Uid="CreateTorrentFormatV1" Content="BitTorrent v1" />
+                <ComboBoxItem x:Uid="CreateTorrentFormatV2" Content="BitTorrent v2" />
+            </ComboBox>
+            <ComboBox
+                x:Name="CreateTorrentPieceSizeComboBox"
+                x:Uid="CreateTorrentPieceSize"
+                Header="Piece size"
+                SelectedIndex="0">
+                <ComboBoxItem
+                    x:Uid="CreateTorrentPieceSizeAuto"
+                    Content="Auto"
+                    Tag="0" />
+                <ComboBoxItem Content="16 KiB" Tag="16384" />
+                <ComboBoxItem Content="32 KiB" Tag="32768" />
+                <ComboBoxItem Content="64 KiB" Tag="65536" />
+                <ComboBoxItem Content="128 KiB" Tag="131072" />
+                <ComboBoxItem Content="256 KiB" Tag="262144" />
+                <ComboBoxItem Content="512 KiB" Tag="524288" />
+                <ComboBoxItem Content="1 MiB" Tag="1048576" />
+                <ComboBoxItem Content="2 MiB" Tag="2097152" />
+                <ComboBoxItem Content="4 MiB" Tag="4194304" />
+                <ComboBoxItem Content="8 MiB" Tag="8388608" />
+                <ComboBoxItem Content="16 MiB" Tag="16777216" />
+                <ComboBoxItem Content="32 MiB" Tag="33554432" />
+                <ComboBoxItem Content="64 MiB" Tag="67108864" />
+                <ComboBoxItem Content="128 MiB" Tag="134217728" />
+            </ComboBox>
+            <CheckBox
+                x:Name="CreateTorrentPrivateCheckBox"
+                x:Uid="CreateTorrentPrivate"
+                Content="Private torrent" />
+            <CheckBox
+                x:Name="CreateTorrentIgnoreDotFilesCheckBox"
+                x:Uid="CreateTorrentIgnoreDotFiles"
+                Content="Ignore hidden dot files"
+                IsChecked="True" />
+            <CheckBox
+                x:Name="CreateTorrentStartSeedingCheckBox"
+                x:Uid="CreateTorrentStartSeeding"
+                Content="Start seeding immediately" />
             <TextBox
-                x:Name="CreateTorrentSourceTextBox"
-                x:Uid="CreateTorrentSource"
-                IsReadOnly="True"
-                PlaceholderText="Source file or folder" />
-            <Button
-                x:Uid="CreateTorrentBrowseFile"
-                Grid.Column="1"
-                Click="CreateTorrentBrowseFile_Click"
-                Content="File..." />
-            <Button
-                x:Uid="CreateTorrentBrowseFolder"
-                Grid.Column="2"
-                Click="CreateTorrentBrowseFolder_Click"
-                Content="Folder..." />
-        </Grid>
-        <ComboBox
-            x:Name="CreateTorrentFormatComboBox"
-            essential:ComboBoxHelper.AcrylicWorkaround="True"
-            SelectedIndex="0">
-            <ComboBoxItem x:Uid="CreateTorrentFormatHybrid" Content="Hybrid (v1 + v2)" />
-            <ComboBoxItem x:Uid="CreateTorrentFormatV1" Content="BitTorrent v1" />
-            <ComboBoxItem x:Uid="CreateTorrentFormatV2" Content="BitTorrent v2" />
-        </ComboBox>
-        <CheckBox
-            x:Name="CreateTorrentPrivateCheckBox"
-            x:Uid="CreateTorrentPrivate"
-            Content="Private torrent" />
-        <CheckBox
-            x:Name="CreateTorrentIgnoreDotFilesCheckBox"
-            x:Uid="CreateTorrentIgnoreDotFiles"
-            Content="Ignore hidden dot files"
-            IsChecked="True" />
-        <TextBox
-            x:Name="CreateTorrentCommentTextBox"
-            x:Uid="CreateTorrentComment"
-            Header="Comment"
-            PlaceholderText="Optional comment" />
-        <TextBox
-            x:Name="CreateTorrentTrackersTextBox"
-            x:Uid="CreateTorrentTrackers"
-            MaxHeight="120"
-            AcceptsReturn="True"
-            Header="Trackers"
-            PlaceholderText="One tracker URL per line"
-            TextWrapping="NoWrap" />
-        <StackPanel Orientation="Horizontal" Spacing="8">
-            <ProgressRing
-                x:Name="CreateTorrentProgressRing"
-                Width="20"
-                Height="20"
-                IsActive="False"
-                Visibility="Collapsed" />
+                x:Name="CreateTorrentCommentTextBox"
+                x:Uid="CreateTorrentComment"
+                Header="Comment"
+                PlaceholderText="Optional comment" />
+            <TextBox
+                x:Name="CreateTorrentTrackersTextBox"
+                x:Uid="CreateTorrentTrackers"
+                MaxHeight="120"
+                AcceptsReturn="True"
+                Header="Trackers"
+                PlaceholderText="One tracker URL per line"
+                TextWrapping="NoWrap" />
+            <TextBox
+                x:Name="CreateTorrentUrlSeedsTextBox"
+                x:Uid="CreateTorrentUrlSeeds"
+                MaxHeight="120"
+                AcceptsReturn="True"
+                Header="Web seed URLs"
+                PlaceholderText="One web seed URL per line"
+                TextWrapping="NoWrap" />
+            <TextBox
+                x:Name="CreateTorrentSourceFieldTextBox"
+                x:Uid="CreateTorrentSourceField"
+                Header="Source"
+                PlaceholderText="Optional source identifier" />
             <TextBlock
                 x:Name="CreateTorrentStatusText"
-                VerticalAlignment="Center"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 TextWrapping="Wrap" />
         </StackPanel>
-    </StackPanel>
+    </ScrollViewer>
 </ContentDialog>

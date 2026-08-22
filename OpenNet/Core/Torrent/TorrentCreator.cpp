@@ -55,8 +55,7 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	TorrentCreationResult TorrentCreator::Create(
-		TorrentCreationOptions const& options)
+	TorrentCreationResult TorrentCreator::Create(TorrentCreationOptions const& options, ProgressCallback progress, std::stop_token const stopToken)
 	{
 		std::error_code filesystemError;
 		if (options.sourcePath.empty()
@@ -111,21 +110,28 @@ namespace OpenNet::Core::Torrent
 		libtorrent::settings_pack hashingSettings;
 		hashingSettings.set_int(libtorrent::settings_pack::aio_threads, std::max(1, torrentSettings.aioThreads));
 		hashingSettings.set_int(libtorrent::settings_pack::hashing_threads, std::max(1, torrentSettings.hashingThreads));
-		libtorrent::set_piece_hashes(creator, PathUtf8(options.sourcePath.parent_path()), hashingSettings, libtorrent::pread_disk_io_constructor, [](libtorrent::piece_index_t)
-		{}, error);
+		auto const pieceCount = creator.num_pieces();
+		if (progress) progress(0, pieceCount);
+		auto const completedPieces = std::make_shared<std::atomic<int>>(0);
+		libtorrent::set_piece_hashes(creator, PathUtf8(options.sourcePath.parent_path()), hashingSettings, libtorrent::pread_disk_io_constructor, [progress = std::move(progress), stopToken, pieceCount, completedPieces](libtorrent::piece_index_t)
+		{
+			if (stopToken.stop_requested()) throw std::runtime_error("Torrent creation canceled");
+			if (progress) progress(completedPieces->fetch_add(1, std::memory_order_relaxed) + 1, pieceCount);
+		}, error);
 		if (error) throw std::runtime_error(error.message());
+		if (stopToken.stop_requested()) throw std::runtime_error("Torrent creation canceled");
 
-		std::vector<char> encoded;
-		libtorrent::bencode(std::back_inserter(encoded), creator.generate());
+		auto metadata = creator.generate();
+		if (!options.source.empty()) metadata["info"]["source"] = options.source;
+		auto encoded = libtorrent::bencode(metadata);
 		TorrentCreationResult result;
 		result.data.assign(encoded.begin(), encoded.end());
 		result.pieceSize = creator.piece_length();
+		result.pieceCount = pieceCount;
 		return result;
 	}
 
-	void TorrentCreator::WriteFile(
-		std::filesystem::path const& target,
-		TorrentCreationResult const& result)
+	void TorrentCreator::WriteFile(std::filesystem::path const& target, TorrentCreationResult const& result)
 	{
 		if (target.empty()) throw std::invalid_argument("The output path is empty");
 		std::filesystem::create_directories(target.parent_path());

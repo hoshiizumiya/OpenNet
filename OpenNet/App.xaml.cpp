@@ -664,6 +664,9 @@ namespace winrt::OpenNet::implementation
 	{
 		try
 		{
+			auto& settingsDatabase = ::OpenNet::Core::AppSettingsDatabase::Instance();
+			settingsDatabase.Initialize();
+			if (!settingsDatabase.GetBool("webui_host", "enabled").value_or(true)) co_return;
 			auto dispatcher =
 				Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 			co_await ::OpenNet::Core::P2PManager::Instance()

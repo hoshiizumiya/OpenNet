@@ -564,18 +564,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	// Show file picker for user to select a .torrent file
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromFile_ClickAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		if (sender == MenuFlyoutItem())
-		{
-			OutputDebugStringA("MenuItemAddFromFile_Click: sender is MenuFlyoutItem, which may cause picker to not show. This is a known issue with WinUI 3. Consider using a different event source if picker fails to appear.\n");
-			// Note: In some cases, if the sender is the MenuFlyoutItem itself, the file picker may fail to show due to focus issues. This is a quirk of WinUI 3. If you encounter this, consider using a different event source (like a button) to trigger the file picker.
-			// However, we will still attempt to show the picker as is for compatibility.
-		}
 		try
 		{
-			auto control = sender.try_as<FrameworkElement>();
-			auto picker = FileOpenPicker(control.XamlRoot().ContentIslandEnvironment().AppWindowId());
+			auto const xamlRoot = XamlRoot();
+			auto picker = FileOpenPicker(xamlRoot.ContentIslandEnvironment().AppWindowId());
 			picker.ViewMode(PickerViewMode::List);
 			picker.SuggestedStartLocation(PickerLocationId::Downloads);
 			picker.FileTypeFilter().Append(L".torrent");
@@ -584,7 +578,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (files.Size() > 1)
 			{
 				winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog multiFileCheckDialog;
-				multiFileCheckDialog.XamlRoot(control.XamlRoot());
+				multiFileCheckDialog.XamlRoot(xamlRoot);
 				multiFileCheckDialog.Configure(ResourceGetString(L"ViewTasksPageMultipleFilesSelectedTitle"), ResourceGetString(L"ViewTasksPageMultipleFilesSelectedPrompt"), {}, ResourceGetString(L"ViewTasksPageCheckInNewWindows"), ResourceGetString(L"CommonCancel"), false, false, {});
 				multiFileCheckDialog.SecondaryButtonText(ResourceGetString(L"ViewTasksPageAddToList"));
 
@@ -698,6 +692,78 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		window.Content(winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage());
 		window.Activate();
 		return;
+	}
+
+	void TasksPage::TaskNewFromUrlKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		args.Handled(true);
+		InvokeKeyboardActionAsync(KeyboardAction::NewFromUrl);
+	}
+
+	void TasksPage::TaskNewFromFileKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		args.Handled(true);
+		InvokeKeyboardActionAsync(KeyboardAction::NewFromFile);
+	}
+
+	void TasksPage::TaskNewFromHttpKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		args.Handled(true);
+		InvokeKeyboardActionAsync(KeyboardAction::NewFromHttp);
+	}
+
+	void TasksPage::TaskStartKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		args.Handled(true);
+		if (!m_viewModel) return;
+		auto command = m_viewModel.StartCommand();
+		if (command && command.CanExecute(nullptr)) command.Execute(nullptr);
+	}
+
+	void TasksPage::TaskDeleteKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		auto const focusedElement = winrt::Microsoft::UI::Xaml::Input::FocusManager::GetFocusedElement(XamlRoot());
+		if (focusedElement.try_as<winrt::Microsoft::UI::Xaml::Controls::TextBox>() || focusedElement.try_as<winrt::Microsoft::UI::Xaml::Controls::RichEditBox>()) return;
+		args.Handled(true);
+		InvokeKeyboardActionAsync(KeyboardAction::Delete);
+	}
+
+	void TasksPage::TaskPauseKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		args.Handled(true);
+		if (!m_viewModel) return;
+		auto command = m_viewModel.PauseCommand();
+		if (command && command.CanExecute(nullptr)) command.Execute(nullptr);
+	}
+
+	void TasksPage::CreateTorrentKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
+	{
+		args.Handled(true);
+		InvokeKeyboardActionAsync(KeyboardAction::CreateTorrent);
+	}
+
+	winrt::fire_and_forget TasksPage::InvokeKeyboardActionAsync(KeyboardAction const action)
+	{
+		auto lifetime = get_strong();
+		try
+		{
+			switch (action)
+			{
+				case KeyboardAction::NewFromUrl: co_await MenuItemAddFromLink_ClickAsync(nullptr, nullptr); break;
+				case KeyboardAction::NewFromFile: co_await MenuItemAddFromFile_ClickAsync(nullptr, nullptr); break;
+				case KeyboardAction::NewFromHttp: co_await MenuItemAddFromHttp_ClickAsync(nullptr, nullptr); break;
+				case KeyboardAction::Delete: co_await DeleteTaskMenuItem_Click(nullptr, nullptr); break;
+				case KeyboardAction::CreateTorrent: co_await CreateTorrentMenuItem_Click(nullptr, nullptr); break;
+			}
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			OutputDebugStringW((L"TasksPage keyboard action failed: " + std::wstring(error.message().c_str()) + L"\n").c_str());
+		}
+		catch (std::exception const& error)
+		{
+			OutputDebugStringW((L"TasksPage keyboard action failed: " + std::wstring(winrt::to_hstring(error.what()).c_str()) + L"\n").c_str());
+		}
 	}
 
 	void TasksPage::PortTestKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const& sender, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
