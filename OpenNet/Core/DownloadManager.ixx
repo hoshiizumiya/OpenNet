@@ -38,6 +38,11 @@ export namespace OpenNet::Core
 		std::uint64_t uploadSpeed;
 		int progressPercent; // 0-100
 	};
+	struct HttpTaskLogEntry
+	{
+		std::int64_t timestamp{};
+		std::string content;
+	};
 
 	using HttpProgressCallback = std::function<void(HttpTaskProgress const&)>;
 	using HttpFinishedCallback = std::function<void(std::string const& gid, std::string const& name)>;
@@ -58,6 +63,10 @@ export namespace OpenNet::Core
 
 		// HTTP download operations via Aria2
 		std::string AddHttpDownload(std::string const& url, std::string const& dir = {}, std::string const& fileName = {});
+		std::string AddHttpDownload(Aria2::HttpDownloadOptions const& options);
+		std::optional<Aria2::DownloadInformation> GetHttpTaskInformation(std::string const& gid);
+		std::vector<Aria2::ServersInformation> GetHttpTaskServers(std::string const& gid);
+		std::vector<HttpTaskLogEntry> GetHttpTaskLog(std::string const& gid) const;
 		// Get the record-id associated with a GID (set after AddHttpDownload)
 		std::string GetRecordIdForGid(std::string const& gid) const;
 		void PauseHttpDownload(std::string const& gid);
@@ -83,7 +92,10 @@ export namespace OpenNet::Core
 		void SetHttpErrorCallback(HttpErrorCallback cb);
 
 		// Direct access for advanced usage (LocalAria2Instance IS-A Aria2Instance)
-		Aria2::LocalAria2Instance* Aria2() { return m_aria2.get(); }
+		Aria2::LocalAria2Instance* Aria2()
+		{
+			return m_aria2.get();
+		}
 
 	private:
 		DownloadManager() = default;
@@ -94,6 +106,7 @@ export namespace OpenNet::Core
 
 		void RefreshThreadEntry();
 		void ProcessAria2Tasks();
+		void ShowHttpCompletionToast(std::string const& gid, Aria2::DownloadInformation const& task);
 
 	private:
 		std::unique_ptr<Aria2::LocalAria2Instance> m_aria2;
@@ -108,6 +121,9 @@ export namespace OpenNet::Core
 
 		// Cached task GIDs for change detection
 		std::set<std::string> m_knownGids;
+		std::unordered_map<std::string, Aria2::DownloadStatus> m_lastHttpStatuses;
+		std::unordered_map<std::string, Aria2::DownloadInformation> m_httpTaskSnapshots;
+		std::unordered_map<std::string, std::vector<HttpTaskLogEntry>> m_httpTaskLogs;
 
 		// GID -> HttpStateManager record-id mapping (mutable: acts as a cache)
 		mutable std::unordered_map<std::string, std::string> m_gidToRecordId;

@@ -622,52 +622,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	// Show HTTP download dialog for adding HTTP/HTTPS/FTP downloads
 	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromHttp_ClickAsync(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
+		auto lifetime = get_strong();
 		try
 		{
+			auto const xamlRoot = XamlRoot();
+			if (!xamlRoot) co_return;
 			auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::HttpDownloadDialog>();
-			dialog.XamlRoot(this->XamlRoot());
-
-			auto result = co_await dialog.ShowAsync();
-
-			if (result == ContentDialogResult::Primary)
-			{
-				try
-				{
-					auto url = winrt::to_string(dialog.Url());
-					auto dir = winrt::to_string(dialog.SaveDirectory());
-					auto fileName = winrt::to_string(dialog.FileName());
-
-					if (!url.empty())
-					{
-						auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
-						if (dlMgr.IsAria2Available())
-						{
-							// Move off UI thread – SimplePost blocks with .get()
-							co_await winrt::resume_background();
-							auto gid = dlMgr.AddHttpDownload(url, dir, fileName);
-							if (!gid.empty())
-							{
-								OutputDebugStringW((L"HTTP download added with GID: " + winrt::to_hstring(gid) + L"\n").c_str());
-							}
-							else
-							{
-								OutputDebugStringW(L"Failed to add HTTP download\n");
-							}
-						}
-						else
-						{
-							winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog errorDialog;
-							errorDialog.XamlRoot(this->XamlRoot());
-							errorDialog.Configure(ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableTitle"), ResourceGetString(L"ViewTasksPageHttpDownloadUnavailableMessage"), {}, {}, ResourceGetString(L"CommonOk"), true, false, {});
-							co_await errorDialog.ShowAsync();
-						}
-					}
-				}
-				catch (const std::exception& ex)
-				{
-					OutputDebugStringW((L"HTTP download add error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
-				}
-			}
+			dialog.XamlRoot(xamlRoot);
+			co_await dialog.ShowAsync();
 		}
 		catch (const std::exception& ex)
 		{
@@ -894,7 +856,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto taskVm = selectedItem.try_as<winrt::OpenNet::ViewModels::TaskViewModel>();
 
 		m_viewModel.SelectedTask(taskVm);
+		UpdateTaskDetailTabs();
 		// SpeedGraph subscription is handled by TaskSummaryPage via ViewModel.PropertyChanged("SelectedTask").
+	}
+
+	void TasksPage::UpdateTaskDetailTabs()
+	{
+		auto const task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
+		auto const isHttp = task && task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http;
+		PeersList().Header(box_value(ResourceGetString(isHttp ? L"TaskHttpConnectionsTab" : L"Task_PeersList/Header")));
+		TrackersList().Header(box_value(ResourceGetString(isHttp ? L"TaskHttpServersTab" : L"Task_TrackersList/Header")));
+		PieceMapContent().Visibility(Visibility::Visible);
+		HttpTaskLogContent().Visibility(isHttp ? Visibility::Visible : Visibility::Collapsed);
+		if (isHttp && Task_TabView().SelectedItem() == PieceMapContent()) Task_TabView().SelectedItem(SummaryContent());
 	}
 
 	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)

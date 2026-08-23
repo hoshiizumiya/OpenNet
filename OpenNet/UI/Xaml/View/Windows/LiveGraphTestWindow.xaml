@@ -18,13 +18,13 @@
     IsAlwaysOnTop="True"
     mc:Ignorable="d">
 
-    <Window.SystemBackdrop>
+    <essential:WindowEx.SystemBackdrop>
         <essential:MicaBackdropWithFallback>
             <essential:MicaBackdropWithFallback.Fallback>
                 <DesktopAcrylicBackdrop />
             </essential:MicaBackdropWithFallback.Fallback>
         </essential:MicaBackdropWithFallback>
-    </Window.SystemBackdrop>
+    </essential:WindowEx.SystemBackdrop>
 
     <essential:WindowEx.ContextMenu>
         <essential:ModernStandardWindowContextMenu />
@@ -36,7 +36,7 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
 
         <TitleBar
             Title="LiveGraph test studio"

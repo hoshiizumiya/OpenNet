@@ -11,13 +11,13 @@
     MinWidth="480"
     MinHeight="320"
     mc:Ignorable="d">
-    <Window.SystemBackdrop>
+    <essential:WindowEx.SystemBackdrop>
         <essential:MicaBackdropWithFallback>
             <essential:MicaBackdropWithFallback.Fallback>
                 <DesktopAcrylicBackdrop />
             </essential:MicaBackdropWithFallback.Fallback>
         </essential:MicaBackdropWithFallback>
-    </Window.SystemBackdrop>
+    </essential:WindowEx.SystemBackdrop>
     <essential:WindowEx.ContextMenu>
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>

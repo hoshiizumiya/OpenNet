@@ -13,7 +13,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	struct TaskPieceMapPage : TaskPieceMapPageT<TaskPieceMapPage>, ::OpenNet::ViewModels::ObservableMixin<TaskPieceMapPage>
 	{
-		TaskPieceMapPage();
 		~TaskPieceMapPage();
 
 		void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args);

@@ -23,7 +23,7 @@ export namespace OpenNet::Factory::Window
 			window.IsResizable(true);
 			window.IsMinimizable(true);
 			window.IsMaximizable(true);
-			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
 
 			// TO Fix: Here's a problem - The window guid will be presisted cause of the window class name is consisted of the winui3package
 			// OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(window);
@@ -34,7 +34,7 @@ export namespace OpenNet::Factory::Window
 			// 	}
 			// );
 
-			return window;
+			return window.Window();
 		}
 
 		static winrt::Microsoft::UI::Xaml::Window CreateStandardWindowForPage(winrt::Microsoft::UI::Xaml::Controls::Page page)
@@ -48,9 +48,9 @@ export namespace OpenNet::Factory::Window
 			window.IsMinimizable(true);
 			window.IsMaximizable(true);
 			window.Content(page);
-			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
 			window.Activate();
-			return window;
+			return window.Window();
 		}
 	};
 }

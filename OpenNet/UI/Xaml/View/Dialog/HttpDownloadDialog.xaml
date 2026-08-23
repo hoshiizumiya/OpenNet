@@ -13,95 +13,207 @@
     DefaultButton="Primary"
     PrimaryButtonClick="OnPrimaryButtonClick"
     PrimaryButtonText="Download"
+    SecondaryButtonClick="OnSecondaryButtonClick"
+    SecondaryButtonText="Download later"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
 
-    <StackPanel
-        x:Name="DialogRoot"
-        MinWidth="480"
-        Padding="16"
-        Loaded="DialogRoot_Loaded"
-        Spacing="12">
+    <ContentDialog.Resources>
+        <x:Double x:Key="ContentDialogMaxWidth">2000</x:Double>
+        <x:Double x:Key="ContentDialogMaxHeight">1500</x:Double>
+    </ContentDialog.Resources>
+    <ScrollView>
+        <StackPanel
+            x:Name="DialogRoot"
+            Padding="16"
+            Loaded="DialogRoot_Loaded"
+            Spacing="12">
 
-        <!--  URL Input  -->
-        <TextBox
-            x:Name="UrlBox"
-            x:Uid="HttpDownloadDialogUrlBox"
-            MinHeight="80"
-            AcceptsReturn="False"
-            AutomationProperties.AutomationId="HttpDownloadDialogUrlBox"
-            Header="URL"
-            PlaceholderText="https://example.com/file.zip"
-            ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextChanged="UrlBox_TextChanged"
-            TextWrapping="Wrap" />
-
-        <!--  Paste from clipboard  -->
-        <StackPanel Orientation="Horizontal" Spacing="12">
-            <Button
-                x:Name="PasteUrlButton"
-                x:Uid="HttpDownloadDialogPasteButton"
-                AutomationProperties.AutomationId="HttpDownloadDialogPasteButton"
-                Click="PasteUrlButton_Click">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal" Spacing="6">
-                        <FontIcon
-                            FontFamily="Segoe Fluent Icons"
-                            FontSize="14"
-                            Glyph="&#xE16F;" />
-                        <TextBlock x:Uid="HttpDownloadDialogPasteButtonText" />
-                    </StackPanel>
-                </Button.Content>
-            </Button>
-            <TextBlock
-                x:Name="ClipboardPreview"
-                x:Uid="DialogClipboardPreview"
-                VerticalAlignment="Center"
-                Foreground="{ThemeResource SystemControlDisabledBaseLowBrush}"
-                TextTrimming="CharacterEllipsis" />
-        </StackPanel>
-
-        <!--  Save Directory  -->
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+            <!--  URL Input  -->
             <TextBox
-                x:Name="SaveDirBox"
-                x:Uid="HttpDownloadDialogSaveDirBox"
-                Grid.Column="0"
-                AutomationProperties.AutomationId="HttpDownloadDialogSaveDirBox"
-                Header="Save to"
-                IsReadOnly="True"
-                PlaceholderText="Default download directory" />
-            <Button
-                x:Name="BrowseDirButton"
-                x:Uid="CommonContentBrowse"
-                Grid.Column="1"
-                Margin="8,0,0,0"
-                VerticalAlignment="Bottom"
-                AutomationProperties.AutomationId="CommonContentBrowse"
-                Click="BrowseDirButton_Click"
-                Content="Browse..." />
-        </Grid>
+                x:Name="UrlBox"
+                x:Uid="HttpDownloadDialogUrlBox"
+                MinHeight="80"
+                AcceptsReturn="False"
+                AutomationProperties.AutomationId="HttpDownloadDialogUrlBox"
+                Header="URL"
+                PlaceholderText="https://example.com/file.zip"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                TextChanged="UrlBox_TextChanged"
+                TextWrapping="Wrap" />
 
-        <!--  Custom Filename  -->
-        <TextBox
-            x:Name="FileNameBox"
-            x:Uid="HttpDownloadDialogFileNameBox"
-            AutomationProperties.AutomationId="HttpDownloadDialogFileNameBox"
-            Header="File name (optional)"
-            PlaceholderText="Leave empty to auto-detect" />
+            <!--  Paste from clipboard  -->
+            <StackPanel Orientation="Horizontal" Spacing="12">
+                <Button
+                    x:Name="PasteUrlButton"
+                    x:Uid="HttpDownloadDialogPasteButton"
+                    AutomationProperties.AutomationId="HttpDownloadDialogPasteButton"
+                    Click="PasteUrlButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <FontIcon
+                                FontFamily="Segoe Fluent Icons"
+                                FontSize="14"
+                                Glyph="&#xE16F;" />
+                            <TextBlock x:Uid="HttpDownloadDialogPasteButtonText" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+                <TextBlock
+                    x:Name="ClipboardPreview"
+                    x:Uid="DialogClipboardPreview"
+                    VerticalAlignment="Center"
+                    Foreground="{ThemeResource SystemControlDisabledBaseLowBrush}"
+                    TextTrimming="CharacterEllipsis" />
+            </StackPanel>
 
-        <!--  Validation Error  -->
-        <InfoBar
-            x:Name="UrlErrorInfoBar"
-            x:Uid="HttpDownloadDialogUrlErrorInfoBar"
-            Title="Invalid URL"
-            IsClosable="False"
-            IsOpen="False"
-            Message="Please enter a valid HTTP, HTTPS, or FTP URL."
-            Severity="Error" />
-    </StackPanel>
+            <!--  Save Directory  -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBox
+                    x:Name="SaveDirBox"
+                    x:Uid="HttpDownloadDialogSaveDirBox"
+                    Grid.Column="0"
+                    AutomationProperties.AutomationId="HttpDownloadDialogSaveDirBox"
+                    Header="Save to"
+                    IsReadOnly="True"
+                    PlaceholderText="Default download directory" />
+                <Button
+                    x:Name="BrowseDirButton"
+                    x:Uid="CommonContentBrowse"
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Bottom"
+                    AutomationProperties.AutomationId="CommonContentBrowse"
+                    Click="BrowseDirButton_Click"
+                    Content="Browse..." />
+            </Grid>
+
+            <!--  Custom Filename  -->
+            <TextBox
+                x:Name="FileNameBox"
+                x:Uid="HttpDownloadDialogFileNameBox"
+                AutomationProperties.AutomationId="HttpDownloadDialogFileNameBox"
+                Header="File name (optional)"
+                PlaceholderText="Leave empty to auto-detect" />
+
+            <Grid ColumnSpacing="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button
+                    x:Name="FetchMetadataButton"
+                    Click="FetchMetadataButton_Click"
+                    Content="Get file information" />
+                <StackPanel
+                    Grid.Column="1"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal"
+                    Spacing="16">
+                    <TextBlock x:Name="FileSizeText" Text="Size: Unknown" />
+                    <TextBlock x:Name="DiskSpaceText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                </StackPanel>
+            </Grid>
+
+            <TabView IsAddTabButtonVisible="False" TabWidthMode="SizeToContent">
+                <TabViewItem Header="Acceleration" IsClosable="False">
+                    <StackPanel Padding="4,12" Spacing="10">
+                        <NumberBox
+                            x:Name="ConnectionsNumberBox"
+                            Header="Connections per server"
+                            Maximum="16"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Inline"
+                            Value="8" />
+                        <NumberBox
+                            x:Name="MaximumRateNumberBox"
+                            Header="Maximum download speed (KiB/s, 0 = unlimited)"
+                            Maximum="1048576"
+                            Minimum="0"
+                            SpinButtonPlacementMode="Inline"
+                            Value="0" />
+                    </StackPanel>
+                </TabViewItem>
+                <TabViewItem Header="HTTP" IsClosable="False">
+                    <StackPanel Padding="4,12" Spacing="8">
+                        <TextBox
+                            x:Name="RefererBox"
+                            Header="Referer"
+                            PlaceholderText="Optional" />
+                        <TextBox
+                            x:Name="UserAgentBox"
+                            Header="User agent"
+                            PlaceholderText="Optional" />
+                        <TextBox
+                            x:Name="CookieBox"
+                            Header="Cookie"
+                            PlaceholderText="name=value; name2=value2" />
+                        <TextBox
+                            x:Name="HeadersBox"
+                            AcceptsReturn="True"
+                            Header="Custom HTTP headers"
+                            PlaceholderText="One Header: value per line"
+                            TextWrapping="NoWrap" />
+                        <Grid ColumnSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="UsernameBox" Header="Username" />
+                            <PasswordBox
+                                x:Name="PasswordBox"
+                                Grid.Column="1"
+                                Header="Password"
+                                PasswordRevealMode="Peek" />
+                        </Grid>
+                    </StackPanel>
+                </TabViewItem>
+                <TabViewItem Header="Mirrors" IsClosable="False">
+                    <TextBox
+                        x:Name="MirrorsBox"
+                        MinHeight="120"
+                        Margin="4,12"
+                        AcceptsReturn="True"
+                        Header="Mirror URLs"
+                        PlaceholderText="One URL per line"
+                        TextWrapping="NoWrap" />
+                </TabViewItem>
+                <TabViewItem Header="MD5/SHA" IsClosable="False">
+                    <StackPanel Padding="4,12" Spacing="8">
+                        <TextBox
+                            x:Name="ChecksumBox"
+                            Header="Checksum"
+                            PlaceholderText="MD5, SHA-1, SHA-256, SHA-512, or type=hex" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="The hash type is detected from its length when omitted."
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </TabViewItem>
+                <TabViewItem Header="Description" IsClosable="False">
+                    <TextBox
+                        x:Name="DescriptionBox"
+                        MinHeight="120"
+                        Margin="4,12"
+                        AcceptsReturn="True"
+                        Header="Notes"
+                        TextWrapping="Wrap" />
+                </TabViewItem>
+            </TabView>
+
+            <!--  Validation Error  -->
+            <InfoBar
+                x:Name="UrlErrorInfoBar"
+                x:Uid="HttpDownloadDialogUrlErrorInfoBar"
+                Title="Invalid URL"
+                IsClosable="False"
+                IsOpen="False"
+                Message="Please enter a valid HTTP, HTTPS, or FTP URL."
+                Severity="Error" />
+        </StackPanel>
+    </ScrollView>
 </ContentDialog>

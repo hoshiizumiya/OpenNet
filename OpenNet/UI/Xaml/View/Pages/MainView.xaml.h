@@ -13,8 +13,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	struct MainView : MainViewT<MainView>
 	{
-		MainView();
 		~MainView();
+		void InitializeComponent();
 		winrt::Windows::Foundation::IAsyncAction RefreshBackgroundMediaAsync(bool advance);
 		void SetBackgroundPlaybackActive(bool active);
 		void AttachBackgroundPresenters(winrt::Microsoft::UI::Xaml::Controls::Image const& image, winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement const& video);
@@ -62,7 +62,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::Controls::Image BackgroundImagePresenter() const;
 		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement BackgroundVideoPresenter() const;
 
-		winrt::OpenNet::ViewModels::MainViewModel m_viewModel{ nullptr };
+		winrt::OpenNet::ViewModels::MainViewModel m_viewModel;
 		winrt::event<winrt::Windows::Foundation::EventHandler<bool>> m_canGoBackChanged;
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_backgroundTimer{ nullptr };
 		winrt::event_token m_backgroundTimerToken{};

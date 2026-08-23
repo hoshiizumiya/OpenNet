@@ -14,7 +14,6 @@
     Title="OpenNet Runtime Status"
     MinWidth="760"
     MinHeight="560"
-    TitleBarAutoDarkMode="True"
     mc:Ignorable="d">
 
     <essential:WindowEx.ContextMenu>
@@ -29,7 +28,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
 
         <TitleBar
             x:Name="RuntimeStatusTitleBar"

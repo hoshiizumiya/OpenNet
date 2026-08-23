@@ -34,12 +34,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void CreateTorrentProgressWindow::InitializeWindow()
 	{
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		SetTitleBar(WindowTitleBar());
 		ExtendsContentIntoTitleBar(true);
 		AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
+		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 
 		Closed([weak = get_weak()](auto const&, auto const&)
 		{

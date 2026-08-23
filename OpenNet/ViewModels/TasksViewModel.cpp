@@ -98,7 +98,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		})
 			.Build();
 
-		// StartCommand: Resume the selected task (or initialize the torrent core if not yet running)
+		// StartCommand: Resume the selected task.
 		m_startCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
 			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
@@ -152,14 +152,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 					});
 				}
 			}
-			else
-			{
-				// No task selected - just ensure the core is initialized
-				auto& mgr = ::OpenNet::Core::P2PManager::Instance();
-				co_await mgr.EnsureTorrentCoreInitializedAsync();
-			}
 			co_return;
 		})
+			.CanExecute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
+		{
+			auto self = weak.get();
+			return self && static_cast<bool>(self->m_selectedTask);
+		})
+			.DependsOn(L"SelectedTask")
 			.Build();
 
 		// PauseCommand: Pause the selected task
@@ -213,6 +213,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 			}
 			co_return;
 		})
+			.CanExecute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
+		{
+			auto self = weak.get();
+			return self && static_cast<bool>(self->m_selectedTask);
+		})
+			.DependsOn(L"SelectedTask")
 			.Build();
 
 		// DeleteCommand: Delete only the selected task (not all tasks)

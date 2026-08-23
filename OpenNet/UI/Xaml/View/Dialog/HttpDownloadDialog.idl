@@ -1,4 +1,4 @@
-namespace OpenNet.UI.Xaml.View.Dialog
+﻿namespace OpenNet.UI.Xaml.View.Dialog
 {
 	[default_interface]
 	runtimeclass HttpDownloadDialog : Microsoft.UI.Xaml.Controls.ContentDialog
@@ -13,5 +13,17 @@ namespace OpenNet.UI.Xaml.View.Dialog
 		String FileName{ get; };
 		// Whether the URL is valid
 		Boolean IsUrlValid{ get; };
+		Int32 ConnectionsPerServer{ get; };
+		Int64 MaximumDownloadRate{ get; };
+		Boolean StartPaused{ get; };
+		String Referer{ get; };
+		String UserAgent{ get; };
+		String Cookie{ get; };
+		String Headers{ get; };
+		String Mirrors{ get; };
+		String Checksum{ get; };
+		String Description{ get; };
+		String Username{ get; };
+		String Password{ get; };
 	}
 }

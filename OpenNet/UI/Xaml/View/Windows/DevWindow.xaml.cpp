@@ -20,17 +20,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	DevWindow::DevWindow()
 	{
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 		});
 	}
 
 	void DevWindow::OpenLiveGraphTestWindow_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		auto window = winrt::make<LiveGraphTestWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
 		window.Activate();
 	}
 

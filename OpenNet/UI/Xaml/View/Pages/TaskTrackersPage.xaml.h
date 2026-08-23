@@ -41,18 +41,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerTickToken{};
-		winrt::Windows::Foundation::Collections::IObservableVector<            winrt::Windows::Foundation::IInspectable> m_trackerItems{ nullptr };
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_trackerItems{ nullptr };
 		winrt::hstring m_sortColumn;
 		int m_sortDirection{};
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 		std::string m_lastTaskId;
 		std::size_t m_lastTrackerSnapshotHash{};
 		bool m_hasTrackerSnapshot{};
+		bool m_httpRefreshInFlight{};
 		std::chrono::steady_clock::time_point m_lastTrackerRefresh{};
 
 		void Unsubscribe();
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void RefreshTrackerList();
+		winrt::fire_and_forget RefreshHttpServersAsync(std::string gid);
 		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void UpdateSortHeaders();
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);

@@ -15,167 +15,185 @@ export module OpenNet.Core.Aria2.Aria2Models;
 
 export namespace OpenNet::Core::Aria2
 {
-    bool ToBoolean(nlohmann::json const &Value);
+	struct HttpDownloadOptions
+	{
+		std::vector<std::string> Uris;
+		std::string Dir;
+		std::string OutFileName;
+		std::uint32_t ConnectionsPerServer = 8;
+		std::uint64_t MaximumDownloadRate = 0;
+		bool StartPaused = false;
+		std::string Referer;
+		std::string UserAgent;
+		std::string Cookie;
+		std::vector<std::string> Headers;
+		std::string Username;
+		std::string Password;
+		std::string Checksum;
+		std::string Description;
+	};
 
-    using DownloadGid = std::uint64_t;
+	bool ToBoolean(nlohmann::json const& Value);
 
-    std::string FromDownloadGid(DownloadGid const &Value);
-    DownloadGid ToDownloadGid(nlohmann::json const &Value);
+	using DownloadGid = std::uint64_t;
 
-    enum class DownloadStatus : std::int32_t
-    {
-        Active,
-        Waiting,
-        Paused,
-        Complete,
-        Error,
-        Removed,
-    };
+	std::string FromDownloadGid(DownloadGid const& Value);
+	DownloadGid ToDownloadGid(nlohmann::json const& Value);
 
-    DownloadStatus ToDownloadStatus(nlohmann::json const &Value);
+	enum class DownloadStatus : std::int32_t
+	{
+		Active,
+		Waiting,
+		Paused,
+		Complete,
+		Error,
+		Removed,
+	};
 
-    enum class UriStatus : std::int32_t
-    {
-        Used,
-        Waiting,
-    };
+	DownloadStatus ToDownloadStatus(nlohmann::json const& Value);
 
-    UriStatus ToUriStatus(nlohmann::json const &Value);
+	enum class UriStatus : std::int32_t
+	{
+		Used,
+		Waiting,
+	};
 
-    struct UriInformation
-    {
-        std::string Uri;
-        UriStatus Status = UriStatus::Used;
-    };
+	UriStatus ToUriStatus(nlohmann::json const& Value);
 
-    UriInformation ToUriInformation(nlohmann::json const &Value);
+	struct UriInformation
+	{
+		std::string Uri;
+		UriStatus Status = UriStatus::Used;
+	};
 
-    struct FileInformation
-    {
-        std::size_t Index = 0;
-        std::string Path;
-        std::size_t Length = 0;
-        std::size_t CompletedLength = 0;
-        bool Selected = true;
-        std::vector<UriInformation> Uris;
-    };
+	UriInformation ToUriInformation(nlohmann::json const& Value);
 
-    FileInformation ToFileInformation(nlohmann::json const &Value);
+	struct FileInformation
+	{
+		std::size_t Index = 0;
+		std::string Path;
+		std::size_t Length = 0;
+		std::size_t CompletedLength = 0;
+		bool Selected = true;
+		std::vector<UriInformation> Uris;
+	};
 
-    enum class BitTorrentFileMode : std::int32_t
-    {
-        None,
-        Single,
-        Multi,
-    };
+	FileInformation ToFileInformation(nlohmann::json const& Value);
 
-    BitTorrentFileMode ToBitTorrentFileMode(nlohmann::json const &Value);
+	enum class BitTorrentFileMode : std::int32_t
+	{
+		None,
+		Single,
+		Multi,
+	};
 
-    struct BitTorrentInfoDictionary
-    {
-        std::string Name;
-    };
+	BitTorrentFileMode ToBitTorrentFileMode(nlohmann::json const& Value);
 
-    BitTorrentInfoDictionary ToBitTorrentInfoDictionary(nlohmann::json const &Value);
+	struct BitTorrentInfoDictionary
+	{
+		std::string Name;
+	};
 
-    struct BitTorrentInformation
-    {
-        std::vector<std::vector<std::string>> AnnounceList;
-        std::string Comment;
-        std::time_t CreationDate = 0;
-        BitTorrentFileMode Mode = BitTorrentFileMode::None;
-        BitTorrentInfoDictionary Info;
-    };
+	BitTorrentInfoDictionary ToBitTorrentInfoDictionary(nlohmann::json const& Value);
 
-    BitTorrentInformation ToBitTorrentInformation(nlohmann::json const &Value);
+	struct BitTorrentInformation
+	{
+		std::vector<std::vector<std::string>> AnnounceList;
+		std::string Comment;
+		std::time_t CreationDate = 0;
+		BitTorrentFileMode Mode = BitTorrentFileMode::None;
+		BitTorrentInfoDictionary Info;
+	};
 
-    struct DownloadInformation
-    {
-        DownloadGid Gid = 0;
-        DownloadStatus Status = DownloadStatus::Error;
-        std::size_t TotalLength = 0;
-        std::size_t CompletedLength = 0;
-        std::size_t UploadLength = 0;
-        std::string Bitfield;
-        std::size_t DownloadSpeed = 0;
-        std::size_t UploadSpeed = 0;
-        std::string InfoHash;
-        std::size_t NumSeeders = 0;
-        bool Seeder = false;
-        std::size_t PieceLength = 0;
-        std::size_t NumPieces = 0;
-        std::int32_t Connections = 0;
-        std::int32_t ErrorCode = 0;
-        std::string ErrorMessage;
-        std::vector<DownloadGid> FollowedBy;
-        DownloadGid Following = 0;
-        DownloadGid BelongsTo = 0;
-        std::string Dir;
-        std::vector<FileInformation> Files;
-        BitTorrentInformation BitTorrent;
-        std::size_t VerifiedLength = 0;
-        bool VerifyIntegrityPending = false;
-    };
+	BitTorrentInformation ToBitTorrentInformation(nlohmann::json const& Value);
 
-    DownloadInformation ToDownloadInformation(nlohmann::json const &Value);
-    std::string ToFriendlyName(DownloadInformation const &Value);
+	struct DownloadInformation
+	{
+		DownloadGid Gid = 0;
+		DownloadStatus Status = DownloadStatus::Error;
+		std::size_t TotalLength = 0;
+		std::size_t CompletedLength = 0;
+		std::size_t UploadLength = 0;
+		std::string Bitfield;
+		std::size_t DownloadSpeed = 0;
+		std::size_t UploadSpeed = 0;
+		std::string InfoHash;
+		std::size_t NumSeeders = 0;
+		bool Seeder = false;
+		std::size_t PieceLength = 0;
+		std::size_t NumPieces = 0;
+		std::int32_t Connections = 0;
+		std::int32_t ErrorCode = 0;
+		std::string ErrorMessage;
+		std::vector<DownloadGid> FollowedBy;
+		DownloadGid Following = 0;
+		DownloadGid BelongsTo = 0;
+		std::string Dir;
+		std::vector<FileInformation> Files;
+		BitTorrentInformation BitTorrent;
+		std::size_t VerifiedLength = 0;
+		bool VerifyIntegrityPending = false;
+	};
 
-    struct PeerInformation
-    {
-        std::string PeerId;
-        std::string Ip;
-        std::uint16_t Port = 0;
-        std::string Bitfield;
-        bool AmChoking = false;
-        bool PeerChoking = false;
-        std::size_t DownloadSpeed = 0;
-        std::size_t UploadSpeed = 0;
-        bool Seeder = false;
-    };
+	DownloadInformation ToDownloadInformation(nlohmann::json const& Value);
+	std::string ToFriendlyName(DownloadInformation const& Value);
 
-    PeerInformation ToPeerInformation(nlohmann::json const &Value);
+	struct PeerInformation
+	{
+		std::string PeerId;
+		std::string Ip;
+		std::uint16_t Port = 0;
+		std::string Bitfield;
+		bool AmChoking = false;
+		bool PeerChoking = false;
+		std::size_t DownloadSpeed = 0;
+		std::size_t UploadSpeed = 0;
+		bool Seeder = false;
+	};
 
-    struct ServerInformation
-    {
-        std::string Uri;
-        std::string CurrentUri;
-        std::size_t DownloadSpeed = 0;
-    };
+	PeerInformation ToPeerInformation(nlohmann::json const& Value);
 
-    ServerInformation ToServerInformation(nlohmann::json const &Value);
+	struct ServerInformation
+	{
+		std::string Uri;
+		std::string CurrentUri;
+		std::size_t DownloadSpeed = 0;
+	};
 
-    struct ServersInformation
-    {
-        std::size_t Index = 0;
-        std::vector<ServerInformation> Servers;
-    };
+	ServerInformation ToServerInformation(nlohmann::json const& Value);
 
-    ServersInformation ToServersInformation(nlohmann::json const &Value);
+	struct ServersInformation
+	{
+		std::size_t Index = 0;
+		std::vector<ServerInformation> Servers;
+	};
 
-    struct GlobalStatusInformation
-    {
-        std::size_t DownloadSpeed = 0;
-        std::size_t UploadSpeed = 0;
-        std::size_t NumActive = 0;
-        std::size_t NumWaiting = 0;
-        std::size_t NumStopped = 0;
-        std::size_t NumStoppedTotal = 0;
-    };
+	ServersInformation ToServersInformation(nlohmann::json const& Value);
 
-    GlobalStatusInformation ToGlobalStatusInformation(nlohmann::json const &Value);
+	struct GlobalStatusInformation
+	{
+		std::size_t DownloadSpeed = 0;
+		std::size_t UploadSpeed = 0;
+		std::size_t NumActive = 0;
+		std::size_t NumWaiting = 0;
+		std::size_t NumStopped = 0;
+		std::size_t NumStoppedTotal = 0;
+	};
 
-    struct VersionInformation
-    {
-        std::string Version;
-        std::vector<std::string> EnabledFeatures;
-    };
+	GlobalStatusInformation ToGlobalStatusInformation(nlohmann::json const& Value);
 
-    VersionInformation ToVersionInformation(nlohmann::json const &Value);
+	struct VersionInformation
+	{
+		std::string Version;
+		std::vector<std::string> EnabledFeatures;
+	};
 
-    struct SessionInformation
-    {
-        std::string SessionId;
-    };
+	VersionInformation ToVersionInformation(nlohmann::json const& Value);
 
-    SessionInformation ToSessionInformation(nlohmann::json const &Value);
+	struct SessionInformation
+	{
+		std::string SessionId;
+	};
+
+	SessionInformation ToSessionInformation(nlohmann::json const& Value);
 }

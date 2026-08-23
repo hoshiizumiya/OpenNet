@@ -449,9 +449,17 @@ namespace Core::Utils::Misc
 
 	winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> Core::Utils::Misc::getCurrentClipboardText()
 	{
-		auto clipboardContent = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
-		auto text = co_await clipboardContent.GetTextAsync();
-		co_return text;
+		try
+		{
+			auto clipboard = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
+			if (clipboard.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
+			{
+				co_return co_await clipboard.GetTextAsync();
+			}
+		}
+		catch (...)
+		{
+		}
 	}
 
 	winrt::hstring Core::Utils::Misc::osName()

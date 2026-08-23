@@ -5,6 +5,10 @@
  *
  * LICENSE:   The MIT License
  */
+module;
+
+#include "Core/Notification/HttpToastNotification.h"
+
 module OpenNet.Core.DownloadManager;
 
 import OpenNet.Core.AppSettingsDatabase;
@@ -158,30 +162,41 @@ namespace OpenNet::Core
 		std::string const& dir,
 		std::string const& fileName)
 	{
-		if (!IsAria2Available())
-			return {};
+		Aria2::HttpDownloadOptions options;
+		options.Uris.push_back(url);
+		options.Dir = dir;
+		options.OutFileName = fileName;
+		return AddHttpDownload(options);
+	}
+
+	std::string DownloadManager::AddHttpDownload(Aria2::HttpDownloadOptions const& options)
+	{
+		if (!IsAria2Available() || options.Uris.empty()) return {};
 
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			auto& database = AppSettingsDatabase::Instance();
 			database.Initialize();
-			auto const connections = static_cast<std::uint32_t>(std::clamp<std::int64_t>(
+			auto effectiveOptions = options;
+			if (effectiveOptions.ConnectionsPerServer == 0)
+				effectiveOptions.ConnectionsPerServer = static_cast<std::uint32_t>(std::clamp<std::int64_t>(
 				database.GetInt(AppSettingsDatabase::CAT_DOWNLOAD,
 					"aria2_connections_per_server", 8), 1, 16));
-			// Always use the options form.  The common URL-only path used to call
-			// AddUri() and silently ignored the user's connection/thread setting.
-			auto const gid = m_aria2->AddUriWithOptions(
-				url, dir, fileName, connections);
+			auto const gid = m_aria2->AddUriWithOptions(effectiveOptions);
 
 			// Persist the download record
 			if (!gid.empty())
 			{
-				auto recordId = HttpStateManager::Instance().AddRecord(url, dir, fileName);
+				if (!effectiveOptions.Description.empty()) database.SetString("http_task_description", gid, effectiveOptions.Description);
+				auto recordId = HttpStateManager::Instance().AddRecord(effectiveOptions.Uris.front(), effectiveOptions.Dir, effectiveOptions.OutFileName);
 				HttpStateManager::Instance().UpdateRecordGid(recordId, gid);
 				{
 					std::lock_guard lock(m_mutex);
 					m_gidToRecordId[gid] = recordId;
+					m_lastHttpStatuses[gid] = effectiveOptions.StartPaused ? Aria2::DownloadStatus::Paused : Aria2::DownloadStatus::Waiting;
+					m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), effectiveOptions.StartPaused ? "Task added in paused state." : "Download task started." });
+					if (!effectiveOptions.Description.empty()) m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), "Description: " + effectiveOptions.Description });
 				}
 			}
 
@@ -191,6 +206,39 @@ namespace OpenNet::Core
 		{
 			return {};
 		}
+	}
+
+	std::optional<Aria2::DownloadInformation> DownloadManager::GetHttpTaskInformation(std::string const& gid)
+	{
+		if (!IsAria2Available() || gid.empty()) return std::nullopt;
+		{
+			std::lock_guard lock(m_mutex);
+			if (auto const snapshot = m_httpTaskSnapshots.find(gid); snapshot != m_httpTaskSnapshots.end()) return snapshot->second;
+		}
+		try
+		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
+			return m_aria2->GetTaskInformation(gid);
+		}
+		catch (...) { return std::nullopt; }
+	}
+
+	std::vector<Aria2::ServersInformation> DownloadManager::GetHttpTaskServers(std::string const& gid)
+	{
+		if (!IsAria2Available() || gid.empty()) return {};
+		try
+		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
+			return m_aria2->GetTaskServers(gid);
+		}
+		catch (...) { return {}; }
+	}
+
+	std::vector<HttpTaskLogEntry> DownloadManager::GetHttpTaskLog(std::string const& gid) const
+	{
+		std::lock_guard lock(m_mutex);
+		if (auto const entries = m_httpTaskLogs.find(gid); entries != m_httpTaskLogs.end()) return entries->second;
+		return {};
 	}
 
 	std::string DownloadManager::GetRecordIdForGid(std::string const& gid) const
@@ -442,6 +490,9 @@ namespace OpenNet::Core
 			std::lock_guard lock(m_mutex);
 			m_gidToRecordId.erase(gid);
 			m_knownGids.erase(gid);
+			m_lastHttpStatuses.erase(gid);
+			m_httpTaskSnapshots.erase(gid);
+			m_httpTaskLogs.erase(gid);
 		}
 	}
 
@@ -590,6 +641,10 @@ namespace OpenNet::Core
 				{
 					continue;
 				}
+				{
+					std::lock_guard lock(m_mutex);
+					m_httpTaskSnapshots[gid] = task;
+				}
 
 				if (progressCb)
 				{
@@ -622,13 +677,27 @@ namespace OpenNet::Core
 						auto friendlyName = Aria2::ToFriendlyName(task);
 						hsm.UpdateRecordName(recordId, friendlyName);
 						hsm.UpdateRecordProgress(recordId, task.CompletedLength, task.TotalLength);
+						int const persistedStatus = task.Status == Aria2::DownloadStatus::Paused ? 2 : task.Status == Aria2::DownloadStatus::Complete ? 3 : task.Status == Aria2::DownloadStatus::Error ? 4 : 1;
+						hsm.UpdateRecordStatus(recordId, persistedStatus);
 					}
 				}
 
-				// Fire completion / error callbacks
+				std::optional<Aria2::DownloadStatus> previousStatus;
+				{
+					std::lock_guard lock(m_mutex);
+					if (auto const previous = m_lastHttpStatuses.find(gid); previous != m_lastHttpStatuses.end()) previousStatus = previous->second;
+					m_lastHttpStatuses[gid] = task.Status;
+					if (previousStatus && *previousStatus != task.Status)
+					{
+						auto const text = task.Status == Aria2::DownloadStatus::Complete ? "Download completed." : task.Status == Aria2::DownloadStatus::Error ? "Download failed: " + task.ErrorMessage : task.Status == Aria2::DownloadStatus::Paused ? "Task paused." : task.Status == Aria2::DownloadStatus::Active ? "Task active." : "Task state changed.";
+						m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), text });
+					}
+				}
+
+				// Fire completion / error callbacks on state transitions.
 				if (task.Status == Aria2::DownloadStatus::Complete)
 				{
-					if (!knownGids.contains(gid))
+					if (previousStatus && *previousStatus != Aria2::DownloadStatus::Complete)
 					{
 						// Persist completed status
 						std::string recordId;
@@ -640,12 +709,13 @@ namespace OpenNet::Core
 						if (!recordId.empty())
 							HttpStateManager::Instance().UpdateRecordStatus(recordId, 3); // completed
 
+						ShowHttpCompletionToast(gid, task);
 						if (finishedCb) finishedCb(gid, Aria2::ToFriendlyName(task));
 					}
 				}
 				else if (task.Status == Aria2::DownloadStatus::Error)
 				{
-					if (!knownGids.contains(gid))
+					if (previousStatus && *previousStatus != Aria2::DownloadStatus::Error)
 					{
 						// Persist failed status
 						std::string recordId;
@@ -671,5 +741,15 @@ namespace OpenNet::Core
 		{
 			// Swallow exceptions in background thread
 		}
+	}
+
+	void DownloadManager::ShowHttpCompletionToast(std::string const& gid, Aria2::DownloadInformation const& task)
+	{
+		std::filesystem::path outputPath;
+		if (!task.Files.empty() && !task.Files.front().Path.empty()) outputPath = winrt::to_hstring(task.Files.front().Path).c_str();
+		auto const now = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+		std::int64_t elapsed = 1;
+		if (auto const record = HttpStateManager::Instance().FindByGid(gid)) elapsed = (std::max<std::int64_t>)(1, now - record->addedTimestamp);
+		::OpenNet::Core::Notification::ShowHttpDownloadCompleted(Aria2::ToFriendlyName(task), outputPath, elapsed, task.CompletedLength);
 	}
 }

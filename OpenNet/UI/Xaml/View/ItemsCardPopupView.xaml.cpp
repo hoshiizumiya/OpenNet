@@ -36,15 +36,6 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		}
 	}
 
-	ItemsCardPopupView::ItemsCardPopupView()
-	{
-	}
-
-	void ItemsCardPopupView::InitializeComponent()
-	{
-		ItemsCardPopupViewT::InitializeComponent();
-	}
-
 	hstring ItemsCardPopupView::WebUIUrl() const
 	{
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
@@ -68,58 +59,44 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 			: L"Not running");
 	}
 
-	void ItemsCardPopupView::OnLoaded(
-		IInspectable const&, RoutedEventArgs const&)
+	void ItemsCardPopupView::OnLoaded(IInspectable const&, RoutedEventArgs const&)
 	{
 		RefreshStatus();
 	}
 
-	fire_and_forget ItemsCardPopupView::OnOpenWebUIClick(
-		IInspectable const&, RoutedEventArgs const&)
+	fire_and_forget ItemsCardPopupView::OnOpenWebUIClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
 		co_await winrt::Windows::System::Launcher::LaunchUriAsync(
 			winrt::Windows::Foundation::Uri{ WebUIUrl() });
 	}
 
-	void ItemsCardPopupView::OnCopyUrlClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ItemsCardPopupView::OnCopyUrlClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		DataPackage package;
 		package.SetText(WebUIUrl());
 		Clipboard::SetContent(package);
 	}
 
-	void ItemsCardPopupView::OnRuntimeStatusClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ItemsCardPopupView::OnRuntimeStatusClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		auto window = winrt::make<
-			winrt::OpenNet::UI::Xaml::View::Windows::implementation::
-			RuntimeStatusWindow>();
+		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::RuntimeStatusWindow>();
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
-			window);
+			window.Window());
 		window.Activate();
 	}
 
-	void ItemsCardPopupView::OnNatDetectionClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ItemsCardPopupView::OnNatDetectionClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		auto window = winrt::make<
-			winrt::OpenNet::UI::Xaml::View::Windows::implementation::
-			NATDetectorWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
-			window);
+		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::NATDetectorWindow>();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 
-	void ItemsCardPopupView::OnGuideClick(
-		IInspectable const&, RoutedEventArgs const&)
+	void ItemsCardPopupView::OnGuideClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		auto window = winrt::make<
-			winrt::OpenNet::UI::Xaml::View::Windows::implementation::
-			GuideWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
-			window);
+		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
 		window.Activate();
 	}
 

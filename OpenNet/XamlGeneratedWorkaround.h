@@ -36,6 +36,7 @@
 
 import std;
 import winrt.Windows.Foundation;
+import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Markup;
 import winrt.Microsoft.UI.Xaml.Interop;
 import winrt.Windows.UI.Xaml.Interop;

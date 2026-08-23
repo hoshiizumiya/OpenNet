@@ -5280,4 +5280,10 @@
   <data name="WebUISettingsCsrfProtection.Header" xml:space="preserve">
     <value>CSRF 保护</value>
   </data>
+  <data name="TaskHttpConnectionsTab" xml:space="preserve">
+    <value>连接</value>
+  </data>
+  <data name="TaskHttpServersTab" xml:space="preserve">
+    <value>服务器</value>
+  </data>
 </root>

@@ -10,6 +10,7 @@
 import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.DownloadManager;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
@@ -295,6 +296,39 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto selectedTask = m_viewModel.SelectedTask();
 		auto taskType = selectedTask.TaskType();
 
+		if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		{
+			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(winrt::to_string(selectedTask.Gid()));
+			if (!information || information->Files.empty())
+			{
+				m_fileItems.Clear();
+				if (emptyText) emptyText.Visibility(Visibility::Visible);
+				return;
+			}
+			m_isRefreshing = true;
+			for (std::uint32_t index = 0; index < information->Files.size(); ++index)
+			{
+				auto const& file = information->Files[index];
+				winrt::OpenNet::ViewModels::FileDisplayItem item{ nullptr };
+				if (index < m_fileItems.Size()) item = m_fileItems.GetAt(index).try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
+				if (!item)
+				{
+					item = winrt::make<winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
+					if (index < m_fileItems.Size()) m_fileItems.SetAt(index, item); else m_fileItems.Append(item);
+				}
+				item.Path(winrt::to_hstring(file.Path));
+				item.Size(::Core::Utils::Misc::friendlyUnit(file.Length));
+				item.ProgressValue(file.Length > 0 ? static_cast<double>(file.CompletedLength) * 100.0 / file.Length : 0.0);
+				item.Done(::Core::Utils::Misc::friendlyUnit(file.CompletedLength));
+				item.PriorityIndex(file.Selected ? 1 : 0);
+				item.FileIndex(static_cast<int32_t>(file.Index));
+			}
+			while (m_fileItems.Size() > information->Files.size()) m_fileItems.RemoveAtEnd();
+			if (emptyText) emptyText.Visibility(Visibility::Collapsed);
+			m_isRefreshing = false;
+			return;
+		}
+
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			m_fileItems.Clear();
@@ -411,6 +445,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto const item = FilesListView().SelectedItem().try_as<
 			winrt::OpenNet::ViewModels::FileDisplayItem>();
 		if (!item) return std::nullopt;
+		if (m_viewModel.SelectedTask().TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		{
+			auto const fullPath = std::filesystem::path{ item.Path().c_str() };
+			return SelectedFileContext{ winrt::to_string(m_viewModel.SelectedTask().Gid()), item.FileIndex(), fullPath.filename(), fullPath };
+		}
 
 		auto const taskId = winrt::to_string(m_viewModel.SelectedTask().TaskId());
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
@@ -527,7 +566,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto const newRelativePath = context->relativePath.parent_path() / newName;
-		if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+		if (m_viewModel.SelectedTask().TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		{
+			std::error_code error;
+			std::filesystem::rename(context->fullPath, context->fullPath.parent_path() / newName, error);
+			RefreshFileList();
+		}
+		else if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
 		{
 			core->RenameFile(
 				context->taskId,

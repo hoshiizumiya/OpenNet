@@ -236,27 +236,36 @@ std::string OpenNet::Core::Aria2::Aria2Instance::AddUri(std::string const& Sourc
 	return SimpleJsonRpcCall("aria2.addUri", params.dump(2));
 }
 
-std::string OpenNet::Core::Aria2::Aria2Instance::AddUriWithOptions(
-	std::string const& Source,
-	std::string const& Dir,
-	std::string const& OutFileName,
-	std::uint32_t const ConnectionsPerServer)
+std::string OpenNet::Core::Aria2::Aria2Instance::AddUriWithOptions(HttpDownloadOptions const& downloadOptions)
 {
+	if (downloadOptions.Uris.empty()) return {};
 	nlohmann::json params;
 	params.push_back("token:" + m_ServerToken);
 
 	nlohmann::json uris;
-	uris.push_back(Source);
+	for (auto const& uri : downloadOptions.Uris)
+		if (!uri.empty()) uris.push_back(uri);
 	params.push_back(uris);
 
 	nlohmann::json options;
-	if (!Dir.empty())
-		options["dir"] = Dir;
-	if (!OutFileName.empty())
-		options["out"] = OutFileName;
-	auto const connections = std::clamp(ConnectionsPerServer, 1u, 16u);
+	if (!downloadOptions.Dir.empty()) options["dir"] = downloadOptions.Dir;
+	if (!downloadOptions.OutFileName.empty()) options["out"] = downloadOptions.OutFileName;
+	auto const connections = std::clamp(downloadOptions.ConnectionsPerServer, 1u, 16u);
 	options["split"] = std::to_string(connections);
 	options["max-connection-per-server"] = std::to_string(connections);
+	if (downloadOptions.MaximumDownloadRate > 0) options["max-download-limit"] = std::to_string(downloadOptions.MaximumDownloadRate);
+	if (downloadOptions.StartPaused) options["pause"] = "true";
+	if (!downloadOptions.Referer.empty()) options["referer"] = downloadOptions.Referer;
+	if (!downloadOptions.UserAgent.empty()) options["user-agent"] = downloadOptions.UserAgent;
+	if (!downloadOptions.Username.empty()) options["http-user"] = downloadOptions.Username;
+	if (!downloadOptions.Password.empty()) options["http-passwd"] = downloadOptions.Password;
+	if (!downloadOptions.Checksum.empty()) options["checksum"] = downloadOptions.Checksum;
+	if (!downloadOptions.Headers.empty() || !downloadOptions.Cookie.empty())
+	{
+		auto headers = downloadOptions.Headers;
+		if (!downloadOptions.Cookie.empty()) headers.push_back("Cookie: " + downloadOptions.Cookie);
+		options["header"] = std::move(headers);
+	}
 	params.push_back(options);
 
 	return SimpleJsonRpcCall("aria2.addUri", params.dump(2));
@@ -318,6 +327,17 @@ OpenNet::Core::Aria2::Aria2Instance::GetTaskInformation(std::string const& Gid)
 	auto response = nlohmann::json::parse(
 		SimpleJsonRpcCall("aria2.tellStatus", params.dump(2)));
 	return ToDownloadInformation(response);
+}
+
+std::vector<OpenNet::Core::Aria2::ServersInformation> OpenNet::Core::Aria2::Aria2Instance::GetTaskServers(std::string const& Gid)
+{
+	nlohmann::json params;
+	params.emplace_back("token:" + m_ServerToken);
+	params.emplace_back(Gid);
+	auto response = nlohmann::json::parse(SimpleJsonRpcCall("aria2.getServers", params.dump(2)));
+	std::vector<ServersInformation> result;
+	for (auto const& item : response) result.push_back(ToServersInformation(item));
+	return result;
 }
 
 std::vector<std::string> OpenNet::Core::Aria2::Aria2Instance::GetTaskList()

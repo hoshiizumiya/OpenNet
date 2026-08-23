@@ -53,18 +53,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::DynamicGraph_CreateResources(
-		IInspectable const&,
-		CanvasAnimatedControl const& canvas)
+	void LiveGraphTestWindow::DynamicGraph_CreateResources(IInspectable const&, CanvasAnimatedControl const& canvas)
 	{
 		RecreateDynamicStreams(canvas);
-		ResourceStatusText().Text(
-			ResourceGetString(L"ViewLiveGraphTestWindowDynamicResourcesReady"));
+		ResourceStatusText().Text(ResourceGetString(L"ViewLiveGraphTestWindowDynamicResourcesReady"));
 	}
 
-	void LiveGraphTestWindow::StaticGraph_CreateResources(
-		IInspectable const&,
-		CanvasAnimatedControl const& canvas)
+	void LiveGraphTestWindow::StaticGraph_CreateResources(IInspectable const&, CanvasAnimatedControl const& canvas)
 	{
 		auto graph = StaticGraph();
 		if (!graph)
@@ -83,12 +78,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			static_cast<float>(graph.ActualHeight()));
 		m_staticGraphKey = graph.RegisterGraphBrush(m_staticBrush);
 		AddStaticBatch(true);
-		ResourceStatusText().Text(
-			ResourceGetString(L"ViewLiveGraphTestWindowAllResourcesReady"));
+		ResourceStatusText().Text(ResourceGetString(L"ViewLiveGraphTestWindowAllResourcesReady"));
 	}
 
-	void LiveGraphTestWindow::RecreateDynamicStreams(
-		CanvasAnimatedControl const& canvas)
+	void LiveGraphTestWindow::RecreateDynamicStreams(CanvasAnimatedControl const& canvas)
 	{
 		auto graph = DynamicGraph();
 		if (!graph || !canvas)
@@ -120,9 +113,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		ApplyBrushAppearance();
 	}
 
-	void LiveGraphTestWindow::DynamicGraph_Draw(
-		IInspectable const&,
-		LiveGraphEventArgs const& args)
+	void LiveGraphTestWindow::DynamicGraph_Draw(IInspectable const&, LiveGraphEventArgs const& args)
 	{
 		if (m_primaryGraphKey.empty() || m_secondaryGraphKey.empty())
 		{
@@ -192,26 +183,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void LiveGraphTestWindow::DynamicGraph_HighlightLineUpdated(
-		IInspectable const&,
-		float value)
+	void LiveGraphTestWindow::DynamicGraph_HighlightLineUpdated(IInspectable const&, float value)
 	{
 		auto const text = ResourceGetString(L"ViewLiveGraphTestWindowDynamicHighlightY") + L" " + std::format(L"{:.1f}px", value);
 		DynamicHighlightText().Text(text);
 		HighlightStatusText().Text(text);
 	}
 
-	void LiveGraphTestWindow::StaticGraph_HighlightLineUpdated(
-		IInspectable const&,
-		float value)
+	void LiveGraphTestWindow::StaticGraph_HighlightLineUpdated(IInspectable const&, float value)
 	{
-		StaticHighlightText().Text(
-			ResourceGetString(L"ViewLiveGraphTestWindowStaticY") + L" " + std::format(L"{:.1f}px", value));
+		StaticHighlightText().Text(ResourceGetString(L"ViewLiveGraphTestWindowStaticY") + L" " + std::format(L"{:.1f}px", value));
 	}
 
-	void LiveGraphTestWindow::ResetDynamicGraph_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::ResetDynamicGraph_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto graph = DynamicGraph();
 		if (!graph)
@@ -227,16 +211,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void LiveGraphTestWindow::AddStaticLine_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::AddStaticLine_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		AddStaticBatch(false);
 	}
 
-	void LiveGraphTestWindow::AddStaticRounded_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::AddStaticRounded_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		AddStaticBatch(true);
 	}
@@ -264,9 +244,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		graph.AddStaticPoints(m_staticGraphKey, points, rounded);
 	}
 
-	void LiveGraphTestWindow::GreenBrush_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::GreenBrush_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto graph = DynamicGraph();
 		auto canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
@@ -276,9 +254,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void LiveGraphTestWindow::BlueBrush_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::BlueBrush_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto graph = DynamicGraph();
 		auto canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
@@ -288,9 +264,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void LiveGraphTestWindow::RedBrush_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::RedBrush_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto graph = DynamicGraph();
 		auto canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
@@ -300,9 +274,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void LiveGraphTestWindow::PurpleBrush_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::PurpleBrush_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto graph = DynamicGraph();
 		auto canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
@@ -312,9 +284,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	void LiveGraphTestWindow::CustomBrush_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::CustomBrush_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto graph = DynamicGraph();
 		auto canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
@@ -356,9 +326,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 
 		auto graph = DynamicGraph();
-		if (!graph ||
-			m_primaryGraphKey.empty() ||
-			m_secondaryGraphKey.empty())
+		if (!graph || m_primaryGraphKey.empty() || m_secondaryGraphKey.empty())
 		{
 			return;
 		}
@@ -372,8 +340,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto const showBorder = ShowBorderToggle().IsOn();
 		auto const dashed = DashedBorderToggle().IsOn();
 
-		auto createData =
-			[=](GraphBrushData const& source)
+		auto createData = [=](GraphBrushData const& source)
 		{
 			GraphBrushData data;
 			if (showFill)
@@ -404,9 +371,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			createData(m_secondaryBrush));
 	}
 
-	void LiveGraphTestWindow::UpdateGradientBounds(
-		GraphBrushData const& brush,
-		float height)
+	void LiveGraphTestWindow::UpdateGradientBounds(GraphBrushData const& brush, float height)
 	{
 		if (!brush)
 		{
@@ -434,51 +399,37 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		(void)brush;
 	}
 
-	void LiveGraphTestWindow::BackgroundMode_SelectionChanged(
-		IInspectable const&,
-		SelectionChangedEventArgs const&)
+	void LiveGraphTestWindow::BackgroundMode_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::HighlightBehavior_SelectionChanged(
-		IInspectable const&,
-		SelectionChangedEventArgs const&)
+	void LiveGraphTestWindow::HighlightBehavior_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::GraphSettings_ValueChanged(
-		NumberBox const&,
-		NumberBoxValueChangedEventArgs const&)
+	void LiveGraphTestWindow::GraphSettings_ValueChanged(NumberBox const&, NumberBoxValueChangedEventArgs const&)
 	{
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::BrushAppearance_ValueChanged(
-		NumberBox const&,
-		NumberBoxValueChangedEventArgs const&)
+	void LiveGraphTestWindow::BrushAppearance_ValueChanged(NumberBox const&, NumberBoxValueChangedEventArgs const&)
 	{
 		ApplyBrushAppearance();
 	}
 
-	void LiveGraphTestWindow::HighlightVisibility_Toggled(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::HighlightVisibility_Toggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::CustomColors_Toggled(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::CustomColors_Toggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::BrushAppearance_Toggled(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void LiveGraphTestWindow::BrushAppearance_Toggled(IInspectable const&, RoutedEventArgs const&)
 	{
 		ApplyBrushAppearance();
 	}

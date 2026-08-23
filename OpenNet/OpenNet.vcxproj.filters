@@ -58,9 +58,9 @@
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
-    <Page Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml">
-      <Filter>UI\Xaml\View\Windows</Filter>
-    </Page>
+	<Page Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml">
+	  <Filter>UI\Xaml\View\Windows</Filter>
+	</Page>
 	<Page Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml">
 	  <Filter>UI\Xaml\View\Windows</Filter>
 	</Page>
@@ -1448,5 +1448,8 @@
     <Font Include="Assets\Fonts\GeosansLight.ttf" />
     <Font Include="Assets\Fonts\CascadiaMono.ttf" />
     <Font Include="Assets\Fonts\MiSans-Regular.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml"><Filter>UI\Xaml\View\Pages</Filter></Page>
   </ItemGroup>
 </Project>

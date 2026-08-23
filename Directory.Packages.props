@@ -23,7 +23,7 @@
     <PackageVersion Include="Microsoft.WindowsAppSDK.Widgets" Version="2.0.5" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.6" />
     <PackageVersion Include="Mile.Aria2" Version="1.0.1050" />
-    <PackageVersion Include="WinUIEssential.WinUI3" Version="1.6.8" />
+    <PackageVersion Include="WinUIEssential.WinUI3" Version="1.7.1" />
     <PackageVersion Include="WinUIEssential.WinUI3.Svg" Version="1.0.1" />
     <PackageVersion Include="XamlToolkit.Labs.WinUI.Native" Version="0.7.0-alpha" />
     <PackageVersion Include="XamlToolkit.WinUI.Animations.Native" Version="0.7.0-alpha" />

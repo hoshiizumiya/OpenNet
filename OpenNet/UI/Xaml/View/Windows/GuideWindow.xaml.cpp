@@ -21,18 +21,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	GuideWindow::GuideWindow()
 	{
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 		});
 	}
 
 	void GuideWindow::InitializeComponent()
 	{
 		GuideWindowT::InitializeComponent();
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
+		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 		bool const isFirstRun = !winrt::OpenNet::implementation::App::window;
 		if (!isFirstRun)
 		{
@@ -44,13 +44,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			auto const state = ::OpenNet::Core::Setting::LocalSetting::Get(
 				::OpenNet::Core::Setting::SettingKeys::GuideState,
 				::OpenNet::ViewModels::Guide::GuideState::Language);
-			if (isFirstRun
-				&& state < ::OpenNet::ViewModels::Guide::GuideState::Completed)
+			if (isFirstRun && state < ::OpenNet::ViewModels::Guide::GuideState::Completed)
 			{
 				winrt::OpenNet::implementation::App::RequestExit();
 			}
-			else if (!isFirstRun
-				&& state < ::OpenNet::ViewModels::Guide::GuideState::Completed)
+			else if (!isFirstRun && state < ::OpenNet::ViewModels::Guide::GuideState::Completed)
 			{
 				// Opening the guide from the running app is only a preview.
 				// Closing it early must not turn the next launch into first run.

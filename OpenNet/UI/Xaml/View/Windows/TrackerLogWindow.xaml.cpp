@@ -43,10 +43,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_entries = single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
 		LogListView().ItemsSource(m_entries);
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		SetTitleBar(WindowTitleBar());
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
+		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 
 		m_refreshTimer = DispatcherTimer();
 		m_refreshTimer.Interval(std::chrono::milliseconds(500));
@@ -64,7 +64,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				strong->m_refreshTimer.Stop();
 				strong->m_refreshTimer.Tick(strong->m_timerToken);
 			}
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 		});
 		RefreshLog();
 	}
@@ -79,10 +79,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			return;
 		}
 
-		auto const entries = p2p.TorrentCore()->GetTrackerLog(
-			winrt::to_string(m_taskId), winrt::to_string(m_trackerUrl));
-		auto const formatter = winrt::Windows::Globalization::
-			DateTimeFormatting::DateTimeFormatter{ L"shortdate longtime" };
+		auto const entries = p2p.TorrentCore()->GetTrackerLog(winrt::to_string(m_taskId), winrt::to_string(m_trackerUrl));
+		auto const formatter = winrt::Windows::Globalization::DateTimeFormatting::DateTimeFormatter{ L"shortdate longtime" };
 		for (std::uint32_t index = 0; index < entries.size(); ++index)
 		{
 			winrt::OpenNet::ViewModels::TrackerLogDisplayItem item{ nullptr };
@@ -91,8 +89,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				winrt::OpenNet::ViewModels::TrackerLogDisplayItem>();
 			if (!item)
 			{
-				item = winrt::make<winrt::OpenNet::ViewModels::implementation::
-					TrackerLogDisplayItem>();
+				item = winrt::make<winrt::OpenNet::ViewModels::implementation::TrackerLogDisplayItem>();
 				m_entries.Append(item);
 			}
 			item.Time(formatter.Format(winrt::clock::from_time_t(
@@ -102,16 +99,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 		while (m_entries.Size() > entries.size())
 			m_entries.RemoveAtEnd();
-		EmptyLogText().Visibility(
-			m_entries.Size() == 0 ? Visibility::Visible : Visibility::Collapsed);
+		EmptyLogText().Visibility(m_entries.Size() == 0 ? Visibility::Visible : Visibility::Collapsed);
 	}
 
-	void TrackerLogWindow::AlwaysOnTopToggle_Toggled(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TrackerLogWindow::AlwaysOnTopToggle_Toggled(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		if (auto presenter = AppWindow().Presenter().try_as<
-			winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
+		if (auto presenter = AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
 		{
 			presenter.IsAlwaysOnTop(AlwaysOnTopToggle().IsOn());
 		}

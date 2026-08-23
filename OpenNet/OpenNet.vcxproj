@@ -1819,4 +1819,14 @@
     <Font Include="Assets\Fonts\GeosansLight.ttf" />
     <Font Include="Assets\Fonts\MiSans-Regular.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml" />
+    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml.cpp"><DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon></ClCompile>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml.h"><DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon></ClInclude>
+    <Midl Include="UI\Xaml\View\Pages\TaskHttpLogPage.idl"><DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon></Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Core\Notification\HttpToastNotification.cpp" />
+    <ClInclude Include="Core\Notification\HttpToastNotification.h" />
+  </ItemGroup>
 </Project>

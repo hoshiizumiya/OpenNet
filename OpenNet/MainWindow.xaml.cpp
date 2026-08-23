@@ -38,10 +38,12 @@ namespace winrt::OpenNet::implementation
 {
 	MainWindow::MainWindow()
 	{
-		InitializeComponent();
-		winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::
-			MainView>(MainContentView())->AttachBackgroundPresenters(
-				BackgroundImagePresenter(), BackgroundVideoPresenter());
+	}
+
+	void MainWindow::InitializeComponent()
+	{
+		MainWindowT::InitializeComponent();
+		winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(MainContentView())->AttachBackgroundPresenters(BackgroundImagePresenter(), BackgroundVideoPresenter());
 		SetTitleBar(AppTitleBar());
 		InitWindowStyle(*this);
 

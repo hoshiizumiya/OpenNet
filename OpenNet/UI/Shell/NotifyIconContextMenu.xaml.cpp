@@ -539,7 +539,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 					self->SaveToggleSetting(L"Tray.FloatingWindowEnabled", false);
 				}
 			});
-			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(floating);
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(floating.Window());
 			floating.Activate();
 		}
 		else if (!enabled && m_floatingWindow)

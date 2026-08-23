@@ -24,12 +24,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		InitializeComponent();
 		ExtendsContentIntoTitleBar(true);
 		SetTitleBar(WindowTitleBar());
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
+		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 			for (auto const& tab : m_tabs)
 			{
 				try

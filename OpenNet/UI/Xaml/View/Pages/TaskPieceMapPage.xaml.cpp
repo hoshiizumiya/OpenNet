@@ -6,6 +6,7 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Windows.UI;
@@ -18,11 +19,6 @@ using namespace winrt::Windows::UI;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	TaskPieceMapPage::TaskPieceMapPage()
-	{
-		InitializeComponent();
-	}
-
 	TaskPieceMapPage::~TaskPieceMapPage()
 	{
 		Unsubscribe();
@@ -33,8 +29,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskPieceMapPage::OnNavigatedTo(
-		winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args)
+	void TaskPieceMapPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args)
 	{
 		Unsubscribe();
 		m_viewModel = args.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
@@ -66,8 +61,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RefreshPieceMap();
 	}
 
-	void TaskPieceMapPage::OnNavigatedFrom(
-		winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
+	void TaskPieceMapPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
 		if (m_refreshTimer)
 		{
@@ -76,9 +70,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		Unsubscribe();
 	}
 
-	void TaskPieceMapPage::RefreshButton_Click(
-		IInspectable const&,
-		RoutedEventArgs const&)
+	void TaskPieceMapPage::RefreshButton_Click(IInspectable const&, RoutedEventArgs const&)
 	{
 		m_renderedStates.clear();
 		RefreshPieceMap();
@@ -87,8 +79,44 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskPieceMapPage::RefreshPieceMap()
 	{
 		auto task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
-		if (!task
-			|| task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+		if (task && task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		{
+			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(to_string(task.Gid()));
+			if (!information)
+			{
+				PieceGrid().Items().Clear();
+				PieceMapSubtitle().Text(L"Waiting for HTTP segment information.");
+				return;
+			}
+			auto const pieceLength = information->PieceLength > 0 ? information->PieceLength : 1024 * 1024;
+			auto const total = information->NumPieces > 0 ? information->NumPieces : information->TotalLength > 0 ? (information->TotalLength + pieceLength - 1) / pieceLength : 1;
+			std::vector<int> states(total, 0);
+			auto const completedPieces = information->TotalLength > 0 ? (std::min<std::size_t>)(total, information->CompletedLength * total / information->TotalLength) : 0;
+			for (std::size_t index = 0; index < completedPieces; ++index) states[index] = 2;
+			if (completedPieces < total && information->Status == ::OpenNet::Core::Aria2::DownloadStatus::Active) states[completedPieces] = 1;
+			std::vector<int> availability(total, information->Files.empty() ? 0 : 1);
+			DownloadedPiecesText().Text(std::format(L"{} / {}", completedPieces, total));
+			AvailablePiecesText().Text(std::format(L"{} / {}", availability.empty() ? 0 : total, total));
+			DownloadedPiecesProgress().Value(total ? completedPieces * 100.0 / total : 0.0);
+			AvailablePiecesProgress().Value(availability.empty() ? 0.0 : 100.0);
+			PieceSizeText().Text(ResourceGetString(L"ViewTaskPieceMapPagePieceSize") + L" " + FormatBytes(pieceLength));
+			std::size_t uriCount{};
+			for (auto const& file : information->Files) uriCount += file.Uris.size();
+			WebSeedCountText().Text(L"HTTP sources: " + std::to_wstring(uriCount));
+			PieceMapSubtitle().Text(task.Name() + L" · HTTP segments · hybrid acceleration ready");
+			auto items = PieceGrid().Items();
+			if (task.Gid() != m_renderedTaskId || items.Size() != total) items.Clear();
+			for (std::size_t index = 0; index < total; ++index)
+			{
+				auto element = CreatePieceElement(index, states[index], availability[index], {});
+				if (items.Size() == total) items.SetAt(static_cast<std::uint32_t>(index), element); else items.Append(element);
+			}
+			m_renderedTaskId = task.Gid();
+			m_renderedStates = std::move(states);
+			m_renderedAvailability = std::move(availability);
+			return;
+		}
+		if (!task || task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			PieceGrid().Items().Clear();
 			PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageBitTorrentOnly"));
@@ -204,9 +232,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel = nullptr;
 	}
 
-	void TaskPieceMapPage::OnViewModelPropertyChanged(
-		IInspectable const&,
-		winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
+	void TaskPieceMapPage::OnViewModelPropertyChanged(IInspectable const&, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
 	{
 		if (args.PropertyName() == L"SelectedTask")
 		{

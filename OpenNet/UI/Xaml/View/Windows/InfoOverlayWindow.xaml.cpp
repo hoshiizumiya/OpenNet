@@ -26,7 +26,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			presenter.IsMinimizable(false);
 			presenter.IsResizable(false);
 		}
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 
 		Closed([this](auto const&, auto const&)
 		{
@@ -35,7 +35,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				m_refreshTimer.Stop();
 				m_refreshTimer = nullptr;
 			}
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 		});
 	}
 

@@ -8,6 +8,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 #include "../Windows/TrackerLogWindow.xaml.h"
 
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.DownloadManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
@@ -73,8 +74,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskTrackersPage::TaskTrackersPage()
 	{
-		m_trackerItems = winrt::single_threaded_observable_vector<
-			winrt::Windows::Foundation::IInspectable>();
+		m_trackerItems = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
 	}
 
 	void TaskTrackersPage::InitializeComponent()
@@ -167,9 +167,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel = nullptr;
 	}
 
-	void TaskTrackersPage::OnViewModelPropertyChanged(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
+	void TaskTrackersPage::OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
 	{
 		if (args.PropertyName() == L"SelectedTask")
 		{
@@ -179,9 +177,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskTrackersPage::OnRefreshTimerTick(
-		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Windows::Foundation::IInspectable const&)
+	void TaskTrackersPage::OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)
 	{
 		RefreshTrackerList();
 	}
@@ -265,9 +261,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return nullptr;
 	}
 
-	void TaskTrackersPage::ColumnVisibility_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskTrackersPage::ColumnVisibility_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto toggle = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleMenuFlyoutItem>();
 		if (!toggle || !toggle.Tag()) return;
@@ -315,9 +309,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RefreshTrackerList();
 	}
 
-	void TaskTrackersPage::TrackerDataRow_Loaded(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TaskTrackersPage::TrackerDataRow_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		std::array const columns{
 			ColTrackerURL(), ColTrackerLog(), ColTrackerRetries(),
@@ -408,7 +400,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::
 			implementation::TrackerLogWindow>(
 				winrt::to_hstring(taskId), taskName, trackerUrl);
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
 		window.Activate();
 	}
 
@@ -623,6 +615,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto selectedTask = m_viewModel.SelectedTask();
 		auto taskType = selectedTask.TaskType();
 
+		if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		{
+			if (!m_httpRefreshInFlight) RefreshHttpServersAsync(winrt::to_string(selectedTask.Gid()));
+			return;
+		}
+
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			m_trackerItems.Clear();
@@ -806,5 +804,42 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_trackerItems.RemoveAtEnd();
 
 		if (emptyPanel) emptyPanel.Visibility(Visibility::Collapsed);
+	}
+
+	winrt::fire_and_forget TaskTrackersPage::RefreshHttpServersAsync(std::string gid)
+	{
+		auto lifetime = get_strong();
+		m_httpRefreshInFlight = true;
+		auto dispatcher = DispatcherQueue();
+		auto weak = get_weak();
+		co_await winrt::resume_background();
+		auto servers = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskServers(gid);
+		dispatcher.TryEnqueue([weak, servers = std::move(servers)]()
+		{
+			if (auto self = weak.get())
+			{
+				self->m_httpRefreshInFlight = false;
+				std::uint32_t index{};
+				for (auto const& fileServers : servers)
+				{
+					for (auto const& server : fileServers.Servers)
+					{
+						winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
+						if (index < self->m_trackerItems.Size()) item = self->m_trackerItems.GetAt(index).try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>();
+						if (!item)
+						{
+							item = winrt::make<winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
+							if (index < self->m_trackerItems.Size()) self->m_trackerItems.SetAt(index, item); else self->m_trackerItems.Append(item);
+						}
+						item.URL(winrt::to_hstring(server.CurrentUri.empty() ? server.Uri : server.CurrentUri));
+						item.Retries(L"-"); item.TimeRemaining(L"-"); item.Seeders(L"-"); item.Leechers(L"-"); item.Downloaded(L"-");
+						item.Status(winrt::to_hstring(std::format("File {} · {:.1f} KiB/s", fileServers.Index, static_cast<double>(server.DownloadSpeed) / 1024.0)));
+						++index;
+					}
+				}
+				while (self->m_trackerItems.Size() > index) self->m_trackerItems.RemoveAtEnd();
+				self->EmptyStatePanel().Visibility(index == 0 ? Visibility::Visible : Visibility::Collapsed);
+			}
+		});
 	}
 }

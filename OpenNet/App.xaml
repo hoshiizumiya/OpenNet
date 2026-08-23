@@ -111,7 +111,7 @@
             <Style BasedOn="{StaticResource DefaultToolTipStyle}" TargetType="ToolTip">
                 <Setter Property="essential:ToolTipHelper.AcrylicWorkaround" Value="True" />
             </Style>
-            <Style BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
+            <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
                 <Setter Property="essential:ComboBoxHelper.AcrylicWorkaround" Value="True" />
             </Style>
 

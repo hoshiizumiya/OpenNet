@@ -57,11 +57,7 @@ export namespace OpenNet::Core::Aria2
 		void Remove(std::string const& Gid);
 
 		std::string AddUri(std::string const& Source);
-		std::string AddUriWithOptions(
-			std::string const& Source,
-			std::string const& Dir = {},
-			std::string const& OutFileName = {},
-			std::uint32_t ConnectionsPerServer = 8);
+		std::string AddUriWithOptions(HttpDownloadOptions const& options);
 
 		std::mutex& InstanceLock();
 
@@ -74,6 +70,7 @@ export namespace OpenNet::Core::Aria2
 		void RefreshInformation();
 
 		DownloadInformation GetTaskInformation(std::string const& Gid);
+		std::vector<ServersInformation> GetTaskServers(std::string const& Gid);
 		std::vector<std::string> GetTaskList();
 
 		std::string SimplePost(std::string const& Content);

@@ -26,9 +26,9 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	MainView::MainView()
+	void MainView::InitializeComponent()
 	{
-		InitializeComponent();
+		MainViewT::InitializeComponent();
 		m_backgroundTimer = DispatcherTimer{};
 		m_backgroundTimer.Interval(std::chrono::minutes(5));
 		m_backgroundTimerToken = m_backgroundTimer.Tick(
@@ -79,7 +79,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			self->StopBackgroundMedia();
 		});
 
-		m_viewModel = winrt::OpenNet::ViewModels::MainViewModel();
 		m_viewModel.Initialize();
 
 		// Navigate to saved start page (default: tasks)
@@ -107,12 +106,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	MainView::~MainView()
 	{
-		::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(
-			m_backgroundOptionsChangedToken);
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::
-			BackgroundPresentersChanged(m_backgroundPresentersChangedToken);
-		::OpenNet::Service::Background::GetBackgroundMediaService().Reset(
-			BackgroundImagePresenter(), BackgroundVideoPresenter());
+		::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(m_backgroundOptionsChangedToken);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::BackgroundPresentersChanged(m_backgroundPresentersChangedToken);
+		::OpenNet::Service::Background::GetBackgroundMediaService().Reset(BackgroundImagePresenter(), BackgroundVideoPresenter());
 		if (m_backgroundTimer)
 		{
 			m_backgroundTimer.Stop();
@@ -156,8 +152,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::StopBackgroundMedia()
 	{
-		::OpenNet::Service::Background::GetBackgroundMediaService().Suspend(
-			BackgroundVideoPresenter());
+		::OpenNet::Service::Background::GetBackgroundMediaService().Suspend(BackgroundVideoPresenter());
 	}
 
 	winrt::Windows::Foundation::IAsyncAction MainView::RefreshBackgroundMediaAsync(bool const advance)
@@ -168,13 +163,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_backgroundTimer.Interval(service.RotationInterval());
 		if (m_backgroundPlaybackActive)
 		{
-			co_await service.RefreshAsync(
-				BackgroundImagePresenter(), BackgroundVideoPresenter(), advance);
+			co_await service.RefreshAsync(BackgroundImagePresenter(), BackgroundVideoPresenter(), advance);
 		}
 		for (auto const& presenters : ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::SecondaryBackgroundPresenters())
 		{
-			co_await service.RefreshAsync(
-				presenters.ImagePresenter, presenters.VideoPresenter, advance);
+			co_await service.RefreshAsync(presenters.ImagePresenter, presenters.VideoPresenter, advance);
 		}
 	}
 

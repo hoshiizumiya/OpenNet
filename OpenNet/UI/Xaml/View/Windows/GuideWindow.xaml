@@ -13,7 +13,6 @@
     MaxWidth="1500"
     MaxHeight="1000"
     IsMaximizable="True"
-    TitleBarAutoDarkMode="True"
     mc:Ignorable="d">
 
     <essential:WindowEx.ContextMenu>
@@ -25,7 +24,7 @@
             <RowDefinition Height="32" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind}" />
+        <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
 
         <TitleBar
             x:Uid="GuideTitleBar"

@@ -8,6 +8,7 @@
 #include "ViewModels/DisplayItems.h"
 
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.DownloadManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
@@ -726,6 +727,51 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		auto selectedTask = m_viewModel.SelectedTask();
 		auto taskType = selectedTask.TaskType();
+
+		if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		{
+			auto const gid = winrt::to_string(selectedTask.Gid());
+			auto dispatcher = DispatcherQueue();
+			auto weak = get_weak();
+			co_await winrt::resume_background();
+			auto information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(gid);
+			dispatcher.TryEnqueue([weak, information = std::move(information)]()
+			{
+				if (auto self = weak.get())
+				{
+					self->ResetPeerGroups();
+					self->m_peerItems = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
+					if (information)
+					{
+						for (auto const& file : information->Files)
+						{
+							for (auto const& uri : file.Uris)
+							{
+								auto item = winrt::make<winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
+								item.IP(winrt::to_hstring(uri.Uri));
+								item.Location(L"-");
+								item.Progress(winrt::to_hstring(std::format("{:.1f}%", file.Length > 0 ? static_cast<double>(file.CompletedLength) * 100.0 / file.Length : 0.0)));
+								item.ProgressValue(file.Length > 0 ? static_cast<double>(file.CompletedLength) * 100.0 / file.Length : 0.0);
+								item.DLSpeed(uri.Status == ::OpenNet::Core::Aria2::UriStatus::Used ? FormatSpeed(static_cast<int>(information->DownloadSpeed / 1024)) : L"0 KB/s");
+								item.ULSpeed(L"0 KB/s");
+								item.Downloaded(FormatBytes(file.CompletedLength));
+								item.Uploaded(L"-");
+								item.Client(L"aria2");
+								item.PeerStatus(uri.Status == ::OpenNet::Core::Aria2::UriStatus::Used ? L"Active" : L"Waiting");
+								item.Reason(L"");
+								item.Protocol(uri.Uri.starts_with("https:") ? L"HTTPS" : uri.Uri.starts_with("ftp:") ? L"FTP" : L"HTTP");
+								item.Initiator(L"Local");
+								item.Source(L"URI");
+								self->m_peerItems.Append(item);
+							}
+						}
+					}
+					self->PeersTreeView().ItemsSource(self->m_peerItems);
+					self->EmptyStateText().Visibility(self->m_peerItems.Size() == 0 ? Visibility::Visible : Visibility::Collapsed);
+				}
+			});
+			co_return;
+		}
 
 		// Only show peers for BitTorrent tasks
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)

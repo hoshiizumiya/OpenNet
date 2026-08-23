@@ -55,17 +55,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		Closed([this](auto&&, auto&&)
 		{
 			this->get_strong();
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 			// The fatal event and optional feedback have been flushed.
 			winrt::OpenNet::implementation::App::RequestExit();
 		});
 
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		SetTitleBar(ExceptionWindowTitleBar());
 
-		auto const ownerWindow = winrt::OpenNet::implementation::App::window
-			? winrt::OpenNet::implementation::App::window
-			: winrt::OpenNet::implementation::App::guideWindow;
+		auto ownerWindow = winrt::OpenNet::implementation::App::window;
+		if (!ownerWindow && winrt::OpenNet::implementation::App::guideWindow)
+			ownerWindow = winrt::OpenNet::implementation::App::guideWindow.Window();
 		bool hasOwner = false;
 		if (ownerWindow)
 		{
@@ -215,7 +215,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		hstring const& exception)
 	{
 		auto window = winrt::make<ExceptionWindow>(sentryId, exception);
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
 		window.Activate();
 	}
 }

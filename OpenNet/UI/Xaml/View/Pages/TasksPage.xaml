@@ -1045,6 +1045,12 @@
                                 Header="Files List"
                                 IsClosable="False"
                                 Tag="{essential:TypeName Type=local:TaskFilesPage}" />
+                            <TabViewItem
+                                x:Name="HttpTaskLogContent"
+                                Header="Task Log"
+                                IsClosable="False"
+                                Tag="{essential:TypeName Type=local:TaskHttpLogPage}"
+                                Visibility="Collapsed" />
                         </TabView.TabItems>
                         <TabView.ContextFlyout>
                             <MenuFlyout Opening="TaskTabViewContextFlyout_Opening">

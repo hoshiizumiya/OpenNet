@@ -4,6 +4,7 @@
 
 import std;
 import winrt.WinUI3Package;
+import winrt.OpenNet.UI.Xaml.View.Windows;
 import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Microsoft.UI.Xaml.Controls;
 namespace winrt::OpenNet::UI::Shell::implementation
@@ -11,7 +12,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	struct NotifyIconContextMenu : NotifyIconContextMenuT<NotifyIconContextMenu>
 	{
 	private:
-		winrt::Microsoft::UI::Xaml::Window m_floatingWindow{ nullptr };
+		winrt::OpenNet::UI::Xaml::View::Windows::InfoOverlayWindow m_floatingWindow{ nullptr };
 		winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker m_clipboardRevoker;
 		std::vector<std::string> m_lastSuspendedTorrentIds;
 		bool m_lastSuspendIncludedHttp{ false };

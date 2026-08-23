@@ -12,6 +12,7 @@
 #include <winrt/Windows.UI.Xaml.Interop.h>
 #include <winrt/Microsoft.UI.h>
 #include <winrt/Microsoft.UI.Dispatching.h>
+#include <winrt/Microsoft.UI.Windowing.h>
 #include <winrt/Microsoft.UI.Xaml.h>
 #include <winrt/Microsoft.UI.Xaml.Controls.h>
 #include <winrt/Microsoft.UI.Xaml.Controls.Primitives.h>
@@ -36,6 +37,7 @@ import winrt.Windows.UI;
 import winrt.Windows.UI.Xaml.Interop;
 import winrt.Microsoft.UI;
 import winrt.Microsoft.UI.Dispatching;
+import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Controls.Primitives;

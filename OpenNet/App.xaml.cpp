@@ -102,10 +102,10 @@ namespace winrt::OpenNet::implementation
 		auto const guideState = LocalSetting::Get(
 			SettingKeys::GuideState,
 			::OpenNet::ViewModels::Guide::GuideState::Language);
-		if (guideState < ::OpenNet::ViewModels::Guide::GuideState::Completed)
+		if (guideState <::OpenNet::ViewModels::Guide::GuideState::Completed)
 		{
 			guideWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
-			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(guideWindow);
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(guideWindow.Window());
 			guideWindow.Activate();
 			return;
 		}
@@ -223,7 +223,7 @@ namespace winrt::OpenNet::implementation
 
 #if _DEBUG
 		auto devWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(devWindow);
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(devWindow.Window());
 		devWindow.Activate();
 #endif
 
@@ -244,8 +244,7 @@ namespace winrt::OpenNet::implementation
 
 		if (s_ipFilterSubscriptionTimer)
 			return;
-		auto dispatcher =
-			Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+		auto dispatcher = Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 		if (!dispatcher)
 			return;
 		s_ipFilterSubscriptionTimer = dispatcher.CreateTimer();

@@ -14,6 +14,7 @@ import OpenNet.ViewModels.ObservableMixin;
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskHttpLogPage.xaml.h"
 #include "UI/Xaml/Control/TaskStatusIndicator.xaml.h"
 #include "UI/Xaml/View/Pages/TasksPage.g.h"
 #include "ViewModels/TasksViewModel.h"
@@ -192,6 +193,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
 		void SetColumnSetting(winrt::hstring const& tag, bool value);
 		void SynchronizeTaskRows();
+		void UpdateTaskDetailTabs();
 
 		struct PersistedScrollState
 		{
