@@ -58,12 +58,12 @@
     <Page Include="UI\Xaml\View\Windows\TorrentCheckModalWindow.xaml">
       <Filter>UI\Xaml\View\Windows</Filter>
     </Page>
-	<Page Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml">
-	  <Filter>UI\Xaml\View\Windows</Filter>
-	</Page>
-	<Page Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml">
-	  <Filter>UI\Xaml\View\Windows</Filter>
-	</Page>
+    <Page Include="UI\Xaml\View\Windows\TrackerLogWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Windows\CreateTorrentProgressWindow.xaml">
+      <Filter>UI\Xaml\View\Windows</Filter>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TaskSummaryPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
@@ -224,6 +224,12 @@
     <Page Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml">
       <Filter>UI\Xaml\View\Dialog</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Dialog\ConfirmationDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\TextInputDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\NumberInputDialog.xaml" />
+    <Page Include="UI\Xaml\View\Dialog\FilterEditorDialog.xaml" />
+    <Page Include="UI\Xaml\Control\Progress\Stroge\StorageBar_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar_ResourceDictionary.xaml" />
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -782,6 +788,9 @@
     <ClCompile Include="Service\Notification\InfoBarService.ixx">
       <Filter>Service</Filter>
     </ClCompile>
+    <ClCompile Include="Core\Notification\HttpToastNotification.cpp" />
+    <ClCompile Include="UI\Xaml\Control\Progress\Stroge\StorageBar.cpp" />
+    <ClCompile Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Service\Background\BackgroundMediaService.h">
@@ -808,6 +817,7 @@
     <ClInclude Include="UI\Xaml\Control\TaskStatusIndicator.xaml.h">
       <Filter>UI\Xaml\Control</Filter>
     </ClInclude>
+    <ClInclude Include="Core\Notification\HttpToastNotification.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -1439,7 +1449,6 @@
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.Dev.appxmanifest" />
-    <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Assets\IP2Location\LICENSE.TXT" />
@@ -1450,6 +1459,8 @@
     <Font Include="Assets\Fonts\MiSans-Regular.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml"><Filter>UI\Xaml\View\Pages</Filter></Page>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
   </ItemGroup>
 </Project>

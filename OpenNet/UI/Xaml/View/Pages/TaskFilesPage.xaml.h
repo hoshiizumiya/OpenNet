@@ -2,6 +2,7 @@
 
 import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.ViewModels.ObservableMixin;
+import winrt.OpenNet.UI.Xaml.Control.Progress.Storage;
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 

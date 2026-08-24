@@ -6,25 +6,31 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
+    xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
     NavigationCacheMode="Required"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <Style x:Key="SectionCardStyle" TargetType="Border">
-            <Setter Property="Padding" Value="14,10" />
-            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-            <Setter Property="CornerRadius" Value="8" />
-        </Style>
-        <Style x:Key="MetricCaptionStyle" TargetType="TextBlock">
-            <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
-            <Setter Property="FontSize" Value="12" />
-        </Style>
-        <Style x:Key="MetricValueStyle" TargetType="TextBlock">
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/Stroge/StorageBar_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="SectionCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="14,10" />
+            </Style>
+            <Style x:Key="MetricCaptionStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="12" />
+                <Setter Property="Foreground" Value="{ThemeResource TextFillColorSecondaryBrush}" />
+            </Style>
+            <Style x:Key="MetricValueStyle" TargetType="TextBlock">
+                <Setter Property="FontWeight" Value="SemiBold" />
+                <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+            </Style>
+        </ResourceDictionary>
     </Page.Resources>
 
     <ScrollViewer HorizontalScrollMode="Disabled">
@@ -73,9 +79,8 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
-                        <ProgressBar
+                        <storage:StorageBar
                             x:Name="TaskProgress"
-                            Height="8"
                             VerticalAlignment="Center"
                             Maximum="100" />
                         <TextBlock
@@ -99,9 +104,8 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="0 / 0" />
                             </Grid>
-                            <ProgressBar
+                            <storage:StorageBar
                                 x:Name="DownloadedPiecesProgress"
-                                Height="5"
                                 Maximum="100" />
                         </StackPanel>
                         <StackPanel Grid.Column="1" Spacing="3">
@@ -113,9 +117,8 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="0 / 0" />
                             </Grid>
-                            <ProgressBar
+                            <storage:StorageBar
                                 x:Name="AvailablePiecesProgress"
-                                Height="5"
                                 Maximum="100" />
                         </StackPanel>
                     </Grid>

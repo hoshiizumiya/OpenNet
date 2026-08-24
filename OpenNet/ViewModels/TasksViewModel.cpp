@@ -28,10 +28,8 @@ using namespace std::string_literals;
 namespace winrt::OpenNet::ViewModels::implementation
 {
 	using namespace ::Core::Utils::Misc;
-	static winrt::hstring FormatByteSize(std::uint64_t bytes);
 	static winrt::hstring FormatRatio(std::uint64_t uploaded, std::uint64_t downloaded);
-	static winrt::hstring FormatSeedsPeers(
-		int connectedSeeds, int connectedPeers, int knownSeeds, int knownPeers);
+	static winrt::hstring FormatSeedsPeers(int connectedSeeds, int connectedPeers, int knownSeeds, int knownPeers);
 	// Tip: All constructions will do in winrt::make<>().
 	TasksViewModel::TasksViewModel()
 	{
@@ -348,6 +346,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 			});
 			co_return;
 		})
+			.CanExecute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
+		{
+			auto self = weak.get();
+			return self && static_cast<bool>(self->m_selectedTask);
+		})
+			.DependsOn(L"SelectedTask")
 			.Build();
 
 		// ExportCommand: Export tasks to a file
@@ -427,14 +431,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::Initialize()
 	{
-		// Initialize HTTP download manager asynchronously on background thread
-		auto initAsync = ::OpenNet::Core::DownloadManager::Instance().InitializeAsync();
-
-		// Fire and forget - the async operation runs on background thread
-		initAsync.Completed([](auto const&, auto)
-		{
-			// Initialization complete, no action needed
-		});
+		// Start HTTP initialization immediately; task restoration below awaits it so
+		// stable recordId/GID mappings exist before any restored row is created.
+		auto httpInitialization = ::OpenNet::Core::DownloadManager::Instance().InitializeAsync();
 
 		// Initialize application settings database (used by RSS, UI settings, etc.)
 		::OpenNet::Core::AppSettingsDatabase::Instance().Initialize();
@@ -447,9 +446,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		::OpenNet::Core::ClientFilterManager::Instance().Initialize();
 
 		// Fire-and-forget: await torrent core init on background, then load tasks
-		[](auto weak) -> winrt::Windows::Foundation::IAsyncAction
+		[](auto weak, auto httpInitialization) -> winrt::Windows::Foundation::IAsyncAction
 		{
 			co_await winrt::resume_background();
+			co_await httpInitialization;
 			co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
 
 			// Apply stored IP filter rules to the now-running session
@@ -459,7 +459,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				self->LoadSavedTasks();
 			}
-		}(get_weak());
+		}(get_weak(), httpInitialization);
 	}
 
 	void TasksViewModel::Shutdown()
@@ -681,8 +681,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 					{
 						vm.Size(L"-");
 					}
-					vm.DownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
-						std::int64_t{}, rec.completedSize))));
+					vm.DownloadSize(Core::Utils::Misc::friendlyUnit(static_cast<std::uint64_t>((std::max)(std::int64_t{}, rec.completedSize))));
 					vm.TotalDownloadSize(vm.DownloadSize());
 					vm.UploadSize(L"-");
 					vm.TotalUploadSize(L"-");
@@ -849,18 +848,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.Progress(to_hstring_percent(e.progressPercent));
 				item.DownloadRate(FormatRateConstraint(e.downloadRateKB, e.downloadLimit, 0));
 				item.UploadRate(FormatRateConstraint(e.uploadRateKB, e.uploadLimit, e.minimumUploadRate));
-				item.Size(FormatByteSize(static_cast<std::uint64_t>((std::max)(
-					std::int64_t{}, e.totalSize))));
-				item.DownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
-					std::int64_t{}, e.sessionDownloaded))));
-				item.UploadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
-					std::int64_t{}, e.sessionUploaded))));
-				auto const allTimeDownloaded = (std::max)(
-					e.allTimeDownloaded, e.downloadedSize);
-				item.TotalDownloadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
-					std::int64_t{}, allTimeDownloaded))));
-				item.TotalUploadSize(FormatByteSize(static_cast<std::uint64_t>((std::max)(
-					std::int64_t{}, e.allTimeUploaded))));
+				item.Size(Core::Utils::Misc::friendlyUnit(static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.totalSize))));
+				item.DownloadSize(Core::Utils::Misc::friendlyUnit(static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.sessionDownloaded))));
+				item.UploadSize(Core::Utils::Misc::friendlyUnit(static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.sessionUploaded))));
+				auto const allTimeDownloaded = (std::max)(e.allTimeDownloaded, e.downloadedSize);
+				item.TotalDownloadSize(Core::Utils::Misc::friendlyUnit(static_cast<std::uint64_t>((std::max)(std::int64_t{}, allTimeDownloaded))));
+				item.TotalUploadSize(Core::Utils::Misc::friendlyUnit(static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.allTimeUploaded))));
 				item.ShareRatio(FormatRatio(
 					static_cast<std::uint64_t>((std::max)(std::int64_t{}, e.allTimeUploaded)),
 					static_cast<std::uint64_t>((std::max)(std::int64_t{}, allTimeDownloaded))));
@@ -938,7 +931,22 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return nullptr;
 		}
 
-		// Lookup by GID first
+		auto const recordId = ::OpenNet::Core::DownloadManager::Instance().GetRecordIdForGid(gidStr);
+		if (!recordId.empty())
+		{
+			auto const stableId = winrt::to_hstring(recordId);
+			for (auto const& item : m_tasks)
+			{
+				if (item.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http
+					&& item.TaskId() == stableId)
+				{
+					if (item.Gid() != gid) item.Gid(gid);
+					return item;
+				}
+			}
+		}
+
+		// Lookup by GID for records that have not been associated yet.
 		for (auto const& item : m_tasks)
 		{
 			if (item.Gid() == gid)
@@ -952,7 +960,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		vm.Gid(gid);
 		// Use recordId (not GID) as TaskId for HTTP downloads.
 		// GIDs are Aria2 session-ephemeral and change across restarts.
-		auto recordId = ::OpenNet::Core::DownloadManager::Instance().GetRecordIdForGid(gidStr);
 		vm.TaskId(recordId.empty() ? gid : winrt::to_hstring(recordId));
 		vm.TaskType(winrt::OpenNet::ViewModels::DownloadTaskType::Http);
 		auto now = std::chrono::system_clock::now();
@@ -960,27 +967,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		vm.AddDate(FormatTimestamp(ts));
 		m_tasks.Append(vm);
 		return vm;
-	}
-
-	static winrt::hstring FormatByteSize(std::uint64_t bytes)
-	{
-		if (bytes == 0)
-			return L"-";
-		wchar_t buf[64];
-		double gb = bytes / (1024.0 * 1024.0 * 1024.0);
-		if (gb >= 1.0)
-		{
-			swprintf(buf, 64, L"%.2f GB", gb);
-		}
-		else
-		{
-			double mb = bytes / (1024.0 * 1024.0);
-			if (mb >= 1.0)
-				swprintf(buf, 64, L"%.2f MB", mb);
-			else
-				swprintf(buf, 64, L"%.1f KB", bytes / 1024.0);
-		}
-		return winrt::hstring{ buf };
 	}
 
 	static winrt::hstring FormatByteRate(std::uint64_t bytesPerSec)
@@ -1019,6 +1005,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 				auto item = self->FindOrCreateHttpItem(gid, name);
 				if (!item) return; // GID was deleted
 				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
+				if (!isNewItem && static_cast<double>(percent) + 0.01 < item.ProgressPercent())
+				{
+					return;
+				}
 
 				// Update name if it changed (aria2 resolves filename later)
 				if (!name.empty() && item.Name() != name)
@@ -1054,11 +1044,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.Progress(to_hstring_percent(percent));
 				item.DownloadRate(FormatByteRate(dlSpeed));
 				item.UploadRate(FormatByteRate(ulSpeed));
-				item.Size(FormatByteSize(totalLen));
-				item.DownloadSize(FormatByteSize(completedLen));
-				item.TotalDownloadSize(FormatByteSize(completedLen));
-				item.UploadSize(FormatByteSize(0));
-				item.TotalUploadSize(FormatByteSize(0));
+				item.Size(Core::Utils::Misc::friendlyUnit(totalLen));
+				item.DownloadSize(Core::Utils::Misc::friendlyUnit(completedLen));
+				item.TotalDownloadSize(Core::Utils::Misc::friendlyUnit(completedLen));
+				item.UploadSize(Core::Utils::Misc::friendlyUnit(0));
+				item.TotalUploadSize(Core::Utils::Misc::friendlyUnit(0));
 				item.ShareRatio(L"0.00");
 				item.Seeds(L"-");
 				item.Peers(L"-");

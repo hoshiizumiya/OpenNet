@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment">
+
+    <Style TargetType="local:HttpSegmentProgressBar">
+        <Setter Property="Background" Value="{ThemeResource ControlStrongFillColorDefaultBrush}" />
+        <Setter Property="Foreground" Value="{ThemeResource AccentFillColorDefaultBrush}" />
+        <Setter Property="MinHeight" Value="10" />
+        <Setter Property="MinWidth" Value="96" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:HttpSegmentProgressBar">
+                    <Grid Height="{TemplateBinding Height}" MinHeight="{TemplateBinding MinHeight}">
+                        <Border
+                            Height="3"
+                            VerticalAlignment="Center"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="2" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="PART_PreRangeColumn" />
+                                <ColumnDefinition x:Name="PART_ValueColumn" />
+                                <ColumnDefinition x:Name="PART_RemainingColumn" />
+                                <ColumnDefinition x:Name="PART_PostRangeColumn" />
+                            </Grid.ColumnDefinitions>
+                            <Border
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2"
+                                Height="7"
+                                VerticalAlignment="Center"
+                                Background="{ThemeResource AccentFillColorTertiaryBrush}"
+                                CornerRadius="3" />
+                            <Border
+                                Grid.Column="1"
+                                Height="7"
+                                VerticalAlignment="Center"
+                                Background="{TemplateBinding Foreground}"
+                                CornerRadius="3" />
+                        </Grid>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

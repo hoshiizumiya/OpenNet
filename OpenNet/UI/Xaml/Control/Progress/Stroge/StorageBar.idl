@@ -1,0 +1,26 @@
+namespace OpenNet.UI.Xaml.Control.Progress.Storage
+{
+	enum BarShapes
+	{
+		Round = 0,
+		Soft = 1,
+		Flat = 2,
+	};
+
+	[default_interface]
+	runtimeclass StorageBar : Microsoft.UI.Xaml.Controls.Primitives.RangeBase
+	{
+		StorageBar();
+		Double ValueBarHeight;
+		Double TrackBarHeight;
+		BarShapes BarShape;
+		Double Percent { get; };
+		Double PercentCaution;
+		Double PercentCritical;
+		static Microsoft.UI.Xaml.DependencyProperty ValueBarHeightProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty TrackBarHeightProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty BarShapeProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty PercentCautionProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty PercentCriticalProperty { get; };
+	}
+}

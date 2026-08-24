@@ -176,21 +176,39 @@ namespace OpenNet::Core
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
+			auto& stateManager = HttpStateManager::Instance();
+			stateManager.Initialize();
+			if (auto const existing = stateManager.FindActiveByUrl(options.Uris.front());
+				existing && !existing->lastGid.empty())
+			{
+				try
+				{
+					auto const information = m_aria2->GetTaskInformation(existing->lastGid);
+					if (information.Status != Aria2::DownloadStatus::Removed
+						&& information.Status != Aria2::DownloadStatus::Error)
+					{
+						return existing->lastGid;
+					}
+				}
+				catch (...)
+				{
+				}
+			}
 			auto& database = AppSettingsDatabase::Instance();
 			database.Initialize();
 			auto effectiveOptions = options;
 			if (effectiveOptions.ConnectionsPerServer == 0)
 				effectiveOptions.ConnectionsPerServer = static_cast<std::uint32_t>(std::clamp<std::int64_t>(
-				database.GetInt(AppSettingsDatabase::CAT_DOWNLOAD,
-					"aria2_connections_per_server", 8), 1, 16));
+					database.GetInt(AppSettingsDatabase::CAT_DOWNLOAD,
+									"aria2_connections_per_server", 8), 1, 16));
 			auto const gid = m_aria2->AddUriWithOptions(effectiveOptions);
 
 			// Persist the download record
 			if (!gid.empty())
 			{
 				if (!effectiveOptions.Description.empty()) database.SetString("http_task_description", gid, effectiveOptions.Description);
-				auto recordId = HttpStateManager::Instance().AddRecord(effectiveOptions.Uris.front(), effectiveOptions.Dir, effectiveOptions.OutFileName);
-				HttpStateManager::Instance().UpdateRecordGid(recordId, gid);
+				auto recordId = stateManager.AddRecord(effectiveOptions.Uris.front(), effectiveOptions.Dir, effectiveOptions.OutFileName);
+				stateManager.UpdateRecordGid(recordId, gid);
 				{
 					std::lock_guard lock(m_mutex);
 					m_gidToRecordId[gid] = recordId;
@@ -211,16 +229,9 @@ namespace OpenNet::Core
 	std::optional<Aria2::DownloadInformation> DownloadManager::GetHttpTaskInformation(std::string const& gid)
 	{
 		if (!IsAria2Available() || gid.empty()) return std::nullopt;
-		{
-			std::lock_guard lock(m_mutex);
-			if (auto const snapshot = m_httpTaskSnapshots.find(gid); snapshot != m_httpTaskSnapshots.end()) return snapshot->second;
-		}
-		try
-		{
-			std::lock_guard rpcLock(m_aria2->InstanceLock());
-			return m_aria2->GetTaskInformation(gid);
-		}
-		catch (...) { return std::nullopt; }
+		std::lock_guard lock(m_mutex);
+		if (auto const snapshot = m_httpTaskSnapshots.find(gid); snapshot != m_httpTaskSnapshots.end()) return snapshot->second;
+		return std::nullopt;
 	}
 
 	std::vector<Aria2::ServersInformation> DownloadManager::GetHttpTaskServers(std::string const& gid)
@@ -231,7 +242,10 @@ namespace OpenNet::Core
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			return m_aria2->GetTaskServers(gid);
 		}
-		catch (...) { return {}; }
+		catch (...)
+		{
+			return {};
+		}
 	}
 
 	std::vector<HttpTaskLogEntry> DownloadManager::GetHttpTaskLog(std::string const& gid) const
@@ -363,7 +377,9 @@ namespace OpenNet::Core
 				}
 			}
 		}
-		catch (...) { }
+		catch (...)
+		{
+		}
 		// A previous delete attempt may already have removed the aria2 result while
 		// Windows still held the output file open. Keep the SQLite record until all
 		// file operations succeed so a retry can reconstruct the output path.
@@ -376,7 +392,7 @@ namespace OpenNet::Core
 				{
 					auto path = std::filesystem::path{
 						winrt::to_hstring(record->savePath).c_str() }
-						/ std::filesystem::path{ winrt::to_hstring(leafName).c_str() };
+					/ std::filesystem::path{ winrt::to_hstring(leafName).c_str() };
 					downloadedFiles.push_back(path);
 					path += L".aria2";
 					controlFiles.push_back(std::move(path));
@@ -388,7 +404,13 @@ namespace OpenNet::Core
 		// stopped tasks. Aria2 moves a cancelled task to the stopped list
 		// asynchronously, so wait briefly before removing its result.
 		bool reachedStoppedList = false;
-		try { m_aria2->Cancel(gid, true); } catch (...) { }
+		try
+		{
+			m_aria2->Cancel(gid, true);
+		}
+		catch (...)
+		{
+		}
 		for (int attempt = 0; attempt < 20; ++attempt)
 		{
 			try
@@ -644,6 +666,49 @@ namespace OpenNet::Core
 				{
 					std::lock_guard lock(m_mutex);
 					m_httpTaskSnapshots[gid] = task;
+				}
+
+				std::string recordId;
+				{
+					std::lock_guard lock(m_mutex);
+					if (auto const entry = m_gidToRecordId.find(gid); entry != m_gidToRecordId.end())
+						recordId = entry->second;
+				}
+				if (recordId.empty())
+				{
+					std::string sourceUrl;
+					for (auto const& file : task.Files)
+					{
+						if (!file.Uris.empty() && !file.Uris.front().Uri.empty())
+						{
+							sourceUrl = file.Uris.front().Uri;
+							break;
+						}
+					}
+					if (!sourceUrl.empty())
+					{
+						auto& stateManager = HttpStateManager::Instance();
+						auto record = stateManager.FindActiveByUrl(sourceUrl);
+						if (record)
+						{
+							recordId = record->recordId;
+							if (record->lastGid.empty() || task.CompletedLength >= static_cast<std::size_t>((std::max)(std::int64_t{}, record->completedSize)))
+								stateManager.UpdateRecordGid(recordId, gid);
+						}
+						else
+						{
+							std::string outputName;
+							if (!task.Files.empty() && !task.Files.front().Path.empty())
+								outputName = std::filesystem::path{ task.Files.front().Path }.filename().string();
+							recordId = stateManager.AddRecord(sourceUrl, task.Dir, outputName);
+							stateManager.UpdateRecordGid(recordId, gid);
+						}
+						if (!recordId.empty())
+						{
+							std::lock_guard lock(m_mutex);
+							m_gidToRecordId[gid] = recordId;
+						}
+					}
 				}
 
 				if (progressCb)

@@ -113,6 +113,24 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_progressValue, v, L"ProgressValue");
 		}
 
+		double SegmentStart() const
+		{
+			return m_segmentStart;
+		}
+		void SegmentStart(double value)
+		{
+			SetProperty(m_segmentStart, value, L"SegmentStart");
+		}
+
+		double SegmentEnd() const
+		{
+			return m_segmentEnd;
+		}
+		void SegmentEnd(double value)
+		{
+			SetProperty(m_segmentEnd, value, L"SegmentEnd");
+		}
+
 		std::int64_t DownloadRate() const
 		{
 			return m_downloadRate;
@@ -265,6 +283,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_downloaded;
 		winrt::hstring m_uploaded;
 		double m_progressValue{};
+		double m_segmentStart{};
+		double m_segmentEnd{ 100.0 };
 		std::int64_t m_downloadRate{};
 		std::int64_t m_uploadRate{};
 		std::int64_t m_downloadedBytes{};

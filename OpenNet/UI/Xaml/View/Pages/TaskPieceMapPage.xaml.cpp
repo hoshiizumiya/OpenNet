@@ -19,6 +19,21 @@ using namespace winrt::Windows::UI;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
+	static int HexValue(char const value)
+	{
+		if (value >= '0' && value <= '9') return value - '0';
+		if (value >= 'a' && value <= 'f') return value - 'a' + 10;
+		if (value >= 'A' && value <= 'F') return value - 'A' + 10;
+		return 0;
+	}
+
+	static bool IsCompletedPiece(std::string const& bitfield, std::size_t const index)
+	{
+		auto const nibbleIndex = index / 4;
+		if (nibbleIndex >= bitfield.size()) return false;
+		return (HexValue(bitfield[nibbleIndex]) & (1 << (3 - static_cast<int>(index % 4)))) != 0;
+	}
+
 	TaskPieceMapPage::~TaskPieceMapPage()
 	{
 		Unsubscribe();
@@ -91,9 +106,38 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto const pieceLength = information->PieceLength > 0 ? information->PieceLength : 1024 * 1024;
 			auto const total = information->NumPieces > 0 ? information->NumPieces : information->TotalLength > 0 ? (information->TotalLength + pieceLength - 1) / pieceLength : 1;
 			std::vector<int> states(total, 0);
-			auto const completedPieces = information->TotalLength > 0 ? (std::min<std::size_t>)(total, information->CompletedLength * total / information->TotalLength) : 0;
-			for (std::size_t index = 0; index < completedPieces; ++index) states[index] = 2;
-			if (completedPieces < total && information->Status == ::OpenNet::Core::Aria2::DownloadStatus::Active) states[completedPieces] = 1;
+			std::size_t completedPieces{};
+			if (!information->Bitfield.empty())
+			{
+				for (std::size_t index = 0; index < total; ++index)
+				{
+					if (!IsCompletedPiece(information->Bitfield, index)) continue;
+					states[index] = 2;
+					++completedPieces;
+				}
+			}
+			else
+			{
+				completedPieces = information->TotalLength > 0
+					? (std::min<std::size_t>)(total, information->CompletedLength * total / information->TotalLength)
+					: 0;
+				for (std::size_t index = 0; index < completedPieces; ++index) states[index] = 2;
+			}
+			if (information->Status == ::OpenNet::Core::Aria2::DownloadStatus::Active)
+			{
+				auto const connectionCount = (std::max)(1, information->Connections);
+				for (int connection = 0; connection < connectionCount; ++connection)
+				{
+					auto const start = total * static_cast<std::size_t>(connection) / connectionCount;
+					auto const end = total * static_cast<std::size_t>(connection + 1) / connectionCount;
+					for (auto index = start; index < end; ++index)
+					{
+						if (states[index] != 0) continue;
+						states[index] = 1;
+						break;
+					}
+				}
+			}
 			std::vector<int> availability(total, information->Files.empty() ? 0 : 1);
 			DownloadedPiecesText().Text(std::format(L"{} / {}", completedPieces, total));
 			AvailablePiecesText().Text(std::format(L"{} / {}", availability.empty() ? 0 : total, total));
@@ -104,12 +148,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			for (auto const& file : information->Files) uriCount += file.Uris.size();
 			WebSeedCountText().Text(L"HTTP sources: " + std::to_wstring(uriCount));
 			PieceMapSubtitle().Text(task.Name() + L" · HTTP segments · hybrid acceleration ready");
+			if (task.Gid() == m_renderedTaskId && states == m_renderedStates && availability == m_renderedAvailability) return;
 			auto items = PieceGrid().Items();
-			if (task.Gid() != m_renderedTaskId || items.Size() != total) items.Clear();
+			auto const canUpdateInPlace = task.Gid() == m_renderedTaskId && items.Size() == total && m_renderedStates.size() == total;
+			if (!canUpdateInPlace) items.Clear();
 			for (std::size_t index = 0; index < total; ++index)
 			{
+				if (canUpdateInPlace && states[index] == m_renderedStates[index] && availability[index] == m_renderedAvailability[index]) continue;
 				auto element = CreatePieceElement(index, states[index], availability[index], {});
-				if (items.Size() == total) items.SetAt(static_cast<std::uint32_t>(index), element); else items.Append(element);
+				if (canUpdateInPlace) items.SetAt(static_cast<std::uint32_t>(index), element); else items.Append(element);
 			}
 			m_renderedTaskId = task.Gid();
 			m_renderedStates = std::move(states);

@@ -57,7 +57,10 @@ namespace OpenNet::Core
         if (rc != SQLITE_OK)
         {
             OutputDebugStringA("HttpStateManager: Failed to open SQLite database\n");
-            if (m_db) { sqlite3_close(m_db); m_db = nullptr; }
+            if (m_db)
+            {
+                sqlite3_close(m_db); m_db = nullptr;
+            }
             return;
         }
 
@@ -112,11 +115,29 @@ namespace OpenNet::Core
             sqlite3_free(errMsg);
         }
 
+        // Older builds could persist more than one active row for the same source
+        // URL. Keep the row with the most downloaded data, then enforce the same
+        // invariant used by AddRecord at the database boundary.
+        sqlite3_exec(m_db, R"(
+            DELETE FROM http_downloads AS duplicate
+            WHERE duplicate.status < 3
+              AND EXISTS (
+                SELECT 1 FROM http_downloads AS preferred
+                WHERE preferred.url = duplicate.url
+                  AND preferred.status < 3
+                  AND (preferred.completed_size > duplicate.completed_size
+                    OR (preferred.completed_size = duplicate.completed_size
+                        AND preferred.added_timestamp < duplicate.added_timestamp))
+              );
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_http_active_url
+            ON http_downloads(url) WHERE status < 3;
+        )", nullptr, nullptr, nullptr);
+
         // Existing databases predate the completion timestamp column.
         errMsg = nullptr;
         rc = sqlite3_exec(m_db,
-            "ALTER TABLE http_downloads ADD COLUMN completed_timestamp INTEGER NOT NULL DEFAULT 0;",
-            nullptr, nullptr, &errMsg);
+                          "ALTER TABLE http_downloads ADD COLUMN completed_timestamp INTEGER NOT NULL DEFAULT 0;",
+                          nullptr, nullptr, &errMsg);
         if (rc != SQLITE_OK && errMsg)
         {
             // SQLITE_ERROR is expected when the column already exists.
@@ -163,9 +184,9 @@ namespace OpenNet::Core
                 std::string savePath  = item.value("savePath", std::string{});
                 std::string fileName  = item.value("fileName", std::string{});
                 std::string name      = item.value("name", std::string{});
-                int64_t addedTs       = item.value("addedTimestamp", int64_t{0});
-                int64_t totalSize     = item.value("totalSize", int64_t{0});
-                int64_t completedSize = item.value("completedSize", int64_t{0});
+                int64_t addedTs       = item.value("addedTimestamp", int64_t{ 0 });
+                int64_t totalSize     = item.value("totalSize", int64_t{ 0 });
+                int64_t completedSize = item.value("completedSize", int64_t{ 0 });
                 int status            = item.value("status", 0);
                 std::string lastGid   = item.value("lastGid", std::string{});
 
@@ -191,13 +212,21 @@ namespace OpenNet::Core
 
             // Remove old JSON file so migration doesn't run again.
             // Use remove instead of rename for reliability.
-            try { std::filesystem::remove(jsonPath); }
+            try
+            {
+                std::filesystem::remove(jsonPath);
+            }
             catch (...)
             {
                 // If deletion fails, try renaming as fallback.
                 std::wstring backupPath = jsonPath + L".migrated";
-                try { std::filesystem::rename(jsonPath, backupPath); }
-                catch (...) {}
+                try
+                {
+                    std::filesystem::rename(jsonPath, backupPath);
+                }
+                catch (...)
+                {
+                }
             }
 
             OutputDebugStringA("HttpStateManager: Migrated records from JSON to SQLite\n");
@@ -218,7 +247,7 @@ namespace OpenNet::Core
 
         // status: 0=pending, 1=downloading, 2=paused → active
         const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp "
-                          "FROM http_downloads WHERE url = ? AND status < 3 LIMIT 1;";
+            "FROM http_downloads WHERE url = ? AND status < 3 LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_text(stmt, 1, url.c_str(), -1, SQLITE_TRANSIENT);
@@ -227,7 +256,8 @@ namespace OpenNet::Core
         if (sqlite3_step(stmt) == SQLITE_ROW)
         {
             HttpDownloadRecord rec;
-            auto safeText = [&](int col) -> const char* {
+            auto safeText = [&](int col) -> const char*
+            {
                 auto ptr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, col));
                 return ptr ? ptr : "";
             };
@@ -347,7 +377,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return;
 
-        const char* sql = "UPDATE http_downloads SET completed_size = ?, total_size = ? WHERE record_id = ?;";
+        const char* sql = "UPDATE http_downloads SET completed_size = MAX(completed_size, ?), total_size = MAX(total_size, ?) WHERE record_id = ?;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_int64(stmt, 1, completedSize);
@@ -476,7 +506,8 @@ namespace OpenNet::Core
         while (sqlite3_step(stmt) == SQLITE_ROW)
         {
             HttpDownloadRecord rec;
-            auto safeText = [&](int col) -> const char* {
+            auto safeText = [&](int col) -> const char*
+            {
                 auto ptr = reinterpret_cast<const char*>(sqlite3_column_text(stmt, col));
                 return ptr ? ptr : "";
             };
@@ -512,7 +543,7 @@ namespace OpenNet::Core
         auto now = std::chrono::system_clock::now().time_since_epoch();
         auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now).count();
 
-        static std::mt19937 rng{std::random_device{}()};
+        static std::mt19937 rng{ std::random_device{}() };
         std::uniform_int_distribution<int> dist(0, 0xFFFF);
 
         char buf[32];

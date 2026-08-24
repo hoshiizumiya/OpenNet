@@ -1,0 +1,14 @@
+namespace OpenNet.UI.Xaml.Control.Progress.HttpSegment
+{
+	[default_interface]
+	runtimeclass HttpSegmentProgressBar : Microsoft.UI.Xaml.Controls.Control
+	{
+		HttpSegmentProgressBar();
+		Double RangeStart;
+		Double RangeEnd;
+		Double Value;
+		static Microsoft.UI.Xaml.DependencyProperty RangeStartProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty RangeEndProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty ValueProperty { get; };
+	}
+}

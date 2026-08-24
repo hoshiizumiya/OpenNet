@@ -2,6 +2,7 @@
 
 import OpenNet.ViewModels.ObservableMixin;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
+import winrt.OpenNet.UI.Xaml.Control.Progress.HttpSegment;
 import winrt.XamlToolkit.Labs.WinUI;
 import winrt.XamlToolkit.WinUI.Animations;
 import winrt.XamlToolkit.WinUI.Behaviors;
@@ -63,6 +64,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_lastActivePeers;
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_disconnectingPeers;
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_banIpPeers;
+		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_httpConnections;
 		std::unordered_set<std::string> m_cachedBannedPeerAddresses;
 		std::string m_flagSprite;
 		std::unordered_map<std::string, winrt::hstring> m_flagSvgCache;

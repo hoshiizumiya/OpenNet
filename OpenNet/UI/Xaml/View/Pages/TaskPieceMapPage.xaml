@@ -5,7 +5,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
     mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/Stroge/StorageBar_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
 
     <Grid Padding="12" RowSpacing="10">
         <Grid.RowDefinitions>
@@ -56,7 +65,7 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="0 / 0" />
                 </Grid>
-                <ProgressBar
+                <storage:StorageBar
                     x:Name="DownloadedPiecesProgress"
                     Maximum="100"
                     Minimum="0"
@@ -71,7 +80,7 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="0 / 0" />
                 </Grid>
-                <ProgressBar
+                <storage:StorageBar
                     x:Name="AvailablePiecesProgress"
                     Maximum="100"
                     Minimum="0"

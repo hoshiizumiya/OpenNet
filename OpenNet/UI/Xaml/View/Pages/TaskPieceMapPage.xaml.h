@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import OpenNet.ViewModels.ObservableMixin;
+import winrt.OpenNet.UI.Xaml.Control.Progress.Storage;
 #include "UI/Xaml/View/Pages/TaskPieceMapPage.g.h"
 #include "ViewModels/TasksViewModel.h"
 

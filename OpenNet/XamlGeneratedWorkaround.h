@@ -45,3 +45,6 @@ import winrt.Microsoft.UI.Xaml.XamlTypeInfo;
 import winrt.WinUI3Package;
 import winrt.XamlToolkit.WinUI;
 import winrt.XamlToolkit.WinUI.Controls;
+
+#include "UI/Xaml/Control/Progress/Stroge/StorageBar.h"
+#include "UI/Xaml/Control/Progress/HttpSegment/HttpSegmentProgressBar.h"

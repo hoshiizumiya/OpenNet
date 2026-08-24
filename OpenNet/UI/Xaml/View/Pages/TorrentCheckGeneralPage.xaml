@@ -12,16 +12,22 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
     <Page.Resources>
-        <Style x:Key="FeatureCardStyle" TargetType="Border">
-            <Setter Property="Padding" Value="16,12,16,16" />
-            <Setter Property="CornerRadius" Value="8" />
-            <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
-            <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
-            <Setter Property="BorderThickness" Value="1" />
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/Stroge/StorageBar_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style x:Key="FeatureCardStyle" TargetType="Border">
+                <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
+                <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="Padding" Value="16,12,16,16" />
+            </Style>
+        </ResourceDictionary>
     </Page.Resources>
     <Grid
         Padding="16,0,16,16"
@@ -249,14 +255,11 @@
                                             Glyph="&#xEDA2;" />
                                         <!--  Progress Bar showing disk usage - fixed width container  -->
                                         <Grid Grid.Column="1" MinWidth="200">
-                                            <ProgressBar
+                                            <storage:StorageBar
                                                 x:Name="DiskSpaceProgressBar"
                                                 HorizontalAlignment="Stretch"
                                                 VerticalAlignment="Center"
-                                                IsIndeterminate="False"
                                                 Maximum="100"
-                                                ShowError="False"
-                                                ShowPaused="False"
                                                 Value="0" />
                                         </Grid>
                                         <!--  Space info  -->

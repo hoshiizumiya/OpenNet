@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+import winrt.OpenNet.UI.Xaml.Control.Progress.Storage;
 #include "Controls/SpeedGraph/SpeedGraph.xaml.h"
 #include "UI/Xaml/View/Pages/TaskSummaryPage.g.h"
 #include "ViewModels/TasksViewModel.h"

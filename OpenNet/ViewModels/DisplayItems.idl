@@ -16,6 +16,8 @@
         String Downloaded;
         String Uploaded;
         Double ProgressValue;
+        Double SegmentStart;
+        Double SegmentEnd;
         Int64 DownloadRate;
         Int64 UploadRate;
         Int64 DownloadedBytes;

@@ -164,6 +164,12 @@
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="Service\Notification\InfoBarService.cpp" />
+    <ClCompile Include="UI\Xaml\Control\Progress\Stroge\StorageBar.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.cpp">
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Dialog\CreateTorrentDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -330,6 +336,14 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClCompile Include="Service\Notification\InfoBarService.ixx" />
+    <ClInclude Include="UI\Xaml\Control\Progress\Stroge\StorageBar.h">
+      <DependentUpon>UI\Xaml\Control\Progress\Stroge\StorageBar.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.h">
+      <DependentUpon>UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Dialog\CreateTorrentDialog.xaml.h">
       <DependentUpon>UI\Xaml\View\Dialog\CreateTorrentDialog.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -699,6 +713,8 @@
     </Page>
     <Page Include="UI\Xaml\Control\CheckUpdateControl_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Graph\LiveGraph_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Progress\Stroge\StorageBar_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\AcrylicBrush_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\Card_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\Color_ResourceDictionary.xaml" />
@@ -1296,6 +1312,14 @@
       <DependentUpon>UI\Xaml\Control\IpEndpointInput.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="UI\Xaml\Control\Progress\Stroge\StorageBar.idl">
+      <DependentUpon>UI\Xaml\Control\Progress\Stroge\StorageBar.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.idl">
+      <DependentUpon>UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.cpp</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="UI\Xaml\Control\TaskStatusIndicator.idl">
       <DependentUpon>UI\Xaml\Control\TaskStatusIndicator.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -1821,9 +1845,15 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml" />
-    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml.cpp"><DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon></ClCompile>
-    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml.h"><DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon></ClInclude>
-    <Midl Include="UI\Xaml\View\Pages\TaskHttpLogPage.idl"><DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon></Midl>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpLogPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon>
+    </ClInclude>
+    <Midl Include="UI\Xaml\View\Pages\TaskHttpLogPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon>
+    </Midl>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Core\Notification\HttpToastNotification.cpp" />

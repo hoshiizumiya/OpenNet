@@ -549,8 +549,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 					// Check if there's enough space for the required download
 					bool hasEnoughSpace = static_cast<uint64_t>(requiredBytes) <= totalFreeBytes.QuadPart;
-					progressBar.ShowError(!hasEnoughSpace);
-					progressBar.ShowPaused(false);  // Don't show paused state, just error if not enough space
+					progressBar.PercentCritical(hasEnoughSpace ? 90.0 : 0.0);
 				}
 			}
 		}
