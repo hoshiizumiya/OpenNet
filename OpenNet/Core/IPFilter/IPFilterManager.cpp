@@ -32,6 +32,12 @@ namespace lt = libtorrent;
 
 namespace OpenNet::Core
 {
+	struct IPFilterManager::RuleLookupSnapshot
+	{
+		std::vector<IPRule> rules;
+		lt::ip_filter lookup;
+	};
+
 	// ---------------------------------------------------------------
 	//  Singleton
 	// ---------------------------------------------------------------
@@ -101,6 +107,7 @@ namespace OpenNet::Core
 			m_db = nullptr;
 		}
 		m_initialized = false;
+		m_ruleLookupSnapshot.reset();
 	}
 
 	void IPFilterManager::CreateTables()
@@ -263,8 +270,10 @@ namespace OpenNet::Core
 			sqlite3_bind_text(stmt, 2, lastIp.c_str(), -1, SQLITE_TRANSIENT);
 			sqlite3_bind_int(stmt, 3, static_cast<int>(flags));
 			sqlite3_bind_text(stmt, 4, description.c_str(), -1, SQLITE_TRANSIENT);
-			sqlite3_step(stmt);
+			auto const changed = sqlite3_step(stmt) == SQLITE_DONE
+				&& sqlite3_changes(m_db) > 0;
 			sqlite3_finalize(stmt);
+			if (changed) InvalidateRuleLookupLocked();
 		}
 	}
 
@@ -292,6 +301,7 @@ namespace OpenNet::Core
 		auto const result = sqlite3_step(stmt);
 		auto const changed = result == SQLITE_DONE && sqlite3_changes(m_db) > 0;
 		sqlite3_finalize(stmt);
+		if (changed) InvalidateRuleLookupLocked();
 		return changed;
 	}
 
@@ -305,37 +315,86 @@ namespace OpenNet::Core
 		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) == SQLITE_OK)
 		{
 			sqlite3_bind_int64(stmt, 1, id);
-			sqlite3_step(stmt);
+			auto const changed = sqlite3_step(stmt) == SQLITE_DONE
+				&& sqlite3_changes(m_db) > 0;
 			sqlite3_finalize(stmt);
+			if (changed) InvalidateRuleLookupLocked();
 		}
 	}
 
 	std::vector<IPRule> IPFilterManager::GetAllRules() const
 	{
-		std::lock_guard lk(m_mutex);
-		std::vector<IPRule> result;
-		if (!m_db) return result;
+		auto const snapshot = GetRuleLookupSnapshot();
+		return snapshot ? snapshot->rules : std::vector<IPRule>{};
+	}
 
-		const char* sql = "SELECT id, first_ip, last_ip, flags, description FROM ip_rules ORDER BY id;";
-		sqlite3_stmt* stmt = nullptr;
-		if (sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr) == SQLITE_OK)
+	void IPFilterManager::InvalidateRuleLookupLocked()
+	{
+		m_ruleLookupSnapshot.reset();
+	}
+
+	std::shared_ptr<IPFilterManager::RuleLookupSnapshot const>
+		IPFilterManager::GetRuleLookupSnapshot() const
+	{
+		if (!const_cast<IPFilterManager*>(this)->Initialize()) return {};
+		std::lock_guard lock(m_mutex);
+		if (m_ruleLookupSnapshot) return m_ruleLookupSnapshot;
+		if (!m_db) return {};
+
+		auto snapshot = std::make_shared<RuleLookupSnapshot>();
+		sqlite3_stmt* countStatement = nullptr;
+		if (sqlite3_prepare_v2(
+			m_db, "SELECT COUNT(*) FROM ip_rules;", -1,
+			&countStatement, nullptr) == SQLITE_OK)
 		{
-			while (sqlite3_step(stmt) == SQLITE_ROW)
+			if (sqlite3_step(countStatement) == SQLITE_ROW)
 			{
-				IPRule rule;
-				rule.id = sqlite3_column_int64(stmt, 0);
-				auto f = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-				auto l = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-				rule.flags = static_cast<uint32_t>(sqlite3_column_int(stmt, 3));
-				auto d = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
-				if (f) rule.firstIp = f;
-				if (l) rule.lastIp = l;
-				if (d) rule.description = d;
-				result.push_back(std::move(rule));
+				snapshot->rules.reserve(static_cast<std::size_t>(
+					(std::max)(0, sqlite3_column_int(countStatement, 0))));
 			}
-			sqlite3_finalize(stmt);
+			sqlite3_finalize(countStatement);
 		}
-		return result;
+
+		constexpr char const* sql =
+			"SELECT id, first_ip, last_ip, flags, description "
+			"FROM ip_rules ORDER BY id;";
+		sqlite3_stmt* statement = nullptr;
+		if (sqlite3_prepare_v2(m_db, sql, -1, &statement, nullptr) != SQLITE_OK)
+			return {};
+		while (sqlite3_step(statement) == SQLITE_ROW)
+		{
+			IPRule rule;
+			rule.id = sqlite3_column_int64(statement, 0);
+			auto const first = reinterpret_cast<char const*>(
+				sqlite3_column_text(statement, 1));
+			auto const last = reinterpret_cast<char const*>(
+				sqlite3_column_text(statement, 2));
+			rule.flags = static_cast<std::uint32_t>(
+				sqlite3_column_int(statement, 3));
+			auto const description = reinterpret_cast<char const*>(
+				sqlite3_column_text(statement, 4));
+			if (first) rule.firstIp = first;
+			if (last) rule.lastIp = last;
+			if (description) rule.description = description;
+			snapshot->rules.push_back(std::move(rule));
+		}
+		sqlite3_finalize(statement);
+
+		for (std::size_t index = 0; index < snapshot->rules.size(); ++index)
+		{
+			auto const& rule = snapshot->rules[index];
+			if ((rule.flags & lt::ip_filter::blocked) == 0) continue;
+			boost::system::error_code firstError;
+			boost::system::error_code lastError;
+			auto const first = lt::make_address(rule.firstIp, firstError);
+			auto const last = lt::make_address(rule.lastIp, lastError);
+			if (firstError || lastError) continue;
+			snapshot->lookup.add_rule(
+				first, last, static_cast<std::uint32_t>(index + 1));
+		}
+
+		m_ruleLookupSnapshot = snapshot;
+		return snapshot;
 	}
 
 	int IPFilterManager::GetRuleCount() const
@@ -360,6 +419,7 @@ namespace OpenNet::Core
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 		sqlite3_exec(m_db, "DELETE FROM ip_rules;", nullptr, nullptr, nullptr);
+		InvalidateRuleLookupLocked();
 	}
 
 	std::int64_t IPFilterManager::AddSubscription(std::string const& url)
@@ -784,23 +844,8 @@ namespace OpenNet::Core
 		if (!const_cast<IPFilterManager*>(this)->Initialize())
 			return result;
 
-		auto const rules = GetAllRules();
-		lt::ip_filter lookup;
-		std::vector<IPRule const*> taggedRules(1, nullptr);
-		for (auto const& rule : rules)
-		{
-			if ((rule.flags & lt::ip_filter::blocked) == 0)
-				continue;
-			boost::system::error_code firstError;
-			boost::system::error_code lastError;
-			auto const first = lt::make_address(rule.firstIp, firstError);
-			auto const last = lt::make_address(rule.lastIp, lastError);
-			if (firstError || lastError)
-				continue;
-			auto const tag = static_cast<std::uint32_t>(taggedRules.size());
-			lookup.add_rule(first, last, tag);
-			taggedRules.push_back(&rule);
-		}
+		auto const snapshot = GetRuleLookupSnapshot();
+		if (!snapshot) return result;
 
 		for (std::size_t index = 0; index < addresses.size(); ++index)
 		{
@@ -808,9 +853,9 @@ namespace OpenNet::Core
 			auto const address = lt::make_address(addresses[index], error);
 			if (error)
 				continue;
-			auto const tag = lookup.access(address);
-			if (tag > 0 && tag < taggedRules.size())
-				result[index] = *taggedRules[tag];
+			auto const tag = snapshot->lookup.access(address);
+			if (tag > 0 && tag <= snapshot->rules.size())
+				result[index] = snapshot->rules[tag - 1];
 		}
 		return result;
 	}
@@ -1095,6 +1140,7 @@ namespace OpenNet::Core
 		}
 
 		sqlite3_exec(m_db, "COMMIT;", nullptr, nullptr, nullptr);
+		if (replaceExisting || count > 0) InvalidateRuleLookupLocked();
 		return count;
 	}
 
@@ -1105,9 +1151,10 @@ namespace OpenNet::Core
 	lt::ip_filter IPFilterManager::BuildFilter() const
 	{
 		lt::ip_filter filter;
-		auto rules = GetAllRules(); // acquires m_mutex internally
+		auto const snapshot = GetRuleLookupSnapshot();
+		if (!snapshot) return filter;
 
-		for (auto const& rule : rules)
+		for (auto const& rule : snapshot->rules)
 		{
 			boost::system::error_code ec1, ec2;
 			auto first = lt::make_address(rule.firstIp, ec1);

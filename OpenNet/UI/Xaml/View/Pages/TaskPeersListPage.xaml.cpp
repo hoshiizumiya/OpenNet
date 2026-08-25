@@ -448,11 +448,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_connectingGroup = nullptr;
 		m_disconnectingGroup = nullptr;
 		m_banIpGroup = nullptr;
-		m_lastActivePeers.clear();
-		m_disconnectingPeers.clear();
-		m_banIpPeers.clear();
-		m_httpConnections.clear();
-		m_cachedBannedPeerAddresses.clear();
+		m_lastActivePeers = {};
+		m_disconnectingPeers = {};
+		m_banIpPeers = {};
+		m_httpConnections = {};
+		m_cachedBannedPeerAddresses = {};
 		if (auto tree = PeersTreeView())
 			tree.ItemsSource(nullptr);
 	}
@@ -1153,12 +1153,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				clientHitsByIp.emplace(hit.ip, hit);
 		}
 
-		auto previousActive = m_lastActivePeers;
-		auto previousBanPeers = m_banIpPeers;
+		auto previousActive = std::move(m_lastActivePeers);
+		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem>
+			previousBanPeerStorage;
+		auto* previousBanPeers = &m_banIpPeers;
 		// Rebuild this group from current ban sources on every refresh. This
 		// removes expired/disabled rules without leaving stale BanIP rows.
 		if (refreshAuxiliaryData)
-			m_banIpPeers.clear();
+		{
+			previousBanPeerStorage = std::move(m_banIpPeers);
+			previousBanPeers = &previousBanPeerStorage;
+		}
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem>
 			currentPeers;
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> connected;
@@ -1196,6 +1201,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto peerEvents = refreshAuxiliaryData
 			? p2p.TorrentCore()->GetRecentPeerEvents(taskId)
 			: std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::PeerConnectionEvent>{};
+		std::unordered_set<std::string> recentEventKeys;
+		if (refreshAuxiliaryData) recentEventKeys.reserve(peerEvents.size());
 		std::unordered_map<
 			std::string, std::optional<::OpenNet::Core::IPRule>>
 			staticRuleMatches;
@@ -1218,6 +1225,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& event : peerEvents)
 		{
 			auto const key = PeerEndpointKey(event.ip, event.port);
+			recentEventKeys.insert(key);
 			// The endpoint has since reconnected. Its current snapshot is more
 			// authoritative than an older terminal event.
 			if (currentPeers.contains(key) && !bansByIp.contains(event.ip))
@@ -1227,8 +1235,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				? previousActive.at(key)
 				: m_disconnectingPeers.contains(key)
 				? m_disconnectingPeers.at(key)
-				: previousBanPeers.contains(key)
-				? previousBanPeers.at(key)
+				: previousBanPeers->contains(key)
+				? previousBanPeers->at(key)
 				: makeEndpointItem(event.ip, event.port);
 			initializeEndpointItem(event.ip, event.port, item);
 
@@ -1315,8 +1323,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				? previousActive.at(key)
 				: m_banIpPeers.contains(key)
 				? m_banIpPeers.at(key)
-				: previousBanPeers.contains(key)
-				? previousBanPeers.at(key)
+				: previousBanPeers->contains(key)
+				? previousBanPeers->at(key)
 				: makeEndpointItem(ban.ip, ban.port);
 			initializeEndpointItem(ban.ip, ban.port, item);
 			if (!ban.client.empty())
@@ -1325,6 +1333,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.Reason(FormatManualBanReason(ban, now));
 			m_disconnectingPeers.erase(key);
 			m_banIpPeers[key] = item;
+		}
+		if (refreshAuxiliaryData)
+		{
+			std::erase_if(m_disconnectingPeers, [&](auto const& entry)
+			{
+				return !recentEventKeys.contains(entry.first)
+					&& !currentPeers.contains(entry.first)
+					&& !m_banIpPeers.contains(entry.first);
+			});
+			constexpr std::size_t MaxDisconnectingPeers = 10000;
+			while (m_disconnectingPeers.size() > MaxDisconnectingPeers)
+				m_disconnectingPeers.erase(m_disconnectingPeers.begin());
 		}
 		m_lastActivePeers = std::move(currentPeers);
 

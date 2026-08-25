@@ -24,10 +24,10 @@ namespace OpenNet::Core
 	/// A single IP filter rule persisted in the database.
 	struct IPRule
 	{
-		std::int64_t  id{};
+		std::int64_t id{};
 		std::string firstIp;       // start of range (inclusive)
 		std::string lastIp;        // end of range (inclusive)
-		std::uint32_t    flags{ 1 };    // 0 = allowed, 1 = blocked (ip_filter::blocked)
+		std::uint32_t flags{ 1 };    // 0 = allowed, 1 = blocked (ip_filter::blocked)
 		std::string description;   // original input or user comment
 	};
 
@@ -92,8 +92,7 @@ namespace OpenNet::Core
 
 		// Subscription sources and their update metadata.
 		std::int64_t AddSubscription(std::string const& url);
-		bool UpdateSubscription(
-			std::int64_t id, std::string const& url, bool enabled);
+		bool UpdateSubscription(std::int64_t id, std::string const& url, bool enabled);
 		void RemoveSubscription(std::int64_t id);
 		void SetSubscriptionEnabled(std::int64_t id, bool enabled);
 		std::vector<IPFilterSubscription> GetSubscriptions() const;
@@ -158,8 +157,7 @@ namespace OpenNet::Core
 		/// Import rules from multi-line text (one entry per line).
 		/// Lines starting with '#' or ';' are treated as comments.
 		/// Returns the number of rules successfully imported.
-		std::int32_t ImportFromText(
-			std::string const& text, bool replaceExisting = false);
+		std::int32_t ImportFromText(std::string const& text, bool replaceExisting = false);
 		static std::int32_t CountRulesInText(std::string const& text);
 
 		// ---------------------------------------------------------------
@@ -183,8 +181,7 @@ namespace OpenNet::Core
 
 		/// Replace the session-only addresses blocked by client-name rules.
 		/// These addresses are deliberately not persisted in ipfilter.db.
-		void SetClientBlockedAddresses(
-			std::vector<std::string> const& addresses);
+		void SetClientBlockedAddresses(std::vector<std::string> const& addresses);
 
 	private:
 		IPFilterManager() = default;
@@ -194,8 +191,10 @@ namespace OpenNet::Core
 
 		void CreateTables();
 		void SeedBundledRules();
-		std::vector<IPBanEntry> GetActiveBansLocked(
-			std::string const& taskId) const;
+		std::vector<IPBanEntry> GetActiveBansLocked(std::string const& taskId) const;
+		struct RuleLookupSnapshot;
+		std::shared_ptr<RuleLookupSnapshot const> GetRuleLookupSnapshot() const;
+		void InvalidateRuleLookupLocked();
 
 		mutable std::mutex m_mutex;
 		mutable std::mutex m_clientBlockedMutex;
@@ -203,6 +202,7 @@ namespace OpenNet::Core
 		std::once_flag m_seedOnce;
 		sqlite3* m_db{ nullptr };
 		bool m_initialized{ false };
+		mutable std::shared_ptr<RuleLookupSnapshot const> m_ruleLookupSnapshot;
 		std::unordered_set<std::string> m_clientBlockedAddresses;
 	};
 
