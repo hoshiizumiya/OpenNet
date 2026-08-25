@@ -60,6 +60,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
 		void SynchronizeTrackerRows();
+		void ConfigureColumnsForTask(bool isHttp);
 		bool TryGetTaskContext(std::string& taskId, winrt::hstring& taskName) const;
 		winrt::hstring SelectedTrackerUrl();
 		void OpenTrackerLog(winrt::hstring const& trackerUrl);

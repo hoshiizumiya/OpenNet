@@ -44,4 +44,22 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+	<Style TargetType="local:RangePieceBar">
+		<Setter Property="MinWidth" Value="96" />
+		<Setter Property="MinHeight" Value="8" />
+		<Setter Property="Background" Value="{ThemeResource ControlFillColorSecondaryBrush}" />
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="local:RangePieceBar">
+					<Border
+						MinHeight="{TemplateBinding MinHeight}"
+						Background="{TemplateBinding Background}"
+						CornerRadius="2">
+						<Grid x:Name="PART_PieceRoot" />
+					</Border>
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</Style>
 </ResourceDictionary>

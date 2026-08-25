@@ -32,6 +32,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void ExceptionWindow::InitializeComponent()
 	{
 		ExceptionWindowT::InitializeComponent();
+		InitializeWindowExBase();
 		InitializeWindow();
 	}
 
@@ -60,10 +61,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			winrt::OpenNet::implementation::App::RequestExit();
 		});
 
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		SetTitleBar(ExceptionWindowTitleBar());
 
-		auto ownerWindow = winrt::OpenNet::implementation::App::window;
+		winrt::Microsoft::UI::Xaml::Window ownerWindow =
+			winrt::OpenNet::implementation::App::window
+				? winrt::OpenNet::implementation::App::window.Window()
+				: nullptr;
 		if (!ownerWindow && winrt::OpenNet::implementation::App::guideWindow)
 			ownerWindow = winrt::OpenNet::implementation::App::guideWindow.Window();
 		bool hasOwner = false;
@@ -215,7 +218,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		hstring const& exception)
 	{
 		auto window = winrt::make<ExceptionWindow>(sentryId, exception);
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 }

@@ -96,6 +96,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	//TaskPeersListPage::InitializeComponent()
+	//{
+
+	//}
+
 	void TaskPeersListPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
 	{
 		Unsubscribe();
@@ -828,16 +833,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					if (information)
 						for (auto const& file : information->Files)
 							for (auto const& uri : file.Uris) uriRows.push_back(uri);
-					auto const rowCount = (std::max)(serverRows.size(), uriRows.size());
+					auto const activeConnections = information
+						? static_cast<std::size_t>((std::max)(0, information->Connections))
+						: std::size_t{};
+					auto const rowCount = (std::max)(std::size_t{ 1 }, activeConnections);
 					std::unordered_set<std::string> currentKeys;
 					for (std::size_t index = 0; index < rowCount; ++index)
 					{
-						auto const uri = index < serverRows.size() && !serverRows[index].CurrentUri.empty()
-							? serverRows[index].CurrentUri
-							: index < serverRows.size() && !serverRows[index].Uri.empty()
-							? serverRows[index].Uri
-							: index < uriRows.size() ? uriRows[index].Uri : std::string{};
-						auto const key = uri + '\n' + std::to_string(index);
+						auto const serverIndex = serverRows.empty() ? 0 : index % serverRows.size();
+						auto const uriIndex = uriRows.empty() ? 0 : index % uriRows.size();
+						auto const uri = !serverRows.empty() && !serverRows[serverIndex].CurrentUri.empty()
+							? serverRows[serverIndex].CurrentUri
+							: !serverRows.empty() && !serverRows[serverIndex].Uri.empty()
+							? serverRows[serverIndex].Uri
+							: !uriRows.empty() ? uriRows[uriIndex].Uri : std::string{};
+						auto const key = "connection:" + std::to_string(index);
 						currentKeys.insert(key);
 						auto& item = self->m_httpConnections[key];
 						if (!item)
@@ -851,15 +861,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 							item.Reason(L"");
 							item.Initiator(L"Local");
 							item.Source(L"URI");
+							item.RangeProgressVisibility(Visibility::Visible);
 							self->m_peerItems.Append(item);
 						}
-						auto const status = index < uriRows.size()
-							? uriRows[index].Status
-							: ::OpenNet::Core::Aria2::UriStatus::Used;
+						auto const status = index < activeConnections
+							? ::OpenNet::Core::Aria2::UriStatus::Used
+							: ::OpenNet::Core::Aria2::UriStatus::Waiting;
 						auto const segment = information
 							? GetHttpConnectionProgress(*information, index, rowCount)
 							: HttpConnectionProgress{};
-						auto speed = index < serverRows.size() ? serverRows[index].DownloadSpeed : std::size_t{};
+						auto speed = information && activeConnections > 0
+							? information->DownloadSpeed / activeConnections
+							: std::size_t{};
 						auto const previousBytes = (std::max)(std::int64_t{}, item.DownloadedBytes());
 						if (previousBytes > 0
 							&& segment.completedBytes >= static_cast<std::uint64_t>(previousBytes)
@@ -1073,7 +1086,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.ULSpeed(FormatSpeed(peer.uploadRateKB));
 			item.Downloaded(FormatBytes(peer.totalDownloaded));
 			item.Uploaded(FormatBytes(peer.totalUploaded));
-			item.ProgressValue(peer.progress);
+			item.ProgressValue(peer.progress * 100.0);
+			item.LinearProgressVisibility(Visibility::Visible);
+			item.RangeProgressVisibility(Visibility::Collapsed);
 			item.DownloadRate(peer.downloadRateKB);
 			item.UploadRate(peer.uploadRateKB);
 			item.DownloadedBytes(peer.totalDownloaded);
@@ -1093,6 +1108,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			initializeEndpointItem(ip, port, item);
 			item.Client(L"-");
 			item.Progress(L"-");
+			item.LinearProgressVisibility(Visibility::Collapsed);
+			item.RangeProgressVisibility(Visibility::Collapsed);
 			item.DLSpeed(L"-");
 			item.ULSpeed(L"-");
 			item.Downloaded(L"-");

@@ -115,10 +115,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			TaskStatusText().Text(task.ProgressPercent() >= 100.0 ? ResourceGetString(L"TaskStatusCompleted") : ResourceGetString(L"TaskStatusDownloading"));
 			DownloadedPiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
 			AvailablePiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
-			DownloadedPiecesProgress().Value(task.ProgressPercent());
-			AvailablePiecesProgress().Value(0);
+			DownloadedPiecesProgress().Pieces(L"");
+			AvailablePiecesProgress().Pieces(L"");
+			DownloadedPiecesProgress().Visibility(Visibility::Collapsed);
+			AvailablePiecesProgress().Visibility(Visibility::Collapsed);
 			return;
 		}
+		DownloadedPiecesProgress().Visibility(Visibility::Visible);
+		AvailablePiecesProgress().Visibility(Visibility::Visible);
 
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 		if (!core)
@@ -260,6 +264,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				++available;
 		}
 		auto const totalPieces = pieces.states.size();
+		std::wstring downloadedStates;
+		std::wstring availableStates;
+		downloadedStates.reserve(totalPieces);
+		availableStates.reserve(totalPieces);
+		for (std::size_t index = 0; index < totalPieces; ++index)
+		{
+			downloadedStates.push_back(static_cast<wchar_t>(L'0' + std::clamp(pieces.states[index], 0, 4)));
+			availableStates.push_back(index < pieces.availability.size() && pieces.availability[index] > 0 ? L'2' : L'0');
+		}
 		DownloadedPiecesText().Text(
 			std::format(L"{} / {}", finished, totalPieces));
 		AvailablePiecesText().Text(
@@ -268,6 +281,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			totalPieces ? finished * 100.0 / totalPieces : 0.0);
 		AvailablePiecesProgress().Value(
 			totalPieces ? available * 100.0 / totalPieces : 0.0);
+		DownloadedPiecesProgress().Pieces(hstring{ downloadedStates });
+		AvailablePiecesProgress().Pieces(hstring{ availableStates });
 	}
 
 	void TaskSummaryPage::ResetSummary()
@@ -280,8 +295,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TaskProgressText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntime0"));
 		DownloadedPiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntime00"));
 		AvailablePiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntime00"));
-		DownloadedPiecesProgress().Value(0);
-		AvailablePiecesProgress().Value(0);
+		DownloadedPiecesProgress().Pieces(L"");
+		AvailablePiecesProgress().Pieces(L"");
+		DownloadedPiecesProgress().Visibility(Visibility::Collapsed);
+		AvailablePiecesProgress().Visibility(Visibility::Collapsed);
 		TimeElapsedText().Text(L"—");
 		DownloadedText().Text(L"—");
 		DownloadSpeedText().Text(L"—");

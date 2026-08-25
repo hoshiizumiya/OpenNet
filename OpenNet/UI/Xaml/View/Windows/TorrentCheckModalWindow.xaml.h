@@ -8,15 +8,17 @@ import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
 import winrt.OpenNet.ViewModels;
 import winrt.Windows.Foundation;
+import OpenNet.Helpers.WindowExBase;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct TorrentCheckModalWindow : TorrentCheckModalWindowT<TorrentCheckModalWindow>
+	struct TorrentCheckModalWindow : TorrentCheckModalWindowT<TorrentCheckModalWindow>, WindowExBase<TorrentCheckModalWindow>
 	{
 		TorrentCheckModalWindow();
 		TorrentCheckModalWindow(winrt::hstring const& torrentLink);
 		TorrentCheckModalWindow(
 			winrt::OpenNet::ViewModels::TaskViewModel const& task);
+		void InitializeComponent();
 
 		// Properties for XAML binding
 		winrt::OpenNet::ViewModels::TorrentMetadataViewModel MetadataViewModel() const

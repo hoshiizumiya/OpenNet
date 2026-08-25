@@ -185,9 +185,26 @@ export namespace OpenNet::Helpers
 				panel.Background(nullptr);
 		}
 
+		static void ApplyImageBackgroundFromSettings(winrt::WinUI3Package::WindowEx const& window)
+		{
+			if (!window) return;
+			auto panel = window.Content().try_as<winrt::Microsoft::UI::Xaml::Controls::Panel>();
+			if (panel && panel.Background().try_as<winrt::Microsoft::UI::Xaml::Media::ImageBrush>())
+			{
+				panel.Background(nullptr);
+			}
+		}
+
 		static void ApplyWindowAppearanceFromSettings(winrt::Microsoft::UI::Xaml::Window const& window)
 		{
 			ApplyBackdropFromSettings(window);
+			ApplyImageBackgroundFromSettings(window);
+		}
+
+		static void ApplyWindowAppearanceFromSettings(winrt::WinUI3Package::WindowEx const& window)
+		{
+			if (!window) return;
+			ApplyBackdropFromSettings(window.Window());
 			ApplyImageBackgroundFromSettings(window);
 		}
 
@@ -216,6 +233,7 @@ export namespace OpenNet::Helpers
 		/// Update theme for a specific window
 		/// </summary>
 		static void UpdateThemeForWindow(winrt::Microsoft::UI::Xaml::Window const& window);
+		static void UpdateThemeForWindow(winrt::WinUI3Package::WindowEx const& window);
 
 		/// <summary>
 		/// Save current theme to local settings

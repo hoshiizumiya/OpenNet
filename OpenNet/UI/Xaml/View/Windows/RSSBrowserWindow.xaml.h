@@ -2,6 +2,7 @@
 
 #include "UI/Xaml/View/Windows/RSSBrowserWindow.g.h"
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Input;
 
@@ -19,7 +20,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		bool InitializationStarted{};
 	};
 
-	struct RSSBrowserWindow : RSSBrowserWindowT<RSSBrowserWindow>
+	struct RSSBrowserWindow : RSSBrowserWindowT<RSSBrowserWindow>, WindowExBase<RSSBrowserWindow>
 	{
 		RSSBrowserWindow();
 

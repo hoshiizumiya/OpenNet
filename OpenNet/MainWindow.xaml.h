@@ -2,12 +2,13 @@
 
 import winrt.OpenNet.UI.Xaml.View.Pages;
 import winrt.OpenNet.UI.Xaml.View;
+import OpenNet.Helpers.WindowExBase;
 #include "MainWindow.g.h"
 #include "ViewModels/MainViewModel.h"
 
 namespace winrt::OpenNet::implementation
 {
-	struct MainWindow : MainWindowT<MainWindow>
+	struct MainWindow : MainWindowT<MainWindow>, WindowExBase<MainWindow>
 	{
 	public:
 		MainWindow();
@@ -22,15 +23,14 @@ namespace winrt::OpenNet::implementation
 		winrt::Windows::Foundation::IAsyncAction ShowAddTaskDialogAsync(winrt::hstring const& kind);
 
 		// Event handlers (XAML wired)
-		void AppTitleBar_BackRequested(winrt::Microsoft::UI::Xaml::Controls::TitleBar const&,
-									   winrt::Windows::Foundation::IInspectable const&);
+		void AppTitleBar_BackRequested(winrt::Microsoft::UI::Xaml::Controls::TitleBar const&, winrt::Windows::Foundation::IInspectable const&);
 
 		void Grid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void RootGrid_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 
 		Microsoft::UI::Xaml::Visibility IsDebug();
 	private:
-		void InitWindowStyle(winrt::Microsoft::UI::Xaml::Window const& window);
+		void InitWindowStyle();
 		void UpdateBackgroundPlaybackState();
 		void RootGridXamlRoot_Changed(winrt::Microsoft::UI::Xaml::XamlRoot sender, winrt::Microsoft::UI::Xaml::XamlRootChangedEventArgs args);
 		winrt::event_token m_canGoBackChangedToken{};

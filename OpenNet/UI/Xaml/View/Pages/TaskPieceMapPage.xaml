@@ -5,13 +5,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
+    xmlns:piece="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment"
     mc:Ignorable="d">
 
     <Page.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/Stroge/StorageBar_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/HttpSegment/HttpSegmentProgressBar_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -65,11 +65,7 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="0 / 0" />
                 </Grid>
-                <storage:StorageBar
-                    x:Name="DownloadedPiecesProgress"
-                    Maximum="100"
-                    Minimum="0"
-                    Value="0" />
+                <piece:RangePieceBar x:Name="DownloadedPiecesProgress" MinHeight="8" />
             </StackPanel>
             <StackPanel Grid.Column="1" Spacing="4">
                 <Grid>
@@ -80,11 +76,7 @@
                         Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                         Text="0 / 0" />
                 </Grid>
-                <storage:StorageBar
-                    x:Name="AvailablePiecesProgress"
-                    Maximum="100"
-                    Minimum="0"
-                    Value="0" />
+                <piece:RangePieceBar x:Name="AvailablePiecesProgress" MinHeight="8" />
             </StackPanel>
             <StackPanel
                 Grid.Column="2"

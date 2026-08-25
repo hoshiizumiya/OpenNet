@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+import OpenNet.Helpers.WindowExBase;
 import std;
 import winrt.Microsoft.Graphics.Canvas.UI.Xaml;
 import winrt.Microsoft.UI.Xaml;
@@ -11,7 +12,7 @@ import winrt.WinUI3Package;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct LiveGraphTestWindow : LiveGraphTestWindowT<LiveGraphTestWindow>
+	struct LiveGraphTestWindow : LiveGraphTestWindowT<LiveGraphTestWindow>, WindowExBase<LiveGraphTestWindow>
 	{
 		LiveGraphTestWindow();
 

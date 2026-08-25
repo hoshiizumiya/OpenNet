@@ -13,17 +13,18 @@ export namespace OpenNet::Factory::Window
 	struct WindowFactory
 	{
 	public:
-		static winrt::Microsoft::UI::Xaml::Window CreateStandardWindow()
+		static winrt::WinUI3Package::WindowEx CreateStandardWindow()
 		{
 			WinUI3Package::WindowEx window;
 
+			window.Title(L"OpenNet");
 			window.ExtendsContentIntoTitleBar(true);
 			window.HasBorder(true);
 			window.HasTitleBar(true);
 			window.IsResizable(true);
 			window.IsMinimizable(true);
 			window.IsMaximizable(true);
-			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
+			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 
 			// TO Fix: Here's a problem - The window guid will be presisted cause of the window class name is consisted of the winui3package
 			// OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(window);
@@ -34,13 +35,14 @@ export namespace OpenNet::Factory::Window
 			// 	}
 			// );
 
-			return window.Window();
+			return window;
 		}
 
-		static winrt::Microsoft::UI::Xaml::Window CreateStandardWindowForPage(winrt::Microsoft::UI::Xaml::Controls::Page page)
+		static winrt::WinUI3Package::WindowEx CreateStandardWindowForPage(winrt::Microsoft::UI::Xaml::Controls::Page page)
 		{
 			WinUI3Package::WindowEx window;
 
+			window.Title(L"OpenNet");
 			window.ExtendsContentIntoTitleBar(true);
 			window.HasBorder(false);
 			window.HasTitleBar(false);
@@ -48,9 +50,9 @@ export namespace OpenNet::Factory::Window
 			window.IsMinimizable(true);
 			window.IsMaximizable(true);
 			window.Content(page);
-			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
+			OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 			window.Activate();
-			return window.Window();
+			return window;
 		}
 	};
 }

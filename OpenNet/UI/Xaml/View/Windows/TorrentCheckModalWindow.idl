@@ -3,7 +3,7 @@
 namespace OpenNet.UI.Xaml.View.Windows
 {
 	[default_interface]
-	runtimeclass TorrentCheckModalWindow : Microsoft.UI.Xaml.Window
+	runtimeclass TorrentCheckModalWindow : WinUI3Package.WindowEx
 	{
 		TorrentCheckModalWindow();
 		TorrentCheckModalWindow(String torrentLink);

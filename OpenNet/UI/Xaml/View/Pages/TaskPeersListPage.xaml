@@ -385,16 +385,31 @@
                                     TextTrimming="CharacterEllipsis" />
                             </Grid>
                             <Grid MinWidth="120">
-                                <segment:HttpSegmentProgressBar
-                                    Height="12"
-                                    RangeEnd="{x:Bind SegmentEnd, Mode=OneWay}"
-                                    RangeStart="{x:Bind SegmentStart, Mode=OneWay}"
-                                    Value="{x:Bind ProgressValue, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontSize="10"
-                                    Text="{x:Bind Progress, Mode=OneWay}" />
+                                <Grid Visibility="{x:Bind RangeProgressVisibility, Mode=OneWay}">
+                                    <segment:RangePieceBar
+                                        Height="12"
+                                        IsRangeMode="True"
+                                        RangeEnd="{x:Bind SegmentEnd, Mode=OneWay}"
+                                        RangeStart="{x:Bind SegmentStart, Mode=OneWay}"
+                                        Value="{x:Bind ProgressValue, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="10"
+                                        Text="{x:Bind Progress, Mode=OneWay}" />
+                                </Grid>
+                                <Grid Visibility="{x:Bind LinearProgressVisibility, Mode=OneWay}">
+                                    <ProgressBar
+                                        Height="4"
+                                        VerticalAlignment="Center"
+                                        Maximum="100"
+                                        Value="{x:Bind ProgressValue, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        FontSize="10"
+                                        Text="{x:Bind Progress, Mode=OneWay}" />
+                                </Grid>
                             </Grid>
                             <TextBlock Text="{x:Bind DLSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind ULSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />

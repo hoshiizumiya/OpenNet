@@ -18,6 +18,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	InfoOverlayWindow::InfoOverlayWindow()
 	{
 		InitializeComponent();
+		InitializeWindowExBase(true, false);
 		ExtendsContentIntoTitleBar(true);
 		if (auto presenter = AppWindow().Presenter()
 			.try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
@@ -26,8 +27,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			presenter.IsMinimizable(false);
 			presenter.IsResizable(false);
 		}
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
-
 		Closed([this](auto const&, auto const&)
 		{
 			if (m_refreshTimer)

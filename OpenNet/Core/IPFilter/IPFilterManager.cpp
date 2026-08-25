@@ -593,8 +593,7 @@ namespace OpenNet::Core
 			.value_or("");
 	}
 
-	void IPFilterManager::SetSubscriptionLastResult(
-		std::int64_t updatedAt, std::string const& result)
+	void IPFilterManager::SetSubscriptionLastResult(std::int64_t updatedAt, std::string const& result)
 	{
 		auto& settings = AppSettingsDatabase::Instance();
 		settings.Initialize();
@@ -668,9 +667,7 @@ namespace OpenNet::Core
 		return success ? sqlite3_last_insert_rowid(m_db) : 0;
 	}
 
-	bool IPFilterManager::RemoveBan(
-		std::string const& ip,
-		std::string const& source)
+	bool IPFilterManager::RemoveBan(std::string const& ip, std::string const& source)
 	{
 		if (!Initialize())
 			return false;
@@ -707,8 +704,7 @@ namespace OpenNet::Core
 		return changed;
 	}
 
-	std::vector<IPBanEntry> IPFilterManager::GetActiveBansLocked(
-		std::string const& taskId) const
+	std::vector<IPBanEntry> IPFilterManager::GetActiveBansLocked(std::string const& taskId) const
 	{
 		std::vector<IPBanEntry> result;
 		if (!m_db)
@@ -753,16 +749,14 @@ namespace OpenNet::Core
 		return result;
 	}
 
-	std::vector<IPBanEntry> IPFilterManager::GetActiveBans(
-		std::string const& taskId) const
+	std::vector<IPBanEntry> IPFilterManager::GetActiveBans(std::string const& taskId) const
 	{
 		const_cast<IPFilterManager*>(this)->Initialize();
 		std::lock_guard lock(m_mutex);
 		return GetActiveBansLocked(taskId);
 	}
 
-	std::optional<IPBanEntry> IPFilterManager::FindActiveBan(
-		std::string const& ip) const
+	std::optional<IPBanEntry> IPFilterManager::FindActiveBan(std::string const& ip) const
 	{
 		auto const bans = GetActiveBans();
 		auto const item = std::find_if(
@@ -776,15 +770,13 @@ namespace OpenNet::Core
 			: std::optional<IPBanEntry>{ *item };
 	}
 
-	std::optional<IPRule> IPFilterManager::FindMatchingRule(
-		std::string const& ip) const
+	std::optional<IPRule> IPFilterManager::FindMatchingRule(std::string const& ip) const
 	{
 		auto matches = FindMatchingRules({ ip });
 		return matches.empty() ? std::nullopt : std::move(matches.front());
 	}
 
-	std::vector<std::optional<IPRule>> IPFilterManager::FindMatchingRules(
-		std::vector<std::string> const& addresses) const
+	std::vector<std::optional<IPRule>> IPFilterManager::FindMatchingRules(std::vector<std::string> const& addresses) const
 	{
 		std::vector<std::optional<IPRule>> result(addresses.size());
 		if (addresses.empty())

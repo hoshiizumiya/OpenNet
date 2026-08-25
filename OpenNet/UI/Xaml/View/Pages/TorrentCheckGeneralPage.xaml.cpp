@@ -10,6 +10,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 
 import Core.Utils.Misc;
 import OpenNet.Core.IO.FileSystem;
+import OpenNet.Core.TorrentSettings;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Xaml.Navigation;
@@ -152,7 +153,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 					if (m_viewModel.SavePath().empty())
 					{
 						// Set default save path
-						const std::wstring_view& downloadsPath = FileSystem::GetDownloadsPathW().GetResults();
+						auto const& downloadsPath = ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath;
 						if (!downloadsPath.empty())
 						{
 							savePathBox.Text(downloadsPath);

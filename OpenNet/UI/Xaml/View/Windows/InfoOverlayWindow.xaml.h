@@ -2,11 +2,12 @@
 
 #include "UI/Xaml/View/Windows/InfoOverlayWindow.g.h"
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.Microsoft.UI.Dispatching;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct InfoOverlayWindow : InfoOverlayWindowT<InfoOverlayWindow>
+	struct InfoOverlayWindow : InfoOverlayWindowT<InfoOverlayWindow>, WindowExBase<InfoOverlayWindow>
 	{
 		InfoOverlayWindow();
 		void OverlayRoot_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);

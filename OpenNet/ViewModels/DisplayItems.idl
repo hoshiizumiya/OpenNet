@@ -1,86 +1,92 @@
 ﻿namespace OpenNet.ViewModels
 {
-    // Lightweight display items for task detail sub-pages (x:Bind DataTable rows).
+	// Lightweight display items for task detail sub-pages (x:Bind DataTable rows).
 
-    [default_interface]
-    runtimeclass PeerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        PeerDisplayItem();
-        String IP;
-        String Address;
-        Int32 Port;
-        String Client;
-        String Progress;
-        String DLSpeed;
-        String ULSpeed;
-        String Downloaded;
-        String Uploaded;
-        Double ProgressValue;
-        Double SegmentStart;
-        Double SegmentEnd;
-        Int64 DownloadRate;
-        Int64 UploadRate;
-        Int64 DownloadedBytes;
-        Int64 UploadedBytes;
-        String PeerStatus;
-        String Reason;
-        String Location;
-        String CountryCode;
-        String FlagSvg;
-        String ConnectionTime;
-        String Protocol;
-        String Initiator;
-        String Source;
-        Boolean IsExpanded;
-        Boolean IsGroup;
-        Windows.Foundation.Collections.IObservableVector<PeerDisplayItem> Children{ get; };
-    };
+	[default_interface]
+	runtimeclass PeerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		PeerDisplayItem();
+		String IP;
+		String Address;
+		Int32 Port;
+		String Client;
+		String Progress;
+		String DLSpeed;
+		String ULSpeed;
+		String Downloaded;
+		String Uploaded;
+		Double ProgressValue;
+		Double SegmentStart;
+		Double SegmentEnd;
+		Microsoft.UI.Xaml.Visibility LinearProgressVisibility;
+		Microsoft.UI.Xaml.Visibility RangeProgressVisibility;
+		Int64 DownloadRate;
+		Int64 UploadRate;
+		Int64 DownloadedBytes;
+		Int64 UploadedBytes;
+		String PeerStatus;
+		String Reason;
+		String Location;
+		String CountryCode;
+		String FlagSvg;
+		String ConnectionTime;
+		String Protocol;
+		String Initiator;
+		String Source;
+		Boolean IsExpanded;
+		Boolean IsGroup;
+		Windows.Foundation.Collections.IObservableVector<PeerDisplayItem> Children{ get; };
+	};
 
-    [default_interface]
-    runtimeclass TrackerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        TrackerDisplayItem();
-        String URL;
-        String Tier;
-        String Peers;
-        String Retries;
-        String TimeRemaining;
-        String Seeders;
-        String Leechers;
-        String Downloaded;
-        String Status;
-        String Message;
-    };
+	[default_interface]
+	runtimeclass TrackerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		TrackerDisplayItem();
+		String URL;
+		String Tier;
+		String Peers;
+		String Retries;
+		String TimeRemaining;
+		String Seeders;
+		String Leechers;
+		String Downloaded;
+		String Status;
+		String Message;
+		String ProgressPieces;
+		String ProgressText;
+		Microsoft.UI.Xaml.Visibility TrackerProgressVisibility;
+		Microsoft.UI.Xaml.Visibility HttpProgressVisibility;
+	};
 
-    [default_interface]
-    runtimeclass FileDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        FileDisplayItem();
-        String Path;
-        String Size;
-        Double ProgressValue;
-        String Done;
-        Int32 PriorityIndex;
-        Int32 FileIndex;
-    };
+	[default_interface]
+	runtimeclass FileDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		FileDisplayItem();
+		String Path;
+		String Size;
+		Double ProgressValue;
+		String Done;
+		Int32 PriorityIndex;
+		Int32 FileIndex;
+	};
 
-    [default_interface]
-    runtimeclass TrackerLogDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        TrackerLogDisplayItem();
-        String Time;
-        String Content;
-        Boolean IsError;
-    };
+	[default_interface]
+	runtimeclass TrackerLogDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		TrackerLogDisplayItem();
+		String Time;
+		String Content;
+		Boolean IsError;
+	};
 
-    [default_interface]
-    runtimeclass RuntimeStatusDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
-    {
-        RuntimeStatusDisplayItem();
-        String Name;
-        String Value;
-        Boolean IsExpanded;
-        Boolean IsGroup;
-        Windows.Foundation.Collections.IObservableVector<RuntimeStatusDisplayItem> Children{ get; };
-    };
+	[default_interface]
+	runtimeclass RuntimeStatusDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		RuntimeStatusDisplayItem();
+		String Name;
+		String Value;
+		Boolean IsExpanded;
+		Boolean IsGroup;
+		Windows.Foundation.Collections.IObservableVector<RuntimeStatusDisplayItem> Children{ get; };
+	};
 }

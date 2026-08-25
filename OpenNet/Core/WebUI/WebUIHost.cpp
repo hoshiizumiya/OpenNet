@@ -21,29 +21,6 @@
 #include "LibtorrentIncludeRestore.h"
 #include <nlohmann/json.hpp>
 
-#include <algorithm>
-#include <array>
-#include <atomic>
-#include <charconv>
-#include <chrono>
-#include <cctype>
-#include <cstdlib>
-#include <fstream>
-#include <functional>
-#include <iomanip>
-#include <iterator>
-#include <limits>
-#include <mutex>
-#include <optional>
-#include <random>
-#include <sstream>
-#include <string_view>
-#include <thread>
-#include <unordered_map>
-#include <unordered_set>
-#include <utility>
-#include <vector>
-
 #include "Core/IPFilter/IPFilterManager.h"
 
 import OpenNet.Core.AppSettingsDatabase;
@@ -57,7 +34,7 @@ import OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.torrentCore.TorrentMetadataFetcher;
 import OpenNet.Core.torrentCore.TorrentMetadataInfo;
 import OpenNet.Core.torrentCore.TorrentStateManager;
-import winrt.Microsoft.Windows.Globalization;
+import winrt.Windows.Globalization;
 
 namespace OpenNet::Core::WebUI
 {
@@ -710,8 +687,7 @@ namespace OpenNet::Core::WebUI
 		{
 			try
 			{
-				auto languages = winrt::Microsoft::Windows::Globalization::
-					ApplicationLanguages::Languages();
+				auto languages = winrt::Windows::Globalization::ApplicationLanguages::Languages();
 				if (languages.Size() > 0)
 					return winrt::to_string(languages.GetAt(0));
 			}

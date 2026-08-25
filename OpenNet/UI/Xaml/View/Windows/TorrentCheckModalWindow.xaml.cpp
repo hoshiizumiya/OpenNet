@@ -18,6 +18,7 @@ import OpenNet.Core.Utils.Message;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.Torrent.TrackerManager;
+import OpenNet.Core.TorrentSettings;
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.Graphics;
@@ -38,34 +39,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	TorrentCheckModalWindow::TorrentCheckModalWindow()
 	{
-		InitializeWindow();
 	}
 
 	TorrentCheckModalWindow::TorrentCheckModalWindow(winrt::hstring const& torrentLink)
 		: m_torrentLink(torrentLink)
 	{
-		InitializeWindow();
 	}
 
 	TorrentCheckModalWindow::TorrentCheckModalWindow(
 		winrt::OpenNet::ViewModels::TaskViewModel const& task)
 		: m_existingTaskMode(true), m_taskViewModel(task)
 	{
+	}
+
+	void TorrentCheckModalWindow::InitializeComponent()
+	{
+		TorrentCheckModalWindowT::InitializeComponent();
+		InitializeWindowExBase();
 		InitializeWindow();
 	}
 
 	void TorrentCheckModalWindow::InitializeWindow()
 	{
 		// AppWindow().Resize(winrt::Windows::Graphics::SizeInt32(1500, 1800));
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
 
 		SetTitleBar(TorrentCheckModalWindowTitleBar());
 		ExtendsContentIntoTitleBar(true);
 		AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 		SetWindowOwner();
-
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
 
 		if (auto presenter = winrt::Microsoft::UI::Windowing::OverlappedPresenter::CreateForDialog())
 		{
@@ -90,7 +91,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel.MetadataState(L"Loading");
 		m_metadataViewModel.MetadataStatus(L"Connecting to peers...");
 		m_metadataViewModel.TorrentName(L"Magnet download");
-		auto const defaultPath = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
+		auto const& defaultPath = ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath;
 		if (!defaultPath.empty())
 		{
 			m_metadataViewModel.SavePath(defaultPath);
@@ -384,9 +385,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 		else
 		{
-			const std::wstring_view& defaultPath =
-				winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW()
-				.GetResults();
+			auto const& defaultPath = ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath;
 			if (!defaultPath.empty())
 			{
 				m_metadataViewModel.SavePath(defaultPath);
@@ -763,7 +762,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			return;
 		}
 
-		HWND ownerHwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(ownerWindow);
+		HWND ownerHwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(ownerWindow.Window());
 		auto ownedWindowId = AppWindow().Id();
 		HWND ownedHwnd = winrt::Microsoft::UI::GetWindowFromWindowId(ownedWindowId);
 

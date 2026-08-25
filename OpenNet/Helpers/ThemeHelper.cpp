@@ -86,6 +86,23 @@ namespace OpenNet::Helpers
 		}
 	}
 
+	void ThemeHelper::UpdateThemeForWindow(winrt::WinUI3Package::WindowEx const& window)
+	{
+		if (!window) return;
+
+		try
+		{
+			if (auto rootElement = window.Content().try_as<FrameworkElement>())
+			{
+				rootElement.RequestedTheme(s_rootTheme);
+			}
+			UpdateTitleBarTheme(window.Window());
+		}
+		catch (...)
+		{
+		}
+	}
+
 	void ThemeHelper::SaveThemeToSettings()
 	{
 		try

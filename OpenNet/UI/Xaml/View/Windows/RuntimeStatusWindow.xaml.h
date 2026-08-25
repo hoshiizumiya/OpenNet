@@ -3,11 +3,12 @@
 #include "UI/Xaml/View/Windows/RuntimeStatusWindow.g.h"
 #include "ViewModels/DisplayItems.h"
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.Microsoft.UI.Dispatching;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct RuntimeStatusWindow : RuntimeStatusWindowT<RuntimeStatusWindow>
+	struct RuntimeStatusWindow : RuntimeStatusWindowT<RuntimeStatusWindow>, WindowExBase<RuntimeStatusWindow>
 	{
 		RuntimeStatusWindow();
 		void InitializeComponent();

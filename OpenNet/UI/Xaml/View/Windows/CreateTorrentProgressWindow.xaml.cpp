@@ -22,6 +22,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	CreateTorrentProgressWindow::CreateTorrentProgressWindow()
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		InitializeWindow();
 	}
 
@@ -29,17 +30,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		: m_options(std::move(options)), m_targetPath(std::move(targetPath)), m_startSeeding(startSeeding)
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		InitializeWindow();
 	}
 
 	void CreateTorrentProgressWindow::InitializeWindow()
 	{
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		SetTitleBar(WindowTitleBar());
 		ExtendsContentIntoTitleBar(true);
 		AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 
 		Closed([weak = get_weak()](auto const&, auto const&)
 		{

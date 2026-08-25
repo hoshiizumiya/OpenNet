@@ -340,12 +340,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void RuntimeStatusWindow::InitializeComponent()
 	{
 		RuntimeStatusWindowT::InitializeComponent();
+		InitializeWindowExBase();
 		SetTitleBar(RuntimeStatusTitleBar());
 		AppWindow().TitleBar().PreferredHeightOption(
 			winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 		AppWindow().Resize({ 920, 760 });
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();

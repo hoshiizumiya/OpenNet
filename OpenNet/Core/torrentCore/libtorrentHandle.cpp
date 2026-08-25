@@ -44,6 +44,19 @@ static_assert(TORRENT_USE_RTC == 1);
 namespace
 {
 	constexpr auto TorrentTaskSettingsCategory = "torrent_task_settings";
+	constexpr std::array DhtFallbackRouters{
+		std::pair{ "dht.libtorrent.org", 25401 },
+		std::pair{ "dht.transmissionbt.com", 6881 },
+		std::pair{ "router.bt.ouinet.work", 6881 },
+		std::pair{ "router.bittorrent.com", 6881 } };
+
+	void AddFallbackDhtRouters(lt::session& session)
+	{
+		for (auto const& [host, port] : DhtFallbackRouters)
+		{
+			session.add_dht_node({ host, port });
+		}
+	}
 
 	std::string TaskSettingKey(std::string const& taskId, std::string_view const name)
 	{
@@ -393,6 +406,11 @@ namespace OpenNet::Core::Torrent
 			std::chrono::steady_clock::now() };
 		std::chrono::steady_clock::time_point m_lastStatsRequest{
 			std::chrono::steady_clock::now() };
+		std::chrono::steady_clock::time_point m_lastDhtStateSave{
+			std::chrono::steady_clock::now() };
+		std::chrono::steady_clock::time_point m_lastDhtBootstrapRetry{
+			std::chrono::steady_clock::now() };
+		int m_dhtBootstrapAttempts{};
 		std::chrono::steady_clock::time_point m_lastClientFilterCheck{
 			std::chrono::steady_clock::now() };
 		std::chrono::steady_clock::time_point m_lastIpFilterMaintenance{
@@ -452,6 +470,9 @@ namespace OpenNet::Core::Torrent
 #define m_sessionStatsMetricsResolved m_impl->m_sessionStatsMetricsResolved
 #define m_lastTorrentUpdateRequest m_impl->m_lastTorrentUpdateRequest
 #define m_lastStatsRequest m_impl->m_lastStatsRequest
+#define m_lastDhtStateSave m_impl->m_lastDhtStateSave
+#define m_lastDhtBootstrapRetry m_impl->m_lastDhtBootstrapRetry
+#define m_dhtBootstrapAttempts m_impl->m_dhtBootstrapAttempts
 #define m_lastClientFilterCheck m_impl->m_lastClientFilterCheck
 #define m_lastIpFilterMaintenance m_impl->m_lastIpFilterMaintenance
 #define RecheckCompletionAction Impl::RecheckCompletionAction
@@ -817,6 +838,14 @@ namespace OpenNet::Core::Torrent
 				params.disk_io_constructor = lt::pread_disk_io_constructor;
 				m_session = std::make_unique<lt::session>(std::move(params));
 			}
+			if (m_session->get_settings().get_bool(lt::settings_pack::enable_dht))
+			{
+				// Keep several independent bootstrap routes. The settings entry is
+				// still user-configurable; these routers are startup fallbacks for a
+				// missing, stale, or partially unreachable saved routing table.
+				AddFallbackDhtRouters(*m_session);
+				m_dhtBootstrapAttempts = 1;
+			}
 			OutputDebugStringA(std::format(
 				"libtorrent header={}, runtime={}, ABI={}, Torrent_Use_ASSERTS={}, sizeof(add_torrent_params)={}, iterator_debug={}\n",
 				LIBTORRENT_VERSION,
@@ -855,10 +884,11 @@ namespace OpenNet::Core::Torrent
 			// leaving the displayed DHT node count at zero indefinitely.
 			pack.set_str(
 				lt::settings_pack::dht_bootstrap_nodes,
-				"router.bittorrent.com:6881,"
-				"router.utorrent.com:6881,"
+				settings.dhtBootstrapNodes.empty()
+				? "dht.libtorrent.org:25401,"
 				"dht.transmissionbt.com:6881,"
-				"dht.libtorrent.org:25401");
+				"router.bt.ouinet.work:6881"
+				: settings.dhtBootstrapNodes);
 		}
 	}
 
@@ -1524,6 +1554,26 @@ namespace OpenNet::Core::Torrent
 						m_session->post_dht_stats();
 						m_lastStatsRequest = now;
 					}
+					if (m_stateManager && m_cachedDhtNodeCount.load() > 0 && now - m_lastDhtStateSave >= std::chrono::minutes(5))
+					{
+						try
+						{
+							auto const state = lt::write_session_params_buf(
+								m_session->session_state(), lt::session::save_dht_state);
+							m_stateManager->SaveSessionState(
+								std::vector<std::uint8_t>(state.begin(), state.end()));
+							m_lastDhtStateSave = now;
+						}
+						catch (...)
+						{
+						}
+					}
+					if (m_cachedDhtNodeCount.load() == 0 && m_dhtBootstrapAttempts < 6 && now - m_lastDhtBootstrapRetry >= std::chrono::seconds(20))
+					{
+						AddFallbackDhtRouters(*m_session);
+						++m_dhtBootstrapAttempts;
+						m_lastDhtBootstrapRetry = now;
+					}
 					if (now - m_lastClientFilterCheck >= std::chrono::seconds(3))
 					{
 						EnforceClientFilters();
@@ -1652,9 +1702,7 @@ namespace OpenNet::Core::Torrent
 	}
 
 	template<typename THandle, typename TEndpoint>
-	void LibtorrentHandle::ClearPeerEvent(
-		THandle const& handle,
-		TEndpoint const& endpoint)
+	void LibtorrentHandle::ClearPeerEvent(THandle const& handle, TEndpoint const& endpoint)
 	{
 		std::string taskId;
 		{
@@ -1714,35 +1762,33 @@ namespace OpenNet::Core::Torrent
 	template<typename TAlerts>
 	void LibtorrentHandle::DispatchAlerts(TAlerts const& alerts)
 	{
-		for (lt::alert* a : alerts)
+		for (lt::alert* alert : alerts)
 		{
-			if (auto connected = lt::alert_cast<lt::peer_connect_alert>(a))
+			if (auto connected = lt::alert_cast<lt::peer_connect_alert>(alert))
 			{
 				if (auto const endpoint = TcpEndpoint(connected->ep))
 					ClearPeerEvent(connected->handle, *endpoint);
 			}
-			else if (auto ban = lt::alert_cast<lt::peer_ban_alert>(a))
+			else if (auto ban = lt::alert_cast<lt::peer_ban_alert>(alert))
 			{
 				if (auto const endpoint = TcpEndpoint(ban->ep))
 					RecordPeerEvent(
 						ban->handle, *endpoint, "anti_leech", true);
 			}
-			else if (auto internalBan = lt::alert_cast<lt::ip_ban_alert>(a))
+			else if (auto internalBan = lt::alert_cast<lt::ip_ban_alert>(alert))
 			{
 				m_internalBanCount.fetch_add(1, std::memory_order_relaxed);
 				OutputDebugStringA(("libtorrent internally banned " + internalBan->banned_address.to_string() + "\n").c_str());
 			}
-			else if (auto priorities = lt::alert_cast<lt::file_priorities_alert>(a))
+			else if (auto priorities = lt::alert_cast<lt::file_priorities_alert>(alert))
 			{
 				std::lock_guard lock(m_filePrioritiesMutex);
 				m_filePrioritiesCache.insert_or_assign(priorities->handle, priorities->priorities);
 			}
-			else if (auto disconnected =
-					 lt::alert_cast<lt::peer_disconnected_alert>(a))
+			else if (auto disconnected = lt::alert_cast<lt::peer_disconnected_alert>(alert))
 			{
 				auto reason = PeerDisconnectReason(*disconnected);
-				auto const isBan =
-					reason == "ip_filter" || reason == "anti_leech";
+				auto const isBan = reason == "ip_filter" || reason == "anti_leech";
 				if (auto const endpoint = TcpEndpoint(disconnected->ep))
 					RecordPeerEvent(
 						disconnected->handle,
@@ -1750,8 +1796,7 @@ namespace OpenNet::Core::Torrent
 						std::move(reason),
 						isBan);
 			}
-			else if (auto peerError =
-					 lt::alert_cast<lt::peer_error_alert>(a))
+			else if (auto peerError = lt::alert_cast<lt::peer_error_alert>(alert))
 			{
 				auto reason = peerError->error
 					? peerError->error.message()
@@ -1777,8 +1822,7 @@ namespace OpenNet::Core::Torrent
 						std::move(reason),
 						isBan);
 			}
-			else if (auto trackerError =
-					 lt::alert_cast<lt::tracker_error_alert>(a))
+			else if (auto trackerError = lt::alert_cast<lt::tracker_error_alert>(alert))
 			{
 				auto content = std::string{ "Tracker connection error: " };
 				if (trackerError->error)
@@ -1795,8 +1839,7 @@ namespace OpenNet::Core::Torrent
 					trackerError->tracker_url(),
 					std::move(content), true);
 			}
-			else if (auto warning =
-					 lt::alert_cast<lt::tracker_warning_alert>(a))
+			else if (auto warning = lt::alert_cast<lt::tracker_warning_alert>(alert))
 			{
 				RecordTrackerLog(
 					warning->handle,
@@ -1804,8 +1847,7 @@ namespace OpenNet::Core::Torrent
 					std::string{ "Tracker warning: " }
 				+ warning->warning_message(), true);
 			}
-			else if (auto scrape =
-					 lt::alert_cast<lt::scrape_reply_alert>(a))
+			else if (auto scrape = lt::alert_cast<lt::scrape_reply_alert>(alert))
 			{
 				RecordTrackerLog(
 					scrape->handle,
@@ -1815,8 +1857,7 @@ namespace OpenNet::Core::Torrent
 					+ ", incomplete = "
 					+ std::to_string(scrape->incomplete));
 			}
-			else if (auto scrapeFailed =
-					 lt::alert_cast<lt::scrape_failed_alert>(a))
+			else if (auto scrapeFailed = lt::alert_cast<lt::scrape_failed_alert>(alert))
 			{
 				auto content = std::string{ "Tracker scrape error: " };
 				if (scrapeFailed->error)
@@ -1828,8 +1869,7 @@ namespace OpenNet::Core::Torrent
 					scrapeFailed->tracker_url(),
 					std::move(content), true);
 			}
-			else if (auto reply =
-					 lt::alert_cast<lt::tracker_reply_alert>(a))
+			else if (auto reply = lt::alert_cast<lt::tracker_reply_alert>(alert))
 			{
 				auto const trackerUrl = std::string{ reply->tracker_url() };
 				RecordTrackerLog(
@@ -1837,8 +1877,7 @@ namespace OpenNet::Core::Torrent
 					trackerUrl,
 					"Logged in; Tracker returned "
 					+ std::to_string(reply->num_peers) + " peers");
-				if (auto const remaining = NextTrackerAnnounceSeconds(
-					reply->handle, trackerUrl))
+				if (auto const remaining = NextTrackerAnnounceSeconds(reply->handle, trackerUrl))
 				{
 					RecordTrackerLog(
 						reply->handle, trackerUrl,
@@ -1846,8 +1885,7 @@ namespace OpenNet::Core::Torrent
 						+ FormatTrackerInterval(*remaining));
 				}
 			}
-			else if (auto announce =
-					 lt::alert_cast<lt::tracker_announce_alert>(a))
+			else if (auto announce = lt::alert_cast<lt::tracker_announce_alert>(alert))
 			{
 				RecordTrackerLog(
 					announce->handle,
@@ -1858,7 +1896,7 @@ namespace OpenNet::Core::Torrent
 					announce->tracker_url(),
 					"Start connecting...");
 			}
-			else if (auto st = lt::alert_cast<lt::state_update_alert>(a))
+			else if (auto st = lt::alert_cast<lt::state_update_alert>(alert))
 			{
 				{
 					std::lock_guard statsLock(m_sessionStatsMutex);
@@ -1919,12 +1957,8 @@ namespace OpenNet::Core::Torrent
 						ProgressEvent evt;
 						evt.taskId = taskId;
 						evt.progressPercent = static_cast<int>(s.progress_ppm / 10000); // 1e6 -> %
-						evt.isPaused =
-							(s.flags & lt::torrent_flags::paused)
-							!= lt::torrent_flags_t{};
-						evt.isChecking =
-							s.state == lt::torrent_status::checking_files
-							|| s.state == lt::torrent_status::checking_resume_data;
+						evt.isPaused = (s.flags & lt::torrent_flags::paused) != lt::torrent_flags_t{};
+						evt.isChecking = s.state == lt::torrent_status::checking_files || s.state == lt::torrent_status::checking_resume_data;
 						evt.downloadRateKB = evt.isPaused
 							? 0 : static_cast<int>(s.download_rate / 1000);
 						evt.uploadRateKB = evt.isPaused
@@ -1935,8 +1969,7 @@ namespace OpenNet::Core::Torrent
 						evt.sessionUploaded = s.total_upload;
 						evt.allTimeDownloaded = s.all_time_download;
 						evt.allTimeUploaded = s.all_time_upload;
-						evt.completedTimestamp =
-							static_cast<std::int64_t>(s.completed_time);
+						evt.completedTimestamp = static_cast<std::int64_t>(s.completed_time);
 						evt.connectedPeers = s.num_peers;
 						evt.connectedSeeds = s.num_seeds;
 						evt.knownPeers = (std::max)(
@@ -1987,7 +2020,7 @@ namespace OpenNet::Core::Torrent
 					}
 				}
 			}
-			else if (auto checked = lt::alert_cast<lt::torrent_checked_alert>(a))
+			else if (auto checked = lt::alert_cast<lt::torrent_checked_alert>(alert))
 			{
 				std::string taskId;
 				std::optional<RecheckCompletionAction> completionAction;
@@ -2027,7 +2060,7 @@ namespace OpenNet::Core::Torrent
 				// stale resume data and presents completed pieces as unchecked again.
 				RequestResumeDataForTorrent(checked->handle);
 			}
-			else if (auto tf = lt::alert_cast<lt::torrent_finished_alert>(a))
+			else if (auto tf = lt::alert_cast<lt::torrent_finished_alert>(alert))
 			{
 				// Completed downloads should remain stopped. In particular,
 				// clear auto_managed before pausing or libtorrent may resume
@@ -2070,15 +2103,15 @@ namespace OpenNet::Core::Torrent
 					}
 				}
 			}
-			else if (auto srd = lt::alert_cast<lt::save_resume_data_alert>(a))
+			else if (auto srd = lt::alert_cast<lt::save_resume_data_alert>(alert))
 			{
 				HandleSaveResumeDataAlert(srd);
 			}
-			else if (auto srdf = lt::alert_cast<lt::save_resume_data_failed_alert>(a))
+			else if (auto srdf = lt::alert_cast<lt::save_resume_data_failed_alert>(alert))
 			{
 				HandleSaveResumeDataFailedAlert(srdf);
 			}
-			else if (auto mapping = lt::alert_cast<lt::portmap_alert>(a))
+			else if (auto mapping = lt::alert_cast<lt::portmap_alert>(alert))
 			{
 				std::lock_guard lock(m_portMappingMutex);
 				std::string mechanism =
@@ -2096,28 +2129,28 @@ namespace OpenNet::Core::Torrent
 				}
 				m_portMappingStatus.lastError.clear();
 			}
-			else if (auto mappingError = lt::alert_cast<lt::portmap_error_alert>(a))
+			else if (auto mappingError = lt::alert_cast<lt::portmap_error_alert>(alert))
 			{
 				std::lock_guard lock(m_portMappingMutex);
 				m_portMappingStatus.lastError = mappingError->message();
 			}
-			else if (auto externalIp = lt::alert_cast<lt::external_ip_alert>(a))
+			else if (auto externalIp = lt::alert_cast<lt::external_ip_alert>(alert))
 			{
 				std::lock_guard lock(m_portMappingMutex);
 				m_portMappingStatus.externalAddress =
 					externalIp->external_address.to_string();
 			}
-			else if (auto listenFailed = lt::alert_cast<lt::listen_failed_alert>(a))
+			else if (auto listenFailed = lt::alert_cast<lt::listen_failed_alert>(alert))
 			{
 				std::lock_guard lock(m_listenStateMutex);
 				m_lastListenError = listenFailed->message();
 			}
-			else if (lt::alert_cast<lt::listen_succeeded_alert>(a))
+			else if (lt::alert_cast<lt::listen_succeeded_alert>(alert))
 			{
 				std::lock_guard lock(m_listenStateMutex);
 				m_lastListenError.clear();
 			}
-			else if (auto se = lt::alert_cast<lt::session_error_alert>(a))
+			else if (auto se = lt::alert_cast<lt::session_error_alert>(alert))
 			{
 				ErrorCallback errorCbCopy;
 				{
@@ -2130,7 +2163,7 @@ namespace OpenNet::Core::Torrent
 					errorCbCopy(se->message());
 				}
 			}
-			else if (auto te = lt::alert_cast<lt::torrent_error_alert>(a))
+			else if (auto te = lt::alert_cast<lt::torrent_error_alert>(alert))
 			{
 				// Update status in database
 				if (m_stateManager)
@@ -2154,7 +2187,7 @@ namespace OpenNet::Core::Torrent
 					errorCbCopy(te->message());
 				}
 			}
-			else if (auto fe = lt::alert_cast<lt::file_error_alert>(a))
+			else if (auto fe = lt::alert_cast<lt::file_error_alert>(alert))
 			{
 				ErrorCallback errorCbCopy;
 				{
@@ -2167,7 +2200,7 @@ namespace OpenNet::Core::Torrent
 					errorCbCopy(fe->message());
 				}
 			}
-			else if (auto ma = lt::alert_cast<lt::metadata_received_alert>(a))
+			else if (auto ma = lt::alert_cast<lt::metadata_received_alert>(alert))
 			{
 				// Update the task and persist a reusable .torrent file as soon
 				// as a magnet has received its metadata.
@@ -2214,17 +2247,15 @@ namespace OpenNet::Core::Torrent
 					}
 				}
 			}
-			else if (auto dsa = lt::alert_cast<lt::dht_stats_alert>(a))
+			else if (auto dsa = lt::alert_cast<lt::dht_stats_alert>(alert))
 			{
-				// Cache DHT routing table node count from the alert
-				int totalNodes = 0;
-				for (auto const& bucket : dsa->routing_table)
-				{
-					totalNodes += bucket.num_nodes;
-				}
-				m_cachedDhtNodeCount.store(totalNodes);
+				// One alert is emitted per local DHT endpoint (typically IPv4 and
+				// IPv6). Do not overwrite the aggregate counter with the last
+				// endpoint's table; an empty IPv6 table would otherwise erase a
+				// healthy IPv4 count. session_stats_alert below is authoritative.
+				(void)dsa;
 			}
-			else if (auto ssa = lt::alert_cast<lt::session_stats_alert>(a))
+			else if (auto ssa = lt::alert_cast<lt::session_stats_alert>(alert))
 			{
 				// Cache session-level counters for use in GetSessionStats()
 				if (!m_sessionStatsMetricsResolved)
@@ -2242,8 +2273,7 @@ namespace OpenNet::Core::Torrent
 					if (metric.value_index >= 0
 						&& metric.value_index < static_cast<int>(counters.size()))
 					{
-						m_sessionMetricValues[metric.name] =
-							counters[metric.value_index];
+						m_sessionMetricValues[metric.name] = counters[metric.value_index];
 					}
 				}
 				if (m_sessionStatsMetricIdxRecvBytes >= 0)

@@ -2,6 +2,7 @@
 
 import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.ViewModels.ObservableMixin;
+import OpenNet.Presentation.ScopedPage;
 
 // Ensure custom control types are declared before including the generated XAML header.
 // The generated header (`Pages/TasksPage.g.h`) uses `winrt::OpenNet::Controls::SpeedGraph::SpeedGraph`
@@ -21,7 +22,7 @@ import OpenNet.ViewModels.ObservableMixin;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
-	struct TasksPage : TasksPageT<TasksPage>, ::OpenNet::ViewModels::ObservableMixin<TasksPage>
+	struct TasksPage : TasksPageT<TasksPage>, ::OpenNet::ViewModels::ObservableMixin<TasksPage>, ::OpenNet::Presentation::ScopedPage<winrt::OpenNet::ViewModels::TasksViewModel>
 	{
 	public:
 		TasksPage();
@@ -77,8 +78,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 
 		// Search
-		void SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
-
 		// TabView
 		void Task_TabView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
 		void TaskTabViewContextFlyout_Opening(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&);
@@ -147,8 +146,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			Delete,
 			CreateTorrent,
 		};
-
-		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 
 		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingNameTextBlock;
 		winrt::Microsoft::UI::Xaml::TextWrapping m_textWrappingSizeTextBlock;

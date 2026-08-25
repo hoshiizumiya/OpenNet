@@ -14,7 +14,13 @@ namespace winrt::OpenNet::UI::Shell::implementation
 {
 	NotifyIconXamlHostWindow::NotifyIconXamlHostWindow()
 	{
-		InitializeComponent();
+	}
+
+	void NotifyIconXamlHostWindow::InitializeComponent()
+	{
+		NotifyIconXamlHostWindowT::InitializeComponent();
+		InitializeWindowExBase(false, false);
+		AppWindow().Hide();
 		trayIcon().Guid(IconGuid());
 	}
 

@@ -30,8 +30,26 @@ namespace winrt::OpenNet::ViewModels::implementation
 	using namespace ::Core::Utils::Misc;
 	static winrt::hstring FormatRatio(std::uint64_t uploaded, std::uint64_t downloaded);
 	static winrt::hstring FormatSeedsPeers(int connectedSeeds, int connectedPeers, int knownSeeds, int knownPeers);
+	static ::OpenNet::Application::Tasks::TaskOperation MakeTaskOperation(
+		winrt::OpenNet::ViewModels::TaskViewModel const& task,
+		bool const deleteDownloadedFiles = false)
+	{
+		return {
+			task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent
+				? ::OpenNet::Application::Tasks::TaskKind::BitTorrent
+				: ::OpenNet::Application::Tasks::TaskKind::Http,
+			winrt::to_string(task.TaskId()),
+			winrt::to_string(task.Gid()),
+			deleteDownloadedFiles };
+	}
+
 	// Tip: All constructions will do in winrt::make<>().
-	TasksViewModel::TasksViewModel()
+	TasksViewModel::TasksViewModel() : TasksViewModel(::OpenNet::Application::Tasks::CreateTaskCommandService())
+	{
+	}
+
+	TasksViewModel::TasksViewModel(std::shared_ptr<::OpenNet::Application::Tasks::ITaskCommandService> taskCommandService)
+		: m_taskCommandService(std::move(taskCommandService))
 	{
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 		m_tasks = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TaskViewModel>();
@@ -100,35 +118,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_startCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
 			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
-			co_await winrt::resume_background();
 			auto self = weak.get();
 			if (!self) co_return;
 
 			auto selectedTask = self->m_selectedTask;
 			if (selectedTask)
 			{
-				auto taskId = winrt::to_string(selectedTask.TaskId());
 				auto taskType = selectedTask.TaskType();
-
-				if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
-				{
-					auto& mgr = ::OpenNet::Core::P2PManager::Instance();
-					co_await mgr.EnsureTorrentCoreInitializedAsync();
-					if (auto core = mgr.TorrentCore())
-					{
-						if (!taskId.empty())
-							core->ResumeTorrent(taskId);
-						else
-							core->Start();
-					}
-				}
-				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
-				{
-					auto gid = winrt::to_string(selectedTask.Gid());
-					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
-					if (!gid.empty())
-						dlMgr.ResumeHttpDownload(gid);
-				}
+				co_await self->m_taskCommandService->StartAsync(MakeTaskOperation(selectedTask));
 				if (auto dispatcher = self->m_dispatcher)
 				{
 					dispatcher.TryEnqueue([weak, selectedTask, taskType]()
@@ -155,40 +152,22 @@ namespace winrt::OpenNet::ViewModels::implementation
 			.CanExecute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
 		{
 			auto self = weak.get();
-			return self && static_cast<bool>(self->m_selectedTask);
+			return self && self->CanStartSelectedTask();
 		})
-			.DependsOn(L"SelectedTask")
+			.DependsOn(L"CanStartSelectedTask")
 			.Build();
 
 		// PauseCommand: Pause the selected task
 		m_pauseCommand = mvvm::AsyncCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
 			.ExecuteAsync([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&) -> winrt::Windows::Foundation::IAsyncAction
 		{
-			co_await winrt::resume_background();
 			auto self = weak.get();
 			if (!self) co_return;
 
 			auto selectedTask = self->m_selectedTask;
 			if (selectedTask)
 			{
-				auto taskId = winrt::to_string(selectedTask.TaskId());
-				auto taskType = selectedTask.TaskType();
-
-				if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
-				{
-					if (auto core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
-					{
-						if (!taskId.empty())
-							core->PauseTorrent(taskId);
-					}
-				}
-				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
-				{
-					auto gid = winrt::to_string(selectedTask.Gid());
-					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
-					if (!gid.empty())
-						dlMgr.PauseHttpDownload(gid);
-				}
+				co_await self->m_taskCommandService->PauseAsync(MakeTaskOperation(selectedTask));
 				if (auto dispatcher = self->m_dispatcher)
 				{
 					dispatcher.TryEnqueue([weak, selectedTask]()
@@ -214,9 +193,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 			.CanExecute([weak = get_weak()](winrt::Windows::Foundation::IInspectable const&)
 		{
 			auto self = weak.get();
-			return self && static_cast<bool>(self->m_selectedTask);
+			return self && self->CanPauseSelectedTask();
 		})
-			.DependsOn(L"SelectedTask")
+			.DependsOn(L"CanPauseSelectedTask")
 			.Build();
 
 		// DeleteCommand: Delete only the selected task (not all tasks)
@@ -246,53 +225,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 				self->m_deletedGids.insert(gid);
 			}
 
-			// Do backend removal on a background thread to avoid STA blocking
-			co_await winrt::resume_background();
 			try
 			{
-				if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
-				{
-					auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-					if (core && !taskId.empty())
-					{
-						core->RemoveTorrent(taskId, deleteDownloadedFiles);
-					}
-					auto* stateMgr = ::OpenNet::Core::P2PManager::Instance().StateManager();
-					if (stateMgr && !taskId.empty())
-					{
-						stateMgr->DeleteTask(taskId);
-					}
-					// Clean up speed graph persistence
-					if (!taskId.empty())
-					{
-						::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(taskId);
-					}
-				}
-				else if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
-				{
-					auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
-					auto recordId = taskId;
-					if (recordId.empty() && !gid.empty())
-					{
-						recordId = dlMgr.GetRecordIdForGid(gid);
-					}
-					if (!gid.empty())
-					{
-						dlMgr.DeleteHttpDownload(gid, deleteDownloadedFiles);
-					}
-					// Delete the persisted HTTP download record.
-					// TaskId now holds the stable recordId (not GID).
-					auto& httpState = ::OpenNet::Core::HttpStateManager::Instance();
-					if (!recordId.empty())
-					{
-						httpState.DeleteRecord(recordId);
-					}
-					// Clean up speed graph persistence
-					if (!recordId.empty())
-					{
-						::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(recordId);
-					}
-				}
+				co_await self->m_taskCommandService->DeleteAsync(
+					MakeTaskOperation(selectedTask, deleteDownloadedFiles));
 			}
 			catch (const std::exception& ex)
 			{
@@ -397,40 +333,45 @@ namespace winrt::OpenNet::ViewModels::implementation
 		})
 			.Build();
 
-		// 注册回调
-		::OpenNet::Core::P2PManager::Instance().SetProgressCallback([weak = get_weak()](const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
-		{
-			if (auto self = weak.get()) self->OnProgress(e);
-		});
-		::OpenNet::Core::P2PManager::Instance().SetFinishedCallback([weak = get_weak()](const std::string& taskId, const std::string& name)
-		{
-			if (auto self = weak.get()) self->OnFinished(taskId, name);
-		});
-		::OpenNet::Core::P2PManager::Instance().SetErrorCallback([weak = get_weak()](const std::string& msg)
-		{
-			if (auto self = weak.get()) self->OnError(msg);
-		});
-
-		// Register Aria2 (HTTP) callbacks
-		auto& dlMgr = ::OpenNet::Core::DownloadManager::Instance();
-		dlMgr.SetHttpProgressCallback([weak = get_weak()](::OpenNet::Core::HttpTaskProgress const& p)
-		{
-			if (auto self = weak.get()) self->OnHttpProgress(p);
-		});
-		dlMgr.SetHttpFinishedCallback([weak = get_weak()](std::string const& gid, std::string const& name)
-		{
-			if (auto self = weak.get()) self->OnHttpFinished(gid, name);
-		});
-		dlMgr.SetHttpErrorCallback([weak = get_weak()](std::string const& gid, std::string const& msg)
-		{
-			if (auto self = weak.get()) self->OnHttpError(gid, msg);
-		});
-
-		Initialize();
 	}
 
 	void TasksViewModel::Initialize()
 	{
+		if (m_initialized.exchange(true)) return;
+		auto weak = get_weak();
+		::OpenNet::Core::P2PManager::Instance().SetProgressCallback(
+			[weak](::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent const& event)
+		{
+			if (auto self = weak.get()) self->OnProgress(event);
+		});
+		::OpenNet::Core::P2PManager::Instance().SetFinishedCallback(
+			[weak](std::string const& taskId, std::string const& name)
+		{
+			if (auto self = weak.get()) self->OnFinished(taskId, name);
+		});
+		::OpenNet::Core::P2PManager::Instance().SetErrorCallback(
+			[weak](std::string const& message)
+		{
+			if (auto self = weak.get()) self->OnError(message);
+		});
+
+		auto& downloadManager = ::OpenNet::Core::DownloadManager::Instance();
+		downloadManager.SetHttpProgressCallback(
+			[weak](::OpenNet::Core::HttpTaskProgress const& progress)
+		{
+			if (auto self = weak.get()) self->OnHttpProgress(progress);
+		});
+		downloadManager.SetHttpFinishedCallback(
+			[weak](std::string const& gid, std::string const& name)
+		{
+			if (auto self = weak.get()) self->OnHttpFinished(gid, name);
+		});
+		downloadManager.SetHttpErrorCallback(
+			[weak](std::string const& gid, std::string const& message)
+		{
+			if (auto self = weak.get()) self->OnHttpError(gid, message);
+		});
+
 		// Start HTTP initialization immediately; task restoration below awaits it so
 		// stable recordId/GID mappings exist before any restored row is created.
 		auto httpInitialization = ::OpenNet::Core::DownloadManager::Instance().InitializeAsync();
@@ -455,7 +396,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			// Apply stored IP filter rules to the now-running session
 			::OpenNet::Core::IPFilterManager::Instance().ApplyToSession();
 
-			if (auto self = weak.get())
+			if (auto self = weak.get(); self && self->m_initialized.load())
 			{
 				self->LoadSavedTasks();
 			}
@@ -464,11 +405,18 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::Shutdown()
 	{
+		if (!m_initialized.exchange(false)) return;
 		{
 			std::lock_guard lock(m_progressSnapshotMutex);
 			m_progressSnapshots.clear();
 		}
-		::OpenNet::Core::DownloadManager::Instance().Shutdown();
+		::OpenNet::Core::P2PManager::Instance().SetProgressCallback({});
+		::OpenNet::Core::P2PManager::Instance().SetFinishedCallback({});
+		::OpenNet::Core::P2PManager::Instance().SetErrorCallback({});
+		auto& downloadManager = ::OpenNet::Core::DownloadManager::Instance();
+		downloadManager.SetHttpProgressCallback({});
+		downloadManager.SetHttpFinishedCallback({});
+		downloadManager.SetHttpErrorCallback({});
 	}
 
 	void TasksViewModel::LoadSavedTasks()
@@ -702,9 +650,46 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		if (m_selectedTask != value)
 		{
+			if (m_selectedTask && m_selectedTaskPropertyChangedToken.value)
+			{
+				m_selectedTask.PropertyChanged(m_selectedTaskPropertyChangedToken);
+				m_selectedTaskPropertyChangedToken = {};
+			}
 			m_selectedTask = value;
-			RaisePropertyChangedEvent(L"SelectedTask");
+			if (m_selectedTask)
+			{
+				m_selectedTaskPropertyChangedToken = m_selectedTask.PropertyChanged(
+					[weak = get_weak()](auto const&, auto const& args)
+				{
+					if (auto self = weak.get(); self
+						&& (args.PropertyName() == L"State"
+							|| args.PropertyName() == L"ProgressPercent"))
+					{
+						self->RaisePropertyChangedEvent({
+							L"CanStartSelectedTask", L"CanPauseSelectedTask" });
+					}
+				});
+			}
+			RaisePropertyChangedEvent({
+				L"SelectedTask", L"HasSelectedTask",
+				L"CanStartSelectedTask", L"CanPauseSelectedTask" });
 		}
+	}
+
+	bool TasksViewModel::CanStartSelectedTask() const
+	{
+		if (!m_selectedTask) return false;
+		auto const state = m_selectedTask.State();
+		return state != winrt::OpenNet::ViewModels::DownloadTaskState::Downloading
+			&& state != winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
+	}
+
+	bool TasksViewModel::CanPauseSelectedTask() const
+	{
+		if (!m_selectedTask) return false;
+		auto const state = m_selectedTask.State();
+		return state == winrt::OpenNet::ViewModels::DownloadTaskState::Downloading
+			|| state == winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
 	}
 
 	winrt::OpenNet::ViewModels::TaskViewModel TasksViewModel::FindOrCreateItem(winrt::hstring const& name)
@@ -1146,8 +1131,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::SetSearchFilter(winrt::hstring const& text)
 	{
-		m_searchText = text;
-		RebuildFiltered();
+		SearchText(text);
+	}
+
+	void TasksViewModel::SearchText(winrt::hstring const& value)
+	{
+		if (SetProperty(m_searchText, value, L"SearchText")) RebuildFiltered();
 	}
 
 	// Helper: case-insensitive substring check

@@ -66,9 +66,12 @@ export namespace OpenNet::Core
 		int upnpLeaseDuration{ 0 };
 
 		// ----- Tracker -----
-		bool announceToAllTiers{ false };
+		bool announceToAllTiers{ true };
 		bool announceToAllTrackers{ false };
-		std::string dhtBootstrapNodes{ "dht.libtorrent.org:25401" };
+		std::string dhtBootstrapNodes{
+			"dht.libtorrent.org:25401,"
+			"dht.transmissionbt.com:6881,"
+			"router.bt.ouinet.work:6881" };
 		std::string announceIp;
 		int announcePort{ 0 };
 		int maxConcurrentHttpAnnounces{ 50 };
@@ -81,9 +84,9 @@ export namespace OpenNet::Core
 
 		// ----- Limits -----
 		bool queueingEnabled{ false };
-		int activeDownloads{ 3 };
-		int activeSeeds{ 5 };
-		int activeLimit{ 15 };
+		int activeDownloads{ 20 };
+		int activeSeeds{ 20 };
+		int activeLimit{ 50 };
 
 		// ----- Speed Limits (bytes/sec, 0 = unlimited) -----
 		int downloadRateLimit{ 0 };

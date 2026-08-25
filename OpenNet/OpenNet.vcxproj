@@ -147,7 +147,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Core\AppRuntime.ixx" />
+	<ClCompile Include="Core\AppRuntime.ixx" />
+	<ClCompile Include="Application\Tasks\TaskCommandService.ixx" />
+	<ClCompile Include="Application\Tasks\TaskCommandService.cpp" />
+	<ClCompile Include="Application\CompositionRoot.ixx" />
+	<ClCompile Include="Application\CompositionRoot.cpp" />
+	<ClCompile Include="Presentation\ScopedPage.ixx" />
     <ClCompile Include="Core\ExceptionService\ExceptionFormat.ixx" />
     <ClCompile Include="Core\ExceptionService\OpenNetException.ixx" />
     <ClCompile Include="Extension\DependencyObjectExtensions.ixx" />
@@ -156,6 +161,7 @@
     <ClCompile Include="Factory\ContentDialog\ContentDialogFactory.ixx" />
     <ClCompile Include="Factory\Window\WindowFactory.ixx" />
     <ClCompile Include="Helpers\EnsureDependencyProperties.ixx" />
+    <ClCompile Include="Helpers\WindowExBase.ixx" />
     <ClCompile Include="Helpers\TabViewStateHelper.ixx" />
     <ClCompile Include="Helpers\TemplateControlHelper.ixx" />
     <ClCompile Include="Service\Notification\AppNotificationLifeTime.ixx" />
@@ -698,7 +704,9 @@
     <ClInclude Include="winrt_module_imports.h" />
     <ClInclude Include="WindowsPlatform.h" />
     <ClInclude Include="LibtorrentIncludeGuard.h" />
-    <ClInclude Include="LibtorrentIncludeRestore.h" />
+	<ClInclude Include="LibtorrentIncludeRestore.h" />
+	<ClInclude Include="ThirdParty\boost\di.hpp" />
+	<None Include="ThirdParty\boost\LICENSE_1_0.txt" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />

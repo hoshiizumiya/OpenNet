@@ -9,7 +9,6 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
@@ -17,7 +16,6 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
-                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/Stroge/StorageBar_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -207,7 +205,8 @@
                             </ToolTipService.ToolTip>
                         </TextBlock>
                         <TextBlock Text="{x:Bind Size, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                        <storage:StorageBar
+                        <ProgressBar
+                            Height="4"
                             Margin="4,0"
                             VerticalAlignment="Center"
                             Maximum="100"

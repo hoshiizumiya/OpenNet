@@ -11,6 +11,8 @@ module;
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/session.hpp> // for proxy_type_t
 #include "LibtorrentIncludeRestore.h"
+#include <shlobj.h>
+#include <wil/resource.h>
 
 module OpenNet.Core.TorrentSettings;
 
@@ -69,10 +71,10 @@ namespace OpenNet::Core
 			// Resolve default save path if empty
 			if (m_settings.defaultSavePath.empty())
 			{
-				auto downloads = winrt::OpenNet::Core::IO::FileSystem::GetDownloadsPathW().GetResults();
-				if (!downloads.empty())
+				wil::unique_cotaskmem_string downloads;
+				if (SUCCEEDED(::SHGetKnownFolderPath(FOLDERID_Downloads, KF_FLAG_DEFAULT, nullptr, downloads.put())) && downloads)
 				{
-					m_settings.defaultSavePath = downloads;
+					m_settings.defaultSavePath = downloads.get();
 				}
 				else
 				{
@@ -381,6 +383,27 @@ namespace OpenNet::Core
 						  "checkingMemUsage", s.checkingMemUsage);
 				db.SetInt(AppSettingsDatabase::CAT_TORRENT,
 						  "performanceDefaultsVersion", 2);
+			}
+			if (performanceDefaultsVersion < 3)
+			{
+				// qBittorrent announces to every tracker tier by default. Older
+				// OpenNet builds persisted false even when the user never touched
+				// the option, delaying peer discovery on multi-tier torrents.
+				s.announceToAllTiers = true;
+				db.SetBool(AppSettingsDatabase::CAT_TRACKER,
+						   "announceToAllTiers", true);
+				if (s.dhtBootstrapNodes.empty()
+					|| s.dhtBootstrapNodes == "dht.libtorrent.org:25401")
+				{
+					s.dhtBootstrapNodes =
+						"dht.libtorrent.org:25401,"
+						"dht.transmissionbt.com:6881,"
+						"router.bt.ouinet.work:6881";
+					db.SetString(AppSettingsDatabase::CAT_TRACKER,
+								 "dhtBootstrapNodes", s.dhtBootstrapNodes);
+				}
+				db.SetInt(AppSettingsDatabase::CAT_TORRENT,
+						  "performanceDefaultsVersion", 3);
 			}
 			s.pieceExtentAffinity = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "pieceExtentAffinity").value_or(s.pieceExtentAffinity);
 			s.uploadSuggestions = db.GetBool(AppSettingsDatabase::CAT_DISK_IO, "uploadSuggestions").value_or(s.uploadSuggestions);

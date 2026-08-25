@@ -21,6 +21,7 @@
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
 
 import OpenNet.App;
+import OpenNet.Application.CompositionRoot;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Core.HttpStateManager;
@@ -301,10 +302,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Keep page cached to preserve ViewModel when navigating away
 		//this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Enabled);
 
-		// Create and attach the view-model
-		m_viewModel = winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>();
-		m_filteredTasksChangedToken = m_viewModel.FilteredTasks().VectorChanged(
-			[this](auto const&, auto const&)
+		m_viewModel = ::OpenNet::Presentation::TasksViewModelFactory::Create(::OpenNet::Application::CompositionRoot::Instance().TaskCommandService());
+		InitializeScopedViewModel(m_viewModel,
+								  [viewModel = m_viewModel]
+		{
+			winrt::get_self<winrt::OpenNet::ViewModels::implementation::TasksViewModel>(viewModel)->Initialize();
+		},
+								  [viewModel = m_viewModel]
+		{
+			winrt::get_self<winrt::OpenNet::ViewModels::implementation::TasksViewModel>(viewModel)->Shutdown();
+		});
+		m_filteredTasksChangedToken = m_viewModel.FilteredTasks().VectorChanged([this](auto const&, auto const&)
 		{
 			if (m_isApplyingSort || m_sortDirection == 0 || m_sortPending)
 				return;
@@ -321,17 +329,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Subscribe to AddTaskRequested event (currently not used, but kept for compatibility)
 		m_addTaskToken = m_viewModel.AddTaskRequested({ this, &TasksPage::OnAddTaskRequested });
-		m_taskDeletionFailedToken = m_viewModel.TaskDeletionFailed(
-			{ this, &TasksPage::OnTaskDeletionFailed });
+		m_taskDeletionFailedToken = m_viewModel.TaskDeletionFailed({ this, &TasksPage::OnTaskDeletionFailed });
 
 		Unloaded([this](IInspectable const&, RoutedEventArgs const&)
 		{
 			SaveColumnWidths();
+			DeactivateScopedViewModel();
 		});
 	}
 
 	TasksPage::~TasksPage()
 	{
+		DeactivateScopedViewModel();
 		if (m_viewModel && m_addTaskToken.value)
 		{
 			m_viewModel.AddTaskRequested(m_addTaskToken);
@@ -360,6 +369,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
+		ActivateScopedViewModel();
 		auto const tasksListHeight = ::OpenNet::Helpers::GetControlHeight("TasksPage_ContentFrame_Height");
 		if (tasksListHeight > 0.0)
 		{
@@ -893,15 +903,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// A right-click on the empty list area must not leave an old task active.
 		listView.SelectedItem(nullptr);
-	}
-
-	void TasksPage::SearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& /*args*/)
-	{
-		if (m_viewModel)
-		{
-			CancelScrollRestore();
-			m_viewModel.SetSearchFilter(sender.Text());
-		}
 	}
 
 	void TasksPage::Task_TabView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args)

@@ -9,6 +9,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.DownloadManager;
+import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
@@ -70,6 +71,59 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				static_cast<std::time_t>(timestamp)))
 				+ L": " + winrt::to_hstring(content);
 		}
+
+		int HexValue(char const value)
+		{
+			if (value >= '0' && value <= '9') return value - '0';
+			if (value >= 'a' && value <= 'f') return value - 'a' + 10;
+			if (value >= 'A' && value <= 'F') return value - 'A' + 10;
+			return 0;
+		}
+
+		winrt::hstring BuildHttpPieceStates(
+			::OpenNet::Core::Aria2::DownloadInformation const& information)
+		{
+			auto const pieceLength = information.PieceLength > 0
+				? information.PieceLength
+				: std::size_t{ 1024 * 1024 };
+			auto const pieceCount = information.NumPieces > 0
+				? information.NumPieces
+				: information.TotalLength > 0
+				? (information.TotalLength + pieceLength - 1) / pieceLength
+				: std::size_t{};
+			std::wstring states(pieceCount, L'0');
+			if (information.Bitfield.empty() && information.TotalLength > 0)
+			{
+				auto const completedPieces = (std::min)(
+					pieceCount, information.CompletedLength / pieceLength);
+				std::fill_n(states.begin(), completedPieces, L'2');
+				return winrt::hstring{ states };
+			}
+			for (std::size_t index = 0; index < pieceCount; ++index)
+			{
+				auto const nibble = index / 4;
+				if (nibble < information.Bitfield.size()
+					&& (HexValue(information.Bitfield[nibble])
+						& (1 << (3 - static_cast<int>(index % 4)))) != 0)
+				{
+					states[index] = L'2';
+				}
+			}
+			return winrt::hstring{ states };
+		}
+
+		winrt::hstring FormatBytes(std::uint64_t const bytes)
+		{
+			constexpr std::array suffixes{ L"B", L"KiB", L"MiB", L"GiB", L"TiB" };
+			double value = static_cast<double>(bytes);
+			std::size_t suffix{};
+			while (value >= 1024.0 && suffix + 1 < suffixes.size())
+			{
+				value /= 1024.0;
+				++suffix;
+			}
+			return winrt::hstring{ std::format(L"{:.1f} {}", value, suffixes[suffix]) };
+		}
 	}
 
 	TaskTrackersPage::TaskTrackersPage()
@@ -106,13 +160,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskTrackersPage::~TaskTrackersPage()
 	{
-		Unsubscribe();
-		if (m_refreshTimer)
-		{
-			m_refreshTimer.Stop();
-			m_refreshTimer.Tick(m_timerTickToken);
-			m_refreshTimer = nullptr;
-		}
+		// XAML objects are detached in OnNavigatedFrom on the UI thread. A page
+		// may be released by a completed background refresh; never call a
+		// DispatcherTimer from that final-release thread.
 	}
 
 	void TaskTrackersPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
@@ -400,7 +450,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::
 			implementation::TrackerLogWindow>(
 				winrt::to_hstring(taskId), taskName, trackerUrl);
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 
@@ -607,6 +657,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
+			ConfigureColumnsForTask(false);
 			m_trackerItems.Clear();
 			if (emptyPanel) emptyPanel.Visibility(Visibility::Visible);
 			return;
@@ -614,6 +665,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		auto selectedTask = m_viewModel.SelectedTask();
 		auto taskType = selectedTask.TaskType();
+		ConfigureColumnsForTask(taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http);
 
 		if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
 		{
@@ -789,6 +841,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.Seeders(FormatOptionalNumber(tracker.seeders));
 			item.Leechers(FormatOptionalNumber(tracker.leechers));
 			item.Downloaded(FormatOptionalNumber(tracker.downloaded));
+			item.ProgressPieces(L"");
+			item.ProgressText(L"");
+			item.TrackerProgressVisibility(Visibility::Visible);
+			item.HttpProgressVisibility(Visibility::Collapsed);
 			auto const latest = p2p.TorrentCore()->GetLatestTrackerLog(
 				taskId, tracker.url);
 			if (latest)
@@ -806,36 +862,99 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (emptyPanel) emptyPanel.Visibility(Visibility::Collapsed);
 	}
 
+	void TaskTrackersPage::ConfigureColumnsForTask(bool const isHttp)
+	{
+		TrackerUrlHeaderText().Text(isHttp ? L"URL" : L"Tracker URL");
+		TrackerLogHeaderText().Text(isHttp ? L"" : L"Log");
+		TrackerRetriesHeaderText().Text(isHttp ? L"Connections" : L"Retries");
+		TrackerTimeHeaderText().Text(isHttp ? L"Download rate" : L"Time remaining");
+		TrackerSeedersHeaderText().Text(isHttp ? L"Downloaded" : L"Seeders");
+		TrackerLeechersHeaderText().Text(isHttp ? L"Progress" : L"Leechers");
+		TrackerDownloadedHeaderText().Text(isHttp ? L"" : L"Downloaded");
+		TrackerStatusHeaderText().Text(L"Status");
+		ColTrackerLog().Visibility(isHttp ? Visibility::Collapsed : Visibility::Visible);
+		ColTrackerDownloaded().Visibility(isHttp ? Visibility::Collapsed : Visibility::Visible);
+	}
+
 	winrt::fire_and_forget TaskTrackersPage::RefreshHttpServersAsync(std::string gid)
 	{
-		auto lifetime = get_strong();
 		m_httpRefreshInFlight = true;
 		auto dispatcher = DispatcherQueue();
 		auto weak = get_weak();
 		co_await winrt::resume_background();
 		auto servers = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskServers(gid);
-		dispatcher.TryEnqueue([weak, servers = std::move(servers)]()
+		auto information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(gid);
+		dispatcher.TryEnqueue([weak, servers = std::move(servers), information = std::move(information)]()
 		{
 			if (auto self = weak.get())
 			{
 				self->m_httpRefreshInFlight = false;
-				std::uint32_t index{};
+				struct ServerRow
+				{
+					std::string url;
+					std::uint64_t speed{};
+					std::uint32_t connections{};
+				};
+				std::vector<ServerRow> rows;
+				std::unordered_map<std::string, std::size_t> rowByUrl;
 				for (auto const& fileServers : servers)
 				{
 					for (auto const& server : fileServers.Servers)
 					{
-						winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
-						if (index < self->m_trackerItems.Size()) item = self->m_trackerItems.GetAt(index).try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>();
-						if (!item)
-						{
-							item = winrt::make<winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
-							if (index < self->m_trackerItems.Size()) self->m_trackerItems.SetAt(index, item); else self->m_trackerItems.Append(item);
-						}
-						item.URL(winrt::to_hstring(server.CurrentUri.empty() ? server.Uri : server.CurrentUri));
-						item.Retries(L"-"); item.TimeRemaining(L"-"); item.Seeders(L"-"); item.Leechers(L"-"); item.Downloaded(L"-");
-						item.Status(winrt::to_hstring(std::format("File {} · {:.1f} KiB/s", fileServers.Index, static_cast<double>(server.DownloadSpeed) / 1024.0)));
-						++index;
+						auto const url = server.CurrentUri.empty() ? server.Uri : server.CurrentUri;
+						auto [entry, inserted] = rowByUrl.try_emplace(url, rows.size());
+						if (inserted) rows.push_back({ url });
+						auto& row = rows[entry->second];
+						row.speed += server.DownloadSpeed;
+						++row.connections;
 					}
+				}
+				if (rows.empty() && information)
+				{
+					for (auto const& file : information->Files)
+					{
+						for (auto const& uri : file.Uris)
+						{
+							if (rowByUrl.try_emplace(uri.Uri, rows.size()).second)
+								rows.push_back({ uri.Uri });
+						}
+					}
+				}
+				auto const pieces = information ? BuildHttpPieceStates(*information) : winrt::hstring{};
+				auto const progress = information && information->TotalLength > 0
+					? 100.0 * static_cast<double>(information->CompletedLength) / information->TotalLength
+					: 0.0;
+				std::uint32_t index{};
+				for (auto const& row : rows)
+				{
+					winrt::OpenNet::ViewModels::TrackerDisplayItem item{ nullptr };
+					if (index < self->m_trackerItems.Size())
+					{
+						item = self->m_trackerItems.GetAt(index)
+							.try_as<winrt::OpenNet::ViewModels::TrackerDisplayItem>();
+					}
+					if (!item)
+					{
+						item = winrt::make<winrt::OpenNet::ViewModels::implementation::TrackerDisplayItem>();
+						if (index < self->m_trackerItems.Size()) self->m_trackerItems.SetAt(index, item);
+						else self->m_trackerItems.Append(item);
+					}
+					item.URL(winrt::to_hstring(row.url));
+					auto const totalConnections = information
+						? static_cast<std::uint32_t>((std::max)(0, information->Connections))
+						: row.connections;
+					item.Retries(winrt::to_hstring(std::format("{}/{}", row.connections, totalConnections)));
+					item.TimeRemaining(FormatBytes(row.speed) + L"/s");
+					item.Seeders(information ? FormatBytes(information->CompletedLength) : L"—");
+					item.Leechers(L"");
+					item.Downloaded(L"");
+					item.ProgressPieces(pieces);
+					item.ProgressText(winrt::hstring{ std::format(L"{:.1f}%", progress) });
+					item.TrackerProgressVisibility(Visibility::Collapsed);
+					item.HttpProgressVisibility(Visibility::Visible);
+					item.Status(information && information->Status == ::OpenNet::Core::Aria2::DownloadStatus::Active
+								? L"Downloading" : L"Waiting");
+					++index;
 				}
 				while (self->m_trackerItems.Size() > index) self->m_trackerItems.RemoveAtEnd();
 				self->EmptyStatePanel().Visibility(index == 0 ? Visibility::Visible : Visibility::Collapsed);

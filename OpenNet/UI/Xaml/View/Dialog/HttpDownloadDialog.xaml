@@ -39,7 +39,7 @@
                 Header="URL"
                 PlaceholderText="https://example.com/file.zip"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
-                TextChanged="UrlBox_TextChanged"
+                Text="{x:Bind Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                 TextWrapping="Wrap" />
 
             <!--  Paste from clipboard  -->
@@ -64,7 +64,9 @@
                     x:Uid="DialogClipboardPreview"
                     VerticalAlignment="Center"
                     Foreground="{ThemeResource SystemControlDisabledBaseLowBrush}"
-                    TextTrimming="CharacterEllipsis" />
+                    Text="{x:Bind ClipboardPreviewText, Mode=OneWay}"
+                    TextTrimming="CharacterEllipsis"
+                    Visibility="{x:Bind ClipboardPreviewVisibility, Mode=OneWay}" />
             </StackPanel>
 
             <!--  Save Directory  -->
@@ -80,7 +82,8 @@
                     AutomationProperties.AutomationId="HttpDownloadDialogSaveDirBox"
                     Header="Save to"
                     IsReadOnly="True"
-                    PlaceholderText="Default download directory" />
+                    PlaceholderText="Default download directory"
+                    Text="{x:Bind SaveDirectory, Mode=TwoWay}" />
                 <Button
                     x:Name="BrowseDirButton"
                     x:Uid="CommonContentBrowse"
@@ -98,7 +101,8 @@
                 x:Uid="HttpDownloadDialogFileNameBox"
                 AutomationProperties.AutomationId="HttpDownloadDialogFileNameBox"
                 Header="File name (optional)"
-                PlaceholderText="Leave empty to auto-detect" />
+                PlaceholderText="Leave empty to auto-detect"
+                Text="{x:Bind FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <Grid ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
@@ -108,14 +112,16 @@
                 <Button
                     x:Name="FetchMetadataButton"
                     Click="FetchMetadataButton_Click"
-                    Content="Get file information" />
+                    Content="Get file information"
+                    IsEnabled="{x:Bind CanFetchMetadata, Mode=OneWay}" />
                 <StackPanel
                     Grid.Column="1"
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="16">
-                    <TextBlock x:Name="FileSizeText" Text="Size: Unknown" />
-                    <TextBlock x:Name="DiskSpaceText" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                    <TextBlock Text="{x:Bind FileSizeText, Mode=OneWay}" />
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ResumeSupportText, Mode=OneWay}" />
+                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind DiskSpaceText, Mode=OneWay}" />
                 </StackPanel>
             </Grid>
 
@@ -128,14 +134,14 @@
                             Maximum="16"
                             Minimum="1"
                             SpinButtonPlacementMode="Inline"
-                            Value="8" />
+                            Value="{x:Bind ConnectionsPerServer, Mode=TwoWay}" />
                         <NumberBox
                             x:Name="MaximumRateNumberBox"
                             Header="Maximum download speed (KiB/s, 0 = unlimited)"
                             Maximum="1048576"
                             Minimum="0"
                             SpinButtonPlacementMode="Inline"
-                            Value="0" />
+                            Value="{x:Bind MaximumDownloadRate, Mode=TwoWay}" />
                     </StackPanel>
                 </TabViewItem>
                 <TabViewItem Header="HTTP" IsClosable="False">
@@ -143,31 +149,39 @@
                         <TextBox
                             x:Name="RefererBox"
                             Header="Referer"
-                            PlaceholderText="Optional" />
+                            PlaceholderText="Optional"
+                            Text="{x:Bind Referer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             x:Name="UserAgentBox"
                             Header="User agent"
-                            PlaceholderText="Optional" />
+                            PlaceholderText="Optional"
+                            Text="{x:Bind UserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             x:Name="CookieBox"
                             Header="Cookie"
-                            PlaceholderText="name=value; name2=value2" />
+                            PlaceholderText="name=value; name2=value2"
+                            Text="{x:Bind Cookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBox
                             x:Name="HeadersBox"
                             AcceptsReturn="True"
                             Header="Custom HTTP headers"
                             PlaceholderText="One Header: value per line"
+                            Text="{x:Bind Headers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                             TextWrapping="NoWrap" />
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBox x:Name="UsernameBox" Header="Username" />
+                            <TextBox
+                                x:Name="UsernameBox"
+                                Header="Username"
+                                Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <PasswordBox
                                 x:Name="PasswordBox"
                                 Grid.Column="1"
                                 Header="Password"
+                                Password="{x:Bind Password, Mode=TwoWay}"
                                 PasswordRevealMode="Peek" />
                         </Grid>
                     </StackPanel>
@@ -180,6 +194,7 @@
                         AcceptsReturn="True"
                         Header="Mirror URLs"
                         PlaceholderText="One URL per line"
+                        Text="{x:Bind Mirrors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="NoWrap" />
                 </TabViewItem>
                 <TabViewItem Header="MD5/SHA" IsClosable="False">
@@ -187,7 +202,8 @@
                         <TextBox
                             x:Name="ChecksumBox"
                             Header="Checksum"
-                            PlaceholderText="MD5, SHA-1, SHA-256, SHA-512, or type=hex" />
+                            PlaceholderText="MD5, SHA-1, SHA-256, SHA-512, or type=hex"
+                            Text="{x:Bind Checksum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="The hash type is detected from its length when omitted."
@@ -201,6 +217,7 @@
                         Margin="4,12"
                         AcceptsReturn="True"
                         Header="Notes"
+                        Text="{x:Bind Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                         TextWrapping="Wrap" />
                 </TabViewItem>
             </TabView>
@@ -209,10 +226,10 @@
             <InfoBar
                 x:Name="UrlErrorInfoBar"
                 x:Uid="HttpDownloadDialogUrlErrorInfoBar"
-                Title="Invalid URL"
+                Title="{x:Bind ErrorTitle, Mode=OneWay}"
                 IsClosable="False"
-                IsOpen="False"
-                Message="Please enter a valid HTTP, HTTPS, or FTP URL."
+                IsOpen="{x:Bind IsErrorOpen, Mode=OneWay}"
+                Message="{x:Bind ErrorMessage, Mode=OneWay}"
                 Severity="Error" />
         </StackPanel>
     </ScrollView>

@@ -22,11 +22,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	RSSBrowserWindow::RSSBrowserWindow()
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		ExtendsContentIntoTitleBar(true);
 		SetTitleBar(WindowTitleBar());
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 		Closed([this](auto const&, auto const&)
 		{
 			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());

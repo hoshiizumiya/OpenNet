@@ -27,52 +27,72 @@ namespace mvvm
 		template <typename TValue>
 		inline TValue GetPropertyOverride(TValue const& valueField)
 		{
-			if (this->derived().HasThreadAccess())
-			{
-				return base::notify_property_changed::GetPropertyCore(valueField);
-			}
-
-			auto dispatcher = this->derived().Dispatcher();
-			if (!dispatcher)
-				return valueField;
-
-			winrt::Windows::Foundation::IAsyncOperation<TValue> operation;
-			dispatcher.TryEnqueue([&]()
-				{
-					operation = []() -> winrt::Windows::Foundation::IAsyncOperation<TValue>
-						{
-							co_return base::notify_property_changed::GetPropertyCore(valueField);
-						}();
-				});
-			return operation.get();
+			std::scoped_lock const guard{ m_propertyMutex };
+			return base::notify_property_changed::GetPropertyCore(valueField);
 		}
 
 		template <typename TValue, typename TOldValue, bool compare, typename propertyNameType>
 		inline bool SetPropertyOverride(TValue& valueField, TValue const& newValue, TOldValue& oldValue, propertyNameType const& propertyNameOrNames)
-		{            
-			if (this->derived().HasThreadAccess())
+		{
+			constexpr bool hasOldValue = !std::is_null_pointer_v<TOldValue>;
+			bool valueChanged{};
 			{
-				return this->SetPropertyCore<TValue, TOldValue, compare, propertyNameType>(std::forward<TValue&>(valueField), newValue, oldValue, propertyNameOrNames);
-			}
-
-			auto dispatcher = this->derived().GetDispatcherOverride();
-			if (!dispatcher)
-				return false;
-
-			winrt::Windows::Foundation::IAsyncOperation<bool> operation;
-			dispatcher.TryEnqueue([&]()
+				std::scoped_lock const guard{ m_propertyMutex };
+				if constexpr (hasOldValue) oldValue = valueField;
+				if constexpr (compare)
 				{
-					operation = [&]() -> winrt::Windows::Foundation::IAsyncOperation<bool>
-						{
-							co_return this->SetPropertyCore<TValue, TOldValue, compare, propertyNameType>(
-								std::forward<TValue&>(valueField), newValue, oldValue, propertyNameOrNames);
-						}();
-				});
+					valueChanged = valueField != newValue;
+					if (valueChanged) valueField = newValue;
+				}
+				else
+				{
+					valueField = newValue;
+					valueChanged = true;
+				}
+			}
+			if (!valueChanged) return false;
 
-			return operation.get();
+			using PropertyNames = std::remove_cvref_t<propertyNameType>;
+			if constexpr (!std::is_same_v<PropertyNames, std::nullptr_t>)
+			{
+				std::vector<std::wstring> propertyNames;
+				if constexpr (std::is_convertible_v<propertyNameType, std::wstring_view>)
+				{
+					propertyNames.emplace_back(std::wstring_view{ propertyNameOrNames });
+				}
+				else
+				{
+					for (auto const propertyName : propertyNameOrNames)
+					{
+						propertyNames.emplace_back(propertyName);
+					}
+				}
+				auto notify = [weak = this->derived().get_weak(), propertyNames = std::move(propertyNames)]
+				{
+					if (auto self = weak.get())
+					{
+						for (auto const& propertyName : propertyNames)
+						{
+							self->RaisePropertyChangedBroadcast(propertyName);
+						}
+					}
+				};
+				if (this->derived().HasThreadAccess())
+				{
+					notify();
+				}
+				else if (auto dispatcher = this->derived().GetDispatcherOverride())
+				{
+					dispatcher.TryEnqueue(std::move(notify));
+				}
+			}
+			return true;
 		}
 
-		winrt::Microsoft::UI::Dispatching::DispatcherQueue GetDispatcherOverride() { return { nullptr }; }
+		winrt::Microsoft::UI::Dispatching::DispatcherQueue GetDispatcherOverride()
+		{
+			return { nullptr };
+		}
 
 		// UI thread HTA check
 		bool HasThreadAccess() const
@@ -99,6 +119,8 @@ namespace mvvm
 		}
 
 	protected:
+		mutable std::mutex m_propertyMutex;
+
 		// This is used to ensure that the derived class is actually derived from ViewModelBase
 		ViewModelBase()
 		{

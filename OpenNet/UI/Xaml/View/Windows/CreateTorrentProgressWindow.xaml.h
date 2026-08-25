@@ -3,10 +3,11 @@
 #include "UI/Xaml/View/Windows/CreateTorrentProgressWindow.g.h"
 
 import OpenNet.Core.Torrent.TorrentCreator;
+import OpenNet.Helpers.WindowExBase;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct CreateTorrentProgressWindow : CreateTorrentProgressWindowT<CreateTorrentProgressWindow>
+	struct CreateTorrentProgressWindow : CreateTorrentProgressWindowT<CreateTorrentProgressWindow>, WindowExBase<CreateTorrentProgressWindow>
 	{
 		CreateTorrentProgressWindow();
 		CreateTorrentProgressWindow(::OpenNet::Core::Torrent::TorrentCreationOptions options, std::filesystem::path targetPath, bool startSeeding);

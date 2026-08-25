@@ -3,7 +3,7 @@
 namespace OpenNet
 {
 	[default_interface]
-	runtimeclass MainWindow : Microsoft.UI.Xaml.Window
+	runtimeclass MainWindow : WinUI3Package.WindowEx
 	{
 		MainWindow();
 		Microsoft.UI.Xaml.Visibility IsDebug { get; };

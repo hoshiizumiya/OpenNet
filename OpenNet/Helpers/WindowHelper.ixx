@@ -20,6 +20,7 @@ import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Windowing;
 import winrtplus.Microsoft.UI.Interop;     // GetWindowIdFromWindow, don't use `microsoft.ui.interop.h` directly
+import winrt.WinUI3Package;
 
 export namespace OpenNet::Helpers::WinUIWindowHelper
 {
@@ -81,6 +82,7 @@ export namespace OpenNet::Helpers::WinUIWindowHelper
 		static void SetWindowMinSize(winrt::Microsoft::UI::Xaml::Window const& window, double const& width, double const& height);
 		static winrt::Microsoft::UI::Xaml::Window CreateHostWindow();
 		static void TrackWindow(winrt::Microsoft::UI::Xaml::Window const& window);
+		static void TrackWindow(winrt::WinUI3Package::WindowEx const& window);
 		static void RefreshWindowAppearances();
 		static std::vector<WindowBackgroundPresenters> SecondaryBackgroundPresenters();
 		static winrt::event_token BackgroundPresentersChanged(
@@ -101,6 +103,7 @@ export namespace OpenNet::Helpers::WinUIWindowHelper
 	struct PlacementRestoration
 	{
 		static void Enable(winrt::Microsoft::UI::Xaml::Window const& window);
+		static void Enable(winrt::Microsoft::UI::Xaml::Window const& window, winrt::hstring const& className);
 		static void Save(winrt::Microsoft::UI::Xaml::Window const& window);
 	private:
 		static winrt::guid GenerateTypeGuid(winrt::hstring const& typeName);

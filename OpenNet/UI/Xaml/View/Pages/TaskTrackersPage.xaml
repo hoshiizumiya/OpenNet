@@ -10,6 +10,7 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:segment="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
@@ -18,6 +19,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AnimatedNumber_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/HttpSegment/HttpSegmentProgressBar_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -160,6 +162,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="URL">
                                 <TextBlock
+                                    x:Name="TrackerUrlHeaderText"
                                     x:Uid="ViewTaskTrackersPageText11"
                                     Text="Tracker URL"
                                     TextTrimming="CharacterEllipsis" />
@@ -172,7 +175,10 @@
                                 IsEnabled="False"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Log">
-                                <TextBlock x:Uid="ViewTaskTrackersPageText12" Text="Log" />
+                                <TextBlock
+                                    x:Name="TrackerLogHeaderText"
+                                    x:Uid="ViewTaskTrackersPageText12"
+                                    Text="Log" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColTrackerRetries" CanResize="True">
@@ -183,6 +189,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Retries">
                                 <TextBlock
+                                    x:Name="TrackerRetriesHeaderText"
                                     x:Uid="ViewTaskTrackersPageText13"
                                     Text="Retries"
                                     TextTrimming="CharacterEllipsis" />
@@ -196,6 +203,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="TimeRemaining">
                                 <TextBlock
+                                    x:Name="TrackerTimeHeaderText"
                                     x:Uid="ViewTaskTrackersPageText14"
                                     Text="Time remaining"
                                     TextTrimming="CharacterEllipsis" />
@@ -209,6 +217,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Seeders">
                                 <TextBlock
+                                    x:Name="TrackerSeedersHeaderText"
                                     x:Uid="ViewTaskTrackersPageText15"
                                     Text="Seeders"
                                     TextTrimming="CharacterEllipsis" />
@@ -222,6 +231,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Leechers">
                                 <TextBlock
+                                    x:Name="TrackerLeechersHeaderText"
                                     x:Uid="ViewTaskTrackersPageText16"
                                     Text="Leechers"
                                     TextTrimming="CharacterEllipsis" />
@@ -235,6 +245,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
                                 <TextBlock
+                                    x:Name="TrackerDownloadedHeaderText"
                                     x:Uid="CommonTextDownloaded"
                                     Text="Downloaded"
                                     TextTrimming="CharacterEllipsis" />
@@ -248,6 +259,7 @@
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
                                 <TextBlock
+                                    x:Name="TrackerStatusHeaderText"
                                     x:Uid="ViewTaskTrackersPageText18"
                                     Text="Status"
                                     TextTrimming="CharacterEllipsis" />
@@ -280,13 +292,27 @@
                             Padding="8,2"
                             Click="TrackerLogButton_Click"
                             Style="{StaticResource SubtleButtonStyle}"
-                            Tag="{x:Bind}">
+                            Tag="{x:Bind}"
+                            Visibility="{x:Bind TrackerProgressVisibility, Mode=OneWay}">
                             <FontIcon FontSize="14" Glyph="&#xE946;" />
                         </Button>
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Retries, Mode=OneWay}" />
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind TimeRemaining, Mode=OneWay}" />
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Seeders, Mode=OneWay}" />
-                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Leechers, Mode=OneWay}" />
+                        <Grid>
+                            <effects:AnimatedNumber
+                                VerticalAlignment="Center"
+                                Visibility="{x:Bind TrackerProgressVisibility, Mode=OneWay}"
+                                Value="{x:Bind Leechers, Mode=OneWay}" />
+                            <Grid MinWidth="140" Visibility="{x:Bind HttpProgressVisibility, Mode=OneWay}">
+                                <segment:RangePieceBar Height="10" Pieces="{x:Bind ProgressPieces, Mode=OneWay}" />
+                                <TextBlock
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    FontSize="10"
+                                    Text="{x:Bind ProgressText, Mode=OneWay}" />
+                            </Grid>
+                        </Grid>
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Downloaded, Mode=OneWay}" />
                         <TextBlock
                             MaxLines="1"

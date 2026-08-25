@@ -2,12 +2,13 @@
 
 #include "UI/Xaml/View/Windows/TrackerLogWindow.g.h"
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Windows.Foundation.Collections;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct TrackerLogWindow : TrackerLogWindowT<TrackerLogWindow>
+	struct TrackerLogWindow : TrackerLogWindowT<TrackerLogWindow>, WindowExBase<TrackerLogWindow>
 	{
 		TrackerLogWindow();
 		TrackerLogWindow(

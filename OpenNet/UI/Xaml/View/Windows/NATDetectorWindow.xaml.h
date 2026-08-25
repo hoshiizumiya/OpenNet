@@ -4,10 +4,11 @@
 #include "UI/Xaml/View/Windows/NATDetectorWindow.g.h"
 
 import winrt.Windows.Foundation;
+import OpenNet.Helpers.WindowExBase;
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct NATDetectorWindow : NATDetectorWindowT<NATDetectorWindow>
+	struct NATDetectorWindow : NATDetectorWindowT<NATDetectorWindow>, WindowExBase<NATDetectorWindow>
 	{
 		NATDetectorWindow();
 

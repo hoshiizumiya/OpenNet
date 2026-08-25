@@ -9,6 +9,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="InfoOverlayWindow"
     Title="InfoOverlayWindow"
+    Width="300"
+    Height="136"
+    MinWidth="300"
+    MinHeight="116"
+    MaxWidth="300"
+    MaxHeight="180"
     IsAlwaysOnTop="True"
     mc:Ignorable="d">
 
@@ -18,7 +24,6 @@
 
     <Grid
         x:Name="OverlayRoot"
-        Width="300"
         MinHeight="116"
         Padding="14,10"
         Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"

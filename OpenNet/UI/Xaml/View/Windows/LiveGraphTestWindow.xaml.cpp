@@ -48,6 +48,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	LiveGraphTestWindow::LiveGraphTestWindow()
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		ExtendsContentIntoTitleBar(true);
 		m_uiReady = true;
 		ApplyGraphSettings();

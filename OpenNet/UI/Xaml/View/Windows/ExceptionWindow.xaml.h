@@ -1,12 +1,13 @@
 ﻿#pragma once
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.WinUI3Package;
 
 #include "UI/Xaml/View/Windows/ExceptionWindow.g.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct ExceptionWindow : ExceptionWindowT<ExceptionWindow>
+	struct ExceptionWindow : ExceptionWindowT<ExceptionWindow>, WindowExBase<ExceptionWindow>
 	{
 		ExceptionWindow(hstring const& sentryId, hstring const& exception);
 

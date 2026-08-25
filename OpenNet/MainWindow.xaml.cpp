@@ -43,9 +43,10 @@ namespace winrt::OpenNet::implementation
 	void MainWindow::InitializeComponent()
 	{
 		MainWindowT::InitializeComponent();
+		InitializeWindowExBase();
 		winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(MainContentView())->AttachBackgroundPresenters(BackgroundImagePresenter(), BackgroundVideoPresenter());
 		SetTitleBar(AppTitleBar());
-		InitWindowStyle(*this);
+		InitWindowStyle();
 
 		AppWindow().SetIcon(L"Assets/AppIcons/win3264.ico");
 
@@ -83,7 +84,7 @@ namespace winrt::OpenNet::implementation
 			{
 			}
 
-			PlacementRestoration::Save(*this);
+			PlacementRestoration::Save(Window());
 
 			// Stop ViewModel background thread (speed refresh)
 			try
@@ -228,13 +229,12 @@ namespace winrt::OpenNet::implementation
 		}
 	}
 
-	void MainWindow::InitWindowStyle(Window const& window)
+	void MainWindow::InitWindowStyle()
 	{
-		window.ExtendsContentIntoTitleBar(true);
-		if (auto appWindow = window.AppWindow())
+		ExtendsContentIntoTitleBar(true);
+		if (auto appWindow = AppWindow())
 		{
 			appWindow.TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Tall);
-			PlacementRestoration::Enable(*this);
 #ifdef _DEBUG
 			{
 				AppTitleBar().Subtitle(L"Dev");
@@ -250,7 +250,6 @@ namespace winrt::OpenNet::implementation
 
 	void MainWindow::Grid_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
 	{
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::SetWindowMinSize(*this, 640, 500);
 
 		if (auto rootGrid = sender.try_as<FrameworkElement>())
 		{
@@ -293,8 +292,7 @@ namespace winrt::OpenNet::implementation
 		return Microsoft::UI::Xaml::Visibility::Collapsed;
 	}
 
-	void MainWindow::RootGridXamlRoot_Changed(XamlRoot /*sender*/, XamlRootChangedEventArgs /*args*/)
+	void MainWindow::RootGridXamlRoot_Changed(winrt::Microsoft::UI::Xaml::XamlRoot /*sender*/, XamlRootChangedEventArgs /*args*/)
 	{
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::SetWindowMinSize(*this, 640, 500);
 	}
 }

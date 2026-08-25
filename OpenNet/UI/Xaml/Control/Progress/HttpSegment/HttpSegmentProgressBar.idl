@@ -11,4 +11,20 @@ namespace OpenNet.UI.Xaml.Control.Progress.HttpSegment
 		static Microsoft.UI.Xaml.DependencyProperty RangeEndProperty { get; };
 		static Microsoft.UI.Xaml.DependencyProperty ValueProperty { get; };
 	}
+
+	[default_interface]
+	runtimeclass RangePieceBar : Microsoft.UI.Xaml.Controls.Control
+	{
+		RangePieceBar();
+		String Pieces;
+		Double RangeStart;
+		Double RangeEnd;
+		Double Value;
+		Boolean IsRangeMode;
+		static Microsoft.UI.Xaml.DependencyProperty PiecesProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty RangeStartProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty RangeEndProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty ValueProperty { get; };
+		static Microsoft.UI.Xaml.DependencyProperty IsRangeModeProperty { get; };
+	}
 }

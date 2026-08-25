@@ -81,8 +81,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 	void ItemsCardPopupView::OnRuntimeStatusClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::RuntimeStatusWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(
-			window.Window());
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 
@@ -96,7 +95,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 	void ItemsCardPopupView::OnGuideClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto window = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 

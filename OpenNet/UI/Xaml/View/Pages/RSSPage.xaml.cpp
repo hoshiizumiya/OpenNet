@@ -236,7 +236,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (!m_browserWindow)
 			{
 				m_browserWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::RSSBrowserWindow>();
-				::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(m_browserWindow.Window());
+				::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(m_browserWindow);
 				m_browserWindow.Closed([weak = get_weak()](auto const&, auto const&)
 				{
 					if (auto self = weak.get()) self->m_browserWindow = nullptr;

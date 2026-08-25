@@ -136,7 +136,8 @@
                 AutomationProperties.AutomationId="TaskDeleteButton"
                 Click="DeleteTaskButton_ClickAsync"
                 Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                Icon="{essential:FontIcon Glyph=&#xE74D;}">
+                Icon="{essential:FontIcon Glyph=&#xE74D;}"
+                IsEnabled="{x:Bind ViewModel.HasSelectedTask, Mode=OneWay}">
                 <AppBarButton.KeyboardAccelerators>
                     <KeyboardAccelerator
                         Key="Delete"
@@ -185,7 +186,7 @@
             essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
             PlaceholderText="Search"
             QueryIcon="Find"
-            TextChanged="SearchBox_TextChanged">
+            Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
             <AutoSuggestBox.KeyboardAccelerators>
                 <KeyboardAccelerator
                     Key="F"

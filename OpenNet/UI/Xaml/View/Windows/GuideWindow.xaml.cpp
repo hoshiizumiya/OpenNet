@@ -21,7 +21,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	GuideWindow::GuideWindow()
 	{
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		Closed([this](auto const&, auto const&)
 		{
 			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
@@ -31,8 +30,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void GuideWindow::InitializeComponent()
 	{
 		GuideWindowT::InitializeComponent();
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
+		InitializeWindowExBase();
 		bool const isFirstRun = !winrt::OpenNet::implementation::App::window;
 		if (!isFirstRun)
 		{

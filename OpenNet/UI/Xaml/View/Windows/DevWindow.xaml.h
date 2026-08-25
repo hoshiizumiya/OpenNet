@@ -1,12 +1,13 @@
 ﻿#pragma once
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.WinUI3Package;
 
 #include "UI/Xaml/View/Windows/DevWindow.g.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct DevWindow : DevWindowT<DevWindow>
+	struct DevWindow : DevWindowT<DevWindow>, WindowExBase<DevWindow>
 	{
 		DevWindow();
 

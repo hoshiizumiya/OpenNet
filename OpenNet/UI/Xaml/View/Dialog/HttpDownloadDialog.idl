@@ -1,29 +1,39 @@
 ﻿namespace OpenNet.UI.Xaml.View.Dialog
 {
 	[default_interface]
-	runtimeclass HttpDownloadDialog : Microsoft.UI.Xaml.Controls.ContentDialog
+	runtimeclass HttpDownloadDialog : Microsoft.UI.Xaml.Controls.ContentDialog, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
 	{
 		HttpDownloadDialog();
 
 		// The validated URL entered by the user
-		String Url{ get; };
+		String Url;
 		// Optional save directory
-		String SaveDirectory{ get; };
+		String SaveDirectory;
 		// Optional custom filename
-		String FileName{ get; };
+		String FileName;
 		// Whether the URL is valid
 		Boolean IsUrlValid{ get; };
-		Int32 ConnectionsPerServer{ get; };
-		Int64 MaximumDownloadRate{ get; };
+		Double ConnectionsPerServer;
+		Double MaximumDownloadRate;
 		Boolean StartPaused{ get; };
-		String Referer{ get; };
-		String UserAgent{ get; };
-		String Cookie{ get; };
-		String Headers{ get; };
-		String Mirrors{ get; };
-		String Checksum{ get; };
-		String Description{ get; };
-		String Username{ get; };
-		String Password{ get; };
+		String Referer;
+		String UserAgent;
+		String Cookie;
+		String Headers;
+		String Mirrors;
+		String Checksum;
+		String Description;
+		String Username;
+		String Password;
+		String ClipboardPreviewText { get; };
+		Microsoft.UI.Xaml.Visibility ClipboardPreviewVisibility { get; };
+		String FileSizeText { get; };
+		String DiskSpaceText { get; };
+		String ResumeSupportText { get; };
+		Boolean IsMetadataLoading { get; };
+		Boolean CanFetchMetadata { get; };
+		String ErrorTitle { get; };
+		String ErrorMessage { get; };
+		Boolean IsErrorOpen { get; };
 	}
 }

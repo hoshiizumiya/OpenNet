@@ -19,8 +19,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	DevWindow::DevWindow()
 	{
+		InitializeWindowExBase();
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		Closed([this](auto const&, auto const&)
 		{
 			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
@@ -30,7 +30,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	void DevWindow::OpenLiveGraphTestWindow_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		auto window = winrt::make<LiveGraphTestWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window.Window());
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 		window.Activate();
 	}
 

@@ -259,19 +259,7 @@ namespace OpenNet::Core
 		try
 		{
 			HttpClient client;
-			auto request = client.GetStringAsync(Uri(m_traversalDirectoryUri));
-			for (int index = 0;
-				 index < 50 && request.Status() == AsyncStatus::Started;
-				 ++index)
-			{
-				co_await winrt::resume_after(std::chrono::milliseconds(100));
-			}
-			if (request.Status() != AsyncStatus::Completed)
-			{
-				request.Cancel();
-				co_return;
-			}
-			auto json = request.GetResults();
+			auto const json = co_await client.GetStringAsync(Uri(m_traversalDirectoryUri));
 			auto root = JsonObject::Parse(json);
 			auto items = root.GetNamedArray(L"servers");
 			servers->reserve(items.Size());
@@ -326,19 +314,7 @@ namespace OpenNet::Core
 				L"{\"port\":" + winrt::to_hstring(port) + L"}",
 				UnicodeEncoding::Utf8,
 				L"application/json");
-			auto request = client.PostAsync(uri, content);
-			for (int index = 0;
-				 index < 50 && request.Status() == AsyncStatus::Started;
-				 ++index)
-			{
-				co_await winrt::resume_after(std::chrono::milliseconds(100));
-			}
-			if (request.Status() != AsyncStatus::Completed)
-			{
-				request.Cancel();
-				co_return;
-			}
-			auto response = request.GetResults();
+			auto const response = co_await client.PostAsync(uri, content);
 			if (!response.IsSuccessStatusCode())
 				co_return;
 

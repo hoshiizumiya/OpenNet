@@ -22,6 +22,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	TrackerLogWindow::TrackerLogWindow()
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		InitializeWindow();
 	}
 
@@ -32,6 +33,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		: m_taskId(taskId), m_trackerUrl(trackerUrl)
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		TaskNameText().Text(taskName);
 		TrackerUrlText().Text(trackerUrl);
 		WindowTitleBar().Subtitle(trackerUrl);
@@ -43,10 +45,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_entries = single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
 		LogListView().ItemsSource(m_entries);
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(Window());
 		SetTitleBar(WindowTitleBar());
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(Window());
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(Window());
 
 		m_refreshTimer = DispatcherTimer();
 		m_refreshTimer.Interval(std::chrono::milliseconds(500));

@@ -23,6 +23,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	NATDetectorWindow::NATDetectorWindow()
 	{
 		InitializeComponent();
+		InitializeWindowExBase();
 		InitializeWindow();
 	}
 
@@ -30,7 +31,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		SetTitleBar(NATDetectorWindowTitleBar());
 		ExtendsContentIntoTitleBar(true);
-		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(*this);
 		DirectoryUriBox().Text(m_detector.TraversalDirectoryUri());
 
 		auto& manager = ::OpenNet::Core::P2PManager::Instance();
@@ -51,8 +51,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			}
 		}
 
-		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(*this);
-		::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(*this);
 		if (auto presenter = winrt::Microsoft::UI::Windowing::OverlappedPresenter::CreateForDialog())
 		{
 			// presenter.IsModal(true);
@@ -62,7 +60,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		UpdateLibtorrentState();
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(*this);
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
 		});
 	}
 

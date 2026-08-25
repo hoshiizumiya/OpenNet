@@ -23,10 +23,10 @@ namespace OpenNet::Core::WebUI
 		int maximumAuthenticationFailures{ 5 };
 		int banDurationSeconds{ 3600 };
 		std::size_t sessionCountLimit{ 10 };
-		bool bypassAuthenticationForLocalhost{};
+		bool bypassAuthenticationForLocalhost{ true };
 		bool csrfProtection{ true };
 		bool hostHeaderValidation{ true };
-		bool secureCookie{};
+		bool secureCookie{ true };
 		std::string domainList{ "*" };
 		std::function<void()> shutdownCallback;
 	};

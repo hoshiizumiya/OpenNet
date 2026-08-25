@@ -1,12 +1,13 @@
 ﻿#pragma once
 
+import OpenNet.Helpers.WindowExBase;
 import winrt.OpenNet.UI.Xaml.View;
 
 #include "UI/Xaml/View/Windows/GuideWindow.g.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-	struct GuideWindow : GuideWindowT<GuideWindow>
+	struct GuideWindow : GuideWindowT<GuideWindow>, WindowExBase<GuideWindow>
 	{
 		GuideWindow();
 		void InitializeComponent();

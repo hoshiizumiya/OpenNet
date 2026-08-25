@@ -1,7 +1,7 @@
 ﻿namespace OpenNet.UI.Shell
 {
 	[default_interface]
-	runtimeclass NotifyIconXamlHostWindow : Microsoft.UI.Xaml.Window
+	runtimeclass NotifyIconXamlHostWindow : WinUI3Package.WindowEx
 	{
 		NotifyIconXamlHostWindow();
 		static Guid IconGuid{ get; };

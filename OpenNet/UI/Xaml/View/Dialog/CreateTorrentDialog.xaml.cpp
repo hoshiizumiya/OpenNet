@@ -103,7 +103,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		try
 		{
 			auto window = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::CreateTorrentProgressWindow>(std::move(options), target, startSeeding);
-			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window->Window());
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(*window);
 			window->Activate();
 			args.Cancel(false);
 		}

@@ -44,11 +44,12 @@ namespace
 
 	std::unordered_map<HWND, SecondaryWindowVisualState>
 		g_secondaryWindowVisualStates;
+	std::unordered_map<HWND, winrt::WinUI3Package::WindowEx> g_windowExHosts;
 
 	bool IsSecondaryWindow(Window const& window)
 	{
 		auto const& mainWindow = winrt::OpenNet::implementation::App::window;
-		return mainWindow && window != mainWindow;
+		return mainWindow && window != mainWindow.Window();
 	}
 
 	bool ApplyWindowAppearancePolicy(Window const& window, bool const refreshBackdrop)
@@ -58,6 +59,14 @@ namespace
 			return false;
 		}
 
+		HWND hwnd{};
+		try
+		{
+			hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
+		}
+		catch (...) { return false; }
+		auto const wrapperEntry = g_windowExHosts.find(hwnd);
+		auto const wrapper = wrapperEntry != g_windowExHosts.end() ? wrapperEntry->second : winrt::WinUI3Package::WindowEx{ nullptr };
 		auto const isSecondary = IsSecondaryWindow(window);
 		auto const applyToSecondary =
 			::OpenNet::Core::AppSettingsDatabase::Instance().GetBool(
@@ -69,7 +78,14 @@ namespace
 		{
 			if (!isSecondary || applyToSecondary)
 			{
-				::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
+				if (wrapper)
+				{
+					::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(wrapper);
+				}
+				else
+				{
+					::OpenNet::Helpers::ThemeHelper::ApplyWindowAppearanceFromSettings(window);
+				}
 			}
 			else
 			{
@@ -82,32 +98,22 @@ namespace
 			return false;
 		}
 
-		auto content = window.Content();
+		auto content = wrapper ? wrapper.Content() : window.Content();
 		auto root = content.try_as<winrt::Microsoft::UI::Xaml::Controls::Panel>();
 		if (!root && applyToSecondary && content)
 		{
 			// Factory windows can host a Page directly. Wrap non-Panel content in a
 			// Grid so it receives the same two presentation layers as MainWindow.
 			root = winrt::Microsoft::UI::Xaml::Controls::Grid{};
-			window.Content(nullptr);
-			root.Children().Append(content);
-			window.Content(root);
+			if (wrapper) wrapper.Content(nullptr); else window.Content(nullptr);
+			if (auto element = content.try_as<winrt::Microsoft::UI::Xaml::UIElement>()) root.Children().Append(element);
+			if (wrapper) wrapper.Content(root); else window.Content(root);
 		}
 		if (!root)
 		{
 			return false;
 		}
 
-		HWND hwnd{};
-		try
-		{
-			hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::
-				GetWindowHandleFromWindow(window);
-		}
-		catch (...)
-		{
-			return false;
-		}
 		if (!hwnd)
 		{
 			return false;
@@ -269,6 +275,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 			{
 				if (trackedHwnd)
 				{
+					g_windowExHosts.erase(trackedHwnd);
 					auto const visual = g_secondaryWindowVisualStates.find(trackedHwnd);
 					if (visual != g_secondaryWindowVisualStates.end())
 					{
@@ -294,6 +301,17 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 				WindowHelper::m_backgroundPresentersChanged(nullptr, nullptr);
 			}
 		});
+	}
+
+	void WindowHelper::TrackWindow(winrt::WinUI3Package::WindowEx const& window)
+	{
+		if (!window) return;
+		auto const nativeWindow = window.Window();
+		if (!nativeWindow) return;
+		auto const hwnd = GetWindowHandleFromWindow(nativeWindow);
+		if (hwnd) g_windowExHosts[hwnd] = window;
+		TrackWindow(nativeWindow);
+		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 	}
 
 	void WindowHelper::RefreshWindowAppearances()
@@ -392,7 +410,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		{
 			try
 			{
-				HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
+				HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window.Window());
 				if (!hwnd || !IsWindow(hwnd))
 				{
 					return;
@@ -499,6 +517,11 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 
 	void PlacementRestoration::Enable(winrt::Microsoft::UI::Xaml::Window const& window)
 	{
+		Enable(window, winrt::get_class_name(window));
+	}
+
+	void PlacementRestoration::Enable(winrt::Microsoft::UI::Xaml::Window const& window, winrt::hstring const& className)
+	{
 		using put_PersistedStateId_t = HRESULT(__stdcall*)(void*, void*);
 
 		using put_PlacementRestorationBehavior_t = HRESULT(__stdcall*)(void*, uint32_t);
@@ -534,8 +557,7 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		// 设置行为
 		putBehavior(experimentalRaw, 0xFFFFFFFF);
 
-		auto typeName = winrt::get_class_name(window);
-		auto persistGuid = GenerateTypeGuid(typeName);
+		auto persistGuid = GenerateTypeGuid(className);
 
 		winrt::Windows::Foundation::IInspectable boxed = winrt::box_value(persistGuid);
 

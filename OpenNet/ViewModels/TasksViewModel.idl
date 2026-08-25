@@ -14,6 +14,10 @@ namespace OpenNet.ViewModels
 
 		// Currently selected task for displaying details (including SpeedGraph)
 		OpenNet.ViewModels.TaskViewModel SelectedTask;
+		Boolean HasSelectedTask { get; };
+		Boolean CanStartSelectedTask { get; };
+		Boolean CanPauseSelectedTask { get; };
+		String SearchText;
 
 		// Commands for toolbar (placeholders for now)
 		Microsoft.UI.Xaml.Input.ICommand NewCommand { get; };

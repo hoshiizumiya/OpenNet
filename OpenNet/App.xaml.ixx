@@ -6,6 +6,7 @@ export module OpenNet.App;
 
 import std;
 import winrt.OpenNet.UI.Shell;
+import winrt.OpenNet;
 import winrt.OpenNet.UI.Xaml.View.Pages;
 import winrt.OpenNet.UI.Xaml.View.Windows;
 import winrt.WinUI3Package;
@@ -36,7 +37,7 @@ export namespace winrt::OpenNet::implementation
 		static AppActivationSnapshot SnapshotActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);
 		static void HandleActivation(AppActivationSnapshot const&);
 
-		static inline winrt::Microsoft::UI::Xaml::Window window{ nullptr };
+		static inline winrt::OpenNet::MainWindow window{ nullptr };
 		static inline winrt::OpenNet::UI::Xaml::View::Windows::GuideWindow guideWindow{ nullptr };
 		static inline winrt::OpenNet::UI::Shell::NotifyIconXamlHostWindow trayIcon{ nullptr };
 		// Set to true before calling Application::Exit() so the Closing handler

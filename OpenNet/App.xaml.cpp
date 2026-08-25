@@ -102,10 +102,10 @@ namespace winrt::OpenNet::implementation
 		auto const guideState = LocalSetting::Get(
 			SettingKeys::GuideState,
 			::OpenNet::ViewModels::Guide::GuideState::Language);
-		if (guideState <::OpenNet::ViewModels::Guide::GuideState::Completed)
+		if (guideState < ::OpenNet::ViewModels::Guide::GuideState::Completed)
 		{
 			guideWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::GuideWindow>();
-			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(guideWindow.Window());
+			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(guideWindow);
 			guideWindow.Activate();
 			return;
 		}
@@ -223,7 +223,7 @@ namespace winrt::OpenNet::implementation
 
 #if _DEBUG
 		auto devWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(devWindow.Window());
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(devWindow);
 		devWindow.Activate();
 #endif
 
@@ -279,7 +279,7 @@ namespace winrt::OpenNet::implementation
 		}
 
 		// 获取窗口句柄
-		HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
+		HWND hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window.Window());
 		if (!hwnd)
 		{
 			return false;
@@ -358,7 +358,7 @@ namespace winrt::OpenNet::implementation
 	{
 		CreateSetMainWindow();
 		HWND hwnd = window
-			? ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window)
+			? ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window.Window())
 			: nullptr;
 
 		// 根据激活类型处理不同的激活参数
@@ -449,7 +449,7 @@ namespace winrt::OpenNet::implementation
 				co_return;
 			}
 
-			auto content = window.Content();
+			auto content = window.Content().try_as<winrt::Microsoft::UI::Xaml::FrameworkElement>();
 			if (!content)
 			{
 				ReallyClose();

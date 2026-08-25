@@ -19,8 +19,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		using ::OpenNet::ViewModels::ObservableMixin<PeerDisplayItem>::SetProperty;
 		PeerDisplayItem()
 		{
-			m_children = winrt::single_threaded_observable_vector<
-				winrt::OpenNet::ViewModels::PeerDisplayItem>();
+			m_children = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::PeerDisplayItem>();
 		}
 
 		winrt::hstring IP() const
@@ -131,6 +130,23 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_segmentEnd, value, L"SegmentEnd");
 		}
 
+		winrt::Microsoft::UI::Xaml::Visibility LinearProgressVisibility() const
+		{
+			return m_linearProgressVisibility;
+		}
+		void LinearProgressVisibility(winrt::Microsoft::UI::Xaml::Visibility const value)
+		{
+			SetProperty(m_linearProgressVisibility, value, L"LinearProgressVisibility");
+		}
+
+		winrt::Microsoft::UI::Xaml::Visibility RangeProgressVisibility() const
+		{
+			return m_rangeProgressVisibility;
+		}
+		void RangeProgressVisibility(winrt::Microsoft::UI::Xaml::Visibility const value)
+		{
+			SetProperty(m_rangeProgressVisibility, value, L"RangeProgressVisibility");
+		}
 		std::int64_t DownloadRate() const
 		{
 			return m_downloadRate;
@@ -285,6 +301,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		double m_progressValue{};
 		double m_segmentStart{};
 		double m_segmentEnd{ 100.0 };
+		winrt::Microsoft::UI::Xaml::Visibility m_linearProgressVisibility{
+			winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
+		winrt::Microsoft::UI::Xaml::Visibility m_rangeProgressVisibility{
+			winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
 		std::int64_t m_downloadRate{};
 		std::int64_t m_uploadRate{};
 		std::int64_t m_downloadedBytes{};
@@ -403,6 +423,41 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_message, v, L"Message");
 		}
 
+		winrt::hstring ProgressPieces() const
+		{
+			return m_progressPieces;
+		}
+		void ProgressPieces(winrt::hstring const& value)
+		{
+			SetProperty(m_progressPieces, value, L"ProgressPieces");
+		}
+
+		winrt::hstring ProgressText() const
+		{
+			return m_progressText;
+		}
+		void ProgressText(winrt::hstring const& value)
+		{
+			SetProperty(m_progressText, value, L"ProgressText");
+		}
+
+		winrt::Microsoft::UI::Xaml::Visibility TrackerProgressVisibility() const
+		{
+			return m_trackerProgressVisibility;
+		}
+		void TrackerProgressVisibility(winrt::Microsoft::UI::Xaml::Visibility const value)
+		{
+			SetProperty(m_trackerProgressVisibility, value, L"TrackerProgressVisibility");
+		}
+
+		winrt::Microsoft::UI::Xaml::Visibility HttpProgressVisibility() const
+		{
+			return m_httpProgressVisibility;
+		}
+		void HttpProgressVisibility(winrt::Microsoft::UI::Xaml::Visibility const value)
+		{
+			SetProperty(m_httpProgressVisibility, value, L"HttpProgressVisibility");
+		}
 	private:
 		winrt::hstring m_url;
 		winrt::hstring m_tier;
@@ -414,6 +469,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_downloaded;
 		winrt::hstring m_status;
 		winrt::hstring m_message;
+		winrt::hstring m_progressPieces;
+		winrt::hstring m_progressText;
+		winrt::Microsoft::UI::Xaml::Visibility m_trackerProgressVisibility{
+			winrt::Microsoft::UI::Xaml::Visibility::Visible };
+		winrt::Microsoft::UI::Xaml::Visibility m_httpProgressVisibility{
+			winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
 	};
 
 	// ---------------------------------------------------------------

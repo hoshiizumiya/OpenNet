@@ -9,6 +9,7 @@
 
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
+import OpenNet.Application.Tasks.TaskCommandService;
 import winrt.Microsoft.UI.Xaml.Input;
 import winrt.Windows.Foundation.Collections;
 import winrt.Microsoft.UI.Dispatching;
@@ -19,6 +20,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 	struct TasksViewModel : TasksViewModelT<TasksViewModel>, ::mvvm::ViewModel<TasksViewModel>
 	{
 		TasksViewModel();
+		explicit TasksViewModel(
+			std::shared_ptr<::OpenNet::Application::Tasks::ITaskCommandService> taskCommandService);
 
 		// All tasks source collection
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> Tasks() const
@@ -37,6 +40,17 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return m_selectedTask;
 		}
 		void SelectedTask(winrt::OpenNet::ViewModels::TaskViewModel const& value);
+		bool HasSelectedTask() const
+		{
+			return static_cast<bool>(m_selectedTask);
+		}
+		bool CanStartSelectedTask() const;
+		bool CanPauseSelectedTask() const;
+		winrt::hstring SearchText() const
+		{
+			return m_searchText;
+		}
+		void SearchText(winrt::hstring const& value);
 
 		winrt::Microsoft::UI::Xaml::Input::ICommand NewCommand() const
 		{
@@ -142,6 +156,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_tasks{ nullptr };
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TaskViewModel> m_filteredTasks{ nullptr };
 		winrt::OpenNet::ViewModels::TaskViewModel m_selectedTask{ nullptr };
+		winrt::event_token m_selectedTaskPropertyChangedToken{};
 
 		winrt::Microsoft::UI::Xaml::Input::ICommand m_newCommand{ nullptr };
 		winrt::Microsoft::UI::Xaml::Input::ICommand m_newFromUrlCommand{ nullptr };
@@ -155,6 +170,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		// 缺失的调度器字段（原 cpp 使用但未声明）
 		winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr };
+		std::shared_ptr<::OpenNet::Application::Tasks::ITaskCommandService> m_taskCommandService;
+		std::atomic_bool m_initialized{};
 
 		// Current filter tag
 		winrt::hstring m_currentFilter{ L"AllTasks" };
@@ -205,5 +222,16 @@ namespace winrt::OpenNet::ViewModels::factory_implementation
 {
 	struct TasksViewModel : TasksViewModelT<TasksViewModel, implementation::TasksViewModel>
 	{
+	};
+}
+
+namespace OpenNet::Presentation
+{
+	struct TasksViewModelFactory
+	{
+		static winrt::OpenNet::ViewModels::TasksViewModel Create(std::shared_ptr<::OpenNet::Application::Tasks::ITaskCommandService> service)
+		{
+			return winrt::make<winrt::OpenNet::ViewModels::implementation::TasksViewModel>(std::move(service));
+		}
 	};
 }
