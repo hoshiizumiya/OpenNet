@@ -135,7 +135,14 @@ export namespace OpenNet::Core::Aria2
 		bool VerifyIntegrityPending = false;
 	};
 
+	struct PieceMapInformation
+	{
+		std::size_t PieceLength = 0;
+		std::vector<int> States;
+	};
+
 	DownloadInformation ToDownloadInformation(nlohmann::json const& Value);
+	PieceMapInformation BuildPieceMapInformation(DownloadInformation const& value);
 	std::string ToFriendlyName(DownloadInformation const& Value);
 
 	struct PeerInformation

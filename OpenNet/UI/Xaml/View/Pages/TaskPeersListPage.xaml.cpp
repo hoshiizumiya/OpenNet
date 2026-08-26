@@ -8,8 +8,6 @@
 #include "ViewModels/DisplayItems.h"
 
 import OpenNet.Core.P2PManager;
-import OpenNet.Core.DownloadManager;
-import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
@@ -35,6 +33,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		Loaded([this](auto, auto)
 		{
+			m_isActive.store(true, std::memory_order_release);
 			RestoreColumn(ColPeerIP(), "Peers.IP");
 			RestoreColumn(ColPeerLocation(), "Peers.Location");
 			RestoreColumn(ColPeerProgress(), "Peers.Progress");
@@ -52,6 +51,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 		Unloaded([this](auto, auto)
 		{
+			m_isActive.store(false, std::memory_order_release);
+			m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
+			StopRefreshTimer();
+			Unsubscribe();
 			SaveColumnWidth("Peers.IP", ColPeerIP());
 			SaveColumnWidth("Peers.Location", ColPeerLocation());
 			SaveColumnWidth("Peers.Progress", ColPeerProgress());
@@ -87,13 +90,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskPeersListPage::~TaskPeersListPage()
 	{
-		Unsubscribe();
-		if (m_refreshTimer)
-		{
-			m_refreshTimer.Stop();
-			m_refreshTimer.Tick(m_timerTickToken);
-			m_refreshTimer = nullptr;
-		}
 	}
 
 	//TaskPeersListPage::InitializeComponent()
@@ -104,6 +100,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskPeersListPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
 	{
 		Unsubscribe();
+		m_isActive.store(true, std::memory_order_release);
 
 		m_viewModel = e.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		if (!m_viewModel)
@@ -122,8 +119,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-			m_timerTickToken = m_refreshTimer.Tick(
-				{ this, &TaskPeersListPage::OnRefreshTimerTick });
+			auto weak = get_weak();
+			m_timerTickToken = m_refreshTimer.Tick([weak](auto const& sender, auto const& args)
+			{
+				if (auto self = weak.get()) self->OnRefreshTimerTick(sender, args);
+			});
 		}
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
@@ -140,12 +140,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPeersListPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
+		m_isActive.store(false, std::memory_order_release);
 		m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
-		if (m_refreshTimer)
+		StopRefreshTimer();
+		Unsubscribe();
+	}
+
+	void TaskPeersListPage::StopRefreshTimer() noexcept
+	{
+		if (!m_refreshTimer) return;
+		try
 		{
 			m_refreshTimer.Stop();
+			if (m_timerTickToken.value) m_refreshTimer.Tick(m_timerTickToken);
 		}
-		Unsubscribe();
+		catch (...)
+		{
+		}
+		m_timerTickToken = {};
+		m_refreshTimer = nullptr;
 	}
 
 	void TaskPeersListPage::Unsubscribe()
@@ -178,6 +191,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Windows::Foundation::IInspectable const&)
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		RefreshPeerList();
 	}
 
@@ -451,7 +465,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_lastActivePeers = {};
 		m_disconnectingPeers = {};
 		m_banIpPeers = {};
-		m_httpConnections = {};
 		m_cachedBannedPeerAddresses = {};
 		if (auto tree = PeersTreeView())
 			tree.ItemsSource(nullptr);
@@ -590,71 +603,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return winrt::hstring{ buf };
 	}
 
-	static int HexValue(char const value)
-	{
-		if (value >= '0' && value <= '9') return value - '0';
-		if (value >= 'a' && value <= 'f') return value - 'a' + 10;
-		if (value >= 'A' && value <= 'F') return value - 'A' + 10;
-		return 0;
-	}
-
-	static bool IsCompletedPiece(std::string const& bitfield, std::size_t const index)
-	{
-		auto const nibbleIndex = index / 4;
-		if (nibbleIndex >= bitfield.size()) return false;
-		auto const bit = 3 - static_cast<int>(index % 4);
-		return (HexValue(bitfield[nibbleIndex]) & (1 << bit)) != 0;
-	}
-
-	struct HttpConnectionProgress
-	{
-		double startPercent{};
-		double endPercent{ 100.0 };
-		double completedPercent{};
-		std::uint64_t completedBytes{};
-	};
-
-	static HttpConnectionProgress GetHttpConnectionProgress(
-		::OpenNet::Core::Aria2::DownloadInformation const& information,
-		std::size_t const connectionIndex,
-		std::size_t const connectionCount)
-	{
-		HttpConnectionProgress result;
-		if (connectionCount == 0) return result;
-		auto const pieceLength = information.PieceLength > 0
-			? information.PieceLength
-			: std::size_t{ 1024 * 1024 };
-		auto const pieceCount = information.NumPieces > 0
-			? information.NumPieces
-			: information.TotalLength > 0
-			? (information.TotalLength + pieceLength - 1) / pieceLength
-			: std::size_t{ 1 };
-		auto const startPiece = pieceCount * connectionIndex / connectionCount;
-		auto const endPiece = pieceCount * (connectionIndex + 1) / connectionCount;
-		auto const segmentPieces = (std::max)(std::size_t{ 1 }, endPiece - startPiece);
-		std::size_t completedPieces{};
-		if (!information.Bitfield.empty())
-		{
-			for (auto index = startPiece; index < endPiece; ++index)
-				if (IsCompletedPiece(information.Bitfield, index)) ++completedPieces;
-		}
-		else if (information.TotalLength > 0)
-		{
-			auto const completedPieceEstimate = (std::min)(pieceCount,
-														   (information.CompletedLength + pieceLength - 1) / pieceLength);
-			completedPieces = completedPieceEstimate > startPiece
-				? (std::min)(endPiece, completedPieceEstimate) - startPiece
-				: 0;
-		}
-		result.startPercent = 100.0 * static_cast<double>(startPiece) / pieceCount;
-		result.endPercent = 100.0 * static_cast<double>(endPiece) / pieceCount;
-		result.completedPercent = 100.0 * static_cast<double>(completedPieces) / segmentPieces;
-		result.completedBytes = (std::min<std::uint64_t>)(
-			static_cast<std::uint64_t>(completedPieces * pieceLength),
-			information.TotalLength);
-		return result;
-	}
-
 	// Format peer status flags to qBittorrent-style string: D=downloading, U=uploading, etc.
 	static winrt::hstring FormatPeerStatus(uint32_t flags)
 	{
@@ -783,6 +731,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	winrt::fire_and_forget TaskPeersListPage::RefreshPeerList()
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) co_return;
 		auto lifetime = get_strong();
 		auto listView = PeersTreeView();
 		auto emptyText = EmptyStateText();
@@ -800,117 +749,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto selectedTask = m_viewModel.SelectedTask();
 		auto taskType = selectedTask.TaskType();
 
-		if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
-		{
-			auto const gid = winrt::to_string(selectedTask.Gid());
-			auto const taskKey = "http:" + gid;
-			if (taskKey != m_lastTaskId)
-			{
-				ResetPeerGroups();
-				m_lastTaskId = taskKey;
-				m_peerItems = winrt::single_threaded_observable_vector<winrt::Windows::Foundation::IInspectable>();
-				PeersTreeView().ItemsSource(m_peerItems);
-			}
-			if (m_refreshInFlight.exchange(true, std::memory_order_acq_rel)) co_return;
-			auto const generation = m_refreshGeneration.load(std::memory_order_relaxed);
-			auto dispatcher = DispatcherQueue();
-			auto weak = get_weak();
-			co_await winrt::resume_background();
-			auto information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(gid);
-			auto servers = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskServers(gid);
-			if (!dispatcher.TryEnqueue([weak, taskKey, information = std::move(information), servers = std::move(servers), generation]() mutable
-			{
-				if (auto self = weak.get())
-				{
-					self->m_refreshInFlight.store(false, std::memory_order_release);
-					if (self->m_refreshGeneration.load(std::memory_order_relaxed) != generation
-						|| self->m_lastTaskId != taskKey || !self->m_peerItems)
-						return;
-					std::vector<::OpenNet::Core::Aria2::ServerInformation> serverRows;
-					for (auto const& fileServers : servers)
-						for (auto const& server : fileServers.Servers) serverRows.push_back(server);
-					std::vector<::OpenNet::Core::Aria2::UriInformation> uriRows;
-					if (information)
-						for (auto const& file : information->Files)
-							for (auto const& uri : file.Uris) uriRows.push_back(uri);
-					auto const activeConnections = information
-						? static_cast<std::size_t>((std::max)(0, information->Connections))
-						: std::size_t{};
-					auto const rowCount = (std::max)(std::size_t{ 1 }, activeConnections);
-					std::unordered_set<std::string> currentKeys;
-					for (std::size_t index = 0; index < rowCount; ++index)
-					{
-						auto const serverIndex = serverRows.empty() ? 0 : index % serverRows.size();
-						auto const uriIndex = uriRows.empty() ? 0 : index % uriRows.size();
-						auto const uri = !serverRows.empty() && !serverRows[serverIndex].CurrentUri.empty()
-							? serverRows[serverIndex].CurrentUri
-							: !serverRows.empty() && !serverRows[serverIndex].Uri.empty()
-							? serverRows[serverIndex].Uri
-							: !uriRows.empty() ? uriRows[uriIndex].Uri : std::string{};
-						auto const key = "connection:" + std::to_string(index);
-						currentKeys.insert(key);
-						auto& item = self->m_httpConnections[key];
-						if (!item)
-						{
-							item = winrt::make<winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
-							item.Address(winrt::to_hstring(key));
-							item.Location(L"-");
-							item.ULSpeed(L"0 KB/s");
-							item.Uploaded(L"-");
-							item.Client(L"aria2");
-							item.Reason(L"");
-							item.Initiator(L"Local");
-							item.Source(L"URI");
-							item.RangeProgressVisibility(Visibility::Visible);
-							self->m_peerItems.Append(item);
-						}
-						auto const status = index < activeConnections
-							? ::OpenNet::Core::Aria2::UriStatus::Used
-							: ::OpenNet::Core::Aria2::UriStatus::Waiting;
-						auto const segment = information
-							? GetHttpConnectionProgress(*information, index, rowCount)
-							: HttpConnectionProgress{};
-						auto speed = information && activeConnections > 0
-							? information->DownloadSpeed / activeConnections
-							: std::size_t{};
-						auto const previousBytes = (std::max)(std::int64_t{}, item.DownloadedBytes());
-						if (previousBytes > 0
-							&& segment.completedBytes >= static_cast<std::uint64_t>(previousBytes)
-							&& segment.completedBytes != static_cast<std::uint64_t>(previousBytes))
-						{
-							auto const interval = (std::max)(std::int64_t{ 1 }, self->m_configuredRefreshInterval.count());
-							speed = static_cast<std::size_t>((segment.completedBytes - previousBytes) * 1000 / interval);
-						}
-						item.IP(winrt::to_hstring(uri));
-						item.Progress(winrt::to_hstring(std::format("{:.1f}%", segment.completedPercent)));
-						item.ProgressValue(segment.completedPercent);
-						item.SegmentStart(segment.startPercent);
-						item.SegmentEnd(segment.endPercent);
-						item.DLSpeed(FormatSpeed(static_cast<int>(speed / 1024)));
-						item.DownloadRate(static_cast<std::int64_t>(speed));
-						item.Downloaded(FormatBytes(static_cast<std::int64_t>(segment.completedBytes)));
-						item.DownloadedBytes(static_cast<std::int64_t>(segment.completedBytes));
-						item.PeerStatus(status == ::OpenNet::Core::Aria2::UriStatus::Used ? L"Active" : L"Waiting");
-						item.Protocol(uri.starts_with("https:") ? L"HTTPS" : uri.starts_with("ftp:") ? L"FTP" : L"HTTP");
-					}
-					for (std::int32_t index = static_cast<std::int32_t>(self->m_peerItems.Size()) - 1; index >= 0; --index)
-					{
-						auto const item = self->m_peerItems.GetAt(static_cast<std::uint32_t>(index)).try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
-						if (item && !currentKeys.contains(winrt::to_string(item.Address())))
-						{
-							self->m_httpConnections.erase(winrt::to_string(item.Address()));
-							self->m_peerItems.RemoveAt(static_cast<std::uint32_t>(index));
-						}
-					}
-					self->EmptyStateText().Visibility(self->m_peerItems.Size() == 0 ? Visibility::Visible : Visibility::Collapsed);
-				}
-			}))
-			{
-				m_refreshInFlight.store(false, std::memory_order_release);
-			}
-			co_return;
-		}
-
 		// Only show peers for BitTorrent tasks
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
@@ -920,7 +758,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			co_return;
 		}
-
 		auto taskId = winrt::to_string(selectedTask.TaskId());
 		if (taskId.empty())
 		{

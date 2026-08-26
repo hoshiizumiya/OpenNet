@@ -878,7 +878,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TrackersList().Header(box_value(ResourceGetString(isHttp ? L"TaskHttpServersTab" : L"Task_TrackersList/Header")));
 		PieceMapContent().Visibility(Visibility::Visible);
 		HttpTaskLogContent().Visibility(isHttp ? Visibility::Visible : Visibility::Collapsed);
-		if (isHttp && Task_TabView().SelectedItem() == PieceMapContent()) Task_TabView().SelectedItem(SummaryContent());
+		auto const selectedTab = Task_TabView().SelectedItem();
+		if (selectedTab == PeersList())
+		{
+			auto const pageType = isHttp
+				? xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpConnectionsPage>()
+				: xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPeersListPage>();
+			ContentFrame().NavigateToType(pageType, m_viewModel, {});
+		}
+		else if (selectedTab == TrackersList())
+		{
+			auto const pageType = isHttp
+				? xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpServersPage>()
+				: xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskTrackersPage>();
+			ContentFrame().NavigateToType(pageType, m_viewModel, {});
+		}
 	}
 
 	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
@@ -930,7 +944,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		m_previousSelectedIndex = currentSelectedIndex;
 
-		ContentFrame().NavigateToType(*selectedItem.try_as<FrameworkElement>().Tag().try_as<winrt::Windows::UI::Xaml::Interop::TypeName>(), m_viewModel, navOptions);
+		auto targetPageType = *selectedItem.try_as<FrameworkElement>().Tag().try_as<winrt::Windows::UI::Xaml::Interop::TypeName>();
+		auto const task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
+		auto const isHttp = task && task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http;
+		if (isHttp && selectedItem == PeersList())
+		{
+			targetPageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpConnectionsPage>();
+		}
+		else if (isHttp && selectedItem == TrackersList())
+		{
+			targetPageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpServersPage>();
+		}
+		ContentFrame().NavigateToType(targetPageType, m_viewModel, navOptions);
 	}
 
 	void TasksPage::TaskTabViewContextFlyout_Opening(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)

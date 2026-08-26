@@ -1,8 +1,4 @@
-<ResourceDictionary
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:effect="using:OpenNet.UI.Xaml.Control.Effect"
-    xmlns:essential="using:WinUI3Package">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:effect="using:OpenNet.UI.Xaml.Control.Effect" xmlns:essential="using:WinUI3Package">
 
     <Style TargetType="effect:AnimatedDigit">
         <Setter Property="Template">
@@ -15,16 +11,7 @@
                             <ExponentialEase x:Key="DigitTranslationEasing" EasingMode="EaseOut" Exponent="5" />
                             <ExponentialEase x:Key="OpacityEasing" EasingMode="EaseOut" Exponent="7" />
                         </Grid.Resources>
-                        <TextBlock
-                            x:Name="CurrentDigit"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            FontStyle="{TemplateBinding FontStyle}"
-                            FontWeight="{TemplateBinding FontWeight}"
-                            Foreground="{TemplateBinding Foreground}"
-                            Opacity="1"
-                            RenderTransformOrigin="0.5,0.5"
-                            Text="{Binding CurrentValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}">
+                        <TextBlock x:Name="CurrentDigit" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" FontStyle="{TemplateBinding FontStyle}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}" Opacity="1" RenderTransformOrigin="0.5,0.5" Text="{Binding CurrentValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}">
                             <TextBlock.RenderTransform>
                                 <TransformGroup>
                                     <TranslateTransform x:Name="CurrentDigitTranslate" />
@@ -32,17 +19,7 @@
                                 </TransformGroup>
                             </TextBlock.RenderTransform>
                         </TextBlock>
-                        <TextBlock
-                            x:Name="NextDigit"
-                            FontFamily="{TemplateBinding FontFamily}"
-                            FontSize="{TemplateBinding FontSize}"
-                            FontStyle="{TemplateBinding FontStyle}"
-                            FontWeight="{TemplateBinding FontWeight}"
-                            Foreground="{TemplateBinding Foreground}"
-                            Opacity="0"
-                            RenderTransformOrigin="0.5,0.5"
-                            Text="{Binding NextValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"
-                            Visibility="Collapsed">
+                        <TextBlock x:Name="NextDigit" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" FontStyle="{TemplateBinding FontStyle}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}" Opacity="0" RenderTransformOrigin="0.5,0.5" Text="{Binding NextValue, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" Visibility="Collapsed">
                             <TextBlock.RenderTransform>
                                 <TransformGroup>
                                     <TranslateTransform x:Name="NextDigitTranslate" />
@@ -62,10 +39,10 @@
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetName="NextDigit" Storyboard.TargetProperty="Visibility">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation x:Name="IncreaseCurrentDigitTranslateAnimation" Duration="{StaticResource DigitAnimationDuration}" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="CurrentDigitTranslate" Storyboard.TargetProperty="Y" />
-                                        <DoubleAnimation x:Name="IncreaseNextDigitTranslateAnimation" Duration="{StaticResource DigitAnimationDuration}" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="NextDigitTranslate" Storyboard.TargetProperty="Y" />
-                                        <DoubleAnimation Duration="{StaticResource OpacityAnimationDuration}" EasingFunction="{StaticResource OpacityEasing}" From="1" Storyboard.TargetName="CurrentDigit" Storyboard.TargetProperty="Opacity" To="0" />
-                                        <DoubleAnimation Duration="{StaticResource OpacityAnimationDuration}" EasingFunction="{StaticResource OpacityEasing}" From="0" Storyboard.TargetName="NextDigit" Storyboard.TargetProperty="Opacity" To="1" />
+                                        <DoubleAnimation x:Name="IncreaseCurrentDigitTranslateAnimation" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="CurrentDigitTranslate" Storyboard.TargetProperty="Y" Duration="{StaticResource DigitAnimationDuration}" />
+                                        <DoubleAnimation x:Name="IncreaseNextDigitTranslateAnimation" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="NextDigitTranslate" Storyboard.TargetProperty="Y" Duration="{StaticResource DigitAnimationDuration}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource OpacityEasing}" Storyboard.TargetName="CurrentDigit" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="{StaticResource OpacityAnimationDuration}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource OpacityEasing}" Storyboard.TargetName="NextDigit" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="{StaticResource OpacityAnimationDuration}" />
                                     </Storyboard>
                                 </VisualState>
                                 <VisualState x:Name="DecreaseState">
@@ -77,10 +54,10 @@
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="Visible" />
                                             <DiscreteObjectKeyFrame KeyTime="0:0:0.3" Value="Collapsed" />
                                         </ObjectAnimationUsingKeyFrames>
-                                        <DoubleAnimation x:Name="DecreaseCurrentDigitTranslateAnimation" Duration="{StaticResource DigitAnimationDuration}" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="CurrentDigitTranslate" Storyboard.TargetProperty="Y" />
-                                        <DoubleAnimation x:Name="DecreaseNextDigitTranslateAnimation" Duration="{StaticResource DigitAnimationDuration}" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="NextDigitTranslate" Storyboard.TargetProperty="Y" />
-                                        <DoubleAnimation Duration="{StaticResource OpacityAnimationDuration}" EasingFunction="{StaticResource OpacityEasing}" From="0" Storyboard.TargetName="CurrentDigit" Storyboard.TargetProperty="Opacity" To="1" />
-                                        <DoubleAnimation Duration="{StaticResource OpacityAnimationDuration}" EasingFunction="{StaticResource OpacityEasing}" From="1" Storyboard.TargetName="NextDigit" Storyboard.TargetProperty="Opacity" To="0" />
+                                        <DoubleAnimation x:Name="DecreaseCurrentDigitTranslateAnimation" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="CurrentDigitTranslate" Storyboard.TargetProperty="Y" Duration="{StaticResource DigitAnimationDuration}" />
+                                        <DoubleAnimation x:Name="DecreaseNextDigitTranslateAnimation" EasingFunction="{StaticResource DigitTranslationEasing}" Storyboard.TargetName="NextDigitTranslate" Storyboard.TargetProperty="Y" Duration="{StaticResource DigitAnimationDuration}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource OpacityEasing}" Storyboard.TargetName="CurrentDigit" Storyboard.TargetProperty="Opacity" From="0" To="1" Duration="{StaticResource OpacityAnimationDuration}" />
+                                        <DoubleAnimation EasingFunction="{StaticResource OpacityEasing}" Storyboard.TargetName="NextDigit" Storyboard.TargetProperty="Opacity" From="1" To="0" Duration="{StaticResource OpacityAnimationDuration}" />
                                     </Storyboard>
                                 </VisualState>
                             </VisualStateGroup>
@@ -95,14 +72,14 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="effect:AnimatedNumber">
-                    <StackPanel
-                        x:Name="RootPanel"
-                        HorizontalAlignment="Left"
-                        Orientation="Horizontal">
-                        <StackPanel.ChildrenTransitions>
-                            <RepositionThemeTransition />
-                        </StackPanel.ChildrenTransitions>
-                    </StackPanel>
+                    <Grid>
+                        <TextBlock x:Name="StaticText" FontFamily="{TemplateBinding FontFamily}" FontSize="{TemplateBinding FontSize}" FontStyle="{TemplateBinding FontStyle}" FontWeight="{TemplateBinding FontWeight}" Foreground="{TemplateBinding Foreground}" />
+                        <StackPanel x:Name="RootPanel" HorizontalAlignment="Left" Orientation="Horizontal" Visibility="Collapsed">
+                            <StackPanel.ChildrenTransitions>
+                                <RepositionThemeTransition />
+                            </StackPanel.ChildrenTransitions>
+                        </StackPanel>
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

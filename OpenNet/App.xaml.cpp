@@ -556,6 +556,18 @@ namespace winrt::OpenNet::implementation
 		{
 			dispatcher.TryEnqueue([]()
 			{
+				if (App::window)
+				{
+					try
+					{
+						App::window.Close();
+					}
+					catch (...)
+					{
+					}
+					App::window = nullptr;
+				}
+				App::guideWindow = nullptr;
 				Microsoft::UI::Xaml::Application::Current().Exit();
 			});
 		}

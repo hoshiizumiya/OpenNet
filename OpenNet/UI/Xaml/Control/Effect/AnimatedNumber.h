@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "UI/Xaml/Control/Effect/AnimatedNumber.g.h"
 
@@ -17,6 +17,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 	private:
 		void UpdateCharacters();
 		winrt::Microsoft::UI::Xaml::Controls::Panel m_rootPanel{ nullptr };
+		winrt::Microsoft::UI::Xaml::Controls::TextBlock m_staticText{ nullptr };
 		winrt::hstring m_value;
 	};
 }

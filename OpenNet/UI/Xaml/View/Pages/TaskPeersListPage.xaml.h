@@ -64,7 +64,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_lastActivePeers;
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_disconnectingPeers;
 		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_banIpPeers;
-		std::unordered_map<std::string, winrt::OpenNet::ViewModels::PeerDisplayItem> m_httpConnections;
 		std::unordered_set<std::string> m_cachedBannedPeerAddresses;
 		std::string m_flagSprite;
 		std::unordered_map<std::string, winrt::hstring> m_flagSvgCache;
@@ -74,6 +73,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool m_rowLayoutSynchronizationQueued{};
 		std::atomic_bool m_refreshInFlight{};
 		std::atomic_bool m_forcePeerRefresh{ true };
+		std::atomic_bool m_isActive{};
 		std::atomic_uint64_t m_refreshGeneration{};
 		std::size_t m_lastPeerSnapshotHash{};
 		bool m_hasPeerSnapshot{};
@@ -84,6 +84,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string m_lastTaskId;
 
 		void Unsubscribe();
+		void StopRefreshTimer() noexcept;
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
 										winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		winrt::fire_and_forget RefreshPeerList();

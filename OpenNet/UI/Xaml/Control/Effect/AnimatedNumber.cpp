@@ -1,4 +1,4 @@
-#include "XamlWorkaround.h"
+﻿#include "XamlWorkaround.h"
 #include "AnimatedNumber.h"
 #include "AnimatedDigit.h"
 #if __has_include("UI/Xaml/Control/Effect/AnimatedNumber.g.cpp")
@@ -10,7 +10,10 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 {
-	hstring AnimatedNumber::Value() const { return m_value; }
+	hstring AnimatedNumber::Value() const
+	{
+		return m_value;
+	}
 
 	void AnimatedNumber::Value(hstring const& value)
 	{
@@ -23,6 +26,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 	{
 		base_type::OnApplyTemplate();
 		m_rootPanel = GetTemplateChild(L"RootPanel").try_as<Panel>();
+		m_staticText = GetTemplateChild(L"StaticText").try_as<TextBlock>();
 		UpdateCharacters();
 	}
 
@@ -30,6 +34,20 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 	{
 		if (!m_rootPanel) return;
 		auto children = m_rootPanel.Children();
+		if (!AnimatedDigit::AnimationsEnabled())
+		{
+			children.Clear();
+			m_rootPanel.Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
+			if (m_staticText)
+			{
+				m_staticText.Text(m_value);
+				m_staticText.Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+			}
+			return;
+		}
+		m_rootPanel.Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+		if (m_staticText)
+			m_staticText.Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 		auto count = children.Size();
 		auto const required = static_cast<std::uint32_t>(m_value.size());
 		while (count < required)

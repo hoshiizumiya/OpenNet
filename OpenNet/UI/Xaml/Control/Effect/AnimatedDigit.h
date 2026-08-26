@@ -38,7 +38,10 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation m_increaseNextAnimation{ nullptr };
 		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation m_decreaseCurrentAnimation{ nullptr };
 		winrt::Microsoft::UI::Xaml::Media::Animation::DoubleAnimation m_decreaseNextAnimation{ nullptr };
-		winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
+		std::vector<std::pair<
+			winrt::event_token,
+			winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler>> m_propertyChangedHandlers;
+		std::int64_t m_nextPropertyChangedToken{};
 	};
 }
 

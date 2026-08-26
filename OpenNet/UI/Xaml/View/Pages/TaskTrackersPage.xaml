@@ -10,7 +10,6 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:segment="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment"
     xmlns:vm="using:OpenNet.ViewModels"
     mc:Ignorable="d">
 
@@ -19,7 +18,6 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AnimatedNumber_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
-                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Progress/HttpSegment/HttpSegmentProgressBar_ResourceDictionary.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
@@ -292,27 +290,13 @@
                             Padding="8,2"
                             Click="TrackerLogButton_Click"
                             Style="{StaticResource SubtleButtonStyle}"
-                            Tag="{x:Bind}"
-                            Visibility="{x:Bind TrackerProgressVisibility, Mode=OneWay}">
+                            Tag="{x:Bind}">
                             <FontIcon FontSize="14" Glyph="&#xE946;" />
                         </Button>
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Retries, Mode=OneWay}" />
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind TimeRemaining, Mode=OneWay}" />
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Seeders, Mode=OneWay}" />
-                        <Grid>
-                            <effects:AnimatedNumber
-                                VerticalAlignment="Center"
-                                Visibility="{x:Bind TrackerProgressVisibility, Mode=OneWay}"
-                                Value="{x:Bind Leechers, Mode=OneWay}" />
-                            <Grid MinWidth="140" Visibility="{x:Bind HttpProgressVisibility, Mode=OneWay}">
-                                <segment:RangePieceBar Height="10" Pieces="{x:Bind ProgressPieces, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    FontSize="10"
-                                    Text="{x:Bind ProgressText, Mode=OneWay}" />
-                            </Grid>
-                        </Grid>
+                        <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Leechers, Mode=OneWay}" />
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Downloaded, Mode=OneWay}" />
                         <TextBlock
                             MaxLines="1"

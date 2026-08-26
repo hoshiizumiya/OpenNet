@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.View.Pages
+{
+	[default_interface]
+	runtimeclass TaskHttpServersPage : Microsoft.UI.Xaml.Controls.Page
+	{
+		TaskHttpServersPage();
+	}
+}

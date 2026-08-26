@@ -123,6 +123,7 @@ export namespace OpenNet::Core
 		std::set<std::string> m_knownGids;
 		std::unordered_map<std::string, Aria2::DownloadStatus> m_lastHttpStatuses;
 		std::unordered_map<std::string, Aria2::DownloadInformation> m_httpTaskSnapshots;
+		std::unordered_map<std::string, std::vector<Aria2::ServersInformation>> m_httpServerSnapshots;
 		std::unordered_map<std::string, std::vector<HttpTaskLogEntry>> m_httpTaskLogs;
 
 		// GID -> HttpStateManager record-id mapping (mutable: acts as a cache)
@@ -136,5 +137,6 @@ export namespace OpenNet::Core
 		// Cached global speeds
 		std::atomic<uint64_t> m_totalDlSpeed{ 0 };
 		std::atomic<uint64_t> m_totalUlSpeed{ 0 };
+		std::chrono::steady_clock::time_point m_lastStoppedListRefresh{};
 	};
 }

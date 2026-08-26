@@ -1,6 +1,8 @@
 ﻿#pragma once
 #include "ViewModels/PeerDisplayItem.g.h"
 #include "ViewModels/TrackerDisplayItem.g.h"
+#include "ViewModels/HttpConnectionDisplayItem.g.h"
+#include "ViewModels/HttpServerDisplayItem.g.h"
 #include "ViewModels/TrackerLogDisplayItem.g.h"
 #include "ViewModels/FileDisplayItem.g.h"
 #include "ViewModels/RuntimeStatusDisplayItem.g.h"
@@ -324,6 +326,178 @@ namespace winrt::OpenNet::ViewModels::implementation
 			winrt::OpenNet::ViewModels::PeerDisplayItem> m_children{ nullptr };
 	};
 
+	struct HttpConnectionDisplayItem : HttpConnectionDisplayItemT<HttpConnectionDisplayItem>, ::OpenNet::ViewModels::ObservableMixin<HttpConnectionDisplayItem>
+	{
+		using ::OpenNet::ViewModels::ObservableMixin<HttpConnectionDisplayItem>::SetProperty;
+		HttpConnectionDisplayItem() = default;
+
+		winrt::hstring Key() const
+		{
+			return m_key;
+		}
+		void Key(winrt::hstring const& value)
+		{
+			SetProperty(m_key, value, L"Key");
+		}
+		winrt::hstring URL() const
+		{
+			return m_url;
+		}
+		void URL(winrt::hstring const& value)
+		{
+			SetProperty(m_url, value, L"URL");
+		}
+		winrt::hstring DownloadRate() const
+		{
+			return m_downloadRate;
+		}
+		void DownloadRate(winrt::hstring const& value)
+		{
+			SetProperty(m_downloadRate, value, L"DownloadRate");
+		}
+		winrt::hstring DownloadSize() const
+		{
+			return m_downloadSize;
+		}
+		void DownloadSize(winrt::hstring const& value)
+		{
+			SetProperty(m_downloadSize, value, L"DownloadSize");
+		}
+		double RangeStart() const
+		{
+			return m_rangeStart;
+		}
+		void RangeStart(double const value)
+		{
+			SetProperty(m_rangeStart, value, L"RangeStart");
+		}
+		double RangeEnd() const
+		{
+			return m_rangeEnd;
+		}
+		void RangeEnd(double const value)
+		{
+			SetProperty(m_rangeEnd, value, L"RangeEnd");
+		}
+		double ProgressValue() const
+		{
+			return m_progressValue;
+		}
+		void ProgressValue(double const value)
+		{
+			SetProperty(m_progressValue, value, L"ProgressValue");
+		}
+		winrt::hstring Progress() const
+		{
+			return m_progress;
+		}
+		void Progress(winrt::hstring const& value)
+		{
+			SetProperty(m_progress, value, L"Progress");
+		}
+		winrt::hstring Status() const
+		{
+			return m_status;
+		}
+		void Status(winrt::hstring const& value)
+		{
+			SetProperty(m_status, value, L"Status");
+		}
+
+	private:
+		winrt::hstring m_key;
+		winrt::hstring m_url;
+		winrt::hstring m_downloadRate;
+		winrt::hstring m_downloadSize;
+		double m_rangeStart{};
+		double m_rangeEnd{ 100.0 };
+		double m_progressValue{};
+		winrt::hstring m_progress;
+		winrt::hstring m_status;
+	};
+
+	struct HttpServerDisplayItem : HttpServerDisplayItemT<HttpServerDisplayItem>,
+		::OpenNet::ViewModels::ObservableMixin<HttpServerDisplayItem>
+	{
+		using ::OpenNet::ViewModels::ObservableMixin<HttpServerDisplayItem>::SetProperty;
+		HttpServerDisplayItem() = default;
+
+		winrt::hstring Key() const
+		{
+			return m_key;
+		}
+		void Key(winrt::hstring const& value)
+		{
+			SetProperty(m_key, value, L"Key");
+		}
+		winrt::hstring URL() const
+		{
+			return m_url;
+		}
+		void URL(winrt::hstring const& value)
+		{
+			SetProperty(m_url, value, L"URL");
+		}
+		winrt::hstring Connections() const
+		{
+			return m_connections;
+		}
+		void Connections(winrt::hstring const& value)
+		{
+			SetProperty(m_connections, value, L"Connections");
+		}
+		winrt::hstring DownloadRate() const
+		{
+			return m_downloadRate;
+		}
+		void DownloadRate(winrt::hstring const& value)
+		{
+			SetProperty(m_downloadRate, value, L"DownloadRate");
+		}
+		winrt::hstring DownloadSize() const
+		{
+			return m_downloadSize;
+		}
+		void DownloadSize(winrt::hstring const& value)
+		{
+			SetProperty(m_downloadSize, value, L"DownloadSize");
+		}
+		winrt::hstring Pieces() const
+		{
+			return m_pieces;
+		}
+		void Pieces(winrt::hstring const& value)
+		{
+			SetProperty(m_pieces, value, L"Pieces");
+		}
+		winrt::hstring Progress() const
+		{
+			return m_progress;
+		}
+		void Progress(winrt::hstring const& value)
+		{
+			SetProperty(m_progress, value, L"Progress");
+		}
+		winrt::hstring Status() const
+		{
+			return m_status;
+		}
+		void Status(winrt::hstring const& value)
+		{
+			SetProperty(m_status, value, L"Status");
+		}
+
+	private:
+		winrt::hstring m_key;
+		winrt::hstring m_url;
+		winrt::hstring m_connections;
+		winrt::hstring m_downloadRate;
+		winrt::hstring m_downloadSize;
+		winrt::hstring m_pieces;
+		winrt::hstring m_progress;
+		winrt::hstring m_status;
+	};
+
 	// ---------------------------------------------------------------
 	// TrackerDisplayItem
 	// ---------------------------------------------------------------
@@ -423,41 +597,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_message, v, L"Message");
 		}
 
-		winrt::hstring ProgressPieces() const
-		{
-			return m_progressPieces;
-		}
-		void ProgressPieces(winrt::hstring const& value)
-		{
-			SetProperty(m_progressPieces, value, L"ProgressPieces");
-		}
-
-		winrt::hstring ProgressText() const
-		{
-			return m_progressText;
-		}
-		void ProgressText(winrt::hstring const& value)
-		{
-			SetProperty(m_progressText, value, L"ProgressText");
-		}
-
-		winrt::Microsoft::UI::Xaml::Visibility TrackerProgressVisibility() const
-		{
-			return m_trackerProgressVisibility;
-		}
-		void TrackerProgressVisibility(winrt::Microsoft::UI::Xaml::Visibility const value)
-		{
-			SetProperty(m_trackerProgressVisibility, value, L"TrackerProgressVisibility");
-		}
-
-		winrt::Microsoft::UI::Xaml::Visibility HttpProgressVisibility() const
-		{
-			return m_httpProgressVisibility;
-		}
-		void HttpProgressVisibility(winrt::Microsoft::UI::Xaml::Visibility const value)
-		{
-			SetProperty(m_httpProgressVisibility, value, L"HttpProgressVisibility");
-		}
 	private:
 		winrt::hstring m_url;
 		winrt::hstring m_tier;
@@ -469,12 +608,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_downloaded;
 		winrt::hstring m_status;
 		winrt::hstring m_message;
-		winrt::hstring m_progressPieces;
-		winrt::hstring m_progressText;
-		winrt::Microsoft::UI::Xaml::Visibility m_trackerProgressVisibility{
-			winrt::Microsoft::UI::Xaml::Visibility::Visible };
-		winrt::Microsoft::UI::Xaml::Visibility m_httpProgressVisibility{
-			winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
 	};
 
 	// ---------------------------------------------------------------
@@ -662,6 +795,12 @@ namespace winrt::OpenNet::ViewModels::factory_implementation
 	{
 	};
 	struct TrackerDisplayItem : TrackerDisplayItemT<TrackerDisplayItem, implementation::TrackerDisplayItem>
+	{
+	};
+	struct HttpConnectionDisplayItem : HttpConnectionDisplayItemT<HttpConnectionDisplayItem, implementation::HttpConnectionDisplayItem>
+	{
+	};
+	struct HttpServerDisplayItem : HttpServerDisplayItemT<HttpServerDisplayItem, implementation::HttpServerDisplayItem>
 	{
 	};
 	struct FileDisplayItem : FileDisplayItemT<FileDisplayItem, implementation::FileDisplayItem>

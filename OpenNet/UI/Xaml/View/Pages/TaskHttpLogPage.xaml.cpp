@@ -16,10 +16,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	TaskHttpLogPage::~TaskHttpLogPage()
 	{
-		if (m_timer)
-		{
-			m_timer.Stop(); m_timer.Tick(m_tickToken);
-		}
 	}
 
 	void TaskHttpLogPage::InitializeComponent()
@@ -27,10 +23,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TaskHttpLogPageT::InitializeComponent();
 		m_entries = single_threaded_observable_vector<Windows::Foundation::IInspectable>();
 		LogListView().ItemsSource(m_entries);
+		auto weak = get_weak();
+		Unloaded([weak](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				self->m_isActive.store(false, std::memory_order_release);
+				self->StopRefreshTimer();
+				self->m_viewModel = nullptr;
+			}
+		});
 	}
 
 	void TaskHttpLogPage::OnNavigatedTo(NavigationEventArgs const& args)
 	{
+		m_isActive.store(true, std::memory_order_release);
 		m_viewModel = args.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		m_timer = DispatcherTimer();
 		m_timer.Interval(std::chrono::seconds(1));
@@ -45,17 +52,29 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskHttpLogPage::OnNavigatedFrom(NavigationEventArgs const&)
 	{
-		if (m_timer)
+		m_isActive.store(false, std::memory_order_release);
+		StopRefreshTimer();
+		m_viewModel = nullptr;
+	}
+
+	void TaskHttpLogPage::StopRefreshTimer() noexcept
+	{
+		if (!m_timer) return;
+		try
 		{
 			m_timer.Stop();
-			m_timer.Tick(m_tickToken);
-			m_timer = nullptr;
-			m_tickToken = {};
+			if (m_tickToken.value) m_timer.Tick(m_tickToken);
 		}
+		catch (...)
+		{
+		}
+		m_tickToken = {};
+		m_timer = nullptr;
 	}
 
 	void TaskHttpLogPage::Refresh()
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto const task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
 		auto const entries = task ? ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskLog(to_string(task.Gid())) : std::vector<::OpenNet::Core::HttpTaskLogEntry>{};
 		auto const formatter = Windows::Globalization::DateTimeFormatting::DateTimeFormatter{ L"shortdate longtime" };

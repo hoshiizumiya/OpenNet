@@ -48,19 +48,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string m_lastTaskId;
 		std::size_t m_lastTrackerSnapshotHash{};
 		bool m_hasTrackerSnapshot{};
-		bool m_httpRefreshInFlight{};
+		std::atomic_bool m_isActive{};
 		std::chrono::steady_clock::time_point m_lastTrackerRefresh{};
 
 		void Unsubscribe();
+		void StopRefreshTimer() noexcept;
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void RefreshTrackerList();
-		winrt::fire_and_forget RefreshHttpServersAsync(std::string gid);
 		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void UpdateSortHeaders();
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
 		void SynchronizeTrackerRows();
-		void ConfigureColumnsForTask(bool isHttp);
 		bool TryGetTaskContext(std::string& taskId, winrt::hstring& taskName) const;
 		winrt::hstring SelectedTrackerUrl();
 		void OpenTrackerLog(winrt::hstring const& trackerUrl);

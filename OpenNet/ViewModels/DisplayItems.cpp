@@ -4,6 +4,8 @@
 // Include the generated implementation files for this shared IDL.
 #include "ViewModels/PeerDisplayItem.g.cpp"
 #include "ViewModels/TrackerDisplayItem.g.cpp"
+#include "ViewModels/HttpConnectionDisplayItem.g.cpp"
+#include "ViewModels/HttpServerDisplayItem.g.cpp"
 #include "ViewModels/TrackerLogDisplayItem.g.cpp"
 #include "ViewModels/FileDisplayItem.g.cpp"
 #include "ViewModels/RuntimeStatusDisplayItem.g.cpp"

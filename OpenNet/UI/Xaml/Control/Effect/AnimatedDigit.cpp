@@ -132,17 +132,34 @@ namespace winrt::OpenNet::UI::Xaml::Control::Effect::implementation
 
 	event_token AnimatedDigit::PropertyChanged(PropertyChangedEventHandler const& handler)
 	{
-		return m_propertyChanged.add(handler);
+		event_token token{ ++m_nextPropertyChangedToken };
+		m_propertyChangedHandlers.emplace_back(token, handler);
+		return token;
 	}
 
 	void AnimatedDigit::PropertyChanged(event_token const& token) noexcept
 	{
-		m_propertyChanged.remove(token);
+		std::erase_if(m_propertyChangedHandlers, [&](auto const& entry)
+		{
+			return entry.first == token;
+		});
 	}
 
 	void AnimatedDigit::RaisePropertyChanged(wchar_t const* propertyName)
 	{
-		m_propertyChanged(*this, PropertyChangedEventArgs{ propertyName });
+		auto const args = PropertyChangedEventArgs{ propertyName };
+		auto const handlers = m_propertyChangedHandlers;
+		for (auto const& [token, handler] : handlers)
+		{
+			(void)token;
+			try
+			{
+				handler(*this, args);
+			}
+			catch (...)
+			{
+			}
+		}
 	}
 
 	bool AnimatedDigit::AnimationsEnabled() noexcept

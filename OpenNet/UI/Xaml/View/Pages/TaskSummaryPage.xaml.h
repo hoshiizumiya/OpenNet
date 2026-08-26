@@ -24,6 +24,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void RefreshSummary();
 		void ResetSummary();
 		void Unsubscribe();
+		void StopRefreshTimer() noexcept;
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		static winrt::hstring FormatBytes(std::int64_t value);
@@ -36,6 +37,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::event_token m_vmPropertyChangedToken{};
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerTickToken{};
+		std::atomic_bool m_isActive{};
 		winrt::hstring m_graphTaskId;
 	};
 }

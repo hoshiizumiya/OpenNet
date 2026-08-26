@@ -464,7 +464,10 @@ namespace OpenNet::Service::Background
 {
 	IBackgroundMediaService& GetBackgroundMediaService()
 	{
-		static ::BackgroundMediaServiceImpl service;
-		return service;
+		// The main XAML window is itself held by an application static. Keep the
+		// process-wide media service alive until process teardown so a late XAML
+		// release can never observe a function-static object already destroyed.
+		static auto* service = new ::BackgroundMediaServiceImpl();
+		return *service;
 	}
 }

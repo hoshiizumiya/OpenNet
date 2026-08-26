@@ -7,6 +7,8 @@
 #endif
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Aria2.Aria2Models;
+import OpenNet.Core.DownloadManager;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.Utils.Message;
 
@@ -18,22 +20,27 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	TaskSummaryPage::TaskSummaryPage()
 	{
 		InitializeComponent();
+		auto weak = get_weak();
+		Unloaded([weak](auto const&, auto const&)
+		{
+			if (auto self = weak.get())
+			{
+				self->m_isActive.store(false, std::memory_order_release);
+				self->StopRefreshTimer();
+				self->Unsubscribe();
+			}
+		});
 	}
 
 	TaskSummaryPage::~TaskSummaryPage()
 	{
-		Unsubscribe();
-		if (m_refreshTimer)
-		{
-			m_refreshTimer.Stop();
-			m_refreshTimer.Tick(m_timerTickToken);
-		}
 	}
 
 	void TaskSummaryPage::OnNavigatedTo(
 		winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args)
 	{
 		Unsubscribe();
+		m_isActive.store(true, std::memory_order_release);
 		m_viewModel = args.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		if (!m_viewModel)
 		{
@@ -49,8 +56,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = DispatcherTimer{};
-			m_timerTickToken = m_refreshTimer.Tick(
-				{ this, &TaskSummaryPage::OnRefreshTimerTick });
+			auto weak = get_weak();
+			m_timerTickToken = m_refreshTimer.Tick([weak](auto const& sender, auto const& timerArgs)
+			{
+				if (auto self = weak.get()) self->OnRefreshTimerTick(sender, timerArgs);
+			});
 		}
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
@@ -66,15 +76,29 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskSummaryPage::OnNavigatedFrom(
 		winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
-		if (m_refreshTimer)
+		m_isActive.store(false, std::memory_order_release);
+		StopRefreshTimer();
+		Unsubscribe();
+	}
+
+	void TaskSummaryPage::StopRefreshTimer() noexcept
+	{
+		if (!m_refreshTimer) return;
+		try
 		{
 			m_refreshTimer.Stop();
+			if (m_timerTickToken.value) m_refreshTimer.Tick(m_timerTickToken);
 		}
-		Unsubscribe();
+		catch (...)
+		{
+		}
+		m_timerTickToken = {};
+		m_refreshTimer = nullptr;
 	}
 
 	void TaskSummaryPage::RefreshSummary()
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
 		if (!task)
 		{
@@ -113,12 +137,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			TaskPathText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeHttpDownload"));
 			SavePathText().Text(L"—");
 			TaskStatusText().Text(task.ProgressPercent() >= 100.0 ? ResourceGetString(L"TaskStatusCompleted") : ResourceGetString(L"TaskStatusDownloading"));
-			DownloadedPiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
-			AvailablePiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
-			DownloadedPiecesProgress().Pieces(L"");
-			AvailablePiecesProgress().Pieces(L"");
-			DownloadedPiecesProgress().Visibility(Visibility::Collapsed);
-			AvailablePiecesProgress().Visibility(Visibility::Collapsed);
+			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(to_string(task.Gid()));
+			if (information)
+			{
+				auto const pieceMap = ::OpenNet::Core::Aria2::BuildPieceMapInformation(*information);
+				auto const finished = static_cast<std::size_t>(std::count(pieceMap.States.begin(), pieceMap.States.end(), 2));
+				std::size_t sourceCount{};
+				for (auto const& file : information->Files) sourceCount += file.Uris.size();
+				std::wstring downloadedStates;
+				downloadedStates.reserve(pieceMap.States.size());
+				for (auto const state : pieceMap.States) downloadedStates.push_back(static_cast<wchar_t>(L'0' + state));
+				std::wstring availableStates(pieceMap.States.size(), sourceCount > 0 ? L'2' : L'0');
+				DownloadedPiecesText().Text(std::format(L"{} / {}", finished, pieceMap.States.size()));
+				AvailablePiecesText().Text(std::format(L"{} / {}", sourceCount > 0 ? pieceMap.States.size() : 0, pieceMap.States.size()));
+				DownloadedPiecesProgress().Pieces(hstring{ downloadedStates });
+				AvailablePiecesProgress().Pieces(hstring{ availableStates });
+				DownloadedPiecesProgress().Visibility(Visibility::Visible);
+				AvailablePiecesProgress().Visibility(Visibility::Visible);
+			}
+			else
+			{
+				DownloadedPiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
+				AvailablePiecesText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeNA"));
+				DownloadedPiecesProgress().Pieces(L"");
+				AvailablePiecesProgress().Pieces(L"");
+				DownloadedPiecesProgress().Visibility(Visibility::Collapsed);
+				AvailablePiecesProgress().Visibility(Visibility::Collapsed);
+			}
 			return;
 		}
 		DownloadedPiecesProgress().Visibility(Visibility::Visible);
@@ -359,6 +404,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		IInspectable const&,
 		IInspectable const&)
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		RefreshSummary();
 	}
 

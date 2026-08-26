@@ -5,6 +5,7 @@
 #endif
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
@@ -21,17 +22,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	TaskPieceMapPage::~TaskPieceMapPage()
 	{
-		Unsubscribe();
-		if (m_refreshTimer)
-		{
-			m_refreshTimer.Stop();
-			m_refreshTimer.Tick(m_timerTickToken);
-		}
 	}
 
 	void TaskPieceMapPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args)
 	{
 		Unsubscribe();
+		m_isActive.store(true, std::memory_order_release);
+		if (!m_unloadedHandlerRegistered)
+		{
+			m_unloadedHandlerRegistered = true;
+			auto weak = get_weak();
+			Unloaded([weak](auto const&, auto const&)
+			{
+				if (auto self = weak.get())
+				{
+					self->m_isActive.store(false, std::memory_order_release);
+					self->StopRefreshTimer();
+					self->Unsubscribe();
+				}
+			});
+		}
 		m_viewModel = args.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		if (!m_viewModel)
 		{
@@ -47,8 +57,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = DispatcherTimer{};
-			m_timerTickToken = m_refreshTimer.Tick(
-				{ this, &TaskPieceMapPage::OnRefreshTimerTick });
+			auto weak = get_weak();
+			m_timerTickToken = m_refreshTimer.Tick([weak](auto const& sender, auto const& timerArgs)
+			{
+				if (auto self = weak.get()) self->OnRefreshTimerTick(sender, timerArgs);
+			});
 		}
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
@@ -63,11 +76,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPieceMapPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
-		if (m_refreshTimer)
+		m_isActive.store(false, std::memory_order_release);
+		StopRefreshTimer();
+		Unsubscribe();
+	}
+
+	void TaskPieceMapPage::StopRefreshTimer() noexcept
+	{
+		if (!m_refreshTimer) return;
+		try
 		{
 			m_refreshTimer.Stop();
+			if (m_timerTickToken.value) m_refreshTimer.Tick(m_timerTickToken);
 		}
-		Unsubscribe();
+		catch (...)
+		{
+		}
+		m_timerTickToken = {};
+		m_refreshTimer = nullptr;
 	}
 
 	void TaskPieceMapPage::RefreshButton_Click(IInspectable const&, RoutedEventArgs const&)
@@ -78,18 +104,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPieceMapPage::RefreshPieceMap()
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
 		if (task && task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
 		{
-			PieceGrid().Items().Clear();
-			PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageBitTorrentOnly"));
-			DownloadedPiecesText().Text(L"0 / 0");
-			AvailablePiecesText().Text(L"0 / 0");
-			DownloadedPiecesProgress().Pieces(L"");
-			AvailablePiecesProgress().Pieces(L"");
-			m_renderedTaskId.clear();
-			m_renderedStates.clear();
-			m_renderedAvailability.clear();
+			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(to_string(task.Gid()));
+			if (!information)
+			{
+				PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageMetadataPending"));
+				return;
+			}
+			auto const pieceMap = ::OpenNet::Core::Aria2::BuildPieceMapInformation(*information);
+			std::size_t sourceCount{};
+			for (auto const& file : information->Files) sourceCount += file.Uris.size();
+			std::vector<int> availability(pieceMap.States.size(), sourceCount > 0 ? 1 : 0);
+			RenderPieceMap(task.TaskId(), task.Name(), pieceMap.PieceLength, pieceMap.States, availability, std::vector<std::string>{}, sourceCount);
 			return;
 		}
 		if (!task || task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
@@ -123,29 +152,41 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
+		RenderPieceMap(taskId, task.Name(), pieces.pieceSize, pieces.states, pieces.availability, pieces.hashes, pieces.webSeeds.size());
+	}
+
+	void TaskPieceMapPage::RenderPieceMap(
+		hstring const& taskId,
+		hstring const& taskName,
+		std::size_t const pieceSize,
+		std::vector<int> const& states,
+		std::vector<int> const& availability,
+		std::vector<std::string> const& hashes,
+		std::size_t const sourceCount)
+	{
 		std::size_t finished{};
 		std::size_t available{};
-		for (std::size_t index = 0; index < pieces.states.size(); ++index)
+		for (std::size_t index = 0; index < states.size(); ++index)
 		{
-			if (pieces.states[index] == 2)
+			if (states[index] == 2)
 			{
 				++finished;
 			}
-			if (index < pieces.availability.size() && pieces.availability[index] > 0)
+			if (index < availability.size() && availability[index] > 0)
 			{
 				++available;
 			}
 		}
 
-		auto const total = pieces.states.size();
+		auto const total = states.size();
 		std::wstring downloadedStates;
 		std::wstring availableStates;
 		downloadedStates.reserve(total);
 		availableStates.reserve(total);
 		for (std::size_t index = 0; index < total; ++index)
 		{
-			downloadedStates.push_back(static_cast<wchar_t>(L'0' + std::clamp(pieces.states[index], 0, 4)));
-			availableStates.push_back(index < pieces.availability.size() && pieces.availability[index] > 0 ? L'2' : L'0');
+			downloadedStates.push_back(static_cast<wchar_t>(L'0' + std::clamp(states[index], 0, 4)));
+			availableStates.push_back(index < availability.size() && availability[index] > 0 ? L'2' : L'0');
 		}
 		DownloadedPiecesText().Text(std::format(L"{} / {}", finished, total));
 		AvailablePiecesText().Text(std::format(L"{} / {}", available, total));
@@ -153,13 +194,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		AvailablePiecesProgress().Value(total ? available * 100.0 / total : 0.0);
 		DownloadedPiecesProgress().Pieces(hstring{ downloadedStates });
 		AvailablePiecesProgress().Pieces(hstring{ availableStates });
-		PieceSizeText().Text(ResourceGetString(L"ViewTaskPieceMapPagePieceSize") + L" " + FormatBytes(pieces.pieceSize));
-		WebSeedCountText().Text(ResourceGetString(L"ViewTaskPieceMapPageWebSeeds") + L" " + std::to_wstring(pieces.webSeeds.size()));
-		PieceMapSubtitle().Text(task.Name() + L" · " + std::to_wstring(total) + L" " + ResourceGetString(L"ViewTaskPieceMapPagePieces"));
+		PieceSizeText().Text(ResourceGetString(L"ViewTaskPieceMapPagePieceSize") + L" " + FormatBytes(pieceSize));
+		WebSeedCountText().Text(ResourceGetString(L"ViewTaskPieceMapPageWebSeeds") + L" " + std::to_wstring(sourceCount));
+		PieceMapSubtitle().Text(taskName + L" · " + std::to_wstring(total) + L" " + ResourceGetString(L"ViewTaskPieceMapPagePieces"));
 
 		if (taskId == m_renderedTaskId
-			&& pieces.states == m_renderedStates
-			&& pieces.availability == m_renderedAvailability)
+			&& states == m_renderedStates
+			&& availability == m_renderedAvailability)
 		{
 			return;
 		}
@@ -169,19 +210,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			taskId == m_renderedTaskId
 			&& items.Size() == total
 			&& m_renderedStates.size() == total
-			&& m_renderedAvailability.size() == pieces.availability.size();
+			&& m_renderedAvailability.size() == availability.size();
 		if (!canUpdateInPlace)
 		{
 			items.Clear();
 		}
 		for (std::size_t index = 0; index < total; ++index)
 		{
-			auto const availability =
-				index < pieces.availability.size() ? pieces.availability[index] : 0;
+			auto const availabilityValue =
+				index < availability.size() ? availability[index] : 0;
 			bool const changed =
 				!canUpdateInPlace
-				|| pieces.states[index] != m_renderedStates[index]
-				|| availability != (
+				|| states[index] != m_renderedStates[index]
+				|| availabilityValue != (
 					index < m_renderedAvailability.size()
 					? m_renderedAvailability[index]
 					: 0);
@@ -192,10 +233,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			auto element = CreatePieceElement(
 				index,
-				pieces.states[index],
-				availability,
-				index < pieces.hashes.size()
-				? to_hstring(pieces.hashes[index])
+				states[index],
+				availabilityValue,
+				index < hashes.size()
+				? to_hstring(hashes[index])
 				: hstring{});
 			if (canUpdateInPlace)
 			{
@@ -207,8 +248,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			}
 		}
 		m_renderedTaskId = taskId;
-		m_renderedStates = pieces.states;
-		m_renderedAvailability = pieces.availability;
+		m_renderedStates = states;
+		m_renderedAvailability = availability;
 	}
 
 	void TaskPieceMapPage::Unsubscribe()
@@ -236,6 +277,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		IInspectable const&,
 		IInspectable const&)
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		RefreshPieceMap();
 	}
 

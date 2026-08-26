@@ -76,7 +76,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			self->m_isUnloaded = true;
 			self->m_backgroundPlaybackActive = false;
 			self->m_backgroundTimer.Stop();
-			self->StopBackgroundMedia();
+			::OpenNet::Service::Background::GetBackgroundMediaService().Reset(
+				self->m_backgroundImagePresenter,
+				self->m_backgroundVideoPresenter);
 		});
 
 		m_viewModel.Initialize();
@@ -108,7 +110,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		::OpenNet::Service::Background::GetBackgroundMediaService().OptionsChanged(m_backgroundOptionsChangedToken);
 		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::BackgroundPresentersChanged(m_backgroundPresentersChangedToken);
-		::OpenNet::Service::Background::GetBackgroundMediaService().Reset(BackgroundImagePresenter(), BackgroundVideoPresenter());
 		if (m_backgroundTimer)
 		{
 			m_backgroundTimer.Stop();

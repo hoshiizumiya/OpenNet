@@ -131,21 +131,66 @@ namespace winrt::OpenNet::UI::Xaml::Control::Progress::HttpSegment::implementati
 		s_isRangeModeProperty = DependencyProperty::Register(L"IsRangeMode", xaml_typename<bool>(), ownerType, PropertyMetadata{ box_value(false), callback });
 	}
 
-	DependencyProperty RangePieceBar::PiecesProperty() { EnsureDependencyProperties(); return s_piecesProperty; }
-	DependencyProperty RangePieceBar::RangeStartProperty() { EnsureDependencyProperties(); return s_rangeStartProperty; }
-	DependencyProperty RangePieceBar::RangeEndProperty() { EnsureDependencyProperties(); return s_rangeEndProperty; }
-	DependencyProperty RangePieceBar::ValueProperty() { EnsureDependencyProperties(); return s_valueProperty; }
-	DependencyProperty RangePieceBar::IsRangeModeProperty() { EnsureDependencyProperties(); return s_isRangeModeProperty; }
-	hstring RangePieceBar::Pieces() const { return unbox_value<hstring>(GetValue(PiecesProperty())); }
-	void RangePieceBar::Pieces(hstring const& value) { SetValue(PiecesProperty(), box_value(value)); }
-	double RangePieceBar::RangeStart() const { return unbox_value<double>(GetValue(RangeStartProperty())); }
-	void RangePieceBar::RangeStart(double const value) { SetValue(RangeStartProperty(), box_value(std::clamp(value, 0.0, 100.0))); }
-	double RangePieceBar::RangeEnd() const { return unbox_value<double>(GetValue(RangeEndProperty())); }
-	void RangePieceBar::RangeEnd(double const value) { SetValue(RangeEndProperty(), box_value(std::clamp(value, 0.0, 100.0))); }
-	double RangePieceBar::Value() const { return unbox_value<double>(GetValue(ValueProperty())); }
-	void RangePieceBar::Value(double const value) { SetValue(ValueProperty(), box_value(std::clamp(value, 0.0, 100.0))); }
-	bool RangePieceBar::IsRangeMode() const { return unbox_value<bool>(GetValue(IsRangeModeProperty())); }
-	void RangePieceBar::IsRangeMode(bool const value) { SetValue(IsRangeModeProperty(), box_value(value)); }
+	DependencyProperty RangePieceBar::PiecesProperty()
+	{
+		EnsureDependencyProperties(); return s_piecesProperty;
+	}
+	DependencyProperty RangePieceBar::RangeStartProperty()
+	{
+		EnsureDependencyProperties(); return s_rangeStartProperty;
+	}
+	DependencyProperty RangePieceBar::RangeEndProperty()
+	{
+		EnsureDependencyProperties(); return s_rangeEndProperty;
+	}
+	DependencyProperty RangePieceBar::ValueProperty()
+	{
+		EnsureDependencyProperties(); return s_valueProperty;
+	}
+	DependencyProperty RangePieceBar::IsRangeModeProperty()
+	{
+		EnsureDependencyProperties(); return s_isRangeModeProperty;
+	}
+	hstring RangePieceBar::Pieces() const
+	{
+		return unbox_value<hstring>(GetValue(PiecesProperty()));
+	}
+	void RangePieceBar::Pieces(hstring const& value)
+	{
+		SetValue(PiecesProperty(), box_value(value));
+	}
+	double RangePieceBar::RangeStart() const
+	{
+		return unbox_value<double>(GetValue(RangeStartProperty()));
+	}
+	void RangePieceBar::RangeStart(double const value)
+	{
+		SetValue(RangeStartProperty(), box_value(std::clamp(value, 0.0, 100.0)));
+	}
+	double RangePieceBar::RangeEnd() const
+	{
+		return unbox_value<double>(GetValue(RangeEndProperty()));
+	}
+	void RangePieceBar::RangeEnd(double const value)
+	{
+		SetValue(RangeEndProperty(), box_value(std::clamp(value, 0.0, 100.0)));
+	}
+	double RangePieceBar::Value() const
+	{
+		return unbox_value<double>(GetValue(ValueProperty()));
+	}
+	void RangePieceBar::Value(double const value)
+	{
+		SetValue(ValueProperty(), box_value(std::clamp(value, 0.0, 100.0)));
+	}
+	bool RangePieceBar::IsRangeMode() const
+	{
+		return unbox_value<bool>(GetValue(IsRangeModeProperty()));
+	}
+	void RangePieceBar::IsRangeMode(bool const value)
+	{
+		SetValue(IsRangeModeProperty(), box_value(value));
+	}
 
 	void RangePieceBar::OnDisplayPropertyChanged(DependencyObject const& sender, DependencyPropertyChangedEventArgs const&)
 	{
@@ -236,20 +281,29 @@ namespace winrt::OpenNet::UI::Xaml::Control::Progress::HttpSegment::implementati
 			}
 			return;
 		}
-		auto const targetCount = (std::min<std::size_t>)(pieces.size(), 256);
+		auto const availableWidth = ActualWidth();
+		auto const widthLimitedCount = availableWidth > 0
+			? (std::max)(std::size_t{ 1 }, static_cast<std::size_t>(availableWidth / 2.0))
+			: std::size_t{ 128 };
+		auto const targetCount = (std::min)({
+			static_cast<std::size_t>(pieces.size()),
+			std::size_t{ 256 }, widthLimitedCount });
 		std::wstring states(targetCount, L'0');
 		for (std::size_t bucket = 0; bucket < targetCount; ++bucket)
 		{
 			auto const first = pieces.size() * bucket / targetCount;
 			auto const last = pieces.size() * (bucket + 1) / targetCount;
-			wchar_t state = L'0';
+			std::array<std::size_t, 5> stateCounts{};
 			for (auto index = first; index < last; ++index)
 			{
 				auto const candidate = pieces[static_cast<std::uint32_t>(index)];
-				if (candidate == L'1' || state == L'0') state = candidate;
-				if (candidate == L'1') break;
+				auto const stateIndex = candidate >= L'0' && candidate <= L'4'
+					? static_cast<std::size_t>(candidate - L'0')
+					: std::size_t{};
+				++stateCounts[stateIndex];
 			}
-			states[bucket] = state;
+			auto const dominant = std::max_element(stateCounts.begin(), stateCounts.end());
+			states[bucket] = static_cast<wchar_t>(L'0' + std::distance(stateCounts.begin(), dominant));
 		}
 		if (children.Size() != targetCount || columns.Size() != targetCount)
 		{
@@ -262,7 +316,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Progress::HttpSegment::implementati
 				columns.Append(column);
 				Border piece;
 				piece.Background(BrushForState(states[bucket]));
-				piece.Margin({ 0.25, 0, 0.25, 0 });
+				piece.Margin({ 0.1, 0, 0.1, 0 });
 				Grid::SetColumn(piece, static_cast<int>(bucket));
 				children.Append(piece);
 			}

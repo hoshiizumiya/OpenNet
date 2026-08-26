@@ -14,6 +14,8 @@ import OpenNet.Presentation.ScopedPage;
 #include "UI/Xaml/View/Pages/TaskPieceMapPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskPeersListPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskTrackersPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskHttpConnectionsPage.xaml.h"
+#include "UI/Xaml/View/Pages/TaskHttpServersPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskFilesPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskHttpLogPage.xaml.h"
 #include "UI/Xaml/Control/TaskStatusIndicator.xaml.h"

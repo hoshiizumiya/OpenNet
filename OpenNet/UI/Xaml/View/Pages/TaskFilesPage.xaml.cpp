@@ -61,6 +61,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		UpdateSortHeaders();
 		Unloaded([this](auto, auto)
 		{
+			m_isActive.store(false, std::memory_order_release);
+			StopRefreshTimer();
+			Unsubscribe();
 			using namespace ::OpenNet::Helpers;
 			SaveColumnWidth("Files.Size", ColFileSize());
 			SaveColumnWidth("Files.Progress", ColFileProgress());
@@ -71,18 +74,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskFilesPage::~TaskFilesPage()
 	{
-		Unsubscribe();
-		if (m_refreshTimer)
-		{
-			m_refreshTimer.Stop();
-			m_refreshTimer.Tick(m_timerTickToken);
-			m_refreshTimer = nullptr;
-		}
 	}
 
 	void TaskFilesPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
 	{
 		Unsubscribe();
+		m_isActive.store(true, std::memory_order_release);
 
 		m_viewModel = e.Parameter().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		if (!m_viewModel)
@@ -100,7 +97,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-			m_timerTickToken = m_refreshTimer.Tick({ this, &TaskFilesPage::OnRefreshTimerTick });
+			auto weak = get_weak();
+			m_timerTickToken = m_refreshTimer.Tick([weak](auto const& sender, auto const& args)
+			{
+				if (auto self = weak.get()) self->OnRefreshTimerTick(sender, args);
+			});
 		}
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
@@ -116,11 +117,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskFilesPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
-		if (m_refreshTimer)
+		m_isActive.store(false, std::memory_order_release);
+		StopRefreshTimer();
+		Unsubscribe();
+	}
+
+	void TaskFilesPage::StopRefreshTimer() noexcept
+	{
+		if (!m_refreshTimer) return;
+		try
 		{
 			m_refreshTimer.Stop();
+			if (m_timerTickToken.value) m_refreshTimer.Tick(m_timerTickToken);
 		}
-		Unsubscribe();
+		catch (...)
+		{
+		}
+		m_timerTickToken = {};
+		m_refreshTimer = nullptr;
 	}
 
 	void TaskFilesPage::Unsubscribe()
@@ -143,6 +157,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskFilesPage::OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		RefreshFileList();
 	}
 
@@ -282,6 +297,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskFilesPage::RefreshFileList()
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto listView = FilesListView();
 		auto emptyText = EmptyStateText();
 		if (!listView) return;

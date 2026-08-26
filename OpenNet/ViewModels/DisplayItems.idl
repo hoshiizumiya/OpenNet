@@ -52,10 +52,35 @@
 		String Downloaded;
 		String Status;
 		String Message;
-		String ProgressPieces;
-		String ProgressText;
-		Microsoft.UI.Xaml.Visibility TrackerProgressVisibility;
-		Microsoft.UI.Xaml.Visibility HttpProgressVisibility;
+	};
+
+	[default_interface]
+	runtimeclass HttpConnectionDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		HttpConnectionDisplayItem();
+		String Key;
+		String URL;
+		String DownloadRate;
+		String DownloadSize;
+		Double RangeStart;
+		Double RangeEnd;
+		Double ProgressValue;
+		String Progress;
+		String Status;
+	};
+
+	[default_interface]
+	runtimeclass HttpServerDisplayItem : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+	{
+		HttpServerDisplayItem();
+		String Key;
+		String URL;
+		String Connections;
+		String DownloadRate;
+		String DownloadSize;
+		String Pieces;
+		String Progress;
+		String Status;
 	};
 
 	[default_interface]

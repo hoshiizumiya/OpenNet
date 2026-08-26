@@ -69,14 +69,17 @@ export namespace OpenNet::Core::Aria2
 
 		void RefreshInformation();
 
-		DownloadInformation GetTaskInformation(std::string const& Gid);
+		DownloadInformation GetTaskInformation(std::string const& Gid, bool includeStaticDetails = true);
 		std::vector<ServersInformation> GetTaskServers(std::string const& Gid);
-		std::vector<std::string> GetTaskList();
+		std::vector<std::string> GetTaskList(bool includeStopped = true);
 
 		std::string SimplePost(std::string const& Content);
 		std::string SimpleJsonRpcCall(
 			std::string const& MethodName,
 			std::string const& Parameters);
+		std::optional<std::string> TrySimpleJsonRpcCall(
+			std::string const& methodName,
+			std::string const& parameters);
 
 	protected:
 		Aria2Instance();

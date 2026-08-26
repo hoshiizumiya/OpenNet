@@ -237,10 +237,31 @@ namespace OpenNet::Core
 	std::vector<Aria2::ServersInformation> DownloadManager::GetHttpTaskServers(std::string const& gid)
 	{
 		if (!IsAria2Available() || gid.empty()) return {};
+		std::vector<Aria2::ServersInformation> cached;
+		{
+			std::lock_guard lock(m_mutex);
+			if (auto const entry = m_httpServerSnapshots.find(gid);
+				entry != m_httpServerSnapshots.end())
+			{
+				cached = entry->second;
+			}
+			if (auto const task = m_httpTaskSnapshots.find(gid);
+				task != m_httpTaskSnapshots.end()
+				&& task->second.Status != Aria2::DownloadStatus::Active)
+			{
+				return cached;
+			}
+		}
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
-			return m_aria2->GetTaskServers(gid);
+			auto servers = m_aria2->GetTaskServers(gid);
+			if (!servers.empty())
+			{
+				std::lock_guard lock(m_mutex);
+				m_httpServerSnapshots.insert_or_assign(gid, servers);
+			}
+			return servers.empty() ? cached : servers;
 		}
 		catch (...)
 		{
@@ -634,18 +655,20 @@ namespace OpenNet::Core
 			m_totalUlSpeed.store(m_aria2->TotalUploadSpeed());
 
 			// Get task list and fire progress callbacks
-			auto gids = m_aria2->GetTaskList();
+			auto const now = std::chrono::steady_clock::now();
+			auto const includeStopped =
+				now - m_lastStoppedListRefresh >= std::chrono::seconds(10);
+			auto gids = m_aria2->GetTaskList(includeStopped);
+			if (includeStopped) m_lastStoppedListRefresh = now;
 
 			HttpProgressCallback progressCb;
 			HttpFinishedCallback finishedCb;
 			HttpErrorCallback errorCb;
-			std::set<std::string> knownGids;
 			{
 				std::lock_guard lock(m_mutex);
 				progressCb = m_progressCb;
 				finishedCb = m_finishedCb;
 				errorCb = m_errorCb;
-				knownGids = m_knownGids;
 			}
 
 			std::set<std::string> currentGids;
@@ -655,9 +678,30 @@ namespace OpenNet::Core
 				currentGids.insert(gid);
 
 				Aria2::DownloadInformation task;
+				std::optional<Aria2::DownloadInformation> previousSnapshot;
+				{
+					std::lock_guard lock(m_mutex);
+					if (auto const previous = m_httpTaskSnapshots.find(gid);
+						previous != m_httpTaskSnapshots.end())
+					{
+						previousSnapshot = previous->second;
+					}
+				}
 				try
 				{
-					task = m_aria2->GetTaskInformation(gid);
+					auto const includeStaticDetails = !previousSnapshot
+						|| previousSnapshot->Files.empty();
+					task = m_aria2->GetTaskInformation(gid, includeStaticDetails);
+					if (!includeStaticDetails && previousSnapshot)
+					{
+						task.InfoHash = previousSnapshot->InfoHash;
+						task.FollowedBy = previousSnapshot->FollowedBy;
+						task.Following = previousSnapshot->Following;
+						task.BelongsTo = previousSnapshot->BelongsTo;
+						task.Dir = previousSnapshot->Dir;
+						task.Files = previousSnapshot->Files;
+						task.BitTorrent = previousSnapshot->BitTorrent;
+					}
 				}
 				catch (...)
 				{

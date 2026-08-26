@@ -318,12 +318,26 @@ void OpenNet::Core::Aria2::Aria2Instance::RefreshInformation()
 	}
 }
 
-OpenNet::Core::Aria2::DownloadInformation
-OpenNet::Core::Aria2::Aria2Instance::GetTaskInformation(std::string const& Gid)
+OpenNet::Core::Aria2::DownloadInformation OpenNet::Core::Aria2::Aria2Instance::GetTaskInformation(std::string const& Gid, bool const includeStaticDetails)
 {
 	nlohmann::json params;
 	params.emplace_back("token:" + m_ServerToken);
 	params.emplace_back(Gid);
+	nlohmann::json keys{
+		"gid", "status", "totalLength", "completedLength", "uploadLength",
+		"bitfield", "downloadSpeed", "uploadSpeed", "numSeeders", "seeder",
+		"pieceLength", "numPieces", "connections", "errorCode", "errorMessage",
+		"verifiedLength", "verifyIntegrityPending" };
+	if (includeStaticDetails)
+	{
+		for (auto const* key : {
+			"infoHash", "followedBy", "following", "belongsTo", "dir",
+			"files", "bittorrent" })
+		{
+			keys.push_back(key);
+		}
+	}
+	params.emplace_back(std::move(keys));
 	auto response = nlohmann::json::parse(
 		SimpleJsonRpcCall("aria2.tellStatus", params.dump(2)));
 	return ToDownloadInformation(response);
@@ -334,13 +348,16 @@ std::vector<OpenNet::Core::Aria2::ServersInformation> OpenNet::Core::Aria2::Aria
 	nlohmann::json params;
 	params.emplace_back("token:" + m_ServerToken);
 	params.emplace_back(Gid);
-	auto response = nlohmann::json::parse(SimpleJsonRpcCall("aria2.getServers", params.dump(2)));
+	auto const message = TrySimpleJsonRpcCall(
+		"aria2.getServers", params.dump(2));
+	if (!message) return {};
+	auto response = nlohmann::json::parse(*message);
 	std::vector<ServersInformation> result;
 	for (auto const& item : response) result.push_back(ToServersInformation(item));
 	return result;
 }
 
-std::vector<std::string> OpenNet::Core::Aria2::Aria2Instance::GetTaskList()
+std::vector<std::string> OpenNet::Core::Aria2::Aria2Instance::GetTaskList(bool const includeStopped)
 {
 	std::vector<std::string> result;
 
@@ -372,7 +389,9 @@ std::vector<std::string> OpenNet::Core::Aria2::Aria2Instance::GetTaskList()
 			result.emplace_back(task["gid"].get<std::string>());
 	}
 
-	// Stopped tasks
+	// Stopped-task history grows for the lifetime of aria2. It is sampled at a
+	// lower cadence by DownloadManager instead of being reparsed every second.
+	if (includeStopped)
 	{
 		nlohmann::json params;
 		params.emplace_back("token:" + m_ServerToken);
@@ -437,6 +456,25 @@ std::string OpenNet::Core::Aria2::Aria2Instance::SimpleJsonRpcCall(
 		throw winrt::hresult_illegal_method_call(winrt::to_hstring(response.Message));
 	}
 
+	return response.Message;
+}
+
+std::optional<std::string> OpenNet::Core::Aria2::Aria2Instance::TrySimpleJsonRpcCall(std::string const& methodName, std::string const& parameters)
+{
+	JsonRpc2::RequestMessage request;
+	request.Method = methodName;
+	request.Parameters = parameters;
+	request.Identifier = winrt::to_string(CreateGuidString());
+	auto const rawRequest = JsonRpc2::FromRequestMessage(request);
+	if (rawRequest.empty()) return std::nullopt;
+
+	JsonRpc2::ResponseMessage response;
+	if (!JsonRpc2::ToResponseMessage(SimplePost(rawRequest), response)
+		|| response.Identifier != request.Identifier
+		|| !response.IsSucceeded)
+	{
+		return std::nullopt;
+	}
 	return response.Message;
 }
 

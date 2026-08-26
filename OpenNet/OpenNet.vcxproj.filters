@@ -76,6 +76,12 @@
     <Page Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpServersPage.xaml">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
@@ -344,6 +350,12 @@
       <Filter>UI\Xaml\View\Pages</Filter>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskPieceMapPage.idl">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.idl">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskHttpServersPage.idl">
       <Filter>UI\Xaml\View\Pages</Filter>
     </Midl>
     <Midl Include="UI\Xaml\Control\CheckUpdateControl.idl" />
@@ -761,6 +773,12 @@
     <ClCompile Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml.cpp">
       <Filter>UI\Xaml\View\Pages</Filter>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml.cpp">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpServersPage.xaml.cpp">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClCompile>
     <ClCompile Include="Service\Notification\InfoBarOptions.cpp">
       <Filter>Service</Filter>
     </ClCompile>
@@ -994,6 +1012,12 @@
       <Filter>UI\Xaml\View\Pages</Filter>
     </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskPieceMapPage.xaml.h">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml.h">
+      <Filter>UI\Xaml\View\Pages</Filter>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpServersPage.xaml.h">
       <Filter>UI\Xaml\View\Pages</Filter>
     </ClInclude>
     <ClInclude Include="XamlWorkaround.h" />

@@ -42,6 +42,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerTickToken{};
+		std::atomic_bool m_isActive{};
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_fileItems{ nullptr };
 
 		// Suppress priority change events during list refresh
@@ -51,6 +52,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 
 		void Unsubscribe();
+		void StopRefreshTimer() noexcept;
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void RefreshFileList();
 		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);

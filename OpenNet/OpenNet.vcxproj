@@ -470,6 +470,14 @@
       <DependentUpon>UI\Xaml\View\Pages\TaskPeersListPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\View\Pages\TaskHttpServersPage.xaml.h">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpServersPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\TaskTrackersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -806,6 +814,12 @@
     <Page Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UI\Xaml\View\Pages\TaskHttpServersPage.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -1074,6 +1088,14 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskPeersListPage.xaml.cpp">
       <DependentUpon>UI\Xaml\View\Pages\TaskPeersListPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\View\Pages\TaskHttpServersPage.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
     <ClCompile Include="UI\Xaml\View\Pages\TaskTrackersPage.xaml.cpp">
@@ -1433,6 +1455,14 @@
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskPeersListPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\TaskPeersListPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskHttpConnectionsPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpConnectionsPage.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="UI\Xaml\View\Pages\TaskHttpServersPage.idl">
+      <DependentUpon>UI\Xaml\View\Pages\TaskHttpServersPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="UI\Xaml\View\Pages\TaskTrackersPage.idl">

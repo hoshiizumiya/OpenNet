@@ -14,9 +14,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	private:
 		void Refresh();
+		void StopRefreshTimer() noexcept;
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_timer{ nullptr };
 		winrt::event_token m_tickToken{};
+		std::atomic_bool m_isActive{};
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_entries{ nullptr };
 	};
 }
