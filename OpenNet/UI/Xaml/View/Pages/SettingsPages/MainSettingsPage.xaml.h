@@ -8,14 +8,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
 	struct MainSettingsPage : MainSettingsPageT<MainSettingsPage>
 	{
-	private:
-		static MainSettingsPage* s_current;
-
-		// Navigate to page by tag
-		void NavigateByTag(winrt::hstring const& tag,
-						   winrt::Microsoft::UI::Xaml::Media::Animation::SlideNavigationTransitionInfo const& transitionInfo);
-
-		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_settingsBarItems = winrt::single_threaded_observable_vector(std::vector<winrt::hstring>{L"Settings"});
 	public:
 		MainSettingsPage();
 		~MainSettingsPage();
@@ -28,25 +20,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		// Navigation handler
 		void SettingsNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
-		void SettingsSearchBox_TextChanged(
-			winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
-		void SettingsSearchBox_QuerySubmitted(
-			winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxQuerySubmittedEventArgs const& args);
+		void SettingsSearchBox_TextChanged(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxTextChangedEventArgs const& args);
+		void SettingsSearchBox_QuerySubmitted(winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBox const& sender, winrt::Microsoft::UI::Xaml::Controls::AutoSuggestBoxQuerySubmittedEventArgs const& args);
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> SettingsBarItems();
 
 	private:
-		std::vector<winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem>
-			SearchableItems();
-		winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem
-			FindSearchResult(winrt::hstring const& text);
+		static MainSettingsPage* s_current;
+		std::vector<winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem> SearchableItems();
+		winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem FindSearchResult(winrt::hstring const& text);
 		static std::wstring NormalizeSearchText(winrt::hstring const& value);
-		static bool MatchesSearch(
-			winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem const& item,
-			std::wstring const& query);
-		static winrt::hstring TagsForRoute(winrt::hstring const& route);
+		static bool MatchesSearch(winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem const& item, std::wstring const& query);
+		static winrt::hstring TagsForPageType(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType);
+
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_settingsBarItems = winrt::single_threaded_observable_vector(std::vector<winrt::hstring>{ L"Settings" });
 	};
 }
 

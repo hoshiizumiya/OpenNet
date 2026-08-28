@@ -299,8 +299,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TasksPage::TasksPage()
 	{
-		// Keep page cached to preserve ViewModel when navigating away
-		//this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Enabled);
+		NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Disabled);
 
 		m_viewModel = ::OpenNet::Presentation::TasksViewModelFactory::Create(::OpenNet::Application::CompositionRoot::Instance().TaskCommandService());
 		InitializeScopedViewModel(m_viewModel,
@@ -322,6 +321,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				if (auto self = weak.get())
 				{
 					self->m_sortPending = false;
+					if (!self->m_isActive.load(std::memory_order_acquire)) return;
 					self->SortFilteredTasks();
 				}
 			});
@@ -333,6 +333,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		Unloaded([this](IInspectable const&, RoutedEventArgs const&)
 		{
+			m_isActive.store(false, std::memory_order_release);
+			++m_scrollRestoreGeneration;
+			m_isRestoringScrollPosition = false;
+			m_restoringFilterKey = {};
 			SaveColumnWidths();
 			DeactivateScopedViewModel();
 		});
@@ -369,6 +373,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	winrt::fire_and_forget TasksPage::Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
+		m_isActive.store(true, std::memory_order_release);
 		ActivateScopedViewModel();
 		auto const tasksListHeight = ::OpenNet::Helpers::GetControlHeight("TasksPage_ContentFrame_Height");
 		if (tasksListHeight > 0.0)
@@ -376,14 +381,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			TasksListRow().Height(GridLength(tasksListHeight, GridUnitType::Pixel));
 		}
 		RestoreScrollPositionAsync(m_currentFilterKey);
+		NavigateSelectedTaskDetailPage(false);
 		co_return;
 	}
 
-	// Save the current scroll position and selected item when navigating away
-	void TasksPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
+	// Save visual state before the outer Frame enters its navigation transaction.
+	void TasksPage::PrepareForNavigation()
 	{
+		if (!m_isActive.exchange(false, std::memory_order_acq_rel)) return;
 		SaveScrollPosition(m_currentFilterKey);
 		::OpenNet::Helpers::TabViewStateHelper::SaveTabViewState(Task_TabView(), std::string{ TaskTabStateKey });
+		++m_scrollRestoreGeneration;
+		m_isRestoringScrollPosition = false;
+		m_restoringFilterKey = {};
+	}
+
+	// OnNavigatedFrom must not inspect or mutate the outgoing visual tree.
+	void TasksPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
+	{
+		m_isActive.store(false, std::memory_order_release);
+		++m_scrollRestoreGeneration;
+		m_isRestoringScrollPosition = false;
+		m_restoringFilterKey = {};
 	}
 
 	// Restore saved column widths
@@ -794,6 +813,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::FilterNavView_SelectionChanged(Microsoft::UI::Xaml::Controls::NavigationView const& /*sender*/, Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args)
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto item = args.SelectedItem().try_as<Microsoft::UI::Xaml::Controls::NavigationViewItem>();
 		if (!item)
 			return;
@@ -813,6 +833,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			{
 				if (auto self = weak.get())
 				{
+					if (!self->m_isActive.load(std::memory_order_acquire)) return;
 					self->RestoreScrollPositionAsync(tag);
 				}
 			});
@@ -858,6 +879,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::TasksList_SelectionChanged(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*args*/)
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto listView = TasksList();
 		if (!listView || !m_viewModel)
 			return;
@@ -872,27 +894,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TasksPage::UpdateTaskDetailTabs()
 	{
+		if (!m_isActive.load(std::memory_order_acquire)) return;
 		auto const task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
 		auto const isHttp = task && task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http;
 		PeersList().Header(box_value(ResourceGetString(isHttp ? L"TaskHttpConnectionsTab" : L"Task_PeersList/Header")));
 		TrackersList().Header(box_value(ResourceGetString(isHttp ? L"TaskHttpServersTab" : L"Task_TrackersList/Header")));
 		PieceMapContent().Visibility(Visibility::Visible);
 		HttpTaskLogContent().Visibility(isHttp ? Visibility::Visible : Visibility::Collapsed);
-		auto const selectedTab = Task_TabView().SelectedItem();
-		if (selectedTab == PeersList())
-		{
-			auto const pageType = isHttp
-				? xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpConnectionsPage>()
-				: xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskPeersListPage>();
-			ContentFrame().NavigateToType(pageType, m_viewModel, {});
-		}
-		else if (selectedTab == TrackersList())
-		{
-			auto const pageType = isHttp
-				? xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpServersPage>()
-				: xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskTrackersPage>();
-			ContentFrame().NavigateToType(pageType, m_viewModel, {});
-		}
+		NavigateSelectedTaskDetailPage(false);
 	}
 
 	void TasksPage::TasksList_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
@@ -922,7 +931,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::Task_TabView_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args)
 	{
 		auto strong = get_strong();
-		auto tabView = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::TabView>();
+		if (!m_isActive.load(std::memory_order_acquire) || m_restoringTabViewState) return;
+		NavigateSelectedTaskDetailPage(true);
+	}
+
+	void TasksPage::NavigateSelectedTaskDetailPage(bool const animate)
+	{
+		if (!m_isActive.load(std::memory_order_acquire) || m_restoringTabViewState) return;
+		auto tabView = Task_TabView();
 		auto selectedItem = tabView.SelectedItem();
 		if (!selectedItem)
 		{
@@ -930,7 +946,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		int32_t const currentSelectedIndex = tabView.SelectedIndex();
 		winrt::Microsoft::UI::Xaml::Navigation::FrameNavigationOptions navOptions;
-		if (m_previousSelectedIndex >= 0 &&
+		if (animate && m_previousSelectedIndex >= 0 &&
 			currentSelectedIndex >= 0 &&
 			currentSelectedIndex != m_previousSelectedIndex)
 		{
@@ -955,6 +971,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			targetPageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TaskHttpServersPage>();
 		}
+		if (ContentFrame().SourcePageType() == targetPageType) return;
 		ContentFrame().NavigateToType(targetPageType, m_viewModel, navOptions);
 	}
 
@@ -2004,7 +2021,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto strong = get_strong();
 		auto const generation = ++m_scrollRestoreGeneration;
 
-		if (filterKey.empty() || filterKey != m_currentFilterKey)
+		if (!m_isActive.load(std::memory_order_acquire)
+			|| filterKey.empty() || filterKey != m_currentFilterKey)
 		{
 			co_return;
 		}
@@ -2031,7 +2049,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			OutputDebugStringW((L"Failed to restore task list scroll position: " + std::wstring{ error.message().c_str() } + L"\n").c_str());
 		}
 
-		if (generation == m_scrollRestoreGeneration)
+		if (m_isActive.load(std::memory_order_acquire)
+			&& generation == m_scrollRestoreGeneration)
 		{
 			ClearRestoredItemContainerHeight();
 			m_isRestoringScrollPosition = false;

@@ -8,6 +8,7 @@
 #include "MainWindow.xaml.h"
 #include "UI/Xaml/View/Windows/InfoOverlayWindow.xaml.h"
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
+#include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
@@ -576,7 +577,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 		if (auto mainWindow = winrt::OpenNet::implementation::App::window.try_as<winrt::OpenNet::MainWindow>())
 		{
-			mainWindow.Navigate(L"settings");
+			mainWindow.Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::MainSettingsPage>());
 		}
 	}
 }

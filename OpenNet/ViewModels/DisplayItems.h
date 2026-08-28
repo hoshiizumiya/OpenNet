@@ -15,8 +15,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 	// ---------------------------------------------------------------
 	// PeerDisplayItem
 	// ---------------------------------------------------------------
-	struct PeerDisplayItem : PeerDisplayItemT<PeerDisplayItem>,
-		::OpenNet::ViewModels::ObservableMixin<PeerDisplayItem>
+	struct PeerDisplayItem : PeerDisplayItemT<PeerDisplayItem>, ::OpenNet::ViewModels::ObservableMixin<PeerDisplayItem>
 	{
 		using ::OpenNet::ViewModels::ObservableMixin<PeerDisplayItem>::SetProperty;
 		PeerDisplayItem()

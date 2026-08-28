@@ -7,7 +7,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:piece="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
-    NavigationCacheMode="Required"
+    NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>

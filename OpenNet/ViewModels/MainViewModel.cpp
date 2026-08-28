@@ -202,36 +202,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 					auto port = listenPort;
 					m_dispatcher.TryEnqueue([this, hspeed, hport, hspeedLevel, peers, dht, port]()
 					{
-						if (m_currentTransferSpeedText != hspeed)
-						{
-							m_currentTransferSpeedText = hspeed;
-							OnPropertyChanged(L"CurrentTransferSpeedText");
-						}
-						if (m_connectedPeersCount != peers)
-						{
-							m_connectedPeersCount = peers;
-							OnPropertyChanged(L"ConnectedPeersCount");
-						}
-						if (m_dhtNodeCount != dht)
-						{
-							m_dhtNodeCount = dht;
-							OnPropertyChanged(L"DhtNodeCount");
-						}
-						if (m_speedLevel != hspeedLevel)
-						{
-							m_speedLevel = hspeedLevel;
-							OnPropertyChanged(L"SpeedLevel");
-						}
-						if (m_listenPort != port)
-						{
-							m_listenPort = port;
-							OnPropertyChanged(L"ListenPort");
-						}
-						if (m_portState != hport)
-						{
-							m_portState = hport;
-							OnPropertyChanged(L"PortState");
-						}
+						SetProperty(m_currentTransferSpeedText, hspeed, L"CurrentTransferSpeedText");
+						SetProperty(m_portState, hport, L"PortState");
+						SetProperty(m_speedLevel, hspeedLevel, L"SpeedLevel");
+						SetProperty(m_connectedPeersCount, peers, L"ConnectedPeersCount");
+						SetProperty(m_dhtNodeCount, dht, L"DhtNodeCount");
+						SetProperty(m_listenPort, port, L"ListenPort");
 					});
 				}
 			}

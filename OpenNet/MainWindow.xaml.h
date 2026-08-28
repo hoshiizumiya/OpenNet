@@ -19,7 +19,7 @@ namespace winrt::OpenNet::implementation
 		winrt::OpenNet::ViewModels::MainViewModel ViewModel();
 
 		// Navigation (delegated to MainContentView)
-		void Navigate(winrt::hstring const& tag);
+		void Navigate(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType);
 		winrt::Windows::Foundation::IAsyncAction ShowAddTaskDialogAsync(winrt::hstring const& kind);
 
 		// Event handlers (XAML wired)

@@ -5,6 +5,11 @@
 #endif
 
 #include "MainWindow.xaml.h"
+#include "UI/Xaml/View/Pages/HomePage.xaml.h"
+#include "UI/Xaml/View/Pages/ContactsPage.xaml.h"
+#include "UI/Xaml/View/Pages/TasksPage.xaml.h"
+#include "UI/Xaml/View/Pages/FilesPage.xaml.h"
+#include "UI/Xaml/View/Pages/NetworkSettingsPage.xaml.h"
 
 import OpenNet.App;
 import winrt.Microsoft.UI.Xaml.Media.Animation;
@@ -159,23 +164,20 @@ namespace winrt::OpenNet::UI::Xaml::Control::HomePage::Header::implementation
 			m_isNavigatingFromTileClick = true;
 			auto featureId = tile.FeatureID();
 
-			// Map FeatureID → navigation tag
-			hstring tag;
+			auto pageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::HomePage>();
 			if (featureId == L"file-transfer" || featureId == L"peer-chat")
-				tag = L"tasks";
+				pageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>();
 			else if (featureId == L"network-discovery")
-				tag = L"contacts";
+				pageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::ContactsPage>();
 			else if (featureId == L"vpn-tunnel" || featureId == L"bandwidth-monitor")
-				tag = L"net";
+				pageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>();
 			else if (featureId == L"shared-storage")
-				tag = L"files";
-			else
-				tag = L"home";
+				pageType = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::FilesPage>();
 
 			// Navigate via MainWindow
 			if (auto mainWindow = winrt::OpenNet::implementation::App::window.try_as<winrt::OpenNet::MainWindow>())
 			{
-				mainWindow.Navigate(tag);
+				mainWindow.Navigate(pageType);
 			}
 		}
 	}

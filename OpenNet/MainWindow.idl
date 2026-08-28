@@ -8,6 +8,6 @@ namespace OpenNet
 		MainWindow();
 		Microsoft.UI.Xaml.Visibility IsDebug { get; };
 		OpenNet.ViewModels.MainViewModel ViewModel { get; };
-		void Navigate(String tag);
+		void Navigate(Windows.UI.Xaml.Interop.TypeName pageType);
 	}
 }

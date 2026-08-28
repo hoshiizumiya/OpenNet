@@ -809,6 +809,12 @@
     <ClCompile Include="Core\Notification\HttpToastNotification.cpp" />
     <ClCompile Include="UI\Xaml\Control\Progress\Stroge\StorageBar.cpp" />
     <ClCompile Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar.cpp" />
+    <ClCompile Include="Application\Tasks\TaskCommandService.ixx" />
+    <ClCompile Include="Application\Tasks\TaskCommandService.cpp" />
+    <ClCompile Include="Application\CompositionRoot.ixx" />
+    <ClCompile Include="Application\CompositionRoot.cpp" />
+    <ClCompile Include="Presentation\ScopedPage.ixx" />
+    <ClCompile Include="Helpers\WindowExBase.ixx" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Service\Background\BackgroundMediaService.h">
@@ -836,6 +842,7 @@
       <Filter>UI\Xaml\Control</Filter>
     </ClInclude>
     <ClInclude Include="Core\Notification\HttpToastNotification.h" />
+    <ClInclude Include="ThirdParty\boost\di.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />

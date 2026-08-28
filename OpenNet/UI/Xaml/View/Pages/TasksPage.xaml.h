@@ -33,6 +33,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		using ::OpenNet::ViewModels::ObservableMixin<TasksPage>::RaisePropertyChanged;
 
 		void InitializeComponent();
+		void PrepareForNavigation();
 		winrt::fire_and_forget Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
 		void DataTable_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -193,6 +194,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void SetColumnSetting(winrt::hstring const& tag, bool value);
 		void SynchronizeTaskRows();
 		void UpdateTaskDetailTabs();
+		void NavigateSelectedTaskDetailPage(bool animate);
 
 		struct PersistedScrollState
 		{
@@ -215,6 +217,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool m_isApplyingSort{};
 		bool m_sortPending{};
 		winrt::event_token m_filteredTasksChangedToken{};
+		std::atomic_bool m_isActive{};
 
 		void UpdateTaskSortHeaders();
 		void SortFilteredTasks();

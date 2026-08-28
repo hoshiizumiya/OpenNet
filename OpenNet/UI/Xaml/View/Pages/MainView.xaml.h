@@ -15,6 +15,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		~MainView();
 		void InitializeComponent();
+		void MainView_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void MainView_Unloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		winrt::Windows::Foundation::IAsyncAction RefreshBackgroundMediaAsync(bool advance);
 		void SetBackgroundPlaybackActive(bool active);
 		void AttachBackgroundPresenters(winrt::Microsoft::UI::Xaml::Controls::Image const& image, winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement const& video);
@@ -23,7 +25,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::OpenNet::ViewModels::MainViewModel ViewModel();
 
 		// Navigation
-		void Navigate(winrt::hstring const& tag);
+		void Navigate(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType);
 		bool CanGoBack();
 		void GoBack();
 		bool CanGoForward();
@@ -34,20 +36,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::event_token CanGoBackChanged(winrt::Windows::Foundation::EventHandler<bool> const& handler);
 		void CanGoBackChanged(winrt::event_token const& token) noexcept;
 
-		// Page open helpers
-		void openHomePage();
-		void openContactsPage();
-		void openTasksPage();
-		void openFilesPage();
-		void openNetworkSettingsPage();
-		void openServersPage();
-		void openRSSPage();
-		void openNatToolsPage();
-		void openSettingsPage();
-
 		// Event handlers (XAML wired)
-		void NavView_ItemInvoked(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&, winrt::Microsoft::UI::Xaml::Controls::NavigationViewItemInvokedEventArgs const&);
-		void NavFrame_Navigating(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Navigation::NavigatingCancelEventArgs const&);
 		void NavFrame_Navigated(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
 		void NavFrame_NavigationFailed(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Navigation::NavigationFailedEventArgs const&);
 		void NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& e);
@@ -57,7 +46,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void NavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const&, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const&);
 
 	private:
-		void UpdateNavigationSelection(winrt::hstring const& tag);
 		void StopBackgroundMedia();
 		winrt::Microsoft::UI::Xaml::Controls::Image BackgroundImagePresenter() const;
 		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement BackgroundVideoPresenter() const;

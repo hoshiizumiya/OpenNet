@@ -6,15 +6,16 @@ import winrt.Windows.Foundation.Collections;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Input;
 import winrt.Microsoft.UI.Dispatching;
+import OpenNet.ViewModels.ObservableMixin;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
-	// 主视图模型 / Main ViewModel
-	struct MainViewModel : MainViewModelT<MainViewModel>
+	struct MainViewModel : MainViewModelT<MainViewModel>, ::OpenNet::ViewModels::ObservableMixin<MainViewModel>
 	{
+		using ::OpenNet::ViewModels::ObservableMixin<MainViewModel>::SetProperty;
+		using ::OpenNet::ViewModels::ObservableMixin<MainViewModel>::RaisePropertyChanged;
 		MainViewModel();
 		~MainViewModel();
-
 		// 基本方法 / Basic Methods
 		// Summary: 初始化视图模型
 		void Initialize();
@@ -29,11 +30,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void IsConnected(bool value)
 		{
-			if (m_isConnected != value)
-			{
-				m_isConnected = value;
-				OnPropertyChanged(L"IsConnected");
-			}
+			SetProperty(m_isConnected, value, L"IsConnected");
 		}
 
 		// Summary: 用户名文本（状态栏）
@@ -93,66 +90,33 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return m_recentActivities;
 		}
 
-		// 错误/通知 / Error & Notification
-		winrt::hstring LastError() const
+		bool IsTasksPageSelected() const
 		{
-			return m_lastError;
+			return m_isTaskPageSelected;
 		}
-		bool HasError() const
+		void IsTasksPageSelected(bool value)
 		{
-			return !m_lastError.empty();
+			SetProperty(m_isTaskPageSelected, value, L"IsTasksPageSelected");
+			if (TasksGlyph() == L"\uEB91" && value)
+			{
+				TasksGlyph(L"\uE7C4");
+			}
+			else if (TasksGlyph() == L"\uE7C4" && !value)
+			{
+				TasksGlyph(L"\uEB91");
+			}
 		}
-		winrt::hstring LastNotification() const
+		hstring TasksGlyph() const
 		{
-			return m_lastNotification;
+			return m_taskGlyph;
 		}
-		bool HasNotification() const
+		void TasksGlyph(hstring const& value)
 		{
-			return !m_lastNotification.empty();
+			SetProperty(m_taskGlyph, value, L"TasksGlyph");
 		}
 
 		// Summary: 初始化核心组件（P2P引擎）
 		Windows::Foundation::IAsyncAction InitializeTorrentCore();
-
-		// INotifyPropertyChanged add/remove
-		winrt::event_token PropertyChanged(winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler const& handler)
-		{
-			return m_propertyChanged.add(handler);
-		}
-		void PropertyChanged(winrt::event_token const& token) noexcept
-		{
-			m_propertyChanged.remove(token);
-		}
-
-		// 命令（暂为占位，后续接入实际逻辑）/ Commands (placeholders)
-		winrt::Microsoft::UI::Xaml::Input::ICommand NavigateToPageCommand() const
-		{
-			return m_navigateToPageCommand;
-		}
-		winrt::Microsoft::UI::Xaml::Input::ICommand StartNetworkDetectionCommand() const
-		{
-			return m_startNetworkDetectionCommand;
-		}
-		winrt::Microsoft::UI::Xaml::Input::ICommand ConnectToPeerCommand() const
-		{
-			return m_connectToPeerCommand;
-		}
-		winrt::Microsoft::UI::Xaml::Input::ICommand RefreshCommand() const
-		{
-			return m_refreshCommand;
-		}
-		winrt::Microsoft::UI::Xaml::Input::ICommand ClearErrorCommand() const
-		{
-			return m_clearErrorCommand;
-		}
-
-		// 工具方法 / Utility
-		void OnPropertyChanged(winrt::hstring const& propertyName)
-		{
-			// Summary: 触发属性变更通知
-			// Param propertyName: 变更属性名称
-			m_propertyChanged(*this, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs{ propertyName });
-		}
 
 	private:
 		bool m_isConnected{};
@@ -182,19 +146,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// 活动列表 / Activities
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_recentActivities;
 
-		// 错误/通知 / Error & notification
-		winrt::hstring m_lastError;
-		winrt::hstring m_lastNotification;
-
-		// 命令 / Commands
-		winrt::Microsoft::UI::Xaml::Input::ICommand m_navigateToPageCommand{ nullptr };
-		winrt::Microsoft::UI::Xaml::Input::ICommand m_startNetworkDetectionCommand{ nullptr };
-		winrt::Microsoft::UI::Xaml::Input::ICommand m_connectToPeerCommand{ nullptr };
-		winrt::Microsoft::UI::Xaml::Input::ICommand m_refreshCommand{ nullptr };
-		winrt::Microsoft::UI::Xaml::Input::ICommand m_clearErrorCommand{ nullptr };
-
-		// 事件 / Events
-		winrt::event<winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventHandler> m_propertyChanged;
+		bool m_isTaskPageSelected{ true };
+		winrt::hstring m_taskGlyph{ L"\uEB91" };
 
 		// Speed refresh
 		winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr };

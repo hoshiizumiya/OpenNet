@@ -7,36 +7,10 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:viewmodels="using:OpenNet.ViewModels"
+    Loaded="RSSPage_Loaded"
     NavigationCacheMode="Disabled"
+    Unloaded="RSSPage_Unloaded"
     mc:Ignorable="d">
-
-    <Page.Resources>
-        <Flyout
-            x:Name="RSSPreviewFlyout"
-            essential:FlyoutHelper.AcrylicWorkaround="True"
-            Closed="RSSPreviewFlyout_Closed"
-            Opened="RSSPreviewFlyout_Opened"
-            Placement="Right"
-            ShowMode="Transient">
-            <Flyout.FlyoutPresenterStyle>
-                <Style BasedOn="{StaticResource DefaultFlyoutPresenterStyle}" TargetType="FlyoutPresenter">
-                    <Setter Property="BorderThickness" Value="0" />
-                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    <Setter Property="IsTabStop" Value="True" />
-                    <Setter Property="MaxWidth" Value="Infinity" />
-                    <Setter Property="Padding" Value="0" />
-                    <Setter Property="TabNavigation" Value="Cycle" />
-                </Style>
-            </Flyout.FlyoutPresenterStyle>
-            <Border CornerRadius="8">
-                <WebView2
-                    x:Name="RSSPreviewWebView"
-                    Width="1500"
-                    Height="2000"
-                    essential:UIElementExtension.ClipToBounds="True" />
-            </Border>
-        </Flyout>
-    </Page.Resources>
 
     <Grid Padding="24" Background="{ThemeResource LayerFillColorDefaultBrush}">
         <Grid.RowDefinitions>

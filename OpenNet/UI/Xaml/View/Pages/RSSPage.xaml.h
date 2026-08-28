@@ -10,6 +10,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	struct RSSPage : RSSPageT<RSSPage>
 	{
 		RSSPage();
+		void RSSPage_Loaded(winrt::Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void RSSPage_Unloaded(winrt::Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 		OpenNet::ViewModels::RSSViewModel ViewModel() const
 		{
@@ -41,10 +43,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::fire_and_forget ProcessAndShowTorrentMetadataWindow(hstring torrentLink);
 		winrt::fire_and_forget OpenItemInBrowser(OpenNet::ViewModels::RSSItemViewModel item);
 		winrt::fire_and_forget OpenItemExternally(OpenNet::ViewModels::RSSItemViewModel item);
+		void EnsurePreviewFlyout();
 		OpenNet::ViewModels::RSSItemViewModel ItemFromSender(::winrt::Windows::Foundation::IInspectable const& sender) const;
 
-		OpenNet::ViewModels::RSSViewModel m_viewModel{ nullptr };
+		OpenNet::ViewModels::RSSViewModel m_viewModel{ winrt::make<OpenNet::ViewModels::implementation::RSSViewModel>() };
 		Microsoft::UI::Xaml::Controls::Flyout m_previewFlyout{ nullptr };
+		Microsoft::UI::Xaml::Controls::WebView2 m_previewWebView{ nullptr };
 		Microsoft::UI::Xaml::FrameworkElement m_previewTarget{ nullptr };
 		winrt::OpenNet::UI::Xaml::View::Windows::RSSBrowserWindow m_browserWindow{ nullptr };
 		winrt::hstring m_previewUrl;

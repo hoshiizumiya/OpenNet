@@ -50,6 +50,8 @@
             <ouxm:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" FallbackColor="{ThemeResource SystemAccentColorDark1}" IsNoiseEnabled="False" TintColor="{ThemeResource SystemAccentColorDark1}" TintLuminosityOpacity="0.8" TintOpacity="0.8" />
             <ouxm:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" FallbackColor="{ThemeResource SystemAccentColorDark2}" IsNoiseEnabled="False" TintColor="{ThemeResource SystemAccentColorDark2}" TintLuminosityOpacity="0.8" TintOpacity="0.8" />
             <ouxm:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" FallbackColor="{ThemeResource SystemAccentColorDark2}" IsNoiseEnabled="False" TintColor="{ThemeResource SystemAccentColorDark2}" TintLuminosityOpacity="0.8" TintOpacity="0.8" />
+            <ouxm:AcrylicBrush x:Key="ContentDialogBGAcrylicBrush" FallbackColor="#F52C2C2C" IsNoiseEnabled="False" TintColor="{ThemeResource ControlOnImageFillColorDefault}" TintOpacity="0.6" />
+            <ouxm:AcrylicBrush x:Key="ContentGridOverlayBGAcrylicBrush" FallbackColor="#F52C2C2C" IsNoiseEnabled="False" TintColor="{ThemeResource ControlOnImageFillColorDefault}" TintOpacity="0.4" />
             <SolidColorBrush x:Key="DesktopAcrylicTransparentBrush" Color="#00000000" />
             <DesktopAcrylicBackdrop x:Key="AcrylicBackgroundFillColorDefaultBackdrop" />
         </ResourceDictionary>
@@ -102,6 +104,8 @@
             <ouxm:AcrylicBrush x:Key="AccentAcrylicInAppFillColorDefaultBrush" FallbackColor="{ThemeResource SystemAccentColorLight3}" IsNoiseEnabled="False" TintColor="{ThemeResource SystemAccentColorLight3}" TintLuminosityOpacity="0.9" TintOpacity="0.8" />
             <ouxm:AcrylicBrush x:Key="AccentAcrylicBackgroundFillColorBaseBrush" FallbackColor="{ThemeResource SystemAccentColorLight3}" IsNoiseEnabled="False" TintColor="{ThemeResource SystemAccentColorLight3}" TintLuminosityOpacity="0.9" TintOpacity="0.8" />
             <ouxm:AcrylicBrush x:Key="AccentAcrylicInAppFillColorBaseBrush" FallbackColor="{ThemeResource SystemAccentColorLight3}" IsNoiseEnabled="False" TintColor="{ThemeResource SystemAccentColorLight3}" TintLuminosityOpacity="0.9" TintOpacity="0.8" />
+            <ouxm:AcrylicBrush x:Key="ContentDialogBGAcrylicBrush" FallbackColor="#F52C2C2C" IsNoiseEnabled="False" TintColor="{ThemeResource ControlOnImageFillColorDefault}" TintOpacity="0.6" />
+            <ouxm:AcrylicBrush x:Key="ContentGridOverlayBGAcrylicBrush" FallbackColor="#F52C2C2C" IsNoiseEnabled="False" TintColor="{ThemeResource ControlOnImageFillColorDefault}" TintOpacity="0.4" />
             <SolidColorBrush x:Key="DesktopAcrylicTransparentBrush" Color="#00000000" />
             <DesktopAcrylicBackdrop x:Key="AcrylicBackgroundFillColorDefaultBackdrop" />
         </ResourceDictionary>

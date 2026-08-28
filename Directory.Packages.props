@@ -10,7 +10,7 @@
     <PackageVersion Include="Microsoft.Windows.AI.MachineLearning" Version="2.2.12" />
     <PackageVersion Include="Microsoft.Windows.CppWinRT" Version="3.0.260818.1" />
     <PackageVersion Include="Microsoft.Windows.ImplementationLibrary" Version="1.0.260126.7" />
-    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2526" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.28000.2705" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools.MSIX" Version="1.7.260610101" />
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="2.4.0" />
     <PackageVersion Include="Microsoft.WindowsAppSDK.AI" Version="2.4.4" />

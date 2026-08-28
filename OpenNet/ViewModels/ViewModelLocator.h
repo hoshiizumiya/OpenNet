@@ -10,6 +10,6 @@ class ViewModelLocator
 public:
 	static ViewModelLocator& GetInstance();
 
-	winrt::OpenNet::ViewModels::SettingsViewModel& SettingsViewModel();
+	// winrt::OpenNet::ViewModels::SettingsViewModel& SettingsViewModel();
 	SpeedGraphData& SpeedGraphData();
 };

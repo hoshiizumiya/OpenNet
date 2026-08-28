@@ -29,7 +29,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		InitializeComponent();
 		UpdateSortHeaders();
-		this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Required);
+		this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Disabled);
 
 		Loaded([this](auto, auto)
 		{

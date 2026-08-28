@@ -126,7 +126,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		if (auto selectedItem = args.SelectedItem().try_as<NavigationViewItem>())
 		{
-			auto tag = unbox_value_or<hstring>(selectedItem.Tag(), L"");
+			auto const pageType = selectedItem.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>();
 
 			// Create slide transition
 			// TODO: Imporve effect based on nav tag item index
@@ -140,13 +140,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 
 			// Add new category if not general
-			if (tag != L"general")
+			if (selectedItem != GeneralNavItem())
 			{
 				m_settingsBarItems.Append(winrt::unbox_value_or(selectedItem.Content(), L""));
 			}
 
-			// Navigate based on tag
-			NavigateByTag(tag, transitionInfo);
+			if (SettingsFrame().SourcePageType() != pageType)
+			{
+				SettingsFrame().Navigate(pageType, nullptr, transitionInfo);
+			}
 		}
 	}
 
@@ -203,8 +205,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	bool MainSettingsPage::MatchesSearch(NavigationViewItem const& item, std::wstring const& query)
 	{
 		auto const label = NormalizeSearchText(unbox_value_or<hstring>(item.Content(), L""));
-		auto const route = unbox_value_or<hstring>(item.Tag(), L"");
-		auto const tags = NormalizeSearchText(TagsForRoute(route));
+		auto const pageType = item.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>();
+		auto const tags = NormalizeSearchText(TagsForPageType(pageType));
 		auto const searchableText = label + L" " + tags;
 		std::wistringstream tokens{ query };
 		std::wstring token;
@@ -220,16 +222,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		return matchedAnyToken;
 	}
 
-	hstring MainSettingsPage::TagsForRoute(hstring const& route)
+	hstring MainSettingsPage::TagsForPageType(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType)
 	{
+		hstring result;
 		for (auto const& registration : SettingsPageTag::Registry())
 		{
-			if (route == registration.Route)
+			if (pageType.Name == registration.TypeName)
 			{
-				return ResourceGetString(registration.TagsResourceKey.data());
+				if (!result.empty()) result = result + L" ";
+				result = result + ResourceGetString(registration.TagsResourceKey.data());
 			}
 		}
-		return {};
+		return result;
 	}
 
 	void MainSettingsPage::SettingsSearchBox_QuerySubmitted(
@@ -251,78 +255,4 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		return m_settingsBarItems;
 	}
 
-	void MainSettingsPage::NavigateByTag(hstring const& tag, SlideNavigationTransitionInfo const& transitionInfo)
-	{
-		if (tag == L"general")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::SettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"about")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::AboutPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"tracker")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::NetworkSettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"bittorrent" || tag == L"advanced" || tag == L"network")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::BittorrentSettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"ipfilter")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::IPFilterSettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"clientfilter")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ClientFilterSettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"webui")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::WebUISettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"appearance")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ThemesSettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else if (tag == L"download")
-		{
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::DownloadSettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-		else
-		{
-			// Default: navigate to general settings as placeholder
-			SettingsFrame().Navigate(
-				xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::SettingsPage>(),
-				nullptr,
-				transitionInfo);
-		}
-	}
 }

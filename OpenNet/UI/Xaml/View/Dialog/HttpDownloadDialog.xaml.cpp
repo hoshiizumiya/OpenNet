@@ -24,6 +24,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
 	HttpDownloadDialog::HttpDownloadDialog()
 	{
+		Style(Application::Current().Resources().Lookup(box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
 		m_saveDir = winrt::hstring{ ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath };
 		UpdateDiskSpace();
 	}

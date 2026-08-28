@@ -7,6 +7,7 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pages="using:OpenNet.UI.Xaml.View.Pages"
     Loaded="MainSettingsPage_Loaded"
     NavigationCacheMode="Disabled"
     PointerPressed="MainSettingsPage_PointerPressed"
@@ -62,7 +63,7 @@
                 AutomationProperties.AutomationId="SettingsGeneralNavItem"
                 Content="General"
                 Icon="{essential:FontIcon Glyph=&#xE713;}"
-                Tag="general">
+                Tag="{essential:TypeName Type=local:SettingsPage}">
                 <!--<NavigationViewItem.InfoBadge>
                     <InfoBadge />
                 </NavigationViewItem.InfoBadge>-->
@@ -76,7 +77,7 @@
                 AutomationProperties.AutomationId="SettingsBitTorrentNavItem"
                 Content="BitTorrent"
                 IsExpanded="True"
-                Tag="bittorrent">
+                Tag="{essential:TypeName Type=local:BittorrentSettingsPage}">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE703;" />
                 </NavigationViewItem.Icon>
@@ -86,7 +87,7 @@
                         x:Uid="SettingsNetworkNavItem"
                         AutomationProperties.AutomationId="SettingsNetworkNavItem"
                         Content="Network"
-                        Tag="network">
+                        Tag="{essential:TypeName Type=local:BittorrentSettingsPage}">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE968;" />
                         </NavigationViewItem.Icon>
@@ -96,7 +97,7 @@
                         x:Uid="SettingsTrackerNavItem"
                         AutomationProperties.AutomationId="SettingsTrackerNavItem"
                         Content="Tracker"
-                        Tag="tracker">
+                        Tag="{essential:TypeName Type=pages:NetworkSettingsPage}">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE774;" />
                         </NavigationViewItem.Icon>
@@ -106,7 +107,7 @@
                         x:Uid="SettingsIPFilterNavItem"
                         AutomationProperties.AutomationId="SettingsIPFilterNavItem"
                         Content="IP Filter"
-                        Tag="ipfilter">
+                        Tag="{essential:TypeName Type=local:IPFilterSettingsPage}">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE8D7;" />
                         </NavigationViewItem.Icon>
@@ -116,7 +117,7 @@
                         x:Uid="ClientFilterNavItem"
                         AutomationProperties.AutomationId="ClientFilterNavItem"
                         Content="Client Filter"
-                        Tag="clientfilter">
+                        Tag="{essential:TypeName Type=local:ClientFilterSettingsPage}">
                         <NavigationViewItem.Icon>
                             <FontIcon Glyph="&#xE71C;" />
                         </NavigationViewItem.Icon>
@@ -129,7 +130,7 @@
                 x:Uid="SettingsDownloadNavItem"
                 AutomationProperties.AutomationId="SettingsDownloadNavItem"
                 Content="DownloadBehavior"
-                Tag="download">
+                Tag="{essential:TypeName Type=local:DownloadSettingsPage}">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE896;" />
                 </NavigationViewItem.Icon>
@@ -140,7 +141,7 @@
                 x:Uid="SettingsWebUINavItem"
                 AutomationProperties.AutomationId="SettingsWebUINavItem"
                 Content="Web UI"
-                Tag="webui">
+                Tag="{essential:TypeName Type=local:WebUISettingsPage}">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE774;" />
                 </NavigationViewItem.Icon>
@@ -151,7 +152,7 @@
                 x:Uid="Appearance"
                 AutomationProperties.AutomationId="Appearance"
                 Content="Appearance"
-                Tag="appearance">
+                Tag="{essential:TypeName Type=local:ThemesSettingsPage}">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE771;" />
                 </NavigationViewItem.Icon>
@@ -164,7 +165,7 @@
                 x:Uid="SettingsAboutNavItem"
                 AutomationProperties.AutomationId="SettingsAboutNavItem"
                 Content="About"
-                Tag="about">
+                Tag="{essential:TypeName Type=local:AboutPage}">
                 <NavigationViewItem.Icon>
                     <FontIcon Glyph="&#xE946;" />
                 </NavigationViewItem.Icon>

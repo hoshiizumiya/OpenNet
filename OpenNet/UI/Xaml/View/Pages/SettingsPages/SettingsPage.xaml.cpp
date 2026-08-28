@@ -9,6 +9,8 @@
 #endif
 
 #include "MainSettingsPage.xaml.h"
+#include "UI/Xaml/View/Pages/TasksPage.xaml.h"
+#include "UI/Xaml/View/Pages/RSSPage.xaml.h"
 #include "SettingsPageTagRegister.h"
 #include "MainWindow.xaml.h"
 
@@ -169,20 +171,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void SettingsPage::StartPageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
 	{
-		if (m_isStartPageLoading) return;
+		if (m_isStartPageLoading)
+			return;
 
 		auto combo = StartPageCombobox();
-		if (combo.SelectedIndex() < 0) return;
 
 		auto sel = combo.SelectedItem().try_as<ComboBoxItem>();
 		if (!sel) return;
 
-		auto tag = unbox_value_or<hstring>(sel.Tag(), L"");
+		if (!sel.Tag()) return;
+		auto const pageType = sel.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>();
 
 		try
 		{
 			auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
-			localSettings.Values().Insert(L"StartPage", box_value(tag));
+			localSettings.Values().Insert(L"StartPage", box_value(pageType.Name));
 		}
 		catch (...)
 		{
@@ -429,31 +432,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				comboLang.SelectedIndex(current.empty() ? 0 : selectedIndex);
 			}
 
-			// Initialize StartPageCombobox
-			if (auto combo = StartPageCombobox())
-			{
-				combo.Items().Clear();
-
-				struct PageEntry
-				{
-					const wchar_t* display; const wchar_t* tag;
-				};
-				PageEntry entries[] = {
-					{ L"Home",     L"home" },
-					{ L"Tasks",    L"tasks" },
-					{ L"RSS",      L"rss" },
-					{ L"Settings", L"settings" },
-				};
-
-				for (auto& e : entries)
-				{
-					auto item = ComboBoxItem();
-					item.Content(box_value(hstring(e.display)));
-					item.Tag(box_value(hstring(e.tag)));
-					combo.Items().Append(item);
-				}
-			}
-
 			co_await SetDesktopBackground();
 
 			m_hasPendingLangChange = false;
@@ -493,18 +471,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			// Load saved start page and set ComboBox selection
 			{
 				m_isStartPageLoading = true;
-				winrt::hstring savedTag = L"home";
+				winrt::hstring savedPageName = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>().Name;
 				try
 				{
 					auto localSettings = winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalSettings();
 					auto values = localSettings.Values();
 					if (values.HasKey(L"StartPage"))
 					{
-						savedTag = unbox_value_or<hstring>(values.Lookup(L"StartPage"), L"home");
+						savedPageName = unbox_value_or<hstring>(values.Lookup(L"StartPage"), savedPageName);
+					}
+					if (!savedPageName.starts_with(L"OpenNet.UI.Xaml.View.Pages."))
+					{
+						savedPageName = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>().Name;
 					}
 				}
 				catch (...)
 				{
+					savedPageName = xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>().Name;
 				}
 
 				if (auto combo = StartPageCombobox())
@@ -513,7 +496,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 					{
 						if (auto item = combo.Items().GetAt(i).try_as<ComboBoxItem>())
 						{
-							if (unbox_value_or<hstring>(item.Tag(), L"") == savedTag)
+							if (item.Tag() && item.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>().Name == savedPageName)
 							{
 								combo.SelectedIndex(i);
 								break;

@@ -9,7 +9,10 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ouxv="using:OpenNet.UI.Xaml.View"
+    xmlns:settings="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:xtwa="using:XamlToolkit.WinUI.Animations"
+    Loaded="MainView_Loaded"
+    Unloaded="MainView_Unloaded"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -31,42 +34,27 @@
             IsBackButtonVisible="Collapsed"
             IsPaneToggleButtonVisible="False"
             IsSettingsVisible="False"
-            ItemInvoked="NavView_ItemInvoked"
             SelectionChanged="NavView_SelectionChanged"
             Style="{StaticResource MainNavigationViewStyle}">
             <NavigationView.MenuItems>
-                <!--  主页 / Home  -->
-                <!--<NavigationViewItem
-                    x:Name="NavItem_Home"
-                    x:Uid="NavItem_Home"
-                    Tag="home" AutomationProperties.AutomationId="NavItem_Home">
-                    <NavigationViewItem.Icon>
-                        <FontIcon
-                            x:Name="HomeIcon"
-                            xtwa:Implicit.Animations="{StaticResource IconOpacityAnim}"
-                            Glyph="&#xE80F;" />
-                    </NavigationViewItem.Icon>
-                </NavigationViewItem>-->
-
                 <NavigationViewItem
                     x:Name="NavItem_Tasks"
                     x:Uid="NavItem_Tasks"
                     AutomationProperties.AutomationId="NavItem_Tasks"
                     Content="Tasks"
-                    Tag="tasks">
+                    IsSelected="{x:Bind ViewModel.IsTasksPageSelected, Mode=TwoWay}"
+                    Tag="{essential:TypeName Type=local:TasksPage}">
                     <NavigationViewItem.Icon>
-                        <FontIcon
-                            x:Name="TasksIcon"
-                            xtwa:Implicit.Animations="{StaticResource IconOpacityAnim}"
-                            Glyph="&#xE7C4;" />
+                        <FontIcon xtwa:Implicit.Animations="{StaticResource IconOpacityAnim}" Glyph="{x:Bind ViewModel.TasksGlyph, Mode=OneWay}" />
                     </NavigationViewItem.Icon>
                 </NavigationViewItem>
 
                 <NavigationViewItem
+                    x:Name="NavItem_RSS"
                     x:Uid="NavItem_RSS"
                     AutomationProperties.AutomationId="NavItem_RSS"
                     Content="RSS"
-                    Tag="rss">
+                    Tag="{essential:TypeName Type=local:RSSPage}">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE8F1;" />
                     </NavigationViewItem.Icon>
@@ -83,7 +71,6 @@
                     AutomationProperties.AutomationId="NavItem_More"
                     Content="More"
                     SelectsOnInvoked="False"
-                    Tag="more"
                     Tapped="NavItem_More_Tapped">
                     <NavigationViewItem.Icon>
                         <FontIcon Glyph="&#xE700;" />
@@ -114,7 +101,7 @@
                     x:Name="NavItem_Settings"
                     x:Uid="NavItem_Settings"
                     AutomationProperties.AutomationId="NavItem_Settings"
-                    Tag="settings">
+                    Tag="{essential:TypeName Type=settings:MainSettingsPage}">
                     <NavigationViewItem.Icon>
                         <AnimatedIcon
                             x:Name="AnimatedIcon"
@@ -136,7 +123,6 @@
                 <Frame
                     x:Name="NavFrame"
                     Navigated="NavFrame_Navigated"
-                    Navigating="NavFrame_Navigating"
                     NavigationFailed="NavFrame_NavigationFailed" />
             </NavigationView.Content>
         </NavigationView>
@@ -156,21 +142,6 @@
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-
-            <!--  Notification Information  -->
-            <StackPanel
-                Orientation="Horizontal"
-                Spacing="6"
-                Visibility="{x:Bind ViewModel.HasNotification, Mode=OneWay}">
-                <FontIcon
-                    FontSize="12"
-                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                    Glyph="&#xE946;" />
-                <TextBlock
-                    FontSize="12"
-                    Text="{x:Bind ViewModel.LastNotification, Mode=OneWay}"
-                    TextTrimming="CharacterEllipsis" />
-            </StackPanel>
 
             <!--  Speed Display  -->
             <StackPanel
@@ -236,36 +207,11 @@
                 </StackPanel>
             </Border>
 
-            <!--  Error / Notification Area  -->
             <StackPanel
                 Grid.Column="2"
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="12">
-                <!--  Error Information  -->
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="6"
-                    Visibility="{x:Bind ViewModel.HasError, Mode=OneWay}">
-                    <FontIcon
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                        Glyph="&#xEA39;" />
-                    <TextBlock
-                        FontSize="12"
-                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                        Text="{x:Bind ViewModel.LastError, Mode=OneWay}"
-                        TextTrimming="CharacterEllipsis" />
-                    <Button
-                        Width="20"
-                        Height="20"
-                        Padding="0"
-                        Command="{x:Bind ViewModel.ClearErrorCommand}"
-                        Style="{StaticResource SubtleButtonStyle}">
-                        <FontIcon FontSize="10" Glyph="&#xE711;" />
-                    </Button>
-                </StackPanel>
-
                 <!--  User Info  -->
                 <StackPanel
                     Grid.Column="4"

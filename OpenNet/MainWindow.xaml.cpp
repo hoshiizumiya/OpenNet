@@ -112,8 +112,7 @@ namespace winrt::OpenNet::implementation
 				active = active
 				&& presenter.State() != OverlappedPresenterState::Minimized;
 
-			auto mainView = winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::
-				implementation::MainView>(MainContentView());
+			auto mainView = winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(MainContentView());
 			mainView->SetBackgroundPlaybackActive(active);
 		}
 		catch (...)
@@ -131,20 +130,17 @@ namespace winrt::OpenNet::implementation
 		return MainContentView().ViewModel();
 	}
 
-	void MainWindow::Navigate(hstring const& tag)
+	void MainWindow::Navigate(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType)
 	{
-		MainContentView().Navigate(tag);
+		MainContentView().Navigate(pageType);
 	}
 
-	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(
-		hstring const& kind)
+	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(hstring const& kind)
 	{
 		auto strong = get_strong();
-		Navigate(L"tasks");
+		Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>());
 
-		auto mainViewImpl = winrt::get_self<
-			winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(
-				MainContentView());
+		auto mainViewImpl = winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(MainContentView());
 		auto tasksPage = mainViewImpl->CurrentTasksPage();
 		if (!tasksPage)
 		{

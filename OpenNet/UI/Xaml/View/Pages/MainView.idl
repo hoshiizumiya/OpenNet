@@ -7,7 +7,7 @@ namespace OpenNet.UI.Xaml.View.Pages
 	{
 		MainView();
 		OpenNet.ViewModels.MainViewModel ViewModel { get; };
-		void Navigate(String tag);
+		void Navigate(Windows.UI.Xaml.Interop.TypeName pageType);
 		Boolean CanGoBack { get; };
 		void GoBack();
 		Boolean CanGoForward{ get; };

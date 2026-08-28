@@ -11,7 +11,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
     Loaded="Page_Loaded"
-    NavigationCacheMode="Required"
+    NavigationCacheMode="Disabled"
     Unloaded="Page_Unloaded"
     mc:Ignorable="d">
 

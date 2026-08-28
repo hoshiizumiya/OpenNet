@@ -27,21 +27,11 @@
 		// 活动列表 / Activities
 		Windows.Foundation.Collections.IObservableVector<String> RecentActivities { get; };
 
-		// 错误与通知 / Error & Notification
-		String LastError { get; };
-		Boolean HasError { get; };
-		String LastNotification { get; };
-		Boolean HasNotification { get; };
-
-		// 命令 / Commands
-		Microsoft.UI.Xaml.Input.ICommand NavigateToPageCommand { get; };
-		Microsoft.UI.Xaml.Input.ICommand StartNetworkDetectionCommand { get; };
-		Microsoft.UI.Xaml.Input.ICommand ConnectToPeerCommand { get; };
-		Microsoft.UI.Xaml.Input.ICommand RefreshCommand { get; };
-		Microsoft.UI.Xaml.Input.ICommand ClearErrorCommand { get; };
-
 		// 方法 / Methods
 		void Initialize();
 		void Shutdown();
+
+		Boolean IsTasksPageSelected;
+		String TasksGlyph;
 	}
 }
