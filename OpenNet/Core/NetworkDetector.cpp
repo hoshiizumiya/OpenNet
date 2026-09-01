@@ -1,5 +1,6 @@
 ﻿#include "pch.h"
 #include "NetworkDetector.h"
+#include <winerror.h>
 
 import OpenNet.Core.Setting.LocalSetting;
 import OpenNet.Core.Setting.SettingKeys;
@@ -16,12 +17,51 @@ using namespace Windows::Storage::Streams;
 using namespace Windows::Web::Http;
 using namespace Windows::Data::Json;
 
+namespace
+{
+	template<typename TAsync>
+	IAsyncOperation<bool> WaitForCompletionAsync(TAsync const& operation, std::uint32_t timeoutMs)
+	{
+		auto cancellation = co_await winrt::get_cancellation_token();
+		cancellation.enable_propagation();
+		auto const deadline = std::chrono::steady_clock::now() + std::chrono::milliseconds(timeoutMs);
+		for (;;)
+		{
+			if (cancellation())
+			{
+				operation.Cancel();
+				co_return false;
+			}
+			auto const status = operation.Status();
+			if (status == AsyncStatus::Completed)
+				co_return true;
+			if (status != AsyncStatus::Started)
+				co_return false;
+			if (std::chrono::steady_clock::now() >= deadline)
+			{
+				operation.Cancel();
+				co_return false;
+			}
+			co_await winrt::resume_after(std::chrono::milliseconds(50));
+		}
+	}
+
+	std::uint32_t RemainingMilliseconds(std::chrono::steady_clock::time_point deadline, std::uint32_t maximum)
+	{
+		auto const now = std::chrono::steady_clock::now();
+		if (now >= deadline)
+			return 0;
+		auto const remaining = std::chrono::duration_cast<std::chrono::milliseconds>(
+			deadline - now).count();
+		return static_cast<std::uint32_t>(std::min<std::int64_t>(remaining, maximum));
+	}
+}
+
 namespace OpenNet::Core
 {
 	NetworkDetector::NetworkDetector() : m_isDetecting(false)
 	{
-		std::wstring directoryUri{
-			::OpenNet::Web::ServerDomain::GetApiRoot() };
+		std::wstring directoryUri{ ::OpenNet::Web::ServerDomain::GetApiRoot() };
 		if (!directoryUri.ends_with(L'/'))
 			directoryUri.push_back(L'/');
 		directoryUri.append(L"api/v1/traversal/servers");
@@ -191,7 +231,10 @@ namespace OpenNet::Core
 				}
 			});
 
-			co_await socket.BindServiceNameAsync(L"");
+			auto bind = socket.BindServiceNameAsync(L"");
+			if (!co_await WaitForCompletionAsync(bind, PORT_SCAN_TIMEOUT_MS))
+				co_return false;
+			bind.GetResults();
 
 			// SSDP M-SEARCH message for Internet Gateway Device
 			std::string msearch =
@@ -209,8 +252,14 @@ namespace OpenNet::Core
 			writer.WriteBytes(winrt::array_view<const uint8_t>(
 				reinterpret_cast<const uint8_t*>(msearch.data()), static_cast<uint32_t>(msearch.size())));
 			auto buf = writer.DetachBuffer();
-			auto outputStream = co_await socket.GetOutputStreamAsync(remoteHost, remotePort);
-			co_await outputStream.WriteAsync(buf);
+			auto streamRequest = socket.GetOutputStreamAsync(remoteHost, remotePort);
+			if (!co_await WaitForCompletionAsync(streamRequest, PORT_SCAN_TIMEOUT_MS))
+				co_return false;
+			auto outputStream = streamRequest.GetResults();
+			auto write = outputStream.WriteAsync(buf);
+			if (!co_await WaitForCompletionAsync(write, PORT_SCAN_TIMEOUT_MS))
+				co_return false;
+			write.GetResults();
 
 			// Wait up to 3 seconds for SSDP responses
 			for (int i = 0; i < 30 && !found; ++i)
@@ -259,7 +308,10 @@ namespace OpenNet::Core
 		try
 		{
 			HttpClient client;
-			auto const json = co_await client.GetStringAsync(Uri(m_traversalDirectoryUri));
+			auto request = client.GetStringAsync(Uri(m_traversalDirectoryUri));
+			if (!co_await WaitForCompletionAsync(request, DIRECTORY_TIMEOUT_MS))
+				co_return;
+			auto const json = request.GetResults();
 			auto root = JsonObject::Parse(json);
 			auto items = root.GetNamedArray(L"servers");
 			servers->reserve(items.Size());
@@ -296,15 +348,20 @@ namespace OpenNet::Core
 		co_return;
 	}
 
-	IAsyncAction NetworkDetector::ProbeServerPortAsync(
+	IAsyncOperation<bool> NetworkDetector::ProbeServerPortAsync(
 		TraversalServerDescriptor const& server,
 		uint16_t port,
 		bool tcp,
 		bool useIpv6,
-		std::shared_ptr<PortProbeResult> result)
+		std::shared_ptr<PortProbeResult> result,
+		std::uint32_t timeoutMs)
 	{
 		try
 		{
+			if (timeoutMs == 0)
+				co_return false;
+			auto const deadline = std::chrono::steady_clock::now()
+				+ std::chrono::milliseconds(timeoutMs);
 			auto host = useIpv6 ? L"[" + server.ipv6Address + L"]" : server.ipv4Address;
 			auto uri = Uri(
 				L"http://" + host + L":" + winrt::to_hstring(server.apiPort)
@@ -314,54 +371,50 @@ namespace OpenNet::Core
 				L"{\"port\":" + winrt::to_hstring(port) + L"}",
 				UnicodeEncoding::Utf8,
 				L"application/json");
-			auto const response = co_await client.PostAsync(uri, content);
+			auto request = client.PostAsync(uri, content);
+			if (!co_await WaitForCompletionAsync(request, RemainingMilliseconds(deadline, timeoutMs)))
+			{
+				co_return false;
+			}
+			auto const response = request.GetResults();
 			if (!response.IsSuccessStatusCode())
-				co_return;
+				co_return false;
 
-			auto json = co_await response.Content().ReadAsStringAsync();
+			auto contentRead = response.Content().ReadAsStringAsync();
+			if (!co_await WaitForCompletionAsync(contentRead, RemainingMilliseconds(deadline, timeoutMs)))
+			{
+				co_return false;
+			}
+			auto json = contentRead.GetResults();
 			auto body = JsonObject::Parse(json);
 			bool reachable = body.GetNamedBoolean(L"reachable", false);
 			auto evidence = body.GetNamedString(L"evidence", L"");
-			if (useIpv6)
-			{
-				result->ipv6Completed = true;
-				if (tcp)
-					result->ipv6TcpCompleted = true;
-				else
-					result->ipv6UdpCompleted = true;
-			}
-			else
-			{
-				result->completed = true;
-				if (tcp)
-					result->tcpCompleted = true;
-				else
-					result->udpCompleted = true;
-			}
-			if (reachable || result->serverName.empty())
-			{
-				result->serverName = server.name;
-				result->observedAddress =
-					body.GetNamedString(L"targetAddress", L"");
-			}
-			result->detail = evidence;
+			auto const latency = static_cast<std::int32_t>(body.GetNamedNumber(L"latencyMs", 0));
 			if (useIpv6 && tcp)
 			{
+				result->ipv6TcpCompleted = true;
+				result->ipv6TcpLatencyMs = latency;
 				if (reachable || result->ipv6TcpEvidence.empty())
 					result->ipv6TcpEvidence = evidence;
 			}
 			else if (useIpv6)
 			{
+				result->ipv6UdpCompleted = true;
+				result->ipv6UdpLatencyMs = latency;
 				if (reachable || result->ipv6UdpEvidence.empty())
 					result->ipv6UdpEvidence = evidence;
 			}
 			else if (tcp)
 			{
+				result->tcpCompleted = true;
+				result->tcpLatencyMs = latency;
 				if (reachable || result->tcpEvidence.empty())
 					result->tcpEvidence = evidence;
 			}
 			else
 			{
+				result->udpCompleted = true;
+				result->udpLatencyMs = latency;
 				if (reachable || result->udpEvidence.empty())
 					result->udpEvidence = evidence;
 			}
@@ -373,31 +426,86 @@ namespace OpenNet::Core
 				result->tcpReachable = result->tcpReachable || reachable;
 			else
 				result->udpReachable = result->udpReachable || reachable;
+			co_return true;
 		}
 		catch (...)
 		{
+			co_return false;
 		}
 	}
 
 	IAsyncAction NetworkDetector::TestPortAccessibilityDetailedAsync(
 		uint16_t port,
-		std::shared_ptr<PortProbeResult> result)
+		std::shared_ptr<PortProbeResult> result,
+		PortProbeAddressFamily family)
 	{
 		*result = {};
+		auto cancellation = co_await winrt::get_cancellation_token();
+		cancellation.enable_propagation();
+		auto const deadline = std::chrono::steady_clock::now()
+			+ std::chrono::milliseconds(PORT_TEST_TIMEOUT_MS);
 		auto servers = std::make_shared<std::vector<TraversalServerDescriptor>>();
 		co_await GetTraversalServersAsync(servers);
+		bool attemptedIPv4 = false;
+		bool attemptedIPv6 = false;
 		for (size_t index = 0; index < std::min<size_t>(servers->size(), 2); ++index)
 		{
-			co_await ProbeServerPortAsync((*servers)[index], port, true, false, result);
-			co_await ProbeServerPortAsync((*servers)[index], port, false, false, result);
-			if (!(*servers)[index].ipv6Address.empty())
+			if (cancellation() || RemainingMilliseconds(deadline, PORT_SCAN_TIMEOUT_MS) == 0)
+				break;
+			std::vector<IAsyncOperation<bool>> probes;
+			if (family != PortProbeAddressFamily::IPv6)
 			{
-				co_await ProbeServerPortAsync((*servers)[index], port, true, true, result);
-				co_await ProbeServerPortAsync((*servers)[index], port, false, true, result);
+				attemptedIPv4 = true;
+				probes.push_back(ProbeServerPortAsync(
+					(*servers)[index], port, true, false, result,
+					RemainingMilliseconds(deadline, PORT_SCAN_TIMEOUT_MS)));
+				probes.push_back(ProbeServerPortAsync(
+					(*servers)[index], port, false, false, result,
+					RemainingMilliseconds(deadline, PORT_SCAN_TIMEOUT_MS)));
 			}
-			if (result->tcpReachable && result->udpReachable)
+			if (family != PortProbeAddressFamily::IPv4
+				&& !(*servers)[index].ipv6Address.empty())
+			{
+				attemptedIPv6 = true;
+				probes.push_back(ProbeServerPortAsync(
+					(*servers)[index], port, true, true, result,
+					RemainingMilliseconds(deadline, PORT_SCAN_TIMEOUT_MS)));
+				probes.push_back(ProbeServerPortAsync(
+					(*servers)[index], port, false, true, result,
+					RemainingMilliseconds(deadline, PORT_SCAN_TIMEOUT_MS)));
+			}
+			// All requested transports are started before awaiting any one of
+			// them. A blocked UDP port therefore does not delay the TCP result (or
+			// vice versa), and all four checks finish within one server timeout.
+			for (auto const& probe : probes)
+			{
+				try
+				{
+					co_await probe;
+				}
+				catch (...)
+				{
+				}
+			}
+			result->completed = result->tcpCompleted || result->udpCompleted;
+			result->ipv6Completed =
+				result->ipv6TcpCompleted || result->ipv6UdpCompleted;
+			bool const ipv4Done = family == PortProbeAddressFamily::IPv6
+				|| (result->tcpCompleted && result->udpCompleted);
+			bool const ipv6Done = family == PortProbeAddressFamily::IPv4
+				|| (result->ipv6TcpCompleted && result->ipv6UdpCompleted);
+			if (ipv4Done && ipv6Done)
 				break;
 		}
+		result->ipv4TimedOut = family != PortProbeAddressFamily::IPv6
+			&& (!result->tcpCompleted || !result->udpCompleted)
+			&& (attemptedIPv4 || servers->empty());
+		result->ipv6TimedOut = family != PortProbeAddressFamily::IPv4
+			&& (!result->ipv6TcpCompleted || !result->ipv6UdpCompleted)
+			&& attemptedIPv6;
+		result->timedOut = result->ipv4TimedOut || result->ipv6TimedOut;
+		if (servers->empty())
+			result->detail = L"Traversal directory unavailable or timed out.";
 		co_return;
 	}
 
@@ -410,7 +518,10 @@ namespace OpenNet::Core
 			// 使用不同的服务获取公网IP / Use different services to get public IP
 			winrt::hstring url = ipv6 ? L"https://ipv6.icanhazip.com" : L"https://ipv4.icanhazip.com";
 
-			auto response = co_await httpClient.GetStringAsync(Uri(url));
+			auto request = httpClient.GetStringAsync(Uri(url));
+			if (!co_await WaitForCompletionAsync(request, PORT_SCAN_TIMEOUT_MS))
+				co_return L"";
+			auto response = request.GetResults();
 
 			// 清理响应字符串 / Clean response string
 			winrt::hstring cleanedResponse;
@@ -437,7 +548,10 @@ namespace OpenNet::Core
 			// Test by attempting to bind on the default torrent port.
 			// If the bind fails the OS firewall is likely blocking it.
 			DatagramSocket socket;
-			co_await socket.BindServiceNameAsync(winrt::to_hstring(DEFAULT_TORRENT_PORT));
+			auto bind = socket.BindServiceNameAsync(winrt::to_hstring(DEFAULT_TORRENT_PORT));
+			if (!co_await WaitForCompletionAsync(bind, PORT_SCAN_TIMEOUT_MS))
+				co_return true;
+			bind.GetResults();
 			socket.Close();
 			co_return false; // No firewall block detected
 		}
@@ -556,7 +670,10 @@ namespace OpenNet::Core
 				}
 			});
 
-			co_await socket.ConnectAsync(HostName(serverHost), serverPort);
+			auto connect = socket.ConnectAsync(HostName(serverHost), serverPort);
+			if (!co_await WaitForCompletionAsync(connect, PORT_SCAN_TIMEOUT_MS))
+				co_return L"";
+			connect.GetResults();
 
 			// Build STUN Binding Request (RFC 5389)
 			uint8_t txId[12];
@@ -568,7 +685,10 @@ namespace OpenNet::Core
 			writer.WriteByte(0x21); writer.WriteByte(0x12);
 			writer.WriteByte(0xA4); writer.WriteByte(0x42);
 			writer.WriteBytes(winrt::array_view<const uint8_t>(txId, 12));
-			co_await writer.StoreAsync();
+			auto store = writer.StoreAsync();
+			if (!co_await WaitForCompletionAsync(store, PORT_SCAN_TIMEOUT_MS))
+				co_return L"";
+			store.GetResults();
 
 			// Wait up to 3 seconds for response
 			for (int i = 0; i < 30 && !gotResponse; ++i)
@@ -589,7 +709,8 @@ namespace OpenNet::Core
 		uint16_t port,
 		bool changeIp,
 		bool changePort,
-		std::shared_ptr<StunObservation> result)
+		std::shared_ptr<StunObservation> result,
+		std::uint32_t timeoutMs)
 	{
 		struct ExchangeState
 		{
@@ -606,6 +727,7 @@ namespace OpenNet::Core
 			value = static_cast<uint8_t>(random());
 
 		auto started = std::chrono::steady_clock::now();
+		auto const deadline = started + std::chrono::milliseconds(timeoutMs);
 		auto token = socket.MessageReceived(
 			[state, started](DatagramSocket const&, DatagramSocketMessageReceivedEventArgs const& args)
 		{
@@ -695,16 +817,28 @@ namespace OpenNet::Core
 					static_cast<uint8_t>((changeIp ? 0x04 : 0) | (changePort ? 0x02 : 0)) });
 			}
 
-			auto stream = co_await socket.GetOutputStreamAsync(
-				HostName(server),
-				winrt::to_hstring(port));
+			auto streamRequest = socket.GetOutputStreamAsync(HostName(server), winrt::to_hstring(port));
+			if (!co_await WaitForCompletionAsync(streamRequest, RemainingMilliseconds(deadline, timeoutMs)))
+			{
+				throw winrt::hresult_error(HRESULT_FROM_WIN32(ERROR_TIMEOUT));
+			}
+			auto stream = streamRequest.GetResults();
 			DataWriter writer(stream);
 			writer.WriteBytes(packet);
-			co_await writer.StoreAsync();
+			auto store = writer.StoreAsync();
+			if (!co_await WaitForCompletionAsync(
+				store, RemainingMilliseconds(deadline, timeoutMs)))
+			{
+				throw winrt::hresult_error(HRESULT_FROM_WIN32(ERROR_TIMEOUT));
+			}
+			store.GetResults();
 			writer.DetachStream();
 
-			for (int index = 0; index < 30 && !state->received.load(); ++index)
+			while (!state->received.load()
+				   && std::chrono::steady_clock::now() < deadline)
+			{
 				co_await winrt::resume_after(std::chrono::milliseconds(100));
+			}
 		}
 		catch (...)
 		{
@@ -734,35 +868,166 @@ namespace OpenNet::Core
 		return {};
 	}
 
+	IAsyncAction NetworkDetector::TestListeningPortsAsync(
+		std::uint16_t ipv4Port,
+		std::uint16_t ipv6Port,
+		std::shared_ptr<PortProbeResult> result)
+	{
+		*result = {};
+		if (ipv4Port == 0 && ipv6Port == 0)
+			co_return;
+		if (ipv4Port > 0 && ipv4Port == ipv6Port)
+		{
+			co_await TestPortAccessibilityDetailedAsync(
+				ipv4Port, result, PortProbeAddressFamily::Both);
+			co_return;
+		}
+
+		auto ipv4Result = std::make_shared<PortProbeResult>();
+		auto ipv6Result = std::make_shared<PortProbeResult>();
+		IAsyncAction ipv4Operation{ nullptr };
+		IAsyncAction ipv6Operation{ nullptr };
+		if (ipv4Port > 0)
+		{
+			ipv4Operation = TestPortAccessibilityDetailedAsync(
+				ipv4Port, ipv4Result, PortProbeAddressFamily::IPv4);
+		}
+		if (ipv6Port > 0)
+		{
+			ipv6Operation = TestPortAccessibilityDetailedAsync(
+				ipv6Port, ipv6Result, PortProbeAddressFamily::IPv6);
+		}
+		try
+		{
+			if (ipv4Operation) co_await ipv4Operation;
+		}
+		catch (...)
+		{
+		}
+		try
+		{
+			if (ipv6Operation) co_await ipv6Operation;
+		}
+		catch (...)
+		{
+		}
+
+		result->completed = ipv4Result->completed;
+		result->tcpCompleted = ipv4Result->tcpCompleted;
+		result->udpCompleted = ipv4Result->udpCompleted;
+		result->tcpReachable = ipv4Result->tcpReachable;
+		result->udpReachable = ipv4Result->udpReachable;
+		result->tcpLatencyMs = ipv4Result->tcpLatencyMs;
+		result->udpLatencyMs = ipv4Result->udpLatencyMs;
+		result->tcpEvidence = ipv4Result->tcpEvidence;
+		result->udpEvidence = ipv4Result->udpEvidence;
+		result->ipv4TimedOut = ipv4Result->ipv4TimedOut;
+
+		result->ipv6Completed = ipv6Result->ipv6Completed;
+		result->ipv6TcpCompleted = ipv6Result->ipv6TcpCompleted;
+		result->ipv6UdpCompleted = ipv6Result->ipv6UdpCompleted;
+		result->ipv6TcpReachable = ipv6Result->ipv6TcpReachable;
+		result->ipv6UdpReachable = ipv6Result->ipv6UdpReachable;
+		result->ipv6TcpLatencyMs = ipv6Result->ipv6TcpLatencyMs;
+		result->ipv6UdpLatencyMs = ipv6Result->ipv6UdpLatencyMs;
+		result->ipv6TcpEvidence = ipv6Result->ipv6TcpEvidence;
+		result->ipv6UdpEvidence = ipv6Result->ipv6UdpEvidence;
+		result->ipv6TimedOut = ipv6Result->ipv6TimedOut;
+		result->timedOut = result->ipv4TimedOut || result->ipv6TimedOut;
+	}
+
 	IAsyncAction NetworkDetector::DetectNATBehaviorAsync(
-		uint16_t listenPort,
+		uint16_t ipv4ListenPort,
+		uint16_t ipv6ListenPort,
 		std::shared_ptr<NatDetectionResult> output)
 	{
 		*output = {};
 		auto& result = *output;
+		auto cancellation = co_await winrt::get_cancellation_token();
+		cancellation.enable_propagation();
+		auto const deadline = std::chrono::steady_clock::now()
+			+ std::chrono::milliseconds(DETECTION_TIMEOUT_MS);
 		result.localIPv4 = GetLocalIPv4Address();
 		auto servers = std::make_shared<std::vector<TraversalServerDescriptor>>();
 		co_await GetTraversalServersAsync(servers);
 		if (servers->empty())
 		{
 			result.diagnostic =
-				L"No traversal server was returned by " + m_traversalDirectoryUri;
+				L"Traversal server discovery timed out or returned no server: "
+				+ m_traversalDirectoryUri;
+			result.portProbe.timedOut = true;
+			result.portProbe.ipv4TimedOut = true;
+			result.portProbe.ipv6TimedOut = true;
 			co_return;
 		}
 
 		DatagramSocket socket;
 		try
 		{
-			co_await socket.BindServiceNameAsync(L"");
+			auto bind = socket.BindServiceNameAsync(L"");
+			if (!co_await WaitForCompletionAsync(
+				bind, RemainingMilliseconds(deadline, PORT_SCAN_TIMEOUT_MS)))
+			{
+				result.diagnostic = L"Timed out while opening the STUN test socket.";
+				co_return;
+			}
+			bind.GetResults();
+			try
+			{
+				auto const information = socket.Information();
+				if (auto const localAddress = information.LocalAddress();
+					localAddress && localAddress.Type() == HostNameType::Ipv4)
+				{
+					result.localIPv4 = localAddress.CanonicalName();
+				}
+				auto const localPortText = winrt::to_string(information.LocalPort());
+				unsigned int localPort{};
+				auto const [end, error] = std::from_chars(
+					localPortText.data(),
+					localPortText.data() + localPortText.size(),
+					localPort);
+				if (error == std::errc{}
+					&& end == localPortText.data() + localPortText.size()
+					&& localPort <= 65535)
+				{
+					result.localPort = static_cast<std::uint16_t>(localPort);
+				}
+			}
+			catch (...)
+			{
+			}
 			auto const& primary = servers->front();
 			auto first = std::make_shared<StunObservation>();
 			co_await PerformStunExchangeAsync(
-				socket, primary.ipv4Address, primary.stunPort, false, false, first);
+				socket, primary.ipv4Address, primary.stunPort, false, false, first,
+				RemainingMilliseconds(deadline, 3000));
 			result.observations.push_back(*first);
 			if (!first->success)
 			{
-				result.diagnostic = L"The primary STUN endpoint did not respond.";
 				socket.Close();
+				if (ipv4ListenPort > 0 || ipv6ListenPort > 0)
+				{
+					auto portProbe = std::make_shared<PortProbeResult>();
+					auto portOperation = TestListeningPortsAsync(
+						ipv4ListenPort, ipv6ListenPort, portProbe);
+					auto const remaining = RemainingMilliseconds(
+						deadline, PORT_TEST_TIMEOUT_MS);
+					if (remaining > 0
+						&& co_await WaitForCompletionAsync(portOperation, remaining))
+					{
+						portOperation.GetResults();
+						result.portProbe = std::move(*portProbe);
+					}
+					else
+					{
+						result.portProbe.timedOut = true;
+						result.portProbe.ipv4TimedOut = true;
+						result.portProbe.ipv6TimedOut = true;
+					}
+				}
+				result.diagnostic =
+					L"The primary STUN endpoint timed out. Port reachability was "
+					L"allowed to finish independently.";
 				co_return;
 			}
 
@@ -775,7 +1040,8 @@ namespace OpenNet::Core
 				primary.alternateStunPort,
 				false,
 				false,
-				differentPort);
+				differentPort,
+				RemainingMilliseconds(deadline, 3000));
 			result.observations.push_back(*differentPort);
 
 			StunObservation differentAddress;
@@ -788,7 +1054,8 @@ namespace OpenNet::Core
 					primary.stunPort,
 					false,
 					false,
-					observation);
+					observation,
+					RemainingMilliseconds(deadline, 3000));
 				differentAddress = std::move(*observation);
 			}
 			else if (servers->size() > 1)
@@ -800,7 +1067,8 @@ namespace OpenNet::Core
 					(*servers)[1].stunPort,
 					false,
 					false,
-					observation);
+					observation,
+					RemainingMilliseconds(deadline, 3000));
 				differentAddress = std::move(*observation);
 			}
 			if (!differentAddress.server.empty())
@@ -833,8 +1101,11 @@ namespace OpenNet::Core
 			if (!primary.alternateIPv4Address.empty())
 			{
 				auto changeBoth = std::make_shared<StunObservation>();
+				result.filteringDifferentAddressAndPortTested = true;
 				co_await PerformStunExchangeAsync(
-					socket, primary.ipv4Address, primary.stunPort, true, true, changeBoth);
+					socket, primary.ipv4Address, primary.stunPort, true, true, changeBoth,
+					RemainingMilliseconds(deadline, 3000));
+				result.filteringDifferentAddressAndPort = *changeBoth;
 				if (changeBoth->success)
 				{
 					result.filtering = NatFilteringBehavior::EndpointIndependent;
@@ -842,8 +1113,11 @@ namespace OpenNet::Core
 				else
 				{
 					auto changePort = std::make_shared<StunObservation>();
+					result.filteringDifferentPortTested = true;
 					co_await PerformStunExchangeAsync(
-						socket, primary.ipv4Address, primary.stunPort, false, true, changePort);
+						socket, primary.ipv4Address, primary.stunPort, false, true, changePort,
+						RemainingMilliseconds(deadline, 3000));
+					result.filteringDifferentPort = *changePort;
 					result.filtering = changePort->success
 						? NatFilteringBehavior::AddressDependent
 						: NatFilteringBehavior::AddressAndPortDependent;
@@ -851,11 +1125,25 @@ namespace OpenNet::Core
 			}
 			socket.Close();
 
-			if (listenPort > 0)
+			if (ipv4ListenPort > 0 || ipv6ListenPort > 0)
 			{
 				auto portProbe = std::make_shared<PortProbeResult>();
-				co_await TestPortAccessibilityDetailedAsync(listenPort, portProbe);
-				result.portProbe = std::move(*portProbe);
+				auto portOperation = TestListeningPortsAsync(
+					ipv4ListenPort, ipv6ListenPort, portProbe);
+				auto const remaining = RemainingMilliseconds(
+					deadline, PORT_TEST_TIMEOUT_MS);
+				if (remaining > 0
+					&& co_await WaitForCompletionAsync(portOperation, remaining))
+				{
+					portOperation.GetResults();
+					result.portProbe = std::move(*portProbe);
+				}
+				else
+				{
+					result.portProbe.timedOut = true;
+					result.portProbe.ipv4TimedOut = true;
+					result.portProbe.ipv6TimedOut = true;
+				}
 			}
 
 			if (result.mapping == NatMappingBehavior::Direct)

@@ -626,10 +626,9 @@ namespace winrt::OpenNet::implementation
 	{
 		try
 		{
-			co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
-				.InitializeAsync();
-			co_await ::OpenNet::Core::P2PManager::Instance()
-				.EnsureTorrentCoreInitializedAsync();
+			auto trackerInitialization = ::OpenNet::Core::Torrent::TrackerManager::Instance().InitializeAsync();
+			co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
+			co_await trackerInitialization;
 			OutputDebugStringA("App: libtorrent core initialized\n");
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				::OpenNet::Service::Notification::InfoBarMessage::Success(

@@ -43,6 +43,30 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_portState;
 		}
+		winrt::hstring IPv4PortState() const
+		{
+			return m_ipv4PortState;
+		}
+		winrt::hstring IPv6PortState() const
+		{
+			return m_ipv6PortState;
+		}
+		winrt::hstring IPv4TcpPortState() const
+		{
+			return m_ipv4TcpPortState;
+		}
+		winrt::hstring IPv4UdpPortState() const
+		{
+			return m_ipv4UdpPortState;
+		}
+		winrt::hstring IPv6TcpPortState() const
+		{
+			return m_ipv6TcpPortState;
+		}
+		winrt::hstring IPv6UdpPortState() const
+		{
+			return m_ipv6UdpPortState;
+		}
 
 		// 快速统计 / Quick stats
 		std::int32_t ConnectedPeersCount() const
@@ -72,6 +96,26 @@ namespace winrt::OpenNet::ViewModels::implementation
 		std::int32_t ListenPort() const
 		{
 			return m_listenPort;
+		}
+		std::int32_t IPv4ListenPort() const
+		{
+			return m_ipv4ListenPort;
+		}
+		std::int32_t IPv6ListenPort() const
+		{
+			return m_ipv6ListenPort;
+		}
+		winrt::hstring ListenPortText() const
+		{
+			return m_listenPortText;
+		}
+		winrt::hstring IPv4ListenPortText() const
+		{
+			return m_ipv4ListenPortText;
+		}
+		winrt::hstring IPv6ListenPortText() const
+		{
+			return m_ipv6ListenPortText;
 		}
 
 		// 网络状态 / Network status
@@ -122,6 +166,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		bool m_isConnected{};
 		winrt::hstring m_userName;
 		winrt::hstring m_portState;
+		winrt::hstring m_ipv4PortState{ L"Unknown" };
+		winrt::hstring m_ipv6PortState{ L"Unknown" };
+		winrt::hstring m_ipv4TcpPortState{ L"Unknown" };
+		winrt::hstring m_ipv4UdpPortState{ L"Unknown" };
+		winrt::hstring m_ipv6TcpPortState{ L"Unknown" };
+		winrt::hstring m_ipv6UdpPortState{ L"Unknown" };
 
 		// 导航状态 / Navigation state
 		bool m_isHomeSelected{ true };
@@ -138,6 +188,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_currentTransferSpeedText{ L"0 bps" };
 		winrt::hstring m_speedLevel{ L"Low" };
 		std::int32_t m_listenPort{ 0 };
+		std::int32_t m_ipv4ListenPort{ 0 };
+		std::int32_t m_ipv6ListenPort{ 0 };
+		winrt::hstring m_listenPortText{ L"—" };
+		winrt::hstring m_ipv4ListenPortText{ L"—" };
+		winrt::hstring m_ipv6ListenPortText{ L"—" };
 
 		// 网络状态 / Network status
 		winrt::hstring m_networkStatusText{ L"未知 / Unknown" };
@@ -152,16 +207,20 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// Speed refresh
 		winrt::Microsoft::UI::Dispatching::DispatcherQueue m_dispatcher{ nullptr };
 		std::thread m_speedRefreshThread;
+		std::thread m_portRefreshThread;
 		std::atomic<bool> m_stopSpeedRefresh{ false };
 		std::condition_variable m_speedCv;
 		std::mutex m_speedMutex;
 		void SpeedRefreshThreadEntry();
+		void PortRefreshThreadEntry();
 		::OpenNet::Core::NetworkDetector m_networkDetector;
 
 		// Port check state
 		std::chrono::steady_clock::time_point m_lastPortCheckTime{};
-		std::int32_t m_lastCheckedPort{ 0 };
-		std::wstring m_cachedPortState{ L"Unknown" };
+		std::int32_t m_lastCheckedIPv4Port{ 0 };
+		std::int32_t m_lastCheckedIPv6Port{ 0 };
+		std::wstring m_cachedIPv4PortState{ L"Unknown" };
+		std::wstring m_cachedIPv6PortState{ L"Unknown" };
 	};
 }
 namespace winrt::OpenNet::ViewModels::factory_implementation

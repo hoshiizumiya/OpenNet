@@ -16,6 +16,31 @@ namespace OpenNet::Core::Torrent
     using namespace winrt::Windows::Web::Http;
     using namespace winrt::Windows::Foundation;
 
+    namespace
+    {
+        constexpr wchar_t DefaultSubscriptionUrl[] =
+            L"https://cf.trackerslist.com/best.txt";
+        constexpr wchar_t DefaultSubscriptionName[] = L"XIU2 best trackers";
+
+        template<typename TAsync>
+        IAsyncOperation<bool> WaitForTrackerRequestAsync(
+            TAsync const& operation,
+            std::chrono::seconds timeout)
+        {
+            auto const deadline = std::chrono::steady_clock::now() + timeout;
+            while (operation.Status() == AsyncStatus::Started)
+            {
+                if (std::chrono::steady_clock::now() >= deadline)
+                {
+                    operation.Cancel();
+                    co_return false;
+                }
+                co_await winrt::resume_after(std::chrono::milliseconds(50));
+            }
+            co_return operation.Status() == AsyncStatus::Completed;
+        }
+    }
+
     TrackerManager& TrackerManager::Instance()
     {
         static TrackerManager instance;
@@ -66,7 +91,31 @@ namespace OpenNet::Core::Torrent
         {
             auto localFolder = ApplicationData::Current().LocalFolder();
             m_configPath = std::wstring(localFolder.Path().c_str()) + L"\\trackers.json";
-            co_await LoadTrackersAsync();
+            bool const configurationExisted = co_await LoadTrackersAsync();
+            bool retryEmptySubscription = false;
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+                retryEmptySubscription = configurationExisted
+                    && m_trackers.empty() && !m_subscriptions.empty();
+            }
+            if (!configurationExisted)
+            {
+                // First install: seed the same maintained list offered by the
+                // Network settings page. Persisting the subscription before the
+                // download also makes an offline first launch recoverable.
+                co_await SubscribeToTrackerListAsync(
+                    DefaultSubscriptionUrl, DefaultSubscriptionName);
+            }
+            else if (retryEmptySubscription)
+            {
+                std::pair<std::wstring, std::wstring> subscription;
+                {
+                    std::lock_guard<std::mutex> lock(m_mutex);
+                    subscription = m_subscriptions.front();
+                }
+                co_await SubscribeToTrackerListAsync(
+                    subscription.second, L"Tracker subscription");
+            }
             {
                 std::lock_guard<std::mutex> lock(m_mutex);
                 m_initialized = true;
@@ -186,27 +235,60 @@ namespace OpenNet::Core::Torrent
     {
         try
         {
-            // Generate subscription ID
-            auto id = std::wstring(L"sub_") + std::to_wstring(
-                std::chrono::system_clock::now().time_since_epoch().count());
+            std::wstring id;
+            bool addedSubscription = false;
+            {
+                std::lock_guard<std::mutex> lock(m_mutex);
+                auto existing = std::find_if(
+                    m_subscriptions.begin(), m_subscriptions.end(),
+                    [&subscriptionUrl](auto const& item)
+                    {
+                        return item.second == subscriptionUrl;
+                    });
+                if (existing != m_subscriptions.end())
+                {
+                    id = existing->first;
+                }
+                else
+                {
+                    id = std::wstring(L"sub_") + std::to_wstring(
+                        std::chrono::system_clock::now().time_since_epoch().count());
+                    m_subscriptions.push_back({ id, subscriptionUrl });
+                    addedSubscription = true;
+                }
+            }
+            // Save the source before touching the network. An unavailable list
+            // is still an active subscription and will be retried next launch.
+            if (addedSubscription)
+                SaveTrackers();
 
             // Download tracker list
             HttpClient client;
             auto uri = Uri(subscriptionUrl);
-            auto response = co_await client.GetAsync(uri);
+            auto request = client.GetAsync(uri);
+            if (!co_await WaitForTrackerRequestAsync(request, std::chrono::seconds(8)))
+                co_return;
+            auto response = request.GetResults();
 
             if (!response.IsSuccessStatusCode())
             {
                 co_return;
             }
 
-            auto contentStr = co_await response.Content().ReadAsStringAsync();
+            auto contentRequest = response.Content().ReadAsStringAsync();
+            if (!co_await WaitForTrackerRequestAsync(
+                contentRequest, std::chrono::seconds(3)))
+            {
+                co_return;
+            }
+            auto contentStr = contentRequest.GetResults();
 
             // Parse tracker list (one URL per line)
             std::wistringstream stream(contentStr.c_str());
             std::wstring line;
             int addedCount = 0;
 
+            std::vector<TrackerInfo> downloaded;
             while (std::getline(stream, line))
             {
                 // Trim whitespace
@@ -227,14 +309,26 @@ namespace OpenNet::Core::Torrent
                 info.enabled = true;
                 info.addedTime = std::chrono::system_clock::now().time_since_epoch().count();
 
-                AddTracker(info);
+                downloaded.push_back(std::move(info));
                 addedCount++;
             }
 
-            // Save subscription
+            if (downloaded.empty())
+                co_return;
+
+            // Replace one subscription atomically only after a valid list was
+            // received, so a temporary network failure never erases the last
+            // known-good trackers.
             {
                 std::lock_guard<std::mutex> lock(m_mutex);
-                m_subscriptions.push_back({ id, subscriptionUrl });
+                std::erase_if(m_trackers, [&id](TrackerInfo const& tracker)
+                {
+                    return tracker.id.starts_with(id + L"_");
+                });
+                m_trackers.insert(
+                    m_trackers.end(),
+                    std::make_move_iterator(downloaded.begin()),
+                    std::make_move_iterator(downloaded.end()));
             }
 
             // Save trackers
@@ -325,7 +419,7 @@ namespace OpenNet::Core::Torrent
         catch (...) {}
     }
 
-    winrt::Windows::Foundation::IAsyncAction TrackerManager::LoadTrackersAsync()
+    winrt::Windows::Foundation::IAsyncOperation<bool> TrackerManager::LoadTrackersAsync()
     {
         try
         {
@@ -334,13 +428,13 @@ namespace OpenNet::Core::Torrent
 
             if (!item)
             {
-                co_return;
+                co_return false;
             }
 
             auto file = item.as<StorageFile>();
             if (!file)
             {
-                co_return;
+                co_return false;
             }
 
             auto content = co_await FileIO::ReadTextAsync(file);
@@ -348,7 +442,7 @@ namespace OpenNet::Core::Torrent
 
             if (!JsonObject::TryParse(content, root))
             {
-                co_return;
+                co_return true;
             }
 
             std::lock_guard<std::mutex> lock(m_mutex);
@@ -387,10 +481,12 @@ namespace OpenNet::Core::Torrent
                     m_subscriptions.push_back({ id, url });
                 }
             }
+            co_return true;
         }
         catch (...)
         {
             // Handle load errors
+            co_return false;
         }
     }
 }

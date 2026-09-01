@@ -325,6 +325,7 @@
                                                         <xtwc:ColorPickerButton HorizontalAlignment="Stretch" SelectedColor="{x:Bind Settings.BackgroundColor, Mode=TwoWay}">
                                                             <xtwc:ColorPickerButton.ColorPicker>
                                                                 <xtwc:ColorPicker
+                                                                    ColorSpectrumShape="Ring"
                                                                     IsAlphaEnabled="True"
                                                                     IsColorChannelTextInputVisible="False"
                                                                     IsColorSliderVisible="False"
@@ -344,6 +345,7 @@
                                                         <xtwc:ColorPickerButton HorizontalAlignment="Stretch" SelectedColor="{x:Bind Settings.ClearColor, Mode=TwoWay}">
                                                             <xtwc:ColorPickerButton.ColorPicker>
                                                                 <xtwc:ColorPicker
+                                                                    ColorSpectrumShape="Ring"
                                                                     IsAlphaEnabled="True"
                                                                     IsColorChannelTextInputVisible="False"
                                                                     IsColorSliderVisible="False"

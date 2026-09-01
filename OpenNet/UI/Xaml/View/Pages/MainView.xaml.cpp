@@ -245,7 +245,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::NavFrame_Navigated(IInspectable const&, Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
-		if (m_isUnloaded) return;
+		if (m_isUnloaded)
+			return;
 
 		m_canGoBackChanged(*this, NavFrame().CanGoBack());
 	}
@@ -265,20 +266,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void MainView::SettingButton_PointerEntered(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)
 	{
-		if (m_isUnloaded) return;
+		if (m_isUnloaded)
+			return;
 		AnimatedIcon::SetState(this->AnimatedIcon(), L"PointerOver");
 	}
 
 	void MainView::SettingButton_PointerExited(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& /*e*/)
 	{
-		if (m_isUnloaded) return;
+		if (m_isUnloaded)
+			return;
 		AnimatedIcon::SetState(this->AnimatedIcon(), L"Normal");
 	}
 
-	void MainView::PortState_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void MainView::PortState_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		auto window = winrt::make_self<
-			winrt::OpenNet::UI::Xaml::View::Windows::implementation::NATDetectorWindow>();
+		Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ShowAttachedFlyout(sender.as<FrameworkElement>());
+	}
+
+	void MainView::OpenPortTestWindow_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto window = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::NATDetectorWindow>();
 		window->Activate();
 	}
 }

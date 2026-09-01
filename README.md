@@ -1,5 +1,5 @@
 ﻿<p align="center">
-🎉Welcome to the OpenNet project
+Welcome to the OpenNet project
 </p>
 <p align="center">
   <img src="https://github.com/hoshiizumiya/OpenNet/blob/master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png" alt="OpenNet Banner" heigth="200"/>
@@ -15,23 +15,24 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 
 ## Support platforms
 - windows 11 ARM64/x64
-- windows 10 is not in my support plan, but it can still run but may occur some issues, include core functions error, UI display issues, report them if you have one.
+- windows 10 is not in the support plan, but it can still run but may occur some issues, include core functions/RPC calling error, UI display issues, report them if you have one. But they're unlikely to be fixed。
 
 ## How to build the debug project
 
 1. Development environment requirements
 
 * Windows 11 25H2 or later — we recommend using the latest version of Windows 11.
-* Visual Studio 2026 (Latest).
+* Visual Studio 2026 (Latest, at least 18.8+).
 * More than 64GB RAM is adviced(or increase your machine virtual memory - Auto management is not stable). Machine with less RAM may still build the project, but your code and debug experience may be impacted.
 * Workloads: C++ Desktop Development, WinUI Desktop Development, and C++ WinUI app tools.
-* Windows 11 SDK (10.0.26100.0 or later)
-* MSVC v145/MSVC preview(or open solution and follow vs install prompts)
-* `vcpkg` package manager (the VS-integrated version is acceptable)
+* Windows 11 SDK (10.0.26100.0+)
+* MSVC v145/MSVC preview(or open solution and follow vs install prompts, the [MSVC Build Tools version](https://learn.microsoft.com/cpp/overview/compiler-versions#version-macros) needs V14.52+, older version will fail in compilation with module or other issues)
+* `vcpkg` package manager (the VS-integrated version is acceptable, adviced self-installed with custom path in the VS options to get up to date version of the vcpkg.exe, check issue [here](https://github.com/microsoft/vcpkg/issues/41479))
 * You may need to have [vcpkg](https://vcpkg.io/) installed and integrate setup for msbuild. See [this documentation for guide](https://learn.microsoft.com/vcpkg/get_started/get-started-msbuild?pivots=shell-powershell).
 
-2. Build the project
+2. Build the project 
 
+**Project uses some enhanced components in the XamlCommunityToolkit, but they're not merged into the upstream currently, so you may encounter some issues, they'll be available in future updates.**
 * Open Visual Studio and choose to clone the repository.
 * Enter the project's Git repository URL and choose a local path with more than 30GB free space (Strongly advise fast SSD). Avoid spaces and non-ASCII characters in the path, as some older dependencies may fail. Then click "Clone". If your network is unreliable, consider using SSH or a TUN proxy for Git.
 * Open OpenNet.slnx in Visual Studio.
@@ -76,7 +77,11 @@ MVVM framework: @https://github.com/AlexAdasCca
 
 ## ⚙️ Tech Stack
 
+- [aria2/aria2](https://github.com/aria2/aria2)
 - [arvidn/libtorrent](https://github.com/arvidn/libtorrent)
+- [boost-ext/di](https://github.com/boost-ext/di)
+- [boostorg/asio](https://github.com/boostorg/asio)
+- [boostorg/beast](https://github.com/boostorg/beast)
 - [dotnet/runtime](https://github.com/dotnet/runtime)
 - [getsentry/sentry-native](https://github.com/getsentry/sentry-native)
 - [HO-COOH/WinUIEssentials](https://github.com/HO-COOH/WinUIEssentials)
@@ -85,10 +90,15 @@ MVVM framework: @https://github.com/AlexAdasCca
 - [microsoft/WindowsAppSDK](https://github.com/microsoft/WindowsAppSDK)
 - [microsoft/microsoft-ui-xaml](https://github.com/microsoft/microsoft-ui-xaml)
 - [microsoft/vcpkg](https://github.com/microsoft/vcpkg)
+- [Millennium-Science-Technology-R-D-Inst/OpenNet.Server](https://github.com/Millennium-Science-Technology-R-D-Inst/OpenNet.Server)
+- [Millennium-Science-Technology-R-D-Inst/OpenNet.Traversal](https://github.com/Millennium-Science-Technology-R-D-Inst/OpenNet.Traversal)
 - [Millennium-Science-Technology-R-D-Inst/WinUI3-cppwinrt-MVVM](https://github.com/Millennium-Science-Technology-R-D-Inst/WinUI3-cppwinrt-MVVM)
 - [openssl/openssl](https://github.com/openssl/openssl)
 - [PBH-BTN/PeerBanHelper](https://github.com/PBH-BTN/PeerBanHelper)
 - [ProjectMile/Mile.Aria2](https://github.com/ProjectMile/Mile.Aria2)
+- [sqlite/sqlite](https://github.com/sqlite/sqlite) 
+
+Tip: There are more dependencies used in the project, they're not all listed.
 
 ## 📈 Development
 ![Alt](https://repobeats.axiom.co/api/embed/94389f8accb0f98aa0a71cbbc5efd10ff6152bc7.svg "Repobeats analytics image")

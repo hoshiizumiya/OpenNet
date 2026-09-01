@@ -51,6 +51,7 @@
                             <ColumnDefinition Width="Auto" />
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -67,20 +68,26 @@
                             PlaceholderText="https://server.example/api/v1/traversal/servers" />
                         <NumberBox
                             x:Name="ListenPortNumber"
-                            x:Uid="ViewNATDetectorWindowText3"
                             Grid.Column="2"
                             Width="130"
                             AutomationProperties.AutomationId="ViewNATDetectorWindowText3"
-                            Header="Listen port"
+                            Header="IPv4 listen port"
+                            Maximum="65535"
+                            Minimum="1"
+                            SpinButtonPlacementMode="Inline" />
+                        <NumberBox
+                            x:Name="IPv6ListenPortNumber"
+                            Grid.Column="3"
+                            Width="130"
+                            Header="IPv6 listen port"
                             Maximum="65535"
                             Minimum="1"
                             SpinButtonPlacementMode="Inline" />
                         <TextBlock
-                            x:Uid="ViewNATDetectorWindowText4"
                             Grid.Row="1"
-                            Grid.ColumnSpan="3"
+                            Grid.ColumnSpan="4"
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                            Text="NAT behavior uses a temporary UDP socket. Port reachability is tested against libtorrent's existing TCP/uTP listener."
+                            Text="Listening-port reachability and NAT behavior are separate tests. The four fast IPv4/IPv6 TCP/UDP probes target libtorrent's existing listeners. NAT behavior uses one temporary UDP socket and compares how its public endpoint changes across remote endpoints."
                             TextWrapping="Wrap" />
                     </Grid>
                 </Border>
@@ -121,6 +128,8 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBlock x:Uid="ViewNATDetectorWindowText6" Text="Local IPv4" />
                                 <TextBlock
@@ -128,46 +137,58 @@
                                     x:Uid="ViewNATDetectorWindowText7"
                                     Grid.Column="1"
                                     Text="—" />
+                                <TextBlock Grid.Row="1" Text="Internal UDP endpoint" />
                                 <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText8"
-                                    Grid.Row="1"
-                                    Text="Public IPv4" />
-                                <TextBlock
-                                    x:Name="PublicIPv4Text"
-                                    x:Uid="ViewNATDetectorWindowText7"
+                                    x:Name="LocalEndpointText"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Text="—" />
                                 <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText10"
+                                    x:Uid="ViewNATDetectorWindowText8"
                                     Grid.Row="2"
+                                    Text="Public IPv4" />
+                                <TextBlock
+                                    x:Name="PublicIPv4Text"
+                                    x:Uid="ViewNATDetectorWindowText7"
+                                    Grid.Row="2"
+                                    Grid.Column="1"
+                                    Text="—" />
+                                <TextBlock Grid.Row="3" Text="Observed public endpoint" />
+                                <TextBlock
+                                    x:Name="PublicEndpointText"
+                                    Grid.Row="3"
+                                    Grid.Column="1"
+                                    Text="—" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText10"
+                                    Grid.Row="4"
                                     Text="Mapping behavior" />
                                 <TextBlock
                                     x:Name="MappingText"
                                     x:Uid="ViewNATDetectorWindowText11"
-                                    Grid.Row="2"
+                                    Grid.Row="4"
                                     Grid.Column="1"
                                     Text="Unknown"
                                     TextWrapping="Wrap" />
                                 <TextBlock
                                     x:Uid="ViewNATDetectorWindowText12"
-                                    Grid.Row="3"
+                                    Grid.Row="5"
                                     Text="Filtering behavior" />
                                 <TextBlock
                                     x:Name="FilteringText"
                                     x:Uid="ViewNATDetectorWindowText11"
-                                    Grid.Row="3"
+                                    Grid.Row="5"
                                     Grid.Column="1"
                                     Text="Unknown"
                                     TextWrapping="Wrap" />
                                 <TextBlock
                                     x:Uid="ViewNATDetectorWindowText14"
-                                    Grid.Row="4"
+                                    Grid.Row="6"
                                     Text="Legacy label" />
                                 <TextBlock
                                     x:Name="NatTypeText"
                                     x:Uid="ViewNATDetectorWindowText11"
-                                    Grid.Row="4"
+                                    Grid.Row="6"
                                     Grid.Column="1"
                                     Text="Unknown"
                                     TextWrapping="Wrap" />
@@ -201,73 +222,74 @@
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <TextBlock x:Uid="ViewNATDetectorWindowText17" Text="TCP / BitTorrent" />
+                                <TextBlock Text="IPv4 TCP / BitTorrent" />
                                 <TextBlock
                                     x:Name="TcpPortText"
                                     x:Uid="ViewNATDetectorWindowText18"
                                     Grid.Column="1"
                                     Text="Not tested" />
-                                <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText19"
-                                    Grid.Row="1"
-                                    Text="UDP / uTP" />
+                                <TextBlock Grid.Row="1" Text="IPv4 UDP / uTP" />
                                 <TextBlock
                                     x:Name="UdpPortText"
                                     x:Uid="ViewNATDetectorWindowText18"
                                     Grid.Row="1"
                                     Grid.Column="1"
                                     Text="Not tested" />
+                                <TextBlock Grid.Row="2" Text="IPv6 TCP / BitTorrent" />
                                 <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText21"
-                                    Grid.Row="2"
-                                    Text="UPnP" />
-                                <TextBlock
-                                    x:Name="UpnpText"
-                                    x:Uid="ViewNATDetectorWindowText11"
+                                    x:Name="IPv6TcpPortText"
                                     Grid.Row="2"
                                     Grid.Column="1"
-                                    Text="Unknown" />
-                                <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText23"
-                                    Grid.Row="3"
-                                    Text="NAT-PMP / PCP" />
-                                <TextBlock
-                                    x:Name="NatPmpText"
-                                    x:Uid="ViewNATDetectorWindowText11"
-                                    Grid.Row="3"
-                                    Grid.Column="1"
-                                    Text="Unknown" />
-                                <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText25"
-                                    Grid.Row="4"
-                                    Text="Mapped port" />
-                                <TextBlock
-                                    x:Name="PortMappingText"
-                                    x:Uid="ViewNATDetectorWindowText7"
-                                    Grid.Row="4"
-                                    Grid.Column="1"
-                                    Text="—"
+                                    Text="Not tested"
                                     TextWrapping="Wrap" />
+                                <TextBlock Grid.Row="3" Text="IPv6 UDP / uTP" />
                                 <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText27"
-                                    Grid.Row="5"
-                                    Text="IPv6 TCP / UDP" />
-                                <TextBlock
-                                    x:Name="IPv6PortText"
-                                    x:Uid="ViewNATDetectorWindowText18"
-                                    Grid.Row="5"
+                                    x:Name="IPv6UdpPortText"
+                                    Grid.Row="3"
                                     Grid.Column="1"
                                     Text="Not tested"
                                     TextWrapping="Wrap" />
                                 <TextBlock
-                                    x:Uid="ViewNATDetectorWindowText29"
+                                    x:Uid="ViewNATDetectorWindowText21"
+                                    Grid.Row="4"
+                                    Text="UPnP" />
+                                <TextBlock
+                                    x:Name="UpnpText"
+                                    x:Uid="ViewNATDetectorWindowText11"
+                                    Grid.Row="4"
+                                    Grid.Column="1"
+                                    Text="Unknown" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText23"
+                                    Grid.Row="5"
+                                    Text="NAT-PMP / PCP" />
+                                <TextBlock
+                                    x:Name="NatPmpText"
+                                    x:Uid="ViewNATDetectorWindowText11"
+                                    Grid.Row="5"
+                                    Grid.Column="1"
+                                    Text="Unknown" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText25"
                                     Grid.Row="6"
+                                    Text="Mapped port" />
+                                <TextBlock
+                                    x:Name="PortMappingText"
+                                    x:Uid="ViewNATDetectorWindowText7"
+                                    Grid.Row="6"
+                                    Grid.Column="1"
+                                    Text="—"
+                                    TextWrapping="Wrap" />
+                                <TextBlock
+                                    x:Uid="ViewNATDetectorWindowText29"
+                                    Grid.Row="7"
                                     Text="Probe evidence" />
                                 <TextBlock
                                     x:Name="ProbeEvidenceText"
                                     x:Uid="ViewNATDetectorWindowText7"
-                                    Grid.Row="6"
+                                    Grid.Row="7"
                                     Grid.Column="1"
                                     Text="—"
                                     TextWrapping="Wrap" />
@@ -400,6 +422,72 @@
                         </Grid>
                     </StackPanel>
                 </Border>
+
+                <Border
+                    Padding="16"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="10">
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="RFC 5780 filtering observations" />
+                        <Grid ColumnSpacing="12" RowSpacing="8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="220" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="Reply from different IP + port" />
+                            <TextBlock
+                                x:Name="FilteringDifferentAddressPortText"
+                                Grid.Column="1"
+                                Text="Not tested"
+                                TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="1" Text="Reply from same IP, different port" />
+                            <TextBlock
+                                x:Name="FilteringDifferentPortText"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Text="Not tested"
+                                TextWrapping="Wrap" />
+                            <TextBlock Grid.Row="2" Text="Interpretation" />
+                            <TextBlock
+                                x:Name="FilteringExplanationText"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Run the full detection to measure which remote endpoints may send back through the NAT mapping."
+                                TextWrapping="Wrap" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <Border
+                    Padding="16"
+                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                    <StackPanel Spacing="8">
+                        <TextBlock
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Text="Why this result?" />
+                        <TextBlock
+                            x:Name="ConclusionExplanationText"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            IsTextSelectionEnabled="True"
+                            Text="Run the full detection to see the internal endpoint, observed public endpoints, and the evidence used for the classification."
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
             </StackPanel>
         </ScrollViewer>
 
@@ -427,6 +515,10 @@
                 Grid.Column="1"
                 Orientation="Horizontal"
                 Spacing="8">
+                <Button
+                    x:Name="QuickPortButton"
+                    Click="QuickPortButton_Click"
+                    Content="Quick port test" />
                 <Button
                     x:Name="StartButton"
                     x:Uid="ViewNATDetectorWindowText48"

@@ -50,7 +50,7 @@ export namespace OpenNet::Core::Torrent
 		LibtorrentHandle& operator=(LibtorrentHandle&&) = delete;
 
 		bool Initialize();
-		void Start();
+		bool Start();
 		void Stop();
 		bool AddMagnet(
 			std::string const& magnetUri,
@@ -115,8 +115,14 @@ export namespace OpenNet::Core::Torrent
 		struct ListenStatus
 		{
 			int port{};
+			int ipv4Port{};
+			int ipv6Port{};
 			bool isListening{};
+			bool isListeningIPv4{};
+			bool isListeningIPv6{};
 			std::string error;
+			std::string ipv4Error;
+			std::string ipv6Error;
 		};
 		ListenStatus GetListenStatus() const;
 
@@ -143,7 +149,11 @@ export namespace OpenNet::Core::Torrent
 			int dhtNodes{};
 			std::int64_t internalBannedIps{};
 			int listenPort{};                 // primary listen port (0 if not listening)
+			int ipv4ListenPort{};
+			int ipv6ListenPort{};
 			bool isListening{};
+			bool isListeningIPv4{};
+			bool isListeningIPv6{};
 			std::string listenError;
 
 		};

@@ -50,6 +50,13 @@ namespace OpenNet::Core
 		AddressAndPortDependent
 	};
 
+	enum class PortProbeAddressFamily
+	{
+		Both,
+		IPv4,
+		IPv6
+	};
+
 	struct TraversalServerDescriptor
 	{
 		winrt::hstring name;
@@ -75,6 +82,9 @@ namespace OpenNet::Core
 	struct PortProbeResult
 	{
 		bool completed{};
+		bool timedOut{};
+		bool ipv4TimedOut{};
+		bool ipv6TimedOut{};
 		bool tcpCompleted{};
 		bool udpCompleted{};
 		bool tcpReachable{};
@@ -84,6 +94,10 @@ namespace OpenNet::Core
 		bool ipv6UdpCompleted{};
 		bool ipv6TcpReachable{};
 		bool ipv6UdpReachable{};
+		std::int32_t tcpLatencyMs{};
+		std::int32_t udpLatencyMs{};
+		std::int32_t ipv6TcpLatencyMs{};
+		std::int32_t ipv6UdpLatencyMs{};
 		winrt::hstring observedAddress;
 		winrt::hstring serverName;
 		winrt::hstring detail;
@@ -98,6 +112,7 @@ namespace OpenNet::Core
 		bool completed{};
 		bool udpAvailable{};
 		winrt::hstring localIPv4;
+		std::uint16_t localPort{};
 		winrt::hstring publicIPv4;
 		NatMappingBehavior mapping{ NatMappingBehavior::Unknown };
 		NatFilteringBehavior filtering{ NatFilteringBehavior::Unknown };
@@ -105,6 +120,10 @@ namespace OpenNet::Core
 		winrt::hstring summary;
 		winrt::hstring diagnostic;
 		std::vector<StunObservation> observations;
+		StunObservation filteringDifferentAddressAndPort;
+		StunObservation filteringDifferentPort;
+		bool filteringDifferentAddressAndPortTested{};
+		bool filteringDifferentPortTested{};
 		PortProbeResult portProbe;
 	};
 
@@ -127,9 +146,15 @@ namespace OpenNet::Core
 		winrt::Windows::Foundation::IAsyncOperation<bool> TestPortAccessibilityAsync(std::uint16_t port, bool tcp = true);
 		winrt::Windows::Foundation::IAsyncAction TestPortAccessibilityDetailedAsync(
 			std::uint16_t port,
+			std::shared_ptr<PortProbeResult> result,
+			PortProbeAddressFamily family = PortProbeAddressFamily::Both);
+		winrt::Windows::Foundation::IAsyncAction TestListeningPortsAsync(
+			std::uint16_t ipv4Port,
+			std::uint16_t ipv6Port,
 			std::shared_ptr<PortProbeResult> result);
 		winrt::Windows::Foundation::IAsyncAction DetectNATBehaviorAsync(
-			std::uint16_t listenPort,
+			std::uint16_t ipv4ListenPort,
+			std::uint16_t ipv6ListenPort,
 			std::shared_ptr<NatDetectionResult> result);
 		winrt::Windows::Foundation::IAsyncAction GetTraversalServersAsync(
 			std::shared_ptr<std::vector<TraversalServerDescriptor>> servers);
@@ -171,14 +196,16 @@ namespace OpenNet::Core
 			std::uint16_t port,
 			bool changeIp,
 			bool changePort,
-			std::shared_ptr<StunObservation> result);
+			std::shared_ptr<StunObservation> result,
+			std::uint32_t timeoutMs);
 		winrt::hstring GetLocalIPv4Address() const;
-		winrt::Windows::Foundation::IAsyncAction ProbeServerPortAsync(
+		winrt::Windows::Foundation::IAsyncOperation<bool> ProbeServerPortAsync(
 			TraversalServerDescriptor const& server,
 			std::uint16_t port,
 			bool tcp,
 			bool useIpv6,
-			std::shared_ptr<PortProbeResult> result);
+			std::shared_ptr<PortProbeResult> result,
+			std::uint32_t timeoutMs);
 		NetworkType DetermineNetworkType();
 
 		// 成员变量 / Member Variables
@@ -193,6 +220,8 @@ namespace OpenNet::Core
 
 		// 常量 / Constants
 		static constexpr std::uint32_t DETECTION_TIMEOUT_MS = 30000;    // 检测超时 / Detection timeout
+		static constexpr std::uint32_t DIRECTORY_TIMEOUT_MS = 5000;
+		static constexpr std::uint32_t PORT_TEST_TIMEOUT_MS = 12000;
 		static constexpr std::uint32_t PORT_SCAN_TIMEOUT_MS = 5000;     // 端口扫描超时 / Port scan timeout
 		static constexpr std::uint32_t MAX_CONCURRENT_TESTS = 10;       // 最大并发测试数 / Max concurrent tests
 		static constexpr std::uint16_t DEFAULT_TORRENT_PORT = 6881;     // 默认BitTorrent端口 / Default BitTorrent port

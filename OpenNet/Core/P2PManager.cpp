@@ -112,8 +112,7 @@ namespace OpenNet::Core
 						throw winrt::hresult_error(E_FAIL, L"Failed to initialize the libtorrent session.");
 					}
 					WireCoreCallbacks();
-					m_torrentCore->Start();
-					if (!m_torrentCore->IsRunning())
+					if (!m_torrentCore->Start() || !m_torrentCore->IsRunning())
 					{
 						throw winrt::hresult_error(E_FAIL, L"Failed to start the libtorrent alert loop.");
 					}
@@ -182,15 +181,26 @@ namespace OpenNet::Core
 		try
 		{
 			// Give the freshly-created session time to bind its configured
-			// interfaces, then explicitly reopen/probe sockets and port mappings.
-			// This also recovers sessions which initially reported listen port 0.
+			// interfaces. Do not unconditionally reopen healthy sockets here: that
+			// used to tear down the just-started DHT UDP socket and could interrupt
+			// magnet metadata discovery during its most important bootstrap window.
 			co_await winrt::resume_after(std::chrono::seconds(2));
 
 			std::scoped_lock lk(m_torrentMutex);
 			if (m_torrentCore && m_torrentCore->IsRunning())
 			{
-				m_torrentCore->RefreshPortMappings();
-				OutputDebugStringA("P2PManager: Startup listen-port probe requested\n");
+				auto const listen = m_torrentCore->GetListenStatus();
+				if (!listen.isListening || listen.port == 0)
+				{
+					// One bounded recovery attempt is useful for a transient bind failure.
+					// Healthy sessions are left untouched.
+					m_torrentCore->RefreshPortMappings();
+					OutputDebugStringA("P2PManager: Retrying failed startup listen bind\n");
+				}
+				else
+				{
+					OutputDebugStringA("P2PManager: Startup listeners are ready\n");
+				}
 			}
 		}
 		catch (std::exception const& ex)
@@ -212,9 +222,13 @@ namespace OpenNet::Core
 		std::vector<std::string> const& extraTrackers,
 		bool startImmediately)
 	{
-		co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
+		// Start tracker loading and the libtorrent session together. The network
+		// session must not wait behind unrelated local tracker-list I/O because a
+		// warm DHT table directly determines magnet metadata discovery latency.
+		auto trackerInitialization = ::OpenNet::Core::Torrent::TrackerManager::Instance()
 			.InitializeAsync();
 		co_await EnsureTorrentCoreInitializedAsync();
+		co_await trackerInitialization;
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
 		co_return m_torrentCore->AddMagnet(
@@ -223,9 +237,10 @@ namespace OpenNet::Core
 
 	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities, std::vector<std::string> const& extraTrackers, bool startImmediately, bool seedMode)
 	{
-		co_await ::OpenNet::Core::Torrent::TrackerManager::Instance()
+		auto trackerInitialization = ::OpenNet::Core::Torrent::TrackerManager::Instance()
 			.InitializeAsync();
 		co_await EnsureTorrentCoreInitializedAsync();
+		co_await trackerInitialization;
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
 		co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities, extraTrackers, startImmediately, seedMode);

@@ -13,6 +13,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		NATDetectorWindow();
 
 		winrt::Windows::Foundation::IAsyncAction StartButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		winrt::Windows::Foundation::IAsyncAction QuickPortButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		void CloseButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
 	private:
@@ -20,6 +21,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		void UpdateLibtorrentState();
 		void ResetObservationTable();
 		void ShowObservation(std::size_t index, ::OpenNet::Core::StunObservation const& observation);
+		void ShowPortProbeResult(::OpenNet::Core::PortProbeResult const& result);
 
 		::OpenNet::Core::NetworkDetector m_detector;
 		bool m_running{};

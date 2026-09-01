@@ -71,9 +71,9 @@ export namespace winrt::XamlToolkit::WinUI::Behaviors
 
 			if (auto frameworkElement = AssociatedObject().try_as<winrt::FrameworkElement>())
 			{
-				_loadedRevoker = frameworkElement.Loaded(winrt::auto_revoke, { this, &BehaviorBase::OnAssociatedObjectLoadedImpl });
-				_unloadedRevoker = frameworkElement.Unloaded(winrt::auto_revoke, { this, &BehaviorBase::OnAssociatedObjectUnloadedImpl });
-				_sizeChangedRevoker = frameworkElement.SizeChanged(winrt::auto_revoke, { this, &BehaviorBase::OnAssociatedObjectSizeChangedImpl });
+				_loadedRevoker = frameworkElement.Loaded(winrt::auto_revoke, { this, &BehaviorBase::HandleAssociatedObjectLoaded });
+				_unloadedRevoker = frameworkElement.Unloaded(winrt::auto_revoke, { this, &BehaviorBase::HandleAssociatedObjectUnloaded });
+				_sizeChangedRevoker = frameworkElement.SizeChanged(winrt::auto_revoke, { this, &BehaviorBase::HandleAssociatedObjectSizeChanged });
 			}
 		}
 
@@ -125,7 +125,7 @@ export namespace winrt::XamlToolkit::WinUI::Behaviors
 		}
 
 	private:
-		void OnAssociatedObjectLoadedImpl([[maybe_unused]] winrt::IInspectable const& sender, [[maybe_unused]] winrt::RoutedEventArgs const& e)
+		void HandleAssociatedObjectLoaded([[maybe_unused]] winrt::IInspectable const& sender, [[maybe_unused]] winrt::RoutedEventArgs const& e)
 		{
 			if (!_isAttached)
 			{
@@ -135,14 +135,14 @@ export namespace winrt::XamlToolkit::WinUI::Behaviors
 			OnAssociatedObjectLoaded();
 		}
 
-		void OnAssociatedObjectUnloadedImpl([[maybe_unused]] winrt::IInspectable const& sender, [[maybe_unused]] winrt::RoutedEventArgs const& e)
+		void HandleAssociatedObjectUnloaded([[maybe_unused]] winrt::IInspectable const& sender, [[maybe_unused]] winrt::RoutedEventArgs const& e)
 		{
 			OnAssociatedObjectUnloaded();
 
 			// Note: don't detach here, we'll let the behavior implementation take care of that
 		}
 
-		void OnAssociatedObjectSizeChangedImpl([[maybe_unused]] winrt::IInspectable const& sender, [[maybe_unused]] winrt::SizeChangedEventArgs const& e)
+		void HandleAssociatedObjectSizeChanged([[maybe_unused]] winrt::IInspectable const& sender, [[maybe_unused]] winrt::SizeChangedEventArgs const& e)
 		{
 			if (!_isAttached)
 			{

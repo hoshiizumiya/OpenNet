@@ -368,6 +368,10 @@ namespace OpenNet::Core::Torrent
 		PortMappingStatus m_portMappingStatus;
 		mutable std::mutex m_listenStateMutex;
 		std::string m_lastListenError;
+		std::string m_ipv4ListenError;
+		std::string m_ipv6ListenError;
+		int m_ipv4ListenPort{};
+		int m_ipv6ListenPort{};
 
 		mutable std::mutex m_sessionStatsMutex;
 		std::int64_t m_sessionTotalDownload{};
@@ -450,6 +454,10 @@ namespace OpenNet::Core::Torrent
 #define m_portMappingStatus m_impl->m_portMappingStatus
 #define m_listenStateMutex m_impl->m_listenStateMutex
 #define m_lastListenError m_impl->m_lastListenError
+#define m_ipv4ListenError m_impl->m_ipv4ListenError
+#define m_ipv6ListenError m_impl->m_ipv6ListenError
+#define m_ipv4ListenPort m_impl->m_ipv4ListenPort
+#define m_ipv6ListenPort m_impl->m_ipv6ListenPort
 #define m_sessionStatsMutex m_impl->m_sessionStatsMutex
 #define m_sessionTotalDownload m_impl->m_sessionTotalDownload
 #define m_sessionTotalUpload m_impl->m_sessionTotalUpload
@@ -892,25 +900,43 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	void LibtorrentHandle::Start()
+	bool LibtorrentHandle::Start()
 	{
 		if (!Initialize())
-			return;
+			return false;
 		if (m_running.load())
-			return;
+			return true;
 		m_stopRequested = false;
-		m_running = true;
-		m_thread = std::thread(&LibtorrentHandle::AlertLoop, this);
+		m_running.store(true);
 		try
 		{
+			// Do not report the core as running unless the alert worker was
+			// actually created. A failed std::thread construction previously left
+			// IsRunning() true with no alert processing, which looked like a live
+			// session with permanently stale DHT/listen state.
+			m_thread = std::thread(&LibtorrentHandle::AlertLoop, this);
 			// Prime the UI-visible counters immediately; the alert loop keeps
 			// refreshing them at its normal two-second cadence.
 			m_session->post_session_stats();
 			m_session->post_dht_stats();
 		}
+		catch (std::exception const& ex)
+		{
+			m_stopRequested.store(true);
+			m_running.store(false);
+			OutputDebugStringA((
+				"LibtorrentHandle: Failed to start alert loop: "
+				+ std::string(ex.what()) + "\n").c_str());
+			return false;
+		}
 		catch (...)
 		{
+			m_stopRequested.store(true);
+			m_running.store(false);
+			OutputDebugStringA("LibtorrentHandle: Failed to start alert loop\n");
+			return false;
 		}
+		return true;
 	}
 
 	void LibtorrentHandle::Stop()
@@ -2144,11 +2170,29 @@ namespace OpenNet::Core::Torrent
 			{
 				std::lock_guard lock(m_listenStateMutex);
 				m_lastListenError = listenFailed->message();
+				if (listenFailed->address.is_v4())
+				{
+					m_ipv4ListenError = listenFailed->message();
+				}
+				else if (listenFailed->address.is_v6())
+				{
+					m_ipv6ListenError = listenFailed->message();
+				}
 			}
-			else if (lt::alert_cast<lt::listen_succeeded_alert>(alert))
+			else if (auto listenSucceeded = lt::alert_cast<lt::listen_succeeded_alert>(alert))
 			{
 				std::lock_guard lock(m_listenStateMutex);
 				m_lastListenError.clear();
+				if (listenSucceeded->address.is_v4())
+				{
+					m_ipv4ListenPort = listenSucceeded->port;
+					m_ipv4ListenError.clear();
+				}
+				else if (listenSucceeded->address.is_v6())
+				{
+					m_ipv6ListenPort = listenSucceeded->port;
+					m_ipv6ListenError.clear();
+				}
 			}
 			else if (auto se = lt::alert_cast<lt::session_error_alert>(alert))
 			{
@@ -2430,22 +2474,34 @@ namespace OpenNet::Core::Torrent
 			return status;
 		}
 
+		{
+			std::lock_guard lock(m_listenStateMutex);
+			status.ipv4Port = m_ipv4ListenPort;
+			status.ipv6Port = m_ipv6ListenPort;
+			status.isListeningIPv4 = status.ipv4Port > 0;
+			status.isListeningIPv6 = status.ipv6Port > 0;
+			status.error = m_lastListenError;
+			status.ipv4Error = m_ipv4ListenError;
+			status.ipv6Error = m_ipv6ListenError;
+		}
+
 		try
 		{
-			status.isListening = m_session->is_listening();
-			status.port = status.isListening
-				? static_cast<int>(m_session->listen_port())
-				: 0;
+			status.isListening = m_session->is_listening()
+				|| status.isListeningIPv4 || status.isListeningIPv6;
+			status.port = status.ipv4Port > 0
+				? status.ipv4Port
+				: status.ipv6Port;
+			// listen_succeeded_alert is normally processed before consumers ask
+			// for status. Keep the session API as a compatibility fallback during
+			// the very small startup window before that alert is dispatched.
+			if (status.port == 0 && status.isListening)
+				status.port = static_cast<int>(m_session->listen_port());
 		}
 		catch (...)
 		{
-			status.isListening = false;
-			status.port = 0;
-		}
-
-		{
-			std::lock_guard lock(m_listenStateMutex);
-			status.error = m_lastListenError;
+			status.isListening = status.isListeningIPv4 || status.isListeningIPv6;
+			status.port = status.ipv4Port > 0 ? status.ipv4Port : status.ipv6Port;
 		}
 		return status;
 	}
@@ -2483,6 +2539,13 @@ namespace OpenNet::Core::Torrent
 			m_portMappingStatus.tcpMechanism.clear();
 			m_portMappingStatus.udpMechanism.clear();
 			m_portMappingStatus.lastError.clear();
+		}
+		{
+			std::lock_guard lock(m_listenStateMutex);
+			m_ipv4ListenPort = 0;
+			m_ipv6ListenPort = 0;
+			m_ipv4ListenError.clear();
+			m_ipv6ListenError.clear();
 		}
 		m_session->reopen_network_sockets(lt::session_handle::reopen_map_ports);
 	}
@@ -2555,6 +2618,10 @@ namespace OpenNet::Core::Torrent
 		auto const listenStatus = GetListenStatus();
 		stats.isListening = listenStatus.isListening;
 		stats.listenPort = listenStatus.port;
+		stats.ipv4ListenPort = listenStatus.ipv4Port;
+		stats.ipv6ListenPort = listenStatus.ipv6Port;
+		stats.isListeningIPv4 = listenStatus.isListeningIPv4;
+		stats.isListeningIPv6 = listenStatus.isListeningIPv6;
 		stats.listenError = listenStatus.error;
 		return stats;
 	}
@@ -2630,6 +2697,10 @@ namespace OpenNet::Core::Torrent
 			auto const listenStatus = GetListenStatus();
 			stats.isListening = listenStatus.isListening;
 			stats.listenPort = listenStatus.port;
+			stats.ipv4ListenPort = listenStatus.ipv4Port;
+			stats.ipv6ListenPort = listenStatus.ipv6Port;
+			stats.isListeningIPv4 = listenStatus.isListeningIPv4;
+			stats.isListeningIPv6 = listenStatus.isListeningIPv6;
 			stats.listenError = listenStatus.error;
 
 			// Session-level totals from session_stats_alert (more accurate than per-torrent sums)

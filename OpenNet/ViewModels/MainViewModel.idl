@@ -10,6 +10,12 @@
 		// 展示信息 / Display Info
 		String UserName { get; };
 		String PortState { get; };
+		String IPv4PortState { get; };
+		String IPv6PortState { get; };
+		String IPv4TcpPortState { get; };
+		String IPv4UdpPortState { get; };
+		String IPv6TcpPortState { get; };
+		String IPv6UdpPortState { get; };
 
 		// 快速统计 / Quick Stats
 		Int32 ConnectedPeersCount { get; };
@@ -19,6 +25,11 @@
 		String CurrentTransferSpeedText { get; };
 		String SpeedLevel { get; };
 		Int32 ListenPort { get; };
+		Int32 IPv4ListenPort { get; };
+		Int32 IPv6ListenPort { get; };
+		String ListenPortText { get; };
+		String IPv4ListenPortText { get; };
+		String IPv6ListenPortText { get; };
 
 		// 网络状态 / Network Status
 		String NetworkStatusText { get; };
