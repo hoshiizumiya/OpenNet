@@ -48,26 +48,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void RSSPage::RSSPage_Unloaded(IInspectable const&, RoutedEventArgs const&)
 	{
-		if (m_previewFlyout && m_previewOpen) m_previewFlyout.Hide();
+		if (m_previewOpen)
+			RSSPreviewFlyout().Hide();
 		m_previewTarget = nullptr;
 		m_previewOpen = false;
-	}
-
-	void RSSPage::EnsurePreviewFlyout()
-	{
-		if (m_previewFlyout) return;
-		m_previewWebView = WebView2{};
-		m_previewWebView.Width(1500);
-		m_previewWebView.Height(2000);
-		Border border;
-		border.CornerRadius({ 8, 8, 8, 8 });
-		border.Child(m_previewWebView);
-		m_previewFlyout = Flyout{};
-		m_previewFlyout.Content(border);
-		m_previewFlyout.Placement(winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutPlacementMode::Right);
-		m_previewFlyout.ShowMode(winrt::Microsoft::UI::Xaml::Controls::Primitives::FlyoutShowMode::Transient);
-		m_previewFlyout.Opened({ get_weak(), &RSSPage::RSSPreviewFlyout_Opened });
-		m_previewFlyout.Closed({ get_weak(), &RSSPage::RSSPreviewFlyout_Closed });
 	}
 
 	void RSSPage::RSSPreviewFlyout_Opened(IInspectable const&, IInspectable const&)
@@ -217,9 +201,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (m_previewUrl != item.Link())
 		{
 			m_previewUrl = item.Link();
-			EnsurePreviewFlyout();
-			m_previewWebView.Source(winrt::Windows::Foundation::Uri(m_previewUrl));
-			m_previewFlyout.ShowAt(m_previewTarget);
+			RSSPreviewWebView().Source(winrt::Windows::Foundation::Uri(m_previewUrl));
+			RSSPreviewFlyout().ShowAt(m_previewTarget);
 		}
 	}
 
@@ -371,7 +354,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 				m_previousSelectedIndex = dialog.ItemDoubleClickAction();
 				m_enableWebViewPreview = dialog.EnableWebViewPreview();
-				if (!m_enableWebViewPreview && m_previewOpen && m_previewFlyout) m_previewFlyout.Hide();
+				if (!m_enableWebViewPreview && m_previewOpen)
+					RSSPreviewFlyout().Hide();
 				auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 				database.SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "item_double_click_action", m_previousSelectedIndex);
 				database.SetBool(::OpenNet::Core::AppSettingsDatabase::CAT_RSS, "enable_webview_preview", m_enableWebViewPreview);
@@ -413,8 +397,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void RSSPage::MaxItemsPerFeedBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& /*sender*/,
-												  winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
+	void RSSPage::MaxItemsPerFeedBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& /*sender*/, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args)
 	{
 		auto newVal = args.NewValue();
 		// NaN means the user cleared the box

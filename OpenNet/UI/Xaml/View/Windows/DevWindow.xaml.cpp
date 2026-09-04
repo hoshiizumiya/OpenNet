@@ -20,18 +20,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	DevWindow::DevWindow()
 	{
 		InitializeWindowExBase();
-		ExtendsContentIntoTitleBar(true);
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 		});
+	}
+
+	void DevWindow::Root_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		ExtendsContentIntoTitleBar(true);
+		SetTitleBar(devWindowTitleBar());
 	}
 
 	void DevWindow::OpenLiveGraphTestWindow_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
-		auto window = winrt::make<LiveGraphTestWindow>();
-		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
-		window.Activate();
+		winrt::make<LiveGraphTestWindow>().Activate();
 	}
 
 	void DevWindow::TriggerXamlException_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
@@ -47,10 +50,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	fire_and_forget DevWindow::OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
-		auto progressDialog =
-			::OpenNet::Factory::ContentDialog::OperationProgressDialog(
-				L"Operation in Progress",
-				L"Please wait while the operation is being completed.");
+		auto progressDialog = ::OpenNet::Factory::ContentDialog::OperationProgressDialog(
+			L"Operation in Progress",
+			L"Please wait while the operation is being completed.",
+			this->XamlRoot());
 		co_await progressDialog.ShowAsync();
 	}
 }

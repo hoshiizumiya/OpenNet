@@ -790,6 +790,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			return;
 		}
 		ownerWindow.Activate();
+		::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 	}
 
 	void TorrentCheckModalWindow::TorrentCheckModalWindowSeleterBar_SelectionChanged(

@@ -27,7 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		SetTitleBar(WindowTitleBar());
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 			for (auto const& tab : m_tabs)
 			{
 				try

@@ -63,7 +63,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				strong->m_refreshTimer.Stop();
 				strong->m_refreshTimer.Tick(strong->m_timerToken);
 			}
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 		});
 		RefreshLog();
 	}

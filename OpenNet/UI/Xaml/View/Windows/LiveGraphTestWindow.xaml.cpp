@@ -45,22 +45,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 	}
 
-	LiveGraphTestWindow::LiveGraphTestWindow()
+	void LiveGraphTestWindow::Root_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		InitializeComponent();
-		InitializeWindowExBase();
 		ExtendsContentIntoTitleBar(true);
+		SetTitleBar(TitleBar());
+		InitializeWindowExBase();
 		m_uiReady = true;
 		ApplyGraphSettings();
 	}
 
-	void LiveGraphTestWindow::DynamicGraph_CreateResources(IInspectable const&, CanvasAnimatedControl const& canvas)
+	void LiveGraphTestWindow::DynamicGraph_CreateResources(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas)
 	{
 		RecreateDynamicStreams(canvas);
 		ResourceStatusText().Text(ResourceGetString(L"ViewLiveGraphTestWindowDynamicResourcesReady"));
 	}
 
-	void LiveGraphTestWindow::StaticGraph_CreateResources(IInspectable const&, CanvasAnimatedControl const& canvas)
+	void LiveGraphTestWindow::StaticGraph_CreateResources(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas)
 	{
 		auto graph = StaticGraph();
 		if (!graph)

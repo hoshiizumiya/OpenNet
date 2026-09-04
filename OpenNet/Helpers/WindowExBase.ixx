@@ -16,15 +16,12 @@ protected:
 		auto window = projected.template as<winrt::WinUI3Package::WindowEx>();
 		window.HasBorder(true);
 		window.HasTitleBar(true);
-		window.IsResizable(true);
-		window.IsMinimizable(true);
-		window.IsMaximizable(true);
 		if (trackWindow)
 		{
 			::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::TrackWindow(window);
 			if (restorePlacement)
 			{
-				::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(window.Window(), winrt::get_class_name(projected));
+				::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Enable(window.AppWindow(), winrt::get_class_name(projected));
 			}
 		}
 	}

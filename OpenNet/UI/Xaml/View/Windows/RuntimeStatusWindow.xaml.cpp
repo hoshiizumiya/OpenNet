@@ -25,6 +25,7 @@ import OpenNet.Core.P2PManager;
 import OpenNet.Core.TorrentSettings;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Windows.ApplicationModel;
 import winrt.Windows.ApplicationModel.DataTransfer;
@@ -342,9 +343,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		RuntimeStatusWindowT::InitializeComponent();
 		InitializeWindowExBase();
 		SetTitleBar(RuntimeStatusTitleBar());
-		AppWindow().TitleBar().PreferredHeightOption(
-			winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
-		AppWindow().Resize({ 920, 760 });
+		AppWindow().TitleBar().PreferredHeightOption(winrt::Microsoft::UI::Windowing::TitleBarHeightOption::Standard);
 
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
@@ -364,7 +363,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		Closed([weak](auto const&, auto const&)
 		{
 			if (auto self = weak.get(); self && self->m_refreshTimer)
+			{
 				self->m_refreshTimer.Stop();
+				::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(self->AppWindow());
+			}
 		});
 		RefreshReport();
 	}

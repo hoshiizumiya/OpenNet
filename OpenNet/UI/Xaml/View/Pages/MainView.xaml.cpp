@@ -278,11 +278,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		AnimatedIcon::SetState(this->AnimatedIcon(), L"Normal");
 	}
 
-	void MainView::PortState_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-	{
-		Microsoft::UI::Xaml::Controls::Primitives::FlyoutBase::ShowAttachedFlyout(sender.as<FrameworkElement>());
-	}
-
 	void MainView::OpenPortTestWindow_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		auto window = winrt::make_self<winrt::OpenNet::UI::Xaml::View::Windows::implementation::NATDetectorWindow>();

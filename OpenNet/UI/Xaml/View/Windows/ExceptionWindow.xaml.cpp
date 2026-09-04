@@ -27,6 +27,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_comment(L"")
 	{
 		ExtendsContentIntoTitleBar(true);
+		Closed([this](auto const&, auto const&)
+		{
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
+		});
 	}
 
 	void ExceptionWindow::InitializeComponent()
@@ -56,7 +60,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		Closed([this](auto&&, auto&&)
 		{
 			this->get_strong();
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(this->AppWindow());
 			// The fatal event and optional feedback have been flushed.
 			winrt::OpenNet::implementation::App::RequestExit();
 		});

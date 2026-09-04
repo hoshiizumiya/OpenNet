@@ -69,23 +69,7 @@ namespace winrt::OpenNet::implementation
 
 		Closed([this](auto&&, auto&&)
 		{
-			try
-			{
-				MainContentView().CanGoBackChanged(m_canGoBackChangedToken);
-			}
-			catch (...)
-			{
-			}
-			try
-			{
-				AppWindow().Changed(m_appWindowChangedToken);
-			}
-			catch (...)
-			{
-			}
-
-			PlacementRestoration::Save(Window());
-
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 			// Stop ViewModel background thread (speed refresh)
 			try
 			{

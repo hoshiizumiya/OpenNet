@@ -30,7 +30,7 @@
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>
 
-    <Grid>
+    <Grid Loaded="Root_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -39,6 +39,7 @@
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
 
         <TitleBar
+            x:Name="TitleBar"
             Title="LiveGraph test studio"
             Grid.Row="0"
             IsBackButtonVisible="False"

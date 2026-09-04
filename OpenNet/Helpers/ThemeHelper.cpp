@@ -88,15 +88,15 @@ namespace OpenNet::Helpers
 
 	void ThemeHelper::UpdateThemeForWindow(winrt::WinUI3Package::WindowEx const& window)
 	{
-		if (!window) return;
-
+		if (!window)
+			return;
+		// TODO: Remove code-behind to the xaml bind https://learn.microsoft.com/windows/windows-app-sdk/api/winrt/microsoft.ui.xaml.frameworkelement.requestedtheme
 		try
 		{
 			if (auto rootElement = window.Content().try_as<FrameworkElement>())
 			{
 				rootElement.RequestedTheme(s_rootTheme);
 			}
-			UpdateTitleBarTheme(window.Window());
 		}
 		catch (...)
 		{

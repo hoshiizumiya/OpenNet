@@ -14,77 +14,35 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	struct LiveGraphTestWindow : LiveGraphTestWindowT<LiveGraphTestWindow>, WindowExBase<LiveGraphTestWindow>
 	{
-		LiveGraphTestWindow();
+		void Root_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
-		void DynamicGraph_CreateResources(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
-		void StaticGraph_CreateResources(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
-		void DynamicGraph_Draw(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs const& args);
-		void DynamicGraph_HighlightLineUpdated(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			float value);
-		void StaticGraph_HighlightLineUpdated(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			float value);
+		void DynamicGraph_CreateResources(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
+		void StaticGraph_CreateResources(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
+		void DynamicGraph_Draw(winrt::Windows::Foundation::IInspectable const& sender, winrt::OpenNet::UI::Xaml::Control::Graph::LiveGraphEventArgs const& args);
+		void DynamicGraph_HighlightLineUpdated(winrt::Windows::Foundation::IInspectable const& sender, float value);
+		void StaticGraph_HighlightLineUpdated(winrt::Windows::Foundation::IInspectable const& sender, float value);
 
-		void ResetDynamicGraph_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void AddStaticLine_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void AddStaticRounded_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void GreenBrush_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void BlueBrush_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void RedBrush_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void PurpleBrush_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void CustomBrush_Click(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void ResetDynamicGraph_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void AddStaticLine_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void AddStaticRounded_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void GreenBrush_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void BlueBrush_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void RedBrush_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void PurpleBrush_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void CustomBrush_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
-		void BackgroundMode_SelectionChanged(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
-		void HighlightBehavior_SelectionChanged(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
-		void GraphSettings_ValueChanged(
-			winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
-		void BrushAppearance_ValueChanged(
-			winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender,
-			winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
-		void HighlightVisibility_Toggled(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void CustomColors_Toggled(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void BrushAppearance_Toggled(
-			winrt::Windows::Foundation::IInspectable const& sender,
-			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void BackgroundMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
+		void HighlightBehavior_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
+		void GraphSettings_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
+		void BrushAppearance_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& args);
+		void HighlightVisibility_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void CustomColors_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
+		void BrushAppearance_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
-		using GraphBrushData =
-			winrt::OpenNet::UI::Xaml::Control::Graph::GraphBrushData;
+		using GraphBrushData = winrt::OpenNet::UI::Xaml::Control::Graph::GraphBrushData;
 
-		void RecreateDynamicStreams(
-			winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
+		void RecreateDynamicStreams(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
 		void ApplyGraphSettings();
 		void ApplyBrushAppearance();
 		void SetPrimaryBrush(GraphBrushData const& brush);
@@ -109,8 +67,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Windows::factory_implementation
 {
-	struct LiveGraphTestWindow :
-		LiveGraphTestWindowT<LiveGraphTestWindow, implementation::LiveGraphTestWindow>
+	struct LiveGraphTestWindow : LiveGraphTestWindowT<LiveGraphTestWindow, implementation::LiveGraphTestWindow>
 	{
 	};
 }

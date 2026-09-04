@@ -24,7 +24,7 @@
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>
 
-    <Grid>
+    <Grid Loaded="Root_Loaded">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -33,6 +33,7 @@
         <essential:WindowCaptionButtonThemeWorkaround Window="{x:Bind Window}" />
 
         <TitleBar
+            x:Name="devWindowTitleBar"
             Title="Dev Window"
             IsBackButtonVisible="False"
             IsPaneToggleButtonVisible="False"

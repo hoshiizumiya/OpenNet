@@ -13,29 +13,29 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace OpenNet::Factory::ContentDialog
 {
-	OperationProgressDialog::OperationProgressDialog(const winrt::hstring& title, const winrt::hstring& description)
+	OperationProgressDialog::OperationProgressDialog(const winrt::hstring& title, const winrt::hstring& description, const winrt::Microsoft::UI::Xaml::XamlRoot& xamlRoot)
 		: m_title(title), m_description(description)
 	{
-		// 创建对话框主容器
+		// Container
 		m_dialog = winrt::Microsoft::UI::Xaml::Controls::ContentDialog();
+		m_dialog.XamlRoot(xamlRoot);
 		m_dialog.Style(winrt::Microsoft::UI::Xaml::Application::Current().Resources().Lookup(winrt::box_value(L"DefaultContentDialogStyle")).try_as<winrt::Microsoft::UI::Xaml::Style>());
 		m_dialog.Title(winrt::box_value(title));
 		m_dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 		m_dialog.DefaultButton(winrt::Microsoft::UI::Xaml::Controls::ContentDialogButton::Primary);
 
-		// 创建进度条
+		// Progress bar
 		m_progressBar = winrt::Microsoft::UI::Xaml::Controls::ProgressBar();
 		m_progressBar.IsIndeterminate(true);
 		m_progressBar.Height(20);
 		m_progressBar.Margin({ 0, 10, 0, 10 });
 
-		// 创建状态文本
+		// Status text
 		m_statusText = winrt::Microsoft::UI::Xaml::Controls::TextBlock();
 		m_statusText.Text(hstring(description));
 		m_statusText.TextWrapping(winrt::Microsoft::UI::Xaml::TextWrapping::Wrap);
 		m_statusText.TextTrimming(winrt::Microsoft::UI::Xaml::TextTrimming::CharacterEllipsis);
 
-		// 创建主面板
 		auto stackPanel = winrt::Microsoft::UI::Xaml::Controls::StackPanel();
 		stackPanel.Orientation(winrt::Microsoft::UI::Xaml::Controls::Orientation::Vertical);
 		stackPanel.Children().Append(m_statusText);
@@ -125,5 +125,10 @@ namespace OpenNet::Factory::ContentDialog
 			m_dialog.Hide();
 			m_isOpen = false;
 		}
+	}
+
+	winrt::Microsoft::UI::Xaml::Controls::ContentDialog OperationProgressDialog::Dialog()
+	{
+		return m_dialog;
 	}
 }

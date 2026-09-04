@@ -42,7 +42,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		Closed([weak = get_weak()](auto const&, auto const&)
 		{
-			if (auto self = weak.get()) self->m_stopSource.request_stop();
+			if (auto self = weak.get())
+			{
+				self->m_stopSource.request_stop();
+				::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(self->AppWindow());
+			}
 		});
 	}
 

@@ -23,7 +23,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		ExtendsContentIntoTitleBar(true);
 		Closed([this](auto const&, auto const&)
 		{
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 		});
 	}
 

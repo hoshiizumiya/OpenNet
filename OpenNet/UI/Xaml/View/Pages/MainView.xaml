@@ -236,7 +236,6 @@
                 Grid.Column="3"
                 Margin="16,0,0,0"
                 Padding="6,3"
-                Click="PortState_Click"
                 Style="{StaticResource SubtleButtonStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip
@@ -244,7 +243,7 @@
                         essential:ToolTipHelper.AcrylicWorkaround="True"
                         Content="Show IPv4 and IPv6 port status" />
                 </ToolTipService.ToolTip>
-                <FlyoutBase.AttachedFlyout>
+                <Button.Flyout>
                     <Flyout essential:FlyoutHelper.AcrylicWorkaround="True" Placement="TopEdgeAlignedRight">
                         <StackPanel Width="320" Spacing="12">
                             <TextBlock
@@ -362,7 +361,7 @@
                                 Content="Open full NAT and port test" />
                         </StackPanel>
                     </Flyout>
-                </FlyoutBase.AttachedFlyout>
+                </Button.Flyout>
                 <StackPanel
                     VerticalAlignment="Center"
                     Orientation="Horizontal"

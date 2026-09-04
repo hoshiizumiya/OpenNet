@@ -20,7 +20,7 @@ import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Windows.Media.Core;
 import winrt.Windows.Media.Playback;
 
-using namespace OpenNet::Core::Utils::Message;
+using namespace ::OpenNet::Core::Utils::Message;
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
 using namespace winrt::Windows::Storage;
@@ -31,8 +31,7 @@ namespace
 {
 	using Brush = winrt::Microsoft::UI::Xaml::Media::Brush;
 	using Image = winrt::Microsoft::UI::Xaml::Controls::Image;
-	using MediaPlayerElement =
-		winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement;
+	using MediaPlayerElement = winrt::Microsoft::UI::Xaml::Controls::MediaPlayerElement;
 
 	struct SecondaryWindowVisualState
 	{
@@ -42,8 +41,7 @@ namespace
 		bool Enabled{};
 	};
 
-	std::unordered_map<HWND, SecondaryWindowVisualState>
-		g_secondaryWindowVisualStates;
+	std::unordered_map<HWND, SecondaryWindowVisualState> g_secondaryWindowVisualStates;
 	std::unordered_map<HWND, winrt::WinUI3Package::WindowEx> g_windowExHosts;
 
 	bool IsSecondaryWindow(Window const& window)
@@ -64,7 +62,10 @@ namespace
 		{
 			hwnd = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowHandleFromWindow(window);
 		}
-		catch (...) { return false; }
+		catch (...)
+		{
+			return false;
+		}
 		auto const wrapperEntry = g_windowExHosts.find(hwnd);
 		auto const wrapper = wrapperEntry != g_windowExHosts.end() ? wrapperEntry->second : winrt::WinUI3Package::WindowEx{ nullptr };
 		auto const isSecondary = IsSecondaryWindow(window);
@@ -305,11 +306,13 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 
 	void WindowHelper::TrackWindow(winrt::WinUI3Package::WindowEx const& window)
 	{
-		if (!window) return;
+		if (!window)
+			return;
 		auto const nativeWindow = window.Window();
-		if (!nativeWindow) return;
-		auto const hwnd = GetWindowHandleFromWindow(nativeWindow);
-		if (hwnd) g_windowExHosts[hwnd] = window;
+		if (!nativeWindow)
+			return;
+		if (auto const hwnd = GetWindowHandleFromWindow(nativeWindow))
+			g_windowExHosts[hwnd] = window;
 		TrackWindow(nativeWindow);
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 	}
@@ -515,34 +518,26 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		};
 	}
 
-	void PlacementRestoration::Enable(winrt::Microsoft::UI::Xaml::Window const& window)
+	void PlacementRestoration::Enable(winrt::Microsoft::UI::Windowing::AppWindow const& appWindow)
 	{
-		Enable(window, winrt::get_class_name(window));
+		Enable(appWindow, winrt::get_class_name(appWindow));
 	}
 
-	void PlacementRestoration::Enable(winrt::Microsoft::UI::Xaml::Window const& window, winrt::hstring const& className)
+	void PlacementRestoration::Enable(winrt::Microsoft::UI::Windowing::AppWindow const& appWindow, winrt::hstring const& className)
 	{
 		using put_PersistedStateId_t = HRESULT(__stdcall*)(void*, void*);
-
 		using put_PlacementRestorationBehavior_t = HRESULT(__stdcall*)(void*, uint32_t);
 
-		using SaveCurrentPlacement_t = HRESULT(__stdcall*)(void*);
+		static constexpr winrt::guid iidExperimental{ L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}" };
+		winrt::com_ptr<::IUnknown> experimental;
 
-		static const winrt::guid iidExperimental
+		if (FAILED(winrt::get_unknown(appWindow)->QueryInterface(
+			reinterpret_cast<IID const&>(iidExperimental), experimental.put_void())))
 		{
-			L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}"
-		};
-
-		auto appWindow = window.AppWindow();
-		auto unk = appWindow.try_as<::IUnknown>();
-		if (!unk)
 			return;
+		}
 
-		void* experimentalRaw{};
-		if (FAILED(unk->QueryInterface(
-			reinterpret_cast<IID const&>(iidExperimental),
-			&experimentalRaw)))
-			return;
+		auto experimentalRaw = experimental.get();
 
 		// 获取 vtable
 		auto vtbl = *reinterpret_cast<void***>(experimentalRaw);
@@ -558,25 +553,19 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		putBehavior(experimentalRaw, 0xFFFFFFFF);
 
 		auto persistGuid = GenerateTypeGuid(className);
-
 		winrt::Windows::Foundation::IInspectable boxed = winrt::box_value(persistGuid);
-
 		putPersist(experimentalRaw, winrt::get_abi(boxed));
-
-
-		reinterpret_cast<::IUnknown*>(experimentalRaw)->Release();
 	}
 
-	void PlacementRestoration::Save(winrt::Microsoft::UI::Xaml::Window const& window)
+	void PlacementRestoration::Save(winrt::Microsoft::UI::Windowing::AppWindow const& appWindow)
 	{
 		using SaveCurrentPlacement_t = HRESULT(__stdcall*)(void*);
 
-		static const winrt::guid iidExperimental
+		static constexpr winrt::guid iidExperimental
 		{
 			L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}"
 		};
 
-		auto appWindow = window.AppWindow();
 		auto unk = appWindow.try_as<::IUnknown>();
 		if (!unk)
 			return;
@@ -591,13 +580,11 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 
 		constexpr size_t saveIndex = 0x58 / sizeof(void*);
 
-		auto savePlacement =
-			reinterpret_cast<SaveCurrentPlacement_t>(vtbl[saveIndex]);
+		auto savePlacement = reinterpret_cast<SaveCurrentPlacement_t>(vtbl[saveIndex]);
 
 		savePlacement(experimentalRaw);
 
 		reinterpret_cast<::IUnknown*>(experimentalRaw)->Release();
 	}
-
 
 }

@@ -13,7 +13,7 @@ export namespace OpenNet::Factory::ContentDialog
 	class OperationProgressDialog
 	{
 	public:
-		OperationProgressDialog(const winrt::hstring& title, const winrt::hstring& description);
+		OperationProgressDialog(const winrt::hstring& title, const winrt::hstring& description, const winrt::Microsoft::UI::Xaml::XamlRoot& xamlRoot);
 
 		/// <summary>
 		/// 显示进度对话框
@@ -37,6 +37,7 @@ export namespace OpenNet::Factory::ContentDialog
 		/// </summary>
 		void Close();
 
+		winrt::Microsoft::UI::Xaml::Controls::ContentDialog Dialog();
 	private:
 		winrt::Microsoft::UI::Xaml::Controls::ContentDialog m_dialog{ nullptr };
 		winrt::Microsoft::UI::Xaml::Controls::ProgressBar m_progressBar{ nullptr };

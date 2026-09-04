@@ -8,7 +8,7 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Uid="InfoOverlayWindow"
-    Title="InfoOverlayWindow"
+    Title="FloatingWindow"
     Width="300"
     Height="136"
     MinWidth="300"
@@ -16,6 +16,9 @@
     MaxWidth="300"
     MaxHeight="180"
     IsAlwaysOnTop="True"
+    IsMaximizable="False"
+    IsMinimizable="False"
+    IsResizable="True"
     mc:Ignorable="d">
 
     <essential:WindowEx.ContextMenu>

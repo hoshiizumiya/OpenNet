@@ -18,15 +18,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	InfoOverlayWindow::InfoOverlayWindow()
 	{
 		InitializeComponent();
-		InitializeWindowExBase(true, false);
+		InitializeWindowExBase();
 		ExtendsContentIntoTitleBar(true);
-		if (auto presenter = AppWindow().Presenter()
-			.try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
-		{
-			presenter.IsMaximizable(false);
-			presenter.IsMinimizable(false);
-			presenter.IsResizable(false);
-		}
 		Closed([this](auto const&, auto const&)
 		{
 			if (m_refreshTimer)
@@ -34,7 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				m_refreshTimer.Stop();
 				m_refreshTimer = nullptr;
 			}
-			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(Window());
+			::OpenNet::Helpers::WinUIWindowHelper::PlacementRestoration::Save(AppWindow());
 		});
 	}
 

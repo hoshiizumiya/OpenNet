@@ -143,7 +143,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	UNREFERENCED_PARAMETER(lpCmdLine);
 	UNREFERENCED_PARAMETER(nCmdShow);
 
-	// 初始化 WinRT
+	// init WinRT
+	// https://github.com/IgorOffline/microsoft-MIDI/blob/747be93a253f4b897cc7041a6a2c1ec2b1d0128b/docs/kb/threading-and-initialization.md
+	// https://learn.microsoft.com/windows/apps/develop/cpp-winrt/get-started#a-cwinrt-quick-start
 	winrt::init_apartment(winrt::apartment_type::single_threaded);
 
 	std::jthread sentryInitThread([]() noexcept
@@ -161,10 +163,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			// Sentry may enumerate and clean this directory, so it must not be
 			// shared with unrelated application cache files.
 			// https://docs.sentry.io/platforms/native/configuration/options/#database_path
-			std::wstring sentryDatabasePath{
-				winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault()
-					.LocalCachePath().c_str()
-			};
+			std::wstring sentryDatabasePath{ winrt::Microsoft::Windows::Storage::ApplicationData::GetDefault().LocalCachePath().c_str() };
 			sentryDatabasePath.append(L"\\Sentry");
 			sentry_options_set_database_pathw(
 				options,
@@ -183,8 +182,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		catch (...)
 		{
 			sentry_options_free(options);
-			OutputDebugStringW(
-				L"An exception occurred while initializing Sentry.\r\n");
+			OutputDebugStringW(L"An exception occurred while initializing Sentry.\r\n");
 		}
 	});
 
