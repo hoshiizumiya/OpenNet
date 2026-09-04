@@ -529,8 +529,8 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		using put_PlacementRestorationBehavior_t = HRESULT(__stdcall*)(void*, uint32_t);
 
 		static constexpr winrt::guid iidExperimental{ L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}" };
-		winrt::com_ptr<::IUnknown> experimental;
 
+		winrt::com_ptr<::IUnknown> experimental;
 		if (FAILED(winrt::get_unknown(appWindow)->QueryInterface(
 			reinterpret_cast<IID const&>(iidExperimental), experimental.put_void())))
 		{
@@ -546,35 +546,31 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		constexpr size_t putPersistIndex = 0x38 / sizeof(void*);
 		constexpr size_t putBehaviorIndex = 0x48 / sizeof(void*);
 
-		auto putPersist = reinterpret_cast<put_PersistedStateId_t>(vtbl[putPersistIndex]);
-		auto putBehavior = reinterpret_cast<put_PlacementRestorationBehavior_t>(vtbl[putBehaviorIndex]);
-
-		// 设置行为
-		putBehavior(experimentalRaw, 0xFFFFFFFF);
+		auto putPersistedStateId = reinterpret_cast<put_PersistedStateId_t>(vtbl[putPersistIndex]);
+		auto putPlacementRestorationBehavior = reinterpret_cast<put_PlacementRestorationBehavior_t>(vtbl[putBehaviorIndex]);
 
 		auto persistGuid = GenerateTypeGuid(className);
-		winrt::Windows::Foundation::IInspectable boxed = winrt::box_value(persistGuid);
-		putPersist(experimentalRaw, winrt::get_abi(boxed));
+		auto boxed = winrt::box_value(persistGuid).as<winrt::Windows::Foundation::IReference<winrt::guid>>();
+		putPersistedStateId(experimentalRaw, winrt::get_abi(boxed));
+
+		// Restore behaivor. It must set after the putPersist call, otherwise all the window will be restored to the last window's position.
+		putPlacementRestorationBehavior(experimentalRaw, 0xFFFFFFFF);
 	}
 
 	void PlacementRestoration::Save(winrt::Microsoft::UI::Windowing::AppWindow const& appWindow)
 	{
 		using SaveCurrentPlacement_t = HRESULT(__stdcall*)(void*);
 
-		static constexpr winrt::guid iidExperimental
+		static constexpr winrt::guid iidExperimental{ L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}" };
+
+		winrt::com_ptr<::IUnknown> experimental;
+		if (FAILED(winrt::get_unknown(appWindow)->QueryInterface(
+			reinterpret_cast<IID const&>(iidExperimental), experimental.put_void())))
 		{
-			L"{04DB96C7-DEB6-5BE4-BFDC-1BC0361C8A12}"
-		};
-
-		auto unk = appWindow.try_as<::IUnknown>();
-		if (!unk)
 			return;
+		}
 
-		void* experimentalRaw{};
-		if (FAILED(unk->QueryInterface(
-			reinterpret_cast<IID const&>(iidExperimental),
-			&experimentalRaw)))
-			return;
+		auto experimentalRaw = experimental.get();
 
 		auto vtbl = *reinterpret_cast<void***>(experimentalRaw);
 
@@ -583,8 +579,6 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		auto savePlacement = reinterpret_cast<SaveCurrentPlacement_t>(vtbl[saveIndex]);
 
 		savePlacement(experimentalRaw);
-
-		reinterpret_cast<::IUnknown*>(experimentalRaw)->Release();
 	}
 
 }
