@@ -19,6 +19,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Helpers.MaterialTheme;
 import winrtplus.Microsoft.UI.Interop;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -43,6 +44,7 @@ namespace winrt::OpenNet::implementation
 	void MainWindow::InitializeComponent()
 	{
 		MainWindowT::InitializeComponent();
+		::OpenNet::Helpers::MaterialTheme::Apply();
 		InitializeWindowExBase();
 		winrt::get_self<winrt::OpenNet::UI::Xaml::View::Pages::implementation::MainView>(MainContentView())->AttachBackgroundPresenters(BackgroundImagePresenter(), BackgroundVideoPresenter());
 		SetTitleBar(AppTitleBar());

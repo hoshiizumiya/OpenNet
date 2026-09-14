@@ -16,10 +16,10 @@
         x:Key="DataTableColumnHeaderButtonStyle"
         BasedOn="{StaticResource SubtleButtonStyle}"
         TargetType="Button">
+        <Setter Property="HorizontalAlignment" Value="Stretch" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="HorizontalContentAlignment" Value="Left" />
-        <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
     </Style>
 

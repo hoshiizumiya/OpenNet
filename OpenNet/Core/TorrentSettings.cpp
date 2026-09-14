@@ -24,6 +24,84 @@ namespace lt = libtorrent;
 
 namespace OpenNet::Core
 {
+	namespace
+	{
+		TorrentSettings NormalizeTorrentSettings(TorrentSettings settings)
+		{
+			auto clamp = [] (int value, int minimum, int maximum)
+			{
+				return (std::clamp)(value, minimum, maximum);
+			};
+			constexpr int MaxRate = (std::numeric_limits<int>::max)();
+			constexpr int MaxKiBScaled = MaxRate / 1024;
+
+			settings.connectionsLimit = clamp(settings.connectionsLimit, 1, 65535);
+			settings.natPmpLeaseDuration = clamp(settings.natPmpLeaseDuration, 0, MaxRate);
+			settings.upnpLeaseDuration = clamp(settings.upnpLeaseDuration, 0, MaxRate);
+			settings.announcePort = clamp(settings.announcePort, 0, 65535);
+			settings.maxConcurrentHttpAnnounces = clamp(settings.maxConcurrentHttpAnnounces, 1, 10000);
+			settings.stopTrackerTimeout = clamp(settings.stopTrackerTimeout, 0, 3600);
+			settings.minWebSocketAnnounceInterval = clamp(settings.minWebSocketAnnounceInterval, 1, 86400);
+			settings.webTorrentConnectionTimeout = clamp(settings.webTorrentConnectionTimeout, 1, 86400);
+			settings.maxWebTorrentOffers = clamp(settings.maxWebTorrentOffers, 1, 10000);
+			settings.activeDownloads = clamp(settings.activeDownloads, 0, 9999);
+			settings.activeSeeds = clamp(settings.activeSeeds, 0, 9999);
+			settings.activeLimit = clamp(settings.activeLimit, 0, 9999);
+			settings.slowTorrentDownloadRateThreshold = clamp(settings.slowTorrentDownloadRateThreshold, 0, MaxRate);
+			settings.slowTorrentUploadRateThreshold = clamp(settings.slowTorrentUploadRateThreshold, 0, MaxRate);
+			settings.slowTorrentInactiveTimer = clamp(settings.slowTorrentInactiveTimer, 0, MaxRate);
+			settings.downloadRateLimit = clamp(settings.downloadRateLimit, 0, MaxRate);
+			settings.uploadRateLimit = clamp(settings.uploadRateLimit, 0, MaxRate);
+			if (!std::isfinite(settings.seedingRatioLimit)
+				|| settings.seedingRatioLimit < 0.0)
+				settings.seedingRatioLimit = 0.0;
+			settings.seedingRatioLimit = (std::min)(
+				settings.seedingRatioLimit,
+				static_cast<double>(MaxRate / 100));
+			settings.seedingTimeLimit = clamp(settings.seedingTimeLimit, 0, MaxRate / 60);
+			settings.inactiveSeedingTimeLimit = clamp(settings.inactiveSeedingTimeLimit, 0, MaxRate / 60);
+			settings.shareLimitAction = clamp(settings.shareLimitAction, 0, 3);
+			settings.peerTimeout = clamp(settings.peerTimeout, 1, 86400);
+			settings.handshakeTimeout = clamp(settings.handshakeTimeout, 1, 3600);
+			settings.maxPeerListSize = clamp(settings.maxPeerListSize, 0, MaxRate);
+			settings.connectionSpeed = clamp(settings.connectionSpeed, 0, MaxRate);
+			settings.socketSendBufferSize = clamp(settings.socketSendBufferSize, 0, MaxRate);
+			settings.socketReceiveBufferSize = clamp(settings.socketReceiveBufferSize, 0, MaxRate);
+			settings.socketBacklogSize = clamp(settings.socketBacklogSize, 1, MaxRate);
+			settings.hostnameCacheTtl = clamp(settings.hostnameCacheTtl, 0, MaxRate);
+			settings.peerTurnover = clamp(settings.peerTurnover, 0, 100);
+			settings.peerTurnoverCutoff = clamp(settings.peerTurnoverCutoff, 0, 100);
+			settings.peerTurnoverInterval = clamp(settings.peerTurnoverInterval, 1, MaxRate);
+			settings.requestQueueSize = clamp(settings.requestQueueSize, 1, MaxRate);
+			settings.unchokeSlotsLimit = clamp(settings.unchokeSlotsLimit, -1, MaxRate);
+			settings.alertQueueSize = clamp(settings.alertQueueSize, 1000, MaxRate);
+			settings.aioThreads = clamp(settings.aioThreads, 1, 64);
+			settings.hashingThreads = clamp(settings.hashingThreads, 1, 64);
+			settings.filePoolSize = clamp(settings.filePoolSize, 1, 10000);
+			settings.checkingMemUsage = clamp(settings.checkingMemUsage, 1, MaxRate / 64);
+			settings.diskQueueSize = clamp(settings.diskQueueSize, 0, MaxRate);
+			settings.sendBufferWatermark = clamp(settings.sendBufferWatermark, 0, MaxKiBScaled);
+			settings.sendBufferLowWatermark = clamp(settings.sendBufferLowWatermark, 0, MaxKiBScaled);
+			settings.sendBufferWatermarkFactor = clamp(settings.sendBufferWatermarkFactor, 0, 1000);
+			settings.maxTorrentDirectoryDepth = clamp(settings.maxTorrentDirectoryDepth, 1, 1000);
+			settings.proxyPort = clamp(settings.proxyPort, 0, 65535);
+			settings.i2pPort = clamp(settings.i2pPort, 1, 65535);
+			settings.i2pInboundQuantity = clamp(settings.i2pInboundQuantity, 1, 16);
+			settings.i2pOutboundQuantity = clamp(settings.i2pOutboundQuantity, 1, 16);
+			settings.i2pInboundLength = clamp(settings.i2pInboundLength, 0, 8);
+			settings.i2pOutboundLength = clamp(settings.i2pOutboundLength, 0, 8);
+			settings.i2pInboundLengthVariance = clamp(settings.i2pInboundLengthVariance, -8, 8);
+			settings.i2pOutboundLengthVariance = clamp(settings.i2pOutboundLengthVariance, -8, 8);
+			if (static_cast<int>(settings.encryptionPolicy) < 0
+				|| static_cast<int>(settings.encryptionPolicy) > 2)
+				settings.encryptionPolicy = EncryptionPolicy::Enabled;
+			if (static_cast<int>(settings.proxyType) < 0
+				|| static_cast<int>(settings.proxyType) > 6)
+				settings.proxyType = ProxyType::None;
+			return settings;
+		}
+	}
+
 	// -------------------------------------------------------------------
 	//  TorrentSettingsManager
 	// -------------------------------------------------------------------
@@ -49,7 +127,7 @@ namespace OpenNet::Core
 	{
 		{
 			std::lock_guard lk(m_mutex);
-			m_settings = settings;
+			m_settings = NormalizeTorrentSettings(settings);
 		}
 		Save();
 	}
@@ -67,6 +145,7 @@ namespace OpenNet::Core
 			{
 				SaveToSqlite();
 			}
+			m_settings = NormalizeTorrentSettings(m_settings);
 
 			// Resolve default save path if empty
 			if (m_settings.defaultSavePath.empty())
@@ -148,6 +227,10 @@ namespace OpenNet::Core
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads", s.activeDownloads);
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds", s.activeSeeds);
 			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit", s.activeLimit);
+			db.SetBool(AppSettingsDatabase::CAT_TORRENT, "dontCountSlowTorrents", s.dontCountSlowTorrents);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "slowTorrentDownloadRateThreshold", s.slowTorrentDownloadRateThreshold);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "slowTorrentUploadRateThreshold", s.slowTorrentUploadRateThreshold);
+			db.SetInt(AppSettingsDatabase::CAT_TORRENT, "slowTorrentInactiveTimer", s.slowTorrentInactiveTimer);
 
 			// Speed limits
 			db.SetInt(AppSettingsDatabase::CAT_SPEED_LIMIT, "downloadRateLimit", s.downloadRateLimit);
@@ -156,6 +239,10 @@ namespace OpenNet::Core
 			// Seeding
 			db.SetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit", s.seedingRatioLimit);
 			db.SetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit", s.seedingTimeLimit);
+			db.SetInt(AppSettingsDatabase::CAT_SEEDING, "inactiveSeedingTimeLimit", s.inactiveSeedingTimeLimit);
+			db.SetBool(AppSettingsDatabase::CAT_SEEDING, "shareLimitMatchAll", s.shareLimitMatchAll);
+			db.SetInt(AppSettingsDatabase::CAT_SEEDING, "shareLimitAction", s.shareLimitAction);
+			db.SetBool(AppSettingsDatabase::CAT_SEEDING, "continueSeedingAfterCompletion", s.continueSeedingAfterCompletion);
 
 			// Peer
 			db.SetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout", s.peerTimeout);
@@ -295,6 +382,10 @@ namespace OpenNet::Core
 			s.activeDownloads = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeDownloads").value_or(s.activeDownloads));
 			s.activeSeeds = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeSeeds").value_or(s.activeSeeds));
 			s.activeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "activeLimit").value_or(s.activeLimit));
+			s.dontCountSlowTorrents = db.GetBool(AppSettingsDatabase::CAT_TORRENT, "dontCountSlowTorrents").value_or(s.dontCountSlowTorrents);
+			s.slowTorrentDownloadRateThreshold = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "slowTorrentDownloadRateThreshold").value_or(s.slowTorrentDownloadRateThreshold));
+			s.slowTorrentUploadRateThreshold = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "slowTorrentUploadRateThreshold").value_or(s.slowTorrentUploadRateThreshold));
+			s.slowTorrentInactiveTimer = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_TORRENT, "slowTorrentInactiveTimer").value_or(s.slowTorrentInactiveTimer));
 			auto const storedQueueing = db.GetBool(
 				AppSettingsDatabase::CAT_TORRENT, "queueingEnabled");
 			s.queueingEnabled = storedQueueing.value_or(
@@ -312,6 +403,10 @@ namespace OpenNet::Core
 			// Seeding
 			s.seedingRatioLimit = db.GetDouble(AppSettingsDatabase::CAT_SEEDING, "seedingRatioLimit").value_or(s.seedingRatioLimit);
 			s.seedingTimeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SEEDING, "seedingTimeLimit").value_or(s.seedingTimeLimit));
+			s.inactiveSeedingTimeLimit = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SEEDING, "inactiveSeedingTimeLimit").value_or(s.inactiveSeedingTimeLimit));
+			s.shareLimitMatchAll = db.GetBool(AppSettingsDatabase::CAT_SEEDING, "shareLimitMatchAll").value_or(s.shareLimitMatchAll);
+			s.shareLimitAction = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_SEEDING, "shareLimitAction").value_or(s.shareLimitAction));
+			s.continueSeedingAfterCompletion = db.GetBool(AppSettingsDatabase::CAT_SEEDING, "continueSeedingAfterCompletion").value_or(s.continueSeedingAfterCompletion);
 
 			// Peer
 			s.peerTimeout = static_cast<int>(db.GetInt(AppSettingsDatabase::CAT_CONNECTION, "peerTimeout").value_or(s.peerTimeout));
@@ -514,6 +609,14 @@ namespace OpenNet::Core
 					 s.queueingEnabled ? s.activeSeeds : -1);
 		pack.set_int(lt::settings_pack::active_limit,
 					 s.queueingEnabled ? s.activeLimit : -1);
+		pack.set_bool(lt::settings_pack::dont_count_slow_torrents,
+			s.dontCountSlowTorrents);
+		pack.set_int(lt::settings_pack::inactive_down_rate,
+			s.slowTorrentDownloadRateThreshold);
+		pack.set_int(lt::settings_pack::inactive_up_rate,
+			s.slowTorrentUploadRateThreshold);
+		pack.set_int(lt::settings_pack::auto_manage_startup,
+			s.slowTorrentInactiveTimer);
 
 		// Speed limits
 		pack.set_int(lt::settings_pack::download_rate_limit, s.downloadRateLimit);
@@ -576,8 +679,8 @@ namespace OpenNet::Core
 		pack.set_int(lt::settings_pack::out_enc_policy, encPolicy);
 		pack.set_int(lt::settings_pack::in_enc_policy, encPolicy);
 
-		int encLevel = s.preferRc4 ? 1 /*pe_rc4*/ : 3 /*pe_both*/;
-		pack.set_int(lt::settings_pack::allowed_enc_level, encLevel);
+		pack.set_int(lt::settings_pack::allowed_enc_level,
+			lt::settings_pack::pe_both);
 		pack.set_bool(lt::settings_pack::prefer_rc4, s.preferRc4);
 
 		// Proxy
@@ -615,6 +718,8 @@ namespace OpenNet::Core
 					 lt::alert_category::connect |
 					 lt::alert_category::tracker |
 					 lt::alert_category::stats |
+					 lt::alert_category::performance_warning |
+					 lt::alert_category::file_progress |
 					 lt::alert_category::dht |
 					 lt::alert_category::ip_block |
 					 lt::alert_category::port_mapping);
@@ -669,6 +774,14 @@ namespace OpenNet::Core
 		if (activeDownloads >= 0) s.activeDownloads = activeDownloads;
 		if (activeSeeds >= 0) s.activeSeeds = activeSeeds;
 		if (activeLimit >= 0) s.activeLimit = activeLimit;
+		s.dontCountSlowTorrents = pack.get_bool(
+			lt::settings_pack::dont_count_slow_torrents);
+		s.slowTorrentDownloadRateThreshold = pack.get_int(
+			lt::settings_pack::inactive_down_rate);
+		s.slowTorrentUploadRateThreshold = pack.get_int(
+			lt::settings_pack::inactive_up_rate);
+		s.slowTorrentInactiveTimer = pack.get_int(
+			lt::settings_pack::auto_manage_startup);
 
 		s.downloadRateLimit = pack.get_int(lt::settings_pack::download_rate_limit);
 		s.uploadRateLimit = pack.get_int(lt::settings_pack::upload_rate_limit);

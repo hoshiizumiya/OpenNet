@@ -113,6 +113,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Seeding
 		SeedRatioLimitNumberBox().Value(s.seedingRatioLimit);
 		SeedTimeLimitNumberBox().Value(s.seedingTimeLimit);
+		ContinueSeedingAfterCompletionToggle().IsOn(s.continueSeedingAfterCompletion);
 
 		// Peer
 		PeerTimeoutNumberBox().Value(s.peerTimeout);
@@ -243,6 +244,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// Seeding
 		s.seedingRatioLimit = SeedRatioLimitNumberBox().Value();
 		s.seedingTimeLimit = static_cast<int>(SeedTimeLimitNumberBox().Value());
+		s.continueSeedingAfterCompletion =
+			ContinueSeedingAfterCompletionToggle().IsOn();
 
 		// Peer
 		s.peerTimeout = static_cast<int>(PeerTimeoutNumberBox().Value());

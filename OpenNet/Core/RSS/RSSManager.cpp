@@ -130,7 +130,10 @@ namespace OpenNet::Core::RSS
 			// Sleep for 1 minute between checks, wake immediately if stopped
 			{
 				std::unique_lock<std::mutex> lock(m_stopMutex);
-				m_stopCv.wait_for(lock, std::chrono::minutes(1), [this] { return !m_running.load(); });
+				m_stopCv.wait_for(lock, std::chrono::minutes(1), [this]
+				{
+					return !m_running.load();
+				});
 			}
 		}
 	}
@@ -275,7 +278,13 @@ namespace OpenNet::Core::RSS
 				auto parsedFeed = RSSParser::Parse(std::wstring(content.c_str()), feedUrl);
 				if (parsedFeed)
 				{
+					std::vector<RSSItem> itemsToNotify;
+					std::vector<RSSItem> itemsToDownload;
 					FeedUpdatedCallback callbackCopy;
+					NewItemCallback newItemCallbackCopy;
+					std::wstring title;
+					std::wstring description;
+					std::int64_t epoch{};
 					{
 						std::lock_guard<std::mutex> lock(self->m_feedsMutex);
 						auto it = self->m_feeds.find(feedId);
@@ -290,23 +299,33 @@ namespace OpenNet::Core::RSS
 							existingFeed.description = parsedFeed->description;
 
 							// Process new items (persists to SQLite internally)
-							self->ProcessNewItems(existingFeed, parsedFeed->items);
+							self->ProcessNewItems(
+								existingFeed, parsedFeed->items,
+								itemsToNotify, itemsToDownload);
 							existingFeed.lastUpdated = std::chrono::system_clock::now();
-
-							// Persist updated feed metadata to SQLite
-							auto epoch = std::chrono::duration_cast<std::chrono::seconds>(
+							epoch = std::chrono::duration_cast<std::chrono::seconds>(
 								existingFeed.lastUpdated.time_since_epoch())
 								.count();
-							RSSDatabase::Instance().UpdateFeedMeta(
-								feedId, existingFeed.title, existingFeed.description, epoch);
+							title = existingFeed.title;
+							description = existingFeed.description;
 						}
-
-						// Copy callback outside the feed lock
-						std::lock_guard<std::mutex> cbLock(self->m_callbackMutex);
-						callbackCopy = self->m_feedUpdatedCallback;
 					}
 
-					// Notify callback outside the lock
+					RSSDatabase::Instance().UpdateFeedMeta(feedId, title, description, epoch);
+					{
+						std::lock_guard<std::mutex> cbLock(self->m_callbackMutex);
+						callbackCopy = self->m_feedUpdatedCallback;
+						newItemCallbackCopy = self->m_newItemCallback;
+					}
+
+					for (auto const& item : itemsToNotify)
+					{
+						if (newItemCallbackCopy)
+							newItemCallbackCopy(feedId, item);
+					}
+					for (auto const& item : itemsToDownload)
+						self->DownloadItem(feedId, item);
+
 					if (callbackCopy)
 					{
 						callbackCopy(feedId);
@@ -342,7 +361,11 @@ namespace OpenNet::Core::RSS
 		co_return content;
 	}
 
-	void RSSManager::ProcessNewItems(RSSFeed& feed, const std::vector<RSSItem>& newItems)
+	void RSSManager::ProcessNewItems(
+		RSSFeed& feed,
+		const std::vector<RSSItem>& newItems,
+		std::vector<RSSItem>& itemsToNotify,
+		std::vector<RSSItem>& itemsToDownload)
 	{
 		auto& db = RSSDatabase::Instance();
 
@@ -354,15 +377,7 @@ namespace OpenNet::Core::RSS
 		{
 			feed.items = db.LoadItems(feed.id);
 
-			// Notify callback for each item on first load
-			for (const auto& item : feed.items)
-			{
-				std::lock_guard<std::mutex> lock(m_callbackMutex);
-				if (m_newItemCallback)
-				{
-					m_newItemCallback(feed.id, item);
-				}
-			}
+			itemsToNotify.insert(itemsToNotify.end(), feed.items.begin(), feed.items.end());
 			return;
 		}
 
@@ -383,19 +398,12 @@ namespace OpenNet::Core::RSS
 				{
 					feed.items.push_back(newItem);
 
-					// Notify new item callback
-					{
-						std::lock_guard<std::mutex> lock(m_callbackMutex);
-						if (m_newItemCallback)
-						{
-							m_newItemCallback(feed.id, newItem);
-						}
-					}
+					itemsToNotify.push_back(newItem);
 
 					// Auto-download if enabled and matches filter
 					if (feed.autoDownload && RSSParser::MatchesFilter(newItem, feed.filterPattern))
 					{
-						DownloadItem(feed.id, newItem);
+						itemsToDownload.push_back(newItem);
 					}
 				}
 			}
@@ -450,7 +458,7 @@ namespace OpenNet::Core::RSS
 		}
 
 		[](RSSManager* self, std::wstring feed, RSSItem rssItem,
-			std::wstring source, std::wstring destination) -> winrt::fire_and_forget
+		   std::wstring source, std::wstring destination) -> winrt::fire_and_forget
 		{
 			try
 			{

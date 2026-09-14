@@ -4980,4 +4980,37 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>낮은 우선순위 알림을 버리기 전까지 유지할 libtorrent 알림의 최대 수입니다.</value>
   </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>컨트롤 재질</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>카드와 카드 패널의 재질 효과를 변경합니다</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>리퀴드 글래스</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>컨트롤 재질 선택</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>기본 Fluent 표면과 리퀴드 글래스를 비교하고 OpenNet 전체에 사용할 재질을 선택하세요.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>컨트롤 재질</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>기본 Fluent 표면</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>리퀴드 글래스</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>흐림, 굴절 및 가장자리 강조</value>
+  </data>
 </root>

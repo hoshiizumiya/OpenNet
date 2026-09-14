@@ -14,32 +14,20 @@
     <Thickness x:Key="SettingsCardAlignSettingsExpanderPadding">16,16,44,16</Thickness>
     <Thickness x:Key="SettingsExpanderItemHasIconPadding">16,8,16,8</Thickness>
 
-    <Style
-        x:Key="SettingsSectionHeaderTextBlockStyle"
-        BasedOn="{StaticResource BodyStrongTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="SettingsSectionHeaderTextBlockStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
         <Style.Setters>
             <Setter Property="Margin" Value="1,29,0,5" />
         </Style.Setters>
     </Style>
-    <Style
-        x:Key="SettingsCardHeaderTextBlockStyle"
-        BasedOn="{StaticResource BodyStrongTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="SettingsCardHeaderTextBlockStyle" BasedOn="{StaticResource BodyStrongTextBlockStyle}" TargetType="TextBlock">
         <Style.Setters>
             <Setter Property="Margin" Value="1,0,0,5" />
         </Style.Setters>
     </Style>
-    <Style
-        x:Key="SettingsContentComboBoxStyle"
-        BasedOn="{StaticResource DefaultComboBoxStyle}"
-        TargetType="ComboBox">
+    <Style x:Key="SettingsContentComboBoxStyle" BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
         <Setter Property="MinWidth" Value="{ThemeResource SettingsCardContentControlMinWidth}" />
     </Style>
-    <Style
-        x:Key="SettingButtonStyle"
-        BasedOn="{StaticResource DefaultButtonStyle}"
-        TargetType="Button">
+    <Style x:Key="SettingButtonStyle" BasedOn="{StaticResource DefaultButtonStyle}" TargetType="Button">
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
@@ -47,10 +35,7 @@
         <Setter Property="MinWidth" Value="{ThemeResource SettingsCardContentControlMinWidth}" />
         <Setter Property="Padding" Value="16,6,16,6" />
     </Style>
-    <Style
-        x:Key="SettingHyperlinkButtonStyle"
-        BasedOn="{StaticResource DefaultHyperlinkButtonStyle}"
-        TargetType="HyperlinkButton">
+    <Style x:Key="SettingHyperlinkButtonStyle" BasedOn="{StaticResource DefaultHyperlinkButtonStyle}" TargetType="HyperlinkButton">
         <Setter Property="Background" Value="{ThemeResource ButtonBackground}" />
         <Setter Property="BackgroundSizing" Value="InnerBorderEdge" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
@@ -62,10 +47,7 @@
         <Setter Property="MinWidth" Value="{ThemeResource SettingsCardContentControlMinWidth}" />
         <Setter Property="Padding" Value="16,6,16,6" />
     </Style>
-    <Style
-        x:Key="SettingToggleButtonStyle"
-        BasedOn="{StaticResource DefaultToggleButtonStyle}"
-        TargetType="ToggleButton">
+    <Style x:Key="SettingToggleButtonStyle" BasedOn="{StaticResource DefaultToggleButtonStyle}" TargetType="ToggleButton">
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />

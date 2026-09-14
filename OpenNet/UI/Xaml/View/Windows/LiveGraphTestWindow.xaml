@@ -9,8 +9,6 @@
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="LiveGraph Developer Test"
-    Width="1100"
-    Height="900"
     MinWidth="780"
     MinHeight="600"
     MaxWidth="1800"
@@ -261,7 +259,7 @@
                     </StackPanel>
                 </Border>
 
-                <Expander
+                <!--<Expander
                     x:Uid="ViewLiveGraphTestWindowExpander"
                     Header="Graph properties and brush composition"
                     IsExpanded="True">
@@ -415,7 +413,7 @@
                                 Toggled="BrushAppearance_Toggled" />
                         </StackPanel>
                     </Grid>
-                </Expander>
+                </Expander>-->
 
                 <Border
                     Padding="12"

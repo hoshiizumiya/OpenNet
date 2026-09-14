@@ -1895,8 +1895,17 @@ namespace OpenNet::Core::WebUI
 			{
 				Json capabilities{
 					{"product", "OpenNet"},
-					{"schema", 2},
+					{"schema", 3},
 					{"theme", "upstream-qbittorrent"},
+					{"operations", Json{
+						{"setShareLimits", "engine-backed"},
+						{"setSSLParameters", "engine-backed-runtime"},
+						{"setAutoManagement", "unsupported"},
+						{"setDownloadPath", "unsupported"},
+						{"setComment", "application-note"},
+						{"rssRules", "unsupported"},
+						{"search", "unsupported"}
+					}},
 					{"supportedPreferenceKeys", Json::array({
 						"locale", "save_path", "preallocate_all",
 						"add_stopped_enabled", "listen_port", "upnp",
@@ -1911,8 +1920,15 @@ namespace OpenNet::Core::WebUI
 						"anonymous_mode", "queueing_enabled",
 						"max_active_downloads",
 						"max_active_uploads", "max_active_torrents",
+						"dont_count_slow_torrents",
+						"slow_torrent_dl_rate_threshold",
+						"slow_torrent_ul_rate_threshold",
+						"slow_torrent_inactive_timer",
 						"max_ratio_enabled", "max_ratio",
 						"max_seeding_time_enabled", "max_seeding_time",
+						"max_inactive_seeding_time_enabled",
+						"max_inactive_seeding_time", "max_ratio_act",
+						"share_limit_mode",
 						"rss_max_articles_per_feed", "async_io_threads",
 						"hashing_threads", "file_pool_size", "checking_memory_use",
 						"disk_queue_size", "enable_piece_extent_affinity",
@@ -2554,11 +2570,18 @@ namespace OpenNet::Core::WebUI
 				{"max_active_downloads", settings.activeDownloads},
 				{"max_active_uploads", settings.activeSeeds},
 				{"max_active_torrents", settings.activeLimit},
+				{"dont_count_slow_torrents", settings.dontCountSlowTorrents},
+				{"slow_torrent_dl_rate_threshold", settings.slowTorrentDownloadRateThreshold},
+				{"slow_torrent_ul_rate_threshold", settings.slowTorrentUploadRateThreshold},
+				{"slow_torrent_inactive_timer", settings.slowTorrentInactiveTimer},
 				{"max_ratio_enabled", settings.seedingRatioLimit > 0.0},
 				{"max_ratio", settings.seedingRatioLimit},
 				{"max_seeding_time_enabled", settings.seedingTimeLimit > 0},
 				{"max_seeding_time", settings.seedingTimeLimit},
-				{"max_ratio_act", 0},
+				{"max_inactive_seeding_time_enabled", settings.inactiveSeedingTimeLimit > 0},
+				{"max_inactive_seeding_time", settings.inactiveSeedingTimeLimit},
+				{"share_limit_mode", settings.shareLimitMatchAll ? "MatchAll" : "MatchAny"},
+				{"max_ratio_act", settings.shareLimitAction},
 				{"dl_limit", settings.downloadRateLimit},
 				{"up_limit", settings.uploadRateLimit},
 				{"alt_dl_limit", m_altDownloadLimit.load()},
@@ -2802,6 +2825,10 @@ namespace OpenNet::Core::WebUI
 				setInteger("max_active_downloads", settings.activeDownloads, -1);
 				setInteger("max_active_uploads", settings.activeSeeds, -1);
 				setInteger("max_active_torrents", settings.activeLimit, -1);
+				setBoolean("dont_count_slow_torrents", settings.dontCountSlowTorrents);
+				setInteger("slow_torrent_dl_rate_threshold", settings.slowTorrentDownloadRateThreshold);
+				setInteger("slow_torrent_ul_rate_threshold", settings.slowTorrentUploadRateThreshold);
+				setInteger("slow_torrent_inactive_timer", settings.slowTorrentInactiveTimer);
 				setInteger("max_connec", settings.connectionsLimit, -1);
 				setInteger("max_uploads", settings.unchokeSlotsLimit, -1);
 				setInteger("alert_queue_size", settings.alertQueueSize, 1000);
@@ -2926,6 +2953,32 @@ namespace OpenNet::Core::WebUI
 					setBoolean("max_seeding_time_enabled", enabled);
 					if (!enabled) settings.seedingTimeLimit = 0;
 					else setInteger("max_seeding_time", settings.seedingTimeLimit, 1);
+				}
+				if (parsed.contains("max_inactive_seeding_time_enabled"))
+				{
+					bool enabled = settings.inactiveSeedingTimeLimit > 0;
+					setBoolean("max_inactive_seeding_time_enabled", enabled);
+					if (!enabled) settings.inactiveSeedingTimeLimit = 0;
+					else setInteger(
+						"max_inactive_seeding_time",
+						settings.inactiveSeedingTimeLimit, 1);
+				}
+				if (parsed.contains("max_ratio_act"))
+					setInteger("max_ratio_act", settings.shareLimitAction, 0);
+				if (parsed.contains("share_limit_mode"))
+				{
+					const auto& mode = parsed.at("share_limit_mode");
+					if (!mode.is_string())
+						throw std::invalid_argument(
+							"share_limit_mode must be a string");
+					auto const normalized = ToLower(mode.get<std::string>());
+					if (normalized == "matchany" || normalized == "any")
+						settings.shareLimitMatchAll = false;
+					else if (normalized == "matchall" || normalized == "all")
+						settings.shareLimitMatchAll = true;
+					else
+						throw std::out_of_range(
+							"share_limit_mode is out of range");
 				}
 
 				setString("proxy_ip", settings.proxyHostname);
@@ -3992,6 +4045,10 @@ namespace OpenNet::Core::WebUI
 			if (operation == "setSavePath"
 				|| operation == "setDownloadPath")
 			{
+				if (operation == "setDownloadPath")
+					return TextResponse(
+						request, http::status::not_implemented,
+						"A separate incomplete-download path is not supported");
 				if (!parameters.contains("id")
 					|| !parameters.contains("path"))
 				{
@@ -4117,18 +4174,9 @@ namespace OpenNet::Core::WebUI
 			const auto hashes = ResolveTorrentHashes(hashesText);
 			if (operation == "setAutoManagement")
 			{
-				if (!parameters.contains("enable"))
-					return TextResponse(
-						request, http::status::bad_request,
-						"Missing parameter: enable");
-				const bool enabled =
-					ParseBoolean(parameters.at("enable"))
-					.value_or(false);
-				std::scoped_lock lock(m_metadataMutex);
-				for (const auto& hash : hashes)
-					m_torrentOverrides[hash]["auto_tmm"] = enabled;
-				PersistTorrentMetadataLocked();
-				return EmptyResponse(request);
+				return TextResponse(
+					request, http::status::not_implemented,
+					"Automatic category path management is not supported");
 			}
 			if (operation == "setComment")
 			{
@@ -4147,13 +4195,12 @@ namespace OpenNet::Core::WebUI
 			if (operation == "setShareLimits")
 			{
 				constexpr std::array<std::pair<
-					std::string_view, std::string_view>, 5> Mappings{ {
+					std::string_view, std::string_view>, 4> Mappings{ {
 					{"ratioLimit", "max_ratio"},
 					{"seedingTimeLimit", "max_seeding_time"},
 					{"inactiveSeedingTimeLimit",
 						"max_inactive_seeding_time"},
-					{"shareLimitAction", "share_limit_action"},
-					{"shareLimitsMode", "share_limit_mode"}
+					{"shareLimitAction", "share_limit_action"}
 				} };
 				for (const auto& [source, destination] : Mappings)
 				{
@@ -4165,8 +4212,11 @@ namespace OpenNet::Core::WebUI
 				double ratio = 0;
 				try
 				{
+					std::size_t consumed{};
 					ratio = std::stod(
-						parameters.at("ratioLimit"));
+						parameters.at("ratioLimit"), &consumed);
+					if (consumed != parameters.at("ratioLimit").size())
+						throw std::invalid_argument("Trailing ratioLimit text");
 				}
 				catch (...)
 				{
@@ -4174,6 +4224,10 @@ namespace OpenNet::Core::WebUI
 						request, http::status::bad_request,
 						"Invalid ratioLimit");
 				}
+				if (!std::isfinite(ratio) || (ratio < 0 && ratio != -1.0 && ratio != -2.0))
+					return TextResponse(
+						request, http::status::bad_request,
+						"ratioLimit is out of range");
 				const auto parseInteger =
 					[&parameters](const char* name)
 					-> std::optional<int>
@@ -4194,10 +4248,62 @@ namespace OpenNet::Core::WebUI
 					parseInteger("seedingTimeLimit");
 				const auto inactiveSeedingTime =
 					parseInteger("inactiveSeedingTimeLimit");
-				if (!seedingTime || !inactiveSeedingTime)
+				if (!seedingTime || !inactiveSeedingTime
+					|| *seedingTime < -2 || *inactiveSeedingTime < -2)
 					return TextResponse(
 						request, http::status::bad_request,
 						"Invalid seeding time limit");
+				auto shareLimitMode = std::string{ "MatchAny" };
+				bool matchAll = false;
+				if (auto const mode = parameters.find("shareLimitsMode");
+					mode != parameters.end())
+				{
+					auto const normalized = ToLower(Trim(mode->second));
+					if (normalized == "matchany" || normalized == "any"
+						|| normalized == "0")
+						shareLimitMode = "MatchAny";
+					else if (normalized == "matchall" || normalized == "all"
+							 || normalized == "1")
+					{
+						shareLimitMode = "MatchAll";
+						matchAll = true;
+					}
+					else
+						return TextResponse(
+							request, http::status::bad_request,
+							"Invalid shareLimitsMode");
+				}
+				auto const actionText = ToLower(Trim(
+					parameters.at("shareLimitAction")));
+				int action = 0;
+				if (actionText == "default")
+					action = -1;
+				else if (actionText == "stop" || actionText == "0")
+					action = 0;
+				else if (actionText == "remove" || actionText == "1")
+					action = 1;
+				else if (actionText == "removewithcontent"
+						 || actionText == "remove_torrent_and_files"
+						 || actionText == "2")
+					action = 2;
+				else if (actionText == "enablesuperseeding"
+						 || actionText == "3")
+					action = 3;
+				else
+					return TextResponse(
+						request, http::status::bad_request,
+						"Invalid shareLimitAction");
+				for (auto const& taskId : taskIds)
+				{
+					if (!core->SetTorrentShareLimits(
+						taskId, ratio, *seedingTime,
+						*inactiveSeedingTime, matchAll, action))
+					{
+						return TextResponse(
+							request, http::status::conflict,
+							"Unable to apply share limits");
+					}
+				}
 				std::scoped_lock lock(m_metadataMutex);
 				for (const auto& hash : hashes)
 				{
@@ -4210,7 +4316,7 @@ namespace OpenNet::Core::WebUI
 					overrides["share_limit_action"] =
 						parameters.at("shareLimitAction");
 					overrides["share_limit_mode"] =
-						parameters.at("shareLimitsMode");
+						shareLimitMode;
 				}
 				PersistTorrentMetadataLocked();
 				return EmptyResponse(request);
@@ -4605,9 +4711,11 @@ namespace OpenNet::Core::WebUI
 					request, http::status::not_found, "Not Found");
 			Json result = Json::array();
 			const auto& files = torrent->second.files;
+			bool firstVisibleFile = true;
 			for (std::size_t index = 0; index < files.size(); ++index)
 			{
 				const auto& file = files[index];
+				if (file.isPadFile) continue;
 				Json value{
 					{"index", file.fileIndex},
 					{"name", file.path},
@@ -4619,11 +4727,12 @@ namespace OpenNet::Core::WebUI
 					{"piece_range", Json::array({
 						file.firstPiece, file.lastPiece})}
 				};
-				if (index == 0)
+				if (firstVisibleFile)
 				{
 					value["is_seed"] = torrent->second.totalSize > 0
 						&& torrent->second.totalDone
 						>= torrent->second.totalSize;
+					firstVisibleFile = false;
 				}
 				result.push_back(std::move(value));
 			}
@@ -4665,7 +4774,7 @@ namespace OpenNet::Core::WebUI
 						continue;
 					attempted = true;
 					if (url.starts_with("magnet:"))
-						succeeded = core->AddMagnet(url, savePath) || succeeded;
+						succeeded = core->AddMagnet(url, savePath).Succeeded() || succeeded;
 				}
 			};
 			if (parameters.contains("urls"))
@@ -4694,7 +4803,7 @@ namespace OpenNet::Core::WebUI
 							static_cast<std::streamsize>(part.data.size()));
 					}
 					succeeded = core->AddTorrentFile(
-						PathUtf8(temporary), savePath) || succeeded;
+						PathUtf8(temporary), savePath).Succeeded() || succeeded;
 					std::error_code error;
 					std::filesystem::remove(temporary, error);
 				}
@@ -5589,16 +5698,12 @@ namespace OpenNet::Core::WebUI
 			if (operation == "SSLParameters")
 			{
 				std::scoped_lock lock(m_metadataMutex);
-				const auto& value = m_torrentOverrides[
+				auto value = m_torrentOverrides[
 					torrent->second.apiHash]["ssl"];
-					if (!value.is_object())
-					{
-						return JsonResponse(request, Json{
-							{"ssl_certificate", ""},
-							{"ssl_private_key", ""},
-							{"ssl_dh_params", ""}
-											});
-					}
+					if (!value.is_object()) value = Json::object();
+					value["ssl_private_key"] = "";
+					if (!value.contains("ssl_certificate")) value["ssl_certificate"] = "";
+					if (!value.contains("ssl_dh_params")) value["ssl_dh_params"] = "";
 					return JsonResponse(request, value);
 			}
 
@@ -5617,11 +5722,21 @@ namespace OpenNet::Core::WebUI
 							request, http::status::bad_request,
 							"Missing TLS parameter");
 				}
+				if (!core->SetSslCertificateBuffers(
+					torrent->first.taskId,
+					parameters.at("ssl_certificate"),
+					parameters.at("ssl_private_key"),
+					parameters.at("ssl_dh_params")))
+				{
+					return TextResponse(
+						request, http::status::conflict,
+						"Unable to apply TLS certificate");
+				}
 				std::scoped_lock lock(m_metadataMutex);
 				m_torrentOverrides[torrent->second.apiHash]["ssl"] = Json{
 					{"ssl_certificate", parameters.at("ssl_certificate")},
-					{"ssl_private_key", parameters.at("ssl_private_key")},
-					{"ssl_dh_params", parameters.at("ssl_dh_params")}
+					{"ssl_dh_params", parameters.at("ssl_dh_params")},
+					{"configured", true}
 				};
 				PersistTorrentMetadataLocked();
 				return EmptyResponse(request);
@@ -5713,7 +5828,9 @@ namespace OpenNet::Core::WebUI
 				return JsonResponse(request, m_rssRules);
 			}
 			if (operation == "matchingArticles")
-				return JsonResponse(request, Json::object());
+				return TextResponse(
+					request, http::status::not_implemented,
+					"RSS rule matching is not supported");
 
 			if (request.method() != http::verb::post
 				&& operation != "setFeedRefreshInterval")
@@ -5859,72 +5976,17 @@ namespace OpenNet::Core::WebUI
 			}
 			if (operation == "setRule")
 			{
-				if (!parameters.contains("ruleName")
-					|| !parameters.contains("ruleDef"))
-				{
-					return TextResponse(
-						request, http::status::bad_request,
-						"Missing rule parameter");
-				}
-				try
-				{
-					const auto definition =
-						Json::parse(parameters.at("ruleDef"));
-					std::scoped_lock lock(m_rssMutex);
-					m_rssRules[parameters.at("ruleName")] = definition;
-					PersistRssRulesLocked();
-					return EmptyResponse(request);
-				}
-				catch (const Json::exception& exception)
-				{
-					return TextResponse(
-						request, http::status::bad_request,
-						exception.what());
-				}
+				return TextResponse(
+					request, http::status::not_implemented,
+					"RSS rule execution is not supported");
 			}
 			if (operation == "removeRule"
 				|| operation == "renameRule"
 				|| operation == "cloneRule")
 			{
-				std::scoped_lock lock(m_rssMutex);
-				if (operation == "removeRule")
-				{
-					if (parameters.contains("ruleName"))
-						m_rssRules.erase(parameters.at("ruleName"));
-				}
-				else if (operation == "renameRule")
-				{
-					if (!parameters.contains("ruleName")
-						|| !parameters.contains("newRuleName"))
-					{
-						return TextResponse(
-							request, http::status::bad_request,
-							"Missing rule parameter");
-					}
-					const auto source =
-						m_rssRules.find(parameters.at("ruleName"));
-					if (source != m_rssRules.end())
-					{
-						m_rssRules[parameters.at("newRuleName")] = *source;
-						m_rssRules.erase(source);
-					}
-				}
-				else
-				{
-					if (!parameters.contains("sourceName")
-						|| !parameters.contains("cloneName"))
-					{
-						return TextResponse(
-							request, http::status::bad_request,
-							"Missing rule parameter");
-					}
-					const auto source =
-						m_rssRules.find(parameters.at("sourceName"));
-					if (source != m_rssRules.end())
-						m_rssRules[parameters.at("cloneName")] = *source;
-				}
-				PersistRssRulesLocked();
-				return EmptyResponse(request);
+				return TextResponse(
+					request, http::status::not_implemented,
+					"RSS rule execution is not supported");
 			}
 			return EmptyResponse(request);
 		}
@@ -5982,18 +6044,9 @@ namespace OpenNet::Core::WebUI
 					"Method Not Allowed");
 			if (operation == "start")
 			{
-				if (!parameters.contains("pattern")
-					|| !parameters.contains("category")
-					|| !parameters.contains("plugins"))
-				{
-					return TextResponse(
-						request, http::status::bad_request,
-						"Missing search parameter");
-				}
-				const int id = m_nextSearchId.fetch_add(1);
-				std::scoped_lock lock(m_searchMutex);
-				m_searchJobs.emplace(id, SearchJob{ id, false, Json::array() });
-				return JsonResponse(request, Json{ {"id", id} });
+				return TextResponse(
+					request, http::status::not_implemented,
+					"No search provider is configured");
 			}
 			if (operation == "downloadTorrent")
 			{
@@ -6008,7 +6061,8 @@ namespace OpenNet::Core::WebUI
 						"Only magnet search results are supported");
 				auto* core =
 					::OpenNet::Core::P2PManager::Instance().TorrentCore();
-				if (!core || !core->AddMagnet(source, DefaultSavePath()))
+				if (!core || !core->AddMagnet(
+					source, DefaultSavePath()).Succeeded())
 					return TextResponse(
 						request, http::status::conflict,
 						"Unable to add search result");

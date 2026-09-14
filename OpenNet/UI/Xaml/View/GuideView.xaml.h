@@ -39,6 +39,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		void IsOpenSourceLicenseAgreed(bool value);
 		bool IsAgreementCopyAgreed();
 		void IsAgreementCopyAgreed(bool value);
+		void GuideMaterialStyleSelector_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void NextOrComplete(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		winrt::event_token Completed(
 			winrt::Windows::Foundation::EventHandler<
@@ -52,6 +53,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		winrt::hstring m_allCulturesWelcomeText;
 		winrt::event<winrt::Windows::Foundation::EventHandler<
 			winrt::Windows::Foundation::IInspectable>> m_completed;
+		bool m_isMaterialInitializing{ true };
 	};
 }
 

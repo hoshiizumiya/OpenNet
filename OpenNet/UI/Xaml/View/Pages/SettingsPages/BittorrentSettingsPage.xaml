@@ -280,6 +280,10 @@
                         ValueChanged="OnSettingChanged" />
                 </essential:SettingsCard>
 
+                <essential:SettingsCard Description="Keep completed torrents active until a configured share limit is reached." Header="Continue seeding after download completes">
+                    <ToggleSwitch x:Name="ContinueSeedingAfterCompletionToggle" Toggled="OnSettingChanged" />
+                </essential:SettingsCard>
+
                 <!--  Peer  -->
                 <TextBlock x:Uid="BT_Section_Peer" Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" />
 

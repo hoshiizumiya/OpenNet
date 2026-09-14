@@ -530,8 +530,128 @@
                 </StackPanel>
             </essential:Case>
 
-            <!--  Complete  -->
+            <!--  Material  -->
             <essential:Case Value="{ouxm:UInt32 Value=6}">
+                <ScrollViewer>
+                    <StackPanel
+                        Width="820"
+                        Margin="32"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Spacing="12">
+                        <FontIcon FontSize="44" Glyph="&#xE790;" />
+                        <TextBlock
+                            x:Uid="GuideMaterialTitle"
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource TitleTextBlockStyle}"
+                            Text="Choose a control material" />
+                        <TextBlock
+                            x:Uid="GuideMaterialDescription"
+                            HorizontalAlignment="Center"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Compare the original Fluent surface with liquid glass, then choose the material used throughout OpenNet."
+                            TextAlignment="Center"
+                            TextWrapping="Wrap" />
+                        <ComboBox
+                            x:Name="GuideMaterialStyleSelector"
+                            x:Uid="GuideMaterialStyleSelector"
+                            MinWidth="220"
+                            HorizontalAlignment="Center"
+                            Header="Control material"
+                            SelectionChanged="GuideMaterialStyleSelector_SelectionChanged">
+                            <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialDefault" Content="Default" />
+                            <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialLiquidGlass" Content="Liquid glass" />
+                        </ComboBox>
+
+                        <Grid
+                            Height="300"
+                            Margin="0,12,0,0"
+                            Background="#FF17233D"
+                            CornerRadius="20">
+                            <Canvas IsHitTestVisible="False">
+                                <Ellipse
+                                    Canvas.Left="30"
+                                    Canvas.Top="24"
+                                    Width="220"
+                                    Height="220"
+                                    Fill="#FF28C4D8" />
+                                <Ellipse
+                                    Canvas.Left="520"
+                                    Canvas.Top="68"
+                                    Width="230"
+                                    Height="230"
+                                    Fill="#FFE94B79" />
+                                <Rectangle
+                                    Canvas.Left="80"
+                                    Canvas.Top="128"
+                                    Width="670"
+                                    Height="54"
+                                    Fill="#FFF4C542"
+                                    RenderTransformOrigin="0.5,0.5">
+                                    <Rectangle.RenderTransform>
+                                        <RotateTransform Angle="-9" />
+                                    </Rectangle.RenderTransform>
+                                </Rectangle>
+                            </Canvas>
+                            <Grid Margin="36" ColumnSpacing="28">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <Border
+                                    Grid.Column="0"
+                                    Padding="24"
+                                    Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="16">
+                                    <StackPanel VerticalAlignment="Center" Spacing="8">
+                                        <FontIcon FontSize="32" Glyph="&#xE8A5;" />
+                                        <TextBlock
+                                            x:Uid="GuideMaterialDefaultPreviewTitle"
+                                            HorizontalAlignment="Center"
+                                            FontSize="22"
+                                            FontWeight="SemiBold"
+                                            Text="Default" />
+                                        <TextBlock
+                                            x:Uid="GuideMaterialDefaultPreviewDescription"
+                                            HorizontalAlignment="Center"
+                                            Text="Original Fluent surface"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                                <Border
+                                    Grid.Column="1"
+                                    Padding="24"
+                                    Background="{ThemeResource OpenNetGuideLiquidGlassBrush}"
+                                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                    BorderThickness="1"
+                                    CornerRadius="16">
+                                    <StackPanel VerticalAlignment="Center" Spacing="8">
+                                        <FontIcon FontSize="32" Glyph="&#xE790;" />
+                                        <TextBlock
+                                            x:Uid="GuideMaterialLiquidGlassPreviewTitle"
+                                            HorizontalAlignment="Center"
+                                            FontSize="22"
+                                            FontWeight="SemiBold"
+                                            Text="Liquid glass" />
+                                        <TextBlock
+                                            x:Uid="GuideMaterialLiquidGlassPreviewDescription"
+                                            HorizontalAlignment="Center"
+                                            Text="Blur, refraction and edge highlights"
+                                            TextAlignment="Center"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </Grid>
+                    </StackPanel>
+                </ScrollViewer>
+            </essential:Case>
+
+            <!--  Complete  -->
+            <essential:Case Value="{ouxm:UInt32 Value=7}">
                 <StackPanel
                     Width="520"
                     Margin="32"
@@ -673,6 +793,7 @@
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B7;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE713;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8BA;}" />
+                    <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE790;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B9;}" />
                 </cwc:Segmented>
                 <Button

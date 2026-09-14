@@ -5074,4 +5074,37 @@
   <data name="CreateTorrentUnknownFailure" xml:space="preserve">
     <value>製作 Torrent 時發生未知錯誤。</value>
   </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>控制項材質</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>變更卡片與卡片面板的材質效果</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>液態玻璃</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>選擇控制項材質</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>比較原生 Fluent 表面與液態玻璃，然後選擇 OpenNet 全域使用的控制項材質。</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>控制項材質</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>原生 Fluent 表面</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>液態玻璃</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>模糊、折射與邊緣高光</value>
+  </data>
 </root>

@@ -611,13 +611,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			// Determine if it's a magnet link or a torrent file
 			if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsMagnetLink(torrentSource))
 			{
-				// It's a magnet link
-				success = co_await p2pManager.AddMagnetAsync(
-					torrentSource,
-					savePath,
-					filePriorities,
-					taskTrackers,
-					startImmediately);
+				auto const reusableTorrent = m_metadataFetcher
+					? m_metadataFetcher->GetReusableTorrentFilePath()
+					: std::string{};
+				if (!reusableTorrent.empty())
+				{
+					success = co_await p2pManager.AddTorrentFileAsync(
+						reusableTorrent, savePath, filePriorities,
+						taskTrackers, startImmediately);
+				}
+				else
+				{
+					success = co_await p2pManager.AddMagnetAsync(
+						torrentSource, savePath, filePriorities,
+						taskTrackers, startImmediately);
+				}
 			}
 			else if (::OpenNet::Core::Torrent::TorrentMetadataFetcher::IsTorrentFile(torrentSource))
 			{
@@ -689,7 +697,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		auto const downloadLimit = TaskDownloadLimitNumberBox().Value();
 		auto const uploadLimit = TaskUploadLimitNumberBox().Value();
 		auto const minimumUploadRate = TaskMinimumUploadRateNumberBox().Value();
-		if (!std::isfinite(downloadLimit) || !std::isfinite(uploadLimit) || !std::isfinite(minimumUploadRate) || (uploadLimit > 0.0 && minimumUploadRate > uploadLimit))
+		auto const downloadLimitBytes =
+			::OpenNet::Core::Torrent::LibtorrentHandle::TryKilobytesToBytesPerSecond(downloadLimit);
+		auto const uploadLimitBytes =
+			::OpenNet::Core::Torrent::LibtorrentHandle::TryKilobytesToBytesPerSecond(uploadLimit);
+		auto const minimumUploadRateBytes =
+			::OpenNet::Core::Torrent::LibtorrentHandle::TryKilobytesToBytesPerSecond(minimumUploadRate);
+		if (!downloadLimitBytes || !uploadLimitBytes || !minimumUploadRateBytes
+			|| (*uploadLimitBytes > 0
+				&& *minimumUploadRateBytes > *uploadLimitBytes))
 		{
 			TaskSettingsStatusInfoBar().Severity(InfoBarSeverity::Error);
 			TaskSettingsStatusInfoBar().Message(ResourceGetString(L"TorrentTaskSettingsInvalidLimits"));
@@ -697,10 +713,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			return;
 		}
 
-		::OpenNet::Core::Torrent::LibtorrentHandle::TorrentTaskSettings settings;
-		settings.downloadLimit = static_cast<int>(downloadLimit * 1024.0);
-		settings.uploadLimit = static_cast<int>(uploadLimit * 1024.0);
-		settings.minimumUploadRate = static_cast<int>(minimumUploadRate * 1024.0);
+		auto const taskId = winrt::to_string(m_taskViewModel.TaskId());
+		::OpenNet::Core::Torrent::LibtorrentHandle::TorrentTaskPatch settings;
+		settings.downloadLimit = *downloadLimitBytes;
+		settings.uploadLimit = *uploadLimitBytes;
+		settings.minimumUploadRate = *minimumUploadRateBytes;
 		settings.maxConnections = static_cast<int>(TaskMaxConnectionsNumberBox().Value());
 		settings.maxUploads = static_cast<int>(TaskMaxUploadsNumberBox().Value());
 		settings.enableDht = TaskEnableDhtToggle().IsOn();
@@ -712,8 +729,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		settings.forceStart = TaskForceStartToggle().IsOn();
 		settings.uploadMode = TaskUploadModeToggle().IsOn();
 		settings.shareMode = TaskShareModeToggle().IsOn();
-		auto const taskId = winrt::to_string(m_taskViewModel.TaskId());
-		auto const applied = core->SetTorrentTaskSettings(taskId, settings);
+		auto const applied = core->PatchTorrentTaskSettings(taskId, settings);
 		if (applied)
 		{
 			auto const detail = core->GetTorrentDetail(taskId);

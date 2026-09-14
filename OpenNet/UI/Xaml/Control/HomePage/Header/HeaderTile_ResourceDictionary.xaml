@@ -7,11 +7,8 @@
     <Style BasedOn="{StaticResource DefaultHeaderTileStyle}" TargetType="local:HeaderTile" />
 
     <Style x:Key="DefaultHeaderTileStyle" TargetType="local:HeaderTile">
-        <Setter Property="Width" Value="360" />
-        <Setter Property="Height" Value="208" />
         <Setter Property="CornerRadius" Value="8" />
-        <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="Height" Value="208" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="local:HeaderTile">
@@ -65,5 +62,8 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="UseLayoutRounding" Value="True" />
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
+        <Setter Property="Width" Value="360" />
     </Style>
 </ResourceDictionary>

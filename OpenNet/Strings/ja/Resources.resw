@@ -4987,4 +4987,37 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>低優先度アラートが破棄されるまで保持する libtorrent アラートの上限です。</value>
   </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>コントロールの素材</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>カードとカードパネルの素材効果を変更します</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>リキッドガラス</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>コントロールの素材を選択</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>標準の Fluent サーフェスとリキッドガラスを比較し、OpenNet 全体で使う素材を選択します。</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>コントロールの素材</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>標準の Fluent サーフェス</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>リキッドガラス</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>ぼかし、屈折、エッジのハイライト</value>
+  </data>
 </root>

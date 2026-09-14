@@ -638,15 +638,12 @@
     <ClInclude Include="pch.h" />
     <ClCompile Include="App.xaml.ixx">
       <DependentUpon>App.xaml</DependentUpon>
-      <FileType>Document</FileType>
     </ClCompile>
     <ClInclude Include="MainWindow.xaml.h">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="resource.h" />
-    <ClCompile Include="ViewModels\Guide\GuideState.ixx">
-      <FileType>Document</FileType>
-    </ClCompile>
+    <ClCompile Include="ViewModels\Guide\GuideState.ixx" />
     <ClInclude Include="ViewModels\Guide\GuideViewModel.h">
       <DependentUpon>ViewModels\Guide\GuideViewModel.cpp</DependentUpon>
       <SubType>Code</SubType>
@@ -713,6 +710,7 @@
     <ClInclude Include="WindowsPlatform.h" />
     <ClInclude Include="LibtorrentIncludeGuard.h" />
     <ClInclude Include="LibtorrentIncludeRestore.h" />
+    <ClInclude Include="Core\torrentCore\TorrentSettingsAdapter.h" />
     <ClInclude Include="ThirdParty\boost\di.hpp" />
     <None Include="ThirdParty\boost\LICENSE_1_0.txt" />
   </ItemGroup>
@@ -1863,6 +1861,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK.Widgets" />
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
     <PackageReference Include="Mile.Aria2" />
+    <PackageReference Include="WinUI.Composition.Hlsl" />
     <PackageReference Include="WinUIEssential.WinUI3" />
     <PackageReference Include="WinUIEssential.WinUI3.Svg" />
     <PackageReference Include="XamlToolkit.Labs.WinUI.Native" />
@@ -1892,9 +1891,9 @@
     <Midl Include="UI\Xaml\View\Pages\TaskHttpLogPage.idl">
       <DependentUpon>UI\Xaml\View\Pages\TaskHttpLogPage.xaml</DependentUpon>
     </Midl>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="Core\Notification\HttpToastNotification.cpp" />
     <ClInclude Include="Core\Notification\HttpToastNotification.h" />
+    <ClCompile Include="Helpers\MaterialTheme.ixx" />
+    <Page Include="UI\Xaml\Control\Theme\VisualMaterials.xaml" />
   </ItemGroup>
 </Project>

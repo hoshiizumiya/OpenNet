@@ -40,6 +40,11 @@ export namespace OpenNet::ViewModels::Guide
 		CommonSetting,
 
 		/// <summary>
+		/// 选择控件材质
+		/// </summary>
+		Material,
+
+		/// <summary>
 		/// 完成
 		/// </summary>
 		Completed,

@@ -16,6 +16,7 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.MaterialTheme;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Content;
@@ -45,9 +46,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		});
 	}
 
+	void ThemesSettingsPage::MaterialStyleSelector_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
+	{
+		if (m_isInitializing) return;
+		auto const index = MaterialStyleSelector().SelectedIndex();
+		if (index >= 0 && index <= 1)
+		{
+			::OpenNet::Helpers::MaterialTheme::Set(static_cast<::OpenNet::Helpers::MaterialStyle>(index));
+		}
+	}
+
 	void ThemesSettingsPage::LoadBackdropSettings()
 	{
 		m_isInitializing = true;
+		MaterialStyleSelector().SelectedIndex(static_cast<int>(::OpenNet::Helpers::MaterialTheme::Current()));
 
 		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 4);

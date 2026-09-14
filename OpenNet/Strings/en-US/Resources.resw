@@ -5286,4 +5286,37 @@
   <data name="TaskHttpServersTab" xml:space="preserve">
     <value>Servers</value>
   </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>Control material</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>Changes the material used by cards and card surfaces</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>Liquid glass</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>Choose a control material</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>Compare the original Fluent surface with liquid glass, then choose the material used throughout OpenNet.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>Control material</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>Original Fluent surface</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>Liquid glass</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>Blur, refraction and edge highlights</value>
+  </data>
 </root>

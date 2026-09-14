@@ -12,6 +12,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.AppRuntime;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Utils.Message;
+import OpenNet.Helpers.MaterialTheme;
 import OpenNet.ViewModels.Guide.GuideState;
 
 using namespace winrt;
@@ -56,10 +57,7 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 			try
 			{
 				auto const context = resourceManager.CreateResourceContext();
-				context.QualifierValues().Insert(
-					winrt::Microsoft::Windows::ApplicationModel::Resources::
-						KnownResourceQualifierName::Language(),
-					tag);
+				context.QualifierValues().Insert(winrt::Microsoft::Windows::ApplicationModel::Resources::KnownResourceQualifierName::Language(), tag);
 				if (auto const candidate = resourceMap.TryGetValue(
 					L"GuideWindowTitle",
 					context))
@@ -87,6 +85,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		GuideViewT::InitializeComponent();
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
+		GuideMaterialStyleSelector().SelectedIndex(static_cast<int>(::OpenNet::Helpers::MaterialTheme::Current()));
+		m_isMaterialInitializing = false;
 		WebUIAddressBox().Text(to_hstring(
 			database.GetString("webui_host", "address")
 			.value_or("127.0.0.1")));
@@ -204,6 +204,17 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 	{
 		this->ViewModel().IsAgreementCopyAgreed(value);
 	}
+
+	void GuideView::GuideMaterialStyleSelector_SelectionChanged(IInspectable const&, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const&)
+	{
+		if (m_isMaterialInitializing) return;
+		auto const index = GuideMaterialStyleSelector().SelectedIndex();
+		if (index >= 0 && index <= 1)
+		{
+			::OpenNet::Helpers::MaterialTheme::Set(static_cast<::OpenNet::Helpers::MaterialStyle>(index));
+		}
+	}
+
 	void GuideView::NextOrComplete(Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		auto const state = this->ViewModel().State();

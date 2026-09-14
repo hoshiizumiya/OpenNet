@@ -38,6 +38,7 @@ export namespace OpenNet::Core::Torrent
 
         // Get the result after fetch completes (use after FetchMetadataAsync)
         std::optional<TorrentMetadataInfo> GetResult() const;
+        std::string GetReusableTorrentFilePath() const;
 
         // Parse a torrent file directly (synchronous)
         static std::optional<TorrentMetadataInfo> ParseTorrentFile(std::string const& filePath);

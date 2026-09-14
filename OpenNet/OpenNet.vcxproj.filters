@@ -236,6 +236,9 @@
     <Page Include="UI\Xaml\View\Dialog\FilterEditorDialog.xaml" />
     <Page Include="UI\Xaml\Control\Progress\Stroge\StorageBar_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Progress\HttpSegment\HttpSegmentProgressBar_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\VisualMaterials.xaml">
+      <Filter>UI\Xaml\Control\Theme</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="MainWindow.idl" />
@@ -815,6 +818,9 @@
     <ClCompile Include="Application\CompositionRoot.cpp" />
     <ClCompile Include="Presentation\ScopedPage.ixx" />
     <ClCompile Include="Helpers\WindowExBase.ixx" />
+    <ClCompile Include="Helpers\MaterialTheme.ixx">
+      <Filter>Helpers</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Service\Background\BackgroundMediaService.h">
@@ -1033,6 +1039,9 @@
     <ClInclude Include="WindowsPlatform.h" />
     <ClInclude Include="LibtorrentIncludeGuard.h" />
     <ClInclude Include="LibtorrentIncludeRestore.h" />
+    <ClInclude Include="Core\torrentCore\TorrentSettingsAdapter.h">
+      <Filter>Core\torrentCore</Filter>
+    </ClInclude>
     <ClInclude Include="Web\WebView2\WebView2Version.h">
       <Filter>Web\WebView2</Filter>
     </ClInclude>
@@ -1441,6 +1450,11 @@
       <Filter>Assets\Rules</Filter>
     </None>
     <None Include="mvvm_framework\README.md" />
+    <None Include="ThirdParty\boost\LICENSE_1_0.txt" />
+    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\overrides\**\*" />
+    <None Include="ThirdParty\VueTorrentWebUI\upstream\public\**\*" />
+    <None Include="ThirdParty\VueTorrentWebUI\overrides\**\*" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

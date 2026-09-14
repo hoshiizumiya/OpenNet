@@ -19,66 +19,39 @@
         <Setter Property="TextTrimming" Value="CharacterEllipsis" />
         <Setter Property="TextWrapping" Value="Wrap" />
     </Style>
-    <Style
-        x:Key="HeaderTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="HeaderTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="46" />
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
-    <Style
-        x:Key="SubheaderTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="SubheaderTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="34" />
         <Setter Property="FontWeight" Value="Light" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
-    <Style
-        x:Key="TitleTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="TitleTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource TitleTextBlockFontSize}" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
-    <Style
-        x:Key="SubtitleTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="SubtitleTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource SubtitleTextBlockFontSize}" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
-    <Style
-        x:Key="BodyTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="BodyTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
-    <Style
-        x:Key="CaptionTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="CaptionTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource CaptionTextBlockFontSize}" />
         <Setter Property="FontWeight" Value="Normal" />
     </Style>
-    <Style
-        x:Key="BodyStrongTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="BodyStrongTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource BodyStrongTextBlockFontSize}" />
     </Style>
-    <Style
-        x:Key="TitleLargeTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="TitleLargeTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource TitleLargeTextBlockFontSize}" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
-    <Style
-        x:Key="DisplayTextBlockStyle"
-        BasedOn="{StaticResource BaseTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="DisplayTextBlockStyle" BasedOn="{StaticResource BaseTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="FontSize" Value="{StaticResource DisplayTextBlockFontSize}" />
         <Setter Property="OpticalMarginAlignment" Value="TrimSideBearings" />
     </Style>
@@ -97,10 +70,7 @@
 
     <SolidColorBrush x:Key="TextControlTextForeground" Color="{ThemeResource TextFillColorPrimary}" />
     <Thickness x:Key="TextControlTextMargin">1,0</Thickness>
-    <Style
-        x:Key="TextControlTextBlockStyle"
-        BasedOn="{StaticResource BodyTextBlockStyle}"
-        TargetType="TextBlock">
+    <Style x:Key="TextControlTextBlockStyle" BasedOn="{StaticResource BodyTextBlockStyle}" TargetType="TextBlock">
         <Setter Property="Foreground" Value="{StaticResource TextControlTextForeground}" />
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalTextAlignment" Value="Center" />

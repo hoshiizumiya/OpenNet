@@ -11,7 +11,7 @@
     <Style BasedOn="{StaticResource DefaultHorizontalCardStyle}" TargetType="ouxcc:HorizontalCard" />
 
     <Style x:Key="DefaultHorizontalCardStyle" TargetType="ouxcc:HorizontalCard">
-        <Setter Property="Background" Value="{ThemeResource ControlAltFillColorSecondaryBrush}" />
+        <Setter Property="Background" Value="{ThemeResource OpenNetSurfaceBrush}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ouxcc:HorizontalCard">

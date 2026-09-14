@@ -1,0 +1,50 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:essential="using:WinUI3Package" xmlns:hlsl="using:WinUI.Composition.Hlsl">
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Light">
+            <hlsl:LiquidGlassBrush x:Key="OpenNetTitleCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="8" DispersionStrength="1.2" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="1.2" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetSurfaceBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="0.8" FallbackColor="#D9FFFFFF" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="18" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetGuideLiquidGlassBrush" BlurRadius="1" BorderThickness="0" CornerRadius="16" DispersionStrength="1.2" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" RefractionStrength="24" />
+            <StaticResource x:Key="SettingsCardBackground" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="SettingsCardBackgroundPointerOver" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="SettingsCardBackgroundPressed" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarBackground" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="OpenNetSurfaceBrush" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="Dark">
+            <hlsl:LiquidGlassBrush x:Key="OpenNetTitleCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="8" DispersionStrength="1.2" FallbackColor="#D92C2C2C" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="1.2" FallbackColor="#D92C2C2C" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetSurfaceBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="0.8" FallbackColor="#CC2C2C2C" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="18" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetGuideLiquidGlassBrush" BlurRadius="1" BorderThickness="0" CornerRadius="16" DispersionStrength="1.2" FallbackColor="#D92C2C2C" HighlightStrength="1.6" RefractionStrength="24" />
+            <StaticResource x:Key="SettingsCardBackground" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="SettingsCardBackgroundPointerOver" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="SettingsCardBackgroundPressed" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarBackground" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="OpenNetSurfaceBrush" />
+        </ResourceDictionary>
+        <ResourceDictionary x:Key="HighContrast">
+            <SolidColorBrush x:Key="OpenNetTitleCardBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="OpenNetCardBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="OpenNetSurfaceBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <SolidColorBrush x:Key="OpenNetGuideLiquidGlassBrush" Color="{ThemeResource SystemColorWindowColor}" />
+            <StaticResource x:Key="SettingsCardBackground" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="SettingsCardBackgroundPointerOver" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="SettingsCardBackgroundPressed" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarBackground" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarBackgroundOpen" ResourceKey="OpenNetSurfaceBrush" />
+            <StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="OpenNetSurfaceBrush" />
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
+    <Style BasedOn="{StaticResource DefaultCommandBarStyle}" TargetType="CommandBar">
+        <Setter Property="Background" Value="{ThemeResource OpenNetSurfaceBrush}" />
+    </Style>
+    <Style BasedOn="{StaticResource DefaultSettingsCardStyle}" TargetType="essential:SettingsCard">
+        <Setter Property="Background" Value="{ThemeResource OpenNetSurfaceBrush}" />
+    </Style>
+    <Style BasedOn="{StaticResource DefaultSettingsExpanderStyle}" TargetType="essential:SettingsExpander">
+        <Setter Property="Background" Value="{ThemeResource OpenNetSurfaceBrush}" />
+    </Style>
+</ResourceDictionary>

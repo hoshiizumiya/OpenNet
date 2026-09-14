@@ -37,6 +37,7 @@
     </PackageVersion>
     <PackageVersion Include="XamlToolkit.WinUI.Native" Version="0.7.0-alpha" />
     <PackageVersion Include="YexuanXiao.CppWinRTPlus.Ext" Version="0.9.0.4" />
+    <PackageVersion Include="WinUI.Composition.Hlsl" Version="1.0.84" />
   </ItemGroup>
   <!--  C# Project References  -->
   <ItemGroup>

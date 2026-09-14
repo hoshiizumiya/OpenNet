@@ -87,6 +87,10 @@ export namespace OpenNet::Core
 		int activeDownloads{ 20 };
 		int activeSeeds{ 20 };
 		int activeLimit{ 50 };
+		bool dontCountSlowTorrents{ true };
+		int slowTorrentDownloadRateThreshold{ 2048 };
+		int slowTorrentUploadRateThreshold{ 2048 };
+		int slowTorrentInactiveTimer{ 60 };
 
 		// ----- Speed Limits (bytes/sec, 0 = unlimited) -----
 		int downloadRateLimit{ 0 };
@@ -97,6 +101,10 @@ export namespace OpenNet::Core
 		//  seedingTimeLimit:  stop seeding after N minutes (0 = unlimited)
 		double seedingRatioLimit{ 0.0 };
 		int seedingTimeLimit{ 0 };
+		int inactiveSeedingTimeLimit{ 0 };
+		bool shareLimitMatchAll{ false };
+		int shareLimitAction{ 0 };
+		bool continueSeedingAfterCompletion{ false };
 
 		// ----- Peer -----
 		int peerTimeout{ 120 };

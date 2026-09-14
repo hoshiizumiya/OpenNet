@@ -357,6 +357,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			tooltip.append(L"\nHash: ");
 			tooltip.append(hash.c_str());
 		}
+		else
+		{
+			tooltip.append(L"\nHash: unavailable for this metadata/protocol");
+		}
 		ToolTipService::SetToolTip(piece, box_value(hstring{ tooltip }));
 		return piece;
 	}

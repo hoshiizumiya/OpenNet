@@ -39,6 +39,20 @@
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                 Text="Appearance" />
 
+            <essential:SettingsCard
+                x:Uid="ViewThemesSettingsPageControlMaterialCard"
+                Description="Changes the material used by cards and card surfaces"
+                Header="Control material"
+                HeaderIcon="{essential:FontIcon Glyph=&#xE790;}">
+                <ComboBox
+                    x:Name="MaterialStyleSelector"
+                    MinWidth="150"
+                    SelectionChanged="MaterialStyleSelector_SelectionChanged">
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialDefault" Content="Default" />
+                    <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialLiquidGlass" Content="Liquid glass" />
+                </ComboBox>
+            </essential:SettingsCard>
+
             <!--  Background  -->
             <essential:SettingsExpander
                 x:Uid="ViewThemesSettingsPageBackgroundExpander"

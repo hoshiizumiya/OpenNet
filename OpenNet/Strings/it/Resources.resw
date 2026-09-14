@@ -4980,4 +4980,37 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>Numero massimo di avvisi libtorrent in attesa prima di eliminare quelli a bassa priorità.</value>
   </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>Materiale dei controlli</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>Modifica l’effetto materiale di schede e pannelli</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>Predefinito</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>Vetro liquido</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>Scegli un materiale per i controlli</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>Confronta la superficie Fluent originale con il vetro liquido e scegli il materiale usato in OpenNet.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>Materiale dei controlli</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>Predefinito</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>Superficie Fluent originale</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>Vetro liquido</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>Sfocatura, rifrazione e riflessi sui bordi</value>
+  </data>
 </root>

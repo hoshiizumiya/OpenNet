@@ -120,21 +120,21 @@
                     <essential:SettingsCard x:Uid="TorrentTaskDownloadLimit">
                         <NumberBox
                             x:Name="TaskDownloadLimitNumberBox"
-                            Maximum="104857600"
+                            Maximum="2097151"
                             Minimum="0"
                             SpinButtonPlacementMode="Inline" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskUploadLimit">
                         <NumberBox
                             x:Name="TaskUploadLimitNumberBox"
-                            Maximum="104857600"
+                            Maximum="2097151"
                             Minimum="0"
                             SpinButtonPlacementMode="Inline" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskMinimumUploadRate">
                         <NumberBox
                             x:Name="TaskMinimumUploadRateNumberBox"
-                            Maximum="104857600"
+                            Maximum="2097151"
                             Minimum="0"
                             SpinButtonPlacementMode="Inline" />
                     </essential:SettingsCard>

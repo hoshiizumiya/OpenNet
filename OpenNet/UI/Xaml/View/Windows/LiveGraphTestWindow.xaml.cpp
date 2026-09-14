@@ -320,7 +320,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	}
 
 	void LiveGraphTestWindow::ApplyBrushAppearance()
-	{
+	{/*
 		if (!m_uiReady || !m_primaryBrush || !m_secondaryBrush)
 		{
 			return;
@@ -369,7 +369,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			createData(m_primaryBrush));
 		graph.UpdateGraphBrush(
 			m_secondaryGraphKey,
-			createData(m_secondaryBrush));
+			createData(m_secondaryBrush));*/
 	}
 
 	void LiveGraphTestWindow::UpdateGradientBounds(GraphBrushData const& brush, float height)
@@ -436,7 +436,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	}
 
 	void LiveGraphTestWindow::ApplyGraphSettings()
-	{
+	{/*
 		if (!m_uiReady)
 		{
 			return;
@@ -515,7 +515,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				graph.ClearColor(BoxColor(
 					ColorHelper::FromArgb(0, 0, 0, 0)));
 			}
-		}
+		}*/
 	}
 }
 

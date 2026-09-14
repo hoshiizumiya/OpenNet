@@ -45,7 +45,7 @@
             x:Uid="RuntimeStatusCommandBar"
             Grid.Row="1"
             Margin="16,8,16,8"
-            Background="Transparent"
+            Background="{ThemeResource OpenNetSurfaceBrush}"
             DefaultLabelPosition="Right">
             <AppBarButton
                 x:Uid="RuntimeStatusRefreshButton"
@@ -64,7 +64,7 @@
         <Border
             Grid.Row="2"
             Margin="16,0"
-            Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+            Background="{ThemeResource OpenNetCardBrush}"
             BorderBrush="{ThemeResource DividerStrokeColorDefaultBrush}"
             BorderThickness="1"
             CornerRadius="4">

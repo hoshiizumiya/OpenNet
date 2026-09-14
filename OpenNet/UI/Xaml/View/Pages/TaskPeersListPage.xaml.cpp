@@ -604,59 +604,39 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	// Format peer status flags to qBittorrent-style string: D=downloading, U=uploading, etc.
-	static winrt::hstring FormatPeerStatus(uint32_t flags)
+	static winrt::hstring FormatPeerStatus(::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo const& peer)
 	{
 		std::wstring result;
-		// lt::peer_info flag bits (libtorrent 2.0)
-		constexpr uint32_t interesting = 0x1;
-		constexpr uint32_t choked = 0x2;
-		constexpr uint32_t remote_interested = 0x4;
-		constexpr uint32_t remote_choked = 0x8;
-		constexpr uint32_t seed = 0x200;
-		constexpr uint32_t optimistic_unchoke = 0x800;
-		constexpr uint32_t snubbed = 0x1000;
-		constexpr uint32_t rc4_encrypted = 0x100000;
-		constexpr uint32_t plaintext_encrypted = 0x200000;
-
-		if (flags & interesting) result += L"D";        // we want data from them
-		if (flags & remote_interested) result += L"U";  // they want data from us
-		if (flags & choked) result += L"d";              // we are choked by them
-		if (flags & remote_choked) result += L"u";       // we are choking them
-		if (flags & seed) result += L"S";                // seed
-		if (flags & optimistic_unchoke) result += L"O";  // optimistic unchoke
-		if (flags & snubbed) result += L"H";             // snubbed
-		if (flags & rc4_encrypted) result += L"E";       // encrypted (RC4)
-		else if (flags & plaintext_encrypted) result += L"e"; // encrypted (plaintext)
+		if (peer.isInteresting) result += L"D";             // we want data from them
+		if (peer.isRemoteInterested) result += L"U";        // they want data from us
+		if (peer.isChoked) result += L"d";			        // we are choked by them
+		if (peer.isRemoteChoked) result += L"u";	        // we are choking them
+		if (peer.isSeed) result += L"S";			        // seed
+		if (peer.isOptimisticUnchoke) result += L"O";       // optimistic unchoke
+		if (peer.isSnubbed) result += L"H";			        // snubbed
+		if (peer.isRc4Encrypted) result += L"E";	        // encrypted (RC4)
+		else if (peer.isPlaintextEncrypted) result += L"e"; // encrypted (plaintext)
 
 		return winrt::hstring{ result };
 	}
 
-	static winrt::hstring FormatConnectionType(int connType, bool isI2p)
+	static winrt::hstring FormatConnectionType(
+		::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo const& peer)
 	{
-		if (isI2p) return L"I2P";
+		std::wstring protocol;
 		// 0_bit = 1, 1_bit = 2, 2_bit = 4 in libtorrent bitfield flags
-		switch (connType)
+		switch (peer.connectionType)
 		{
-			case 1: return L"BT";         // standard_bittorrent = 0_bit -> value 1
-			case 2: return L"WebSeed";    // web_seed = 1_bit -> value 2
-			case 4: return L"HTTP";       // http_seed = 2_bit -> value 4
-			default: return L"BT";
+			case 1: protocol = L"BT"; break;
+			case 2: protocol = L"WebSeed"; break;
+			case 4: protocol = L"HTTP"; break;
+			default: protocol = L"Unknown"; break;
 		}
-	}
-
-	static winrt::hstring FormatPeerSource(int source)
-	{
-		std::wstring parts;
-		if (source & 1) parts += L"Tracker ";   // tracker = 0_bit -> 1
-		if (source & 2) parts += L"DHT ";       // dht = 1_bit -> 2
-		if (source & 4) parts += L"PEX ";       // pex = 2_bit -> 4
-		if (source & 8) parts += L"LSD ";       // lsd = 3_bit -> 8
-		if (source & 16) parts += L"Resume ";   // resume_data = 4_bit -> 16
-		if (source & 32) parts += L"Incoming ";  // incoming = 5_bit -> 32
-		// Trim trailing space
-		if (!parts.empty() && parts.back() == L' ')
-			parts.pop_back();
-		return parts.empty() ? L"-" : winrt::hstring{ parts };
+		if (peer.isI2p) protocol += L" / I2P";
+		else if (peer.isUtp) protocol += L" / uTP";
+		else protocol += L" / TCP";
+		if (peer.isTls) protocol += L" / TLS";
+		return winrt::hstring{ protocol };
 	}
 
 	static std::string PeerEndpointKey(std::string const& ip, int port)
@@ -930,12 +910,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.UploadRate(peer.uploadRateKB);
 			item.DownloadedBytes(peer.totalDownloaded);
 			item.UploadedBytes(peer.totalUploaded);
-			item.PeerStatus(FormatPeerStatus(peer.flags));
+			item.PeerStatus(FormatPeerStatus(peer));
 			item.Reason(L"");
 			item.ConnectionTime(L"-");
-			item.Protocol(FormatConnectionType(peer.connectionType, peer.isI2p));
+			item.Protocol(FormatConnectionType(peer));
 			item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
-			item.Source(FormatPeerSource(peer.source));
+			item.Source(peer.sourceDescription.empty()
+				? L"-" : winrt::to_hstring(peer.sourceDescription));
 		};
 		auto makeEndpointItem =
 			[&initializeEndpointItem](std::string const& ip, int port)

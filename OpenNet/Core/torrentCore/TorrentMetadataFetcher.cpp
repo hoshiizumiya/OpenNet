@@ -13,6 +13,8 @@
 #include <libtorrent/create_torrent.hpp>
 #include <libtorrent/load_torrent.hpp>
 #include <libtorrent/write_resume_data.hpp>
+#include "TorrentSettingsAdapter.h"
+#include "Core/IPFilter/IPFilterManager.h"
 #include "LibtorrentIncludeRestore.h"
 
 module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
@@ -37,6 +39,7 @@ namespace OpenNet::Core::Torrent
 		std::atomic<bool> metadataFailed{ false };
 		MetadataProgressCallback progressCallback;
 		std::optional<TorrentMetadataInfo> result;
+		std::string reusableTorrentFilePath;
 		std::string errorMessage;
 	};
 
@@ -49,6 +52,7 @@ namespace OpenNet::Core::Torrent
 #define m_metadataFailed m_impl->metadataFailed
 #define m_progressCallback m_impl->progressCallback
 #define m_result m_impl->result
+#define m_reusableTorrentFilePath m_impl->reusableTorrentFilePath
 #define m_errorMessage m_impl->errorMessage
 
 	// Helper function to convert info_hash to hex string
@@ -59,7 +63,7 @@ namespace OpenNet::Core::Torrent
 		return oss.str();
 	}
 
-	static void PersistMetadataTorrent(lt::torrent_handle const& handle)
+	static std::string PersistMetadataTorrent(lt::torrent_handle const& handle)
 	{
 		try
 		{
@@ -67,7 +71,7 @@ namespace OpenNet::Core::Torrent
 				lt::torrent_handle::save_info_dict);
 			if (!params.ti || !params.ti->is_valid())
 			{
-				return;
+				return {};
 			}
 
 			auto bytes = lt::write_torrent_file_buf(
@@ -89,16 +93,21 @@ namespace OpenNet::Core::Torrent
 				}
 			}
 
+			auto const path = directory / ((stem.empty() ? L"metadata" : stem) + L".torrent");
 			std::ofstream output(
-				directory / ((stem.empty() ? L"metadata" : stem) + L".torrent"),
+				path,
 				std::ios::binary | std::ios::trunc);
 			output.write(bytes.data(), static_cast<std::streamsize>(bytes.size()));
+			output.flush();
+			if (!output.good()) return {};
+			return path.string();
 		}
 		catch (std::exception const& ex)
 		{
 			OutputDebugStringA((
 				"TorrentMetadataFetcher: Failed to save metadata: "
 				+ std::string(ex.what()) + "\n").c_str());
+			return {};
 		}
 	}
 
@@ -133,11 +142,14 @@ namespace OpenNet::Core::Torrent
 		try
 		{
 			lt::settings_pack pack;
+			auto& settingsManager =	::OpenNet::Core::TorrentSettingsManager::Instance();
+			settingsManager.Load();
+			auto const settings = settingsManager.Get();
+			Detail::ApplyNetworkSettings(settings, pack);
 
-			// Minimal configuration for metadata fetching
+			// Use ephemeral listeners so this separate preview session cannot
+			// contend with the main session's configured ports.
 			pack.set_str(lt::settings_pack::listen_interfaces, "0.0.0.0:0,[::]:0");
-			pack.set_bool(lt::settings_pack::enable_dht, true);
-			pack.set_bool(lt::settings_pack::enable_lsd, true);
 			pack.set_bool(lt::settings_pack::enable_upnp, false);  // Not needed for metadata
 			pack.set_bool(lt::settings_pack::enable_natpmp, false);
 
@@ -149,15 +161,10 @@ namespace OpenNet::Core::Torrent
 			// Limit connections since we only need metadata
 			pack.set_int(lt::settings_pack::connections_limit, 50);
 
-			// Add DHT bootstrap nodes — without these, the DHT table is empty
-			// and magnet links that rely on DHT can never find peers.
-			pack.set_str(lt::settings_pack::dht_bootstrap_nodes,
-						 "router.bittorrent.com:6881,"
-						 "router.utorrent.com:6881,"
-						 "dht.transmissionbt.com:6881,"
-						 "dht.libtorrent.org:25401");
-
 			m_ownedSession = std::make_unique<lt::session>(pack);
+			m_ownedSession->set_ip_filter(
+				::OpenNet::Core::IPFilterManager::Instance()
+				.BuildSessionFilter());
 			return true;
 		}
 		catch (std::exception const& ex)
@@ -179,6 +186,7 @@ namespace OpenNet::Core::Torrent
 		m_metadataReceived.store(false);
 		m_metadataFailed.store(false);
 		m_result = std::nullopt;
+		m_reusableTorrentFilePath.clear();
 		m_errorMessage.clear();
 
 		// Check if it's a torrent file (can parse directly)
@@ -251,6 +259,13 @@ namespace OpenNet::Core::Torrent
 			// for magnet links via the ut_metadata extension protocol (BEP 9).
 			atp.flags &= ~lt::torrent_flags::auto_managed;
 			atp.flags &= ~lt::torrent_flags::paused;
+			atp.flags |= lt::torrent_flags::default_dont_download;
+			if (atp.ti)
+			{
+				atp.file_priorities.assign(
+					static_cast<std::size_t>(atp.ti->num_files()),
+					lt::dont_download);
+			}
 
 			// Add torrent
 			auto session = m_ownedSession.get();
@@ -303,7 +318,8 @@ namespace OpenNet::Core::Torrent
 						}
 
 						m_result = ExtractMetadata(m_handle);
-						PersistMetadataTorrent(m_handle);
+						m_reusableTorrentFilePath =
+							PersistMetadataTorrent(m_handle);
 						break;
 					}
 
@@ -367,6 +383,12 @@ namespace OpenNet::Core::Torrent
 	std::optional<TorrentMetadataInfo> TorrentMetadataFetcher::GetResult() const
 	{
 		return m_result;
+	}
+
+	std::string TorrentMetadataFetcher::GetReusableTorrentFilePath() const
+	{
+		std::lock_guard lock(m_mutex);
+		return m_reusableTorrentFilePath;
 	}
 
 	bool TorrentMetadataFetcher::IsFetching() const noexcept

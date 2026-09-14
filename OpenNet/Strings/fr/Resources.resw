@@ -4980,4 +4980,37 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>Nombre maximal d’alertes libtorrent en attente avant suppression des alertes de faible priorité.</value>
   </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>Matériau des contrôles</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>Modifie l’effet de matériau des cartes et de leurs panneaux</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>Verre liquide</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>Choisir un matériau de contrôle</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>Comparez la surface Fluent d’origine au verre liquide, puis choisissez le matériau utilisé dans OpenNet.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>Matériau des contrôles</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>Surface Fluent d’origine</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>Verre liquide</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>Flou, réfraction et reflets des bords</value>
+  </data>
 </root>

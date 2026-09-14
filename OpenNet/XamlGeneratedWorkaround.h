@@ -43,6 +43,7 @@ import winrt.Windows.UI.Xaml.Interop;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.XamlTypeInfo;
 import winrt.WinUI3Package;
+import winrt.WinUI.Composition.Hlsl;
 import winrt.XamlToolkit.WinUI;
 import winrt.XamlToolkit.WinUI.Controls;
 

@@ -4,6 +4,7 @@
 module OpenNet.Core.P2PManager;
 
 import OpenNet.Core.Torrent.TrackerManager;
+import OpenNet.Core.TorrentSettings;
 
 using namespace winrt;
 using namespace Windows::Foundation;
@@ -92,7 +93,8 @@ namespace OpenNet::Core
 					if (!m_stateManager->Initialize())
 					{
 						OutputDebugStringA("Failed to initialize TorrentStateManager\n");
-						// Continue anyway, persistence will just be disabled
+						m_stateManager.reset();
+						throw winrt::hresult_error(E_FAIL, L"Failed to initialize torrent persistence.");
 					}
 				}
 
@@ -232,7 +234,8 @@ namespace OpenNet::Core
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
 		co_return m_torrentCore->AddMagnet(
-			magnetUri, savePath, filePriorities, extraTrackers, startImmediately);
+			magnetUri, savePath, filePriorities, extraTrackers, startImmediately)
+			.Succeeded();
 	}
 
 	IAsyncOperation<bool> P2PManager::AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities, std::vector<std::string> const& extraTrackers, bool startImmediately, bool seedMode)
@@ -243,7 +246,9 @@ namespace OpenNet::Core
 		co_await trackerInitialization;
 		std::scoped_lock lk(m_torrentMutex);
 		if (!m_torrentCore) co_return false;
-		co_return m_torrentCore->AddTorrentFile(torrentFilePath, savePath, filePriorities, extraTrackers, startImmediately, seedMode);
+		co_return m_torrentCore->AddTorrentFile(
+			torrentFilePath, savePath, filePriorities, extraTrackers,
+			startImmediately, seedMode).Succeeded();
 	}
 
 	IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()
@@ -260,7 +265,7 @@ namespace OpenNet::Core
 			// Paused/completed torrents are restored in their correct state via resume data flags.
 			// Without loading them, "Resume" button won't work for paused tasks
 			// since they wouldn't exist in the libtorrent session.
-			if (task.status == 1 || task.status == 2 || task.status == 3)
+			if (task.status == 1 || task.status == 2 || task.status == 3 || task.status == 4)
 			{
 				std::string resumedId = m_torrentCore->AddTorrentFromResumeData(task.taskId);
 				if (!resumedId.empty())
@@ -269,17 +274,27 @@ namespace OpenNet::Core
 
 					// Ensure paused and completed tasks stay stopped even when
 					// older resume data did not preserve that state.
-					if (task.status == 2 || task.status == 3)
+					auto const policy = m_stateManager->LoadTaskSettings(task.taskId);
+					if (task.status == 2 || task.status == 4
+						|| (task.status == 3 && (!policy || policy->completionAction != 1)))
 					{
 						m_torrentCore->PauseTorrent(task.taskId);
-						if (task.status == 3 && m_stateManager)
+						if ((task.status == 3 || task.status == 4)
+							&& m_stateManager)
 						{
-							m_stateManager->UpdateTaskStatus(task.taskId, 3);
+							m_stateManager->UpdateTaskStatus(
+								task.taskId, task.status);
 						}
+					}
+					else if (task.status == 3)
+					{
+						m_torrentCore->ResumeTorrent(task.taskId);
+						m_stateManager->UpdateTaskStatus(task.taskId, 3);
 					}
 				}
 			}
 		}
+		m_torrentCore->RestoreQueuePositions();
 	}
 
 	std::vector<::OpenNet::Core::Torrent::TaskMetadata> P2PManager::GetAllTasks()
@@ -310,7 +325,7 @@ namespace OpenNet::Core
 			auto tasks = m_stateManager->LoadAllTasks();
 			for (auto const& task : tasks)
 			{
-				if (task.status == 1 || task.status == 2)
+				if (task.status >= 1 && task.status <= 4)
 				{
 					m_torrentCore->AddTorrentFromResumeData(task.taskId);
 				}

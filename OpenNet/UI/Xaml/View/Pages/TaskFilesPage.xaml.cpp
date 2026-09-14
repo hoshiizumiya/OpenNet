@@ -369,6 +369,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto detail = p2p.TorrentCore()->GetTorrentFilesSnapshot(taskId);
+		std::erase_if(detail.files, [](auto const& file)
+		{
+			return file.isPadFile;
+		});
 
 		if (detail.files.empty())
 		{

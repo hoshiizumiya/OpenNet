@@ -94,7 +94,11 @@ export namespace OpenNet::Core::RSS
         void UpdateLoop();
         void FetchFeed(const std::wstring& feedId);
         winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> FetchFeedContentAsync(const std::wstring& url);
-        void ProcessNewItems(RSSFeed& feed, const std::vector<RSSItem>& newItems);
+        void ProcessNewItems(
+            RSSFeed& feed,
+            const std::vector<RSSItem>& newItems,
+            std::vector<RSSItem>& itemsToNotify,
+            std::vector<RSSItem>& itemsToDownload);
         std::wstring GenerateFeedId();
 
         std::unordered_map<std::wstring, RSSFeed> m_feeds;

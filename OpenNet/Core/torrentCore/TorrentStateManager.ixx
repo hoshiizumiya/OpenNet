@@ -21,6 +21,7 @@ export namespace OpenNet::Core::Torrent
 		std::string infoHashV1;
 		std::string infoHashV2;
 		std::string errorMessage;
+		int queuePosition{ -1 };
 		std::vector<uint8_t> resumeData; // libtorrent resume data blob
 	};
 
@@ -41,6 +42,12 @@ export namespace OpenNet::Core::Torrent
 		bool forceStart{};
 		bool uploadMode{};
 		bool shareMode{};
+		double shareRatioLimit{ -2.0 };
+		int seedingTimeLimit{ -2 };
+		int inactiveSeedingTimeLimit{ -2 };
+		bool shareLimitMatchAll{};
+		int shareLimitAction{ -1 }; // inherit global action
+		int completionAction{ -1 }; // -1=unresolved, 0=stop, 1=continue seeding
 	};
 
 	// Manages libtorrent session state and resume data persistence
@@ -69,11 +76,11 @@ export namespace OpenNet::Core::Torrent
 		bool SaveTaskResumeData(
 			std::string const& taskId,
 			std::vector<std::uint8_t> const& resumeData);
-		std::optional<std::vector<std::uint8_t>> LoadTaskResumeData(
-			std::string const& taskId);
+		std::optional<std::vector<std::uint8_t>> LoadTaskResumeData(std::string const& taskId);
 
 		// Task metadata operations
 		bool SaveTaskMetadata(TaskMetadata const& metadata);
+		std::optional<std::string> FindTaskIdByInfoHashes(std::string const& infoHashV1, std::string const& infoHashV2);
 		std::optional<TaskMetadata> LoadTaskMetadata(std::string const& taskId);
 		std::vector<TaskMetadata> LoadAllTasks();
 		bool SaveTaskSettings(TaskSettingsMetadata const& settings);
@@ -83,6 +90,7 @@ export namespace OpenNet::Core::Torrent
 		bool UpdateTaskProgress(std::string const& taskId, std::int64_t downloadedSize, std::int64_t uploadedSize, std::int64_t completedTimestamp);
 		bool UpdateTaskName(std::string const& taskId, std::string const& name);
 		bool UpdateTaskSavePath(std::string const& taskId, std::string const& savePath);
+		bool UpdateTaskQueuePosition(std::string const& taskId, int queuePosition);
 
 		// Import/Export functionality
 		bool ExportToFile(std::wstring const& filePath);
