@@ -28,6 +28,18 @@
   <Folder Name="/Solution Items/docs/">
     <File Path="docs/cppwinrt-xamltypeinfo-build-guide.md" />
   </Folder>
+  <Folder Name="/ThirdParty/CommunityToolkit.WinUI/">
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI\XamlToolkit.WinUI.vcxproj" Id="17c20e50-8d62-4fc3-8feb-b64b03a893be" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.ModuleBuilder\XamlToolkit.WinUI.ModuleBuilder.vcxproj" Id="f9871572-63b1-4f7c-a561-c1f39bb9143b" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Helpers\XamlToolkit.WinUI.Helpers.vcxproj" Id="f8087280-d16f-4d9d-9e17-58aac733d56d" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Converters\XamlToolkit.WinUI.Converters.vcxproj" Id="5f5234f5-2630-47bf-94c7-b2c14301e00e" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Interactivity\XamlToolkit.WinUI.Interactivity.vcxproj" Id="70bc2fd9-1f86-48e5-b3d2-abd12a9e40dc" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Controls\XamlToolkit.WinUI.Controls.vcxproj" Id="ef5f53e1-2ddb-4936-a78f-517fc8be74ff" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Animations\XamlToolkit.WinUI.Animations.vcxproj" Id="37cd7b40-3e54-41ce-af73-43c6746ef315" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Behaviors\XamlToolkit.WinUI.Behaviors.vcxproj" Id="72f42e7f-edd4-4cde-b07d-e90d68039da9" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Media\XamlToolkit.WinUI.Media.vcxproj" Id="a8fa1b9a-b83c-408a-8132-c1576b9fcbd5" />
+    <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.Labs.WinUI\XamlToolkit.Labs.WinUI.vcxproj" Id="8dbdb115-b325-4d42-aecf-50cbf8b7ab3e" />
+  </Folder>
   <Project Path="OpenNetUnitTest/OpenNetUnitTest.vcxproj" Id="1a0e0afc-ae59-4945-af19-3df6d5ae63e7">
     <Deploy />
   </Project>
