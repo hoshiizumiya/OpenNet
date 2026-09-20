@@ -164,10 +164,12 @@ namespace OpenNet::Web::ServerDomain::details
 		if (parsedDomains.empty() && parsedIps.empty())
 			return false;
 
-		if (!parsedDomains.empty())
-			domains = std::move(parsedDomains);
-		if (!parsedIps.empty())
-			ips = std::move(parsedIps);
+		// A valid remote configuration is authoritative. In particular, an empty
+		// domain category means "there is no domain candidate", not "reuse the
+		// compiled domain". The compiled values are only fallbacks for an
+		// unavailable or invalid configuration.
+		domains = std::move(parsedDomains);
+		ips = std::move(parsedIps);
 		return true;
 	}
 
@@ -230,15 +232,24 @@ export namespace OpenNet::Web::ServerDomain
 			// Keep the compiled defaults when the remote configuration is unavailable.
 		}
 
-		details::SetResolvedRoots(domainCandidates.front(), ipCandidates.front());
+		auto const primaryRoot = domainCandidates.empty()
+			? std::wstring{ details::DefaultDomainRoot }
+			: domainCandidates.front();
+		auto const backupRoot = ipCandidates.empty()
+			? std::wstring{ details::DefaultIpRoot }
+			: ipCandidates.front();
+		details::SetResolvedRoots(primaryRoot, backupRoot);
 
-		// Domain entries always have priority. Only after every domain candidate
-		// fails do we try IP entries.
+		// Domain entries always have priority. If the valid remote configuration
+		// contains no domain entries, this loop is skipped and IP probing begins
+		// immediately. Only an unavailable/invalid configuration uses compiled
+		// candidates.
+		
 		for (auto const& candidate : domainCandidates)
 		{
 			if (co_await details::ProbeEndpointAsync(candidate))
 			{
-				details::SetResolvedRoots(candidate, ipCandidates.front());
+				details::SetResolvedRoots(candidate, backupRoot);
 				details::CurrentMode.store(ServerDomainMode::Primary, std::memory_order_relaxed);
 				co_return;
 			}
@@ -248,7 +259,7 @@ export namespace OpenNet::Web::ServerDomain
 		{
 			if (co_await details::ProbeEndpointAsync(candidate))
 			{
-				details::SetResolvedRoots(domainCandidates.front(), candidate);
+				details::SetResolvedRoots(primaryRoot, candidate);
 				details::CurrentMode.store(ServerDomainMode::Backup, std::memory_order_relaxed);
 				co_return;
 			}
