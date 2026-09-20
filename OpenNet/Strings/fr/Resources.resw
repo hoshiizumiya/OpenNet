@@ -5013,4 +5013,322 @@
   <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
     <value>Flou, réfraction et reflets des bords</value>
   </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>Téléversé</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>Emplacement</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>Progression</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>Vitesse de téléchargement</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>Vitesse de téléversement</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>Téléversé</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>État</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>Protocole</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>Initiateur</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>Graphique de vitesse</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>Mode de largeur des onglets</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>Largeur égale</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>Ajuster au contenu</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>Compact</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>Personnalisation du graphique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>Les modifications sont appliquées immédiatement et enregistrées pour la prochaine session</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>Comportement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>Pixels</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>Réserve d’historique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>Conserver les points hors écran afin que l’agrandissement de la fenêtre puisse afficher l’historique récent</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>Largeurs d’écran</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>Courbes lissées</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>Interpoler les échantillons adjacents avec des courbes arrondies</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>Ligne de surbrillance</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>Afficher un marqueur mobile pour les valeurs échantillonnées du graphique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Maximum parmi toutes les séries</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>Minimum de chaque série</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Minimum parmi toutes les séries</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>Maximum de chaque série</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>Croix</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>Durée de l’animation</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>Chaque point</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>Grille et canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>Choisir le motif et l’espacement du canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>Motif d’arrière-plan</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Espacement des croix</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Espacement des points</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>Couleurs personnalisées du canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>Remplacer les couleurs par défaut de la grille adaptées au thème et du canevas transparent</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>Couleurs du canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>Sélectionner les couleurs de la grille et du canevas utilisées lorsque les couleurs personnalisées sont activées</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>Contrôler l’échantillonnage, le mouvement, le lissage des courbes et l’historique conservé</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>Mouvement et historique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>Remplissage en dégradé</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>Ligne de bordure</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>Distance de défilement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>Distance horizontale parcourue pendant chaque durée de défilement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>Durée du défilement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>Temps nécessaire pour parcourir la distance configurée</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>Intervalle d’échantillonnage</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>Cadence d’échantillonnage de la télémétrie</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>Apparence</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>Date d’achèvement</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>Ratio de partage</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Sources/Pairs [total]</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>Sources/Pairs [total]</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>Ouvrir la détection NAT et des ports</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>Recharger</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>Aller</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>Ouvrir dans le navigateur système par défaut</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>Sources connectées / pairs connectés [toutes les sources connues / tous les pairs connus]</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>Lire le fichier</value>
+  </data>
+  <data name="CreateTorrentFormat.Header" xml:space="preserve">
+    <value>Format du torrent</value>
+  </data>
+  <data name="CreateTorrentPieceSize.Header" xml:space="preserve">
+    <value>Taille des pièces</value>
+  </data>
+  <data name="CreateTorrentPieceSizeAuto.Content" xml:space="preserve">
+    <value>Automatique</value>
+  </data>
+  <data name="CreateTorrentStartSeeding.Content" xml:space="preserve">
+    <value>Commencer immédiatement le partage</value>
+  </data>
+  <data name="CreateTorrentUrlSeeds.Header" xml:space="preserve">
+    <value>URL des sources Web</value>
+  </data>
+  <data name="CreateTorrentUrlSeeds.PlaceholderText" xml:space="preserve">
+    <value>Une URL de source Web par ligne</value>
+  </data>
+  <data name="CreateTorrentSourceField.Header" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="CreateTorrentSourceField.PlaceholderText" xml:space="preserve">
+    <value>Identifiant de source facultatif</value>
+  </data>
+  <data name="CreateTorrentProgressWindowTitleBar.Title" xml:space="preserve">
+    <value>Création du torrent</value>
+  </data>
+  <data name="CreateTorrentProgressWindowTitleBar.Subtitle" xml:space="preserve">
+    <value>Calcul des empreintes des fichiers</value>
+  </data>
+  <data name="CreateTorrentProgressDescription.Text" xml:space="preserve">
+    <value>Création des métadonnées BitTorrent</value>
+  </data>
+  <data name="CreateTorrentProgressSourceLabel.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
+  <data name="CreateTorrentProgressTargetLabel.Text" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="CreateTorrentProgressOpenFolder.Content" xml:space="preserve">
+    <value>Ouvrir le dossier</value>
+  </data>
+  <data name="CreateTorrentCompleteSeedingFailed" xml:space="preserve">
+    <value>Le torrent a été créé, mais il n’a pas pu être ajouté pour le partage.</value>
+  </data>
+  <data name="CreateTorrentCanceling" xml:space="preserve">
+    <value>Annulation de la création du torrent…</value>
+  </data>
+  <data name="CreateTorrentUnknownFailure" xml:space="preserve">
+    <value>Une erreur inconnue s’est produite lors de la création du torrent.</value>
+  </data>
+  <data name="WebUISettingsEnabledCard.Header" xml:space="preserve">
+    <value>Activer l’interface Web</value>
+  </data>
+  <data name="WebUISettingsEnabledCard.Description" xml:space="preserve">
+    <value>Autoriser les navigateurs et les clients API compatibles à se connecter à OpenNet.</value>
+  </data>
+  <data name="WebUISettingsSecurityHeader.Text" xml:space="preserve">
+    <value>Sessions et sécurité</value>
+  </data>
+  <data name="WebUISettingsSessionExpander.Header" xml:space="preserve">
+    <value>Politique d’authentification</value>
+  </data>
+  <data name="WebUISettingsSessionExpander.Description" xml:space="preserve">
+    <value>Contrôler l’authentification locale, la durée de vie des sessions et les bannissements après échec de connexion.</value>
+  </data>
+  <data name="WebUISettingsSessionTimeoutCard.Header" xml:space="preserve">
+    <value>Délai d’expiration de la session (secondes)</value>
+  </data>
+  <data name="WebUISettingsSessionLimitCard.Header" xml:space="preserve">
+    <value>Limite du nombre de sessions</value>
+  </data>
+  <data name="WebUISettingsMaxFailuresCard.Header" xml:space="preserve">
+    <value>Bannir après des échecs consécutifs</value>
+  </data>
+  <data name="WebUISettingsBanDurationCard.Header" xml:space="preserve">
+    <value>Durée du bannissement (secondes)</value>
+  </data>
+  <data name="WebUISettingsRequestSecurityExpander.Header" xml:space="preserve">
+    <value>Protection des requêtes</value>
+  </data>
+  <data name="WebUISettingsRequestSecurityExpander.Description" xml:space="preserve">
+    <value>Protéger les sessions du navigateur contre les requêtes falsifiées et le rebinding DNS.</value>
+  </data>
+  <data name="WebUISettingsHostValidationCard.Header" xml:space="preserve">
+    <value>Validation de l’en-tête Host</value>
+  </data>
+  <data name="WebUISettingsSecureCookieCard.Header" xml:space="preserve">
+    <value>Indicateur Secure des cookies</value>
+  </data>
+  <data name="WebUISettingsDomainsCard.Header" xml:space="preserve">
+    <value>Domaines de serveur autorisés</value>
+  </data>
+  <data name="WebUISettingsBypassLocalAuth.Header" xml:space="preserve">
+    <value>Contourner l’authentification sur localhost</value>
+  </data>
+  <data name="WebUISettingsCsrfProtection.Header" xml:space="preserve">
+    <value>Protection CSRF</value>
+  </data>
+  <data name="TaskHttpConnectionsTab" xml:space="preserve">
+    <value>Connexions</value>
+  </data>
+  <data name="TaskHttpServersTab" xml:space="preserve">
+    <value>Serveurs</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
+    <value>Échanger les listes de pairs avec les pairs connectés</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardPEX.Header" xml:space="preserve">
+    <value>Activer l’échange de pairs (PEX)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardDHT.Description" xml:space="preserve">
+    <value>Table de hachage distribuée pour la découverte décentralisée des pairs</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
+    <value>Activer DHT</value>
+  </data>
 </root>

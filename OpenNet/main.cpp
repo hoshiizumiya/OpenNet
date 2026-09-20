@@ -5,6 +5,7 @@
 
 import OpenNet.App;
 import OpenNet.Core.ApplicationModel;
+import OpenNet.Web.ServerDomain;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Windows.Foundation;
 import winrt.Microsoft.UI.Composition;
@@ -202,6 +203,30 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 		return 0;
 	}
 
+	// Resolve the server endpoint before XAML and network-dependent services start.
+	// The WinRT HTTP operation is waited on from an MTA worker because blocking a
+	// WinRT async operation with .get() on the STA/XAML thread is not permitted.
+	std::jthread serverDomainInitThread([]() noexcept
+	{
+		try
+		{
+			winrt::init_apartment(winrt::apartment_type::multi_threaded);
+			try
+			{
+				::OpenNet::Web::ServerDomain::InitializeAsync().get();
+			}
+			catch (...)
+			{
+				OutputDebugStringW(L"ServerDomain initialization failed; compiled fallback endpoints remain active.\r\n");
+			}
+			winrt::uninit_apartment();
+		}
+		catch (...)
+		{
+			OutputDebugStringW(L"Failed to initialize the ServerDomain worker apartment.\r\n");
+		}
+	});
+
 	bool DefaultStyleOptimizationsResult = winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::DefaultStyleOptimizations);
 	bool DeferContextFlyoutInitResult = winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::DeferContextFlyoutInit);
 	bool IconNoGridOptimizationResult = winrt::Microsoft::UI::Xaml::Settings::XamlOptionalChanges::EnableChange(winrt::Microsoft::UI::Xaml::Settings::XamlChangeId::IconNoGridOptimization);
@@ -215,6 +240,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	OutputDebugStringW((L"OptimizeApplyStylesResult: " + std::wstring(OptimizeApplyStylesResult ? L"true" : L"false") + L"\n").c_str());
 	OutputDebugStringW((L"CompositionEngineResult: " + std::wstring(CompositionEngineResult ? L"true" : L"false") + L"\n").c_str());
 #endif // _DEBUG
+
+	if (serverDomainInitThread.joinable())
+	{
+		serverDomainInitThread.join();
+	}
 
 	winrt::Microsoft::UI::Xaml::Application::Start([](auto&&)
 	{
