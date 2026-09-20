@@ -1868,16 +1868,36 @@
     <PackageReference Include="WinUI.LiquidGlass" />
     <PackageReference Include="WinUIEssential.WinUI3" />
     <PackageReference Include="WinUIEssential.WinUI3.Svg" />
-    <PackageReference Include="XamlToolkit.Labs.WinUI.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Animations.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Behaviors.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Controls.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Converters.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Helpers.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Interactivity.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Media.Native" />
-    <PackageReference Include="XamlToolkit.WinUI.Native" />
     <PackageReference Include="YexuanXiao.CppWinRTPlus.Ext" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.Labs.WinUI\XamlToolkit.Labs.WinUI.vcxproj">
+      <Project>{8dbdb115-b325-4d42-aecf-50cbf8b7ab3e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Animations\XamlToolkit.WinUI.Animations.vcxproj">
+      <Project>{37cd7b40-3e54-41ce-af73-43c6746ef315}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Behaviors\XamlToolkit.WinUI.Behaviors.vcxproj">
+      <Project>{72f42e7f-edd4-4cde-b07d-e90d68039da9}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Controls\XamlToolkit.WinUI.Controls.vcxproj">
+      <Project>{ef5f53e1-2ddb-4936-a78f-517fc8be74ff}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Converters\XamlToolkit.WinUI.Converters.vcxproj">
+      <Project>{5f5234f5-2630-47bf-94c7-b2c14301e00e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Helpers\XamlToolkit.WinUI.Helpers.vcxproj">
+      <Project>{f8087280-d16f-4d9d-9e17-58aac733d56d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Interactivity\XamlToolkit.WinUI.Interactivity.vcxproj">
+      <Project>{70bc2fd9-1f86-48e5-b3d2-abd12a9e40dc}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI.Media\XamlToolkit.WinUI.Media.vcxproj">
+      <Project>{a8fa1b9a-b83c-408a-8132-c1576b9fcbd5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI\XamlToolkit.WinUI.vcxproj">
+      <Project>{17c20e50-8d62-4fc3-8feb-b64b03a893be}</Project>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Font Include="Assets\Fonts\CascadiaMono.ttf" />

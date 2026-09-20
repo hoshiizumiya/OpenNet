@@ -1,0 +1,4 @@
+[submodule "ThirdParty/CommunityToolkit.WinUI"]
+	path = ThirdParty/CommunityToolkit.WinUI
+	url = https://github.com/hoshiizumiya/CommunityToolkit.WinUI.git
+	branch = master-opennet
