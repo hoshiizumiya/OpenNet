@@ -3574,19 +3574,19 @@
     <value>从URL（.txt格式）订阅跟踪列表</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsExpander.Header" xml:space="preserve">
-    <value>Tracker Subscriptions</value>
+    <value>Tracker 订阅</value>
   </data>
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>订阅</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
-    <value>Enable Local Peer Discovery (LSD)</value>
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
+    <value>启用本地节点发现 (LSD)</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>订阅链接 (e.g., https://example.com/trackers.txt)</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
-    <value>Discover peers on the local network</value>
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
+    <value>发现位于本地网络的用户</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
     <value>前往仓库</value>
@@ -5318,5 +5318,17 @@
   </data>
   <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
     <value>模糊、折射与边缘高光</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardPEX.Header" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardDHT.Description" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
+    <value />
   </data>
 </root>

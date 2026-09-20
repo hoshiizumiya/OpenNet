@@ -3543,13 +3543,13 @@
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>Sottoscrivi</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
     <value>Abilita rilevamento peer locale (LSD)</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>URL sottoscrizione (ad es. https://example.com/trackers.txt)</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
     <value>Rileva peer sulla rete locale</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">

@@ -372,15 +372,17 @@
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                 Text="Font" />
 
+            <!--  TODO  -->
             <essential:SettingsCard
                 x:Name="FontSetting"
                 x:Uid="ViewThemesSettingsPageFontSetting"
                 Click="NavigateToThemeSettingFontSettingPageButton_Click"
-                Description="Font size"
+                Description="Font custom (Not available currently. Please go to Windows Settings to configure)"
                 Header="Font Setting"
                 HeaderIcon="{essential:FontIcon Glyph=&#xE8D2;,
                                                 FontFamily=Segoe Fluent Icons}"
-                IsClickEnabled="True" />
+                IsClickEnabled="True"
+                IsEnabled="False" />
 
             <StackPanel.ChildrenTransitions>
                 <TransitionCollection>

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // XamlCompiler-generated metadata sources still emit textual C++/WinRT, COM,
 // Windows and STL includes. Those declarations are supplied by windows.h and
@@ -44,6 +44,7 @@ import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.XamlTypeInfo;
 import winrt.WinUI3Package;
 import winrt.WinUI.Composition.Hlsl;
+import winrt.WinUI.LiquidGlass;
 import winrt.XamlToolkit.WinUI;
 import winrt.XamlToolkit.WinUI.Controls;
 

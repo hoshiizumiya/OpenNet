@@ -3543,13 +3543,13 @@
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>Subscribe</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
     <value>Activer Local Pair Découverte (LSD)</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>Abonnement URL (e.g., https://example.com/traqueurs.txt)</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
     <value>Discover pairs sur le local réseau</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">

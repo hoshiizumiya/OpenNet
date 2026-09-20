@@ -1451,10 +1451,8 @@
     </None>
     <None Include="mvvm_framework\README.md" />
     <None Include="ThirdParty\boost\LICENSE_1_0.txt" />
-    <None Include="ThirdParty\qBittorrentWebUI\upstream\**\*" />
-    <None Include="ThirdParty\qBittorrentWebUI\overrides\**\*" />
-    <None Include="ThirdParty\VueTorrentWebUI\upstream\public\**\*" />
-    <None Include="ThirdParty\VueTorrentWebUI\overrides\**\*" />
+    <None Include="ThirdParty\qBittorrentWebUI\*" />
+    <None Include="ThirdParty\VueTorrentWebUI\*" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="$(MSBuildThisFileDirectory)..\..\natvis\wil.natvis" />

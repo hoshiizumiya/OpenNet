@@ -99,13 +99,11 @@
     <!--  Overrides default style added to Generic.xaml by NavigationView control at runtime  -->
     <Style x:Key="NavigationBackButtonNormalStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent" />
-        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
+        <Setter Property="Content" Value="&#xE72B;" />
         <Setter Property="FontFamily" Value="{ThemeResource SymbolThemeFontFamily}" />
         <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="{ThemeResource SystemControlForegroundBaseHighBrush}" />
         <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
-        <Setter Property="Content" Value="&#xE72B;" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -157,23 +155,23 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <!--  Overrides default style added to Generic.xaml by NavigationView control at runtime  -->
     <Style x:Key="PaneToggleButtonStyle" TargetType="Button">
-        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
+        <Setter Property="BorderBrush" Value="{ThemeResource NavigationViewItemBorderBrush}" />
+        <Setter Property="BorderThickness" Value="{ThemeResource NavigationViewToggleBorderThickness}" />
         <Setter Property="FontFamily" Value="{StaticResource SymbolThemeFontFamily}" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
+        <Setter Property="HorizontalAlignment" Value="Left" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
         <Setter Property="MinHeight" Value="{StaticResource PaneToggleButtonSize}" />
         <Setter Property="MinWidth" Value="{StaticResource PaneToggleButtonSize}" />
         <Setter Property="Padding" Value="0" />
-        <Setter Property="HorizontalAlignment" Value="Left" />
-        <Setter Property="VerticalAlignment" Value="Top" />
-        <Setter Property="HorizontalContentAlignment" Value="Center" />
-        <Setter Property="VerticalContentAlignment" Value="Center" />
-        <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
-        <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
-        <Setter Property="BorderBrush" Value="{ThemeResource NavigationViewItemBorderBrush}" />
-        <Setter Property="BorderThickness" Value="{ThemeResource NavigationViewToggleBorderThickness}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
@@ -242,6 +240,8 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="VerticalAlignment" Value="Top" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
     <!--
@@ -251,17 +251,17 @@
         our customization are marked with "WinStore: "
     -->
     <Style x:Key="MainNavigationViewStyle" TargetType="NavigationView">
-        <Setter Property="PaneToggleButtonStyle" Value="{StaticResource PaneToggleButtonStyle}" />
         <Setter Property="AlwaysShowHeader" Value="False" />
+        <Setter Property="CompactPaneLength" Value="{ThemeResource RailNavigationViewCompactPaneLength}" />
+        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
         <Setter Property="IsBackButtonVisible" Value="Collapsed" />
         <Setter Property="IsPaneToggleButtonVisible" Value="False" />
         <Setter Property="IsSettingsVisible" Value="False" />
-        <Setter Property="PaneDisplayMode" Value="Left" />
-        <Setter Property="OpenPaneLength" Value="{ThemeResource RailNavigationViewOpenPaneLength}" />
         <Setter Property="IsTabStop" Value="False" />
-        <Setter Property="CompactPaneLength" Value="{ThemeResource RailNavigationViewCompactPaneLength}" />
-        <Setter Property="CornerRadius" Value="{ThemeResource OverlayCornerRadius}" />
         <Setter Property="MenuItemContainerStyle" Value="{StaticResource MainNavigationViewItemStyle}" />
+        <Setter Property="OpenPaneLength" Value="{ThemeResource RailNavigationViewOpenPaneLength}" />
+        <Setter Property="PaneDisplayMode" Value="Left" />
+        <Setter Property="PaneToggleButtonStyle" Value="{StaticResource PaneToggleButtonStyle}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationView">
@@ -605,18 +605,17 @@
     </Style>
 
     <Style x:Key="MainNavigationViewItemStyle" TargetType="NavigationViewItem">
-        <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
         <Setter Property="Background" Value="{ThemeResource NavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource NavigationViewItemBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource NavigationViewItemBorderThickness}" />
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
-        <Setter Property="FontWeight" Value="Normal" />
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
-        <Setter Property="Margin" Value="{ThemeResource NavigationViewItemMargin}" />
-        <Setter Property="UseSystemFocusVisuals" Value="True" />
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="TabNavigation" Value="Once" />
         <Setter Property="CornerRadius" Value="{ThemeResource ControlCornerRadius}" />
+        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}" />
+        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}" />
+        <Setter Property="FontWeight" Value="Normal" />
+        <Setter Property="Foreground" Value="{ThemeResource NavigationViewItemForeground}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Margin" Value="{ThemeResource NavigationViewItemMargin}" />
+        <Setter Property="TabNavigation" Value="Once" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationViewItem">
@@ -748,16 +747,16 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
     </Style>
 
     <Style x:Key="MUX_NavigationViewItemPresenterStyleWhenOnLeftPane_Main" TargetType="NavigationViewItemPresenter">
-        <Setter Property="Foreground" Value="{ThemeResource RailNavigationViewItemForeground}" />
         <Setter Property="Background" Value="{ThemeResource RailNavigationViewItemBackground}" />
         <Setter Property="BorderBrush" Value="{ThemeResource RailNavigationViewItemBorderBrush}" />
         <Setter Property="BorderThickness" Value="{StaticResource NavigationViewItemBorderThickness}" />
-        <Setter Property="UseSystemFocusVisuals" Value="True" />
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="FontSize" Value="10" />
+        <Setter Property="Foreground" Value="{ThemeResource RailNavigationViewItemForeground}" />
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="NavigationViewItemPresenter">
@@ -1019,13 +1018,13 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="UseSystemFocusVisuals" Value="True" />
     </Style>
 
     <Style x:Key="MainNavSplitViewStyle" TargetType="SplitView">
-        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="VerticalContentAlignment" Value="Stretch" />
-        <Setter Property="OpenPaneLength" Value="{ThemeResource SplitViewOpenPaneThemeLength}" />
         <Setter Property="CompactPaneLength" Value="{ThemeResource SplitViewCompactPaneThemeLength}" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="OpenPaneLength" Value="{ThemeResource SplitViewOpenPaneThemeLength}" />
         <Setter Property="PaneBackground" Value="{ThemeResource SystemControlPageBackgroundChromeLowBrush}" />
         <Setter Property="Template">
             <Setter.Value>
@@ -1690,5 +1689,6 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
     </Style>
 </ResourceDictionary>

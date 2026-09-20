@@ -1849,7 +1849,10 @@
     <PackageReference Include="Microsoft.Windows.CppWinRT" />
     <PackageReference Include="Microsoft.Windows.ImplementationLibrary" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
-    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" />
+    <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.WindowsAppSDK" />
     <PackageReference Include="Microsoft.WindowsAppSDK.AI" />
     <PackageReference Include="Microsoft.WindowsAppSDK.Base" />
@@ -1862,6 +1865,7 @@
     <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
     <PackageReference Include="Mile.Aria2" />
     <PackageReference Include="WinUI.Composition.Hlsl" />
+    <PackageReference Include="WinUI.LiquidGlass" />
     <PackageReference Include="WinUIEssential.WinUI3" />
     <PackageReference Include="WinUIEssential.WinUI3.Svg" />
     <PackageReference Include="XamlToolkit.Labs.WinUI.Native" />

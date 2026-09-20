@@ -3544,13 +3544,13 @@
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>Subscribe</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
     <value>Включить локальный пир обнаружение (LSD)</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>подписка URL (e.g., https://example.com/трекеры.txt)</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
     <value>Обнаруживать пиров в локальной сети</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">

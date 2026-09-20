@@ -3579,13 +3579,13 @@
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>Subscribe</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
     <value>Enable Local Peer Discovery (LSD)</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>Subscription URL (e.g., https://example.com/trackers.txt)</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
     <value>Discover peers on the local network</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
@@ -5318,5 +5318,17 @@
   </data>
   <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
     <value>Blur, refraction and edge highlights</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
+    <value>Exchange peer lists with connected peers</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardPEX.Header" xml:space="preserve">
+    <value>Enable Peer Exchange (PEX)</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardDHT.Description" xml:space="preserve">
+    <value>Distributed Hash Table for decentralized peer discovery</value>
+  </data>
+  <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
+    <value>Enable DHT</value>
   </data>
 </root>

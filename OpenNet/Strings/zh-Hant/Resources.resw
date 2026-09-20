@@ -3579,13 +3579,13 @@
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>訂閱</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
     <value>啟用區域 Peer 探索（LSD）</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>訂閱 URL（例如 https://example.com/trackers.txt）</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
     <value>探索區域網路上的 Peer</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">

@@ -38,10 +38,7 @@
                     Text="Network Settings"  x:Uid="ViewNetworkSettingsPageTextBlock"/>-->
 
                 <!--  Custom Tracker Section  -->
-                <TextBlock
-                    x:Uid="ViewNetworkSettingsPageTextBlock"
-                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
-                    Text="Custom Trackers" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{essential:StringResource Name=ViewNetworkSettingsPageSettingsExpander/Header}" />
 
                 <essential:SettingsExpander
                     x:Uid="ViewNetworkSettingsPageSettingsExpander"
@@ -132,10 +129,7 @@
                 </essential:SettingsExpander>
 
                 <!--  Tracker Subscription Section  -->
-                <TextBlock
-                    x:Uid="ViewNetworkSettingsPageTextBlock"
-                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
-                    Text="Tracker Subscriptions" />
+                <TextBlock Style="{StaticResource SettingsSectionHeaderTextBlockStyle}" Text="{essential:StringResource Name=ViewNetworkSettingsPageSettingsExpander/Header}" />
 
                 <essential:SettingsExpander
                     x:Uid="ViewNetworkSettingsPageSettingsExpander"
@@ -314,21 +308,21 @@
                 </essential:SettingsExpander>
 
                 <essential:SettingsCard
-                    x:Uid="ViewNetworkSettingsPageSettingsCard"
+                    x:Uid="ViewNetworkSettingsPageSettingsCardDHT"
                     Description="Distributed Hash Table for decentralized peer discovery"
                     Header="Enable DHT">
                     <ToggleSwitch x:Name="EnableDHTToggle" IsOn="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
-                    x:Uid="ViewNetworkSettingsPageSettingsCard"
+                    x:Uid="ViewNetworkSettingsPageSettingsCardPEX"
                     Description="Exchange peer lists with connected peers"
                     Header="Enable Peer Exchange (PEX)">
                     <ToggleSwitch x:Name="EnablePEXToggle" IsOn="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
-                    x:Uid="ViewNetworkSettingsPageSettingsCard"
+                    x:Uid="ViewNetworkSettingsPageSettingsCardLSD"
                     Description="Discover peers on the local network"
                     Header="Enable Local Peer Discovery (LSD)">
                     <ToggleSwitch x:Name="EnableLSDToggle" IsOn="True" />

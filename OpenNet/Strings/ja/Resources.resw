@@ -3543,13 +3543,13 @@
   <data name="ViewNetworkSettingsPageButton.Content" xml:space="preserve">
     <value>購読</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Header" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Header" xml:space="preserve">
     <value>ローカルピア検出（LSD）を有効にする</value>
   </data>
   <data name="ViewNetworkSettingsPageTextBox.PlaceholderText" xml:space="preserve">
     <value>購読 URL（例: https://example.com/trackers.txt）</value>
   </data>
-  <data name="ViewNetworkSettingsPageSettingsCard.Description" xml:space="preserve">
+  <data name="ViewNetworkSettingsPageSettingsCardLSD.Description" xml:space="preserve">
     <value>ローカルネットワーク上のピアを検出</value>
   </data>
   <data name="ViewAboutPageTextBlock.Text" xml:space="preserve">
