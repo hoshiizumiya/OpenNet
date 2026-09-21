@@ -22,7 +22,7 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 1. Development environment requirements
 
 * Windows 11 25H2 or later — we recommend using the latest version of Windows 11.
-* Visual Studio 2026 (Latest, at least 18.8+).
+* Visual Studio 2026 (Latest, at least 18.11+).
 * More than 64GB RAM is adviced(or increase your machine virtual memory - Auto management is not stable). Machine with less RAM may still build the project, but your code and debug experience may be impacted.
 * Workloads: C++ Desktop Development, WinUI Desktop Development, and C++ WinUI app tools.
 * Windows 11 SDK (10.0.26100.0+)
@@ -32,18 +32,26 @@ The main open-source library we currently use are `libtorrent` and `aria2`.
 
 2. Build the project 
 
-**Project uses some enhanced components in the XamlCommunityToolkit, but they're not merged into the upstream currently, so you may encounter some issues, they'll be available in future updates.**
 * Open Visual Studio and choose to clone the repository.
-* Enter the project's Git repository URL and choose a local path with more than 30GB free space (Strongly advise fast SSD). Avoid spaces and non-ASCII characters in the path, as some older dependencies may fail. Then click "Clone". If your network is unreliable, consider using SSH or a TUN proxy for Git.
+* Enter the project's Git repository URL and choose a local path with more than 50GB free space and short path as the cl couldn't handle long path https://developercommunity.visualstudio.com/t/compiler-cant-find-source-file-in-path/10221576 (Strongly advise fast SSD/ReFS). Avoid spaces and non-ASCII characters in the path, as some older dependencies may fail. Then click "Clone". If your network is unreliable, consider using SSH or a TUN proxy for Git.
+* Init the submodules by running the following command in the directory of the cloned repository:
+  ```bash
+  git submodule update --init --recursive
+  ```
+  How to update:
+  ```bash
+  git submodule update --remote --merge
+  ```
 * Open OpenNet.slnx in Visual Studio.
 * In Solution Explorer, ensure the bolded project is `OpenNet` and configured as the startup project.
 * Click the green Start button to begin debugging and launch the application.
-* On first run, the application will automatically download required NuGet and `vcpkg` dependencies and build them. This may take some time depending on configuration (around 30–60 minutes). Since `vcpkg` is hosted on GitHub, use a proxy if your network is restricted.
+* On first run, the application will automatically download required NuGet and `vcpkg` dependencies and build them. This may take some time depending on configuration (around 30–100 minutes). Since `vcpkg` is hosted on GitHub, use a proxy if your network is restricted.
 
 ## Features
 
 * Support for downloading via BitTorrent using `.torrent` files/magnet links and http/https download.
 * RSS subscription and automatic downloading.
+* Integrated webui experience.
 * Nat tools to check network status.
 
 ## Preview
