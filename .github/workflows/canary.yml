@@ -69,6 +69,8 @@ jobs:
       
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
+        with:
+          msbuild-architecture: x64
       
       - name: Install MSVC Preview Build Tools
         shell: cmd
@@ -238,6 +240,7 @@ jobs:
           msbuild OpenNet\OpenNet.vcxproj `
             /p:Configuration=${{ matrix.configuration }} `
             /p:Platform=${{ matrix.platform }} `
+            /p:PreferredToolArchitecture=x64 `
             /p:GenerateAppxPackageOnBuild=true `
             /p:UapAppxPackageBuildMode=SideloadOnly `
             /p:AppxPackageDir=AppPackages\ `
@@ -246,7 +249,7 @@ jobs:
             /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /p:PackageCertificateKeyFile= `
             /p:PackageCertificatePassword= `
-            /p:ExtraLinkOptions="/CGTHREADS:1" `
+            /p:CGTHREADS=1 `
             /m:1
 
       - name: Cleanup certificate

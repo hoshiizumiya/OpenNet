@@ -24,12 +24,12 @@
     <PackageVersion Include="Microsoft.WindowsAppSDK.WinUI" Version="2.3.9" />
     <PackageVersion Include="Mile.Aria2" Version="1.0.1050" />
     <PackageVersion Include="WinUI.LiquidGlass">
-      <Version>1.1.337</Version>
+      <Version>1.1.339</Version>
     </PackageVersion>
     <PackageVersion Include="WinUIEssential.WinUI3" Version="1.7.2" />
     <PackageVersion Include="WinUIEssential.WinUI3.Svg" Version="1.0.1" />
     <PackageVersion Include="YexuanXiao.CppWinRTPlus.Ext" Version="0.9.0.5" />
-    <PackageVersion Include="WinUI.Composition.Hlsl" Version="1.1.337" />
+    <PackageVersion Include="WinUI.Composition.Hlsl" Version="1.1.339" />
   </ItemGroup>
   <!--  C# Project References  -->
   <ItemGroup>
