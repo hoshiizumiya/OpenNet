@@ -23,7 +23,15 @@ namespace OpenNet::Web::ServerDomain::details
 	inline constexpr std::uint32_t ConfigurationTimeoutMs = 2000;
 	inline constexpr std::uint32_t EndpointProbeTimeoutMs = 1000;
 
+	enum class InitializationState : std::uint8_t
+	{
+		NotStarted,
+		Running,
+		Completed
+	};
+
 	std::atomic<ServerDomainMode> CurrentMode{ ServerDomainMode::Primary };
+	std::atomic<InitializationState> Initialization{ InitializationState::NotStarted };
 	std::shared_mutex EndpointMutex;
 	std::wstring PrimaryRoot{ DefaultDomainRoot };
 	std::wstring BackupRoot{ DefaultIpRoot };
@@ -213,61 +221,98 @@ export namespace OpenNet::Web::ServerDomain
 		using namespace winrt::Windows::Foundation;
 		using namespace winrt::Windows::Web::Http;
 
-		std::vector<std::wstring> domainCandidates{ details::DefaultDomainRoot };
-		std::vector<std::wstring> ipCandidates{ details::DefaultIpRoot };
+		auto state = details::Initialization.load(std::memory_order_acquire);
+		if (state == details::InitializationState::Completed)
+		{
+			co_return;
+		}
+
+		auto expected = details::InitializationState::NotStarted;
+		if (!details::Initialization.compare_exchange_strong(
+			expected,
+			details::InitializationState::Running,
+			std::memory_order_acq_rel,
+			std::memory_order_acquire))
+		{
+			while (details::Initialization.load(std::memory_order_acquire)
+				== details::InitializationState::Running)
+			{
+				co_await winrt::resume_after(std::chrono::milliseconds(25));
+			}
+			co_return;
+		}
 
 		try
 		{
-			HttpClient client;
-			client.DefaultRequestHeaders().UserAgent().ParseAdd(L"OpenNet/1.0 ServerDomainResolver");
-			auto operation = client.GetStringAsync(Uri{ details::ConfigurationUri });
-			if (co_await details::WaitForCompletionAsync(operation, details::ConfigurationTimeoutMs))
+			std::vector<std::wstring> domainCandidates{ details::DefaultDomainRoot };
+			std::vector<std::wstring> ipCandidates{ details::DefaultIpRoot };
+
+			try
 			{
-				auto const json = operation.GetResults();
-				(void)details::TryParseConfiguration(json, domainCandidates, ipCandidates);
+				HttpClient client;
+				client.DefaultRequestHeaders().UserAgent().ParseAdd(L"OpenNet/1.0 ServerDomainResolver");
+				auto operation = client.GetStringAsync(Uri{ details::ConfigurationUri });
+				if (co_await details::WaitForCompletionAsync(operation, details::ConfigurationTimeoutMs))
+				{
+					auto const json = operation.GetResults();
+					(void)details::TryParseConfiguration(json, domainCandidates, ipCandidates);
+				}
+			}
+			catch (...)
+			{
+				// Remote configuration is optional; compiled endpoints remain available.
+			}
+
+			auto const primaryRoot = domainCandidates.empty()
+				? std::wstring{ details::DefaultDomainRoot }
+				: domainCandidates.front();
+			auto const backupRoot = ipCandidates.empty()
+				? std::wstring{ details::DefaultIpRoot }
+				: ipCandidates.front();
+			details::SetResolvedRoots(primaryRoot, backupRoot);
+
+			bool resolved = false;
+			for (auto const& candidate : domainCandidates)
+			{
+				if (co_await details::ProbeEndpointAsync(candidate))
+				{
+					details::SetResolvedRoots(candidate, backupRoot);
+					details::CurrentMode.store(ServerDomainMode::Primary, std::memory_order_release);
+					resolved = true;
+					break;
+				}
+			}
+
+			if (!resolved)
+			{
+				for (auto const& candidate : ipCandidates)
+				{
+					if (co_await details::ProbeEndpointAsync(candidate))
+					{
+						details::SetResolvedRoots(primaryRoot, candidate);
+						details::CurrentMode.store(ServerDomainMode::Backup, std::memory_order_release);
+						resolved = true;
+						break;
+					}
+				}
+			}
+
+			if (!resolved)
+			{
+				// Preserve domain preference while offline so a later request still
+				// follows domain-first semantics.
+				details::CurrentMode.store(ServerDomainMode::Primary, std::memory_order_release);
 			}
 		}
 		catch (...)
 		{
-			// Keep the compiled defaults when the remote configuration is unavailable.
+			// Initialization must never make callers fail just because endpoint
+			// discovery failed. The compiled defaults remain usable.
 		}
 
-		auto const primaryRoot = domainCandidates.empty()
-			? std::wstring{ details::DefaultDomainRoot }
-			: domainCandidates.front();
-		auto const backupRoot = ipCandidates.empty()
-			? std::wstring{ details::DefaultIpRoot }
-			: ipCandidates.front();
-		details::SetResolvedRoots(primaryRoot, backupRoot);
-
-		// Domain entries always have priority. If the valid remote configuration
-		// contains no domain entries, this loop is skipped and IP probing begins
-		// immediately. Only an unavailable/invalid configuration uses compiled
-		// candidates.
-		
-		for (auto const& candidate : domainCandidates)
-		{
-			if (co_await details::ProbeEndpointAsync(candidate))
-			{
-				details::SetResolvedRoots(candidate, backupRoot);
-				details::CurrentMode.store(ServerDomainMode::Primary, std::memory_order_relaxed);
-				co_return;
-			}
-		}
-
-		for (auto const& candidate : ipCandidates)
-		{
-			if (co_await details::ProbeEndpointAsync(candidate))
-			{
-				details::SetResolvedRoots(primaryRoot, candidate);
-				details::CurrentMode.store(ServerDomainMode::Backup, std::memory_order_relaxed);
-				co_return;
-			}
-		}
-
-		// If the machine is currently offline, retain the domain as the preferred
-		// endpoint so a later network recovery still follows the intended policy.
-		details::CurrentMode.store(ServerDomainMode::Primary, std::memory_order_relaxed);
+		details::Initialization.store(
+			details::InitializationState::Completed,
+			std::memory_order_release);
 	}
 
 	[[nodiscard]]

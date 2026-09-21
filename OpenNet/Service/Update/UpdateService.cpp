@@ -30,6 +30,7 @@ namespace OpenNet::Service::Update
 		*result = {};
 		try
 		{
+			co_await ::OpenNet::Web::ServerDomain::InitializeAsync();
 			HttpClient client;
 			auto const json = co_await client.GetStringAsync(Uri{ GetEndpoint() });
 			JsonObject root;

@@ -55,19 +55,40 @@ namespace
 			deadline - now).count();
 		return static_cast<std::uint32_t>(std::min<std::int64_t>(remaining, maximum));
 	}
+
+	winrt::hstring BuildAutomaticTraversalDirectoryUri()
+	{
+		std::wstring uri{ ::OpenNet::Web::ServerDomain::GetApiRoot() };
+		if (!uri.ends_with(L'/'))
+			uri.push_back(L'/');
+		uri.append(L"api/v1/traversal/servers");
+		return winrt::hstring{ uri };
+	}
+
+	bool IsLegacyAutomaticTraversalDirectoryUri(winrt::hstring const& value) noexcept
+	{
+		return value == L"http://opennet.hoshiizumiya.top:5090/api/v1/traversal/servers"
+			|| value == L"http://103.236.69.23:5090/api/v1/traversal/servers";
+	}
 }
 
 namespace OpenNet::Core
 {
 	NetworkDetector::NetworkDetector() : m_isDetecting(false)
 	{
-		std::wstring directoryUri{ ::OpenNet::Web::ServerDomain::GetApiRoot() };
-		if (!directoryUri.ends_with(L'/'))
-			directoryUri.push_back(L'/');
-		directoryUri.append(L"api/v1/traversal/servers");
+		// An empty persisted value means "follow ServerDomain automatically".
+		// Older builds persisted the generated default URI, so migrate those two
+		// known defaults back to automatic mode.
 		m_traversalDirectoryUri = ::OpenNet::Core::Setting::LocalSetting::Get<winrt::hstring>(
 			::OpenNet::Core::Setting::SettingKeys::TraversalDirectoryUri,
-			winrt::hstring{ directoryUri });
+			{});
+		if (IsLegacyAutomaticTraversalDirectoryUri(m_traversalDirectoryUri))
+		{
+			m_traversalDirectoryUri = {};
+			::OpenNet::Core::Setting::LocalSetting::Set(
+				::OpenNet::Core::Setting::SettingKeys::TraversalDirectoryUri,
+				winrt::hstring{});
+		}
 		// 初始化推荐的STUN服务器列表 / Initialize recommended STUN server list
 		m_stunServers = winrt::single_threaded_vector<winrt::hstring>();
 		// Google STUN servers
@@ -290,15 +311,23 @@ namespace OpenNet::Core
 
 	winrt::hstring NetworkDetector::TraversalDirectoryUri() const
 	{
-		return m_traversalDirectoryUri;
+		return m_traversalDirectoryUri.empty()
+			? BuildAutomaticTraversalDirectoryUri()
+			: m_traversalDirectoryUri;
 	}
 
 	void NetworkDetector::TraversalDirectoryUri(winrt::hstring const& value)
 	{
-		m_traversalDirectoryUri = value;
+		// Selecting the generated endpoint is equivalent to automatic mode. This
+		// keeps future domain/IP failover visible without reconstructing the detector.
+		m_traversalDirectoryUri =
+			value.empty() || value == BuildAutomaticTraversalDirectoryUri()
+				|| IsLegacyAutomaticTraversalDirectoryUri(value)
+			? winrt::hstring{}
+			: value;
 		::OpenNet::Core::Setting::LocalSetting::Set(
 			::OpenNet::Core::Setting::SettingKeys::TraversalDirectoryUri,
-			value);
+			m_traversalDirectoryUri);
 	}
 
 	IAsyncAction NetworkDetector::GetTraversalServersAsync(
@@ -307,8 +336,13 @@ namespace OpenNet::Core
 		servers->clear();
 		try
 		{
+			co_await ::OpenNet::Web::ServerDomain::InitializeAsync();
+			auto const directoryUri = TraversalDirectoryUri();
+			if (directoryUri.empty())
+				co_return;
+
 			HttpClient client;
-			auto request = client.GetStringAsync(Uri(m_traversalDirectoryUri));
+			auto request = client.GetStringAsync(Uri(directoryUri));
 			if (!co_await WaitForCompletionAsync(request, DIRECTORY_TIMEOUT_MS))
 				co_return;
 			auto const json = request.GetResults();
@@ -954,7 +988,7 @@ namespace OpenNet::Core
 		{
 			result.diagnostic =
 				L"Traversal server discovery timed out or returned no server: "
-				+ m_traversalDirectoryUri;
+				+ std::wstring{ TraversalDirectoryUri().c_str() };
 			result.portProbe.timedOut = true;
 			result.portProbe.ipv4TimedOut = true;
 			result.portProbe.ipv6TimedOut = true;
