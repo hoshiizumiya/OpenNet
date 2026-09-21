@@ -6,6 +6,7 @@
     "sqlite3",
     "nlohmann-json",
     "sentry-native",
+    "tree-sitter",
     "zlib"
   ]
 }
