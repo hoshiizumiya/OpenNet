@@ -214,8 +214,8 @@
     <value>Осталось</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Header_AddDate.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="Header_AddDate.Text" xml:space="preserve">
+    <value>Дата добавления</value>
   </data>
   <data name="Task_SummaryContent.Header" xml:space="preserve">
     <value>Сводка</value>

@@ -4303,8 +4303,8 @@
     <value>每個凸輪寬度相同</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>配合內容大小</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value>每個分頁會根據分頁內內容調整寬度</value>
@@ -4315,8 +4315,8 @@
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>無</value>
   </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>移動設定距離所需的時間</value>
   </data>
   <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
     <value>UPnP 租約期限 (秒)</value>

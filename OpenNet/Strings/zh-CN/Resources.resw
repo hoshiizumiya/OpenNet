@@ -5320,15 +5320,15 @@
     <value>模糊、折射与边缘高光</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
-    <value />
+    <value>与已连接的对等节点交换节点列表</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Header" xml:space="preserve">
-    <value />
+    <value>启用对等节点交换（PEX）</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Description" xml:space="preserve">
-    <value />
+    <value>用于去中心化对等节点发现的分布式哈希表</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
-    <value />
+    <value>启用 DHT</value>
   </data>
 </root>

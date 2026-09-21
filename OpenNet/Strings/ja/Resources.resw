@@ -4264,14 +4264,14 @@
     <value>Piece Map</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>等幅</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
     <value>各タブの幅は同じです</value>
   </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" type="System.Resources.ResXNullRef, System.Windows.Forms">
-    <value />
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>コンテンツに合わせる</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value> 各タブは、タブ内のコンテンツに合わせて幅を調整します</value>
