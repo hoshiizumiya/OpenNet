@@ -230,6 +230,8 @@ jobs:
           "version=$version" >> $env:GITHUB_OUTPUT
 
       - name: Build MSIX
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,read"
         shell: pwsh
         working-directory: ${{ github.workspace }}
         run: |
@@ -244,6 +246,7 @@ jobs:
             /p:PackageCertificateThumbprint="${{ steps.import_cert.outputs.thumbprint }}" `
             /p:PackageCertificateKeyFile= `
             /p:PackageCertificatePassword= `
+            /p:ExtraLinkOptions="/CGTHREADS:1" `
             /m:1
 
       - name: Cleanup certificate
