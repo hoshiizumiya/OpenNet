@@ -429,7 +429,7 @@ namespace OpenNet::Core
 	{
 		return AppSettingsDatabase::Instance()
 			.GetBool(AppSettingsDatabase::CAT_APP, EnabledSetting)
-			.value_or(false);
+			.value_or(true);
 	}
 
 	void ClientFilterManager::SetEnabled(bool enabled)

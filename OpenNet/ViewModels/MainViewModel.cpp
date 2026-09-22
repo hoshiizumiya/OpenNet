@@ -1,12 +1,18 @@
 ﻿#include "XamlWorkaround.h"
+#include <netfw.h>
+#include "Core/WebUI/WebUIControl.h"
 import winrt.OpenNet.ViewModels;
 
 #include "MainViewModel.h"
 #include "ViewModels/MainViewModel.g.cpp"
 
 import OpenNet.Core.DownloadManager;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.TorrentSettings;
 import winrtplus_coroutine;
+import winrt.Windows.Networking;
+import winrt.Windows.Networking.Connectivity;
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -14,6 +20,98 @@ using namespace std::chrono_literals;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+	namespace
+	{
+		struct LocalNetworkAddresses
+		{
+			std::vector<std::wstring> ipv4;
+			std::vector<std::wstring> ipv6;
+		};
+
+		std::wstring JoinAddresses(std::vector<std::wstring> values)
+		{
+			std::sort(values.begin(), values.end());
+			values.erase(std::unique(values.begin(), values.end()), values.end());
+			std::wstring result;
+			for (auto const& value : values)
+			{
+				if (!result.empty()) result += L", ";
+				result += value;
+			}
+			return result.empty() ? L"Unavailable" : result;
+		}
+
+		LocalNetworkAddresses GetLocalNetworkAddresses()
+		{
+			LocalNetworkAddresses result;
+			try
+			{
+				using namespace winrt::Windows::Networking;
+				using namespace winrt::Windows::Networking::Connectivity;
+				for (auto const& host : NetworkInformation::GetHostNames())
+				{
+					auto const ip = host.IPInformation();
+					if (!ip || !ip.NetworkAdapter()) continue;
+					auto const value = std::wstring(host.CanonicalName());
+					if (value == L"127.0.0.1" || value == L"::1") continue;
+					if (host.Type() == HostNameType::Ipv4)
+						result.ipv4.push_back(value);
+					else if (host.Type() == HostNameType::Ipv6)
+						result.ipv6.push_back(value);
+				}
+			}
+			catch (...)
+			{
+			}
+			return result;
+		}
+
+		std::wstring BestProtocolState(
+			std::wstring const& ipv4,
+			std::wstring const& ipv6)
+		{
+			if (ipv4 == L"Open" || ipv6 == L"Open") return L"Open";
+			if (ipv4 == L"Blocked" || ipv6 == L"Blocked") return L"Blocked";
+			if (ipv4 == L"Timed out" || ipv6 == L"Timed out") return L"Timed out";
+			return L"Unavailable";
+		}
+
+		std::wstring FormatListenerStatus(int port, std::wstring const& state)
+		{
+			if (port <= 0) return L"Not listening";
+			return std::format(
+				L"{} ({})",
+				port,
+				state == L"Open" ? L"Opened in Firewall/Router" : state);
+		}
+
+		std::wstring GetWindowsFirewallState()
+		{
+			INetFwPolicy2* policy = nullptr;
+			auto const hr = CoCreateInstance(
+				__uuidof(NetFwPolicy2), nullptr, CLSCTX_INPROC_SERVER,
+				IID_PPV_ARGS(&policy));
+			if (FAILED(hr) || !policy) return L"Unavailable";
+			long profiles{};
+			policy->get_CurrentProfileTypes(&profiles);
+			bool enabled = false;
+			for (auto const profile : {
+				NET_FW_PROFILE2_DOMAIN,
+					NET_FW_PROFILE2_PRIVATE,
+					NET_FW_PROFILE2_PUBLIC })
+			{
+				if ((profiles & profile) == 0) continue;
+				VARIANT_BOOL value = VARIANT_FALSE;
+				if (SUCCEEDED(policy->get_FirewallEnabled(
+					static_cast<NET_FW_PROFILE_TYPE2>(profile), &value))
+					&& value == VARIANT_TRUE)
+					enabled = true;
+			}
+			policy->Release();
+			return enabled ? L"On" : L"Off";
+		}
+	}
+
 	// Summary: 构造函数，初始化默认状态和集合
 	MainViewModel::MainViewModel()
 		: m_isConnected(false), m_userName(L"Guest"), m_portState(L"Unknown")
@@ -355,6 +453,81 @@ namespace winrt::OpenNet::ViewModels::implementation
 						aggregateState = L"Open";
 					else if (ipv4State == L"Blocked" || ipv6State == L"Blocked")
 						aggregateState = L"Blocked";
+
+					auto const localAddresses = GetLocalNetworkAddresses();
+					auto const lanIPv4 = JoinAddresses(localAddresses.ipv4);
+					auto const lanIPv6 = JoinAddresses(localAddresses.ipv6);
+					std::wstring wanIPv4;
+					std::wstring wanIPv6;
+					try
+					{
+						wanIPv4 = m_networkDetector.GetPublicIPAddressAsync(false).get();
+						if (!m_stopSpeedRefresh.load())
+							wanIPv6 = m_networkDetector.GetPublicIPAddressAsync(true).get();
+					}
+					catch (...)
+					{
+					}
+
+					auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+					auto const mapping = core
+						? core->GetPortMappingStatus()
+						: ::OpenNet::Core::Torrent::LibtorrentHandle::PortMappingStatus{};
+					if (wanIPv4.empty() && !mapping.externalAddress.empty())
+						wanIPv4.assign(mapping.externalAddress.begin(), mapping.externalAddress.end());
+					if (wanIPv4.empty()) wanIPv4 = L"Unavailable";
+					if (wanIPv6.empty()) wanIPv6 = L"Unavailable";
+
+					auto const tcpState = BestProtocolState(ipv4TcpState, ipv6TcpState);
+					auto const udpState = BestProtocolState(ipv4UdpState, ipv6UdpState);
+					auto const listenPort = stats.listenPort > 0
+						? stats.listenPort
+						: std::max(ipv4Port, ipv6Port);
+					auto const btTcpStatus = FormatListenerStatus(listenPort, tcpState);
+					auto const btUdpStatus = FormatListenerStatus(listenPort, udpState);
+
+					auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+					database.Initialize();
+					auto const webPort = static_cast<int>(
+						database.GetInt("webui_host", "port").value_or(8080));
+					auto const webRunning = ::OpenNet::Core::WebUI::IsWebUIRunning();
+					auto const remoteAccessStatus = std::format(
+						L"{} ({})", webPort, webRunning ? L"Listening" : L"Disabled");
+
+					auto& torrentSettingsManager =
+						::OpenNet::Core::TorrentSettingsManager::Instance();
+					torrentSettingsManager.Load();
+					auto const torrentSettings = torrentSettingsManager.Get();
+					auto const lsdStatus = torrentSettings.enableLsd
+						? std::wstring{ L"6771 (Listening)" }
+					: std::wstring{ L"Disabled" };
+
+					auto const firewallStatus = std::format(
+						L"{} [TCP {} {}; UDP {} {}; remote TCP {} {}]",
+						GetWindowsFirewallState(),
+						listenPort, tcpState,
+						listenPort, udpState,
+						webPort, webRunning ? L"Listening" : L"Disabled");
+
+					std::wstring upnpStatus;
+					if (mapping.tcpExternalPort > 0 || mapping.udpExternalPort > 0)
+					{
+						upnpStatus = std::format(
+							L"Added [TCP {} → {}; UDP {} → {}]",
+							listenPort, mapping.tcpExternalPort,
+							listenPort, mapping.udpExternalPort);
+					}
+					else if (mapping.upnpEnabled)
+					{
+						upnpStatus = mapping.lastError.empty()
+							? L"Enabled; waiting for a confirmed mapping"
+							: L"Failed [" + std::wstring(
+								mapping.lastError.begin(), mapping.lastError.end()) + L"]";
+					}
+					else
+					{
+						upnpStatus = L"Disabled";
+					}
 					if (m_dispatcher)
 					{
 						m_dispatcher.TryEnqueue([
@@ -365,6 +538,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 							ipv4Udp = winrt::hstring{ ipv4UdpState },
 							ipv6Tcp = winrt::hstring{ ipv6TcpState },
 							ipv6Udp = winrt::hstring{ ipv6UdpState },
+							lan4 = winrt::hstring{ lanIPv4 },
+							lan6 = winrt::hstring{ lanIPv6 },
+							wan4 = winrt::hstring{ wanIPv4 },
+							wan6 = winrt::hstring{ wanIPv6 },
+							btTcp = winrt::hstring{ btTcpStatus },
+							btUdp = winrt::hstring{ btUdpStatus },
+							remoteAccess = winrt::hstring{ remoteAccessStatus },
+							lsd = winrt::hstring{ lsdStatus },
+							firewall = winrt::hstring{ firewallStatus },
+							upnp = winrt::hstring{ upnpStatus },
 							aggregate = winrt::hstring{ aggregateState }]()
 						{
 							SetProperty(m_ipv4PortState, ipv4, L"IPv4PortState");
@@ -373,6 +556,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 							SetProperty(m_ipv4UdpPortState, ipv4Udp, L"IPv4UdpPortState");
 							SetProperty(m_ipv6TcpPortState, ipv6Tcp, L"IPv6TcpPortState");
 							SetProperty(m_ipv6UdpPortState, ipv6Udp, L"IPv6UdpPortState");
+							SetProperty(m_lanIPv4Address, lan4, L"LanIPv4Address");
+							SetProperty(m_lanIPv6Address, lan6, L"LanIPv6Address");
+							SetProperty(m_wanIPv4Address, wan4, L"WanIPv4Address");
+							SetProperty(m_wanIPv6Address, wan6, L"WanIPv6Address");
+							SetProperty(m_bitTorrentTcpStatus, btTcp, L"BitTorrentTcpStatus");
+							SetProperty(m_bitTorrentUdpStatus, btUdp, L"BitTorrentUdpStatus");
+							SetProperty(m_remoteAccessStatus, remoteAccess, L"RemoteAccessStatus");
+							SetProperty(m_lsdStatus, lsd, L"LsdStatus");
+							SetProperty(m_windowsFirewallStatus, firewall, L"WindowsFirewallStatus");
+							SetProperty(m_upnpMappingStatus, upnp, L"UpnpMappingStatus");
 							SetProperty(m_portState, aggregate, L"PortState");
 						});
 					}

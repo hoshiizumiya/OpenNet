@@ -127,7 +127,7 @@ export namespace OpenNet::Core
 		int requestQueueSize{ 500 };
 		int uploadSlotsBehavior{ 0 };
 		int uploadChokingAlgorithm{ 1 };
-		int unchokeSlotsLimit{ 20 };
+		int unchokeSlotsLimit{ 1000 };
 		int alertQueueSize{ 1000000 };
 
 		// ----- Disk I/O -----

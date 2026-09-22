@@ -16,6 +16,16 @@
 		String IPv4UdpPortState { get; };
 		String IPv6TcpPortState { get; };
 		String IPv6UdpPortState { get; };
+		String LanIPv4Address { get; };
+		String LanIPv6Address { get; };
+		String WanIPv4Address { get; };
+		String WanIPv6Address { get; };
+		String BitTorrentTcpStatus { get; };
+		String BitTorrentUdpStatus { get; };
+		String RemoteAccessStatus { get; };
+		String LsdStatus { get; };
+		String WindowsFirewallStatus { get; };
+		String UpnpMappingStatus { get; };
 
 		// 快速统计 / Quick Stats
 		Int32 ConnectedPeersCount { get; };

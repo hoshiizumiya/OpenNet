@@ -1214,7 +1214,7 @@ namespace OpenNet::Core
 	{
 		return AppSettingsDatabase::Instance()
 			.GetBool(AppSettingsDatabase::CAT_APP, "ipfilter_enabled")
-			.value_or(false);
+			.value_or(true);
 	}
 
 	void IPFilterManager::SetEnabled(bool enabled)

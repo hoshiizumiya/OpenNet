@@ -213,15 +213,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		else if (tag == L"Dark") desired = ElementTheme::Dark;
 		else desired = ElementTheme::Default;
 
-		// Update theme using ThemeHelper (persists to storage)
+		// Update and persist the theme. ThemeHelper refreshes every tracked
+		// native Window and WindowEx content root.
 		::OpenNet::Helpers::ThemeHelper::RootTheme(desired);
-
-		// Apply to current window
-		auto window = ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::GetWindowForElement(*this);
-		if (window)
-		{
-			::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
-		}
 	}
 
 	void SettingsPage::GuiRefreshIntervalBox_ValueChanged(

@@ -67,6 +67,46 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_ipv6UdpPortState;
 		}
+		winrt::hstring LanIPv4Address() const
+		{
+			return m_lanIPv4Address;
+		}
+		winrt::hstring LanIPv6Address() const
+		{
+			return m_lanIPv6Address;
+		}
+		winrt::hstring WanIPv4Address() const
+		{
+			return m_wanIPv4Address;
+		}
+		winrt::hstring WanIPv6Address() const
+		{
+			return m_wanIPv6Address;
+		}
+		winrt::hstring BitTorrentTcpStatus() const
+		{
+			return m_bitTorrentTcpStatus;
+		}
+		winrt::hstring BitTorrentUdpStatus() const
+		{
+			return m_bitTorrentUdpStatus;
+		}
+		winrt::hstring RemoteAccessStatus() const
+		{
+			return m_remoteAccessStatus;
+		}
+		winrt::hstring LsdStatus() const
+		{
+			return m_lsdStatus;
+		}
+		winrt::hstring WindowsFirewallStatus() const
+		{
+			return m_windowsFirewallStatus;
+		}
+		winrt::hstring UpnpMappingStatus() const
+		{
+			return m_upnpMappingStatus;
+		}
 
 		// 快速统计 / Quick stats
 		std::int32_t ConnectedPeersCount() const
@@ -172,6 +212,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_ipv4UdpPortState{ L"Unknown" };
 		winrt::hstring m_ipv6TcpPortState{ L"Unknown" };
 		winrt::hstring m_ipv6UdpPortState{ L"Unknown" };
+		winrt::hstring m_lanIPv4Address{ L"Detecting…" };
+		winrt::hstring m_lanIPv6Address{ L"Detecting…" };
+		winrt::hstring m_wanIPv4Address{ L"Detecting…" };
+		winrt::hstring m_wanIPv6Address{ L"Detecting…" };
+		winrt::hstring m_bitTorrentTcpStatus{ L"Detecting…" };
+		winrt::hstring m_bitTorrentUdpStatus{ L"Detecting…" };
+		winrt::hstring m_remoteAccessStatus{ L"Detecting…" };
+		winrt::hstring m_lsdStatus{ L"Detecting…" };
+		winrt::hstring m_windowsFirewallStatus{ L"Detecting…" };
+		winrt::hstring m_upnpMappingStatus{ L"Detecting…" };
 
 		// 导航状态 / Navigation state
 		bool m_isHomeSelected{ true };

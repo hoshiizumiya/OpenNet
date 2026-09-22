@@ -30,6 +30,7 @@ namespace OpenNet::Helpers
 	{
 		s_rootTheme = value;
 		SaveThemeToSettings();
+		::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::RefreshWindowThemes();
 	}
 
 	ElementTheme ThemeHelper::ActualTheme()

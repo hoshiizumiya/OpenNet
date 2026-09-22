@@ -83,11 +83,10 @@ export namespace OpenNet::Helpers::WinUIWindowHelper
 		static winrt::Microsoft::UI::Xaml::Window CreateHostWindow();
 		static void TrackWindow(winrt::Microsoft::UI::Xaml::Window const& window);
 		static void TrackWindow(winrt::WinUI3Package::WindowEx const& window);
+		static void RefreshWindowThemes();
 		static void RefreshWindowAppearances();
 		static std::vector<WindowBackgroundPresenters> SecondaryBackgroundPresenters();
-		static winrt::event_token BackgroundPresentersChanged(
-			winrt::Windows::Foundation::EventHandler<
-				winrt::Windows::Foundation::IInspectable> const& handler);
+		static winrt::event_token BackgroundPresentersChanged(winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable> const& handler);
 		static void BackgroundPresentersChanged(winrt::event_token const& token) noexcept;
 		static winrt::Microsoft::UI::Xaml::Window GetWindowForElement(winrt::Microsoft::UI::Xaml::UIElement const& element);
 		static HWND GetNativeWindowHandleForElement(winrt::Microsoft::UI::Xaml::UIElement const& element);

@@ -11,11 +11,11 @@
   IgnorableNamespaces="uap rescap uap18">
 
   <Identity
-    Name="6f29f01c-42c5-4e50-96a2-c0fbd90fc4aa"
-    Publisher="CN=Millennium Science Technology R&amp;D Inst"
+    Name="MillenniumScienceTechnolo.OpenNet"
+    Publisher="CN=9C947BF5-422C-4285-B301-9F787230839B"
     Version="0.0.4.0" />
 
-  <mp:PhoneIdentity PhoneProductId="6f29f01c-42c5-4e50-96a2-c0fbd90fc4aa" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="a0d66003-b533-4463-9a82-2d4b39fa3828" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>OpenNet</DisplayName>

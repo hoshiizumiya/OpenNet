@@ -28,6 +28,7 @@
     <CppWinRTProjectLanguage>C++/WinRT</CppWinRTProjectLanguage>
     <WindowsAppSdkAutoInitialize>false</WindowsAppSdkAutoInitialize>
     <CppWinRTBuildModule>true</CppWinRTBuildModule>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
     <!-- Self contained framework enables us to run in environments without deploying SDKs -->
     <!-- <WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained> -->
     <!-- <WindowsAppSdkUndockedRegFreeWinRTInitialize>true</WindowsAppSdkUndockedRegFreeWinRTInitialize> -->

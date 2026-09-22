@@ -1843,7 +1843,7 @@
     <value>✗ 操作失败</value>
   </data>
   <data name="ViewNotifyIconContextMenuText1.Text" xml:space="preserve">
-    <value>Open OpenNet</value>
+    <value>打开 OpenNet</value>
   </data>
   <data name="ViewNotifyIconContextMenuText2.Text" xml:space="preserve">
     <value>开始所有下载</value>
@@ -1861,7 +1861,7 @@
     <value>恢复上次暂停的任务</value>
   </data>
   <data name="ViewNotifyIconContextMenuText7.Text" xml:space="preserve">
-    <value>Download Limit</value>
+    <value>下载限制</value>
   </data>
   <data name="ViewNotifyIconContextMenuText14.Text" xml:space="preserve">
     <value>不限</value>
@@ -1885,34 +1885,34 @@
     <value>256 KiB/s</value>
   </data>
   <data name="ViewNotifyIconContextMenuText19.Text" xml:space="preserve">
-    <value>Enable Scheduler</value>
+    <value>启用计划</value>
   </data>
   <data name="ViewNotifyIconContextMenuText20.Text" xml:space="preserve">
-    <value>Open Torrent File ...</value>
+    <value>打开种子文件 ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText21.Text" xml:space="preserve">
     <value>Add Torrent from URL ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText22.Text" xml:space="preserve">
-    <value>HTTP/FTP Download ...</value>
+    <value>HTTP/FTP 下载...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText23.Text" xml:space="preserve">
-    <value>HTTP/FTP Batch Download ...</value>
+    <value>HTTP/FTP 批次下载 ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText24.Text" xml:space="preserve">
-    <value>Capture Clipboard URL</value>
+    <value>监听剪贴板 URL</value>
   </data>
   <data name="ViewNotifyIconContextMenuText25.Text" xml:space="preserve">
-    <value>Tray Balloon</value>
+    <value>托盘气泡通知</value>
   </data>
   <data name="ViewNotifyIconContextMenuText26.Text" xml:space="preserve">
-    <value>Floating Window</value>
+    <value>悬浮窗口</value>
   </data>
   <data name="ViewNotifyIconContextMenuText27.Text" xml:space="preserve">
-    <value>Floating Window settings</value>
+    <value>悬浮窗口设置</value>
   </data>
   <data name="ViewNotifyIconContextMenuText28.Text" xml:space="preserve">
-    <value>Options ...</value>
+    <value>选项 ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText29.Text" xml:space="preserve">
     <value>Exit</value>
@@ -1978,7 +1978,7 @@
     <value>开始传输</value>
   </data>
   <data name="ViewHomePageText6.Text" xml:space="preserve">
-    <value>Auto Discovery</value>
+    <value>自动发现</value>
   </data>
   <data name="ViewHomePageText7.Text" xml:space="preserve">
     <value>Automatically find available peers on your local network</value>
@@ -2011,16 +2011,16 @@
     <value>无</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundCustomMica.Content" xml:space="preserve">
-    <value>Custom Mica</value>
+    <value>自定义云母 Mica</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundAcrylic.Content" xml:space="preserve">
-    <value>Acrylic</value>
+    <value>亚克力</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.Content" xml:space="preserve">
-    <value>Custom Acrylic</value>
+    <value>自定义亚克力 Acrylic</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeDefault.Content" xml:space="preserve">
-    <value>Default</value>
+    <value>默认</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeBase.Content" xml:space="preserve">
     <value>Base</value>
@@ -2062,13 +2062,13 @@
     <value>正在下载</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.Text" xml:space="preserve">
-    <value>Finished</value>
+    <value>已完成</value>
   </data>
   <data name="ViewTaskPieceMapPageText11.Text" xml:space="preserve">
     <value>×</value>
   </data>
   <data name="ViewTaskPieceMapPageText12.Text" xml:space="preserve">
-    <value>Disabled</value>
+    <value>已禁用</value>
   </data>
   <data name="ViewTaskPieceMapPageText13.Text" xml:space="preserve">
     <value>未检查</value>
@@ -2092,7 +2092,7 @@
     <value>可下载分块</value>
   </data>
   <data name="ViewTaskSummaryPageText7.Text" xml:space="preserve">
-    <value>Download progress and speed</value>
+    <value>下载进度与速度</value>
   </data>
   <data name="ViewTaskSummaryPageText8.Text" xml:space="preserve">
     <value>传输</value>
@@ -2104,7 +2104,7 @@
     <value>下载速度</value>
   </data>
   <data name="ViewTaskSummaryPageText15.Text" xml:space="preserve">
-    <value>Download limit</value>
+    <value>下载限制</value>
   </data>
   <data name="ViewTaskSummaryPageText17.Text" xml:space="preserve">
     <value>做种时间</value>
@@ -2125,7 +2125,7 @@
     <value>用户</value>
   </data>
   <data name="ViewTaskSummaryPageText29.Text" xml:space="preserve">
-    <value>Connections</value>
+    <value>连接数</value>
   </data>
   <data name="ViewTaskSummaryPageText38.Text" xml:space="preserve">
     <value>分享率</value>
@@ -2137,7 +2137,7 @@
     <value>上传大小</value>
   </data>
   <data name="ViewTaskSummaryPageText40.Text" xml:space="preserve">
-    <value>General</value>
+    <value>一般</value>
   </data>
   <data name="ViewTaskSummaryPageText41.Text" xml:space="preserve">
     <value>任务名称</value>
@@ -2158,13 +2158,13 @@
     <value>Info hash v2</value>
   </data>
   <data name="ViewTaskSummaryPageText51.Text" xml:space="preserve">
-    <value>Piece hashes</value>
+    <value>分块哈希</value>
   </data>
   <data name="ViewTaskSummaryPageText53.Text" xml:space="preserve">
-    <value>Added on</value>
+    <value>添加时间</value>
   </data>
   <data name="ViewTaskSummaryPageText55.Text" xml:space="preserve">
-    <value>Finished on</value>
+    <value>完成时间</value>
   </data>
   <data name="ViewTaskSummaryPageText57.Text" xml:space="preserve">
     <value>发布者</value>
@@ -2191,10 +2191,10 @@
     <value>队列位置</value>
   </data>
   <data name="ViewTaskSummaryPageText71.Text" xml:space="preserve">
-    <value>Created by</value>
+    <value>创建者</value>
   </data>
   <data name="ViewTaskSummaryPageText73.Text" xml:space="preserve">
-    <value>Created on</value>
+    <value>创建时间</value>
   </data>
   <data name="ViewTaskSummaryPageText75.Text" xml:space="preserve">
     <value>私人 Torrent</value>
@@ -2353,7 +2353,7 @@
     <value>开始检测</value>
   </data>
   <data name="ViewNATDetectorWindowText49.Content" xml:space="preserve">
-    <value>Close</value>
+    <value>关闭</value>
   </data>
   <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.Text" xml:space="preserve">
     <value>Advanced</value>
@@ -2368,7 +2368,7 @@
     <value>任务名称</value>
   </data>
   <data name="ViewTrackerLogWindowText2.Header" xml:space="preserve">
-    <value>Always on top</value>
+    <value>永远置顶</value>
   </data>
   <data name="ViewTrackerLogWindowText3.Text" xml:space="preserve">
     <value>Tracker 链接</value>
@@ -2377,7 +2377,7 @@
     <value>时间</value>
   </data>
   <data name="ViewTrackerLogWindowText5.Text" xml:space="preserve">
-    <value>Content</value>
+    <value>内容</value>
   </data>
   <data name="ViewTrackerLogWindowText6.Text" xml:space="preserve">
     <value>暂无 tracker 日志记录</value>
@@ -2437,7 +2437,7 @@
     <value>—</value>
   </data>
   <data name="ViewNotifyIconContextMenuText1.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Open OpenNet</value>
+    <value>打开 OpenNet</value>
   </data>
   <data name="ViewNotifyIconContextMenuText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>开始所有下载</value>
@@ -2455,7 +2455,7 @@
     <value>恢复上次暂停的任务</value>
   </data>
   <data name="ViewNotifyIconContextMenuText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Download Limit</value>
+    <value>下载限制</value>
   </data>
   <data name="ViewNotifyIconContextMenuText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>不限</value>
@@ -2479,34 +2479,34 @@
     <value>256 KiB/s</value>
   </data>
   <data name="ViewNotifyIconContextMenuText19.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Enable Scheduler</value>
+    <value>启用计划</value>
   </data>
   <data name="ViewNotifyIconContextMenuText20.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Open Torrent File ...</value>
+    <value>打开种子文件 ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText21.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Add Torrent from URL ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText22.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>HTTP/FTP Download ...</value>
+    <value>HTTP/FTP 下载...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText23.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>HTTP/FTP Batch Download ...</value>
+    <value>HTTP/FTP 批次下载 ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText24.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Capture Clipboard URL</value>
+    <value>监听剪贴板 URL</value>
   </data>
   <data name="ViewNotifyIconContextMenuText25.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Tray Balloon</value>
+    <value>托盘气泡通知</value>
   </data>
   <data name="ViewNotifyIconContextMenuText26.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Floating Window</value>
+    <value>悬浮窗口</value>
   </data>
   <data name="ViewNotifyIconContextMenuText27.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Floating Window settings</value>
+    <value>悬浮窗口设置</value>
   </data>
   <data name="ViewNotifyIconContextMenuText28.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Options ...</value>
+    <value>选项 ...</value>
   </data>
   <data name="ViewNotifyIconContextMenuText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Exit</value>
@@ -2584,7 +2584,7 @@
     <value>开始传输</value>
   </data>
   <data name="ViewHomePageText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Auto Discovery</value>
+    <value>自动发现</value>
   </data>
   <data name="ViewHomePageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Automatically find available peers on your local network</value>
@@ -2629,16 +2629,16 @@
     <value>无</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundCustomMica.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Custom Mica</value>
+    <value>自定义云母 Mica</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Acrylic</value>
+    <value>亚克力</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundCustomAcrylic.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Custom Acrylic</value>
+    <value>自定义亚克力 Acrylic</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeDefault.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Default</value>
+    <value>默认</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeBase.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Base</value>
@@ -2692,13 +2692,13 @@
     <value>正在下载</value>
   </data>
   <data name="ViewTaskPieceMapPageText10.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Finished</value>
+    <value>已完成</value>
   </data>
   <data name="ViewTaskPieceMapPageText11.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>×</value>
   </data>
   <data name="ViewTaskPieceMapPageText12.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Disabled</value>
+    <value>已禁用</value>
   </data>
   <data name="ViewTaskPieceMapPageText13.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>未检查</value>
@@ -2722,7 +2722,7 @@
     <value>可下载分块</value>
   </data>
   <data name="ViewTaskSummaryPageText7.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Download progress and speed</value>
+    <value>下载进度与速度</value>
   </data>
   <data name="ViewTaskSummaryPageText8.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>传输</value>
@@ -2734,7 +2734,7 @@
     <value>下载速度</value>
   </data>
   <data name="ViewTaskSummaryPageText15.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Download limit</value>
+    <value>下载限制</value>
   </data>
   <data name="ViewTaskSummaryPageText17.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>做种时间</value>
@@ -2755,7 +2755,7 @@
     <value>用户</value>
   </data>
   <data name="ViewTaskSummaryPageText29.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Connections</value>
+    <value>连接数</value>
   </data>
   <data name="ViewTaskSummaryPageText31.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>分享率</value>
@@ -2767,7 +2767,7 @@
     <value>上传大小</value>
   </data>
   <data name="ViewTaskSummaryPageText40.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>General</value>
+    <value>一般</value>
   </data>
   <data name="ViewTaskSummaryPageText41.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>任务名称</value>
@@ -2788,13 +2788,13 @@
     <value>Info hash v2</value>
   </data>
   <data name="ViewTaskSummaryPageText51.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Piece hashes</value>
+    <value>分块哈希</value>
   </data>
   <data name="ViewTaskSummaryPageText53.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Added on</value>
+    <value>添加时间</value>
   </data>
   <data name="ViewTaskSummaryPageText55.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Finished on</value>
+    <value>完成时间</value>
   </data>
   <data name="ViewTaskSummaryPageText57.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>发布者</value>
@@ -2821,10 +2821,10 @@
     <value>队列位置</value>
   </data>
   <data name="ViewTaskSummaryPageText71.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Created by</value>
+    <value>创建者</value>
   </data>
   <data name="ViewTaskSummaryPageText73.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Created on</value>
+    <value>创建时间</value>
   </data>
   <data name="ViewTaskSummaryPageText75.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>私人 Torrent</value>
@@ -2983,7 +2983,7 @@
     <value>开始检测</value>
   </data>
   <data name="ViewNATDetectorWindowText49.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Close</value>
+    <value>关闭</value>
   </data>
   <data name="ViewModalWindowTorrentCheckModalWindowSelectorBarItem_Advanced.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Advanced</value>
@@ -2998,7 +2998,7 @@
     <value>任务名称</value>
   </data>
   <data name="ViewTrackerLogWindowText2.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Always on top</value>
+    <value>永远置顶</value>
   </data>
   <data name="ViewTrackerLogWindowText3.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Tracker 链接</value>
@@ -3007,7 +3007,7 @@
     <value>时间</value>
   </data>
   <data name="ViewTrackerLogWindowText5.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Content</value>
+    <value>内容</value>
   </data>
   <data name="ViewTrackerLogWindowText6.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>暂无 tracker 日志记录</value>
@@ -3106,10 +3106,10 @@
     <value>无 HTTP 列表（nohttp.txt）</value>
   </data>
   <data name="ViewPageNetworkSettingsPageConnectionSettingsHeader.Text" xml:space="preserve">
-    <value>Connection</value>
+    <value>连接</value>
   </data>
   <data name="ViewPageNetworkSettingsPageConnectionSettings.Description" xml:space="preserve">
-    <value>Configure the IPv4 and IPv6 endpoints used by libtorrent. Port 0 lets the operating system select an available port.</value>
+    <value>配置 IPv4 and IPv6 libtorrent 使用的端点信息. 0 端口让操作系统随机选择一个可用的端口</value>
   </data>
   <data name="ViewPageNetworkSettingsPageConnectionSettings.Header" xml:space="preserve">
     <value>BitTorrent listen endpoints</value>
@@ -3202,7 +3202,7 @@
     <value>背景</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundMica.Content" xml:space="preserve">
-    <value>Mica</value>
+    <value>Mica（云母）</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeCard.Description" xml:space="preserve">
     <value>背景的亚克力效果模式</value>
@@ -3268,10 +3268,10 @@
     <value>等比例填充</value>
   </data>
   <data name="ViewThemesSettingsPageFontSetting.Description" xml:space="preserve">
-    <value>Font size</value>
+    <value>字体大小</value>
   </data>
   <data name="ViewThemesSettingsPageFontSetting.Header" xml:space="preserve">
-    <value>Font Setting</value>
+    <value>字体设置</value>
   </data>
   <data name="WebUISettingsTitle.Text" xml:space="preserve">
     <value>Web UI</value>
@@ -3280,7 +3280,7 @@
     <value>Use the bundled qBittorrent WebUI from a browser or any qBittorrent Web API compatible client.</value>
   </data>
   <data name="WebUISettingsConnectionHeader.Text" xml:space="preserve">
-    <value>Connection</value>
+    <value>连接</value>
   </data>
   <data name="WebUISettingsAddressCard.Description" xml:space="preserve">
     <value>embedded HTTP 服务器所接受的IP地址</value>
@@ -3325,13 +3325,13 @@
     <value>API key</value>
   </data>
   <data name="WebUISettingsGenerateApiKey.Content" xml:space="preserve">
-    <value>Generate</value>
+    <value>生成</value>
   </data>
   <data name="WebUISettingsCopyApiKey.Content" xml:space="preserve">
-    <value>Copy</value>
+    <value>复制</value>
   </data>
   <data name="WebUISettingsClearApiKey.Content" xml:space="preserve">
-    <value>Clear</value>
+    <value>清空</value>
   </data>
   <data name="WebUISettingsSave.Content" xml:space="preserve">
     <value>保存并重启 Web UI</value>
@@ -3394,13 +3394,13 @@
     <value>全局 CPU</value>
   </data>
   <data name="ViewTaskSpeedGraphPageAverageCpu.Text" xml:space="preserve">
-    <value>Average CPU</value>
+    <value>平均 CPU</value>
   </data>
   <data name="ViewTaskSpeedGraphPageWorkingSet.Text" xml:space="preserve">
-    <value>OpenNet working set</value>
+    <value>OpenNet 工作集</value>
   </data>
   <data name="ViewTaskSpeedGraphPageDhtReceive.Text" xml:space="preserve">
-    <value>DHT receive</value>
+    <value>DHT 接收</value>
   </data>
   <data name="TaskSpeedGraph_GlobalUpload.Text" xml:space="preserve">
     <value>全局上传速度</value>
@@ -3679,7 +3679,7 @@
     <value>Exception handling</value>
   </data>
   <data name="ViewDevWindowButton.Content" xml:space="preserve">
-    <value>Trigger exception</value>
+    <value>触发异常</value>
   </data>
   <data name="ViewInfoOverlayWindowTextBlock.Text" xml:space="preserve">
     <value>DHT: 0 nodes</value>
@@ -3760,10 +3760,10 @@
     <value>未知</value>
   </data>
   <data name="ViewNatToolsPageError" xml:space="preserve">
-    <value>Error</value>
+    <value>错误</value>
   </data>
   <data name="ViewNatToolsPageInvalidPortNumber" xml:space="preserve">
-    <value>Invalid port number</value>
+    <value>无效的端口号</value>
   </data>
   <data name="ViewNatToolsPageSTUNReportsYourExternalPortMatchesTheLocalPortPeersShouldBeAbleToConnectToYouDirectly" xml:space="preserve">
     <value>STUN reports your external port matches the local port. Peers should be able to connect to you directly.</value>
@@ -3772,7 +3772,7 @@
     <value>STUN mapped port differs from local port, or no response received. Your NAT may be rewriting the port. Consider enabling UPnP or setting up port forwarding.</value>
   </data>
   <data name="ViewNatToolsPageErrorTestingPort" xml:space="preserve">
-    <value>Error testing port</value>
+    <value>测试端口时发生错误</value>
   </data>
   <data name="ViewNatToolsPageCouldNotCompleteTheSTUNBasedPortTestCheckYourNetworkConnection" xml:space="preserve">
     <value>Could not complete the STUN-based port test. Check your network connection.</value>

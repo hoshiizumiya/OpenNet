@@ -317,13 +317,41 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 		::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 	}
 
+	void WindowHelper::RefreshWindowThemes()
+	{
+		for (auto const& window : m_activeWindows)
+		{
+			// WindowEx owns the XAML tree shown to the user. Its underlying
+			// Window.Content can be a separate host element, so updating only the
+			// native Window leaves controls on the previous theme.
+			HWND hwnd{};
+			try
+			{
+				hwnd = GetWindowHandleFromWindow(window);
+			}
+			catch (...)
+			{
+			}
+
+			if (auto const wrapper = g_windowExHosts.find(hwnd);
+				wrapper != g_windowExHosts.end())
+			{
+				::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(
+					wrapper->second);
+			}
+
+			// Keep the native root and title-bar colors in sync as well.
+			::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
+		}
+	}
+
 	void WindowHelper::RefreshWindowAppearances()
 	{
 		for (auto const& window : m_activeWindows)
 		{
 			ApplyWindowAppearancePolicy(window, true);
-			::OpenNet::Helpers::ThemeHelper::UpdateThemeForWindow(window);
 		}
+		RefreshWindowThemes();
 		m_backgroundPresentersChanged(nullptr, nullptr);
 	}
 
