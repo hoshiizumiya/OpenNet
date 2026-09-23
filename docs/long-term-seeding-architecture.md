@@ -1,5 +1,8 @@
 # OpenNet Long-Term Seeding and HTTP P2P Acceleration Architecture
 
+> Handoff/checkpoint: [long-term-seeding-development-checkpoint.md](long-term-seeding-development-checkpoint.md)  
+> Next-session prompt: [long-term-seeding-next-session-prompt.zh-CN.md](long-term-seeding-next-session-prompt.zh-CN.md)
+
 > Status: architecture baseline and implementation guide.
 >
 > The local content catalog, Content Directory control plane, on-demand wakeup flow, deterministic canonical BitTorrent v2 swarm, hidden libtorrent seed/download sessions, and peer injection are implemented on the feature branches described in this document. HTTP resource-to-content discovery, mixed aria2/P2P range coordination, authenticated node identity, peer tickets, and verified NAT traversal remain subsequent phases.
