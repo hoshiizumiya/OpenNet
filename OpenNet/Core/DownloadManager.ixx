@@ -10,6 +10,8 @@ export module OpenNet.Core.DownloadManager;
 
 import OpenNet.Core.Aria2.Aria2Engine;
 import OpenNet.Core.Aria2.Aria2Models;
+import OpenNet.Core.Content.ContentDirectoryContracts;
+import OpenNet.Core.Content.ResourceKey;
 import OpenNet.Core.HttpStateManager;
 import winrt.Windows.Foundation;
 
@@ -44,6 +46,16 @@ export namespace OpenNet::Core
 		std::string content;
 	};
 
+	struct HttpResourceDiscovery
+	{
+		bool completed{};
+		bool checksumValidated{};
+		std::string contentId;
+		std::uint64_t size{};
+		std::uint32_t observationCount{};
+		std::optional<::OpenNet::Core::Content::ContentIdentity> bep52Identity;
+	};
+
 	using HttpProgressCallback = std::function<void(HttpTaskProgress const&)>;
 	using HttpFinishedCallback = std::function<void(std::string const& gid, std::string const& name)>;
 	using HttpErrorCallback = std::function<void(std::string const& gid, std::string const& message)>;
@@ -67,6 +79,8 @@ export namespace OpenNet::Core
 		std::optional<Aria2::DownloadInformation> GetHttpTaskInformation(std::string const& gid);
 		std::vector<Aria2::ServersInformation> GetHttpTaskServers(std::string const& gid);
 		std::vector<HttpTaskLogEntry> GetHttpTaskLog(std::string const& gid) const;
+		std::optional<HttpResourceDiscovery> GetHttpResourceDiscovery(
+			std::string const& gid) const;
 		// Get the record-id associated with a GID (set after AddHttpDownload)
 		std::string GetRecordIdForGid(std::string const& gid) const;
 		void PauseHttpDownload(std::string const& gid);
@@ -106,6 +120,11 @@ export namespace OpenNet::Core
 
 		void RefreshThreadEntry();
 		void ProcessAria2Tasks();
+		void ResourceDiscoveryThreadEntry();
+		void QueueResourceDiscovery(
+			std::string gid,
+			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
+			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256);
 		void ShowHttpCompletionToast(std::string const& gid, Aria2::DownloadInformation const& task);
 
 	private:
@@ -117,6 +136,18 @@ export namespace OpenNet::Core
 		std::atomic<bool> m_stopRefresh{ false };
 		std::condition_variable m_stopCv;
 		std::mutex m_stopMutex;
+
+		struct ResourceDiscoveryJob
+		{
+			std::string gid;
+			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
+			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256;
+		};
+		std::thread m_resourceDiscoveryThread;
+		std::atomic<bool> m_stopResourceDiscovery{ false };
+		std::condition_variable m_resourceDiscoveryCv;
+		std::mutex m_resourceDiscoveryMutex;
+		std::deque<ResourceDiscoveryJob> m_resourceDiscoveryJobs;
 		mutable std::mutex m_mutex;
 
 		// Cached task GIDs for change detection
@@ -125,6 +156,7 @@ export namespace OpenNet::Core
 		std::unordered_map<std::string, Aria2::DownloadInformation> m_httpTaskSnapshots;
 		std::unordered_map<std::string, std::vector<Aria2::ServersInformation>> m_httpServerSnapshots;
 		std::unordered_map<std::string, std::vector<HttpTaskLogEntry>> m_httpTaskLogs;
+		std::unordered_map<std::string, HttpResourceDiscovery> m_httpResourceDiscoveries;
 
 		// GID -> HttpStateManager record-id mapping (mutable: acts as a cache)
 		mutable std::unordered_map<std::string, std::string> m_gidToRecordId;

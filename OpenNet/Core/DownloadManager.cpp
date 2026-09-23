@@ -13,10 +13,94 @@ module OpenNet.Core.DownloadManager;
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.ContentCatalogService;
+import OpenNet.Core.Content.ContentDirectoryClient;
+import OpenNet.Core.Content.ResourceKey;
 
 namespace OpenNet::Core
 {
 	using namespace std::chrono_literals;
+
+	namespace
+	{
+		constexpr auto ResourceHintEligibilityCategory =
+			"http_resource_hint_eligible";
+
+		bool IsResourceHintSafe(
+			Aria2::HttpDownloadOptions const& options)
+		{
+			// Any caller-controlled request context can change the bytes
+			// returned by the same URL. V1 resource hints therefore only
+			// share plain public requests.
+			return options.Cookie.empty()
+				&& options.Username.empty()
+				&& options.Password.empty()
+				&& options.Headers.empty()
+				&& options.Referer.empty()
+				&& options.UserAgent.empty();
+		}
+
+		std::optional<::OpenNet::Core::Content::ContentIdentity>
+			ParseExpectedSha256(std::string checksum)
+		{
+			auto const equals = checksum.find('=');
+			if (equals == std::string::npos) return std::nullopt;
+
+			auto algorithm = checksum.substr(0, equals);
+			std::ranges::transform(
+				algorithm,
+				algorithm.begin(),
+				[](unsigned char value)
+				{
+					return static_cast<char>(std::tolower(value));
+				});
+			if (algorithm != "sha-256" && algorithm != "sha256")
+				return std::nullopt;
+
+			auto hex = checksum.substr(equals + 1);
+			std::erase_if(hex, [](unsigned char value)
+			{
+				return std::isspace(value) != 0;
+			});
+			if (hex.size() != 64) return std::nullopt;
+
+			auto valueOf = [](char value) -> int
+			{
+				if (value >= '0' && value <= '9') return value - '0';
+				if (value >= 'a' && value <= 'f') return value - 'a' + 10;
+				if (value >= 'A' && value <= 'F') return value - 'A' + 10;
+				return -1;
+			};
+
+			::OpenNet::Core::Content::ContentIdentity identity;
+			identity.algorithm =
+				::OpenNet::Core::Content::ContentIdentityAlgorithm::WholeFileSha256;
+			identity.digest.reserve(32);
+			for (std::size_t index = 0; index < hex.size(); index += 2)
+			{
+				int const high = valueOf(hex[index]);
+				int const low = valueOf(hex[index + 1]);
+				if (high < 0 || low < 0) return std::nullopt;
+				identity.digest.push_back(
+					static_cast<std::uint8_t>((high << 4) | low));
+			}
+			return identity;
+		}
+
+		std::vector<::OpenNet::Core::Content::ResourceKey>
+			BuildResourceKeys(std::ranges::input_range auto const& uris)
+		{
+			std::vector<::OpenNet::Core::Content::ResourceKey> keys;
+			for (auto const& uri : uris)
+			{
+				auto key =
+					::OpenNet::Core::Content::ResourceKeyFactory::FromHttpUrl(uri);
+				if (key
+					&& std::ranges::find(keys, *key) == keys.end())
+					keys.push_back(*key);
+			}
+			return keys;
+		}
+	}
 
 	// ------------------------------------------------------------------
 	//  Singleton accessor
@@ -43,6 +127,14 @@ namespace OpenNet::Core
 			m_stopCv.notify_all();
 			if (m_refreshThread.joinable())
 				m_refreshThread.join();
+
+			{
+				std::lock_guard lock(m_resourceDiscoveryMutex);
+				m_stopResourceDiscovery.store(true);
+			}
+			m_resourceDiscoveryCv.notify_all();
+			if (m_resourceDiscoveryThread.joinable())
+				m_resourceDiscoveryThread.join();
 
 			if (m_aria2)
 				m_aria2->ForceTerminate();
@@ -92,11 +184,16 @@ namespace OpenNet::Core
 					}
 				}
 
-				// Start periodic refresh thread
+				// Start periodic refresh and resource-discovery workers.
 				m_stopRefresh.store(false);
 				m_refreshThread = std::thread([this]()
 				{
 					RefreshThreadEntry();
+				});
+				m_stopResourceDiscovery.store(false);
+				m_resourceDiscoveryThread = std::thread([this]()
+				{
+					ResourceDiscoveryThreadEntry();
 				});
 
 				m_initialized = true;
@@ -130,6 +227,14 @@ namespace OpenNet::Core
 		m_stopCv.notify_all();
 		if (m_refreshThread.joinable())
 			m_refreshThread.join();
+
+		{
+			std::lock_guard lock(m_resourceDiscoveryMutex);
+			m_stopResourceDiscovery.store(true);
+		}
+		m_resourceDiscoveryCv.notify_all();
+		if (m_resourceDiscoveryThread.joinable())
+			m_resourceDiscoveryThread.join();
 
 		// Graceful aria2 shutdown following NanaGet pattern:
 		// RPC Shutdown → wait up to 30s for process exit → ForceTerminate.
@@ -174,6 +279,12 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || options.Uris.empty()) return {};
 
+		bool const resourceHintSafe = IsResourceHintSafe(options);
+		auto resourceKeys = resourceHintSafe
+			? BuildResourceKeys(options.Uris)
+			: std::vector<::OpenNet::Core::Content::ResourceKey>{};
+		auto expectedSha256 = ParseExpectedSha256(options.Checksum);
+
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -210,6 +321,10 @@ namespace OpenNet::Core
 				if (!effectiveOptions.Description.empty()) database.SetString("http_task_description", gid, effectiveOptions.Description);
 				auto recordId = stateManager.AddRecord(effectiveOptions.Uris.front(), effectiveOptions.Dir, effectiveOptions.OutFileName);
 				stateManager.UpdateRecordGid(recordId, gid);
+				database.SetInt(
+					ResourceHintEligibilityCategory,
+					recordId,
+					resourceHintSafe && !resourceKeys.empty() ? 1 : 0);
 				{
 					std::lock_guard lock(m_mutex);
 					m_gidToRecordId[gid] = recordId;
@@ -217,6 +332,14 @@ namespace OpenNet::Core
 					m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), effectiveOptions.StartPaused ? "Task added in paused state." : "Download task started." });
 					if (!effectiveOptions.Description.empty()) m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), "Description: " + effectiveOptions.Description });
 				}
+			}
+
+			if (!gid.empty() && !resourceKeys.empty())
+			{
+				QueueResourceDiscovery(
+					gid,
+					std::move(resourceKeys),
+					std::move(expectedSha256));
 			}
 
 			return gid;
@@ -275,6 +398,17 @@ namespace OpenNet::Core
 		std::lock_guard lock(m_mutex);
 		if (auto const entries = m_httpTaskLogs.find(gid); entries != m_httpTaskLogs.end()) return entries->second;
 		return {};
+	}
+
+	std::optional<HttpResourceDiscovery>
+		DownloadManager::GetHttpResourceDiscovery(
+			std::string const& gid) const
+	{
+		std::lock_guard lock(m_mutex);
+		if (auto const entry = m_httpResourceDiscoveries.find(gid);
+			entry != m_httpResourceDiscoveries.end())
+			return entry->second;
+		return std::nullopt;
 	}
 
 	std::string DownloadManager::GetRecordIdForGid(std::string const& gid) const
@@ -644,6 +778,107 @@ namespace OpenNet::Core
 		}
 	}
 
+	void DownloadManager::QueueResourceDiscovery(
+		std::string gid,
+		std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
+		std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256)
+	{
+		if (gid.empty() || resourceKeys.empty()) return;
+		{
+			std::lock_guard lock(m_resourceDiscoveryMutex);
+			m_resourceDiscoveryJobs.push_back({
+				std::move(gid),
+				std::move(resourceKeys),
+				std::move(expectedSha256)
+			});
+		}
+		m_resourceDiscoveryCv.notify_one();
+	}
+
+	void DownloadManager::ResourceDiscoveryThreadEntry()
+	{
+		winrt::init_apartment(winrt::apartment_type::multi_threaded);
+		::OpenNet::Core::Content::ContentDirectoryClient client;
+
+		for (;;)
+		{
+			ResourceDiscoveryJob job;
+			{
+				std::unique_lock lock(m_resourceDiscoveryMutex);
+				m_resourceDiscoveryCv.wait(lock, [this]
+				{
+					return m_stopResourceDiscovery.load()
+						|| !m_resourceDiscoveryJobs.empty();
+				});
+				if (m_stopResourceDiscovery.load()
+					&& m_resourceDiscoveryJobs.empty())
+					break;
+
+				job = std::move(m_resourceDiscoveryJobs.front());
+				m_resourceDiscoveryJobs.pop_front();
+			}
+
+			HttpResourceDiscovery summary;
+			summary.completed = true;
+
+			for (auto const& key : job.resourceKeys)
+			{
+				auto lookup = client.LookupResource(key, 8);
+				if (!lookup || lookup->candidates.empty())
+					continue;
+
+				auto const& candidate = lookup->candidates.front();
+				summary.contentId = candidate.contentId;
+				summary.size = candidate.size;
+				summary.observationCount = candidate.observationCount;
+
+				for (auto const& identity : candidate.identities)
+				{
+					if (identity.algorithm
+						== ::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256)
+						summary.bep52Identity = identity;
+
+					if (job.expectedSha256
+						&& identity == *job.expectedSha256)
+						summary.checksumValidated = true;
+				}
+
+				break;
+			}
+
+			{
+				std::lock_guard lock(m_mutex);
+				m_httpResourceDiscoveries.insert_or_assign(
+					job.gid, summary);
+
+				auto const timestamp =
+					std::chrono::duration_cast<std::chrono::seconds>(
+						std::chrono::system_clock::now()
+							.time_since_epoch()).count();
+
+				if (!summary.contentId.empty())
+				{
+					std::string message =
+						"OpenNet resource hint found: "
+						+ std::to_string(summary.observationCount)
+						+ " observation(s)";
+					if (summary.checksumValidated)
+						message +=
+							"; supplied SHA-256 matches candidate.";
+					else
+						message +=
+							"; hint is not authoritative, origin download remains active.";
+					m_httpTaskLogs[job.gid].push_back({
+						timestamp,
+						std::move(message)
+					});
+				}
+			}
+		}
+
+		winrt::uninit_apartment();
+	}
+
 	void DownloadManager::ProcessAria2Tasks()
 	{
 		try
@@ -819,6 +1054,59 @@ namespace OpenNet::Core
 						if (!recordId.empty())
 							HttpStateManager::Instance().UpdateRecordStatus(recordId, 3); // completed
 
+						std::vector<::OpenNet::Core::Content::ResourceKey>
+							resourceKeys;
+						auto& settings =
+							::OpenNet::Core::AppSettingsDatabase::Instance();
+						bool const resourceHintEligible =
+							!recordId.empty()
+							&& settings.GetInt(
+								ResourceHintEligibilityCategory,
+								recordId,
+								0) != 0;
+
+						if (resourceHintEligible)
+						{
+							std::vector<std::string> uris;
+							if (auto record =
+								HttpStateManager::Instance()
+									.FindByRecordId(recordId))
+							{
+								if (!record->url.empty())
+									uris.push_back(record->url);
+							}
+
+							for (auto const& file : task.Files)
+							{
+								for (auto const& uri : file.Uris)
+								{
+									if (!uri.Uri.empty())
+										uris.push_back(uri.Uri);
+								}
+							}
+
+							try
+							{
+								auto const servers =
+									m_aria2->GetTaskServers(gid);
+								for (auto const& group : servers)
+								{
+									for (auto const& server : group.Servers)
+									{
+										if (!server.Uri.empty())
+											uris.push_back(server.Uri);
+										if (!server.CurrentUri.empty())
+											uris.push_back(server.CurrentUri);
+									}
+								}
+							}
+							catch (...)
+							{
+							}
+
+							resourceKeys = BuildResourceKeys(uris);
+						}
+
 						for (auto const& file : task.Files)
 						{
 							if (file.Path.empty()) continue;
@@ -828,7 +1116,9 @@ namespace OpenNet::Core
 									::OpenNet::Core::Content::ContentSourceKind::Http,
 									recordId.empty() ? gid : recordId,
 									std::nullopt
-								});
+								},
+								{},
+								resourceKeys);
 						}
 
 						ShowHttpCompletionToast(gid, task);
