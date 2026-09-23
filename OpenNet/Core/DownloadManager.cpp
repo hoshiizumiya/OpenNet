@@ -24,6 +24,8 @@ namespace OpenNet::Core
 	{
 		constexpr auto ResourceHintEligibilityCategory =
 			"http_resource_hint_eligible";
+		constexpr auto ResourceValidatorKeyCategory =
+			"http_resource_validator_key";
 
 		bool IsResourceHintSafe(
 			Aria2::HttpDownloadOptions const& options)
@@ -99,6 +101,51 @@ namespace OpenNet::Core
 					keys.push_back(*key);
 			}
 			return keys;
+		}
+
+		std::optional<::OpenNet::Core::Content::ResourceKey>
+			ParsePersistedResourceKey(std::string_view value)
+		{
+			auto const separator = value.find(':');
+			if (separator == std::string_view::npos)
+				return std::nullopt;
+
+			int algorithm{};
+			auto const algorithmText = value.substr(0, separator);
+			auto const [end, error] = std::from_chars(
+				algorithmText.data(),
+				algorithmText.data() + algorithmText.size(),
+				algorithm);
+			if (error != std::errc{}
+				|| end != algorithmText.data() + algorithmText.size()
+				|| algorithm <= 0
+				|| algorithm > 255)
+				return std::nullopt;
+
+			auto const hex = value.substr(separator + 1);
+			if (hex.size() != 64) return std::nullopt;
+
+			auto nibble = [](char value) -> int
+			{
+				if (value >= '0' && value <= '9') return value - '0';
+				if (value >= 'a' && value <= 'f') return value - 'a' + 10;
+				if (value >= 'A' && value <= 'F') return value - 'A' + 10;
+				return -1;
+			};
+
+			::OpenNet::Core::Content::ResourceKey key;
+			key.algorithm =
+				static_cast<::OpenNet::Core::Content::ResourceKeyAlgorithm>(
+					static_cast<std::uint8_t>(algorithm));
+			for (std::size_t index = 0; index < key.digest.size(); ++index)
+			{
+				int const high = nibble(hex[index * 2]);
+				int const low = nibble(hex[index * 2 + 1]);
+				if (high < 0 || low < 0) return std::nullopt;
+				key.digest[index] =
+					static_cast<std::uint8_t>((high << 4) | low);
+			}
+			return key;
 		}
 	}
 
@@ -282,9 +329,33 @@ namespace OpenNet::Core
 		if (!IsAria2Available() || options.Uris.empty()) return {};
 
 		bool const resourceHintSafe = IsResourceHintSafe(options);
+		std::vector<std::string> initialResourceUris = options.Uris;
+		if (!options.ResourceFinalUrl.empty())
+			initialResourceUris.push_back(options.ResourceFinalUrl);
 		auto resourceKeys = resourceHintSafe
-			? BuildResourceKeys(options.Uris)
+			? BuildResourceKeys(initialResourceUris)
 			: std::vector<::OpenNet::Core::Content::ResourceKey>{};
+
+		std::optional<::OpenNet::Core::Content::ResourceKey>
+			preflightValidatorKey;
+		if (resourceHintSafe
+			&& !options.ResourceFinalUrl.empty()
+			&& !options.ResourceStrongETag.empty()
+			&& options.ResourceContentLength != 0)
+		{
+			preflightValidatorKey =
+				::OpenNet::Core::Content::ResourceKeyFactory::FromHttpValidator({
+					options.ResourceFinalUrl,
+					options.ResourceStrongETag,
+					options.ResourceContentLength
+				});
+			if (preflightValidatorKey
+				&& std::ranges::find(
+					resourceKeys, *preflightValidatorKey)
+					== resourceKeys.end())
+				resourceKeys.push_back(*preflightValidatorKey);
+		}
+
 		auto expectedSha256 = ParseExpectedSha256(options.Checksum);
 
 		try
@@ -327,6 +398,23 @@ namespace OpenNet::Core
 					ResourceHintEligibilityCategory,
 					recordId,
 					resourceHintSafe && !resourceKeys.empty() ? 1 : 0);
+				if (preflightValidatorKey)
+				{
+					database.SetString(
+						ResourceValidatorKeyCategory,
+						recordId,
+						std::format(
+							"{}:{}",
+							static_cast<int>(
+								preflightValidatorKey->algorithm),
+							preflightValidatorKey->ToHex()));
+				}
+				else
+				{
+					database.Delete(
+						ResourceValidatorKeyCategory,
+						recordId);
+				}
 				{
 					std::lock_guard lock(m_mutex);
 					m_gidToRecordId[gid] = recordId;
@@ -686,6 +774,9 @@ namespace OpenNet::Core
 			settings.Initialize();
 			settings.Delete(
 				ResourceHintEligibilityCategory,
+				resourceRecordId);
+			settings.Delete(
+				ResourceValidatorKeyCategory,
 				resourceRecordId);
 		}
 	}
@@ -1121,6 +1212,23 @@ namespace OpenNet::Core
 							}
 
 							resourceKeys = BuildResourceKeys(uris);
+
+							if (auto persisted =
+								settings.GetString(
+									ResourceValidatorKeyCategory,
+									recordId))
+							{
+								if (auto validatorKey =
+									ParsePersistedResourceKey(*persisted);
+									validatorKey
+									&& std::ranges::find(
+										resourceKeys, *validatorKey)
+										== resourceKeys.end())
+								{
+									resourceKeys.push_back(
+										*validatorKey);
+								}
+							}
 						}
 
 						for (auto const& file : task.Files)
