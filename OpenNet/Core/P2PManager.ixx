@@ -1,6 +1,7 @@
 ﻿export module OpenNet.Core.P2PManager;
 
 import std;
+import OpenNet.Core.Content.ContentIdentity;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.torrentCore.TorrentStateManager;
 import winrt.Windows.Foundation;
@@ -33,6 +34,33 @@ export namespace OpenNet::Core
 			GetSessionStats();
 		::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats
 			GetPerformanceStats();
+		::OpenNet::Core::Torrent::LibtorrentHandle::ListenStatus
+			GetListenStatus();
+		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
+			OpenLongSeedSession(
+				std::string const& sessionId,
+				std::vector<std::uint8_t> const& metainfo,
+				std::filesystem::path const& localFilePath);
+		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
+			OpenLongSeedDownloadSession(
+				std::string const& sessionId,
+				std::vector<std::uint8_t> const& metainfo,
+				std::filesystem::path const& targetFilePath);
+
+		// Standalone hidden P2P fetch. Do not point this at a file currently
+		// being written by aria2; mixed-source range coordination is a later
+		// TransferCoordinator integration.
+		winrt::Windows::Foundation::IAsyncOperation<bool>
+			StartLongSeedDownloadAsync(
+				::OpenNet::Core::Content::ContentIdentity identity,
+				std::filesystem::path targetFilePath,
+				std::uint32_t maxPeers = 20);
+		bool ConnectLongSeedPeer(
+			std::string const& sessionId,
+			std::string const& address,
+			std::uint16_t port,
+			bool preferUtp);
+		void CloseLongSeedSession(std::string const& sessionId);
 		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>
 			GetTorrentPeers(std::string const& taskId);
 

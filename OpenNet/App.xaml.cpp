@@ -15,6 +15,8 @@ module OpenNet.App;
 import OpenNet.Core.ExceptionService.ExceptionHandling;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
+import OpenNet.Core.Content.ContentCatalogService;
+import OpenNet.Core.Content.ContentDirectorySyncService;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.RSS.RSSManager;
@@ -215,6 +217,7 @@ namespace winrt::OpenNet::implementation
 		}
 
 		window.Activate();
+		::OpenNet::Core::Content::ContentCatalogService::Instance().Initialize();
 		::OpenNet::Core::GeoIPManager::Instance().Initialize();
 		InitializeTorrentCoreAsync();
 		InitializeRSSManagerAsync();
@@ -599,6 +602,15 @@ namespace winrt::OpenNet::implementation
 			OutputDebugStringA("App: WebUI shutdown error\n");
 		}
 
+		try
+		{
+			::OpenNet::Core::Content::ContentDirectorySyncService::Instance().Stop();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: ContentDirectory sync shutdown error\n");
+		}
+
 		// Shutdown P2PManager (torrent session uses abort() + proxy, non-blocking)
 		try
 		{
@@ -619,6 +631,15 @@ namespace winrt::OpenNet::implementation
 			OutputDebugStringA("App: DownloadManager shutdown error\n");
 		}
 
+		try
+		{
+			::OpenNet::Core::Content::ContentCatalogService::Instance().Shutdown();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: ContentCatalog shutdown error\n");
+		}
+
 		OutputDebugStringA("App: Engine shutdown completed\n");
 	}
 
@@ -629,6 +650,7 @@ namespace winrt::OpenNet::implementation
 			auto trackerInitialization = ::OpenNet::Core::Torrent::TrackerManager::Instance().InitializeAsync();
 			co_await ::OpenNet::Core::P2PManager::Instance().EnsureTorrentCoreInitializedAsync();
 			co_await trackerInitialization;
+			::OpenNet::Core::Content::ContentDirectorySyncService::Instance().Start();
 			OutputDebugStringA("App: libtorrent core initialized\n");
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
 				::OpenNet::Service::Notification::InfoBarMessage::Success(

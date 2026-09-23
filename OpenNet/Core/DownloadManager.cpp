@@ -12,6 +12,7 @@ module;
 module OpenNet.Core.DownloadManager;
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Content.ContentCatalogService;
 
 namespace OpenNet::Core
 {
@@ -817,6 +818,18 @@ namespace OpenNet::Core
 						}
 						if (!recordId.empty())
 							HttpStateManager::Instance().UpdateRecordStatus(recordId, 3); // completed
+
+						for (auto const& file : task.Files)
+						{
+							if (file.Path.empty()) continue;
+							::OpenNet::Core::Content::ContentCatalogService::Instance().EnqueueFile(
+								std::filesystem::path{ winrt::to_hstring(file.Path).c_str() },
+								{
+									::OpenNet::Core::Content::ContentSourceKind::Http,
+									recordId.empty() ? gid : recordId,
+									std::nullopt
+								});
+						}
 
 						ShowHttpCompletionToast(gid, task);
 						if (finishedCb) finishedCb(gid, Aria2::ToFriendlyName(task));
