@@ -131,6 +131,7 @@ namespace OpenNet::Core
 			{
 				std::lock_guard lock(m_resourceDiscoveryMutex);
 				m_stopResourceDiscovery.store(true);
+				m_resourceDiscoveryJobs.clear();
 			}
 			m_resourceDiscoveryCv.notify_all();
 			if (m_resourceDiscoveryThread.joinable())
@@ -231,6 +232,7 @@ namespace OpenNet::Core
 		{
 			std::lock_guard lock(m_resourceDiscoveryMutex);
 			m_stopResourceDiscovery.store(true);
+			m_resourceDiscoveryJobs.clear();
 		}
 		m_resourceDiscoveryCv.notify_all();
 		if (m_resourceDiscoveryThread.joinable())
@@ -505,6 +507,10 @@ namespace OpenNet::Core
 		}
 		std::lock_guard rpcLock(m_aria2->InstanceLock());
 
+		std::string resourceRecordId;
+		if (auto const record = HttpStateManager::Instance().FindByGid(gid))
+			resourceRecordId = record->recordId;
+
 		std::vector<std::filesystem::path> downloadedFiles;
 		std::vector<std::filesystem::path> controlFiles;
 		try
@@ -671,6 +677,16 @@ namespace OpenNet::Core
 			m_lastHttpStatuses.erase(gid);
 			m_httpTaskSnapshots.erase(gid);
 			m_httpTaskLogs.erase(gid);
+			m_httpResourceDiscoveries.erase(gid);
+		}
+
+		if (!resourceRecordId.empty())
+		{
+			auto& settings = AppSettingsDatabase::Instance();
+			settings.Initialize();
+			settings.Delete(
+				ResourceHintEligibilityCategory,
+				resourceRecordId);
 		}
 	}
 
