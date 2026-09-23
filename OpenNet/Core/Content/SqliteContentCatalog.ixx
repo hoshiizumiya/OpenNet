@@ -24,6 +24,8 @@ export namespace OpenNet::Core::Content
         void Upsert(ContentRecord record) override;
         std::optional<ContentRecord> FindByKey(ContentKey const& key) const override;
         std::optional<ContentRecord> FindByIdentity(ContentIdentity const& identity) const override;
+        std::optional<ContentRecord> FindByLocation(
+            std::filesystem::path const& path) const override;
         std::vector<ContentRecord> SnapshotAvailable() const override;
         std::vector<ContentRecord> SnapshotAll() const override;
         void SetLocationAvailability(

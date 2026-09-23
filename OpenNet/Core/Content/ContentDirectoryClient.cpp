@@ -344,6 +344,124 @@ namespace OpenNet::Core::Content
         }
     }
 
+    bool ContentDirectoryClient::AnnounceResource(
+        std::string const& nodeId,
+        std::string const& leaseId,
+        ResourceKey const& resourceKey,
+        ContentIdentity const& contentIdentity)
+    {
+        if (nodeId.empty()
+            || leaseId.empty()
+            || !contentIdentity.IsWellFormed())
+            return false;
+
+        try
+        {
+            InitializeServerDomain();
+
+            JsonObject keyJson;
+            keyJson.Insert(L"algorithm", JsonValue::CreateNumberValue(
+                static_cast<int>(resourceKey.algorithm)));
+            keyJson.Insert(L"digest", JsonValue::CreateStringValue(
+                winrt::to_hstring(resourceKey.ToHex())));
+
+            JsonObject request;
+            request.Insert(L"leaseId", JsonValue::CreateStringValue(
+                winrt::to_hstring(leaseId)));
+            request.Insert(L"resourceKey", keyJson);
+            request.Insert(L"contentIdentity", IdentityJson(contentIdentity));
+
+            std::wstring relative = L"/api/v1/content/nodes/";
+            relative += winrt::to_hstring(nodeId).c_str();
+            relative += L"/resources";
+
+            auto http = CreateClient();
+            HttpStringContent body{
+                request.Stringify(),
+                UnicodeEncoding::Utf8,
+                L"application/json"
+            };
+            return http.PostAsync(
+                Uri{ ApiUri(relative) }, body)
+                .get().IsSuccessStatusCode();
+        }
+        catch (...)
+        {
+            return false;
+        }
+    }
+
+    std::optional<ResourceLookupResult>
+        ContentDirectoryClient::LookupResource(
+            ResourceKey const& resourceKey,
+            std::uint32_t maxCandidates)
+    {
+        try
+        {
+            InitializeServerDomain();
+
+            std::wstring relative = std::format(
+                L"/api/v1/content/resources/lookup"
+                L"?algorithm={}&digest={}&maxCandidates={}",
+                static_cast<int>(resourceKey.algorithm),
+                winrt::to_hstring(resourceKey.ToHex()).c_str(),
+                (std::min)(maxCandidates, 32u));
+
+            auto http = CreateClient();
+            auto response = http.GetAsync(
+                Uri{ ApiUri(relative) }).get();
+            if (!response.IsSuccessStatusCode())
+                return std::nullopt;
+
+            JsonObject json = JsonObject::Parse(
+                response.Content().ReadAsStringAsync().get());
+
+            ResourceLookupResult result;
+            result.key = resourceKey;
+
+            auto candidates = json.GetNamedArray(L"candidates");
+            for (std::uint32_t i = 0; i < candidates.Size(); ++i)
+            {
+                auto candidateJson = candidates.GetObjectAt(i);
+                ResourceCandidate candidate;
+                candidate.contentId = winrt::to_string(
+                    candidateJson.GetNamedString(L"contentId"));
+                candidate.size = static_cast<std::uint64_t>(
+                    candidateJson.GetNamedNumber(L"size"));
+                candidate.observationCount =
+                    static_cast<std::uint32_t>(
+                        candidateJson.GetNamedNumber(
+                            L"observationCount", 0));
+
+                auto identities =
+                    candidateJson.GetNamedArray(L"identities");
+                for (std::uint32_t index = 0;
+                    index < identities.Size();
+                    ++index)
+                {
+                    if (auto identity = ParseIdentity(
+                        identities.GetObjectAt(index)))
+                        candidate.identities.push_back(
+                            std::move(*identity));
+                }
+
+                if (!candidate.contentId.empty()
+                    && !candidate.identities.empty())
+                    result.candidates.push_back(
+                        std::move(candidate));
+            }
+
+            return result.candidates.empty()
+                ? std::nullopt
+                : std::optional<ResourceLookupResult>{
+                    std::move(result) };
+        }
+        catch (...)
+        {
+            return std::nullopt;
+        }
+    }
+
     std::optional<ContentLookupResult> ContentDirectoryClient::Lookup(
         ContentIdentity const& identity,
         std::optional<std::string> const& excludeNodeId,

@@ -17,7 +17,8 @@ export namespace OpenNet::Core::Content
         void EnqueueFile(
             std::filesystem::path path,
             ContentSourceReference source,
-            std::vector<ContentIdentity> knownIdentities = {});
+            std::vector<ContentIdentity> knownIdentities = {},
+            std::vector<ResourceKey> resourceKeys = {});
 
         void RemoveLocation(std::filesystem::path const& path);
 
@@ -25,6 +26,8 @@ export namespace OpenNet::Core::Content
         [[nodiscard]] std::vector<ContentRecord> SnapshotAll() const;
         [[nodiscard]] std::optional<ContentRecord> FindByIdentity(
             ContentIdentity const& identity) const;
+        [[nodiscard]] std::optional<ContentRecord> FindByLocation(
+            std::filesystem::path const& path) const;
 
         // Ensures the deterministic OpenNet.Content.v1 canonical piece layer
         // exists for one available content object. Existing v2 metadata may
@@ -43,6 +46,7 @@ export namespace OpenNet::Core::Content
             std::filesystem::path path;
             ContentSourceReference source;
             std::vector<ContentIdentity> knownIdentities;
+            std::vector<ResourceKey> resourceKeys;
         };
 
         ContentCatalogService() = default;

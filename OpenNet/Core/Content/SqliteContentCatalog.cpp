@@ -157,6 +157,18 @@ namespace OpenNet::Core::Content
                 FOREIGN KEY (content_key) REFERENCES content(content_key)
                     ON DELETE CASCADE
             );
+
+            CREATE TABLE IF NOT EXISTS content_resource_key (
+                algorithm INTEGER NOT NULL,
+                digest BLOB NOT NULL,
+                content_key BLOB NOT NULL,
+                observed_at INTEGER NOT NULL,
+                PRIMARY KEY (algorithm, digest),
+                FOREIGN KEY (content_key) REFERENCES content(content_key)
+                    ON DELETE CASCADE
+            );
+            CREATE INDEX IF NOT EXISTS idx_content_resource_key_content
+                ON content_resource_key(content_key);
         )";
 
         char* message{};
@@ -293,6 +305,34 @@ namespace OpenNet::Core::Content
                 int const result = sqlite3_step(statement);
                 sqlite3_finalize(statement);
                 if (result != SQLITE_DONE) ThrowSqlite(m_db, "Upsert piece layer");
+            }
+
+            for (auto const& resourceKey : record.resourceKeys)
+            {
+                sqlite3_stmt* statement{};
+                char const* sql =
+                    "INSERT INTO content_resource_key("
+                    "algorithm, digest, content_key, observed_at) "
+                    "VALUES(?, ?, ?, ?) "
+                    "ON CONFLICT(algorithm, digest) DO UPDATE SET "
+                    "content_key=excluded.content_key, "
+                    "observed_at=excluded.observed_at;";
+                if (sqlite3_prepare_v2(
+                    m_db, sql, -1, &statement, nullptr) != SQLITE_OK)
+                    ThrowSqlite(m_db, "Prepare resource-key upsert");
+                sqlite3_bind_int(
+                    statement, 1, static_cast<int>(resourceKey.algorithm));
+                sqlite3_bind_blob(
+                    statement, 2,
+                    resourceKey.digest.data(),
+                    static_cast<int>(resourceKey.digest.size()),
+                    SQLITE_TRANSIENT);
+                BindKey(statement, 3, record.key);
+                sqlite3_bind_int64(statement, 4, UnixNow());
+                int const result = sqlite3_step(statement);
+                sqlite3_finalize(statement);
+                if (result != SQLITE_DONE)
+                    ThrowSqlite(m_db, "Upsert content resource key");
             }
 
             for (auto const& source : record.sources)
@@ -442,6 +482,32 @@ namespace OpenNet::Core::Content
             sqlite3_stmt* statement{};
             if (sqlite3_prepare_v2(
                 m_db,
+                "SELECT algorithm, digest FROM content_resource_key "
+                "WHERE content_key=?;",
+                -1, &statement, nullptr) != SQLITE_OK)
+                ThrowSqlite(m_db, "Prepare resource-key read");
+            BindKey(statement, 1, key);
+            while (sqlite3_step(statement) == SQLITE_ROW)
+            {
+                auto const digest = ReadBlob(statement, 1);
+                if (digest.size() != 32) continue;
+
+                ResourceKey resourceKey;
+                resourceKey.algorithm = static_cast<ResourceKeyAlgorithm>(
+                    sqlite3_column_int(statement, 0));
+                std::copy_n(
+                    digest.data(),
+                    resourceKey.digest.size(),
+                    resourceKey.digest.begin());
+                record.resourceKeys.push_back(std::move(resourceKey));
+            }
+            sqlite3_finalize(statement);
+        }
+
+        {
+            sqlite3_stmt* statement{};
+            if (sqlite3_prepare_v2(
+                m_db,
                 "SELECT source_kind, source_id, source_file_index "
                 "FROM content_source WHERE content_key=?;",
                 -1, &statement, nullptr) != SQLITE_OK)
@@ -490,6 +556,31 @@ namespace OpenNet::Core::Content
         sqlite3_bind_int(statement, 1, static_cast<int>(identity.algorithm));
         sqlite3_bind_blob(statement, 2, identity.digest.data(),
             static_cast<int>(identity.digest.size()), SQLITE_TRANSIENT);
+
+        std::optional<ContentKey> key;
+        if (sqlite3_step(statement) == SQLITE_ROW)
+            key = ReadKey(statement, 0);
+        sqlite3_finalize(statement);
+        return key ? LoadRecord(*key) : std::nullopt;
+    }
+
+    std::optional<ContentRecord> SqliteContentCatalog::FindByLocation(
+        std::filesystem::path const& path) const
+    {
+        std::lock_guard lock(m_mutex);
+        if (!const_cast<SqliteContentCatalog*>(this)->EnsureInitialized())
+            return std::nullopt;
+
+        sqlite3_stmt* statement{};
+        if (sqlite3_prepare_v2(
+            m_db,
+            "SELECT content_key FROM content_location WHERE local_path=?;",
+            -1, &statement, nullptr) != SQLITE_OK)
+            ThrowSqlite(m_db, "Prepare location lookup");
+
+        auto const utf8 = PathToUtf8(path);
+        sqlite3_bind_text(
+            statement, 1, utf8.c_str(), -1, SQLITE_TRANSIENT);
 
         std::optional<ContentKey> key;
         if (sqlite3_step(statement) == SQLITE_ROW)

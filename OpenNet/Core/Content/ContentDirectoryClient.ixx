@@ -37,6 +37,16 @@ export namespace OpenNet::Core::Content
             std::vector<std::uint8_t> const& canonicalTorrent = {},
             std::string const& error = {});
 
+        bool AnnounceResource(
+            std::string const& nodeId,
+            std::string const& leaseId,
+            ResourceKey const& resourceKey,
+            ContentIdentity const& contentIdentity);
+
+        std::optional<ResourceLookupResult> LookupResource(
+            ResourceKey const& resourceKey,
+            std::uint32_t maxCandidates = 8);
+
         std::optional<ContentLookupResult> Lookup(
             ContentIdentity const& identity,
             std::optional<std::string> const& excludeNodeId = std::nullopt,

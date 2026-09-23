@@ -8,6 +8,7 @@ export module OpenNet.Core.Content.ContentCatalog;
 
 import std;
 import OpenNet.Core.Content.ContentIdentity;
+import OpenNet.Core.Content.ResourceKey;
 
 export namespace OpenNet::Core::Content
 {
@@ -82,6 +83,7 @@ export namespace OpenNet::Core::Content
         std::vector<ContentIdentity> identities;
         std::vector<ContentLocation> locations;
         std::vector<ContentSourceReference> sources;
+        std::vector<ResourceKey> resourceKeys;
         std::optional<CanonicalPieceLayer> canonicalPieceLayer;
 
         [[nodiscard]] bool IsAvailable() const noexcept
@@ -101,6 +103,8 @@ export namespace OpenNet::Core::Content
         virtual void Upsert(ContentRecord record) = 0;
         virtual std::optional<ContentRecord> FindByKey(ContentKey const& key) const = 0;
         virtual std::optional<ContentRecord> FindByIdentity(ContentIdentity const& identity) const = 0;
+        virtual std::optional<ContentRecord> FindByLocation(
+            std::filesystem::path const& path) const = 0;
         virtual std::vector<ContentRecord> SnapshotAvailable() const = 0;
         virtual std::vector<ContentRecord> SnapshotAll() const = 0;
         virtual void SetLocationAvailability(

@@ -71,6 +71,7 @@ namespace OpenNet::Core::Content
         m_stopping = false;
         ++m_revision;
         m_syncedRevision = 0;
+        m_announcedResourceRevision = 0;
         m_started = true;
         ::OpenNet::Core::Content::ContentCatalogService::Instance()
             .SetChangedCallback([this] { MarkDirty(); });
@@ -270,6 +271,57 @@ namespace OpenNet::Core::Content
 
                         if (leaseId)
                         {
+                            std::uint64_t resourceAttemptRevision{};
+                            bool announceResources{};
+                            {
+                                std::lock_guard lock(m_mutex);
+                                resourceAttemptRevision = m_revision;
+                                announceResources =
+                                    m_announcedResourceRevision
+                                        != m_revision;
+                            }
+
+                            if (announceResources)
+                            {
+                                bool allAnnounced = true;
+                                auto records =
+                                    ::OpenNet::Core::Content::ContentCatalogService::Instance()
+                                        .SnapshotAvailable();
+
+                                for (auto const& record : records)
+                                {
+                                    auto identity = std::ranges::find_if(
+                                        record.identities,
+                                        [](ContentIdentity const& value)
+                                        {
+                                            return value.algorithm
+                                                == ContentIdentityAlgorithm::Bep52FileRootSha256;
+                                        });
+                                    if (identity == record.identities.end())
+                                        continue;
+
+                                    for (auto const& resourceKey
+                                        : record.resourceKeys)
+                                    {
+                                        if (!client.AnnounceResource(
+                                            nodeId,
+                                            *leaseId,
+                                            resourceKey,
+                                            *identity))
+                                        {
+                                            allAnnounced = false;
+                                        }
+                                    }
+                                }
+
+                                if (allAnnounced)
+                                {
+                                    std::lock_guard lock(m_mutex);
+                                    m_announcedResourceRevision =
+                                        resourceAttemptRevision;
+                                }
+                            }
+
                             auto wakeups = client.PollWakeups(
                                 nodeId, *leaseId, 32);
                             if (wakeups)

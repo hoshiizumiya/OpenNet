@@ -2,6 +2,7 @@ export module OpenNet.Core.Content.ContentDirectoryContracts;
 
 import std;
 import OpenNet.Core.Content.ContentCatalog;
+import OpenNet.Core.Content.ResourceKey;
 
 export namespace OpenNet::Core::Content
 {
@@ -53,6 +54,20 @@ export namespace OpenNet::Core::Content
         std::string nodeId;
         bool ready{};
         std::vector<ContentPeerEndpoint> endpoints;
+    };
+
+    struct ResourceCandidate
+    {
+        std::string contentId;
+        std::uint64_t size{};
+        std::uint32_t observationCount{};
+        std::vector<ContentIdentity> identities;
+    };
+
+    struct ResourceLookupResult
+    {
+        ResourceKey key;
+        std::vector<ResourceCandidate> candidates;
     };
 
     struct ContentLookupResult

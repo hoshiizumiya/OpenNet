@@ -119,7 +119,8 @@ namespace OpenNet::Core::Content
     void ContentCatalogService::EnqueueFile(
         std::filesystem::path path,
         ContentSourceReference source,
-        std::vector<ContentIdentity> knownIdentities)
+        std::vector<ContentIdentity> knownIdentities,
+        std::vector<ResourceKey> resourceKeys)
     {
         if (path.empty()) return;
         {
@@ -146,13 +147,22 @@ namespace OpenNet::Core::Content
                         == duplicate->knownIdentities.end())
                         duplicate->knownIdentities.push_back(std::move(identity));
                 }
+                for (auto& resourceKey : resourceKeys)
+                {
+                    if (std::ranges::find(
+                        duplicate->resourceKeys, resourceKey)
+                        == duplicate->resourceKeys.end())
+                        duplicate->resourceKeys.push_back(
+                            std::move(resourceKey));
+                }
                 return;
             }
 
             m_jobs.push_back({
                 std::move(path),
                 std::move(source),
-                std::move(knownIdentities)
+                std::move(knownIdentities),
+                std::move(resourceKeys)
             });
         }
         m_condition.notify_one();
@@ -253,6 +263,14 @@ namespace OpenNet::Core::Content
                 record.identities.push_back(identity);
         }
 
+        for (auto const& resourceKey : job.resourceKeys)
+        {
+            if (std::ranges::find(
+                record.resourceKeys, resourceKey)
+                == record.resourceKeys.end())
+                record.resourceKeys.push_back(resourceKey);
+        }
+
         ContentLocation location;
         location.localPath = job.path;
         location.availability = ContentAvailability::Available;
@@ -299,6 +317,12 @@ namespace OpenNet::Core::Content
         ContentIdentity const& identity) const
     {
         return m_catalog.FindByIdentity(identity);
+    }
+
+    std::optional<ContentRecord> ContentCatalogService::FindByLocation(
+        std::filesystem::path const& path) const
+    {
+        return m_catalog.FindByLocation(path);
     }
 
     std::optional<ContentRecord> ContentCatalogService::EnsureCanonicalPieceLayer(

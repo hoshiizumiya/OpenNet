@@ -30,5 +30,6 @@ export namespace OpenNet::Core::Content
         bool m_stopping{};
         std::uint64_t m_revision{ 1 };
         std::uint64_t m_syncedRevision{};
+        std::uint64_t m_announcedResourceRevision{};
     };
 }

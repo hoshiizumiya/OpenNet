@@ -229,6 +229,7 @@
     <ClCompile Include="Core\ApplicationModel\PackageIdentityAdapter.ixx" />
     <ClCompile Include="Core\AppSettingsDatabase.ixx" />
     <ClCompile Include="Core\Content\ContentIdentity.ixx" />
+    <ClCompile Include="Core\Content\ResourceKey.ixx" />
     <ClCompile Include="Core\Content\ContentCatalog.ixx" />
     <ClCompile Include="Core\Content\SqliteContentCatalog.ixx" />
     <ClCompile Include="Core\Content\ContentHasher.ixx" />
@@ -1141,6 +1142,7 @@
     <ClCompile Include="Core\DataGraph\ReadableUnitConverterWinRT.cpp" />
     <ClCompile Include="Core\DataGraph\SpeedGraphData.cpp" />
     <ClCompile Include="Core\P2PManager.cpp" />
+    <ClCompile Include="Core\Content\ResourceKey.cpp" />
     <ClCompile Include="Core\Content\SqliteContentCatalog.cpp" />
     <ClCompile Include="Core\Content\ContentHasher.cpp" />
     <ClCompile Include="Core\Content\ContentCatalogService.cpp" />
