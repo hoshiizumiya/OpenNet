@@ -1,8 +1,7 @@
 export module OpenNet.Core.Content.ContentHasher;
 
 import std;
-import OpenNet.Core.Content.ContentIdentity;
-import OpenNet.Core.Content.ContentCatalog;
+export import OpenNet.Core.Content.ContentCatalog;
 
 export namespace OpenNet::Core::Content
 {

@@ -1,7 +1,7 @@
 export module OpenNet.Core.Content.ContentCatalogService;
 
 import std;
-import OpenNet.Core.Content.ContentCatalog;
+export import OpenNet.Core.Content.ContentCatalog;
 import OpenNet.Core.Content.SqliteContentCatalog;
 
 export namespace OpenNet::Core::Content

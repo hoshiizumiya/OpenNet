@@ -5,7 +5,7 @@ struct sqlite3;
 export module OpenNet.Core.Content.SqliteContentCatalog;
 
 import std;
-import OpenNet.Core.Content.ContentCatalog;
+export import OpenNet.Core.Content.ContentCatalog;
 
 export namespace OpenNet::Core::Content
 {

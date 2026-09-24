@@ -1,8 +1,7 @@
 export module OpenNet.Core.Content.ContentDirectoryContracts;
 
 import std;
-import OpenNet.Core.Content.ContentCatalog;
-import OpenNet.Core.Content.ResourceKey;
+export import OpenNet.Core.Content.ContentCatalog;
 
 export namespace OpenNet::Core::Content
 {
