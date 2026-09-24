@@ -638,78 +638,61 @@ remove temporary canonical torrent
 
 The catalog remains resident after the temporary session is removed. These hidden torrents are deliberately absent from normal task persistence and task UI state.
 
-## 17. HTTP ResourceKey discovery and verified fallback
+## 17. HTTP ResourceKey discovery and canonical WebSeed hybrid
 
-A new HTTP task knows its origin resource before it knows the final content identity. OpenNet now keeps those namespaces separate:
+`ResourceKey` is discovery metadata, not a content identity. Exact URL and validator-qualified keys remain privacy-preserving hints; raw URLs are not uploaded to the public Content Directory, and private/authenticated/signed request contexts are excluded.
 
-```text
-HTTP resource observation
-        |
-        v
-privacy-preserving ResourceKey
-        |
-        v
-untrusted Content candidate(s)
-        |
-        +-- caller SHA-256 + size match? -- no --> origin only
-        |
-       yes
-        v
-authoritative BEP52 identity
-        |
-        v
-hidden canonical v2 fallback
-```
+Automatic canonical-hybrid routing is deliberately strict. It requires:
 
-`ResourceKey != ContentIdentity`. Resource keys are discovery hints and never replace cryptographic content identities.
+1. a caller-supplied whole-file SHA-256;
+2. an exact matching `WholeFileSha256` alias on the candidate;
+3. matching known Content-Length;
+4. a BEP52 file-root identity;
+5. a known output path;
+6. a public/privacy-safe HTTP request;
+7. an active `GET Range: bytes=0-0` probe that actually returns `206 Partial Content` with `Content-Range`.
 
-Two ResourceKey algorithms are currently defined:
+`Accept-Ranges: bytes` is only a UI hint and is not sufficient to enable WebSeed routing.
 
-| ID | Name | Input |
-|---:|---|---|
-| 1 | `ExactUrlSha256V1` | normalized public HTTP(S) URL, including the exact query |
-| 2 | `HttpValidatorSha256V1` | normalized final URL + strong ETag + Content-Length |
+### Primary trusted data plane
 
-Only the SHA-256 digest of that descriptor is sent to OpenNet.Server. The raw URL is not uploaded.
-
-The client refuses to create shared resource hints for requests carrying explicit cookies, credentials, custom headers, Referer, or User-Agent overrides. URL credentials and query names that strongly indicate signed/authentication material (for example token/signature/credential families and common cloud signing prefixes) are also excluded.
-
-The HTTP dialog already performs a HEAD preflight and falls back to `GET Range: bytes=0-0` when required. That preflight now carries the final redirected URL, Content-Length, and a strong ETag into the core download options.
-
-A strong ETag is still **not** a content hash. Automatic peer fallback is enabled only when the caller supplied a whole-file SHA-256 checksum and a Server candidate contains the exact matching `WholeFileSha256` alias; when preflight size is known, size must match as well.
-
-Completed public HTTP downloads persist their safe ResourceKeys alongside the ContentRecord. ContentDirectorySyncService announces those mappings only after the content is part of the node's current inventory and the node has a valid lease.
-
-Server API:
-
-```http
-POST /api/v1/content/nodes/{nodeId}/resources
-GET  /api/v1/content/resources/lookup?algorithm={id}&digest={hex}&maxCandidates={n}
-```
-
-A resource observation is accepted only for content that the announcing node currently owns in its inventory. Observations have a finite lifetime, and removing content from a node inventory invalidates that node's mappings. Lookup groups current observations by ContentId and ranks candidates by observation count and recency, but the result remains an untrusted hint.
-
-### Verified full-file peer fallback
-
-OpenNet now has a conservative integration path that still preserves the one-writer invariant.
+When the request is eligible, aria2 is initially created paused only as a temporary compatibility shell for the existing HTTP GID / SQLite / UI model. It does not own payload writes while discovery decides the route.
 
 ```text
-aria2 origin target:       file.iso
-hidden libtorrent target:  file.iso.opennet-p2p-<gid>.part
+HTTP task
+  +-- paused aria2 control shell (no payload writes)
+  |
+  v
+canonical OpenNet.Content.v1 torrent
+  +-- BEP 19 HTTP URL Seed
+  +-- OpenNet TCP/uTP peer(s)
+  |
+  v
+one libtorrent piece picker
+  |
+  v
+one disk writer
 ```
 
-The two engines never write the same path concurrently.
+The final public HTTP origin is passed through `add_torrent_params::url_seeds`. A ready OpenNet peer is no longer required before opening the canonical download when a valid URL seed is available. HTTP and P2P therefore contribute pieces through one libtorrent scheduler and one cryptographic verification path.
 
-For a trusted candidate:
+The current primary hybrid writes the destination directly because aria2 remains paused. On hybrid failure, OpenNet closes the hidden canonical session, removes the incomplete libtorrent-owned destination/control residue, and only then resumes aria2. Ownership is transferred, never shared.
 
-1. a bounded background worker opens a hidden canonical v2 download into the temporary file;
-2. libtorrent verifies the BEP52 Merkle data;
-3. after completion, OpenNet re-hashes the temporary file and requires the caller-supplied WholeFile SHA-256 (and known size) to match;
-4. if aria2 succeeds first, the hidden fallback is cancelled and its temporary file is removed;
-5. if aria2 reaches a terminal error while the verified fallback is ready, OpenNet atomically replaces the destination with `MoveFileExW(..., MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)`, updates the HTTP record to Complete, and catalogs the final file;
-6. explicit pause/cancel/remove/delete suppresses any late discovery result from starting hidden P2P work.
+After libtorrent finishes, OpenNet also re-hashes the complete file and requires caller WholeFile SHA-256/size to match before marking the HTTP record Complete and cataloguing the final file. The older separate `.opennet-p2p-<gid>.part` path remains available as a compatibility/error-recovery fallback.
 
-This is a **fallback/alternative full-file path**, not mixed-source P2SP acceleration. Real simultaneous acceleration still requires a TransferCoordinator that assigns every output range to exactly one writer.
+Explicit Pause/Cancel/Remove/Delete cancels hidden work and suppresses late discovery results.
+
+### TransferCoordinator is not the default HTTP P2SP design
+
+The old design assumed two independent writers and therefore required a custom range owner. That is no longer necessary for ordinary public HTTP acceleration: BEP 19 lets libtorrent coordinate HTTP URL-seed requests and BitTorrent peer requests inside the same torrent.
+
+The invariant is:
+
+```text
+one physical output -> one active data writer
+```
+
+OpenNet must never point active aria2 and libtorrent sessions at the same physical file. A future `TransferCoordinator` is only justified for heterogeneous sources that cannot be represented as libtorrent URL Seeds or peers.
 
 ## 18. Content integrity vs transport encryption
 
@@ -821,62 +804,48 @@ Still required before public production:
 
 ### Implemented in OpenNet client
 
-- [x] multi-identity `ContentRecord`;
-- [x] multiple local locations per content;
-- [x] dedicated SQLite catalog;
-- [x] background BEP 52 / SHA-256 hashing;
-- [x] direct reuse of libtorrent v2 file roots;
-- [x] HTTP completion ingestion;
-- [x] torrent completion ingestion;
-- [x] private-torrent exclusion;
-- [x] startup metadata validation;
-- [x] random local Content Directory NodeId;
-- [x] full inventory registration;
-- [x] generation + persisted registration idempotency state;
-- [x] lease heartbeat;
-- [x] revision-based lossless dirty synchronization;
-- [x] lookup client DTOs.
+- [x] multi-identity/multi-location ContentCatalog with background hashing and startup validation;
+- [x] BEP52 root reuse, canonical 1 MiB piece layer, and deterministic `OpenNet.Content.v1` v2 swarm;
+- [x] Content Directory inventory/lease synchronization, demand wakeup, manifest validation and TCP/uTP peer injection;
+- [x] privacy-safe HTTP ResourceKey discovery and resource observations;
+- [x] candidate selection gated by caller WholeFile SHA-256 and size;
+- [x] active 206 + Content-Range probe for BEP 19 eligibility;
+- [x] hidden canonical download sessions carrying HTTP URL seeds;
+- [x] primary canonical HTTP hybrid using a paused aria2 control shell and one libtorrent writer;
+- [x] HTTP URL Seed + OpenNet peers scheduled by one libtorrent piece picker;
+- [x] hybrid progress bridged back to the existing HTTP task UI/persistence;
+- [x] caller SHA-256 post-verification and Complete/ContentCatalog integration;
+- [x] hybrid failure cleanup before aria2 ownership resumes;
+- [x] older separate-file peer fallback retained for compatibility/recovery.
 
 ### Implemented in OpenNet.Server
 
-- [x] separate content directory database;
-- [x] logical content and multi-identity aliases;
-- [x] node, endpoint and presence models;
-- [x] transactional full-inventory replacement;
-- [x] generation conflict handling;
-- [x] registration idempotency;
-- [x] lease heartbeat;
-- [x] bounded lookup;
-- [x] observed-address endpoint policy;
-- [x] expiry filtering and background expired-node cleanup;
-- [x] SQLite service tests;
-- [x] SQLite/MySQL provider wiring.
+- [x] logical content/multi-identity aliases, node presence, leases, generation and idempotency;
+- [x] bounded content lookup, demand wakeup and canonical manifest validation/cache;
+- [x] ResourceObservation announce/lookup with digest-only keys, TTL, bounded candidates and stale-ownership invalidation;
+- [x] SQLite/MySQL wiring and service tests.
 
-### Not implemented yet
+### Remaining gaps
 
-- [ ] deterministic canonical v2 swarm builder;
-- [ ] lazy canonical seed sessions;
-- [ ] direct peer injection into libtorrent from Server lookup;
-- [ ] HTTP ResourceKey -> Content mapping;
-- [ ] piece-layer persistence/cache for canonical swarms;
-- [ ] dual-stack verified candidate registration through Traversal;
-- [ ] NAT hole-punch coordination for this content protocol;
-- [ ] relay fallback;
-- [ ] node cryptographic authentication;
-- [ ] peer tickets;
-- [ ] BitComet LT `filehash` derivation;
-- [ ] BitComet LT wire protocol adapter;
-- [ ] production database migrations and rate limiting.
+- [ ] deterministic end-to-end HTTP Range + WebSeed + OpenNet peer hybrid test;
+- [ ] automated confirmation of the exact libtorrent request-path semantics for the current canonical single-file layout;
+- [ ] cooperative cancellation of in-flight wakeup/lookup during shutdown;
+- [ ] automatic re-discovery after Resume;
+- [ ] activating hybrid when the output filename arrives late via redirect/Content-Disposition;
+- [ ] stale hybrid/P2P partial cleanup after abnormal termination;
+- [ ] same-target duplicate HTTP-task exclusion;
+- [ ] stronger crash/recovery semantics around HTTP task-shell cleanup/session persistence;
+- [ ] Traversal-verified IPv4/IPv6 candidates, hole punching, relay, node keys and peer tickets;
+- [ ] production abuse controls/migrations and BitComet LT wire compatibility.
 
 ## 22. Recommended next implementation sequence
 
-1. Build deterministic `CanonicalV2Swarm` metadata and add unit vectors proving that the same root/size always generates the same v2 info-hash.
-2. Add piece-layer caching to the content catalog.
-3. Add a lazy `SeedSessionManager` that maps a catalog location into the canonical swarm.
-4. Extend lookup handling to inject returned peers into libtorrent and prove a cross-task file transfer without HTTP origin traffic.
-5. Add conservative HTTP `ResourceKey` mapping and make HTTP origin + P2P race/fallback work.
-6. Integrate OpenNet.Traversal for verified IPv4/IPv6 candidates and hole punching.
-7. Add node keys, request signatures and peer tickets before opening the service to untrusted Internet clients.
-8. Run the BitComet compatibility test matrix and add the adapter only from reproduced evidence.
+1. Add a deterministic local HTTP Range server fixture and record the exact libtorrent WebSeed request path for `OpenNet.Content.v1`.
+2. Test URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog end to end.
+3. Harden shutdown/cancel/resume, stale partial cleanup and same-target exclusion.
+4. Support output names discovered after task creation.
+5. Integrate OpenNet.Traversal for verified IPv4/IPv6 candidates and hole punching.
+6. Add node keys, request signatures, peer tickets, rate limits and production migrations.
+7. Continue BitComet compatibility work independently.
 
-That sequence keeps each layer testable and prevents transport/security experimentation from destabilizing the durable content identity layer.
+Do not reintroduce a general `TransferCoordinator` as the default HTTP path unless a future source type cannot be represented as a libtorrent URL Seed or peer.

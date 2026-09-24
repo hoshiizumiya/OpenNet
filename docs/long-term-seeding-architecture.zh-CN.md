@@ -670,78 +670,61 @@ Task inactive
 
 而不是让所有停止 torrent 永久常驻。
 
-## 17. HTTP ResourceKey 提前发现与可信整文件 Fallback
+## 17. HTTP ResourceKey 提前发现与 Canonical WebSeed Hybrid
 
-新 HTTP 任务最先知道的是“资源 URL”，而不是最终 ContentIdentity。因此当前实现显式区分：
+`ResourceKey` 仍然只是发现键，不是 ContentIdentity。Exact URL / validator key 只作为隐私保护 hint；raw URL 不上传公共目录，带 Cookie、凭据、自定义 Header、Referer/User-Agent override、URL credentials 或明显 signed/auth query 的请求都排除。
 
-```text
-HTTP resource observation
-        |
-        v
-隐私保护 ResourceKey
-        |
-        v
-Server 返回的候选 Content（不可信 hint）
-        |
-        +-- 用户 SHA-256 + 已知 size 是否匹配？ -- 否 --> 继续 origin
-        |
-       是
-        v
-BEP52 identity
-        |
-        v
-隐藏 canonical v2 fallback
-```
+自动进入 canonical hybrid 必须同时满足：
 
-`ResourceKey != ContentIdentity`。ResourceKey 只负责发现，不承担内容完整性证明。
+1. caller 明确提供 WholeFile SHA-256；
+2. candidate 中存在完全相同的 `WholeFileSha256` alias；
+3. 已知 Content-Length 与 candidate size 一致；
+4. candidate 有 BEP52 file-root identity；
+5. output path 已知；
+6. 请求是 public/privacy-safe；
+7. 实际执行 `GET Range: bytes=0-0` 并得到 `206 Partial Content + Content-Range`。
 
-当前定义两种 ResourceKey：
+`Accept-Ranges: bytes` 只作为 UI 提示，不足以启用 WebSeed。
 
-| ID | 名称 | 输入 |
-|---:|---|---|
-| 1 | `ExactUrlSha256V1` | 规范化后的 public HTTP(S) URL，query 原样参与 |
-| 2 | `HttpValidatorSha256V1` | redirect 后 final URL + strong ETag + Content-Length |
+### 当前可信主数据面
 
-客户端只上传 descriptor 的 SHA-256 digest，**不把 raw URL 上传到 OpenNet.Server**。
-
-以下请求当前不会参与共享 ResourceKey：显式 Cookie、账号密码、自定义 Header、Referer、User-Agent override；URL 内嵌账号密码也会排除。query 参数名如果明显属于 token/signature/credential/session 等认证材料，或常见云厂商签名参数前缀，同样直接拒绝共享，而不是尝试“聪明地删参数”。
-
-HTTP 对话框原本已有 HEAD preflight，必要时会退到 `GET Range: bytes=0-0`。现在这条链会把 redirect 后 final URL、Content-Length 和 strong ETag 带进 Core。
-
-strong ETag **仍然不是 Content Hash**。只有调用者明确给出 whole-file SHA-256，并且 Server candidate 中存在完全一致的 `WholeFileSha256` alias；若 preflight 已知长度，size 也必须一致，客户端才允许自动进入 P2P fallback。
-
-完成后的 public HTTP 文件会把可安全共享的 ResourceKey 持久化进 ContentRecord。ContentDirectorySyncService 只有在 Content 已经属于当前 inventory 且 Node lease 有效时才向 Server announce 映射。
-
-Server API：
-
-```http
-POST /api/v1/content/nodes/{nodeId}/resources
-GET  /api/v1/content/resources/lookup?algorithm={id}&digest={hex}&maxCandidates={n}
-```
-
-ResourceObservation 必须绑定当前 Node 真正拥有的 ContentPresence，并具有有限 TTL。Node 后续 inventory 删除该 Content 时，对应 observation 会同步失效。lookup 按 ContentId 聚合 observation count / recency，但结果仍只是 hint。
-
-### 当前已实现的 verified full-file fallback
-
-当前实现严格保持“同一物理文件同一时刻只有一个 writer”：
+满足潜在条件时，aria2 先以 paused 状态创建，只承担现有 HTTP GID / SQLite / UI 的兼容 control shell；在 discovery 做出决定前它不拥有 payload 写入权。
 
 ```text
-aria2 origin:              file.iso
-隐藏 libtorrent fallback: file.iso.opennet-p2p-<gid>.part
+HTTP task
+  +-- paused aria2 control shell（不写 payload）
+  |
+  v
+canonical OpenNet.Content.v1 torrent
+  +-- BEP19 HTTP URL Seed
+  +-- OpenNet TCP/uTP Peer(s)
+  |
+  v
+一个 libtorrent piece picker
+  |
+  v
+一个 disk writer
 ```
 
-两者绝不会同时写一个路径。
+final public HTTP origin 通过 `add_torrent_params::url_seeds` 交给 libtorrent。有有效 URL Seed 时，打开 canonical download 不再要求事先已经有 ready Peer。HTTP 与 P2P 都由同一个 libtorrent scheduler 和同一套密码学校验处理。
 
-可信候选的处理链：
+当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 全程 paused。hybrid 失败时，OpenNet 先关闭隐藏 canonical session，删除 libtorrent 尚未完成的目标/控制残留，然后才 Resume aria2。这里是 writer ownership transfer，不是两个 writer 共存。
 
-1. 有界后台 worker 把 canonical v2 swarm 下载到独立临时文件；
-2. libtorrent 先按 BEP52 做 piece/Merkle 校验；
-3. 完整下载后 OpenNet 再对临时文件重新 Hash，要求用户提供的 WholeFile SHA-256（以及已知 size）完全一致；
-4. aria2 先成功：立即取消 fallback 并删除临时文件；
-5. aria2 进入 terminal Error，而 fallback 已完成并二次校验：用 `MoveFileExW(..., MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)` 原子接管目标文件，把 HTTP record 改为 Complete 并进入 ContentCatalog；
-6. 用户显式 Pause/Cancel/Remove/Delete：即使之前的 Server lookup 稍后才返回，也会通过 per-GID suppression 阻止迟到的隐藏 P2P 再启动。
+libtorrent 完成后，OpenNet 仍会重算整文件并要求 caller WholeFile SHA-256/size 完全一致，随后才把 HTTP record 标记 Complete 并写入 ContentCatalog。旧的 `.opennet-p2p-<gid>.part` 独立整文件 fallback 继续作为兼容/恢复路径保留。
 
-因此这一阶段已经是可工作的“整文件容错/替代数据源”，但**还不是**迅雷式 origin + P2P 同时贡献 ranges 的 P2SP。真正并行加速必须先有 TransferCoordinator。
+Pause/Cancel/Remove/Delete 仍会取消 hidden work，并 suppress 迟到 discovery。
+
+### TransferCoordinator 不再是普通 HTTP P2SP 的默认方案
+
+旧方案因为假定 aria2 与 libtorrent 是两个独立 writer，所以必须自己做 range ownership。现在普通 public HTTP 不需要这样做：BEP19 允许 libtorrent 在一个 torrent 内同时调度 HTTP URL Seed 与 BitTorrent Peer。
+
+核心不变量变成：
+
+```text
+one physical output -> one active data writer
+```
+
+绝不能让 active aria2 与 libtorrent 同时写同一个物理文件。只有未来出现无法表达成 libtorrent URL Seed / Peer 的异构 source 时，才需要独立 `TransferCoordinator`。
 
 ## 18. Content Integrity 和传输加密不是一个问题
 
@@ -851,78 +834,48 @@ BitComet LT UDP == uTP
 
 ### OpenNet 客户端已实现
 
-- [x] 一个 Content 支持多个 identity；
-- [x] 一个 Content 支持多个本地 location；
-- [x] 独立 SQLite ContentCatalog；
-- [x] 后台 BEP52 / SHA-256 Hash；
-- [x] 直接复用 libtorrent v2 per-file root；
-- [x] HTTP 完成文件入库；
-- [x] torrent 完成文件入库；
-- [x] private torrent 排除；
-- [x] 启动 metadata validation；
-- [x] 随机 Content Directory NodeId；
-- [x] full inventory registration；
-- [x] generation + 持久化 registration idempotency state；
-- [x] lease heartbeat；
-- [x] revision-based 无丢更新同步；
-- [x] lookup client DTO/API；
-- [x] deterministic `OpenNet.Content.v1` v2 swarm builder；
-- [x] canonical 1 MiB piece-layer 持久缓存；
-- [x] 按需隐藏 libtorrent seed session；
-- [x] wakeup polling/completion 与 ready TTL；
-- [x] hidden download 前 canonical manifest 二次验证；
-- [x] TCP/uTP Peer 注入的隐藏整文件 P2P download primitive；
-- [x] privacy-safe HTTP ResourceKey（Exact URL / strong-validator）；
-- [x] HTTP task start 后异步 ResourceKey lookup；
-- [x] caller SHA-256 + size 约束下的 candidate 选择；
-- [x] 独立临时文件的 verified full-file peer fallback；
-- [x] origin Error 时的原子 promotion 与 HTTP Complete 状态接管。
+- [x] multi-identity / multi-location ContentCatalog、后台 Hash 与启动校验；
+- [x] BEP52 root 复用、canonical 1 MiB piece layer、deterministic `OpenNet.Content.v1` v2 swarm；
+- [x] Content Directory inventory/lease、demand wakeup、manifest 验证与 TCP/uTP Peer 注入；
+- [x] privacy-safe HTTP ResourceKey / ResourceObservation；
+- [x] caller WholeFile SHA-256 + size gate；
+- [x] 实际 206 + Content-Range 的 BEP19 eligibility probe；
+- [x] hidden canonical download 接收 HTTP URL Seed；
+- [x] primary canonical HTTP hybrid：paused aria2 shell + 单一 libtorrent writer；
+- [x] HTTP URL Seed + OpenNet Peer 由同一个 libtorrent piece picker 调度；
+- [x] hybrid progress 映射回现有 HTTP task UI / persistence；
+- [x] caller SHA-256 二次校验、HTTP Complete 与 ContentCatalog 入库；
+- [x] hybrid 失败后先清理 libtorrent 不完整目标，再把 ownership 交回 aria2；
+- [x] 旧 separate-file peer fallback 继续保留用于兼容/恢复。
 
 ### OpenNet.Server 已实现
 
-- [x] 独立 Content Directory DB；
-- [x] logical content + multi-identity alias；
-- [x] node / endpoint / presence 模型；
-- [x] 事务式 full inventory replacement；
-- [x] generation conflict；
-- [x] registration idempotency；
-- [x] lease heartbeat；
-- [x] bounded lookup；
-- [x] observed-address endpoint policy；
-- [x] 过期过滤与后台 expired-node cleanup；
-- [x] SQLite service tests；
-- [x] SQLite / MySQL provider wiring；
-- [x] demand-driven wakeup queue / completion API；
-- [x] canonical metainfo cache 与 binary manifest endpoint；
-- [x] Server 端 BEP 52/info-hash/piece-layer 校验；
-- [x] unchanged inventory refresh 保留 seed readiness；
-- [x] ResourceObservation 持久化、announce / lookup API；
-- [x] ResourceKey 只保存 digest，不保存 raw URL；
-- [x] resource observation TTL / bounded candidates；
-- [x] inventory 删除 Content 时同步失效 stale resource observations。
+- [x] logical content / multi-identity / node presence / lease / generation / idempotency；
+- [x] bounded lookup、demand wakeup、canonical manifest validator/cache；
+- [x] ResourceObservation announce/lookup、digest-only key、TTL、candidate bound、stale ownership invalidation；
+- [x] SQLite / MySQL wiring 与 service tests。
 
-### 尚未实现
+### 尚未实现 / 仍需加固
 
-- [ ] aria2/P2P 对同一逻辑下载的 range ownership / scheduling；
-- [ ] origin 健康时的 mixed-source 并行加速；
-- [ ] 未知/迟到 output filename 的自动 P2P fallback；
-- [ ] Traversal 验证过的 IPv4/IPv6 candidate 注册；
-- [ ] 针对本 Content protocol 的 NAT hole-punch 协调；
-- [ ] relay fallback；
-- [ ] Node 密码学认证；
-- [ ] Peer Ticket；
-- [ ] BitComet LT `filehash` 算法；
-- [ ] BitComet LT wire protocol adapter；
-- [ ] production DB migrations 和 rate limiting。
+- [ ] deterministic HTTP Range + WebSeed + OpenNet Peer 端到端测试；
+- [ ] 自动确认当前 canonical single-file layout 对应的 libtorrent WebSeed 真实请求路径；
+- [ ] shutdown 时协作取消正在进行的 wakeup/lookup；
+- [ ] Resume 后自动重新 discovery；
+- [ ] redirect / Content-Disposition 晚到 filename 后启用 hybrid；
+- [ ] 异常退出后的 stale hybrid/P2P partial 清理；
+- [ ] same-target duplicate HTTP task 排他；
+- [ ] HTTP task-shell cleanup/session persistence 的 crash/recovery 语义；
+- [ ] Traversal verified IPv4/IPv6 candidate、hole punching、relay、Node key、Peer Ticket；
+- [ ] production rate limit/migration 与 BitComet LT wire compatibility。
 
 ## 22. 下一步实现顺序
 
-1. 增加 URL -> ResourceKey -> candidate -> wakeup -> manifest -> peer payload -> SHA-256 verify -> origin Error promotion 的端到端测试。
-2. 收紧 fallback restart/cancel/shutdown，并支持 output filename 在任务启动后才确定的情况。
-3. 真正 mixed-source 之前实现 `TransferCoordinator` / range ownership，确保一个 range 同时只属于一个 writer。
-4. 在 deterministic resume/retry/truncation/verification 测试完善后，再允许 aria2 + libtorrent 同时贡献 ranges。
-5. 接 OpenNet.Traversal，获得验证过的 IPv4/IPv6 candidate 与 hole punching。
-6. 公网不可信部署前加入 Node key、请求签名、Peer Ticket、rate limiting 与 production migrations。
-7. BitComet compatibility test matrix 独立推进，不阻塞 OpenNet native protocol。
+1. 增加 deterministic local HTTP Range server fixture，记录 libtorrent 对 `OpenNet.Content.v1` 的实际 WebSeed 请求路径。
+2. 端到端覆盖 URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + Peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog。
+3. 收紧 shutdown/cancel/resume、stale partial cleanup 与 same-target 排他。
+4. 支持任务创建后才确定的 output filename。
+5. 接 OpenNet.Traversal verified IPv4/IPv6 candidate 与 hole punching。
+6. 公网部署前加入 Node key、请求签名、Peer Ticket、rate limit 与 production migrations。
+7. BitComet compatibility 独立推进。
 
-这个顺序保证每一层都可以单独验证，不会因为过早研究自定义 transport / SSL / PQC，把最重要的持久 Content 身份层一起复杂化。
+除非未来 source 无法表达成 libtorrent URL Seed / Peer，否则不要把通用 `TransferCoordinator` 重新作为 HTTP 主路线。
