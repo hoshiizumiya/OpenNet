@@ -37,6 +37,7 @@ export namespace OpenNet::Core::Aria2
 		std::string ResourceFinalUrl;
 		std::string ResourceStrongETag;
 		std::uint64_t ResourceContentLength = 0;
+		bool ResourceSupportsByteRanges = false;
 	};
 
 	bool ToBoolean(nlohmann::json const& Value);

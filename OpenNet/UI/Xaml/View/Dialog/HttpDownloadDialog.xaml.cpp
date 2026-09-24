@@ -65,6 +65,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		m_resourceFinalUrl.clear();
 		m_resourceStrongETag.clear();
 		m_resourceContentLength = 0;
+		m_resourceSupportsByteRanges = false;
 		m_isUrlValid = ValidateUrl(m_url);
 		RaisePropertyChanged(L"IsUrlValid");
 		RaisePropertyChanged(L"CanFetchMetadata");
@@ -373,6 +374,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		options.ResourceFinalUrl = winrt::to_string(m_resourceFinalUrl);
 		options.ResourceStrongETag = winrt::to_string(m_resourceStrongETag);
 		options.ResourceContentLength = m_resourceContentLength;
+		options.ResourceSupportsByteRanges = m_resourceSupportsByteRanges;
 		auto checksum = winrt::to_string(m_checksum);
 		std::erase_if(checksum, [](unsigned char value)
 		{
@@ -494,6 +496,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 					break;
 				}
 			}
+			m_resourceSupportsByteRanges = resumable;
 			SetProperty(m_resumeSupportText, resumable ? hstring{ L"Resume support: Yes" } : hstring{ L"Resume support: No" }, L"ResumeSupportText");
 			if (m_fileName.empty())
 			{
