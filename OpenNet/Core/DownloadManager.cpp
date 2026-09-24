@@ -1993,7 +1993,22 @@ namespace OpenNet::Core
 						&& *previousStatus
 							!= Aria2::DownloadStatus::Error)
 					{
-						CancelPeerFallback(gid);
+						// Do not suppress an in-flight ResourceKey lookup here.
+						// A very fast origin failure may happen before discovery
+						// returns; a later caller-SHA256-validated candidate is
+						// still allowed to recover this failed origin task.
+						{
+							std::lock_guard fallbackLock(
+								m_peerFallbackMutex);
+							if (auto const failed =
+								m_peerFallbacks.find(gid);
+								failed != m_peerFallbacks.end()
+								&& failed->second.phase
+									== PeerFallbackPhase::Failed)
+							{
+								m_peerFallbacks.erase(failed);
+							}
+						}
 						if (!recordId.empty())
 							HttpStateManager::Instance()
 								.UpdateRecordStatus(recordId, 4);

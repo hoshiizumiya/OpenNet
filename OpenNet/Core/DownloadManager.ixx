@@ -114,6 +114,8 @@ export namespace OpenNet::Core
 		}
 
 	private:
+		struct ResourceDiscoveryJob;
+
 		DownloadManager() = default;
 		~DownloadManager();
 
