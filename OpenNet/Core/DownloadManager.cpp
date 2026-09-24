@@ -1299,9 +1299,19 @@ namespace OpenNet::Core
 				.CloseLongSeedSession(job.sessionId);
 			std::error_code error;
 			if (!job.hybridPrimary)
+			{
 				std::filesystem::remove(job.temporaryFilePath, error);
+			}
 			else
 			{
+				// The canonical session was the only writer. Remove its
+				// incomplete destination before handing ownership back to
+				// aria2, which has remained paused up to this point.
+				std::filesystem::remove(job.targetFilePath, error);
+				auto aria2ControlPath = std::filesystem::path{
+					job.targetFilePath.wstring() + L".aria2" };
+				error.clear();
+				std::filesystem::remove(aria2ControlPath, error);
 				try
 				{
 					std::lock_guard rpcLock(m_aria2->InstanceLock());
