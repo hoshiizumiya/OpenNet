@@ -7,8 +7,8 @@
 export module OpenNet.Core.Content.ContentCatalog;
 
 import std;
-import OpenNet.Core.Content.ContentIdentity;
-import OpenNet.Core.Content.ResourceKey;
+export import OpenNet.Core.Content.ContentIdentity;
+export import OpenNet.Core.Content.ResourceKey;
 
 export namespace OpenNet::Core::Content
 {
