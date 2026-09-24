@@ -269,6 +269,31 @@ Requester path:
 
 The hidden full-file download primitive is intentionally standalone.
 
+## Implemented: HTTP ResourceKey discovery and verified fallback
+
+HTTP resource discovery now uses hashed descriptors rather than raw URLs.
+
+Current resource-key algorithms:
+
+- `ExactUrlSha256V1`: SHA-256 over a normalized public HTTP(S) URL, exact query included;
+- `HttpValidatorSha256V1`: SHA-256 over final URL + strong ETag + Content-Length.
+
+Secret-bearing request contexts and suspicious signed/auth query names are excluded. The Server stores only ResourceKey digests and finite-lived observations bound to a current node ContentPresence.
+
+The HTTP preflight carries final URI / size / strong ETag into DownloadManager. Lookup runs asynchronously and never blocks `aria2.addUri`.
+
+A Server resource match remains untrusted. Automatic peer fallback is queued only when:
+
+- the caller supplied a WholeFile SHA-256;
+- a candidate contains that exact `WholeFileSha256` alias;
+- known size matches;
+- a BEP52 identity is present;
+- the output filename is known.
+
+The fallback downloads into a separate `.opennet-p2p-<gid>.part` file. libtorrent verifies BEP52 during transfer; OpenNet hashes the completed temporary file again and verifies the caller SHA-256. If the origin succeeds first, fallback is discarded. If the origin reaches Error and the fallback is verified, the temporary file is atomically promoted and the HTTP record is completed.
+
+Explicit pause/cancel/remove/delete suppresses late resource lookups from resurrecting hidden P2P work.
+
 ## Important boundary: do not mix aria2 and libtorrent writes yet
 
 The current requester primitive must **not** point libtorrent at a destination file that aria2 is concurrently writing.
@@ -356,9 +381,9 @@ Recommended research remains:
 
 The following are deliberate remaining gaps, not accidental omissions:
 
-- no HTTP `ResourceKey -> Content` discovery;
-- no pre-download content lookup from a plain URL;
 - no aria2/libtorrent mixed range scheduler;
+- no mixed-source acceleration while the origin is healthy;
+- automatic peer fallback currently requires a caller-supplied SHA-256 and a known output filename before task creation;
 - no end-to-end automated network transfer test;
 - no verified NAT candidates;
 - no hole-punch orchestration for this protocol;
@@ -373,7 +398,7 @@ The following are deliberate remaining gaps, not accidental omissions:
 
 ## Next milestone
 
-The next implementation milestone is **HTTP resource discovery**, not more work on custom transport encryption.
+HTTP resource discovery and the first verified full-file fallback slice are now implemented. The next milestone is end-to-end fallback validation followed by explicit range ownership / TransferCoordinator work.
 
 Build a conservative resource-hint layer:
 

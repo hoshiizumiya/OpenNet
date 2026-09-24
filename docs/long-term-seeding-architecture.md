@@ -5,7 +5,7 @@
 
 > Status: architecture baseline and implementation guide.
 >
-> The local content catalog, Content Directory control plane, on-demand wakeup flow, deterministic canonical BitTorrent v2 swarm, hidden libtorrent seed/download sessions, and peer injection are implemented on the feature branches described in this document. HTTP resource-to-content discovery, mixed aria2/P2P range coordination, authenticated node identity, peer tickets, and verified NAT traversal remain subsequent phases.
+> The local content catalog, Content Directory control plane, on-demand wakeup flow, deterministic canonical BitTorrent v2 swarm, hidden libtorrent seed/download sessions, privacy-preserving HTTP ResourceKey discovery, and a verified full-file peer fallback are implemented on the feature branches described in this document. Coordinated aria2/P2P range mixing, authenticated node identity, peer tickets, and verified NAT traversal remain subsequent phases.
 
 ## 1. Goals
 
@@ -631,38 +631,78 @@ remove temporary canonical torrent
 
 The catalog remains resident after the temporary session is removed. These hidden torrents are deliberately absent from normal task persistence and task UI state.
 
-## 17. HTTP P2P acceleration discovery
+## 17. HTTP ResourceKey discovery and verified fallback
 
-Also a subsequent phase.
-
-A new HTTP task normally knows a URL before it knows the file's cryptographic content identity. Therefore a separate resource hint index is required:
+A new HTTP task knows its origin resource before it knows the final content identity. OpenNet now keeps those namespaces separate:
 
 ```text
-HTTP resource descriptor
+HTTP resource observation
         |
         v
-ResourceKey
+privacy-preserving ResourceKey
         |
         v
-Content identity
+untrusted Content candidate(s)
+        |
+        +-- caller SHA-256 + size match? -- no --> origin only
+        |
+       yes
+        v
+authoritative BEP52 identity
         |
         v
-Content Directory lookup
+hidden canonical v2 fallback
 ```
 
-The Server must not require storing raw signed URLs, authentication tokens or cookies.
+`ResourceKey != ContentIdentity`. Resource keys are discovery hints and never replace cryptographic content identities.
 
-The conservative first design should derive a resource key from a normalized public resource descriptor and available validators such as:
+Two ResourceKey algorithms are currently defined:
 
-- normalized scheme/host/port/path;
-- query retained by default unless a site-specific canonicalizer proves it disposable;
-- strong ETag when available;
-- Content-Length;
-- optional Last-Modified as a weaker hint.
+| ID | Name | Input |
+|---:|---|---|
+| 1 | `ExactUrlSha256V1` | normalized public HTTP(S) URL, including the exact query |
+| 2 | `HttpValidatorSha256V1` | normalized final URL + strong ETag + Content-Length |
 
-A resource mapping is always a **hint**. Received bytes remain subject to cryptographic verification against the content manifest. If an origin resource changed, OpenNet must fall back to the origin instead of trusting a stale mapping.
+Only the SHA-256 digest of that descriptor is sent to OpenNet.Server. The raw URL is not uploaded.
 
-This resource-to-content index is what eventually enables a plain HTTP/HTTPS request to discover an existing OpenNet swarm before downloading the full file.
+The client refuses to create shared resource hints for requests carrying explicit cookies, credentials, custom headers, Referer, or User-Agent overrides. URL credentials and query names that strongly indicate signed/authentication material (for example token/signature/credential families and common cloud signing prefixes) are also excluded.
+
+The HTTP dialog already performs a HEAD preflight and falls back to `GET Range: bytes=0-0` when required. That preflight now carries the final redirected URL, Content-Length, and a strong ETag into the core download options.
+
+A strong ETag is still **not** a content hash. Automatic peer fallback is enabled only when the caller supplied a whole-file SHA-256 checksum and a Server candidate contains the exact matching `WholeFileSha256` alias; when preflight size is known, size must match as well.
+
+Completed public HTTP downloads persist their safe ResourceKeys alongside the ContentRecord. ContentDirectorySyncService announces those mappings only after the content is part of the node's current inventory and the node has a valid lease.
+
+Server API:
+
+```http
+POST /api/v1/content/nodes/{nodeId}/resources
+GET  /api/v1/content/resources/lookup?algorithm={id}&digest={hex}&maxCandidates={n}
+```
+
+A resource observation is accepted only for content that the announcing node currently owns in its inventory. Observations have a finite lifetime, and removing content from a node inventory invalidates that node's mappings. Lookup groups current observations by ContentId and ranks candidates by observation count and recency, but the result remains an untrusted hint.
+
+### Verified full-file peer fallback
+
+OpenNet now has a conservative integration path that still preserves the one-writer invariant.
+
+```text
+aria2 origin target:       file.iso
+hidden libtorrent target:  file.iso.opennet-p2p-<gid>.part
+```
+
+The two engines never write the same path concurrently.
+
+For a trusted candidate:
+
+1. a bounded background worker opens a hidden canonical v2 download into the temporary file;
+2. libtorrent verifies the BEP52 Merkle data;
+3. after completion, OpenNet re-hashes the temporary file and requires the caller-supplied WholeFile SHA-256 (and known size) to match;
+4. if aria2 succeeds first, the hidden fallback is cancelled and its temporary file is removed;
+5. if aria2 reaches a terminal error while the verified fallback is ready, OpenNet atomically replaces the destination with `MoveFileExW(..., MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)`, updates the HTTP record to Complete, and catalogs the final file;
+6. explicit pause/cancel/remove/delete suppresses any late discovery result from starting hidden P2P work.
+
+This is a **fallback/alternative full-file path**, not mixed-source P2SP acceleration. Real simultaneous acceleration still requires a TransferCoordinator that assigns every output range to exactly one writer.
 
 ## 18. Content integrity vs transport encryption
 
