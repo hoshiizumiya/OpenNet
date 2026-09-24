@@ -50,6 +50,8 @@ export namespace OpenNet::Core
 	{
 		bool completed{};
 		bool checksumValidated{};
+		bool peerFallbackQueued{};
+		bool peerFallbackReady{};
 		std::string contentId;
 		std::uint64_t size{};
 		std::uint32_t observationCount{};
@@ -124,7 +126,19 @@ export namespace OpenNet::Core
 		void QueueResourceDiscovery(
 			std::string gid,
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
-			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256);
+			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
+			std::filesystem::path targetFilePath = {},
+			std::uint64_t expectedSize = 0);
+		void QueuePeerFallback(
+			ResourceDiscoveryJob const& discovery,
+			HttpResourceDiscovery const& summary);
+		void PeerFallbackThreadEntry();
+		bool HasPeerFallbackPending(std::string const& gid) const;
+		bool TryPromotePeerFallback(
+			std::string const& gid,
+			Aria2::DownloadInformation const& task,
+			std::string const& recordId);
+		void CancelPeerFallback(std::string const& gid);
 		void ShowHttpCompletionToast(std::string const& gid, Aria2::DownloadInformation const& task);
 
 	private:
@@ -142,12 +156,53 @@ export namespace OpenNet::Core
 			std::string gid;
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
 			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256;
+			std::filesystem::path targetFilePath;
+			std::uint64_t expectedSize{};
 		};
 		std::thread m_resourceDiscoveryThread;
 		std::atomic<bool> m_stopResourceDiscovery{ false };
 		std::condition_variable m_resourceDiscoveryCv;
 		std::mutex m_resourceDiscoveryMutex;
 		std::deque<ResourceDiscoveryJob> m_resourceDiscoveryJobs;
+
+		enum class PeerFallbackPhase : std::uint8_t
+		{
+			Pending,
+			Downloading,
+			Ready,
+			Failed,
+		};
+
+		struct PeerFallbackJob
+		{
+			std::string gid;
+			std::string sessionId;
+			std::filesystem::path targetFilePath;
+			std::filesystem::path temporaryFilePath;
+			::OpenNet::Core::Content::ContentIdentity bep52Identity;
+			::OpenNet::Core::Content::ContentIdentity expectedSha256;
+			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
+			std::uint64_t expectedSize{};
+		};
+
+		struct PeerFallbackState
+		{
+			PeerFallbackPhase phase{ PeerFallbackPhase::Pending };
+			PeerFallbackJob job;
+			bool cancelRequested{};
+			int progressPercent{};
+			std::int64_t downloadRate{};
+			std::int64_t completedBytes{};
+			std::string error;
+		};
+
+		std::atomic<bool> m_stopPeerFallback{ false };
+		std::condition_variable m_peerFallbackCv;
+		mutable std::mutex m_peerFallbackMutex;
+		std::deque<PeerFallbackJob> m_peerFallbackJobs;
+		std::unordered_map<std::string, PeerFallbackState> m_peerFallbacks;
+		std::vector<std::thread> m_peerFallbackWorkers;
+
 		mutable std::mutex m_mutex;
 
 		// Cached task GIDs for change detection

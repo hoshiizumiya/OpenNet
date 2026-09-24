@@ -14,7 +14,9 @@ module OpenNet.Core.DownloadManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.ContentCatalogService;
 import OpenNet.Core.Content.ContentDirectoryClient;
+import OpenNet.Core.Content.ContentHasher;
 import OpenNet.Core.Content.ResourceKey;
+import OpenNet.Core.P2PManager;
 
 namespace OpenNet::Core
 {
@@ -184,6 +186,23 @@ namespace OpenNet::Core
 			if (m_resourceDiscoveryThread.joinable())
 				m_resourceDiscoveryThread.join();
 
+			{
+				std::lock_guard lock(m_peerFallbackMutex);
+				m_stopPeerFallback.store(true);
+				m_peerFallbackJobs.clear();
+				for (auto& [gid, state] : m_peerFallbacks)
+				{
+					(void)gid;
+					state.cancelRequested = true;
+				}
+			}
+			m_peerFallbackCv.notify_all();
+			for (auto& worker : m_peerFallbackWorkers)
+			{
+				if (worker.joinable()) worker.join();
+			}
+			m_peerFallbackWorkers.clear();
+
 			if (m_aria2)
 				m_aria2->ForceTerminate();
 		}
@@ -244,6 +263,16 @@ namespace OpenNet::Core
 					ResourceDiscoveryThreadEntry();
 				});
 
+				m_stopPeerFallback.store(false);
+				m_peerFallbackWorkers.clear();
+				for (int index = 0; index < 2; ++index)
+				{
+					m_peerFallbackWorkers.emplace_back([this]()
+					{
+						PeerFallbackThreadEntry();
+					});
+				}
+
 				m_initialized = true;
 				m_initializing = false;
 			}
@@ -284,6 +313,23 @@ namespace OpenNet::Core
 		m_resourceDiscoveryCv.notify_all();
 		if (m_resourceDiscoveryThread.joinable())
 			m_resourceDiscoveryThread.join();
+
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			m_stopPeerFallback.store(true);
+			m_peerFallbackJobs.clear();
+			for (auto& [gid, state] : m_peerFallbacks)
+			{
+				(void)gid;
+				state.cancelRequested = true;
+			}
+		}
+		m_peerFallbackCv.notify_all();
+		for (auto& worker : m_peerFallbackWorkers)
+		{
+			if (worker.joinable()) worker.join();
+		}
+		m_peerFallbackWorkers.clear();
 
 		// Graceful aria2 shutdown following NanaGet pattern:
 		// RPC Shutdown → wait up to 30s for process exit → ForceTerminate.
@@ -358,6 +404,18 @@ namespace OpenNet::Core
 
 		auto expectedSha256 = ParseExpectedSha256(options.Checksum);
 
+		std::filesystem::path peerFallbackTarget;
+		if (expectedSha256
+			&& !options.Dir.empty()
+			&& !options.OutFileName.empty())
+		{
+			peerFallbackTarget =
+				std::filesystem::path{
+					winrt::to_hstring(options.Dir).c_str() }
+				/ std::filesystem::path{
+					winrt::to_hstring(options.OutFileName).c_str() };
+		}
+
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -429,7 +487,9 @@ namespace OpenNet::Core
 				QueueResourceDiscovery(
 					gid,
 					std::move(resourceKeys),
-					std::move(expectedSha256));
+					std::move(expectedSha256),
+					std::move(peerFallbackTarget),
+					options.ResourceContentLength);
 			}
 
 			return gid;
@@ -526,6 +586,7 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
+		CancelPeerFallback(gid);
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -554,6 +615,7 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
+		CancelPeerFallback(gid);
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -568,6 +630,7 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
+		CancelPeerFallback(gid);
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -585,6 +648,7 @@ namespace OpenNet::Core
 		{
 			return;
 		}
+		CancelPeerFallback(gid);
 		bool const engineAvailable = IsAria2Available();
 		if (!engineAvailable)
 		{
@@ -888,7 +952,9 @@ namespace OpenNet::Core
 	void DownloadManager::QueueResourceDiscovery(
 		std::string gid,
 		std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
-		std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256)
+		std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
+		std::filesystem::path targetFilePath,
+		std::uint64_t expectedSize)
 	{
 		if (gid.empty() || resourceKeys.empty()) return;
 		{
@@ -896,7 +962,9 @@ namespace OpenNet::Core
 			m_resourceDiscoveryJobs.push_back({
 				std::move(gid),
 				std::move(resourceKeys),
-				std::move(expectedSha256)
+				std::move(expectedSha256),
+				std::move(targetFilePath),
+				expectedSize
 			});
 		}
 		m_resourceDiscoveryCv.notify_one();
@@ -934,23 +1002,59 @@ namespace OpenNet::Core
 				if (!lookup || lookup->candidates.empty())
 					continue;
 
-				auto const& candidate = lookup->candidates.front();
-				summary.contentId = candidate.contentId;
-				summary.size = candidate.size;
-				summary.observationCount = candidate.observationCount;
+				::OpenNet::Core::Content::ResourceCandidate const*
+					selected = nullptr;
 
-				for (auto const& identity : candidate.identities)
+				if (job.expectedSha256)
+				{
+					for (auto const& candidate : lookup->candidates)
+					{
+						if (job.expectedSize != 0
+							&& candidate.size != job.expectedSize)
+							continue;
+
+						bool const checksumMatch =
+							std::ranges::find(
+								candidate.identities,
+								*job.expectedSha256)
+							!= candidate.identities.end();
+						if (checksumMatch)
+						{
+							selected = &candidate;
+							break;
+						}
+					}
+				}
+
+				if (!selected)
+				{
+					selected = &lookup->candidates.front();
+				}
+
+				summary.contentId = selected->contentId;
+				summary.size = selected->size;
+				summary.observationCount = selected->observationCount;
+				summary.checksumValidated =
+					job.expectedSha256
+					&& (job.expectedSize == 0
+						|| selected->size == job.expectedSize)
+					&& std::ranges::find(
+						selected->identities,
+						*job.expectedSha256)
+						!= selected->identities.end();
+
+				for (auto const& identity : selected->identities)
 				{
 					if (identity.algorithm
 						== ::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256)
+					{
 						summary.bep52Identity = identity;
-
-					if (job.expectedSha256
-						&& identity == *job.expectedSha256)
-						summary.checksumValidated = true;
+						break;
+					}
 				}
 
-				break;
+				if (summary.checksumValidated)
+					break;
 			}
 
 			{
@@ -971,7 +1075,7 @@ namespace OpenNet::Core
 						+ " observation(s)";
 					if (summary.checksumValidated)
 						message +=
-							"; supplied SHA-256 matches candidate.";
+							"; supplied SHA-256 and known length match candidate.";
 					else
 						message +=
 							"; hint is not authoritative, origin download remains active.";
@@ -981,9 +1085,580 @@ namespace OpenNet::Core
 					});
 				}
 			}
+
+			if (summary.checksumValidated
+				&& summary.bep52Identity
+				&& job.expectedSha256
+				&& !job.targetFilePath.empty())
+			{
+				QueuePeerFallback(job, summary);
+			}
 		}
 
 		winrt::uninit_apartment();
+	}
+
+	void DownloadManager::QueuePeerFallback(
+		ResourceDiscoveryJob const& discovery,
+		HttpResourceDiscovery const& summary)
+	{
+		if (!summary.bep52Identity
+			|| !discovery.expectedSha256
+			|| discovery.targetFilePath.empty())
+			return;
+
+		PeerFallbackJob job;
+		job.gid = discovery.gid;
+		job.sessionId = "http-fallback:" + discovery.gid;
+		job.targetFilePath = discovery.targetFilePath;
+		job.temporaryFilePath = discovery.targetFilePath;
+		job.temporaryFilePath +=
+			winrt::to_hstring(
+				".opennet-p2p-" + discovery.gid + ".part").c_str();
+		job.bep52Identity = *summary.bep52Identity;
+		job.expectedSha256 = *discovery.expectedSha256;
+		job.resourceKeys = discovery.resourceKeys;
+		job.expectedSize = summary.size;
+
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			if (m_stopPeerFallback.load())
+				return;
+			if (auto const existing = m_peerFallbacks.find(job.gid);
+				existing != m_peerFallbacks.end()
+				&& existing->second.phase != PeerFallbackPhase::Failed
+				&& !existing->second.cancelRequested)
+				return;
+
+			PeerFallbackState state;
+			state.phase = PeerFallbackPhase::Pending;
+			state.job = job;
+			m_peerFallbacks.insert_or_assign(job.gid, state);
+			m_peerFallbackJobs.push_back(job);
+		}
+
+		{
+			std::lock_guard lock(m_mutex);
+			if (auto discoveryState =
+				m_httpResourceDiscoveries.find(job.gid);
+				discoveryState != m_httpResourceDiscoveries.end())
+			{
+				discoveryState->second.peerFallbackQueued = true;
+			}
+			m_httpTaskLogs[job.gid].push_back({
+				std::chrono::duration_cast<std::chrono::seconds>(
+					std::chrono::system_clock::now()
+						.time_since_epoch()).count(),
+				"Trusted OpenNet peer fallback queued in a separate temporary file."
+			});
+		}
+		m_peerFallbackCv.notify_one();
+	}
+
+	bool DownloadManager::HasPeerFallbackPending(
+		std::string const& gid) const
+	{
+		std::lock_guard lock(m_peerFallbackMutex);
+		auto const it = m_peerFallbacks.find(gid);
+		if (it == m_peerFallbacks.end()
+			|| it->second.cancelRequested)
+			return false;
+		return it->second.phase == PeerFallbackPhase::Pending
+			|| it->second.phase == PeerFallbackPhase::Downloading
+			|| it->second.phase == PeerFallbackPhase::Ready;
+	}
+
+	void DownloadManager::CancelPeerFallback(std::string const& gid)
+	{
+		if (gid.empty()) return;
+
+		std::optional<PeerFallbackJob> immediateCleanup;
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			auto const it = m_peerFallbacks.find(gid);
+			if (it == m_peerFallbacks.end())
+				return;
+
+			it->second.cancelRequested = true;
+			std::erase_if(
+				m_peerFallbackJobs,
+				[&](PeerFallbackJob const& job)
+				{
+					return job.gid == gid;
+				});
+
+			if (it->second.phase == PeerFallbackPhase::Pending
+				|| it->second.phase == PeerFallbackPhase::Ready
+				|| it->second.phase == PeerFallbackPhase::Failed)
+			{
+				immediateCleanup = it->second.job;
+				m_peerFallbacks.erase(it);
+			}
+		}
+
+		if (immediateCleanup)
+		{
+			::OpenNet::Core::P2PManager::Instance()
+				.CloseLongSeedSession(immediateCleanup->sessionId);
+			std::error_code error;
+			std::filesystem::remove(
+				immediateCleanup->temporaryFilePath,
+				error);
+		}
+		m_peerFallbackCv.notify_all();
+	}
+
+	void DownloadManager::PeerFallbackThreadEntry()
+	{
+		winrt::init_apartment(winrt::apartment_type::multi_threaded);
+
+		auto fail = [this](
+			PeerFallbackJob const& job,
+			std::string message)
+		{
+			::OpenNet::Core::P2PManager::Instance()
+				.CloseLongSeedSession(job.sessionId);
+			std::error_code error;
+			std::filesystem::remove(job.temporaryFilePath, error);
+
+			bool shouldLog = false;
+			{
+				std::lock_guard lock(m_peerFallbackMutex);
+				auto const it = m_peerFallbacks.find(job.gid);
+				if (it != m_peerFallbacks.end())
+				{
+					if (it->second.cancelRequested)
+					{
+						m_peerFallbacks.erase(it);
+					}
+					else
+					{
+						it->second.phase = PeerFallbackPhase::Failed;
+						it->second.error = message;
+						shouldLog = true;
+					}
+				}
+			}
+
+			if (shouldLog)
+			{
+				std::lock_guard lock(m_mutex);
+				m_httpTaskLogs[job.gid].push_back({
+					std::chrono::duration_cast<std::chrono::seconds>(
+						std::chrono::system_clock::now()
+							.time_since_epoch()).count(),
+					"OpenNet peer fallback failed: " + message
+				});
+			}
+		};
+
+		for (;;)
+		{
+			PeerFallbackJob job;
+			{
+				std::unique_lock lock(m_peerFallbackMutex);
+				m_peerFallbackCv.wait(lock, [this]
+				{
+					return m_stopPeerFallback.load()
+						|| !m_peerFallbackJobs.empty();
+				});
+
+				if (m_stopPeerFallback.load()
+					&& m_peerFallbackJobs.empty())
+					break;
+
+				job = std::move(m_peerFallbackJobs.front());
+				m_peerFallbackJobs.pop_front();
+
+				auto const state = m_peerFallbacks.find(job.gid);
+				if (state == m_peerFallbacks.end()
+					|| state->second.cancelRequested)
+					continue;
+				state->second.phase =
+					PeerFallbackPhase::Downloading;
+			}
+
+			{
+				std::error_code error;
+				std::filesystem::remove(
+					job.temporaryFilePath,
+					error);
+			}
+
+			bool started = false;
+			try
+			{
+				started =
+					::OpenNet::Core::P2PManager::Instance()
+						.StartLongSeedDownloadAsync(
+							job.bep52Identity,
+							job.temporaryFilePath,
+							20,
+							job.sessionId)
+						.get();
+			}
+			catch (std::exception const& exception)
+			{
+				fail(job, exception.what());
+				continue;
+			}
+			catch (...)
+			{
+				fail(job, "Unable to start hidden libtorrent download.");
+				continue;
+			}
+
+			if (!started)
+			{
+				fail(job, "No ready canonical swarm was available.");
+				continue;
+			}
+
+			auto const deadline =
+				std::chrono::steady_clock::now()
+				+ std::chrono::minutes(30);
+			bool completed = false;
+			bool cancelled = false;
+			std::string failure;
+
+			while (std::chrono::steady_clock::now() < deadline)
+			{
+				{
+					std::lock_guard lock(m_peerFallbackMutex);
+					auto const state = m_peerFallbacks.find(job.gid);
+					if (m_stopPeerFallback.load()
+						|| state == m_peerFallbacks.end()
+						|| state->second.cancelRequested)
+					{
+						cancelled = true;
+						break;
+					}
+				}
+
+				bool originCompleted = false;
+				{
+					std::lock_guard lock(m_mutex);
+					if (auto const task =
+						m_httpTaskSnapshots.find(job.gid);
+						task != m_httpTaskSnapshots.end())
+					{
+						originCompleted =
+							task->second.Status
+								== Aria2::DownloadStatus::Complete;
+					}
+				}
+				if (originCompleted)
+				{
+					cancelled = true;
+					break;
+				}
+
+				auto status =
+					::OpenNet::Core::P2PManager::Instance()
+						.GetLongSeedSessionStatus(job.sessionId);
+
+				if (!status.exists || !status.valid)
+				{
+					failure =
+						"Hidden libtorrent session disappeared.";
+					break;
+				}
+				if (status.hasError)
+				{
+					failure = status.error.empty()
+						? "Hidden libtorrent session failed."
+						: status.error;
+					break;
+				}
+
+				{
+					std::lock_guard lock(m_peerFallbackMutex);
+					auto const state = m_peerFallbacks.find(job.gid);
+					if (state != m_peerFallbacks.end())
+					{
+						state->second.progressPercent =
+							status.progressPercent;
+						state->second.downloadRate =
+							status.downloadRate;
+						state->second.completedBytes =
+							status.totalWantedDone;
+					}
+				}
+
+				if (status.finished)
+				{
+					completed = true;
+					break;
+				}
+
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds(500));
+			}
+
+			::OpenNet::Core::P2PManager::Instance()
+				.CloseLongSeedSession(job.sessionId);
+
+			if (cancelled)
+			{
+				std::error_code error;
+				std::filesystem::remove(
+					job.temporaryFilePath,
+					error);
+				std::lock_guard lock(m_peerFallbackMutex);
+				m_peerFallbacks.erase(job.gid);
+				continue;
+			}
+			if (!completed)
+			{
+				fail(
+					job,
+					failure.empty()
+						? "Peer fallback timed out."
+						: std::move(failure));
+				continue;
+			}
+
+			try
+			{
+				auto hashed =
+					::OpenNet::Core::Content::ContentHasher::HashFile(
+						job.temporaryFilePath);
+
+				bool const sizeMatches =
+					(job.expectedSize == 0
+						|| hashed.size == job.expectedSize);
+				bool const checksumMatches =
+					std::ranges::find(
+						hashed.identities,
+						job.expectedSha256)
+					!= hashed.identities.end();
+
+				if (!sizeMatches || !checksumMatches)
+				{
+					fail(
+						job,
+						"Downloaded peer content failed the caller-supplied SHA-256/size check.");
+					continue;
+				}
+			}
+			catch (std::exception const& exception)
+			{
+				fail(job, exception.what());
+				continue;
+			}
+			catch (...)
+			{
+				fail(job, "Unable to verify peer fallback file.");
+				continue;
+			}
+
+			{
+				std::lock_guard lock(m_peerFallbackMutex);
+				auto const state = m_peerFallbacks.find(job.gid);
+				if (state == m_peerFallbacks.end()
+					|| state->second.cancelRequested)
+				{
+					std::error_code error;
+					std::filesystem::remove(
+						job.temporaryFilePath,
+						error);
+					if (state != m_peerFallbacks.end())
+						m_peerFallbacks.erase(state);
+					continue;
+				}
+				state->second.phase = PeerFallbackPhase::Ready;
+				state->second.progressPercent = 100;
+				state->second.completedBytes =
+					static_cast<std::int64_t>(job.expectedSize);
+			}
+
+			{
+				std::lock_guard lock(m_mutex);
+				if (auto discovery =
+					m_httpResourceDiscoveries.find(job.gid);
+					discovery != m_httpResourceDiscoveries.end())
+				{
+					discovery->second.peerFallbackReady = true;
+				}
+				m_httpTaskLogs[job.gid].push_back({
+					std::chrono::duration_cast<std::chrono::seconds>(
+						std::chrono::system_clock::now()
+							.time_since_epoch()).count(),
+					"OpenNet peer fallback is fully downloaded and locally SHA-256 verified."
+				});
+			}
+		}
+
+		winrt::uninit_apartment();
+	}
+
+	bool DownloadManager::TryPromotePeerFallback(
+		std::string const& gid,
+		Aria2::DownloadInformation const& task,
+		std::string const& recordId)
+	{
+		PeerFallbackJob job;
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			auto const it = m_peerFallbacks.find(gid);
+			if (it == m_peerFallbacks.end()
+				|| it->second.cancelRequested
+				|| it->second.phase != PeerFallbackPhase::Ready)
+				return false;
+			job = it->second.job;
+		}
+
+		std::error_code existsError;
+		if (!std::filesystem::is_regular_file(
+			job.temporaryFilePath,
+			existsError)
+			|| existsError)
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			if (auto const it = m_peerFallbacks.find(gid);
+				it != m_peerFallbacks.end())
+			{
+				it->second.phase = PeerFallbackPhase::Failed;
+				it->second.error =
+					"Verified peer fallback file disappeared before promotion.";
+			}
+			return false;
+		}
+
+		if (!::MoveFileExW(
+			job.temporaryFilePath.c_str(),
+			job.targetFilePath.c_str(),
+			MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+		{
+			auto const error = ::GetLastError();
+			// aria2 may need one more refresh tick to release the failed
+			// output handle. Keep the verified fallback intact and retry.
+			if (error == ERROR_SHARING_VIOLATION
+				|| error == ERROR_LOCK_VIOLATION
+				|| error == ERROR_ACCESS_DENIED)
+				return false;
+
+			std::lock_guard lock(m_peerFallbackMutex);
+			if (auto const it = m_peerFallbacks.find(gid);
+				it != m_peerFallbacks.end())
+			{
+				it->second.phase = PeerFallbackPhase::Failed;
+				it->second.error = std::system_category()
+					.message(static_cast<int>(error));
+			}
+			return false;
+		}
+
+		auto aria2ControlPath = job.targetFilePath;
+		aria2ControlPath += L".aria2";
+		{
+			std::error_code error;
+			std::filesystem::remove(aria2ControlPath, error);
+		}
+
+		// The task is already in aria2's stopped/error list at this point.
+		// Removing the result prevents the old failed origin from being
+		// restored from the saved aria2 session.
+		try
+		{
+			m_aria2->Remove(gid);
+			m_aria2->SaveSession();
+		}
+		catch (...)
+		{
+		}
+
+		auto const finalSize = std::filesystem::file_size(
+			job.targetFilePath,
+			existsError);
+		auto const completedSize = existsError
+			? job.expectedSize
+			: finalSize;
+
+		if (!recordId.empty())
+		{
+			auto& stateManager = HttpStateManager::Instance();
+			stateManager.UpdateRecordOutputPath(
+				recordId,
+				winrt::to_string(winrt::hstring{
+					job.targetFilePath.parent_path().wstring() }),
+				winrt::to_string(winrt::hstring{
+					job.targetFilePath.filename().wstring() }));
+			stateManager.UpdateRecordProgress(
+				recordId,
+				static_cast<std::int64_t>(completedSize),
+				static_cast<std::int64_t>(completedSize));
+			stateManager.UpdateRecordStatus(recordId, 3);
+		}
+
+		Aria2::DownloadInformation completedTask = task;
+		completedTask.Status = Aria2::DownloadStatus::Complete;
+		completedTask.TotalLength =
+			static_cast<std::size_t>(completedSize);
+		completedTask.CompletedLength =
+			static_cast<std::size_t>(completedSize);
+		completedTask.DownloadSpeed = 0;
+		completedTask.ErrorCode = 0;
+		completedTask.ErrorMessage.clear();
+		if (completedTask.Files.empty())
+		{
+			Aria2::FileInformation file;
+			file.Index = 1;
+			file.Path = winrt::to_string(
+				winrt::hstring{ job.targetFilePath.wstring() });
+			file.Length =
+				static_cast<std::size_t>(completedSize);
+			file.CompletedLength = file.Length;
+			completedTask.Files.push_back(std::move(file));
+		}
+		else
+		{
+			completedTask.Files.front().Path = winrt::to_string(
+				winrt::hstring{ job.targetFilePath.wstring() });
+			completedTask.Files.front().Length =
+				static_cast<std::size_t>(completedSize);
+			completedTask.Files.front().CompletedLength =
+				static_cast<std::size_t>(completedSize);
+		}
+
+		HttpFinishedCallback finishedCallback;
+		{
+			std::lock_guard lock(m_mutex);
+			m_httpTaskSnapshots.insert_or_assign(
+				gid, completedTask);
+			m_lastHttpStatuses.insert_or_assign(
+				gid, Aria2::DownloadStatus::Complete);
+			m_httpTaskLogs[gid].push_back({
+				std::chrono::duration_cast<std::chrono::seconds>(
+					std::chrono::system_clock::now()
+						.time_since_epoch()).count(),
+				"HTTP origin failed; verified OpenNet peer fallback was promoted atomically."
+			});
+			finishedCallback = m_finishedCb;
+		}
+
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			m_peerFallbacks.erase(gid);
+		}
+
+		::OpenNet::Core::Content::ContentCatalogService::Instance()
+			.EnqueueFile(
+				job.targetFilePath,
+				{
+					::OpenNet::Core::Content::ContentSourceKind::Http,
+					recordId.empty() ? gid : recordId,
+					std::nullopt
+				},
+				{},
+				job.resourceKeys);
+
+		ShowHttpCompletionToast(gid, completedTask);
+		if (finishedCallback)
+			finishedCallback(
+				gid,
+				Aria2::ToFriendlyName(completedTask));
+		return true;
 	}
 
 	void DownloadManager::ProcessAria2Tasks()
@@ -1098,12 +1773,18 @@ namespace OpenNet::Core
 					}
 				}
 
+				bool const peerFallbackHoldingError =
+					task.Status == Aria2::DownloadStatus::Error
+					&& HasPeerFallbackPending(gid);
+
 				if (progressCb)
 				{
 					HttpTaskProgress progress;
 					progress.gid = gid;
 					progress.name = Aria2::ToFriendlyName(task);
-					progress.status = task.Status;
+					progress.status = peerFallbackHoldingError
+						? Aria2::DownloadStatus::Waiting
+						: task.Status;
 					progress.totalLength = task.TotalLength;
 					progress.completedLength = task.CompletedLength;
 					progress.downloadSpeed = task.DownloadSpeed;
@@ -1129,20 +1810,48 @@ namespace OpenNet::Core
 						auto friendlyName = Aria2::ToFriendlyName(task);
 						hsm.UpdateRecordName(recordId, friendlyName);
 						hsm.UpdateRecordProgress(recordId, task.CompletedLength, task.TotalLength);
-						int const persistedStatus = task.Status == Aria2::DownloadStatus::Paused ? 2 : task.Status == Aria2::DownloadStatus::Complete ? 3 : task.Status == Aria2::DownloadStatus::Error ? 4 : 1;
-						hsm.UpdateRecordStatus(recordId, persistedStatus);
+						if (!peerFallbackHoldingError)
+						{
+							int const persistedStatus =
+								task.Status == Aria2::DownloadStatus::Paused ? 2
+								: task.Status == Aria2::DownloadStatus::Complete ? 3
+								: task.Status == Aria2::DownloadStatus::Error ? 4
+								: 1;
+							hsm.UpdateRecordStatus(recordId, persistedStatus);
+						}
 					}
 				}
 
 				std::optional<Aria2::DownloadStatus> previousStatus;
 				{
 					std::lock_guard lock(m_mutex);
-					if (auto const previous = m_lastHttpStatuses.find(gid); previous != m_lastHttpStatuses.end()) previousStatus = previous->second;
-					m_lastHttpStatuses[gid] = task.Status;
-					if (previousStatus && *previousStatus != task.Status)
+					if (auto const previous = m_lastHttpStatuses.find(gid);
+						previous != m_lastHttpStatuses.end())
+						previousStatus = previous->second;
+
+					if (!peerFallbackHoldingError)
 					{
-						auto const text = task.Status == Aria2::DownloadStatus::Complete ? "Download completed." : task.Status == Aria2::DownloadStatus::Error ? "Download failed: " + task.ErrorMessage : task.Status == Aria2::DownloadStatus::Paused ? "Task paused." : task.Status == Aria2::DownloadStatus::Active ? "Task active." : "Task state changed.";
-						m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), text });
+						m_lastHttpStatuses[gid] = task.Status;
+						if (previousStatus
+							&& *previousStatus != task.Status)
+						{
+							auto const text =
+								task.Status == Aria2::DownloadStatus::Complete
+									? "Download completed."
+								: task.Status == Aria2::DownloadStatus::Error
+									? "Download failed: " + task.ErrorMessage
+								: task.Status == Aria2::DownloadStatus::Paused
+									? "Task paused."
+								: task.Status == Aria2::DownloadStatus::Active
+									? "Task active."
+								: "Task state changed.";
+							m_httpTaskLogs[gid].push_back({
+								std::chrono::duration_cast<std::chrono::seconds>(
+									std::chrono::system_clock::now()
+										.time_since_epoch()).count(),
+								text
+							});
+						}
 					}
 				}
 
@@ -1151,6 +1860,7 @@ namespace OpenNet::Core
 				{
 					if (previousStatus && *previousStatus != Aria2::DownloadStatus::Complete)
 					{
+						CancelPeerFallback(gid);
 						// Persist completed status
 						std::string recordId;
 						{
@@ -1251,19 +1961,34 @@ namespace OpenNet::Core
 				}
 				else if (task.Status == Aria2::DownloadStatus::Error)
 				{
-					if (previousStatus && *previousStatus != Aria2::DownloadStatus::Error)
+					if (peerFallbackHoldingError)
 					{
-						// Persist failed status
-						std::string recordId;
+						if (TryPromotePeerFallback(
+							gid,
+							task,
+							recordId))
 						{
-							std::lock_guard lock(m_mutex);
-							auto it = m_gidToRecordId.find(gid);
-							if (it != m_gidToRecordId.end()) recordId = it->second;
+							continue;
 						}
-						if (!recordId.empty())
-							HttpStateManager::Instance().UpdateRecordStatus(recordId, 4); // failed
 
-						if (errorCb) errorCb(gid, Aria2::ToFriendlyName(task));
+						// Keep the persisted task out of Failed while a
+						// trusted peer fallback is still downloading or is
+						// waiting for aria2 to release the target handle.
+						continue;
+					}
+
+					if (previousStatus
+						&& *previousStatus
+							!= Aria2::DownloadStatus::Error)
+					{
+						if (!recordId.empty())
+							HttpStateManager::Instance()
+								.UpdateRecordStatus(recordId, 4);
+
+						if (errorCb)
+							errorCb(
+								gid,
+								Aria2::ToFriendlyName(task));
 					}
 				}
 			}
