@@ -201,6 +201,7 @@ export namespace OpenNet::Core
 		mutable std::mutex m_peerFallbackMutex;
 		std::deque<PeerFallbackJob> m_peerFallbackJobs;
 		std::unordered_map<std::string, PeerFallbackState> m_peerFallbacks;
+		std::unordered_set<std::string> m_peerFallbackSuppressedGids;
 		std::vector<std::thread> m_peerFallbackWorkers;
 
 		mutable std::mutex m_mutex;

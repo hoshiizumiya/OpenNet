@@ -202,6 +202,11 @@ namespace OpenNet::Core
 				if (worker.joinable()) worker.join();
 			}
 			m_peerFallbackWorkers.clear();
+			{
+				std::lock_guard lock(m_peerFallbackMutex);
+				m_peerFallbackSuppressedGids.clear();
+				m_peerFallbacks.clear();
+			}
 
 			if (m_aria2)
 				m_aria2->ForceTerminate();
@@ -330,6 +335,11 @@ namespace OpenNet::Core
 			if (worker.joinable()) worker.join();
 		}
 		m_peerFallbackWorkers.clear();
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			m_peerFallbackSuppressedGids.clear();
+			m_peerFallbacks.clear();
+		}
 
 		// Graceful aria2 shutdown following NanaGet pattern:
 		// RPC Shutdown → wait up to 30s for process exit → ForceTerminate.
@@ -1122,7 +1132,8 @@ namespace OpenNet::Core
 
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
-			if (m_stopPeerFallback.load())
+			if (m_stopPeerFallback.load()
+				|| m_peerFallbackSuppressedGids.contains(job.gid))
 				return;
 			if (auto const existing = m_peerFallbacks.find(job.gid);
 				existing != m_peerFallbacks.end()
@@ -1175,6 +1186,7 @@ namespace OpenNet::Core
 		std::optional<PeerFallbackJob> immediateCleanup;
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
+			m_peerFallbackSuppressedGids.insert(gid);
 			auto const it = m_peerFallbacks.find(gid);
 			if (it == m_peerFallbacks.end())
 				return;
@@ -1981,6 +1993,7 @@ namespace OpenNet::Core
 						&& *previousStatus
 							!= Aria2::DownloadStatus::Error)
 					{
+						CancelPeerFallback(gid);
 						if (!recordId.empty())
 							HttpStateManager::Instance()
 								.UpdateRecordStatus(recordId, 4);
