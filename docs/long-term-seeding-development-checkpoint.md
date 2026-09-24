@@ -16,10 +16,12 @@ Feature branch:
 
 - `feat/long-term-seeding-content-catalog`
 
-Implementation checkpoint before this documentation commit:
+Implementation checkpoint for the HTTP ResourceKey / verified-fallback slice:
 
-- `6eecbc78a89b9c05af7f616f5eeb814e12ebf45f`
-- `feat: implement long-term seeding directory and canonical swarms`
+- `bfd9a1197ecb072b8884586b89a862d2dbafb77d`
+- `fix: preserve late trusted fallback after fast origin failure`
+
+This tip includes the earlier ContentCatalog / canonical-swarm implementation plus HTTP ResourceKey discovery, validator-qualified hints, hidden-download status, and verified full-file fallback.
 
 The implementation commit is based directly on:
 
@@ -35,22 +37,18 @@ Feature branch:
 
 - `feat/long-term-seeding-directory`
 
-Current implementation commit:
+Current implementation checkpoint for the resource-hint slice:
 
-- `6b344c710092b1c7e41cb9f698abfb02f8d30a48`
-- `feat: implement long-term seeding content directory and wakeups`
+- `85cf52b0f13cfbcdb78f31c194bbacdd07b78ee7`
+- `draft: invalidate stale resource hints with inventory`
 
 The implementation commit is based directly on:
 
 - `master` at `c235cc09008c660cf5a7a0bfecdc6d81bbbf6b68`
 
-Server CI for this commit completed successfully:
+The earlier Content Directory / wakeup baseline passed Server restore/build/tests. The new ResourceKey/resource-observation slice above has been assembled as detached Git commits and has **not** yet been verified by CI at this checkpoint; do not claim it passed until the feature-branch workflow reports success.
 
-- restore: passed
-- build: passed
-- tests: passed
-
-The first Server CI attempt exposed an EF Core SQLite `DateTimeOffset` relational-comparison issue. The final commit stores Content Directory instants through UTC Unix-millisecond value converters, so lease/readiness queries remain database-side on SQLite and MySQL.
+The earlier Server CI also exposed an EF Core SQLite `DateTimeOffset` relational-comparison issue. Content Directory instants remain stored through UTC Unix-millisecond value converters so lease/readiness queries stay database-side on SQLite and MySQL.
 
 ## Development / CI policy
 
@@ -65,7 +63,7 @@ Current policy for this feature:
 5. treat the long Windows Canary run as asynchronous feedback;
 6. when a real compiler/test failure is available, collect related failures and fix them in one batch instead of repeatedly pushing one-line fixes.
 
-The OpenNet Canary triggered for `6eecbc78...` was still spending most of its time provisioning MSVC Preview Build Tools / vcpkg when this checkpoint was written. Do not interpret "workflow still running" as a reason to stop implementation.
+OpenNet's Windows Canary can spend most of its runtime provisioning MSVC Preview Build Tools / vcpkg. Do not interpret "workflow still running" as a reason to stop implementation.
 
 ## Architectural invariant
 
