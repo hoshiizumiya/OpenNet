@@ -44,6 +44,25 @@ namespace OpenNet::Core
 				&& options.UserAgent.empty();
 		}
 
+		std::vector<std::string> BuildHybridWebSeeds(
+			Aria2::HttpDownloadOptions const& options)
+		{
+			std::vector<std::string> result;
+			if (!options.ResourceSupportsByteRanges
+				|| options.ResourceFinalUrl.empty())
+				return result;
+
+			// Reuse the same public-resource policy as ResourceKey discovery.
+			// If the final URL is unsafe for sharing, do not hand it to the
+			// canonical web-seed path either.
+			if (::OpenNet::Core::Content::ResourceKeyFactory::FromHttpUrl(
+				options.ResourceFinalUrl))
+			{
+				result.push_back(options.ResourceFinalUrl);
+			}
+			return result;
+		}
+
 		std::optional<::OpenNet::Core::Content::ContentIdentity>
 			ParseExpectedSha256(std::string checksum)
 		{
@@ -414,6 +433,9 @@ namespace OpenNet::Core
 		}
 
 		auto expectedSha256 = ParseExpectedSha256(options.Checksum);
+		auto hybridWebSeeds = resourceHintSafe
+			? BuildHybridWebSeeds(options)
+			: std::vector<std::string>{};
 
 		std::filesystem::path peerFallbackTarget;
 		if (expectedSha256
@@ -426,6 +448,14 @@ namespace OpenNet::Core
 				/ std::filesystem::path{
 					winrt::to_hstring(options.OutFileName).c_str() };
 		}
+
+		bool const hybridProbe =
+			!options.StartPaused
+			&& resourceHintSafe
+			&& expectedSha256.has_value()
+			&& options.ResourceContentLength != 0
+			&& !peerFallbackTarget.empty()
+			&& !hybridWebSeeds.empty();
 
 		try
 		{
@@ -451,6 +481,8 @@ namespace OpenNet::Core
 			auto& database = AppSettingsDatabase::Instance();
 			database.Initialize();
 			auto effectiveOptions = options;
+			if (hybridProbe)
+				effectiveOptions.StartPaused = true;
 			if (effectiveOptions.ConnectionsPerServer == 0)
 				effectiveOptions.ConnectionsPerServer = static_cast<std::uint32_t>(std::clamp<std::int64_t>(
 					database.GetInt(AppSettingsDatabase::CAT_DOWNLOAD,
@@ -500,7 +532,9 @@ namespace OpenNet::Core
 					std::move(resourceKeys),
 					std::move(expectedSha256),
 					std::move(peerFallbackTarget),
-					options.ResourceContentLength);
+					options.ResourceContentLength,
+					hybridProbe,
+					std::move(hybridWebSeeds));
 			}
 
 			return gid;
@@ -965,7 +999,9 @@ namespace OpenNet::Core
 		std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
 		std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
 		std::filesystem::path targetFilePath,
-		std::uint64_t expectedSize)
+		std::uint64_t expectedSize,
+		bool hybridPrimary,
+		std::vector<std::string> webSeeds)
 	{
 		if (gid.empty() || resourceKeys.empty()) return;
 		{
@@ -975,7 +1011,9 @@ namespace OpenNet::Core
 				std::move(resourceKeys),
 				std::move(expectedSha256),
 				std::move(targetFilePath),
-				expectedSize
+				expectedSize,
+				hybridPrimary,
+				std::move(webSeeds)
 			});
 		}
 		m_resourceDiscoveryCv.notify_one();
@@ -1104,6 +1142,24 @@ namespace OpenNet::Core
 			{
 				QueuePeerFallback(job, summary);
 			}
+			else if (job.hybridPrimary)
+			{
+				try
+				{
+					std::lock_guard rpcLock(m_aria2->InstanceLock());
+					m_aria2->Resume(job.gid);
+				}
+				catch (...)
+				{
+				}
+				std::lock_guard lock(m_mutex);
+				m_httpTaskLogs[job.gid].push_back({
+					std::chrono::duration_cast<std::chrono::seconds>(
+						std::chrono::system_clock::now()
+							.time_since_epoch()).count(),
+					"No trusted canonical resource matched; resumed aria2 origin transfer."
+				});
+			}
 		}
 
 		winrt::uninit_apartment();
@@ -1120,16 +1176,23 @@ namespace OpenNet::Core
 
 		PeerFallbackJob job;
 		job.gid = discovery.gid;
-		job.sessionId = "http-fallback:" + discovery.gid;
+		job.sessionId = discovery.hybridPrimary
+			? "http-hybrid:" + discovery.gid
+			: "http-fallback:" + discovery.gid;
 		job.targetFilePath = discovery.targetFilePath;
 		job.temporaryFilePath = discovery.targetFilePath;
-		job.temporaryFilePath +=
-			winrt::to_hstring(
-				".opennet-p2p-" + discovery.gid + ".part").c_str();
+		if (!discovery.hybridPrimary)
+		{
+			job.temporaryFilePath +=
+				winrt::to_hstring(
+					".opennet-p2p-" + discovery.gid + ".part").c_str();
+		}
 		job.bep52Identity = *summary.bep52Identity;
 		job.expectedSha256 = *discovery.expectedSha256;
 		job.resourceKeys = discovery.resourceKeys;
 		job.expectedSize = summary.size;
+		job.hybridPrimary = discovery.hybridPrimary;
+		job.webSeeds = discovery.webSeeds;
 
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
@@ -1161,7 +1224,9 @@ namespace OpenNet::Core
 				std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now()
 						.time_since_epoch()).count(),
-				"Trusted OpenNet peer fallback queued in a separate temporary file."
+				job.hybridPrimary
+					? "Trusted canonical resource matched; libtorrent hybrid transfer queued with HTTP web seed + OpenNet peers."
+					: "Trusted OpenNet peer fallback queued in a separate temporary file."
 			});
 		}
 		m_peerFallbackCv.notify_one();
@@ -1232,7 +1297,19 @@ namespace OpenNet::Core
 			::OpenNet::Core::P2PManager::Instance()
 				.CloseLongSeedSession(job.sessionId);
 			std::error_code error;
-			std::filesystem::remove(job.temporaryFilePath, error);
+			if (!job.hybridPrimary)
+				std::filesystem::remove(job.temporaryFilePath, error);
+			else
+			{
+				try
+				{
+					std::lock_guard rpcLock(m_aria2->InstanceLock());
+					m_aria2->Resume(job.gid);
+				}
+				catch (...)
+				{
+				}
+			}
 
 			bool shouldLog = false;
 			{
@@ -1260,7 +1337,9 @@ namespace OpenNet::Core
 					std::chrono::duration_cast<std::chrono::seconds>(
 						std::chrono::system_clock::now()
 							.time_since_epoch()).count(),
-					"OpenNet peer fallback failed: " + message
+					(job.hybridPrimary
+						? "Canonical HTTP/P2P hybrid failed; aria2 origin resumed: "
+						: "OpenNet peer fallback failed: ") + message
 				});
 			}
 		};
@@ -1307,7 +1386,8 @@ namespace OpenNet::Core
 							job.bep52Identity,
 							job.temporaryFilePath,
 							20,
-							job.sessionId)
+							job.sessionId,
+							job.webSeeds)
 						.get();
 			}
 			catch (std::exception const& exception)
@@ -1414,9 +1494,10 @@ namespace OpenNet::Core
 			if (cancelled)
 			{
 				std::error_code error;
-				std::filesystem::remove(
-					job.temporaryFilePath,
-					error);
+				if (!job.hybridPrimary)
+					std::filesystem::remove(
+						job.temporaryFilePath,
+						error);
 				std::lock_guard lock(m_peerFallbackMutex);
 				m_peerFallbacks.erase(job.gid);
 				continue;
@@ -1497,7 +1578,9 @@ namespace OpenNet::Core
 					std::chrono::duration_cast<std::chrono::seconds>(
 						std::chrono::system_clock::now()
 							.time_since_epoch()).count(),
-					"OpenNet peer fallback is fully downloaded and locally SHA-256 verified."
+					job.hybridPrimary
+						? "Canonical HTTP/P2P hybrid completed and passed caller SHA-256 verification."
+						: "OpenNet peer fallback is fully downloaded and locally SHA-256 verified."
 				});
 			}
 		}
@@ -1538,10 +1621,11 @@ namespace OpenNet::Core
 			return false;
 		}
 
-		if (!::MoveFileExW(
-			job.temporaryFilePath.c_str(),
-			job.targetFilePath.c_str(),
-			MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
+		if (job.temporaryFilePath != job.targetFilePath
+			&& !::MoveFileExW(
+				job.temporaryFilePath.c_str(),
+				job.targetFilePath.c_str(),
+				MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
 		{
 			auto const error = ::GetLastError();
 			// aria2 may need one more refresh tick to release the failed
@@ -1645,7 +1729,9 @@ namespace OpenNet::Core
 				std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now()
 						.time_since_epoch()).count(),
-				"HTTP origin failed; verified OpenNet peer fallback was promoted atomically."
+				job.hybridPrimary
+					? "Canonical HTTP/P2P hybrid completed through libtorrent with one writer."
+					: "HTTP origin failed; verified OpenNet peer fallback was promoted atomically."
 			});
 			finishedCallback = m_finishedCb;
 		}
@@ -1784,6 +1870,13 @@ namespace OpenNet::Core
 							m_gidToRecordId[gid] = recordId;
 						}
 					}
+				}
+
+				if (task.Status == Aria2::DownloadStatus::Paused
+					&& HasPeerFallbackPending(gid)
+					&& TryPromotePeerFallback(gid, task, recordId))
+				{
+					continue;
 				}
 
 				bool const peerFallbackHoldingError =

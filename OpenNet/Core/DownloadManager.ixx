@@ -130,7 +130,9 @@ export namespace OpenNet::Core
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
 			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
 			std::filesystem::path targetFilePath = {},
-			std::uint64_t expectedSize = 0);
+			std::uint64_t expectedSize = 0,
+			bool hybridPrimary = false,
+			std::vector<std::string> webSeeds = {});
 		void QueuePeerFallback(
 			ResourceDiscoveryJob const& discovery,
 			HttpResourceDiscovery const& summary);
@@ -160,6 +162,8 @@ export namespace OpenNet::Core
 			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256;
 			std::filesystem::path targetFilePath;
 			std::uint64_t expectedSize{};
+			bool hybridPrimary{};
+			std::vector<std::string> webSeeds;
 		};
 		std::thread m_resourceDiscoveryThread;
 		std::atomic<bool> m_stopResourceDiscovery{ false };
@@ -185,6 +189,8 @@ export namespace OpenNet::Core
 			::OpenNet::Core::Content::ContentIdentity expectedSha256;
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
 			std::uint64_t expectedSize{};
+			bool hybridPrimary{};
+			std::vector<std::string> webSeeds;
 		};
 
 		struct PeerFallbackState
