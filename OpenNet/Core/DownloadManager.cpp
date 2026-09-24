@@ -1279,9 +1279,10 @@ namespace OpenNet::Core
 			::OpenNet::Core::P2PManager::Instance()
 				.CloseLongSeedSession(immediateCleanup->sessionId);
 			std::error_code error;
-			std::filesystem::remove(
-				immediateCleanup->temporaryFilePath,
-				error);
+			if (!immediateCleanup->hybridPrimary)
+				std::filesystem::remove(
+					immediateCleanup->temporaryFilePath,
+					error);
 		}
 		m_peerFallbackCv.notify_all();
 	}
@@ -1553,9 +1554,10 @@ namespace OpenNet::Core
 					|| state->second.cancelRequested)
 				{
 					std::error_code error;
-					std::filesystem::remove(
-						job.temporaryFilePath,
-						error);
+					if (!job.hybridPrimary)
+						std::filesystem::remove(
+							job.temporaryFilePath,
+							error);
 					if (state != m_peerFallbacks.end())
 						m_peerFallbacks.erase(state);
 					continue;
@@ -1883,6 +1885,18 @@ namespace OpenNet::Core
 					task.Status == Aria2::DownloadStatus::Error
 					&& HasPeerFallbackPending(gid);
 
+				std::optional<PeerFallbackState> hybridState;
+				{
+					std::lock_guard fallbackLock(m_peerFallbackMutex);
+					if (auto const state = m_peerFallbacks.find(gid);
+						state != m_peerFallbacks.end()
+						&& state->second.job.hybridPrimary
+						&& !state->second.cancelRequested)
+					{
+						hybridState = state->second;
+					}
+				}
+
 				if (progressCb)
 				{
 					HttpTaskProgress progress;
@@ -1898,6 +1912,22 @@ namespace OpenNet::Core
 					progress.progressPercent = (task.TotalLength > 0)
 						? static_cast<int>((task.CompletedLength * 100) / task.TotalLength)
 						: 0;
+					if (hybridState)
+					{
+						progress.status = hybridState->phase == PeerFallbackPhase::Failed
+							? Aria2::DownloadStatus::Waiting
+							: Aria2::DownloadStatus::Active;
+						progress.totalLength =
+							hybridState->job.expectedSize;
+						progress.completedLength =
+							static_cast<std::uint64_t>((std::max)(
+								std::int64_t{}, hybridState->completedBytes));
+						progress.downloadSpeed =
+							static_cast<std::uint64_t>((std::max)(
+								std::int64_t{}, hybridState->downloadRate));
+						progress.progressPercent =
+							hybridState->progressPercent;
+					}
 
 					progressCb(progress);
 				}
@@ -1915,8 +1945,22 @@ namespace OpenNet::Core
 						auto& hsm = HttpStateManager::Instance();
 						auto friendlyName = Aria2::ToFriendlyName(task);
 						hsm.UpdateRecordName(recordId, friendlyName);
-						hsm.UpdateRecordProgress(recordId, task.CompletedLength, task.TotalLength);
-						if (!peerFallbackHoldingError)
+						if (hybridState)
+						{
+							hsm.UpdateRecordProgress(
+								recordId,
+								(std::max)(std::int64_t{}, hybridState->completedBytes),
+								static_cast<std::int64_t>(
+									hybridState->job.expectedSize));
+						}
+						else
+						{
+							hsm.UpdateRecordProgress(
+								recordId,
+								task.CompletedLength,
+								task.TotalLength);
+						}
+						if (!peerFallbackHoldingError && !hybridState)
 						{
 							int const persistedStatus =
 								task.Status == Aria2::DownloadStatus::Paused ? 2
