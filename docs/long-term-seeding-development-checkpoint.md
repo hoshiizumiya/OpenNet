@@ -1,5 +1,12 @@
 # Long-Term Seeding Development Checkpoint — 2026-09-24
 
+
+> **Architecture update — 2026-09-24**
+>
+> The preferred HTTP P2P path has changed. For a privacy-safe public HTTP resource with a caller-supplied WholeFile SHA-256, matching size, BEP52 identity, known output path, and verified byte-range support, OpenNet now keeps aria2 paused as a temporary control/UI shell and makes the canonical BitTorrent v2 session the primary data plane. libtorrent receives the final HTTP origin as a BEP 19 URL seed and OpenNet peers as normal peers, so origin + P2P share one piece picker, one cryptographic verification path, and one disk writer. If no trusted candidate is found or the hybrid path fails, aria2 is resumed. The older separate-file full-download fallback remains only as a compatibility path.
+>
+> A custom aria2/libtorrent `TransferCoordinator` is no longer the default design for public HTTP acceleration. The invariant remains: `one output range -> one writer/owner`.
+
 This document is the handoff checkpoint for the OpenNet long-term-seeding / HTTP P2P acceleration work.
 
 It is intentionally operational: it records exactly what is implemented, what has been verified, what remains unsafe or incomplete, and what the next development session should do.

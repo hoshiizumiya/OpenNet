@@ -1,5 +1,12 @@
 # 下一轮对话接手提示词：OpenNet Long-Term Seeding / HTTP P2P
 
+
+> **架构更新 — 2026-09-24**
+>
+> HTTP P2P 的首选路径已经改变。对于隐私安全的 public HTTP 资源，若 caller 提供 WholeFile SHA-256，且 size、BEP52 identity、输出路径、HTTP byte-range 能力都满足可信条件，则 OpenNet 让 aria2 保持 paused，只临时承担现有 GID/UI/SQLite control shell；真正的数据面交给 canonical BitTorrent v2 session。libtorrent 同时接收 final HTTP origin 作为 BEP 19 URL Seed，并接收 OpenNet peers，因此 HTTP origin + P2P 共用同一个 piece picker、同一套校验路径和单一 disk writer。若没有可信 candidate，或 hybrid 启动/运行失败，则恢复 aria2 普通 HTTP 下载。旧的独立临时文件 full-file fallback 只作为兼容路径保留。
+>
+> 因此自研 aria2/libtorrent `TransferCoordinator` 不再是 public HTTP 加速的默认设计。核心 invariant 仍然是：`one output range -> one writer/owner`。
+
 把下面整段直接交给下一轮 ChatGPT/Codex 使用。
 
 ---

@@ -1,5 +1,12 @@
 # OpenNet 长效种子与 HTTP P2P 加速架构
 
+
+> **架构更新 — 2026-09-24**
+>
+> HTTP P2P 的首选路径已经改变。对于隐私安全的 public HTTP 资源，若 caller 提供 WholeFile SHA-256，且 size、BEP52 identity、输出路径、HTTP byte-range 能力都满足可信条件，则 OpenNet 让 aria2 保持 paused，只临时承担现有 GID/UI/SQLite control shell；真正的数据面交给 canonical BitTorrent v2 session。libtorrent 同时接收 final HTTP origin 作为 BEP 19 URL Seed，并接收 OpenNet peers，因此 HTTP origin + P2P 共用同一个 piece picker、同一套校验路径和单一 disk writer。若没有可信 candidate，或 hybrid 启动/运行失败，则恢复 aria2 普通 HTTP 下载。旧的独立临时文件 full-file fallback 只作为兼容路径保留。
+>
+> 因此自研 aria2/libtorrent `TransferCoordinator` 不再是 public HTTP 加速的默认设计。核心 invariant 仍然是：`one output range -> one writer/owner`。
+
 > 状态：架构基线与实现指南。
 >
 > 本文所述的本地 ContentCatalog、Content Directory 控制面、按需 canonical BitTorrent v2 swarm、HTTP ResourceKey 提前发现，以及“独立临时文件 + SHA-256 二次校验”的整文件 P2P fallback 已经在对应 feature 分支中实现。aria2/libtorrent 真正混合 range 加速、节点密码学认证、Peer Ticket、经过验证的 NAT 穿透仍属于后续阶段。
