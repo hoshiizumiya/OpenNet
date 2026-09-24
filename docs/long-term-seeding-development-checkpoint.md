@@ -23,12 +23,7 @@ Feature branch:
 
 - `feat/long-term-seeding-content-catalog`
 
-Implementation checkpoint for the HTTP ResourceKey / verified-fallback slice:
-
-- `bfd9a1197ecb072b8884586b89a862d2dbafb77d`
-- `fix: preserve late trusted fallback after fast origin failure`
-
-This tip includes the earlier ContentCatalog / canonical-swarm implementation plus HTTP ResourceKey discovery, validator-qualified hints, hidden-download status, and verified full-file fallback.
+Current client checkpoint for the canonical HTTP hybrid slice is this document's parent code lineage. It includes ResourceKey discovery, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, HTTP progress bridging, caller SHA-256 verification, and fallback to aria2.
 
 The implementation commit is based directly on:
 
@@ -46,14 +41,14 @@ Feature branch:
 
 Current implementation checkpoint for the resource-hint slice:
 
-- `85cf52b0f13cfbcdb78f31c194bbacdd07b78ee7`
-- `draft: invalidate stale resource hints with inventory`
+- `a7d6c5def75a421673eda8096163151475ccdd3f`
+- `fix: initialize required resource identity digest`
 
 The implementation commit is based directly on:
 
 - `master` at `c235cc09008c660cf5a7a0bfecdc6d81bbbf6b68`
 
-The earlier Content Directory / wakeup baseline passed Server restore/build/tests. The new ResourceKey/resource-observation slice above has been assembled as detached Git commits and has **not** yet been verified by CI at this checkpoint; do not claim it passed until the feature-branch workflow reports success.
+The Server resource-hint slice at the checkpoint above passed restore/build/tests.
 
 The earlier Server CI also exposed an EF Core SQLite `DateTimeOffset` relational-comparison issue. Content Directory instants remain stored through UTC Unix-millisecond value converters so lease/readiness queries stay database-side on SQLite and MySQL.
 
@@ -299,23 +294,23 @@ The fallback downloads into a separate `.opennet-p2p-<gid>.part` file. libtorren
 
 Explicit pause/cancel/remove/delete suppresses late resource lookups from resurrecting hidden P2P work.
 
-## Important boundary: do not mix aria2 and libtorrent writes yet
+## Important boundary: one physical output has one active writer
 
-The current requester primitive must **not** point libtorrent at a destination file that aria2 is concurrently writing.
-
-This is intentional.
-
-The current architecture has not yet implemented a range-ownership layer that can safely coordinate two independent disk writers.
-
-Before real HTTP P2SP acceleration can combine origin and P2P sources, add a `TransferCoordinator` or equivalent owner/scheduler.
-
-Required invariant:
+The normal trusted HTTP P2P route no longer uses two data writers. aria2 remains paused as a compatibility shell while libtorrent owns the payload path and combines BEP19 URL Seeds with OpenNet peers.
 
 ```text
-one output range -> one current writer/owner
+paused aria2 shell (no payload writes)
+        |
+        v
+libtorrent URL Seed + OpenNet peers
+        |
+        v
+one piece picker / one writer
 ```
 
-Do not "just start aria2 and libtorrent on the same file" as a shortcut.
+If the hybrid route fails, OpenNet closes libtorrent and removes its incomplete output before resuming aria2. Writer ownership is transferred, never shared.
+
+A general `TransferCoordinator` is no longer the default HTTP plan. Only introduce one for future source types that libtorrent cannot model as URL Seeds or peers.
 
 ## Important boundary: endpoint reachability is not proven
 
@@ -384,70 +379,43 @@ Recommended research remains:
 
 ## Known implementation limitations
 
-The following are deliberate remaining gaps, not accidental omissions:
-
-- no aria2/libtorrent mixed range scheduler;
-- no mixed-source acceleration while the origin is healthy;
-- automatic peer fallback currently requires a caller-supplied SHA-256 and a known output filename before task creation;
-- no end-to-end automated network transfer test;
-- no verified NAT candidates;
-- no hole-punch orchestration for this protocol;
-- no relay fallback;
-- no node public-key identity;
-- no signed control requests;
-- no peer connection tickets;
-- no production rate limiting/abuse quotas;
-- no production EF migrations yet;
-- no BitComet LT wire adapter;
-- empty-file canonical long seeding is deferred.
+- no deterministic end-to-end URL Seed + OpenNet peer hybrid test yet;
+- exact libtorrent WebSeed request-path behavior for the current canonical layout still needs an automated fixture;
+- hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
+- in-flight wakeup/lookup is not cooperatively cancellable during shutdown;
+- Resume does not automatically re-run discovery;
+- late redirect/Content-Disposition output names cannot yet activate hybrid;
+- stale hybrid/P2P partial cleanup after abnormal termination remains incomplete;
+- same-target duplicate HTTP tasks need explicit exclusion;
+- task-shell cleanup/session persistence needs stronger crash-recovery testing;
+- Traversal/NAT/security/production hardening and BitComet wire compatibility remain future work.
 
 ## Next milestone
 
-HTTP resource discovery and the first verified full-file fallback slice are now implemented. The next milestone is end-to-end fallback validation followed by explicit range ownership / TransferCoordinator work.
-
-Build a conservative resource-hint layer:
+Build deterministic validation and lifecycle hardening for the canonical HTTP hybrid.
 
 ```text
-HTTP resource descriptor
-        |
-        v
-ResourceKey
-        |
-        v
-ContentId / authoritative identities
-        |
-        v
-Content Directory lookup
+local HTTP Range origin
+ -> ResourceKey
+ -> authoritative candidate
+ -> wakeup / canonical manifest
+ -> libtorrent URL Seed + OpenNet peer(s)
+ -> BEP52 verification
+ -> WholeFile SHA-256 verification
+ -> HTTP Complete
+ -> ContentCatalog
 ```
 
-The Server must not become a database of private signed URLs, cookies, bearer tokens, or authorization query strings.
+Recommended order:
 
-A resource mapping is a hint, not cryptographic proof.
+1. Add a local deterministic HTTP Range fixture and record libtorrent's real URL requests.
+2. Test the complete hybrid chain without public-network dependencies.
+3. Harden shutdown/cancel/resume, stale partial cleanup and same-target exclusion.
+4. Support late output filenames.
+5. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
+6. Continue BitComet compatibility separately.
 
-Likely first version should model:
-
-- normalized scheme / host / effective port / path;
-- query handled conservatively;
-- strong ETag when available;
-- Content-Length;
-- optional Last-Modified as weaker metadata;
-- mapping expiry / observation time;
-- multiple observations pointing to a content object.
-
-The next session must inspect the real aria2/HTTP request path before deciding where resource discovery hooks belong.
-
-## Recommended next implementation order
-
-1. Inspect the current OpenNet HTTP creation/preflight path and aria2 request metadata actually available before task start.
-2. Design `ResourceDescriptor` and privacy-preserving `ResourceKey`.
-3. Add Server resource-hint persistence + announce/lookup endpoints.
-4. Add client resource lookup before or alongside origin task start.
-5. Keep P2P as standalone full-file fallback/alternative initially.
-6. Add end-to-end requester -> lookup -> wakeup -> manifest -> peer-transfer integration coverage.
-7. Only then design `TransferCoordinator` for synchronized origin + P2P range ownership.
-8. Integrate OpenNet.Traversal for verified IPv4/IPv6 candidates and hole punching.
-9. Add node keys, request signatures, peer tickets, rate limiting, migrations before public untrusted deployment.
-10. Continue BitComet compatibility experiments independently; do not block the native OpenNet protocol on reverse engineering.
+Do not make `TransferCoordinator` the default HTTP milestone again.
 
 ## Files to read first next session
 
