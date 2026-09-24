@@ -31,6 +31,12 @@ export namespace OpenNet::Core::Aria2
 		std::string Password;
 		std::string Checksum;
 		std::string Description;
+
+		// Optional public-resource metadata collected by a preflight request.
+		// These fields are discovery hints only and are never passed to aria2.
+		std::string ResourceFinalUrl;
+		std::string ResourceStrongETag;
+		std::uint64_t ResourceContentLength = 0;
 	};
 
 	bool ToBoolean(nlohmann::json const& Value);

@@ -86,6 +86,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		winrt::hstring m_description;
 		winrt::hstring m_username;
 		winrt::hstring m_password;
+		winrt::hstring m_resourceFinalUrl;
+		winrt::hstring m_resourceStrongETag;
+		std::uint64_t m_resourceContentLength{};
 		winrt::hstring m_clipboardPreviewText;
 		winrt::Microsoft::UI::Xaml::Visibility m_clipboardPreviewVisibility{ winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
 		winrt::hstring m_fileSizeText{ L"Size: Unknown" };

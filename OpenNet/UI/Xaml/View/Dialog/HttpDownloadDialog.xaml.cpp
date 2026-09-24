@@ -62,6 +62,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			}
 		}
 		if (!SetProperty(m_url, normalized, L"Url")) return;
+		m_resourceFinalUrl.clear();
+		m_resourceStrongETag.clear();
+		m_resourceContentLength = 0;
 		m_isUrlValid = ValidateUrl(m_url);
 		RaisePropertyChanged(L"IsUrlValid");
 		RaisePropertyChanged(L"CanFetchMetadata");
@@ -367,6 +370,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		options.Username = winrt::to_string(m_username);
 		options.Password = winrt::to_string(m_password);
 		options.Description = winrt::to_string(m_description);
+		options.ResourceFinalUrl = winrt::to_string(m_resourceFinalUrl);
+		options.ResourceStrongETag = winrt::to_string(m_resourceStrongETag);
+		options.ResourceContentLength = m_resourceContentLength;
 		auto checksum = winrt::to_string(m_checksum);
 		std::erase_if(checksum, [](unsigned char value)
 		{
@@ -454,6 +460,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				if (auto rangeLength = contentRange.Length()) length = rangeLength.Value();
 			}
 			SetProperty(m_fileSizeText, length > 0 ? hstring{ std::format(L"Size: {:.2f} MiB", static_cast<double>(length) / 1048576.0) } : hstring{ L"Size: Unknown" }, L"FileSizeText");
+
+			m_resourceFinalUrl =
+				response.RequestMessage().RequestUri().AbsoluteUri();
+			m_resourceContentLength = length;
+			m_resourceStrongETag.clear();
+			for (auto const& header : response.Headers())
+			{
+				if (_wcsicmp(header.Key().c_str(), L"ETag") == 0)
+				{
+					auto value = header.Value();
+					auto view = std::wstring_view{ value };
+					auto const first = view.find_first_not_of(L" \t\r\n");
+					if (first != std::wstring_view::npos)
+					{
+						auto const last = view.find_last_not_of(L" \t\r\n");
+						auto trimmed = hstring{
+							view.substr(first, last - first + 1) };
+						if (!std::wstring_view{ trimmed }.starts_with(L"W/")
+							&& !std::wstring_view{ trimmed }.starts_with(L"w/"))
+							m_resourceStrongETag = trimmed;
+					}
+					break;
+				}
+			}
 
 			bool resumable = response.StatusCode() == winrt::Windows::Web::Http::HttpStatusCode::PartialContent;
 			for (auto const& header : response.Headers())

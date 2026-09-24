@@ -7,6 +7,7 @@ export namespace OpenNet::Core::Content
     enum class ResourceKeyAlgorithm : std::uint8_t
     {
         ExactUrlSha256V1 = 1,
+        HttpValidatorSha256V1 = 2,
     };
 
     struct ResourceKey
@@ -16,6 +17,13 @@ export namespace OpenNet::Core::Content
 
         [[nodiscard]] std::string ToHex() const;
         bool operator==(ResourceKey const&) const = default;
+    };
+
+    struct HttpResourceValidator
+    {
+        std::string finalUrl;
+        std::string strongETag;
+        std::uint64_t contentLength{};
     };
 
     class ResourceKeyFactory
@@ -29,5 +37,10 @@ export namespace OpenNet::Core::Content
         // shared directory rather than trying to strip secrets heuristically.
         static std::optional<ResourceKey> FromHttpUrl(
             std::string_view url);
+
+        // Version-qualified resource hint. This remains discovery metadata,
+        // not a cryptographic content identity: ETag values are origin-defined.
+        static std::optional<ResourceKey> FromHttpValidator(
+            HttpResourceValidator const& validator);
     };
 }

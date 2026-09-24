@@ -91,13 +91,13 @@ namespace OpenNet::Core::Content
         return result;
     }
 
-    std::optional<ResourceKey> ResourceKeyFactory::FromHttpUrl(
-        std::string_view url)
+    namespace
     {
-        if (url.empty()) return std::nullopt;
-
-        try
+        std::optional<std::string> CanonicalPublicHttpUrl(
+            std::string_view url)
         {
+            if (url.empty()) return std::nullopt;
+
             winrt::Windows::Foundation::Uri uri{
                 winrt::to_hstring(std::string(url))
             };
@@ -157,14 +157,76 @@ namespace OpenNet::Core::Content
                 canonical += query;
             }
 
+            return canonical;
+        }
+    }
+
+    std::optional<ResourceKey> ResourceKeyFactory::FromHttpUrl(
+        std::string_view url)
+    {
+        try
+        {
+            auto canonical = CanonicalPublicHttpUrl(url);
+            if (!canonical) return std::nullopt;
+
             constexpr std::string_view domain =
                 "OpenNet.Resource.ExactUrlSha256V1\n";
             std::string input;
-            input.reserve(domain.size() + canonical.size());
+            input.reserve(domain.size() + canonical->size());
             input.append(domain);
-            input.append(canonical);
+            input.append(*canonical);
 
             ResourceKey result;
+            result.algorithm = ResourceKeyAlgorithm::ExactUrlSha256V1;
+            result.digest = Sha256(input);
+            return result;
+        }
+        catch (...)
+        {
+            return std::nullopt;
+        }
+    }
+
+    std::optional<ResourceKey> ResourceKeyFactory::FromHttpValidator(
+        HttpResourceValidator const& validator)
+    {
+        if (validator.strongETag.empty()
+            || validator.contentLength == 0)
+            return std::nullopt;
+
+        auto etag = validator.strongETag;
+        auto trimmed = std::string_view{ etag };
+        while (!trimmed.empty()
+            && std::isspace(
+                static_cast<unsigned char>(trimmed.front())))
+            trimmed.remove_prefix(1);
+        if (trimmed.starts_with("W/")
+            || trimmed.starts_with("w/"))
+            return std::nullopt;
+
+        try
+        {
+            auto canonical = CanonicalPublicHttpUrl(
+                validator.finalUrl);
+            if (!canonical) return std::nullopt;
+
+            constexpr std::string_view domain =
+                "OpenNet.Resource.HttpValidatorSha256V1\n";
+            std::string input;
+            input.reserve(
+                domain.size()
+                + canonical->size()
+                + validator.strongETag.size()
+                + 64);
+            input.append(domain);
+            input.append(*canonical);
+            input.append("\netag:");
+            input.append(validator.strongETag);
+            input.append("\nlength:");
+            input.append(std::to_string(validator.contentLength));
+
+            ResourceKey result;
+            result.algorithm = ResourceKeyAlgorithm::HttpValidatorSha256V1;
             result.digest = Sha256(input);
             return result;
         }
