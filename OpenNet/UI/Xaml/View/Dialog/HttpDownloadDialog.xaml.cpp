@@ -455,6 +455,46 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			}
 			if (!response.IsSuccessStatusCode()) throw winrt::hresult_error(E_FAIL, L"HTTP " + winrt::to_hstring(static_cast<int>(response.StatusCode())));
 
+			// BEP 19 routing requires observed byte-range behavior. An
+			// Accept-Ranges advertisement is useful for UI, but it is not
+			// sufficient to let libtorrent depend on this origin as a URL seed.
+			bool rangeVerified =
+				response.StatusCode()
+					== winrt::Windows::Web::Http::HttpStatusCode::PartialContent
+				&& static_cast<bool>(
+					response.Content().Headers().ContentRange());
+			if (!rangeVerified)
+			{
+				try
+				{
+					auto const finalUri =
+						response.RequestMessage().RequestUri();
+					winrt::Windows::Web::Http::HttpRequestMessage rangeRequest{
+						winrt::Windows::Web::Http::HttpMethod::Get(),
+						finalUri };
+					rangeRequest.Headers().TryAppendWithoutValidation(
+						L"Range", L"bytes=0-0");
+					auto rangeResponse = co_await client.SendRequestAsync(
+						rangeRequest,
+						winrt::Windows::Web::Http::HttpCompletionOption::ResponseHeadersRead);
+					if (rangeResponse.StatusCode()
+							== winrt::Windows::Web::Http::HttpStatusCode::PartialContent
+						&& static_cast<bool>(
+							rangeResponse.Content().Headers().ContentRange()))
+					{
+						rangeVerified = true;
+						// Keep metadata consistent with the actual redirect-final
+						// resource proven to support byte ranges.
+						response = rangeResponse;
+					}
+				}
+				catch (...)
+				{
+					// HEAD metadata may still be useful. Only the canonical
+					// URL-seed route is disabled when this active probe fails.
+				}
+			}
+
 			std::uint64_t length{};
 			if (auto contentLength = response.Content().Headers().ContentLength()) length = contentLength.Value();
 			if (auto contentRange = response.Content().Headers().ContentRange())
@@ -487,16 +527,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				}
 			}
 
-			bool resumable = response.StatusCode() == winrt::Windows::Web::Http::HttpStatusCode::PartialContent;
+			bool resumable = rangeVerified;
 			for (auto const& header : response.Headers())
 			{
-				if (header.Key() == L"Accept-Ranges" && std::wstring_view{ header.Value() }.find(L"bytes") != std::wstring_view::npos)
+				if (header.Key() == L"Accept-Ranges"
+					&& std::wstring_view{ header.Value() }.find(L"bytes")
+						!= std::wstring_view::npos)
 				{
 					resumable = true;
 					break;
 				}
 			}
-			m_resourceSupportsByteRanges = resumable;
+			// Hybrid routing is stricter than the UI hint: only a successful
+			// active 206 + Content-Range probe enables BEP 19 URL-seed use.
+			m_resourceSupportsByteRanges = rangeVerified;
 			SetProperty(m_resumeSupportText, resumable ? hstring{ L"Resume support: Yes" } : hstring{ L"Resume support: No" }, L"ResumeSupportText");
 			if (m_fileName.empty())
 			{
