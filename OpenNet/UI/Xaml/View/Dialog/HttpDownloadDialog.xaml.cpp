@@ -483,9 +483,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 							rangeResponse.Content().Headers().ContentRange()))
 					{
 						rangeVerified = true;
-						// Keep metadata consistent with the actual redirect-final
-						// resource proven to support byte ranges.
-						response = rangeResponse;
+						// This probe only proves BEP 19 range capability.
+						// Preserve the original metadata response because a
+						// 206 response is not required to repeat ETag,
+						// Content-Disposition, or other useful headers.
 					}
 				}
 				catch (...)
