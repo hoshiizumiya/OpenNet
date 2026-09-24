@@ -8,6 +8,7 @@
 module;
 
 #include "Core/Notification/HttpToastNotification.h"
+#include <Windows.h>
 
 module OpenNet.Core.DownloadManager;
 
@@ -1561,8 +1562,8 @@ namespace OpenNet::Core
 			return false;
 		}
 
-		auto aria2ControlPath = job.targetFilePath;
-		aria2ControlPath += L".aria2";
+		auto aria2ControlPath = std::filesystem::path{
+			job.targetFilePath.wstring() + L".aria2" };
 		{
 			std::error_code error;
 			std::filesystem::remove(aria2ControlPath, error);
