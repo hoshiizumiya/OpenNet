@@ -48,9 +48,10 @@ export namespace OpenNet::Core
 				std::filesystem::path const& targetFilePath,
 				std::vector<std::string> const& urlSeeds = {});
 
-		// Standalone hidden P2P fetch. Do not point this at a file currently
-		// being written by aria2; mixed-source range coordination is a later
-		// TransferCoordinator integration.
+		// Hidden canonical fetch. URL seeds and BitTorrent peers may be mixed
+		// because libtorrent owns both the piece picker and the single disk
+		// writer. Never point this at a destination concurrently written by
+		// aria2 or another independent transfer engine.
 		winrt::Windows::Foundation::IAsyncOperation<bool>
 			StartLongSeedDownloadAsync(
 				::OpenNet::Core::Content::ContentIdentity identity,
