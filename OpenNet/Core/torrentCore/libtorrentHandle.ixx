@@ -118,7 +118,8 @@ export namespace OpenNet::Core::Torrent
 		LongSeedSessionResult OpenLongSeedDownloadSession(
 			std::string const& sessionId,
 			std::vector<std::uint8_t> const& metainfo,
-			std::filesystem::path const& targetFilePath);
+			std::filesystem::path const& targetFilePath,
+			std::vector<std::string> const& urlSeeds = {});
 		bool ConnectLongSeedPeer(
 			std::string const& sessionId,
 			std::string const& address,

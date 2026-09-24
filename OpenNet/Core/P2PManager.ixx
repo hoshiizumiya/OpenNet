@@ -45,7 +45,8 @@ export namespace OpenNet::Core
 			OpenLongSeedDownloadSession(
 				std::string const& sessionId,
 				std::vector<std::uint8_t> const& metainfo,
-				std::filesystem::path const& targetFilePath);
+				std::filesystem::path const& targetFilePath,
+				std::vector<std::string> const& urlSeeds = {});
 
 		// Standalone hidden P2P fetch. Do not point this at a file currently
 		// being written by aria2; mixed-source range coordination is a later
@@ -55,7 +56,8 @@ export namespace OpenNet::Core
 				::OpenNet::Core::Content::ContentIdentity identity,
 				std::filesystem::path targetFilePath,
 				std::uint32_t maxPeers = 20,
-				std::string sessionId = {});
+				std::string sessionId = {},
+				std::vector<std::string> urlSeeds = {});
 		bool ConnectLongSeedPeer(
 			std::string const& sessionId,
 			std::string const& address,

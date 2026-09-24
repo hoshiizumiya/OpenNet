@@ -1892,7 +1892,8 @@ namespace OpenNet::Core::Torrent
 		LibtorrentHandle::OpenLongSeedDownloadSession(
 			std::string const& sessionId,
 			std::vector<std::uint8_t> const& metainfo,
-			std::filesystem::path const& targetFilePath)
+			std::filesystem::path const& targetFilePath,
+			std::vector<std::string> const& urlSeeds)
 	{
 		if (sessionId.empty())
 			return { false, {}, "Long-seed download session ID is empty" };
@@ -1935,6 +1936,11 @@ namespace OpenNet::Core::Torrent
 				lt::file_index_t{0},
 				winrt::to_string(
 					winrt::hstring{ targetFilePath.filename().wstring() }));
+			for (auto const& urlSeed : urlSeeds)
+			{
+				if (!urlSeed.empty())
+					params.url_seeds.push_back(urlSeed);
+			}
 
 			params.flags |= lt::torrent_flags::duplicate_is_error
 				| lt::torrent_flags::disable_dht

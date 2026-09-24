@@ -64,12 +64,13 @@ namespace OpenNet::Core
 		P2PManager::OpenLongSeedDownloadSession(
 			std::string const& sessionId,
 			std::vector<std::uint8_t> const& metainfo,
-			std::filesystem::path const& targetFilePath)
+			std::filesystem::path const& targetFilePath,
+			std::vector<std::string> const& urlSeeds)
 	{
 		std::scoped_lock lock(m_torrentMutex);
 		return m_torrentCore
 			? m_torrentCore->OpenLongSeedDownloadSession(
-				sessionId, metainfo, targetFilePath)
+				sessionId, metainfo, targetFilePath, urlSeeds)
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult{
 				false, {}, "Torrent core is unavailable" };
 	}
@@ -108,7 +109,8 @@ namespace OpenNet::Core
 			::OpenNet::Core::Content::ContentIdentity identity,
 			std::filesystem::path targetFilePath,
 			std::uint32_t maxPeers,
-			std::string sessionId)
+			std::string sessionId,
+			std::vector<std::string> urlSeeds)
 	{
 		if (!identity.IsWellFormed()
 			|| identity.algorithm
@@ -139,7 +141,7 @@ namespace OpenNet::Core
 			if (lookup->manifestAvailable
 				&& lookup->canonicalProtocolVersion == 1
 				&& !lookup->canonicalInfoHashV2.empty()
-				&& hasReadyPeer)
+				&& (hasReadyPeer || !urlSeeds.empty()))
 				break;
 
 			auto const delay = std::chrono::milliseconds(
@@ -170,7 +172,7 @@ namespace OpenNet::Core
 						targetFilePath.lexically_normal().wstring()));
 		}
 		auto opened = OpenLongSeedDownloadSession(
-			sessionId, *manifest, targetFilePath);
+			sessionId, *manifest, targetFilePath, urlSeeds);
 		if (!opened.succeeded
 			|| opened.infoHashV2 != lookup->canonicalInfoHashV2)
 		{
@@ -201,7 +203,7 @@ namespace OpenNet::Core
 			if (connected != 0) break;
 		}
 
-		if (connected == 0)
+		if (connected == 0 && urlSeeds.empty())
 		{
 			CloseLongSeedSession(sessionId);
 			co_return false;
