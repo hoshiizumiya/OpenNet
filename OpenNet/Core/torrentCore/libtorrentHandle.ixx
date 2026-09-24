@@ -92,6 +92,23 @@ export namespace OpenNet::Core::Torrent
 			std::string error;
 		};
 
+		struct LongSeedSessionStatus
+		{
+			bool exists{};
+			bool valid{};
+			bool finished{};
+			bool seeding{};
+			bool hasError{};
+			int progressPercent{};
+			std::int64_t downloadRate{};
+			std::int64_t uploadRate{};
+			std::int64_t totalWanted{};
+			std::int64_t totalWantedDone{};
+			int connectedPeers{};
+			int connectedSeeds{};
+			std::string error;
+		};
+
 		// Hidden OpenNet.Content.v1 torrents are intentionally separate from
 		// user task persistence and UI-visible task maps.
 		LongSeedSessionResult OpenLongSeedSession(
@@ -107,6 +124,8 @@ export namespace OpenNet::Core::Torrent
 			std::string const& address,
 			std::uint16_t port,
 			bool preferUtp);
+		LongSeedSessionStatus GetLongSeedSessionStatus(
+			std::string const& sessionId) const;
 		void CloseLongSeedSession(std::string const& sessionId);
 		void CloseAllLongSeedSessions();
 

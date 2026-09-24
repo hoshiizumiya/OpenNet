@@ -1784,6 +1784,59 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
+	LibtorrentHandle::LongSeedSessionStatus
+		LibtorrentHandle::GetLongSeedSessionStatus(
+			std::string const& sessionId) const
+	{
+		LongSeedSessionStatus result;
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end())
+				return result;
+			result.exists = true;
+			handle = it->second.handle;
+		}
+
+		if (!handle.is_valid())
+			return result;
+
+		result.valid = true;
+		try
+		{
+			auto const status = handle.status();
+			result.seeding = status.is_seeding;
+			result.finished = status.is_finished || status.is_seeding;
+			result.progressPercent = std::clamp(
+				status.progress_ppm / 10000,
+				0,
+				100);
+			result.downloadRate = status.download_rate;
+			result.uploadRate = status.upload_rate;
+			result.totalWanted = status.total_wanted;
+			result.totalWantedDone = status.total_wanted_done;
+			result.connectedPeers = status.num_peers;
+			result.connectedSeeds = status.num_seeds;
+			if (status.errc)
+			{
+				result.hasError = true;
+				result.error = status.errc.message();
+			}
+		}
+		catch (std::exception const& exception)
+		{
+			result.hasError = true;
+			result.error = exception.what();
+		}
+		catch (...)
+		{
+			result.hasError = true;
+			result.error = "Unknown long-seed session status error";
+		}
+		return result;
+	}
+
 	void LibtorrentHandle::CloseLongSeedSession(std::string const& sessionId)
 	{
 		lt::torrent_handle handle;

@@ -54,12 +54,16 @@ export namespace OpenNet::Core
 			StartLongSeedDownloadAsync(
 				::OpenNet::Core::Content::ContentIdentity identity,
 				std::filesystem::path targetFilePath,
-				std::uint32_t maxPeers = 20);
+				std::uint32_t maxPeers = 20,
+				std::string sessionId = {});
 		bool ConnectLongSeedPeer(
 			std::string const& sessionId,
 			std::string const& address,
 			std::uint16_t port,
 			bool preferUtp);
+		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus
+			GetLongSeedSessionStatus(
+				std::string const& sessionId);
 		void CloseLongSeedSession(std::string const& sessionId);
 		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>
 			GetTorrentPeers(std::string const& taskId);

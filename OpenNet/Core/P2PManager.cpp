@@ -86,6 +86,16 @@ namespace OpenNet::Core
 				sessionId, address, port, preferUtp);
 	}
 
+	::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus
+		P2PManager::GetLongSeedSessionStatus(
+			std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->GetLongSeedSessionStatus(sessionId)
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus{};
+	}
+
 	void P2PManager::CloseLongSeedSession(std::string const& sessionId)
 	{
 		std::scoped_lock lock(m_torrentMutex);
@@ -97,7 +107,8 @@ namespace OpenNet::Core
 		P2PManager::StartLongSeedDownloadAsync(
 			::OpenNet::Core::Content::ContentIdentity identity,
 			std::filesystem::path targetFilePath,
-			std::uint32_t maxPeers)
+			std::uint32_t maxPeers,
+			std::string sessionId)
 	{
 		if (!identity.IsWellFormed()
 			|| identity.algorithm
@@ -151,8 +162,13 @@ namespace OpenNet::Core
 			lookup->canonicalInfoHashV2))
 			co_return false;
 
-		std::string const sessionId =
-			"download:" + lookup->contentId;
+		if (sessionId.empty())
+		{
+			sessionId = "download:" + lookup->contentId + ":"
+				+ std::to_string(
+					std::hash<std::wstring>{}(
+						targetFilePath.lexically_normal().wstring()));
+		}
 		auto opened = OpenLongSeedDownloadSession(
 			sessionId, *manifest, targetFilePath);
 		if (!opened.succeeded
