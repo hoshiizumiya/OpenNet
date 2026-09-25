@@ -8,8 +8,10 @@
 #include "Core/WebUI/WebUIControl.h"
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.WinUI.LiquidGlass;
 import winrt.Microsoft.Windows.Globalization;
 import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Windows.Foundation;
@@ -54,22 +56,88 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				return "127.0.0.1";
 			return address;
 		}
+
+		std::optional<bool> ToggleIsOn(IInspectable const& sender)
+		{
+			if (!sender) return std::nullopt;
+			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
+			return std::nullopt;
+		}
+
+		void SetToggleIsOn(IInspectable const& target, bool value)
+		{
+			if (!target) return;
+			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
+		}
 	}
 
 	WebUISettingsPage::WebUISettingsPage()
 	{
 		InitializeComponent();
-		Loaded([this](auto const&, auto const&)
+		Loaded([weak = get_weak()](auto const&, auto const&)
 		{
-			LoadSettings();
+			if (auto self = weak.get())
+			{
+				self->LoadSettings();
+			}
 		});
+		Unloaded([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get(); self && self->m_applyTimer && self->m_applyTimer.IsRunning())
+			{
+				self->m_applyTimer.Stop();
+				self->ApplySettings();
+			}
+		});
+		m_applyTimer = DispatcherQueue().CreateTimer();
+		m_applyTimer.Interval(std::chrono::milliseconds(700));
+		m_applyTimer.IsRepeating(false);
+		m_applyTimer.Tick([weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get()) self->ApplySettings();
+		});
+		auto changed = [weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get()) self->ScheduleApply();
+		};
+		FrontendComboBox().SelectionChanged(changed);
+		AddressTextBox().TextChanged(changed);
+		PortNumberBox().ValueChanged(changed);
+		LocaleTextBox().TextChanged(changed);
+		UsernameTextBox().TextChanged(changed);
+		PasswordInput().PasswordChanged(changed);
+		ViewModel().PropertyChanged([weak = get_weak()](auto const&, auto const& args)
+		{
+			if (auto self = weak.get())
+			{
+				auto const propertyName = args.PropertyName();
+				if (propertyName == L"ApiKey" || propertyName == L"Enabled")
+					self->ScheduleApply();
+			}
+		});
+		SessionTimeoutNumberBox().ValueChanged(changed);
+		SessionCountLimitNumberBox().ValueChanged(changed);
+		MaxAuthFailuresNumberBox().ValueChanged(changed);
+		BanDurationNumberBox().ValueChanged(changed);
+		DomainListTextBox().TextChanged(changed);
+	}
+
+	void WebUISettingsPage::ScheduleApply()
+	{
+		if (m_initializing || !m_applyTimer) return;
+		m_applyTimer.Stop();
+		m_applyTimer.Start();
 	}
 
 	void WebUISettingsPage::LoadSettings()
 	{
+		m_initializing = true;
+		if (m_applyTimer) m_applyTimer.Stop();
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
-		EnableWebUIToggle().IsOn(database.GetBool(Category.data(), "enabled").value_or(true));
+		ViewModel().Load();
 		FrontendComboBox().SelectedIndex(
 			database.GetString(Category.data(), "frontend")
 			.value_or("qbittorrent") == "vuetorrent" ? 1 : 0);
@@ -79,10 +147,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		PortNumberBox().Value(static_cast<double>(
 			database.GetInt(Category.data(), "port").value_or(8080)));
 		auto const storedLocale = database.GetString(Category.data(), "locale");
-		const bool followApplicationLanguage = database.GetBool(
+		m_followApplicationLanguage = database.GetBool(
 			Category.data(), "follow_application_language")
 			.value_or(!storedLocale.has_value());
-		FollowApplicationLanguageToggle().IsOn(followApplicationLanguage);
 		std::string applicationLocale{ "en" };
 		try
 		{
@@ -95,23 +162,38 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 		}
 		LocaleTextBox().Text(to_hstring(
-			followApplicationLanguage
+			m_followApplicationLanguage
 			? applicationLocale
 			: storedLocale.value_or("en")));
-		LocaleTextBox().IsEnabled(!followApplicationLanguage);
+		LocaleTextBox().IsEnabled(!m_followApplicationLanguage);
 		UsernameTextBox().Text(to_hstring(database.GetString(Category.data(), "username").value_or("admin")));
 		PasswordInput().Password(to_hstring(database.GetString(Category.data(), "password").value_or("adminadmin")));
-		ApiKeyInput().Password(to_hstring(database.GetString("webui_http", "api_key").value_or("")));
-		BypassLocalAuthToggle().IsOn(database.GetBool(Category.data(), "bypass_authentication_for_localhost").value_or(false));
+		m_bypassLocalAuth = database.GetBool(Category.data(), "bypass_authentication_for_localhost").value_or(false);
 		SessionTimeoutNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "session_timeout_seconds").value_or(3600)));
 		SessionCountLimitNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "session_count_limit").value_or(10)));
 		MaxAuthFailuresNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "maximum_authentication_failures").value_or(5)));
 		BanDurationNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "ban_duration_seconds").value_or(3600)));
-		CsrfProtectionToggle().IsOn(database.GetBool(Category.data(), "csrf_protection").value_or(true));
-		HostValidationToggle().IsOn(database.GetBool(Category.data(), "host_header_validation").value_or(true));
-		SecureCookieToggle().IsOn(database.GetBool(Category.data(), "secure_cookie").value_or(false));
+		m_csrfProtection = database.GetBool(Category.data(), "csrf_protection").value_or(true);
+		m_hostValidation = database.GetBool(Category.data(), "host_header_validation").value_or(true);
+		m_secureCookie = database.GetBool(Category.data(), "secure_cookie").value_or(false);
+		SyncMaterialToggles();
 		DomainListTextBox().Text(to_hstring(database.GetString(Category.data(), "domain_list").value_or("*")));
 		UpdateStatus();
+		m_initializing = false;
+	}
+
+	void WebUISettingsPage::SyncMaterialToggles()
+	{
+		SetToggleIsOn(FollowApplicationLanguageToggle(), m_followApplicationLanguage);
+		SetToggleIsOn(FollowApplicationLanguageGlassToggle(), m_followApplicationLanguage);
+		SetToggleIsOn(BypassLocalAuthToggle(), m_bypassLocalAuth);
+		SetToggleIsOn(BypassLocalAuthGlassToggle(), m_bypassLocalAuth);
+		SetToggleIsOn(CsrfProtectionToggle(), m_csrfProtection);
+		SetToggleIsOn(CsrfProtectionGlassToggle(), m_csrfProtection);
+		SetToggleIsOn(HostValidationToggle(), m_hostValidation);
+		SetToggleIsOn(HostValidationGlassToggle(), m_hostValidation);
+		SetToggleIsOn(SecureCookieToggle(), m_secureCookie);
+		SetToggleIsOn(SecureCookieGlassToggle(), m_secureCookie);
 	}
 
 	hstring WebUISettingsPage::WebUIUrl()
@@ -133,27 +215,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 		StatusInfoBar().Message(
 			::OpenNet::Core::WebUI::IsWebUIRunning()
-			? L"Web UI is running at " + WebUIUrl()
-			: L"Web UI is not running. Save valid settings to start it.");
+			? ResourceGetString(L"WebUISettingsRunningAt") + WebUIUrl()
+			: ResourceGetString(L"WebUISettingsChangesApplyAutomatically"));
 	}
 
-	void WebUISettingsPage::OnSaveClick(IInspectable const&, RoutedEventArgs const&)
+	void WebUISettingsPage::ApplySettings()
 	{
 		const auto address = to_string(AddressTextBox().Text());
 		const std::string frontend = FrontendComboBox().SelectedIndex() == 1
 			? "vuetorrent" : "qbittorrent";
 		const auto locale = to_string(LocaleTextBox().Text());
-		const bool followApplicationLanguage =
-			FollowApplicationLanguageToggle().IsOn();
+		const bool followApplicationLanguage = m_followApplicationLanguage;
 		const auto username = to_string(UsernameTextBox().Text());
 		const auto password = to_string(PasswordInput().Password());
-		const auto apiKey = to_string(ApiKeyInput().Password());
+		const auto apiKey = to_string(ViewModel().ApiKey());
 		const auto portValue = PortNumberBox().Value();
-		const bool enabled = EnableWebUIToggle().IsOn();
-		const bool bypassLocalAuth = BypassLocalAuthToggle().IsOn();
-		const bool csrfProtection = CsrfProtectionToggle().IsOn();
-		const bool hostValidation = HostValidationToggle().IsOn();
-		const bool secureCookie = SecureCookieToggle().IsOn();
+		const bool enabled = ViewModel().Enabled();
+		const bool bypassLocalAuth = m_bypassLocalAuth;
+		const bool csrfProtection = m_csrfProtection;
+		const bool hostValidation = m_hostValidation;
+		const bool secureCookie = m_secureCookie;
 		const auto domainList = to_string(DomainListTextBox().Text());
 		const auto sessionTimeout = SessionTimeoutNumberBox().Value();
 		const auto sessionLimit = SessionCountLimitNumberBox().Value();
@@ -250,6 +331,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				::OpenNet::Core::WebUI::StopWebUI();
 			else
 				applied = ::OpenNet::Core::WebUI::IsWebUIRunning() ? ::OpenNet::Core::WebUI::RestartWebUI() : ::OpenNet::Core::WebUI::StartWebUI();
+			ViewModel().RefreshRuntimeState();
 			if (!applied)
 			{
 				const auto restoreString = [&database](
@@ -294,12 +376,32 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				restoreInt("session_count_limit", oldSessionLimit);
 				restoreInt("maximum_authentication_failures", oldMaximumFailures);
 				restoreInt("ban_duration_seconds", oldBanDuration);
-				if (oldEnabled.value_or(true)) ::OpenNet::Core::WebUI::StartWebUI();
-				throw std::runtime_error(
-					"The address or port could not be opened. Previous settings were restored.");
+				bool rollbackApplied = true;
+				if (oldEnabled.value_or(true))
+				{
+					if (!::OpenNet::Core::WebUI::IsWebUIRunning())
+						rollbackApplied = ::OpenNet::Core::WebUI::StartWebUI();
+				}
+				else
+				{
+					::OpenNet::Core::WebUI::StopWebUI();
+				}
+				const bool wasInitializing = m_initializing;
+				m_initializing = true;
+				ViewModel().Enabled(oldEnabled.value_or(true));
+				ViewModel().ApiKey(to_hstring(oldApiKey.value_or("")));
+				ViewModel().RefreshRuntimeState();
+				m_initializing = wasInitializing;
+				if (!rollbackApplied)
+					OutputDebugStringA("WebUISettingsPage: failed to restart the restored Web UI configuration.\n");
+				throw std::runtime_error(winrt::to_string(
+					ResourceGetString(L"WebUISettingsAddressPortFailedRestored")));
 			}
 
-			UpdateStatus(enabled ? L"Settings saved. Web UI restarted at " + WebUIUrl() : L"Settings saved. Web UI is disabled.", InfoBarSeverity::Success);
+			UpdateStatus(enabled
+				? ResourceGetString(L"WebUISettingsChangesAppliedRunning") + WebUIUrl()
+				: ResourceGetString(L"WebUISettingsChangesAppliedDisabled"),
+				InfoBarSeverity::Success);
 		}
 		catch (std::exception const& exception)
 		{
@@ -308,56 +410,103 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	void WebUISettingsPage::OnFollowApplicationLanguageToggled(
-		IInspectable const&, RoutedEventArgs const&)
+	void WebUISettingsPage::OnMaterialToggleLoaded(IInspectable const& sender, RoutedEventArgs const&)
 	{
-		const bool follow = FollowApplicationLanguageToggle().IsOn();
-		LocaleTextBox().IsEnabled(!follow);
-		if (!follow) return;
-		try
+		auto const name = sender.as<FrameworkElement>().Name();
+		const bool wasInitializing = m_initializing;
+		m_initializing = true;
+		if (name == L"EnableWebUIToggle" || name == L"EnableWebUIGlassToggle") SetToggleIsOn(sender, ViewModel().Enabled());
+		else if (name == L"FollowApplicationLanguageToggle" || name == L"FollowApplicationLanguageGlassToggle") SetToggleIsOn(sender, m_followApplicationLanguage);
+		else if (name == L"BypassLocalAuthToggle" || name == L"BypassLocalAuthGlassToggle") SetToggleIsOn(sender, m_bypassLocalAuth);
+		else if (name == L"CsrfProtectionToggle" || name == L"CsrfProtectionGlassToggle") SetToggleIsOn(sender, m_csrfProtection);
+		else if (name == L"HostValidationToggle" || name == L"HostValidationGlassToggle") SetToggleIsOn(sender, m_hostValidation);
+		else if (name == L"SecureCookieToggle" || name == L"SecureCookieGlassToggle") SetToggleIsOn(sender, m_secureCookie);
+		m_initializing = wasInitializing;
+	}
+
+	void WebUISettingsPage::OnMaterialToggleChanged(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		if (m_initializing) return;
+		auto const value = ToggleIsOn(sender);
+		if (!value) return;
+		auto const name = sender.as<FrameworkElement>().Name();
+		bool followChanged = false;
+		if (name == L"EnableWebUIToggle" || name == L"EnableWebUIGlassToggle") ViewModel().Enabled(*value);
+		else if (name == L"FollowApplicationLanguageToggle" || name == L"FollowApplicationLanguageGlassToggle")
 		{
-			auto languages = winrt::Microsoft::Windows::Globalization::
-				ApplicationLanguages::Languages();
-			if (languages.Size() > 0)
-				LocaleTextBox().Text(languages.GetAt(0));
+			m_followApplicationLanguage = *value;
+			followChanged = true;
 		}
-		catch (...)
+		else if (name == L"BypassLocalAuthToggle" || name == L"BypassLocalAuthGlassToggle") m_bypassLocalAuth = *value;
+		else if (name == L"CsrfProtectionToggle" || name == L"CsrfProtectionGlassToggle") m_csrfProtection = *value;
+		else if (name == L"HostValidationToggle" || name == L"HostValidationGlassToggle") m_hostValidation = *value;
+		else if (name == L"SecureCookieToggle" || name == L"SecureCookieGlassToggle") m_secureCookie = *value;
+		else return;
+		m_initializing = true;
+		SyncMaterialToggles();
+		m_initializing = false;
+		if (followChanged) UpdateFollowLanguageUi();
+		ScheduleApply();
+	}
+
+
+	void WebUISettingsPage::UpdateFollowLanguageUi()
+	{
+		LocaleTextBox().IsEnabled(!m_followApplicationLanguage);
+		if (m_followApplicationLanguage)
 		{
+			try
+			{
+				auto languages = winrt::Microsoft::Windows::Globalization::
+					ApplicationLanguages::Languages();
+				if (languages.Size() > 0)
+					LocaleTextBox().Text(languages.GetAt(0));
+			}
+			catch (...)
+			{
+			}
 		}
 	}
 
 	void WebUISettingsPage::OnGenerateApiKeyClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		ApiKeyInput().Password(to_hstring(RandomApiKey()));
-		UpdateStatus(
-			L"A new API key was generated. Select “Save and restart Web UI” to apply it.",
-			InfoBarSeverity::Informational);
+		ViewModel().ApiKey(to_hstring(RandomApiKey()));
+		UpdateStatus(ResourceGetString(L"WebUISettingsApiKeyApplying"), InfoBarSeverity::Informational);
 	}
 
 	void WebUISettingsPage::OnCopyApiKeyClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		if (ApiKeyInput().Password().empty())
+		if (!ViewModel().HasApiKey())
 		{
-			UpdateStatus(L"There is no API key to copy.", InfoBarSeverity::Warning);
+			UpdateStatus(ResourceGetString(L"WebUISettingsNoApiKeyToCopy"), InfoBarSeverity::Warning);
 			return;
 		}
 		DataPackage package;
-		package.SetText(ApiKeyInput().Password());
+		package.SetText(ViewModel().ApiKey());
 		Clipboard::SetContent(package);
-		UpdateStatus(L"API key copied to the clipboard.", InfoBarSeverity::Success);
+		UpdateStatus(ResourceGetString(L"WebUISettingsApiKeyCopied"), InfoBarSeverity::Success);
 	}
 
 	void WebUISettingsPage::OnClearApiKeyClick(IInspectable const&, RoutedEventArgs const&)
 	{
-		ApiKeyInput().Password(L"");
-		UpdateStatus(
-			L"API key cleared locally. Save the settings to revoke it.",
-			InfoBarSeverity::Informational);
+		ViewModel().ApiKey(L"");
+		UpdateStatus(ResourceGetString(L"WebUISettingsApiKeyRevocationApplying"), InfoBarSeverity::Informational);
 	}
 
 	fire_and_forget WebUISettingsPage::OnOpenWebUIClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
+		if (m_applyTimer && m_applyTimer.IsRunning())
+		{
+			m_applyTimer.Stop();
+			ApplySettings();
+		}
+		ViewModel().RefreshRuntimeState();
+		if (!ViewModel().IsRunning())
+		{
+			UpdateStatus(ResourceGetString(L"WebUISettingsNotRunningCheckSettings"), InfoBarSeverity::Warning);
+			co_return;
+		}
 		co_await Windows::System::Launcher::LaunchUriAsync(
 			Windows::Foundation::Uri{ WebUIUrl() });
 	}

@@ -1,0 +1,16 @@
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass WebUISettingsViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        WebUISettingsViewModel();
+
+        Boolean Enabled;
+        String ApiKey;
+        Boolean HasApiKey { get; };
+        Boolean IsRunning { get; };
+
+        void Load();
+        void RefreshRuntimeState();
+    };
+}

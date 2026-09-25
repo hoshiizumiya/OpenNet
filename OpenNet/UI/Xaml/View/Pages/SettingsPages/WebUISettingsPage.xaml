@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -44,7 +45,28 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE774;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch x:Name="EnableWebUIToggle" />
+                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch
+                            x:Name="EnableWebUIToggle"
+                            IsOn="{x:Bind ViewModel.Enabled, Mode=TwoWay}"
+                            Loaded="OnMaterialToggleLoaded"
+                            Toggled="OnMaterialToggleChanged" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Name="EnableWebUIGlassToggle"
+                            Click="OnMaterialToggleChanged"
+                            IsOn="{x:Bind ViewModel.Enabled, Mode=TwoWay}"
+                            Loaded="OnMaterialToggleLoaded" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -85,7 +107,7 @@
 
             <essential:SettingsCard
                 x:Uid="WebUISettingsPortCard"
-                Description="Restarting the Web UI applies a new port immediately."
+                Description="Changes are applied automatically to the embedded Web UI."
                 Header="Port">
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE839;" />
@@ -106,10 +128,28 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE8C1;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
-                    x:Name="FollowApplicationLanguageToggle"
-                    AutomationProperties.AutomationId="WebUISettingsFollowLanguage"
-                    Toggled="OnFollowApplicationLanguageToggled" />
+                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch
+                            x:Name="FollowApplicationLanguageToggle"
+                            AutomationProperties.AutomationId="WebUISettingsFollowLanguage"
+                            Loaded="OnMaterialToggleLoaded"
+                            Toggled="OnMaterialToggleChanged" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Name="FollowApplicationLanguageGlassToggle"
+                            AutomationProperties.AutomationId="WebUISettingsFollowLanguage"
+                            Click="OnMaterialToggleChanged"
+                            Loaded="OnMaterialToggleLoaded" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -168,6 +208,7 @@
                         x:Name="ApiKeyInput"
                         MinWidth="240"
                         AutomationProperties.AutomationId="WebUISettingsApiKey"
+                        Password="{x:Bind ViewModel.ApiKey, Mode=TwoWay}"
                         PasswordRevealMode="Peek" />
                     <Button
                         x:Uid="WebUISettingsGenerateApiKey"
@@ -175,15 +216,19 @@
                         Click="OnGenerateApiKeyClick"
                         Content="Generate" />
                     <Button
+                        x:Name="CopyApiKeyButton"
                         x:Uid="WebUISettingsCopyApiKey"
                         AutomationProperties.AutomationId="WebUISettingsCopyApiKey"
                         Click="OnCopyApiKeyClick"
-                        Content="Copy" />
+                        Content="Copy"
+                        IsEnabled="{x:Bind ViewModel.HasApiKey, Mode=OneWay}" />
                     <Button
+                        x:Name="ClearApiKeyButton"
                         x:Uid="WebUISettingsClearApiKey"
                         AutomationProperties.AutomationId="WebUISettingsClearApiKey"
                         Click="OnClearApiKeyClick"
-                        Content="Clear" />
+                        Content="Clear"
+                        IsEnabled="{x:Bind ViewModel.HasApiKey, Mode=OneWay}" />
                 </StackPanel>
             </essential:SettingsCard>
 
@@ -199,10 +244,30 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE72E;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch
-                    x:Name="BypassLocalAuthToggle"
-                    x:Uid="WebUISettingsBypassLocalAuth"
-                    Header="Bypass authentication on localhost" />
+                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch
+                            x:Name="BypassLocalAuthToggle"
+                            x:Uid="WebUISettingsBypassLocalAuth"
+                            Header="Bypass authentication on localhost"
+                            Loaded="OnMaterialToggleLoaded"
+                            Toggled="OnMaterialToggleChanged" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Name="BypassLocalAuthGlassToggle"
+                            x:Uid="WebUISettingsBypassLocalAuth"
+                            Click="OnMaterialToggleChanged"
+                            Header="Bypass authentication on localhost"
+                            Loaded="OnMaterialToggleLoaded" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="WebUISettingsSessionTimeoutCard" Header="Session timeout (seconds)">
                         <NumberBox
@@ -242,16 +307,74 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE83D;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch
-                    x:Name="CsrfProtectionToggle"
-                    x:Uid="WebUISettingsCsrfProtection"
-                    Header="CSRF protection" />
+                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch
+                            x:Name="CsrfProtectionToggle"
+                            x:Uid="WebUISettingsCsrfProtection"
+                            Header="CSRF protection"
+                            Loaded="OnMaterialToggleLoaded"
+                            Toggled="OnMaterialToggleChanged" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Name="CsrfProtectionGlassToggle"
+                            x:Uid="WebUISettingsCsrfProtection"
+                            Click="OnMaterialToggleChanged"
+                            Header="CSRF protection"
+                            Loaded="OnMaterialToggleLoaded" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="WebUISettingsHostValidationCard" Header="Host header validation">
-                        <ToggleSwitch x:Name="HostValidationToggle" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <ToggleSwitch
+                                    x:Name="HostValidationToggle"
+                                    Loaded="OnMaterialToggleLoaded"
+                                    Toggled="OnMaterialToggleChanged" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassToggleSwitch
+                                    x:Name="HostValidationGlassToggle"
+                                    Click="OnMaterialToggleChanged"
+                                    Loaded="OnMaterialToggleLoaded" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="WebUISettingsSecureCookieCard" Header="Secure cookie flag">
-                        <ToggleSwitch x:Name="SecureCookieToggle" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <ToggleSwitch
+                                    x:Name="SecureCookieToggle"
+                                    Loaded="OnMaterialToggleLoaded"
+                                    Toggled="OnMaterialToggleChanged" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassToggleSwitch
+                                    x:Name="SecureCookieGlassToggle"
+                                    Click="OnMaterialToggleChanged"
+                                    Loaded="OnMaterialToggleLoaded" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="WebUISettingsDomainsCard" Header="Allowed server domains">
                         <TextBox
@@ -267,17 +390,13 @@
                 Orientation="Horizontal"
                 Spacing="8">
                 <Button
-                    x:Name="SaveButton"
-                    x:Uid="WebUISettingsSave"
-                    AutomationProperties.AutomationId="WebUISettingsSave"
-                    Click="OnSaveClick"
-                    Content="Save and restart Web UI"
-                    Style="{StaticResource AccentButtonStyle}" />
-                <Button
+                    x:Name="OpenWebUIButton"
                     x:Uid="WebUISettingsOpen"
                     AutomationProperties.AutomationId="WebUISettingsOpen"
                     Click="OnOpenWebUIClick"
-                    Content="Open Web UI" />
+                    Content="Open Web UI"
+                    IsEnabled="{x:Bind ViewModel.IsRunning, Mode=OneWay}"
+                    Style="{StaticResource AccentButtonStyle}" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
