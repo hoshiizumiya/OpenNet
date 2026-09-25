@@ -348,11 +348,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_isPrivate, v, L"IsPrivate");
 		}
 
-		winrt::hstring MetadataState() const
+		std::uint32_t MetadataState() const
 		{
 			return m_metadataState;
 		}
-		void MetadataState(winrt::hstring const& v)
+		void MetadataState(std::uint32_t v)
 		{
 			SetProperty(m_metadataState, v, L"MetadataState");
 		}
@@ -446,8 +446,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		std::int32_t m_pieceLength{};
 		std::int32_t m_numPieces{};
 		bool m_isPrivate{};
-		winrt::hstring m_metadataState{ L"Loading" };
-		winrt::hstring m_metadataStatus{ L"Connecting to peers..." };
+		std::uint32_t m_metadataState{};
+		winrt::hstring m_metadataStatus;
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileInfoViewModel> m_files;
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::TorrentFileNodeViewModel> m_fileTree{

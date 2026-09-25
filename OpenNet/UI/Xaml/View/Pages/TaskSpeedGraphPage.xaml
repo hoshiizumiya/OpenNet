@@ -421,43 +421,61 @@
                 CornerRadius="8">
                 <StackPanel>
                     <essential:SwitchPresenter Value="{Binding SelectedValue, ElementName=MetricSelector, Mode=OneWay}">
-                        <essential:Case Value="TransferSpeed">
+                        <essential:Case IsDefault="True">
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageGlobalDownload"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Global download" />
                         </essential:Case>
-                        <essential:Case Value="DiskCache">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>DiskCache</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageDiskCacheTitle"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Disk cache" />
                         </essential:Case>
-                        <essential:Case Value="LongTermSeeding">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>LongTermSeeding</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageLongTermUpload"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Long-term upload" />
                         </essential:Case>
-                        <essential:Case Value="CpuOverall">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>CpuOverall</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageOverallCpu"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Overall CPU" />
                         </essential:Case>
-                        <essential:Case Value="CpuLogicalProcessors">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>CpuLogicalProcessors</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageAverageCpu"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Average CPU" />
                         </essential:Case>
-                        <essential:Case Value="MemoryUsage">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>MemoryUsage</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageWorkingSet"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="OpenNet working set" />
                         </essential:Case>
-                        <essential:Case Value="DhtUdp">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>DhtUdp</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="ViewTaskSpeedGraphPageDhtReceive"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -480,43 +498,61 @@
                 CornerRadius="8">
                 <StackPanel>
                     <essential:SwitchPresenter Value="{Binding SelectedValue, ElementName=MetricSelector, Mode=OneWay}">
-                        <essential:Case Value="TransferSpeed">
+                        <essential:Case IsDefault="True">
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_GlobalUpload"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Global upload" />
                         </essential:Case>
-                        <essential:Case Value="DiskCache">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>DiskCache</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_Source"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Source" />
                         </essential:Case>
-                        <essential:Case Value="LongTermSeeding">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>LongTermSeeding</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_Scope"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Scope" />
                         </essential:Case>
-                        <essential:Case Value="CpuOverall">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>CpuOverall</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_Sampling"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Sampling" />
                         </essential:Case>
-                        <essential:Case Value="CpuLogicalProcessors">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>CpuLogicalProcessors</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_PeakCpu"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Peak CPU" />
                         </essential:Case>
-                        <essential:Case Value="MemoryUsage">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>MemoryUsage</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_PhysicalMemoryShare"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="Physical memory share" />
                         </essential:Case>
-                        <essential:Case Value="DhtUdp">
+                        <essential:Case>
+                            <essential:Case.Value>
+                                <x:String>DhtUdp</x:String>
+                            </essential:Case.Value>
                             <TextBlock
                                 x:Uid="TaskSpeedGraph_DhtSend"
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
