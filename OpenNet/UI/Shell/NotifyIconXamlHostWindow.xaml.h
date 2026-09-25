@@ -2,11 +2,9 @@
 
 #include "UI/Shell/NotifyIconXamlHostWindow.g.h"
 
-import OpenNet.Helpers.WindowExBase;
-
 namespace winrt::OpenNet::UI::Shell::implementation
 {
-	struct NotifyIconXamlHostWindow : NotifyIconXamlHostWindowT<NotifyIconXamlHostWindow>, WindowExBase<NotifyIconXamlHostWindow>
+	struct NotifyIconXamlHostWindow : NotifyIconXamlHostWindowT<NotifyIconXamlHostWindow>
 	{
 		NotifyIconXamlHostWindow();
 		void InitializeComponent();
