@@ -7,6 +7,7 @@
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.DownloadManager;
+import OpenNet.Core.Utils.Message;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -44,11 +45,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		hstring StatusText(::OpenNet::Core::Aria2::DownloadInformation const& information, bool const active)
 		{
 			using Status = ::OpenNet::Core::Aria2::DownloadStatus;
-			if (information.Status == Status::Paused) return L"Paused";
-			if (information.Status == Status::Complete) return L"Complete";
-			if (information.Status == Status::Error) return L"Error";
-			if (information.Status == Status::Removed) return L"Removed";
-			return active ? L"Active" : L"Waiting";
+			if (information.Status == Status::Paused) return ResourceGetString(L"TaskStatusPaused");
+			if (information.Status == Status::Complete) return ResourceGetString(L"TaskStatusCompleted");
+			if (information.Status == Status::Error) return ResourceGetString(L"TaskStatusFailed");
+			if (information.Status == Status::Removed) return ResourceGetString(L"Aria2StatusRemoved");
+			return active ? ResourceGetString(L"Aria2StatusActive") : ResourceGetString(L"Aria2StatusWaiting");
 		}
 
 		ConnectionProgress GetConnectionProgress(::OpenNet::Core::Aria2::DownloadInformation const& information, std::size_t const index, std::size_t const count)

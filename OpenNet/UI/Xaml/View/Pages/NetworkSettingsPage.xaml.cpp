@@ -326,15 +326,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			static_cast<std::uint32_t>(status.port);
 		ViewModel().ListenPort(
 			static_cast<std::uint16_t>(actualPort));
-		ActualListenPortText().Text(to_hstring(
-			std::format("Port {}", actualPort)));
-		ActualListenEndpointText().Text(to_hstring(
-			std::format("Currently listening on port {}", actualPort)));
+		ActualListenPortText().Text(
+			ResourceGetString(L"ViewNetworkSettingsPageActualPortPrefix") +
+			to_hstring(actualPort));
+		ActualListenEndpointText().Text(
+			ResourceGetString(L"ViewNetworkSettingsPageActualListeningPrefix") +
+			to_hstring(actualPort));
 
 		if (!inputsValid)
 		{
 			ActualListenStatusText().Text(
-				L"The edited endpoint is invalid; the displayed listener still uses the last valid configuration.");
+				ResourceGetString(L"ViewNetworkSettingsPageEditedEndpointInvalidDisplayedListener"));
 			return;
 		}
 
@@ -343,17 +345,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (ipv4Port == 0 || ipv6Port == 0)
 		{
 			ActualListenStatusText().Text(
-				L"The operating system selected this runtime port because at least one configured endpoint uses port 0.");
+				ResourceGetString(L"ViewNetworkSettingsPageRuntimePortAutoSelected"));
 		}
 		else if (actualPort == ipv4Port || actualPort == ipv6Port)
 		{
 			ActualListenStatusText().Text(
-				L"The runtime listener matches the saved endpoint configuration.");
+				ResourceGetString(L"ViewNetworkSettingsPageRuntimePortMatchesConfiguration"));
 		}
 		else
 		{
 			ActualListenStatusText().Text(
-				L"The runtime port differs from the saved fixed port. Check whether the configured port is already in use.");
+				ResourceGetString(L"ViewNetworkSettingsPageRuntimePortDiffersConfiguration"));
 		}
 	}
 
@@ -546,7 +548,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto url = unbox_value_or<hstring>(selected.Tag(), L"");
-		auto name = unbox_value_or<hstring>(selected.Content(), L"Tracker list");
+		auto name = unbox_value_or<hstring>(selected.Content(), ResourceGetString(L"ViewNetworkSettingsPageTrackerList"));
 		if (url.empty())
 		{
 			co_return;

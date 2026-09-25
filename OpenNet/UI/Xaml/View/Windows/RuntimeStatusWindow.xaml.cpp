@@ -45,9 +45,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
 	namespace
 	{
-		constexpr wchar_t const* NotApplicable =
-			L"Not applicable to OpenNet";
-
 		std::wstring FormatBytes(std::uint64_t value)
 		{
 			constexpr double kib = 1024.0;
@@ -79,6 +76,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				seconds);
 		}
 
+		std::wstring FormatRuntimeText(
+			wchar_t const* resourceKey,
+			std::initializer_list<std::wstring> values)
+		{
+			auto text = std::wstring{ ResourceGetString(resourceKey).c_str() };
+			for (auto const& value : values)
+			{
+				auto const placeholder = text.find(L"{}");
+				if (placeholder == std::wstring::npos)
+					break;
+				text.replace(placeholder, 2, value);
+			}
+			return text;
+		}
+
 		std::uint64_t FileTimeValue(FILETIME const& value)
 		{
 			ULARGE_INTEGER result{};
@@ -89,7 +101,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 		std::wstring LimitText(std::int64_t value)
 		{
-			return value <= 0 ? L"Unlimited" : FormatBytes(value) + L"/s";
+			return value <= 0
+				? std::wstring{ ResourceGetString(L"CommonUnlimited").c_str() }
+				: FormatBytes(value) + L"/s";
 		}
 
 		std::wstring Join(
@@ -105,7 +119,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 					result += separator;
 				result += value;
 			}
-			return result.empty() ? L"None detected" : result;
+			return result.empty()
+				? std::wstring{ ResourceGetString(L"RuntimeStatusNoneDetected").c_str() }
+				: result;
 		}
 
 		struct NetworkAddresses
@@ -160,11 +176,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 			DWORD const required = GetLogicalDriveStringsW(0, nullptr);
 			if (required == 0)
-				return L"No mounted volumes";
+				return std::wstring{ ResourceGetString(L"RuntimeStatusNoMountedVolumes").c_str() };
 			std::vector<wchar_t> buffer(required + 1);
 			if (!GetLogicalDriveStringsW(
 				static_cast<DWORD>(buffer.size()), buffer.data()))
-				return L"Unable to enumerate volumes";
+				return std::wstring{ ResourceGetString(L"RuntimeStatusUnableEnumerateVolumes").c_str() };
 
 			std::vector<std::wstring> volumes;
 			for (auto root = buffer.data(); *root;
@@ -176,11 +192,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				ULARGE_INTEGER available{}, total{}, free{};
 				if (GetDiskFreeSpaceExW(root, &available, &total, &free))
 				{
-					volumes.push_back(std::format(
-						L"{} {} free / {}",
-						root,
-						FormatBytes(free.QuadPart),
-						FormatBytes(total.QuadPart)));
+					volumes.push_back(FormatRuntimeText(
+						L"RuntimeStatusVolumeEntryValue", {
+						std::wstring{ root }, FormatBytes(free.QuadPart),
+						FormatBytes(total.QuadPart)}));
 				}
 			}
 			cached = Join(std::move(volumes), L"; ");
@@ -303,7 +318,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				IID_PPV_ARGS(&policy));
 			if (FAILED(hr) || !policy)
 			{
-				cached = std::format(L"Unable to query (0x{:08X})", hr);
+				cached = std::wstring{ ResourceGetString(L"RuntimeStatusFirewallQueryFailedPrefix").c_str() } +
+					std::format(L"0x{:08X}", hr);
 				return cached;
 			}
 
@@ -321,12 +337,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 					states.push_back(std::format(
 						L"{}: {}",
 						name,
-						enabled == VARIANT_TRUE ? L"On" : L"Off"));
+						enabled == VARIANT_TRUE
+							? ResourceGetString(L"CommonEnabled").c_str()
+							: ResourceGetString(L"CommonDisabled").c_str()));
 				}
 			};
-			append(NET_FW_PROFILE2_DOMAIN, L"Domain");
-			append(NET_FW_PROFILE2_PRIVATE, L"Private");
-			append(NET_FW_PROFILE2_PUBLIC, L"Public");
+			append(NET_FW_PROFILE2_DOMAIN, ResourceGetString(L"RuntimeStatusFirewallDomain").c_str());
+			append(NET_FW_PROFILE2_PRIVATE, ResourceGetString(L"RuntimeStatusFirewallPrivate").c_str());
+			append(NET_FW_PROFILE2_PUBLIC, ResourceGetString(L"RuntimeStatusFirewallPublic").c_str());
 			policy->Release();
 			cached = Join(std::move(states));
 			return cached;
@@ -393,8 +411,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		SyncStatusItems();
 		SYSTEMTIME now{};
 		GetLocalTime(&now);
-		LastUpdatedText().Text(std::format(
-			L"Last updated {:02}:{:02}:{:02}.{:03}",
+		LastUpdatedText().Text(ResourceGetString(L"RuntimeStatusLastUpdatedPrefix") + std::format(
+			L"{:02}:{:02}:{:02}.{:03}",
 			now.wHour,
 			now.wMinute,
 			now.wSecond,
@@ -432,8 +450,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				m_statusItems.Append(group);
 			}
 			group.Name(section.title);
-			group.Value(std::format(
-				L"{} items", section.rows.size()));
+			group.Value(ResourceGetString(L"RuntimeStatusItemsSuffix") +
+				to_hstring(static_cast<std::uint32_t>(section.rows.size())));
 
 			auto const children = group.Children();
 			for (std::uint32_t rowIndex = 0;
@@ -466,6 +484,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	hstring RuntimeStatusWindow::BuildReport()
 	{
+		auto const notApplicable = std::wstring{
+			ResourceGetString(L"RuntimeStatusNotApplicable").c_str() };
 		auto const stats =
 			::OpenNet::Core::P2PManager::Instance().GetSessionStats();
 		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
@@ -554,7 +574,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			return result;
 		};
 
-		std::wstring version = L"Unpackaged/dev";
+		std::wstring version = ResourceGetString(L"RuntimeStatusUnpackagedDev").c_str();
 		try
 		{
 			auto const value =
@@ -655,7 +675,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			nullptr, &diskAvailable, &diskTotal, &diskFree);
 
 		m_statusSections.clear();
-		std::wstring report = L"OpenNet complete runtime status\r\n";
+		std::wstring report = std::wstring{
+			ResourceGetString(L"RuntimeStatusReportTitle").c_str() } + L"\r\n";
 		StatusSection* currentSection = nullptr;
 		auto section = [this, &report, &currentSection](
 			std::wstring_view title, bool initiallyExpanded = true)
@@ -666,66 +687,63 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			report += L"\r\n[" + std::wstring(title) + L"]\r\n";
 		};
 		auto row = [&report, &currentSection](
-			std::wstring_view name, std::wstring const& value)
+			std::wstring_view name, auto const& value)
 		{
+			std::wstring valueText;
+			if constexpr (std::is_same_v<std::decay_t<decltype(value)>, winrt::hstring>)
+				valueText = value.c_str();
+			else
+				valueText = value;
 			if (currentSection)
 				currentSection->rows.push_back(
-					StatusRow{ std::wstring(name), value });
-			report += std::format(L"{:<38} {}\r\n", name, value);
+					StatusRow{ std::wstring(name), valueText });
+			report += std::format(L"{:<38} {}\r\n", name, valueText);
 		};
-		section(L"Application and tasks");
-		row(L"Version", version);
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionApplicationTasks").c_str()));
+		row(ResourceGetString(L"RuntimeStatusVersion"), version);
 		row(
-			L"BitTorrent engine",
+			ResourceGetString(L"RuntimeStatusBitTorrentEngine"),
 			std::wstring(to_hstring(libtorrent::version_str).c_str()));
 		row(
-			L"Up time",
+			ResourceGetString(L"RuntimeStatusUpTime"),
 			FormatDuration(
 				(FileTimeValue(currentTime) - FileTimeValue(creation))
 				/ 10000ULL));
 		row(
-			L"Overall tasks",
-			std::format(
-				L"{} (BitTorrent {}, HTTP {})",
-				std::max<std::size_t>(
-					stats.numTorrents, persistedP2PTasks) + httpRecords.size(),
-				std::max<std::size_t>(
-					stats.numTorrents, persistedP2PTasks),
-				httpRecords.size()));
+			ResourceGetString(L"RuntimeStatusOverallTasks"),
+			FormatRuntimeText(L"RuntimeStatusTaskBreakdownValue", {
+				std::to_wstring(std::max<std::size_t>(stats.numTorrents, persistedP2PTasks) + httpRecords.size()),
+				std::to_wstring(std::max<std::size_t>(stats.numTorrents, persistedP2PTasks)),
+				std::to_wstring(httpRecords.size())}));
 		row(
-			L"Running tasks",
-			std::format(
-				L"{} (BitTorrent {}, HTTP {})",
-				stats.numRunningTorrents + httpStateCounts[1],
-				stats.numRunningTorrents,
-				httpStateCounts[1]));
+			ResourceGetString(L"RuntimeStatusRunningTasks"),
+			FormatRuntimeText(L"RuntimeStatusTaskBreakdownValue", {
+				std::to_wstring(stats.numRunningTorrents + httpStateCounts[1]),
+				std::to_wstring(stats.numRunningTorrents),
+				std::to_wstring(httpStateCounts[1])}));
 		row(
-			L"BitTorrent task states",
-			std::format(
-				L"Downloading {}, metadata {}, seeding {}, checking {}, "
-				L"paused {}, error {}",
-				stats.numDownloadingTorrents,
-				stats.numMetadataTorrents,
-				stats.numSeedingTorrents,
-				stats.numCheckingTorrents,
-				stats.numPausedTorrents,
-				stats.numErrorTorrents));
+			ResourceGetString(L"RuntimeStatusBitTorrentTaskStates"),
+			FormatRuntimeText(L"RuntimeStatusBitTorrentTaskStatesValue", {
+				std::to_wstring(stats.numDownloadingTorrents),
+				std::to_wstring(stats.numMetadataTorrents),
+				std::to_wstring(stats.numSeedingTorrents),
+				std::to_wstring(stats.numCheckingTorrents),
+				std::to_wstring(stats.numPausedTorrents),
+				std::to_wstring(stats.numErrorTorrents)}));
 		row(
-			L"HTTP task states",
-			std::format(
-				L"Pending {}, downloading {}, paused {}, completed {}, failed {}",
-				httpStateCounts[0],
-				httpStateCounts[1],
-				httpStateCounts[2],
-				httpStateCounts[3],
-				httpStateCounts[4]));
+			ResourceGetString(L"RuntimeStatusHttpTaskStates"),
+			FormatRuntimeText(L"RuntimeStatusHttpTaskStatesValue", {
+				std::to_wstring(httpStateCounts[0]),
+				std::to_wstring(httpStateCounts[1]),
+				std::to_wstring(httpStateCounts[2]),
+				std::to_wstring(httpStateCounts[3]),
+				std::to_wstring(httpStateCounts[4])}));
 		row(
-			L"Long-term seeding",
-			std::format(
-				L"{} native seeding tasks; BitComet LTSeed protocol is not used",
-				stats.numSeedingTorrents));
+			ResourceGetString(L"RuntimeStatusLongTermSeeding"),
+			FormatRuntimeText(L"RuntimeStatusLongTermSeedingValue", {
+				std::to_wstring(stats.numSeedingTorrents)}));
 		row(
-			L"Metadata downloading",
+			ResourceGetString(L"RuntimeStatusMetadataDownloading"),
 			std::to_wstring(stats.numMetadataTorrents));
 
 		std::uint64_t metadataBytes = 0;
@@ -751,60 +769,57 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 		}
 		row(
-			L"Metadata cache files",
-			std::format(
-				L"{} files / {}", metadataFiles, FormatBytes(metadataBytes)));
+			ResourceGetString(L"RuntimeStatusMetadataCacheFiles"),
+			FormatRuntimeText(L"RuntimeStatusMetadataCacheFilesValue", {
+				std::to_wstring(metadataFiles), FormatBytes(metadataBytes)}));
 		row(
-			L"Torrent exchange blocklist",
-			std::format(
-				L"{}; {} persisted rules",
-				::OpenNet::Core::IPFilterManager::Instance().IsEnabled()
-				? L"Enabled"
-				: L"Disabled",
-				::OpenNet::Core::IPFilterManager::Instance().GetRuleCount()));
+			ResourceGetString(L"RuntimeStatusTorrentExchangeBlocklist"),
+			FormatRuntimeText(L"RuntimeStatusEnabledPersistedRulesValue", {
+				std::wstring{ (::OpenNet::Core::IPFilterManager::Instance().IsEnabled()
+					? ResourceGetString(L"CommonEnabled")
+					: ResourceGetString(L"CommonDisabled")).c_str() },
+				std::to_wstring(::OpenNet::Core::IPFilterManager::Instance().GetRuleCount())}));
 		row(
-			L"BitTorrent core",
+			ResourceGetString(L"RuntimeStatusBitTorrentCore"),
 			::OpenNet::Core::P2PManager::Instance()
 			.IsTorrentCoreInitialized()
-			? L"Initialized"
-			: L"Not initialized");
+			? ResourceGetString(L"RuntimeStatusInitialized")
+			: ResourceGetString(L"RuntimeStatusNotInitialized"));
 		row(
-			L"HTTP core",
-			aria2Available ? L"Aria2 available" : L"Aria2 unavailable");
+			ResourceGetString(L"RuntimeStatusHttpCore"),
+			aria2Available ? ResourceGetString(L"RuntimeStatusAria2Available") : ResourceGetString(L"RuntimeStatusAria2Unavailable"));
 		row(
-			L"Remote access / Web UI",
+			ResourceGetString(L"RuntimeStatusRemoteAccessWebUi"),
 			::OpenNet::Core::WebUI::IsWebUIRunning()
-			? L"Running"
-			: L"Stopped");
+			? ResourceGetString(L"WebUiRunning")
+			: ResourceGetString(L"WebUiStopped"));
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		auto const webAddress =
 			database.GetString("webui_host", "address").value_or("127.0.0.1");
 		auto const webPort =
 			database.GetInt("webui_host", "port").value_or(8080);
 		row(
-			L"Web UI endpoint",
+			ResourceGetString(L"RuntimeStatusWebUiEndpoint"),
 			std::format(
 				L"http://{}:{}",
 				to_hstring(webAddress).c_str(),
 				webPort));
 		row(
-			L"Web UI account",
-			std::format(
-				L"{}; password {}",
-				to_hstring(database.GetString(
-					"webui_host", "username").value_or("admin")).c_str(),
-				database.GetBool("webui_host", "initialized").value_or(false)
-				? L"initialized"
-				: L"requires first-run initialization"));
+			ResourceGetString(L"RuntimeStatusWebUiAccount"),
+			FormatRuntimeText(L"RuntimeStatusWebUiAccountValue", {
+				std::wstring{ to_hstring(database.GetString(
+					"webui_host", "username").value_or("admin")).c_str() },
+				std::wstring{ ResourceGetString(database.GetBool("webui_host", "initialized").value_or(false)
+					? L"RuntimeStatusPasswordInitialized"
+					: L"RuntimeStatusPasswordNeedsInitialization").c_str() }}));
 		row(
-			L"Web UI activity",
-			std::format(
-				L"{} requests, {} active connections, {} failed logins",
-				webStats.requests,
-				webStats.activeConnections,
-				webStats.failedLogins));
+			ResourceGetString(L"RuntimeStatusWebUiActivity"),
+			FormatRuntimeText(L"RuntimeStatusWebUiActivityValue", {
+				std::to_wstring(webStats.requests),
+				std::to_wstring(webStats.activeConnections),
+				std::to_wstring(webStats.failedLogins)}));
 
-		section(L"Connections and addresses");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionConnectionsAddresses").c_str()));
 		auto const tcpPeers =
 			metric("peer.num_tcp_peers")
 			+ metric("peer.num_ssl_peers");
@@ -817,161 +832,156 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			metric("peer.num_utp_peers")
 			+ metric("peer.num_ssl_utp_peers");
 		row(
-			L"TCP connections established",
-			std::format(
-				L"{} direct, {} proxy", tcpPeers, proxyPeers));
+			ResourceGetString(L"RuntimeStatusTcpConnectionsEstablished"),
+			FormatRuntimeText(L"RuntimeStatusDirectProxyConnectionsValue", {
+				std::to_wstring(tcpPeers), std::to_wstring(proxyPeers)}));
 		row(
-			L"TCP connections maximum",
+			ResourceGetString(L"RuntimeStatusTcpConnectionsMaximum"),
 			std::to_wstring(torrentSettings.connectionsLimit));
 		row(
-			L"TCP half-open / maximum",
-			std::format(
-				L"{} / dynamically managed",
-				metric("peer.num_peers_half_open")));
+			ResourceGetString(L"RuntimeStatusTcpHalfOpenMaximum"),
+			FormatRuntimeText(L"RuntimeStatusHalfOpenManagedValue", {
+				std::to_wstring(metric("peer.num_peers_half_open"))}));
 		row(
-			L"Pending connections",
-			std::format(
-				L"{} half-open, {} outstanding accepts",
-				metric("peer.num_peers_half_open"),
-				metric("ses.num_outstanding_accept")));
+			ResourceGetString(L"RuntimeStatusPendingConnections"),
+			FormatRuntimeText(L"RuntimeStatusPendingConnectionsValue", {
+				std::to_wstring(metric("peer.num_peers_half_open")),
+				std::to_wstring(metric("ses.num_outstanding_accept"))}));
 		row(
-			L"BT connection count",
-			std::format(
-				L"{} reported peers; TCP {}, uTP {}, proxy {}",
-				stats.numPeers,
-				tcpPeers,
-				utpPeers,
-				proxyPeers));
+			ResourceGetString(L"RuntimeStatusBtConnectionCount"),
+			FormatRuntimeText(L"RuntimeStatusBtConnectionCountValue", {
+				std::to_wstring(stats.numPeers), std::to_wstring(tcpPeers),
+				std::to_wstring(utpPeers), std::to_wstring(proxyPeers)}));
 		row(
-			L"WebTorrent / WebRTC",
+			ResourceGetString(L"RuntimeStatusWebTorrentWebRtc"),
 			torrentSettings.enableWebTorrent
-			? std::format(
-				L"Enabled; STUN {}; {} offers; {} s timeout",
-				to_hstring(torrentSettings.webTorrentStunServer).c_str(),
-				torrentSettings.maxWebTorrentOffers,
-				torrentSettings.webTorrentConnectionTimeout)
-			: L"Disabled");
+			? FormatRuntimeText(L"RuntimeStatusWebTorrentEnabledValue", {
+				std::wstring{ to_hstring(torrentSettings.webTorrentStunServer).c_str() },
+				std::to_wstring(torrentSettings.maxWebTorrentOffers),
+				std::to_wstring(torrentSettings.webTorrentConnectionTimeout)})
+			: std::wstring{ ResourceGetString(L"CommonDisabled").c_str() });
 		row(
-			L"I2P / PEX",
+			ResourceGetString(L"RuntimeStatusI2pPex"),
 			torrentSettings.enableI2p
-			? std::format(L"Enabled via {}:{}; mixed mode {}", to_hstring(torrentSettings.i2pHostname).c_str(), torrentSettings.i2pPort, torrentSettings.allowI2pMixed ? L"enabled" : L"disabled")
-			: L"Disabled");
-		row(L"Internal peer bans", std::to_wstring(stats.internalBannedIps));
+			? FormatRuntimeText(L"RuntimeStatusI2pEnabledValue", {
+				std::wstring{ to_hstring(torrentSettings.i2pHostname).c_str() },
+				std::to_wstring(torrentSettings.i2pPort),
+				torrentSettings.allowI2pMixed
+					? std::wstring{ ResourceGetString(L"CommonEnabled").c_str() }
+					: std::wstring{ ResourceGetString(L"CommonDisabled").c_str() }})
+			: std::wstring{ ResourceGetString(L"CommonDisabled").c_str() });
+		row(ResourceGetString(L"RuntimeStatusInternalPeerBans"), std::to_wstring(stats.internalBannedIps));
 		row(
-			L"HTTP connection activity",
-			std::format(
-				L"{} active / {} waiting tasks (Aria2 reports tasks, not sockets)",
-				httpStateCounts[1],
-				httpStateCounts[0]));
+			ResourceGetString(L"RuntimeStatusHttpConnectionActivity"),
+			FormatRuntimeText(L"RuntimeStatusHttpConnectionActivityValue", {
+				std::to_wstring(httpStateCounts[1]), std::to_wstring(httpStateCounts[0])}));
 		row(
-			L"HTTP tracker connection count",
-			std::format(
-				L"{} queued announces",
-				metric("tracker.num_queued_tracker_announces")));
-		row(L"LAN IPv4", Join(networkAddresses.ipv4));
-		row(L"LAN IPv6", Join(networkAddresses.ipv6));
+			ResourceGetString(L"RuntimeStatusHttpTrackerConnectionCount"),
+			FormatRuntimeText(L"RuntimeStatusQueuedAnnouncesValue", {
+				std::to_wstring(metric("tracker.num_queued_tracker_announces"))}));
+		row(ResourceGetString(L"RuntimeStatusLanIpv4"), Join(networkAddresses.ipv4));
+		row(ResourceGetString(L"RuntimeStatusLanIpv6"), Join(networkAddresses.ipv6));
 		row(
-			L"WAN IPv4",
+			ResourceGetString(L"RuntimeStatusWanIpv4"),
 			mapping.externalAddress.empty()
-			? L"Not observed by port mapping"
+			? ResourceGetString(L"RuntimeStatusWanIpv4NotObserved")
 			: to_hstring(mapping.externalAddress).c_str());
 		row(
-			L"WAN IPv6",
+			ResourceGetString(L"RuntimeStatusWanIpv6"),
 			networkAddresses.ipv6.empty()
-			? L"No IPv6 address observed"
-			: L"See LAN IPv6 (globally routable/link-local scope is OS supplied)");
+			? ResourceGetString(L"RuntimeStatusWanIpv6NotObserved")
+			: ResourceGetString(L"RuntimeStatusWanIpv6SeeLanAddress"));
 		row(
-			L"BT TCP listen port",
+			ResourceGetString(L"RuntimeStatusBtTcpListenPort"),
 			stats.isListening
 			? std::to_wstring(stats.listenPort)
-			: std::wstring(L"Not listening: ")
-			+ std::wstring(to_hstring(stats.listenError)));
+			: std::wstring(ResourceGetString(L"RuntimeStatusNotListeningPrefix").c_str())
+			+ (stats.listenError.empty()
+				? std::wstring{ ResourceGetString(L"RuntimeStatusListenerErrorUnknown").c_str() }
+				: std::wstring(to_hstring(stats.listenError))));
 		row(
-			L"Incoming peer connectivity",
+			ResourceGetString(L"RuntimeStatusIncomingPeerConnectivity"),
 			metric("net.has_incoming_connections") != 0
-			? L"Observed"
-			: L"Not observed in this session");
+			? std::wstring{ ResourceGetString(L"RuntimeStatusIncomingConnectivityObserved").c_str() }
+			: std::wstring{ ResourceGetString(L"RuntimeStatusIncomingConnectivityNotObserved").c_str() });
 		row(
-			L"BT TCP firewall/router state IPv4",
+			ResourceGetString(L"RuntimeStatusBtTcpFirewallIpv4"),
 			mapping.tcpExternalPort > 0
-			? std::format(
-				L"Mapped to {} via {}",
-				mapping.tcpExternalPort,
-				to_hstring(mapping.tcpMechanism).c_str())
-			: L"No confirmed external mapping");
+			? FormatRuntimeText(L"RuntimeStatusMappedViaValue", {
+				std::to_wstring(mapping.tcpExternalPort),
+				std::wstring{ to_hstring(mapping.tcpMechanism).c_str() }})
+			: std::wstring{ ResourceGetString(L"RuntimeStatusNoConfirmedExternalMapping").c_str() });
 		row(
-			L"BT TCP firewall/router state IPv6",
-			L"Direct IPv6 reachability; no NAT mapping is required");
+			ResourceGetString(L"RuntimeStatusBtTcpFirewallIpv6"),
+			ResourceGetString(L"RuntimeStatusDirectIpv6NoNatMapping"));
 		row(
-			L"BT UDP listen port",
+			ResourceGetString(L"RuntimeStatusBtUdpListenPort"),
 			stats.listenPort > 0
 			? std::to_wstring(stats.listenPort)
-			: L"Not listening");
+			: std::wstring{ ResourceGetString(L"RuntimeStatusNotListening").c_str() });
 		row(
-			L"BT UDP mapped port",
+			ResourceGetString(L"RuntimeStatusBtUdpMappedPort"),
 			mapping.udpExternalPort > 0
 			? std::to_wstring(mapping.udpExternalPort)
-			: L"No confirmed mapping");
+			: std::wstring{ ResourceGetString(L"RuntimeStatusNoConfirmedMapping").c_str() });
 		row(
-			L"uTP connections",
-			std::format(
-				L"Connected {}, SYN sent {}, FIN sent {}, close wait {}, idle {}",
-				metric("utp.num_utp_connected"),
-				metric("utp.num_utp_syn_sent"),
-				metric("utp.num_utp_fin_sent"),
-				metric("utp.num_utp_close_wait"),
-				metric("utp.num_utp_idle")));
+			ResourceGetString(L"RuntimeStatusUtpConnections"),
+			FormatRuntimeText(L"RuntimeStatusUtpConnectionsValue", {
+				std::to_wstring(metric("utp.num_utp_connected")),
+				std::to_wstring(metric("utp.num_utp_syn_sent")),
+				std::to_wstring(metric("utp.num_utp_fin_sent")),
+				std::to_wstring(metric("utp.num_utp_close_wait")),
+				std::to_wstring(metric("utp.num_utp_idle"))}));
 		row(
-			L"Remote access port",
+			ResourceGetString(L"RuntimeStatusRemoteAccessPort"),
 			std::to_wstring(webPort));
 		row(
-			L"Remote access connections",
+			ResourceGetString(L"RuntimeStatusRemoteAccessConnections"),
 			std::to_wstring(webStats.activeConnections));
 		row(
-			L"LSD port",
+			ResourceGetString(L"RuntimeStatusLsdPort"),
 			torrentSettings.enableLsd
-			? L"6771/UDP (enabled)"
-			: L"Disabled");
-		row(L"Windows Firewall state", GetFirewallState());
+			? ResourceGetString(L"RuntimeStatusLsdPortEnabled")
+			: ResourceGetString(L"CommonDisabled"));
+		row(ResourceGetString(L"RuntimeStatusWindowsFirewallState"), GetFirewallState());
 		row(
-			L"UPnP NAT mapping",
-			mapping.upnpEnabled ? L"Enabled" : L"Disabled");
+			ResourceGetString(L"RuntimeStatusUpnpNatMapping"),
+			mapping.upnpEnabled ? ResourceGetString(L"CommonEnabled") : ResourceGetString(L"CommonDisabled"));
 		row(
-			L"NAT-PMP mapping",
-			mapping.natPmpEnabled ? L"Enabled" : L"Disabled");
+			ResourceGetString(L"RuntimeStatusNatPmpMapping"),
+			mapping.natPmpEnabled ? ResourceGetString(L"CommonEnabled") : ResourceGetString(L"CommonDisabled"));
 		row(
-			L"Port mapping mechanisms",
-			std::format(
-				L"TCP: {}; UDP: {}",
+			ResourceGetString(L"RuntimeStatusPortMappingMechanisms"),
+			FormatRuntimeText(L"RuntimeStatusPortMappingMechanismsValue", {
 				mapping.tcpMechanism.empty()
-				? L"none confirmed"
-				: to_hstring(mapping.tcpMechanism).c_str(),
+					? std::wstring{ ResourceGetString(L"RuntimeStatusNoneConfirmed").c_str() }
+					: std::wstring{ to_hstring(mapping.tcpMechanism).c_str() },
 				mapping.udpMechanism.empty()
-				? L"none confirmed"
-				: to_hstring(mapping.udpMechanism).c_str()));
+					? std::wstring{ ResourceGetString(L"RuntimeStatusNoneConfirmed").c_str() }
+					: std::wstring{ to_hstring(mapping.udpMechanism).c_str() }}));
 		row(
-			L"TCP / UDP mapped ports",
+			ResourceGetString(L"RuntimeStatusTcpUdpMappedPorts"),
 			std::format(
 				L"{} / {}",
 				mapping.tcpExternalPort,
 				mapping.udpExternalPort));
 		row(
-			L"Port mapping error",
+			ResourceGetString(L"RuntimeStatusPortMappingError"),
 			mapping.lastError.empty()
-			? L"None"
+			? ResourceGetString(L"CommonNone")
 			: to_hstring(mapping.lastError).c_str());
 
-		section(L"Transfer");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionTransfer").c_str()));
 		row(
-			L"Overall download rate",
+			ResourceGetString(L"RuntimeStatusOverallDownloadRate"),
 			FormatBytes(std::max<std::int64_t>(0, stats.totalDownloadRate)
 						+ httpDown) + L"/s");
 		row(
-			L"Overall upload rate",
+			ResourceGetString(L"RuntimeStatusOverallUploadRate"),
 			FormatBytes(std::max<std::int64_t>(0, stats.totalUploadRate)
 						+ httpUp) + L"/s");
 		row(
-			L"BitTorrent download / upload rate",
+			ResourceGetString(L"RuntimeStatusBtDownloadUploadRate"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(std::max<std::int64_t>(
@@ -979,150 +989,137 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				FormatBytes(std::max<std::int64_t>(
 					0, stats.totalUploadRate)) + L"/s"));
 		row(
-			L"HTTP download / upload rate",
+			ResourceGetString(L"RuntimeStatusHttpDownloadUploadRate"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(httpDown) + L"/s",
 				FormatBytes(httpUp) + L"/s"));
 		row(
-			L"Download / upload limits",
+			ResourceGetString(L"RuntimeStatusDownloadUploadLimits"),
 			std::format(
 				L"{} / {}",
 				LimitText(torrentSettings.downloadRateLimit),
 				LimitText(torrentSettings.uploadRateLimit)));
 		row(
-			L"Active task limits",
-			std::format(
-				L"Downloads {}, seeds {}, total {}",
-				torrentSettings.activeDownloads,
-				torrentSettings.activeSeeds,
-				torrentSettings.activeLimit));
+			ResourceGetString(L"RuntimeStatusActiveTaskLimits"),
+			FormatRuntimeText(L"RuntimeStatusActiveTaskLimitsValue", {
+				std::to_wstring(torrentSettings.activeDownloads),
+				std::to_wstring(torrentSettings.activeSeeds),
+				std::to_wstring(torrentSettings.activeLimit)}));
 		row(
-			L"Maximum peer list per task",
+			ResourceGetString(L"RuntimeStatusMaximumPeerListPerTask"),
 			std::to_wstring(torrentSettings.maxPeerListSize));
 		row(
-			L"Tracker receive / send rate",
+			ResourceGetString(L"RuntimeStatusTrackerReceiveSendRate"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metricRate("net.recv_tracker_bytes")) + L"/s",
 				FormatBytes(metricRate("net.sent_tracker_bytes")) + L"/s"));
 		row(
-			L"Tracker receive / send total",
+			ResourceGetString(L"RuntimeStatusTrackerReceiveSendTotal"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metric("net.recv_tracker_bytes")),
 				FormatBytes(metric("net.sent_tracker_bytes"))));
 		row(
-			L"BT metadata messages",
-			std::format(
-				L"Received {}, sent {}",
-				metric("ses.num_incoming_metadata"),
-				metric("ses.num_outgoing_metadata")));
+			ResourceGetString(L"RuntimeStatusBtMetadataMessages"),
+			FormatRuntimeText(L"RuntimeStatusReceivedSentValue", {
+				std::to_wstring(metric("ses.num_incoming_metadata")),
+				std::to_wstring(metric("ses.num_outgoing_metadata"))}));
 		row(
-			L"BT upload slots",
-			std::format(
-				L"{} active / {} allowed",
-				metric("peer.num_peers_up_unchoked"),
-				metric("ses.num_unchoke_slots")));
+			ResourceGetString(L"RuntimeStatusBtUploadSlots"),
+			FormatRuntimeText(L"RuntimeStatusBtUploadSlotsValue", {
+				std::to_wstring(metric("peer.num_peers_up_unchoked")),
+				std::to_wstring(metric("ses.num_unchoke_slots"))}));
 		row(
-			L"Seeding upload rate",
+			ResourceGetString(L"RuntimeStatusSeedingUploadRate"),
 			FormatBytes(std::max<std::int64_t>(
 				0, stats.longTermSeedingUploadRate)) + L"/s");
 		row(
-			L"Remote access transfer rate",
-			std::format(
-				L"Receive {} / send {}",
+			ResourceGetString(L"RuntimeStatusRemoteAccessTransferRate"),
+			FormatRuntimeText(L"RuntimeStatusReceiveSendValue", {
 				FormatBytes(webReceiveRate) + L"/s",
-				FormatBytes(webSendRate) + L"/s"));
+				FormatBytes(webSendRate) + L"/s"}));
 		row(
-			L"Remote access transfer total",
-			std::format(
-				L"Receive {} / send {}",
+			ResourceGetString(L"RuntimeStatusRemoteAccessTransferTotal"),
+			FormatRuntimeText(L"RuntimeStatusReceiveSendValue", {
 				FormatBytes(webStats.requestBytes),
-				FormatBytes(webStats.responseBytes)));
-		row(L"DHT nodes IPv4", std::to_wstring(stats.dhtNodes));
+				FormatBytes(webStats.responseBytes)}));
+		row(ResourceGetString(L"RuntimeStatusDhtNodesIpv4"), std::to_wstring(stats.dhtNodes));
 		row(
-			L"DHT routing cache / torrents / peers",
-			std::format(
-				L"{} / {} / {}",
-				metric("dht.dht_node_cache"),
-				metric("dht.dht_torrents"),
-				metric("dht.dht_peers")));
+			ResourceGetString(L"RuntimeStatusDhtRoutingCacheTorrentsPeers"),
+			FormatRuntimeText(L"RuntimeStatusTripleCountsValue", {
+				std::to_wstring(metric("dht.dht_node_cache")),
+				std::to_wstring(metric("dht.dht_torrents")),
+				std::to_wstring(metric("dht.dht_peers"))}));
 		row(
-			L"DNS resolver state",
-			L"Managed internally by libtorrent/WinHTTP; no public cache queue counter");
+			ResourceGetString(L"RuntimeStatusDnsResolverState"),
+			ResourceGetString(L"RuntimeStatusDnsResolverStateValue"));
 
-		section(L"Process and memory");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionProcessMemory").c_str()));
 		row(
-			L"CPU usage",
-			std::format(
-				L"{:.2f}% ({} physical cores / {} logical processors)",
-				cpu,
-				GetPhysicalCoreCount(),
-				GetActiveProcessorCount(ALL_PROCESSOR_GROUPS)));
-		row(L"Memory working set", FormatBytes(memory.WorkingSetSize));
-		row(L"Memory commit/private", FormatBytes(memory.PrivateUsage));
+			ResourceGetString(L"RuntimeStatusCpuUsage"),
+			FormatRuntimeText(L"RuntimeStatusCpuUsageValue", {
+				std::format(L"{:.2f}", cpu),
+				std::to_wstring(GetPhysicalCoreCount()),
+				std::to_wstring(GetActiveProcessorCount(ALL_PROCESSOR_GROUPS))}));
+		row(ResourceGetString(L"RuntimeStatusMemoryWorkingSet"), FormatBytes(memory.WorkingSetSize));
+		row(ResourceGetString(L"RuntimeStatusMemoryCommitPrivate"), FormatBytes(memory.PrivateUsage));
 		row(
-			L"Process heap",
-			std::format(
-				L"{} busy + {} overhead across {} heaps",
+			ResourceGetString(L"RuntimeStatusProcessHeap"),
+			FormatRuntimeText(L"RuntimeStatusProcessHeapValue", {
 				FormatBytes(heap.busyBytes),
 				FormatBytes(heap.overheadBytes),
-				heap.heapCount));
-		row(L"Process handle count", std::to_wstring(handleCount));
+				std::to_wstring(heap.heapCount)}));
+		row(ResourceGetString(L"RuntimeStatusProcessHandleCount"), std::to_wstring(handleCount));
 		row(
-			L"libtorrent disk cache",
+			ResourceGetString(L"RuntimeStatusLibtorrentDiskCache"),
 			FormatBytes(std::max<std::int64_t>(0, stats.diskCacheBytes)));
 		row(
-			L"Disk write buffer",
-			std::format(
-				L"{} queued; setting maximum {}",
-				FormatBytes(std::max<std::int64_t>(
-					0, metric("disk.queued_write_bytes"))),
-				FormatBytes(std::max(0, runtimeSettings.maxQueuedDiskBytes))));
+			ResourceGetString(L"RuntimeStatusDiskWriteBuffer"),
+			FormatRuntimeText(L"RuntimeStatusDiskWriteBufferValue", {
+				FormatBytes(std::max<std::int64_t>(0, metric("disk.queued_write_bytes"))),
+				FormatBytes(std::max(0, runtimeSettings.maxQueuedDiskBytes))}));
 		row(
-			L"TCP/UDP socket buffers",
-			std::format(
-				L"Receive {}, send {} (0 means OS default)",
-				runtimeSettings.receiveSocketBufferSize,
-				runtimeSettings.sendSocketBufferSize));
+			ResourceGetString(L"RuntimeStatusTcpUdpSocketBuffers"),
+			FormatRuntimeText(L"RuntimeStatusSocketBuffersValue", {
+				std::to_wstring(runtimeSettings.receiveSocketBufferSize),
+				std::to_wstring(runtimeSettings.sendSocketBufferSize)}));
 		row(
-			L"Application model buffers",
-			L"STL/WinRT containers are included in heap/private memory totals");
+			ResourceGetString(L"RuntimeStatusApplicationModelBuffers"),
+			ResourceGetString(L"RuntimeStatusApplicationModelBuffersValue"));
 		row(
-			L"Logging buffers",
-			L"OpenNet uses ETW/debug sinks; no fixed BitComet-style log arenas");
+			ResourceGetString(L"RuntimeStatusLoggingBuffers"),
+			ResourceGetString(L"RuntimeStatusLoggingBuffersValue"));
 		row(
-			L"Reserved virtual memory",
-			std::format(
-				L"{} reserved/private address space",
-				FormatBytes(memory.PrivateUsage)));
+			ResourceGetString(L"RuntimeStatusReservedVirtualMemory"),
+			FormatRuntimeText(L"RuntimeStatusReservedVirtualMemoryValue", {
+				FormatBytes(memory.PrivateUsage)}));
 		row(
-			L"Free physical memory",
+			ResourceGetString(L"RuntimeStatusFreePhysicalMemory"),
 			FormatBytes(systemMemory.ullAvailPhys));
 		row(
-			L"Free virtual memory",
+			ResourceGetString(L"RuntimeStatusFreeVirtualMemory"),
 			FormatBytes(systemMemory.ullAvailVirtual));
 		row(
-			L"Free process address space",
+			ResourceGetString(L"RuntimeStatusFreeProcessAddressSpace"),
 			FormatBytes(freeAddressSpace));
 
-		section(L"Storage and disk cache");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionStorageDiskCache").c_str()));
 		row(
-			L"Storage total",
+			ResourceGetString(L"RuntimeStatusStorageTotal"),
 			FormatBytes(diskTotal.QuadPart));
 		row(
-			L"Storage free",
+			ResourceGetString(L"RuntimeStatusStorageFree"),
 			FormatBytes(diskFree.QuadPart));
-		row(L"Volume list", GetVolumeSummary());
+		row(ResourceGetString(L"RuntimeStatusVolumeList"), GetVolumeSummary());
 		row(
-			L"Disk cache data size",
-			std::format(
-				L"{} ({} 16-KiB blocks)",
+			ResourceGetString(L"RuntimeStatusDiskCacheDataSize"),
+			FormatRuntimeText(L"RuntimeStatusDiskCacheDataSizeValue", {
 				FormatBytes(std::max<std::int64_t>(0, stats.diskCacheBytes)),
-				metric("disk.disk_blocks_in_use")));
+				std::to_wstring(metric("disk.disk_blocks_in_use"))}));
 		row(
-			L"libtorrent disk read / write",
+			ResourceGetString(L"RuntimeStatusLibtorrentDiskReadWrite"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(std::max<std::int64_t>(
@@ -1130,246 +1127,234 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				FormatBytes(std::max<std::int64_t>(
 					0, metric("disk.num_blocks_written")) * 16 * 1024)));
 		row(
-			L"libtorrent read / write operations",
+			ResourceGetString(L"RuntimeStatusLibtorrentReadWriteOperations"),
 			std::format(
 				L"{} / {}",
 				metric("disk.num_read_ops"),
 				metric("disk.num_write_ops")));
 		row(
-			L"libtorrent disk jobs",
-			std::format(
-				L"Queued {}, running {}, blocked {}, read {}, write {}",
-				metric("disk.queued_disk_jobs"),
-				metric("disk.num_running_disk_jobs"),
-				metric("disk.blocked_disk_jobs"),
-				metric("disk.num_read_jobs"),
-				metric("disk.num_write_jobs")));
+			ResourceGetString(L"RuntimeStatusLibtorrentDiskJobs"),
+			FormatRuntimeText(L"RuntimeStatusDiskJobsValue", {
+				std::to_wstring(metric("disk.queued_disk_jobs")),
+				std::to_wstring(metric("disk.num_running_disk_jobs")),
+				std::to_wstring(metric("disk.blocked_disk_jobs")),
+				std::to_wstring(metric("disk.num_read_jobs")),
+				std::to_wstring(metric("disk.num_write_jobs"))}));
 		row(
-			L"libtorrent disk timing",
-			std::format(
-				L"Read {} ms, write {} ms, hash {} ms, request latency {} us",
-				metric("disk.disk_read_time") / 1000,
-				metric("disk.disk_write_time") / 1000,
-				metric("disk.disk_hash_time") / 1000,
-				metric("disk.request_latency")));
+			ResourceGetString(L"RuntimeStatusLibtorrentDiskTiming"),
+			FormatRuntimeText(L"RuntimeStatusDiskTimingValue", {
+				std::to_wstring(metric("disk.disk_read_time") / 1000),
+				std::to_wstring(metric("disk.disk_write_time") / 1000),
+				std::to_wstring(metric("disk.disk_hash_time") / 1000),
+				std::to_wstring(metric("disk.request_latency"))}));
 		row(
-			L"Process disk read total",
-			std::format(
-				L"{} in {} operations",
+			ResourceGetString(L"RuntimeStatusProcessDiskReadTotal"),
+			FormatRuntimeText(L"RuntimeStatusProcessDiskIoValue", {
 				FormatBytes(ioCounters.ReadTransferCount),
-				ioCounters.ReadOperationCount));
+				std::to_wstring(ioCounters.ReadOperationCount)}));
 		row(
-			L"Process disk write total",
-			std::format(
-				L"{} in {} operations",
+			ResourceGetString(L"RuntimeStatusProcessDiskWriteTotal"),
+			FormatRuntimeText(L"RuntimeStatusProcessDiskIoValue", {
 				FormatBytes(ioCounters.WriteTransferCount),
-				ioCounters.WriteOperationCount));
+				std::to_wstring(ioCounters.WriteOperationCount)}));
 		row(
-			L"Persisted HTTP completed data",
+			ResourceGetString(L"RuntimeStatusPersistedHttpCompletedData"),
 			FormatBytes(httpCompletedBytes));
 		row(
-			L"Long-term seed / disk boost service",
-			NotApplicable);
+			ResourceGetString(L"RuntimeStatusLongTermSeedDiskBoost"),
+			notApplicable);
 
-		section(L"Session totals");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionSessionTotals").c_str()));
 		row(
-			L"Total downloaded (session)",
+			ResourceGetString(L"RuntimeStatusTotalDownloadedSession"),
 			FormatBytes(std::max<std::int64_t>(0, stats.totalDownloaded)));
 		row(
-			L"Total uploaded (session)",
+			ResourceGetString(L"RuntimeStatusTotalUploadedSession"),
 			FormatBytes(std::max<std::int64_t>(0, stats.totalUploaded)));
 		row(
-			L"Network payload receive / send",
+			ResourceGetString(L"RuntimeStatusNetworkPayloadReceiveSend"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metric("net.recv_payload_bytes")),
 				FormatBytes(metric("net.sent_payload_bytes"))));
 		row(
-			L"Network protocol receive / send",
+			ResourceGetString(L"RuntimeStatusNetworkProtocolReceiveSend"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metric("net.recv_bytes")),
 				FormatBytes(metric("net.sent_bytes"))));
 		row(
-			L"IP overhead receive / send",
+			ResourceGetString(L"RuntimeStatusIpOverheadReceiveSend"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metric("net.recv_ip_overhead_bytes")),
 				FormatBytes(metric("net.sent_ip_overhead_bytes"))));
 		row(
-			L"Failed / redundant download",
+			ResourceGetString(L"RuntimeStatusFailedRedundantDownload"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metric("net.recv_failed_bytes")),
 				FormatBytes(metric("net.recv_redundant_bytes"))));
 		row(
-			L"Piece checks passed / failed",
+			ResourceGetString(L"RuntimeStatusPieceChecksPassedFailed"),
 			std::format(
 				L"{} / {}",
 				metric("ses.num_piece_passed"),
 				metric("ses.num_piece_failed")));
 		row(
-			L"Persisted HTTP downloaded",
+			ResourceGetString(L"RuntimeStatusPersistedHttpDownloaded"),
 			FormatBytes(httpCompletedBytes));
 		row(
-			L"Persisted P2P downloaded",
+			ResourceGetString(L"RuntimeStatusPersistedP2pDownloaded"),
 			FormatBytes(persistedP2PDownloaded));
 		row(
-			L"Persisted combined downloaded",
+			ResourceGetString(L"RuntimeStatusPersistedCombinedDownloaded"),
 			FormatBytes(persistedP2PDownloaded + httpCompletedBytes));
 
-		section(L"UDP, DHT and detection diagnostics");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionUdpDhtDiagnostics").c_str()));
 		row(
-			L"DHT bytes receive / send",
+			ResourceGetString(L"RuntimeStatusDhtBytesReceiveSend"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(stats.dhtBytesReceived),
 				FormatBytes(stats.dhtBytesSent)));
 		row(
-			L"DHT receive / send rate",
+			ResourceGetString(L"RuntimeStatusDhtReceiveSendRate"),
 			std::format(
 				L"{} / {}",
 				FormatBytes(metricRate("dht.dht_bytes_in")) + L"/s",
 				FormatBytes(metricRate("dht.dht_bytes_out")) + L"/s"));
 		row(
-			L"DHT messages receive / send",
+			ResourceGetString(L"RuntimeStatusDhtMessagesReceiveSend"),
 			std::format(
 				L"{} / {}",
 				metric("dht.dht_messages_in"),
 				metric("dht.dht_messages_out")));
 		row(
-			L"DHT dropped receive / send",
+			ResourceGetString(L"RuntimeStatusDhtDroppedReceiveSend"),
 			std::format(
 				L"{} / {}",
 				metric("dht.dht_messages_in_dropped"),
 				metric("dht.dht_messages_out_dropped")));
 		row(
-			L"DHT request types receive / send",
-			std::format(
-				L"ping {}/{}, find_node {}/{}, get_peers {}/{}, "
-				L"announce_peer {}/{}, get {}/{}, put {}/{}",
-				metric("dht.dht_ping_in"),
-				metric("dht.dht_ping_out"),
-				metric("dht.dht_find_node_in"),
-				metric("dht.dht_find_node_out"),
-				metric("dht.dht_get_peers_in"),
-				metric("dht.dht_get_peers_out"),
-				metric("dht.dht_announce_peer_in"),
-				metric("dht.dht_announce_peer_out"),
-				metric("dht.dht_get_in"),
-				metric("dht.dht_get_out"),
-				metric("dht.dht_put_in"),
-				metric("dht.dht_put_out")));
+			ResourceGetString(L"RuntimeStatusDhtRequestTypesReceiveSend"),
+			FormatRuntimeText(L"RuntimeStatusDhtRequestTypesValue", {
+				std::to_wstring(metric("dht.dht_ping_in")),
+				std::to_wstring(metric("dht.dht_ping_out")),
+				std::to_wstring(metric("dht.dht_find_node_in")),
+				std::to_wstring(metric("dht.dht_find_node_out")),
+				std::to_wstring(metric("dht.dht_get_peers_in")),
+				std::to_wstring(metric("dht.dht_get_peers_out")),
+				std::to_wstring(metric("dht.dht_announce_peer_in")),
+				std::to_wstring(metric("dht.dht_announce_peer_out")),
+				std::to_wstring(metric("dht.dht_get_in")),
+				std::to_wstring(metric("dht.dht_get_out")),
+				std::to_wstring(metric("dht.dht_put_in")),
+				std::to_wstring(metric("dht.dht_put_out"))}));
 		row(
-			L"DHT invalid requests",
+			ResourceGetString(L"RuntimeStatusDhtInvalidRequests"),
 			std::to_wstring(sumPrefix("dht.dht_invalid_")));
 		row(
-			L"DHT pending RPC observers",
+			ResourceGetString(L"RuntimeStatusDhtPendingRpcObservers"),
 			std::to_wstring(metric("dht.dht_allocated_observers")));
 		row(
-			L"DHT upload rate limit",
+			ResourceGetString(L"RuntimeStatusDhtUploadRateLimit"),
 			LimitText(runtimeSettings.dhtUploadRateLimit));
 		row(
-			L"uTP packets receive / send",
+			ResourceGetString(L"RuntimeStatusUtpPacketsReceiveSend"),
 			std::format(
 				L"{} / {}",
 				metric("utp.utp_packets_in"),
 				metric("utp.utp_packets_out")));
 		row(
-			L"uTP payload packets receive / send",
+			ResourceGetString(L"RuntimeStatusUtpPayloadReceiveSend"),
 			std::format(
 				L"{} / {}",
 				metric("utp.utp_payload_pkts_in"),
 				metric("utp.utp_payload_pkts_out")));
 		row(
-			L"uTP loss / timeout / resend",
+			ResourceGetString(L"RuntimeStatusUtpLossTimeoutResend"),
 			std::format(
 				L"{} / {} / {}",
 				metric("utp.utp_packet_loss"),
 				metric("utp.utp_timeout"),
 				metric("utp.utp_packet_resend")));
 		row(
-			L"UDP tracker traffic",
-			std::format(
-				L"Included in tracker receive/send totals: {} / {}",
+			ResourceGetString(L"RuntimeStatusUdpTrackerTraffic"),
+			FormatRuntimeText(L"RuntimeStatusUdpTrackerTrafficValue", {
 				FormatBytes(metric("net.recv_tracker_bytes")),
-				FormatBytes(metric("net.sent_tracker_bytes"))));
+				FormatBytes(metric("net.sent_tracker_bytes"))}));
 		row(
-			L"NAT detection",
-			std::format(
-				L"External address {}; mapped TCP/UDP {} / {}",
+			ResourceGetString(L"RuntimeStatusNatDetection"),
+			FormatRuntimeText(L"RuntimeStatusNatDetectionValue", {
 				mapping.externalAddress.empty()
-				? L"not observed"
-				: to_hstring(mapping.externalAddress).c_str(),
-				mapping.tcpExternalPort,
-				mapping.udpExternalPort));
+				? std::wstring{ ResourceGetString(L"RuntimeStatusNotObserved").c_str() }
+				: std::wstring{ to_hstring(mapping.externalAddress).c_str() },
+				std::to_wstring(mapping.tcpExternalPort),
+				std::to_wstring(mapping.udpExternalPort)}));
 		row(
-			L"IP detection",
+			ResourceGetString(L"RuntimeStatusIpDetection"),
 			metric("net.has_incoming_connections") != 0
-			? L"Incoming connectivity observed"
-			: L"No incoming connectivity observed");
+			? ResourceGetString(L"RuntimeStatusIncomingConnectivityObserved")
+			: ResourceGetString(L"RuntimeStatusNoIncomingConnectivityObserved"));
 		row(
-			L"DNS failure domain counts",
-			L"Resolver details are not part of libtorrent's public statistics API");
+			ResourceGetString(L"RuntimeStatusDnsFailureDomainCounts"),
+			ResourceGetString(L"RuntimeStatusResolverDetailsUnavailable"));
 
-		section(L"Schedulers and trackers");
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionSchedulersTrackers").c_str()));
 		row(
-			L"Peer messages receive / send",
+			ResourceGetString(L"RuntimeStatusPeerMessagesReceiveSend"),
 			std::format(
 				L"{} / {}",
 				sumPrefix("ses.num_incoming_"),
 				sumPrefix("ses.num_outgoing_")));
 		row(
-			L"Rate limiter queues",
-			std::format(
-				L"Upload {} sockets / {}; download {} sockets / {}",
-				metric("net.limiter_up_queue"),
+			ResourceGetString(L"RuntimeStatusRateLimiterQueues"),
+			FormatRuntimeText(L"RuntimeStatusRateLimiterQueuesValue", {
+				std::to_wstring(metric("net.limiter_up_queue")),
 				FormatBytes(metric("net.limiter_up_bytes")),
-				metric("net.limiter_down_queue"),
-				FormatBytes(metric("net.limiter_down_bytes"))));
+				std::to_wstring(metric("net.limiter_down_queue")),
+				FormatBytes(metric("net.limiter_down_bytes"))}));
 		row(
-			L"Network event wakeups",
-			std::format(
-				L"Read {}, write {}, tick {}, UDP {}, accept {}, disk {}",
-				metric("net.on_read_counter"),
-				metric("net.on_write_counter"),
-				metric("net.on_tick_counter"),
-				metric("net.on_udp_counter"),
-				metric("net.on_accept_counter"),
-				metric("net.on_disk_counter")));
+			ResourceGetString(L"RuntimeStatusNetworkEventWakeups"),
+			FormatRuntimeText(L"RuntimeStatusNetworkEventWakeupsValue", {
+				std::to_wstring(metric("net.on_read_counter")),
+				std::to_wstring(metric("net.on_write_counter")),
+				std::to_wstring(metric("net.on_tick_counter")),
+				std::to_wstring(metric("net.on_udp_counter")),
+				std::to_wstring(metric("net.on_accept_counter")),
+				std::to_wstring(metric("net.on_disk_counter"))}));
 		row(
-			L"Queued tracker announces",
+			ResourceGetString(L"RuntimeStatusQueuedTrackerAnnounces"),
 			std::to_wstring(
 				metric("tracker.num_queued_tracker_announces")));
 		row(
-			L"Tracker connection details",
-			std::format(
-				L"Queued {}; received {}; sent {}",
-				metric("tracker.num_queued_tracker_announces"),
+			ResourceGetString(L"RuntimeStatusTrackerConnectionDetails"),
+			FormatRuntimeText(L"RuntimeStatusTrackerConnectionDetailsValue", {
+				std::to_wstring(metric("tracker.num_queued_tracker_announces")),
 				FormatBytes(metric("net.recv_tracker_bytes")),
-				FormatBytes(metric("net.sent_tracker_bytes"))));
+				FormatBytes(metric("net.sent_tracker_bytes"))}));
 		row(
-			L"Disk scheduler",
-			std::format(
-				L"{} queued / {} running / {} blocked",
-				metric("disk.queued_disk_jobs"),
-				metric("disk.num_running_disk_jobs"),
-				metric("disk.blocked_disk_jobs")));
+			ResourceGetString(L"RuntimeStatusDiskScheduler"),
+			FormatRuntimeText(L"RuntimeStatusDiskSchedulerValue", {
+				std::to_wstring(metric("disk.queued_disk_jobs")),
+				std::to_wstring(metric("disk.num_running_disk_jobs")),
+				std::to_wstring(metric("disk.blocked_disk_jobs"))}));
 		row(
-			L"Timer/message implementation",
-			L"libtorrent ASIO executor; BitComet timer queue internals do not apply");
+			ResourceGetString(L"RuntimeStatusTimerMessageImplementation"),
+			ResourceGetString(L"RuntimeStatusTimerMessageImplementationValue"));
 
-		section(L"BitComet-specific subsystem coverage", false);
-		row(L"LTSeed client/server protocol", NotApplicable);
-		row(L"LTSeed UDP queues", NotApplicable);
-		row(L"Disk boost service", NotApplicable);
-		row(L"BitComet message queue categories", NotApplicable);
-		row(L"BitComet timer queue categories", NotApplicable);
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionBitCometCoverage").c_str()), false);
+		row(ResourceGetString(L"RuntimeStatusLtSeedProtocol"), notApplicable);
+		row(ResourceGetString(L"RuntimeStatusLtSeedUdpQueues"), notApplicable);
+		row(ResourceGetString(L"RuntimeStatusDiskBoostService"), notApplicable);
+		row(ResourceGetString(L"RuntimeStatusBitCometMessageQueues"), notApplicable);
+		row(ResourceGetString(L"RuntimeStatusBitCometTimerQueues"), notApplicable);
 		row(
-			L"OpenNet equivalents",
-			L"Native BitTorrent/libtorrent, Aria2 HTTP, ASIO scheduler, mmap disk I/O");
+			ResourceGetString(L"RuntimeStatusOpenNetEquivalents"),
+			ResourceGetString(L"RuntimeStatusOpenNetEquivalentsValue"));
 
-		section(L"Raw libtorrent session metrics", false);
+		section(std::wstring(ResourceGetString(L"RuntimeStatusSectionRawLibtorrentMetrics").c_str()), false);
 		std::vector<std::pair<std::string, std::int64_t>> sortedMetrics(
 			sessionMetrics.begin(), sessionMetrics.end());
 		std::ranges::sort(sortedMetrics, [](auto const& left, auto const& right)

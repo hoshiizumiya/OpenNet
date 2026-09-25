@@ -23,16 +23,18 @@ namespace
 	winrt::hstring HumanProbeEvidence(winrt::hstring const& evidence)
 	{
 		if (evidence == L"tcp-connected-and-bittorrent-handshake-sent")
-			return L"TCP connected; BitTorrent handshake sent";
+			return ResourceGetString(L"ViewNATDetectorWindowProbeTcpHandshake");
 		if (evidence == L"utp-response-received")
-			return L"valid uTP response received";
+			return ResourceGetString(L"ViewNATDetectorWindowProbeUtpResponse");
 		if (evidence == L"connection-refused")
-			return L"connection refused";
+			return ResourceGetString(L"ViewNATDetectorWindowProbeConnectionRefused");
 		if (evidence == L"timeout")
-			return L"no response before the traversal timeout";
+			return ResourceGetString(L"ViewNATDetectorWindowProbeTimeout");
 		if (evidence == L"unexpected-udp-response")
-			return L"UDP replied, but not with a valid uTP packet";
-		return evidence.empty() ? L"no probe evidence" : evidence;
+			return ResourceGetString(L"ViewNATDetectorWindowProbeUnexpectedUdp");
+		return evidence.empty()
+			? ResourceGetString(L"ViewNATDetectorWindowProbeNoEvidence")
+			: evidence;
 	}
 
 	winrt::hstring FormatPortProbe(
@@ -44,15 +46,19 @@ namespace
 	{
 		if (completed)
 		{
-			return winrt::hstring{ std::format(
-				L"{} · {} ms · {}",
-				reachable ? L"Open" : L"Blocked / unreachable",
-				latencyMs,
-				HumanProbeEvidence(evidence)) };
+			std::wstring format = ResourceGetString(
+				L"ViewNATDetectorWindowProbeResultFormat").c_str();
+			std::wstring state = reachable
+				? std::wstring{ ResourceGetString(L"CommonOpen").c_str() }
+				: std::wstring{ ResourceGetString(L"ViewNATDetectorWindowProbeBlocked").c_str() };
+			std::wstring evidenceText = HumanProbeEvidence(evidence).c_str();
+			return winrt::hstring{ std::vformat(
+				format,
+				std::make_wformat_args(state, latencyMs, evidenceText)) };
 		}
 		return timedOut
-			? L"Timed out before the traversal node returned a result"
-			: L"Not available / not tested";
+			? ResourceGetString(L"ViewNATDetectorWindowProbeTimedOut")
+			: ResourceGetString(L"ViewNATDetectorWindowProbeNotAvailable");
 	}
 
 	winrt::hstring FormatFilteringObservation(
@@ -60,40 +66,56 @@ namespace
 		::OpenNet::Core::StunObservation const& observation)
 	{
 		if (!tested)
-			return L"Not available (the traversal node needs a second public IPv4 address)";
+			return ResourceGetString(L"ViewNATDetectorWindowFilteringNotAvailable");
 		return observation.success
-			? L"Received from the requested alternate endpoint"
-			: L"Not received before the 3 s STUN timeout";
+			? ResourceGetString(L"ViewNATDetectorWindowFilteringReceived")
+			: ResourceGetString(L"ViewNATDetectorWindowFilteringNotReceived");
 	}
 
 	winrt::hstring EndpointText(::OpenNet::Core::StunObservation const& observation)
 	{
-		return observation.success
+	return observation.success
 			? observation.mappedAddress + L":" + winrt::to_hstring(observation.mappedPort)
-			: L"not observed";
+			: ResourceGetString(L"ViewNATDetectorWindowNotObserved");
+	}
+
+	std::wstring FormatMappingStatus(
+		wchar_t const* resourceKey,
+		int port,
+		std::string const& mechanism)
+	{
+		auto format = std::wstring{ ResourceGetString(resourceKey).c_str() };
+		auto mechanismText = std::wstring{ mechanism.begin(), mechanism.end() };
+		return std::vformat(
+			format,
+			std::make_wformat_args(port, mechanismText));
 	}
 
 	winrt::hstring BuildConclusion(::OpenNet::Core::NatDetectionResult const& result)
 	{
-		std::wstring text = std::format(
-			L"All mapping requests used the same internal UDP endpoint {}:{}. ",
-			result.localIPv4.empty() ? L"—" : result.localIPv4.c_str(),
-			result.localPort);
+		std::wstring format = ResourceGetString(
+			L"ViewNATDetectorWindowConclusionInternalEndpoint").c_str();
+		std::wstring localAddress = result.localIPv4.empty()
+			? std::wstring{ L"—" }
+			: std::wstring{ result.localIPv4.c_str() };
+		std::wstring text = std::vformat(
+			format,
+			std::make_wformat_args(localAddress, result.localPort));
 		if (!result.observations.empty())
 		{
-			text += L"The primary traversal endpoint observed ";
+			text += ResourceGetString(L"ViewNATDetectorWindowConclusionPrimaryObserved");
 			text += EndpointText(result.observations[0]).c_str();
 			text += L". ";
 		}
 		if (result.observations.size() > 1)
 		{
-			text += L"Changing only the remote port produced ";
+			text += ResourceGetString(L"ViewNATDetectorWindowConclusionRemotePort");
 			text += EndpointText(result.observations[1]).c_str();
 			text += L". ";
 		}
 		if (result.observations.size() > 2)
 		{
-			text += L"Changing the remote address produced ";
+			text += ResourceGetString(L"ViewNATDetectorWindowConclusionRemoteAddress");
 			text += EndpointText(result.observations[2]).c_str();
 			text += L". ";
 		}
@@ -101,22 +123,22 @@ namespace
 		switch (result.mapping)
 		{
 			case ::OpenNet::Core::NatMappingBehavior::Direct:
-				text += L"The local and observed public IPv4 addresses match, so no IPv4 address translation was observed.";
+				text += ResourceGetString(L"ViewNATDetectorWindowConclusionDirect");
 				break;
 			case ::OpenNet::Core::NatMappingBehavior::EndpointIndependent:
-				text += L"The public endpoint stayed constant across remote endpoints (endpoint-independent mapping).";
+				text += ResourceGetString(L"ViewNATDetectorWindowConclusionEndpointIndependent");
 				break;
 			case ::OpenNet::Core::NatMappingBehavior::AddressDependent:
-				text += L"The public endpoint changed when the remote IP changed, but not when only its port changed (address-dependent mapping).";
+				text += ResourceGetString(L"ViewNATDetectorWindowConclusionAddressDependent");
 				break;
 			case ::OpenNet::Core::NatMappingBehavior::AddressAndPortDependent:
-				text += L"The same local socket received a different public mapping when the remote endpoint changed. This destination-dependent mapping is the key evidence behind the traditional Symmetric NAT label.";
+				text += ResourceGetString(L"ViewNATDetectorWindowConclusionAddressAndPortDependent");
 				break;
 			default:
-				text += L"There was not enough STUN evidence to classify mapping behavior.";
+				text += ResourceGetString(L"ViewNATDetectorWindowConclusionUnknown");
 				break;
 		}
-		text += L" Mapping describes how outbound traffic is translated; filtering separately describes which remote endpoints may send packets back. Neither result is a conventional port scan.";
+		text += ResourceGetString(L"ViewNATDetectorWindowConclusionDisclaimer");
 		return winrt::hstring{ text };
 	}
 }
@@ -154,7 +176,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Error);
 				DiagnosticInfoBar().Message(
 					stats.listenError.empty()
-					? L"libtorrent did not open a listening socket."
+					? ResourceGetString(L"ViewNATDetectorWindowNoListeningSocket")
 					: winrt::to_hstring(stats.listenError));
 				DiagnosticInfoBar().IsOpen(true);
 			}
@@ -199,17 +221,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (status.tcpExternalPort > 0 || status.udpExternalPort > 0)
 		{
 			auto tcp = status.tcpExternalPort > 0
-				? std::format(
-					L"TCP {} ({})",
-					status.tcpExternalPort,
-					winrt::to_hstring(status.tcpMechanism))
-				: L"TCP pending";
+				? FormatMappingStatus(L"ViewNATDetectorWindowTcpMappingFormat", status.tcpExternalPort, status.tcpMechanism)
+				: std::wstring{ ResourceGetString(L"ViewNATDetectorWindowTcpPending").c_str() };
 			auto udp = status.udpExternalPort > 0
-				? std::format(
-					L"UDP {} ({})",
-					status.udpExternalPort,
-					winrt::to_hstring(status.udpMechanism))
-				: L"UDP pending";
+				? FormatMappingStatus(L"ViewNATDetectorWindowUdpMappingFormat", status.udpExternalPort, status.udpMechanism)
+				: std::wstring{ ResourceGetString(L"ViewNATDetectorWindowUdpPending").c_str() };
 			PortMappingText().Text(tcp + L"; " + udp);
 		}
 		else if (!status.lastError.empty())
@@ -233,12 +249,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		}
 		LocalEndpointText().Text(L"—");
 		PublicEndpointText().Text(L"—");
-		FilteringDifferentAddressPortText().Text(L"Not tested");
-		FilteringDifferentPortText().Text(L"Not tested");
+		FilteringDifferentAddressPortText().Text(ResourceGetString(L"CommonNotTested"));
+		FilteringDifferentPortText().Text(ResourceGetString(L"CommonNotTested"));
 		FilteringExplanationText().Text(
-			L"Waiting for the full STUN behavior test.");
+			ResourceGetString(L"ViewNATDetectorWindowWaitingForStunTest"));
 		ConclusionExplanationText().Text(
-			L"Waiting for mapping and filtering evidence.");
+			ResourceGetString(L"ViewNATDetectorWindowWaitingForEvidence"));
 	}
 
 	void NATDetectorWindow::ShowObservation(
@@ -294,15 +310,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			result.ipv6UdpEvidence));
 		ProbeEvidenceText().Text(
 			result.completed || result.ipv6Completed
-			? std::format(
-				L"IPv4 TCP: {}\nIPv4 UDP: {}\nIPv6 TCP: {}\nIPv6 UDP: {}",
-				HumanProbeEvidence(result.tcpEvidence),
-				HumanProbeEvidence(result.udpEvidence),
-				HumanProbeEvidence(result.ipv6TcpEvidence),
-				HumanProbeEvidence(result.ipv6UdpEvidence))
+				? winrt::hstring{ std::format(
+					L"IPv4 TCP: {}\nIPv4 UDP: {}\nIPv6 TCP: {}\nIPv6 UDP: {}",
+					HumanProbeEvidence(result.tcpEvidence),
+					HumanProbeEvidence(result.udpEvidence),
+					HumanProbeEvidence(result.ipv6TcpEvidence),
+					HumanProbeEvidence(result.ipv6UdpEvidence)) }
 			: (result.timedOut
-			   ? L"Traversal probe timed out"
-			   : L"No traversal probe response"));
+			   ? ResourceGetString(L"ViewNATDetectorWindowTraversalProbeTimedOut")
+			   : ResourceGetString(L"ViewNATDetectorWindowNoTraversalProbeResponse")));
 	}
 
 	winrt::Windows::Foundation::IAsyncAction NATDetectorWindow::QuickPortButton_Click(
@@ -320,7 +336,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		if (!validPort(ipv4Value) && !validPort(ipv6Value))
 		{
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Error);
-			DiagnosticInfoBar().Message(L"No active libtorrent IPv4 or IPv6 listener is available.");
+			DiagnosticInfoBar().Message(ResourceGetString(L"ViewNATDetectorWindowNoActiveListener"));
 			DiagnosticInfoBar().IsOpen(true);
 			co_return;
 		}
@@ -330,11 +346,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		QuickPortButton().IsEnabled(false);
 		StartButton().IsEnabled(false);
 		DetectingProgress().IsActive(true);
-		StatusText().Text(L"Testing IPv4/IPv6 TCP and UDP reachability");
-		TcpPortText().Text(L"Testing");
-		UdpPortText().Text(L"Testing");
-		IPv6TcpPortText().Text(L"Testing");
-		IPv6UdpPortText().Text(L"Testing");
+		StatusText().Text(ResourceGetString(L"ViewNATDetectorWindowTestingReachability"));
+		TcpPortText().Text(ResourceGetString(L"CommonTesting"));
+		UdpPortText().Text(ResourceGetString(L"CommonTesting"));
+		IPv6TcpPortText().Text(ResourceGetString(L"CommonTesting"));
+		IPv6UdpPortText().Text(ResourceGetString(L"CommonTesting"));
 		m_detector.TraversalDirectoryUri(DirectoryUriBox().Text());
 		auto result = std::make_shared<::OpenNet::Core::PortProbeResult>();
 		try
@@ -344,13 +360,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				validPort(ipv6Value) ? static_cast<std::uint16_t>(ipv6Value) : 0,
 				result);
 			ShowPortProbeResult(*result);
-			StatusText().Text(L"Quick port test complete");
+			StatusText().Text(ResourceGetString(L"ViewNATDetectorWindowQuickPortTestComplete"));
 		}
 		catch (...)
 		{
-			StatusText().Text(L"Quick port test incomplete");
+			StatusText().Text(ResourceGetString(L"ViewNATDetectorWindowQuickPortTestIncomplete"));
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Warning);
-			DiagnosticInfoBar().Message(L"The quick port test stopped unexpectedly.");
+			DiagnosticInfoBar().Message(ResourceGetString(L"ViewNATDetectorWindowQuickPortTestStopped"));
 			DiagnosticInfoBar().IsOpen(true);
 		}
 		DetectingProgress().IsActive(false);
@@ -386,7 +402,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Error);
 			DiagnosticInfoBar().Message(
 				sessionStats.listenError.empty()
-				? L"libtorrent is not listening. Set an available port in BitTorrent settings."
+				? ResourceGetString(L"ViewNATDetectorWindowNoListeningConfiguredPort")
 				: winrt::to_hstring(sessionStats.listenError));
 			DiagnosticInfoBar().IsOpen(true);
 			co_return;
@@ -426,10 +442,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Warning);
 			DiagnosticInfoBar().Message(
 				error.code() == HRESULT_FROM_WIN32(ERROR_CANCELLED)
-				? L"Detection was cancelled."
-				: L"Detection stopped: " + error.message());
+				? ResourceGetString(L"ViewNATDetectorWindowDetectionCancelled")
+				: ResourceGetString(L"ViewNATDetectorWindowDetectionStopped") + L" " + error.message());
 			DiagnosticInfoBar().IsOpen(true);
-			StatusText().Text(L"Detection incomplete");
+			StatusText().Text(ResourceGetString(L"ViewNATDetectorWindowDetectionIncomplete"));
 			DetectingProgress().IsActive(false);
 			StartButton().IsEnabled(true);
 			QuickPortButton().IsEnabled(true);
@@ -439,9 +455,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		catch (...)
 		{
 			DiagnosticInfoBar().Severity(Controls::InfoBarSeverity::Warning);
-			DiagnosticInfoBar().Message(L"Detection stopped unexpectedly.");
+			DiagnosticInfoBar().Message(ResourceGetString(L"ViewNATDetectorWindowDetectionStoppedUnexpectedly"));
 			DiagnosticInfoBar().IsOpen(true);
-			StatusText().Text(L"Detection incomplete");
+			StatusText().Text(ResourceGetString(L"ViewNATDetectorWindowDetectionIncomplete"));
 			DetectingProgress().IsActive(false);
 			StartButton().IsEnabled(true);
 			QuickPortButton().IsEnabled(true);
@@ -476,20 +492,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		switch (result->filtering)
 		{
 			case ::OpenNet::Core::NatFilteringBehavior::EndpointIndependent:
-				FilteringExplanationText().Text(
-					L"A reply from a different public IP and port was received. Once the mapping exists, inbound filtering is endpoint-independent.");
+				FilteringExplanationText().Text(ResourceGetString(L"ViewNATDetectorWindowFilteringExplanationEndpointIndependent"));
 				break;
 			case ::OpenNet::Core::NatFilteringBehavior::AddressDependent:
-				FilteringExplanationText().Text(
-					L"A different IP was blocked, while the same IP using a different source port was accepted. Filtering depends on the remote address.");
+				FilteringExplanationText().Text(ResourceGetString(L"ViewNATDetectorWindowFilteringExplanationAddressDependent"));
 				break;
 			case ::OpenNet::Core::NatFilteringBehavior::AddressAndPortDependent:
-				FilteringExplanationText().Text(
-					L"Replies from both a different IP+port and the same IP with a different port were not received. Filtering depends on the full remote endpoint.");
+				FilteringExplanationText().Text(ResourceGetString(L"ViewNATDetectorWindowFilteringExplanationAddressAndPortDependent"));
 				break;
 			default:
-				FilteringExplanationText().Text(
-					L"Filtering behavior could not be classified. A traversal node with two public IPv4 addresses is required for the complete test.");
+				FilteringExplanationText().Text(ResourceGetString(L"ViewNATDetectorWindowFilteringExplanationUnknown"));
 				break;
 		}
 		ConclusionExplanationText().Text(BuildConclusion(*result));

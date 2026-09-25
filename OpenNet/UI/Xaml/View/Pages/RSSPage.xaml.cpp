@@ -111,11 +111,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				if (!torrentLink.empty())
 				{
 					ProcessAndShowTorrentMetadataWindow(torrentLink);
-					m_viewModel.SetStatusMessage(L"Opening download: " + item.Title());
+					m_viewModel.SetStatusMessage(ResourceGetString(L"ViewRSSPageOpeningDownload") + L" " + item.Title());
 				}
 				else
 				{
-					m_viewModel.SetStatusMessage(L"No download link available for: " + item.Title());
+					m_viewModel.SetStatusMessage(ResourceGetString(L"ViewRSSPageNoDownloadLink") + L" " + item.Title());
 				}
 			}
 		}
@@ -140,7 +140,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		catch (winrt::hresult_error const& ex)
 		{
-			m_viewModel.SetStatusMessage(L"Unable to open torrent: " + ex.message());
+				m_viewModel.SetStatusMessage(ResourceGetString(L"ViewRSSPageUnableToOpenTorrent") + L" " + ex.message());
 		}
 		catch (const std::exception& ex)
 		{
@@ -252,7 +252,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		catch (...)
 		{
-			m_viewModel.SetStatusMessage(L"Unable to open the article link.");
+			m_viewModel.SetStatusMessage(ResourceGetString(L"ViewRSSPageUnableToOpenArticle"));
 		}
 	}
 
@@ -266,7 +266,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		catch (...)
 		{
-			m_viewModel.SetStatusMessage(L"Unable to open the article link.");
+			m_viewModel.SetStatusMessage(ResourceGetString(L"ViewRSSPageUnableToOpenArticle"));
 		}
 	}
 

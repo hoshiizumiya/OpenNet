@@ -6,6 +6,7 @@
 
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
+import OpenNet.Core.Utils.Message;
 
 namespace OpenNet::ViewModels
 {
@@ -61,11 +62,11 @@ namespace OpenNet::ViewModels
 		{
 			switch (m_status)
 			{
-				case DetectionStatus::Idle: return L"就绪 / Ready";
-				case DetectionStatus::Detecting: return L"检测中... / Detecting...";
-				case DetectionStatus::Completed: return L"检测完成 / Detection Completed";
-				case DetectionStatus::Failed: return L"检测失败 / Detection Failed";
-				default: return L"未知 / Unknown";
+				case DetectionStatus::Idle: return ResourceGetString(L"NetworkDetectionReady").c_str();
+				case DetectionStatus::Detecting: return ResourceGetString(L"NetworkDetectionInProgress").c_str();
+				case DetectionStatus::Completed: return ResourceGetString(L"NetworkDetectionComplete").c_str();
+				case DetectionStatus::Failed: return ResourceGetString(L"NetworkDetectionFailed").c_str();
+				default: return ResourceGetString(L"CommonUnknown").c_str();
 			}
 		}
 
@@ -138,7 +139,7 @@ namespace OpenNet::ViewModels
 
 		std::wstring UPnPStatusText() const
 		{
-			return m_upnpAvailable ? L"可用 / Available" : L"不可用 / Not Available";
+			return ResourceGetString(m_upnpAvailable ? L"CommonAvailable" : L"CommonNotAvailable").c_str();
 		}
 
 		bool FirewallEnabled() const
@@ -155,7 +156,7 @@ namespace OpenNet::ViewModels
 
 		std::wstring FirewallStatusText() const
 		{
-			return m_firewallEnabled ? L"已启用 / Enabled" : L"已禁用 / Disabled";
+			return ResourceGetString(m_firewallEnabled ? L"CommonEnabled" : L"CommonDisabled").c_str();
 		}
 
 		// 网络质量指标 / Network Quality Metrics
@@ -176,7 +177,7 @@ namespace OpenNet::ViewModels
 		{
 			if (m_latency > 0)
 				return std::to_wstring(static_cast<int>(m_latency)) + L" ms";
-			return L"未测试 / Not Tested";
+			return ResourceGetString(L"CommonNotTested").c_str();
 		}
 
 		double Bandwidth() const
@@ -208,7 +209,7 @@ namespace OpenNet::ViewModels
 
 				return std::to_wstring(static_cast<int>(speed)) + L" " + units[unitIndex];
 			}
-			return L"未测试 / Not Tested";
+			return ResourceGetString(L"CommonNotTested").c_str();
 		}
 
 		double PacketLoss() const
@@ -228,7 +229,7 @@ namespace OpenNet::ViewModels
 		{
 			if (m_packetLoss >= 0)
 				return std::to_wstring(static_cast<int>(m_packetLoss * 100)) + L"%";
-			return L"未测试 / Not Tested";
+			return ResourceGetString(L"CommonNotTested").c_str();
 		}
 
 		// 网络评分 / Network Score
@@ -252,11 +253,11 @@ namespace OpenNet::ViewModels
 
 		std::wstring NetworkQuality() const
 		{
-			if (m_networkScore >= 80) return L"优秀 / Excellent";
-			else if (m_networkScore >= 60) return L"良好 / Good";
-			else if (m_networkScore >= 40) return L"一般 / Fair";
-			else if (m_networkScore >= 20) return L"较差 / Poor";
-			else return L"很差 / Very Poor";
+			if (m_networkScore >= 80) return ResourceGetString(L"NetworkQualityExcellent").c_str();
+			else if (m_networkScore >= 60) return ResourceGetString(L"NetworkQualityGood").c_str();
+			else if (m_networkScore >= 40) return ResourceGetString(L"NetworkQualityFair").c_str();
+			else if (m_networkScore >= 20) return ResourceGetString(L"NetworkQualityPoor").c_str();
+			else return ResourceGetString(L"NetworkQualityVeryPoor").c_str();
 		}
 
 		// 端口状态 / Port Status

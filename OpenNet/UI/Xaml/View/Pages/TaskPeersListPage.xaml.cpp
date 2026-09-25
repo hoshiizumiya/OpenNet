@@ -603,6 +603,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return winrt::hstring{ buf };
 	}
 
+	static winrt::hstring PeerResource(wchar_t const* key);
+
 	// Format peer status flags to qBittorrent-style string: D=downloading, U=uploading, etc.
 	static winrt::hstring FormatPeerStatus(::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo const& peer)
 	{
@@ -630,7 +632,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			case 1: protocol = L"BT"; break;
 			case 2: protocol = L"WebSeed"; break;
 			case 4: protocol = L"HTTP"; break;
-			default: protocol = L"Unknown"; break;
+		default: protocol = PeerResource(L"CommonUnknown").c_str(); break;
 		}
 		if (peer.isI2p) protocol += L" / I2P";
 		else if (peer.isUtp) protocol += L" / uTP";
@@ -655,21 +657,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		return winrt::to_hstring(ip) + L":" + winrt::to_hstring(port);
 	}
 
-	static winrt::hstring PeerResource(
-		wchar_t const* key, wchar_t const* fallback)
+	static winrt::hstring PeerResource(wchar_t const* key)
 	{
-		try
-		{
-			auto value =
-				winrt::Microsoft::Windows::ApplicationModel::Resources::
-				ResourceLoader{}.GetString(key);
-			if (!value.empty())
-				return value;
-		}
-		catch (...)
-		{
-		}
-		return fallback;
+		return winrt::Microsoft::Windows::ApplicationModel::Resources::
+			ResourceLoader{}.GetString(key);
 	}
 
 	static winrt::hstring FormatManualBanReason(
@@ -677,18 +668,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::int64_t now)
 	{
 		std::wstring text{
-			PeerResource(L"PeerReason_Manual", L"User manual ban").c_str() };
+			PeerResource(L"PeerReason_Manual").c_str() };
 		text += L" \u00b7 ";
 		if (ban.expiresAt == 0)
 		{
-			text += PeerResource(
-				L"PeerReason_Permanent", L"Permanent").c_str();
+			text += PeerResource(L"PeerReason_Permanent").c_str();
 			return winrt::hstring{ text };
 		}
 
 		auto const remaining = std::max<std::int64_t>(0, ban.expiresAt - now);
-		text += PeerResource(
-			L"PeerReason_Remaining", L"Remaining").c_str();
+		text += PeerResource(L"PeerReason_Remaining").c_str();
 		text += L" ";
 		if (remaining < 60)
 		{
@@ -914,7 +903,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.Reason(L"");
 			item.ConnectionTime(L"-");
 			item.Protocol(FormatConnectionType(peer));
-			item.Initiator(peer.isIncoming ? L"Remote" : L"Local");
+			item.Initiator(PeerResource(peer.isIncoming ? L"PeerInitiatorRemote" : L"PeerInitiatorLocal"));
 			item.Source(peer.sourceDescription.empty()
 				? L"-" : winrt::to_hstring(peer.sourceDescription));
 		};
@@ -1010,7 +999,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			if (!currentPeers.contains(key))
 			{
-				item.PeerStatus(L"disconnecting");
+				item.PeerStatus(PeerResource(L"PeerStatusDisconnecting"));
 				item.Reason(L"connection_closed");
 				m_disconnectingPeers[key] = item;
 			}
@@ -1078,18 +1067,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			if (event.isBan && remainsBanned)
 			{
-				item.PeerStatus(L"BanIP");
+				item.PeerStatus(PeerResource(L"PeerStatusBanned"));
 				if (event.reason == "anti_leech")
 				{
-					item.Reason(PeerResource(
-						L"PeerReason_AntiLeech", L"Anti-leech ban"));
+					item.Reason(PeerResource(L"PeerReason_AntiLeech"));
 				}
 				else if (hasClientRule)
 				{
 					std::wstring reason{
-						PeerResource(
-							L"PeerReason_ClientListMatch",
-							L"Anti-leech client list match").c_str() };
+						PeerResource(L"PeerReason_ClientListMatch").c_str() };
 					if (!activeClientRule->pattern.empty())
 					{
 						reason += L": ";
@@ -1101,9 +1087,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				else if (matchingRule)
 				{
 					std::wstring reason{
-						PeerResource(
-							L"PeerReason_ListMatch",
-							L"IP list source match").c_str() };
+						PeerResource(L"PeerReason_ListMatch").c_str() };
 					if (!matchingRule->description.empty())
 					{
 						reason += L": ";
@@ -1114,15 +1098,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				}
 				else
 				{
-					item.Reason(PeerResource(
-						L"PeerReason_IPFilter", L"IP filter match"));
+					item.Reason(PeerResource(L"PeerReason_IPFilter"));
 				}
 				m_disconnectingPeers.erase(key);
 				m_banIpPeers[key] = item;
 			}
 			else
 			{
-				item.PeerStatus(L"disconnecting");
+				item.PeerStatus(PeerResource(L"PeerStatusDisconnecting"));
 				item.Reason(winrt::to_hstring(
 					event.isBan ? "ip_filter_released" : event.reason));
 				m_banIpPeers.erase(key);
@@ -1147,7 +1130,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			initializeEndpointItem(ban.ip, ban.port, item);
 			if (!ban.client.empty())
 				item.Client(winrt::to_hstring(ban.client));
-			item.PeerStatus(L"BanIP");
+			item.PeerStatus(PeerResource(L"PeerStatusBanned"));
 			item.Reason(FormatManualBanReason(ban, now));
 			m_disconnectingPeers.erase(key);
 			m_banIpPeers[key] = item;
@@ -1221,13 +1204,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		replaceChildren(m_banIpGroup.Children(), banned);
 
 		m_connectedGroup.IP(
-			L"bt_connected (" + winrt::to_hstring(connected.size()) + L")");
+			PeerResource(L"PeersGroupConnected") + L" (" + winrt::to_hstring(connected.size()) + L")");
 		m_connectingGroup.IP(
-			L"bt_connecting (" + winrt::to_hstring(connecting.size()) + L")");
+			PeerResource(L"PeersGroupConnecting") + L" (" + winrt::to_hstring(connecting.size()) + L")");
 		m_disconnectingGroup.IP(
-			L"disconnecting (" + winrt::to_hstring(disconnecting.size()) + L")");
+			PeerResource(L"PeersGroupDisconnecting") + L" (" + winrt::to_hstring(disconnecting.size()) + L")");
 		m_banIpGroup.IP(
-			L"BanIP (" + winrt::to_hstring(banned.size()) + L")");
+			PeerResource(L"PeersGroupBannedIps") + L" (" + winrt::to_hstring(banned.size()) + L")");
 
 		auto const hasAny = !connected.empty() || !connecting.empty()
 			|| !disconnecting.empty() || !banned.empty();

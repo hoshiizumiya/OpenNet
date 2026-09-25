@@ -88,12 +88,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		winrt::hstring m_password;
 		winrt::hstring m_clipboardPreviewText;
 		winrt::Microsoft::UI::Xaml::Visibility m_clipboardPreviewVisibility{ winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
-		winrt::hstring m_fileSizeText{ L"Size: Unknown" };
+		winrt::hstring m_fileSizeText;
 		winrt::hstring m_diskSpaceText;
-		winrt::hstring m_resumeSupportText{ L"Resume support: Unknown" };
+		winrt::hstring m_resumeSupportText;
 		bool m_isMetadataLoading{};
-		winrt::hstring m_errorTitle{ L"Invalid URL" };
-		winrt::hstring m_errorMessage{ L"Please enter a valid HTTP, HTTPS, or FTP URL." };
+		winrt::hstring m_errorTitle;
+		winrt::hstring m_errorMessage;
 		bool m_isErrorOpen{};
 		winrt::Windows::ApplicationModel::DataTransfer::Clipboard::ContentChanged_revoker m_event_revoker;
 	};

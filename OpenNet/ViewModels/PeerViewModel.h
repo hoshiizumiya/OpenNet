@@ -7,6 +7,7 @@
 import winrt.Windows.System.Threading;
 import winrt.Windows.Foundation;
 import winrt.Windows.Foundation.Collections;
+import OpenNet.Core.Utils.Message;
 
 // 使用项目自有模型命名空间
 namespace Models = winrt::OpenNet::Models;
@@ -65,10 +66,10 @@ namespace OpenNet::ViewModels
 		{
 			switch (m_status)
 			{
-				case DiscoveryStatus::Stopped: return L"已停止 / Stopped";
-				case DiscoveryStatus::Discovering: return L"发现中... / Discovering...";
-				case DiscoveryStatus::Broadcasting: return L"广播中... / Broadcasting...";
-				default: return L"未知 / Unknown";
+				case DiscoveryStatus::Stopped: return ResourceGetString(L"PeerDiscoveryStopped").c_str();
+				case DiscoveryStatus::Discovering: return ResourceGetString(L"PeerDiscoveryInProgress").c_str();
+				case DiscoveryStatus::Broadcasting: return ResourceGetString(L"PeerBroadcasting").c_str();
+				default: return ResourceGetString(L"CommonUnknown").c_str();
 			}
 		}
 
@@ -114,18 +115,18 @@ namespace OpenNet::ViewModels
 		std::wstring SelectedPeerDetails() const
 		{
 			if (!m_selectedPeer)
-				return L"未选择节点 / No peer selected";
+				return ResourceGetString(L"PeerNoPeerSelected").c_str();
 
-			std::wstring details = L"节点信息 / Peer Information:\n";
-			details += L"名称 / Name: " + std::wstring(m_selectedPeer->displayName.c_str()) + L"\n";
-			details += L"设备 / Device: " + std::wstring(m_selectedPeer->deviceName.c_str()) + L"\n";
-			details += L"系统 / OS: " + std::wstring(m_selectedPeer->operatingSystem.c_str()) + L"\n";
-			details += L"状态 / Status: " + std::wstring(m_selectedPeer->GetStatusString().c_str()) + L"\n";
-			details += L"本地IP / Local IP: " + std::wstring(m_selectedPeer->localIP.c_str()) + L"\n";
-			details += L"公网IP / Public IP: " + std::wstring(m_selectedPeer->publicIP.c_str()) + L"\n";
-			details += L"NAT类型 / NAT Type: " + std::wstring(m_selectedPeer->GetNATTypeString().c_str()) + L"\n";
-			details += L"延迟 / Latency: " + std::to_wstring(static_cast<int>(m_selectedPeer->latency)) + L" ms\n";
-			details += L"信号强度 / Signal: " + std::wstring(m_selectedPeer->GetSignalStrengthString().c_str());
+			std::wstring details = ResourceGetString(L"PeerDetailsHeader").c_str();
+			details += ResourceGetString(L"PeerDetailsNamePrefix").c_str() + std::wstring(m_selectedPeer->displayName.c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsDevicePrefix").c_str() + std::wstring(m_selectedPeer->deviceName.c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsOsPrefix").c_str() + std::wstring(m_selectedPeer->operatingSystem.c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsStatusPrefix").c_str() + std::wstring(m_selectedPeer->GetStatusString().c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsLocalIpPrefix").c_str() + std::wstring(m_selectedPeer->localIP.c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsPublicIpPrefix").c_str() + std::wstring(m_selectedPeer->publicIP.c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsNatTypePrefix").c_str() + std::wstring(m_selectedPeer->GetNATTypeString().c_str()) + L"\n";
+			details += ResourceGetString(L"PeerDetailsLatencyPrefix").c_str() + std::to_wstring(static_cast<int>(m_selectedPeer->latency)) + ResourceGetString(L"PeerDetailsMillisecondsSuffix").c_str() + L"\n";
+			details += ResourceGetString(L"PeerDetailsSignalPrefix").c_str() + std::wstring(m_selectedPeer->GetSignalStrengthString().c_str());
 
 			return details;
 		}
@@ -248,7 +249,7 @@ namespace OpenNet::ViewModels
 		std::wstring ConnectionSuccessRate() const
 		{
 			if (m_totalConnectionAttempts == 0)
-				return L"N/A";
+				return ResourceGetString(L"CommonNotAvailable").c_str();
 			double rate = static_cast<double>(m_successfulConnections) / m_totalConnectionAttempts * 100.0;
 			return std::to_wstring(static_cast<int>(rate)) + L"%";
 		}

@@ -184,19 +184,13 @@ export namespace OpenNet::UI::Xaml::Control
 				: direction == 2
 				? L"DataTableSortDescendingHint"
 				: L"DataTableSortNoneHint";
-			auto const fallback = direction == 1
-				? L"Sorted ascending. Activate to sort descending."
-				: direction == 2
-				? L"Sorted descending. Activate to clear sorting."
-				: L"Not sorted. Activate to sort ascending.";
 			try
 			{
-				auto value = ResourceLoader{}.GetString(key);
-				return value.empty() ? winrt::hstring{ fallback } : value;
+				return ResourceLoader{}.GetString(key);
 			}
 			catch (...)
 			{
-				return winrt::hstring{ fallback };
+				return {};
 			}
 		}
 	};

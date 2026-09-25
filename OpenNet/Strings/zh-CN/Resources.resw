@@ -5331,4 +5331,1409 @@
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
     <value>启用 DHT</value>
   </data>
+  <data name="CommonNotTested" xml:space="preserve">
+    <value>未测试</value>
+  </data>
+  <data name="CommonOpen" xml:space="preserve">
+    <value>开放</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeTcpHandshake" xml:space="preserve">
+    <value>TCP 已连接；已发送 BitTorrent 握手</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeUtpResponse" xml:space="preserve">
+    <value>收到有效的 uTP 响应</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeConnectionRefused" xml:space="preserve">
+    <value>连接被拒绝</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeTimeout" xml:space="preserve">
+    <value>遍历超时前未收到响应</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeUnexpectedUdp" xml:space="preserve">
+    <value>UDP 已响应，但不是有效的 uTP 数据包</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeNoEvidence" xml:space="preserve">
+    <value>没有探测证据</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeResultFormat" xml:space="preserve">
+    <value>{0} · {1} 毫秒 · {2}</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeBlocked" xml:space="preserve">
+    <value>被阻止 / 不可达</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeTimedOut" xml:space="preserve">
+    <value>遍历节点返回结果前已超时</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeNotAvailable" xml:space="preserve">
+    <value>不可用 / 未测试</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringNotAvailable" xml:space="preserve">
+    <value>不可用（遍历节点需要第二个公网 IPv4 地址）</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringReceived" xml:space="preserve">
+    <value>已从请求的备用端点收到响应</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringNotReceived" xml:space="preserve">
+    <value>3 秒 STUN 超时前未收到响应</value>
+  </data>
+  <data name="ViewNATDetectorWindowNotObserved" xml:space="preserve">
+    <value>未观察到</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionInternalEndpoint" xml:space="preserve">
+    <value>所有映射请求都使用相同的内部 UDP 端点 {0}:{1}。 </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionPrimaryObserved" xml:space="preserve">
+    <value>主遍历端点观察到 </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionRemotePort" xml:space="preserve">
+    <value>仅改变远程端口后得到 </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionRemoteAddress" xml:space="preserve">
+    <value>改变远程地址后得到 </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionDirect" xml:space="preserve">
+    <value>本地与观察到的公网 IPv4 地址一致，未观察到 IPv4 地址转换。</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionEndpointIndependent" xml:space="preserve">
+    <value>不同远程端点的公网端点保持不变（端点无关映射）。</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionAddressDependent" xml:space="preserve">
+    <value>远程 IP 改变时公网端点改变，但仅改变端口时不变（地址相关映射）。</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionAddressAndPortDependent" xml:space="preserve">
+    <value>远程端点改变后，同一套接字收到了不同的公网映射。这种依赖目标的映射是传统“对称型 NAT”标签的关键依据。</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionUnknown" xml:space="preserve">
+    <value>STUN 证据不足，无法判断映射行为。</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionDisclaimer" xml:space="preserve">
+    <value>映射描述出站流量如何转换；过滤行为则单独描述哪些远程端点可以回发数据包。两者都不是传统端口扫描。</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoListeningSocket" xml:space="preserve">
+    <value>libtorrent 未打开监听套接字。</value>
+  </data>
+  <data name="ViewNATDetectorWindowTcpPending" xml:space="preserve">
+    <value>TCP 等待中</value>
+  </data>
+  <data name="ViewNATDetectorWindowUdpPending" xml:space="preserve">
+    <value>UDP 等待中</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForStunTest" xml:space="preserve">
+    <value>正在等待完整的 STUN 行为测试。</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForEvidence" xml:space="preserve">
+    <value>正在等待映射和过滤证据。</value>
+  </data>
+  <data name="ViewNATDetectorWindowTraversalProbeTimedOut" xml:space="preserve">
+    <value>遍历探测超时</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoTraversalProbeResponse" xml:space="preserve">
+    <value>未收到遍历探测响应</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoActiveListener" xml:space="preserve">
+    <value>没有可用的活动 libtorrent IPv4 或 IPv6 监听器。</value>
+  </data>
+  <data name="ViewNATDetectorWindowTestingReachability" xml:space="preserve">
+    <value>正在测试 IPv4/IPv6 TCP 和 UDP 可达性</value>
+  </data>
+  <data name="ViewNATDetectorWindowQuickPortTestComplete" xml:space="preserve">
+    <value>快速端口测试完成</value>
+  </data>
+  <data name="ViewNATDetectorWindowQuickPortTestIncomplete" xml:space="preserve">
+    <value>快速端口测试未完成</value>
+  </data>
+  <data name="ViewNATDetectorWindowQuickPortTestStopped" xml:space="preserve">
+    <value>快速端口测试意外停止。</value>
+  </data>
+  <data name="ViewNATDetectorWindowTcpMappingFormat" xml:space="preserve">
+    <value>TCP {0}（{1}）</value>
+  </data>
+  <data name="ViewNATDetectorWindowUdpMappingFormat" xml:space="preserve">
+    <value>UDP {0}（{1}）</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoListeningConfiguredPort" xml:space="preserve">
+    <value>libtorrent 未监听。请在 BitTorrent 设置中选择可用端口。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionCancelled" xml:space="preserve">
+    <value>检测已取消。</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionStopped" xml:space="preserve">
+    <value>检测已停止：</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionStoppedUnexpectedly" xml:space="preserve">
+    <value>检测意外停止。</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationEndpointIndependent" xml:space="preserve">
+    <value>收到了来自不同公网 IP 和端口的响应。映射建立后，入站过滤与端点无关。</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationAddressDependent" xml:space="preserve">
+    <value>不同 IP 被阻止，但同一 IP 使用不同源端口时被接受。过滤取决于远程地址。</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationAddressAndPortDependent" xml:space="preserve">
+    <value>来自不同 IP+端口以及同一 IP 不同端口的响应都未收到。过滤取决于完整的远程端点。</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationUnknown" xml:space="preserve">
+    <value>无法判断过滤行为。完整测试需要具有两个公网 IPv4 地址的遍历节点。</value>
+  </data>
+  <data name="ViewNatToolsPagePortOpenPrefix" xml:space="preserve">
+    <value>端口 </value>
+  </data>
+  <data name="ViewNatToolsPagePortOpenSuffix" xml:space="preserve">
+    <value> 已开放（映射端口匹配）</value>
+  </data>
+  <data name="ViewNatToolsPagePortClosedPrefix" xml:space="preserve">
+    <value>端口 </value>
+  </data>
+  <data name="ViewNatToolsPagePortClosedSuffix" xml:space="preserve">
+    <value> 似乎已关闭或被重新映射</value>
+  </data>
+  <data name="ViewNetworkSettingsPageActualPortPrefix" xml:space="preserve">
+    <value>端口 </value>
+  </data>
+  <data name="ViewNetworkSettingsPageActualListeningPrefix" xml:space="preserve">
+    <value>当前监听端口：</value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidDisplayedListener" xml:space="preserve">
+    <value>编辑的端点无效；当前显示的监听器仍使用上一次有效配置。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageRuntimePortAutoSelected" xml:space="preserve">
+    <value>由于至少有一个配置端点使用端口 0，操作系统选择了当前运行端口。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageRuntimePortMatchesConfiguration" xml:space="preserve">
+    <value>当前运行监听器与已保存的端点配置一致。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageRuntimePortDiffersConfiguration" xml:space="preserve">
+    <value>运行端口与保存的固定端口不同。请检查配置端口是否已被占用。</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTrackerList" xml:space="preserve">
+    <value>Tracker 列表</value>
+  </data>
+  <data name="ViewRSSPageOpeningDownload" xml:space="preserve">
+    <value>正在打开下载：</value>
+  </data>
+  <data name="ViewRSSPageNoDownloadLink" xml:space="preserve">
+    <value>没有可用的下载链接：</value>
+  </data>
+  <data name="ViewRSSPageUnableToOpenTorrent" xml:space="preserve">
+    <value>无法打开种子：</value>
+  </data>
+  <data name="ViewRSSPageUnableToOpenArticle" xml:space="preserve">
+    <value>无法打开文章链接。</value>
+  </data>
+  <data name="RuntimeStatusSectionApplicationTasks" xml:space="preserve">
+    <value>应用与任务</value>
+  </data>
+  <data name="RuntimeStatusVersion" xml:space="preserve">
+    <value>版本</value>
+  </data>
+  <data name="RuntimeStatusDhtNodesIpv4" xml:space="preserve">
+    <value>DHT IPv4 节点</value>
+  </data>
+  <data name="RuntimeStatusSectionProcessMemory" xml:space="preserve">
+    <value>进程与内存</value>
+  </data>
+  <data name="RuntimeStatusMemoryWorkingSet" xml:space="preserve">
+    <value>内存工作集</value>
+  </data>
+  <data name="RuntimeStatusMemoryCommitPrivate" xml:space="preserve">
+    <value>内存提交/专用</value>
+  </data>
+  <data name="RuntimeStatusProcessHandleCount" xml:space="preserve">
+    <value>进程句柄数</value>
+  </data>
+  <data name="RuntimeStatusSectionStorageDiskCache" xml:space="preserve">
+    <value>存储与磁盘缓存</value>
+  </data>
+  <data name="RuntimeStatusVolumeList" xml:space="preserve">
+    <value>卷列表</value>
+  </data>
+  <data name="RuntimeStatusVolumeEntryValue" xml:space="preserve">
+    <value>{} 可用 {} / {}</value>
+  </data>
+  <data name="RuntimeStatusSectionBitCometCoverage" xml:space="preserve">
+    <value>BitComet 专用子系统覆盖情况</value>
+  </data>
+  <data name="RuntimeStatusLtSeedProtocol" xml:space="preserve">
+    <value>LTSeed 客户端/服务器协议</value>
+  </data>
+  <data name="RuntimeStatusLtSeedUdpQueues" xml:space="preserve">
+    <value>LTSeed UDP 队列</value>
+  </data>
+  <data name="RuntimeStatusDiskBoostService" xml:space="preserve">
+    <value>磁盘加速服务</value>
+  </data>
+  <data name="RuntimeStatusBitCometMessageQueues" xml:space="preserve">
+    <value>BitComet 消息队列类别</value>
+  </data>
+  <data name="RuntimeStatusBitCometTimerQueues" xml:space="preserve">
+    <value>BitComet 定时器队列类别</value>
+  </data>
+  <data name="RuntimeStatusSectionConnectionsAddresses" xml:space="preserve">
+    <value>连接与地址</value>
+  </data>
+  <data name="RuntimeStatusInternalPeerBans" xml:space="preserve">
+    <value>内部对等节点封禁</value>
+  </data>
+  <data name="RuntimeStatusLanIpv4" xml:space="preserve">
+    <value>局域网 IPv4</value>
+  </data>
+  <data name="RuntimeStatusLanIpv6" xml:space="preserve">
+    <value>局域网 IPv6</value>
+  </data>
+  <data name="RuntimeStatusWindowsFirewallState" xml:space="preserve">
+    <value>Windows 防火墙状态</value>
+  </data>
+  <data name="RuntimeStatusSectionSessionTotals" xml:space="preserve">
+    <value>会话总计</value>
+  </data>
+  <data name="RuntimeStatusSectionUdpDhtDiagnostics" xml:space="preserve">
+    <value>UDP、DHT 与检测诊断</value>
+  </data>
+  <data name="RuntimeStatusSectionSchedulersTrackers" xml:space="preserve">
+    <value>调度器与 Tracker</value>
+  </data>
+  <data name="RuntimeStatusSectionRawLibtorrentMetrics" xml:space="preserve">
+    <value>原始 libtorrent 会话指标</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentEngine" xml:space="preserve">
+    <value>BitTorrent 引擎</value>
+  </data>
+  <data name="RuntimeStatusUpTime" xml:space="preserve">
+    <value>运行时间</value>
+  </data>
+  <data name="RuntimeStatusOverallTasks" xml:space="preserve">
+    <value>任务总数</value>
+  </data>
+  <data name="RuntimeStatusRunningTasks" xml:space="preserve">
+    <value>运行中任务</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentTaskStates" xml:space="preserve">
+    <value>BitTorrent 任务状态</value>
+  </data>
+  <data name="RuntimeStatusHttpTaskStates" xml:space="preserve">
+    <value>HTTP 任务状态</value>
+  </data>
+  <data name="RuntimeStatusLongTermSeeding" xml:space="preserve">
+    <value>长期做种</value>
+  </data>
+  <data name="RuntimeStatusMetadataDownloading" xml:space="preserve">
+    <value>元数据下载</value>
+  </data>
+  <data name="RuntimeStatusMetadataCacheFiles" xml:space="preserve">
+    <value>元数据缓存文件</value>
+  </data>
+  <data name="RuntimeStatusTorrentExchangeBlocklist" xml:space="preserve">
+    <value>种子交换黑名单</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentCore" xml:space="preserve">
+    <value>BitTorrent 核心</value>
+  </data>
+  <data name="RuntimeStatusHttpCore" xml:space="preserve">
+    <value>HTTP 核心</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessWebUi" xml:space="preserve">
+    <value>远程访问 / Web UI</value>
+  </data>
+  <data name="RuntimeStatusWebUiEndpoint" xml:space="preserve">
+    <value>Web UI 端点</value>
+  </data>
+  <data name="RuntimeStatusWebUiAccount" xml:space="preserve">
+    <value>Web UI 账户</value>
+  </data>
+  <data name="RuntimeStatusWebUiActivity" xml:space="preserve">
+    <value>Web UI 活动</value>
+  </data>
+  <data name="RuntimeStatusTcpConnectionsEstablished" xml:space="preserve">
+    <value>已建立 TCP 连接</value>
+  </data>
+  <data name="RuntimeStatusTcpConnectionsMaximum" xml:space="preserve">
+    <value>TCP 连接上限</value>
+  </data>
+  <data name="RuntimeStatusTcpHalfOpenMaximum" xml:space="preserve">
+    <value>TCP 半开放 / 上限</value>
+  </data>
+  <data name="RuntimeStatusPendingConnections" xml:space="preserve">
+    <value>待处理连接</value>
+  </data>
+  <data name="RuntimeStatusBtConnectionCount" xml:space="preserve">
+    <value>BT 连接数</value>
+  </data>
+  <data name="RuntimeStatusWebTorrentWebRtc" xml:space="preserve">
+    <value>WebTorrent / WebRTC</value>
+  </data>
+  <data name="RuntimeStatusI2pPex" xml:space="preserve">
+    <value>I2P / PEX</value>
+  </data>
+  <data name="RuntimeStatusHttpConnectionActivity" xml:space="preserve">
+    <value>HTTP 连接活动</value>
+  </data>
+  <data name="RuntimeStatusHttpTrackerConnectionCount" xml:space="preserve">
+    <value>HTTP Tracker 连接数</value>
+  </data>
+  <data name="RuntimeStatusOverallDownloadRate" xml:space="preserve">
+    <value>总下载速率</value>
+  </data>
+  <data name="RuntimeStatusOverallUploadRate" xml:space="preserve">
+    <value>总上传速率</value>
+  </data>
+  <data name="RuntimeStatusBtDownloadUploadRate" xml:space="preserve">
+    <value>BitTorrent 下载 / 上传速率</value>
+  </data>
+  <data name="RuntimeStatusHttpDownloadUploadRate" xml:space="preserve">
+    <value>HTTP 下载 / 上传速率</value>
+  </data>
+  <data name="RuntimeStatusDownloadUploadLimits" xml:space="preserve">
+    <value>下载 / 上传限制</value>
+  </data>
+  <data name="RuntimeStatusActiveTaskLimits" xml:space="preserve">
+    <value>活动任务限制</value>
+  </data>
+  <data name="RuntimeStatusMaximumPeerListPerTask" xml:space="preserve">
+    <value>每个任务的最大对等节点列表</value>
+  </data>
+  <data name="RuntimeStatusTrackerReceiveSendRate" xml:space="preserve">
+    <value>Tracker 接收 / 发送速率</value>
+  </data>
+  <data name="RuntimeStatusTrackerReceiveSendTotal" xml:space="preserve">
+    <value>Tracker 接收 / 发送总量</value>
+  </data>
+  <data name="RuntimeStatusBtMetadataMessages" xml:space="preserve">
+    <value>BT 元数据消息</value>
+  </data>
+  <data name="RuntimeStatusBtUploadSlots" xml:space="preserve">
+    <value>BT 上传槽位</value>
+  </data>
+  <data name="RuntimeStatusSeedingUploadRate" xml:space="preserve">
+    <value>做种上传速率</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessTransferRate" xml:space="preserve">
+    <value>远程访问传输速率</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessTransferTotal" xml:space="preserve">
+    <value>远程访问传输总量</value>
+  </data>
+  <data name="RuntimeStatusDhtRoutingCacheTorrentsPeers" xml:space="preserve">
+    <value>DHT 路由缓存 / 种子 / 对等节点</value>
+  </data>
+  <data name="RuntimeStatusDnsResolverState" xml:space="preserve">
+    <value>DNS 解析器状态</value>
+  </data>
+  <data name="RuntimeStatusCpuUsage" xml:space="preserve">
+    <value>CPU 使用率</value>
+  </data>
+  <data name="RuntimeStatusProcessHeap" xml:space="preserve">
+    <value>进程堆</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskCache" xml:space="preserve">
+    <value>libtorrent 磁盘缓存</value>
+  </data>
+  <data name="RuntimeStatusDiskWriteBuffer" xml:space="preserve">
+    <value>磁盘写入缓冲区</value>
+  </data>
+  <data name="RuntimeStatusTcpUdpSocketBuffers" xml:space="preserve">
+    <value>TCP/UDP 套接字缓冲区</value>
+  </data>
+  <data name="RuntimeStatusApplicationModelBuffers" xml:space="preserve">
+    <value>应用模型缓冲区</value>
+  </data>
+  <data name="RuntimeStatusLoggingBuffers" xml:space="preserve">
+    <value>日志缓冲区</value>
+  </data>
+  <data name="RuntimeStatusReservedVirtualMemory" xml:space="preserve">
+    <value>预留虚拟内存</value>
+  </data>
+  <data name="RuntimeStatusFreePhysicalMemory" xml:space="preserve">
+    <value>可用物理内存</value>
+  </data>
+  <data name="RuntimeStatusFreeVirtualMemory" xml:space="preserve">
+    <value>可用虚拟内存</value>
+  </data>
+  <data name="RuntimeStatusFreeProcessAddressSpace" xml:space="preserve">
+    <value>可用进程地址空间</value>
+  </data>
+  <data name="RuntimeStatusStorageTotal" xml:space="preserve">
+    <value>存储总量</value>
+  </data>
+  <data name="RuntimeStatusStorageFree" xml:space="preserve">
+    <value>可用存储</value>
+  </data>
+  <data name="RuntimeStatusDiskCacheDataSize" xml:space="preserve">
+    <value>磁盘缓存数据大小</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskReadWrite" xml:space="preserve">
+    <value>libtorrent 磁盘读 / 写</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentReadWriteOperations" xml:space="preserve">
+    <value>libtorrent 读 / 写操作</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskJobs" xml:space="preserve">
+    <value>libtorrent 磁盘任务</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskTiming" xml:space="preserve">
+    <value>libtorrent 磁盘耗时</value>
+  </data>
+  <data name="RuntimeStatusProcessDiskReadTotal" xml:space="preserve">
+    <value>进程磁盘读取总量</value>
+  </data>
+  <data name="RuntimeStatusProcessDiskWriteTotal" xml:space="preserve">
+    <value>进程磁盘写入总量</value>
+  </data>
+  <data name="RuntimeStatusPersistedHttpCompletedData" xml:space="preserve">
+    <value>已持久化的 HTTP 完成数据</value>
+  </data>
+  <data name="RuntimeStatusLongTermSeedDiskBoost" xml:space="preserve">
+    <value>长期做种 / 磁盘加速服务</value>
+  </data>
+  <data name="RuntimeStatusTotalDownloadedSession" xml:space="preserve">
+    <value>会话下载总量</value>
+  </data>
+  <data name="RuntimeStatusTotalUploadedSession" xml:space="preserve">
+    <value>会话上传总量</value>
+  </data>
+  <data name="RuntimeStatusNetworkPayloadReceiveSend" xml:space="preserve">
+    <value>网络负载接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusNetworkProtocolReceiveSend" xml:space="preserve">
+    <value>网络协议接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusIpOverheadReceiveSend" xml:space="preserve">
+    <value>IP 开销接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusFailedRedundantDownload" xml:space="preserve">
+    <value>失败 / 冗余下载</value>
+  </data>
+  <data name="RuntimeStatusPieceChecksPassedFailed" xml:space="preserve">
+    <value>分块校验通过 / 失败</value>
+  </data>
+  <data name="RuntimeStatusPersistedHttpDownloaded" xml:space="preserve">
+    <value>已持久化的 HTTP 下载量</value>
+  </data>
+  <data name="RuntimeStatusPersistedP2pDownloaded" xml:space="preserve">
+    <value>已持久化的 P2P 下载量</value>
+  </data>
+  <data name="RuntimeStatusPersistedCombinedDownloaded" xml:space="preserve">
+    <value>已持久化的合计下载量</value>
+  </data>
+  <data name="RuntimeStatusDhtBytesReceiveSend" xml:space="preserve">
+    <value>DHT 字节接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusDhtReceiveSendRate" xml:space="preserve">
+    <value>DHT 接收 / 发送速率</value>
+  </data>
+  <data name="RuntimeStatusDhtMessagesReceiveSend" xml:space="preserve">
+    <value>DHT 消息接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusDhtDroppedReceiveSend" xml:space="preserve">
+    <value>DHT 丢弃接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusDhtRequestTypesReceiveSend" xml:space="preserve">
+    <value>DHT 请求类型接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusDhtInvalidRequests" xml:space="preserve">
+    <value>DHT 无效请求</value>
+  </data>
+  <data name="RuntimeStatusDhtPendingRpcObservers" xml:space="preserve">
+    <value>DHT 待处理 RPC 观察器</value>
+  </data>
+  <data name="RuntimeStatusDhtUploadRateLimit" xml:space="preserve">
+    <value>DHT 上传速率限制</value>
+  </data>
+  <data name="RuntimeStatusUtpPacketsReceiveSend" xml:space="preserve">
+    <value>uTP 数据包接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusUtpPayloadReceiveSend" xml:space="preserve">
+    <value>uTP 负载包接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusUtpLossTimeoutResend" xml:space="preserve">
+    <value>uTP 丢包 / 超时 / 重发</value>
+  </data>
+  <data name="RuntimeStatusUdpTrackerTraffic" xml:space="preserve">
+    <value>UDP Tracker 流量</value>
+  </data>
+  <data name="RuntimeStatusNatDetection" xml:space="preserve">
+    <value>NAT 检测</value>
+  </data>
+  <data name="RuntimeStatusIpDetection" xml:space="preserve">
+    <value>IP 检测</value>
+  </data>
+  <data name="RuntimeStatusDnsFailureDomainCounts" xml:space="preserve">
+    <value>DNS 失败域计数</value>
+  </data>
+  <data name="RuntimeStatusPeerMessagesReceiveSend" xml:space="preserve">
+    <value>对等节点消息接收 / 发送</value>
+  </data>
+  <data name="RuntimeStatusRateLimiterQueues" xml:space="preserve">
+    <value>速率限制器队列</value>
+  </data>
+  <data name="RuntimeStatusNetworkEventWakeups" xml:space="preserve">
+    <value>网络事件唤醒</value>
+  </data>
+  <data name="RuntimeStatusQueuedTrackerAnnounces" xml:space="preserve">
+    <value>排队的 Tracker 公告</value>
+  </data>
+  <data name="RuntimeStatusTrackerConnectionDetails" xml:space="preserve">
+    <value>Tracker 连接详情</value>
+  </data>
+  <data name="RuntimeStatusDiskScheduler" xml:space="preserve">
+    <value>磁盘调度器</value>
+  </data>
+  <data name="RuntimeStatusTimerMessageImplementation" xml:space="preserve">
+    <value>定时器/消息实现</value>
+  </data>
+  <data name="RuntimeStatusNoneDetected" xml:space="preserve">
+    <value>未检测到</value>
+  </data>
+  <data name="RuntimeStatusWanIpv4NotObserved" xml:space="preserve">
+    <value>端口映射未观察到</value>
+  </data>
+  <data name="RuntimeStatusWanIpv6NotObserved" xml:space="preserve">
+    <value>未观察到 IPv6 地址</value>
+  </data>
+  <data name="RuntimeStatusIncomingConnectivityNotObserved" xml:space="preserve">
+    <value>本次会话未观察到</value>
+  </data>
+  <data name="RuntimeStatusNoConfirmedExternalMapping" xml:space="preserve">
+    <value>没有已确认的外部映射</value>
+  </data>
+  <data name="RuntimeStatusDirectIpv6NoNatMapping" xml:space="preserve">
+    <value>IPv6 直接可达；不需要 NAT 映射</value>
+  </data>
+  <data name="RuntimeStatusNoConfirmedMapping" xml:space="preserve">
+    <value>没有已确认的映射</value>
+  </data>
+  <data name="RuntimeStatusNotObserved" xml:space="preserve">
+    <value>未观察到</value>
+  </data>
+  <data name="RuntimeStatusIncomingConnectivityObserved" xml:space="preserve">
+    <value>观察到入站连接</value>
+  </data>
+  <data name="RuntimeStatusNoIncomingConnectivityObserved" xml:space="preserve">
+    <value>未观察到入站连接</value>
+  </data>
+  <data name="RuntimeStatusResolverDetailsUnavailable" xml:space="preserve">
+    <value>解析器详情不属于 libtorrent 公共统计 API</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentTaskStatesValue" xml:space="preserve">
+    <value>下载中 {}，元数据 {}，做种 {}，校验中 {}，暂停 {}，错误 {}</value>
+  </data>
+  <data name="RuntimeStatusHttpTaskStatesValue" xml:space="preserve">
+    <value>待处理 {}，下载中 {}，暂停 {}，已完成 {}，失败 {}</value>
+  </data>
+  <data name="RuntimeStatusLongTermSeedingValue" xml:space="preserve">
+    <value>{} 个原生做种任务；未使用 BitComet LTSeed 协议</value>
+  </data>
+  <data name="RuntimeStatusWebUiActivityValue" xml:space="preserve">
+    <value>{} 个请求，{} 个活动连接，{} 次登录失败</value>
+  </data>
+  <data name="RuntimeStatusWebTorrentEnabledValue" xml:space="preserve">
+    <value>已启用；STUN {}；{} 个 offer；{} 秒超时</value>
+  </data>
+  <data name="RuntimeStatusI2pEnabledValue" xml:space="preserve">
+    <value>通过 {}:{} 启用；混合模式 {}</value>
+  </data>
+  <data name="RuntimeStatusMappedViaValue" xml:space="preserve">
+    <value>已通过 {} 映射到 {}</value>
+  </data>
+  <data name="RuntimeStatusUtpConnectionsValue" xml:space="preserve">
+    <value>已连接 {}，SYN 发送 {}，FIN 发送 {}，等待关闭 {}，空闲 {}</value>
+  </data>
+  <data name="RuntimeStatusReceivedSentValue" xml:space="preserve">
+    <value>接收 {}，发送 {}</value>
+  </data>
+  <data name="RuntimeStatusReceiveSendValue" xml:space="preserve">
+    <value>接收 {} / 发送 {}</value>
+  </data>
+  <data name="RuntimeStatusProcessHeapValue" xml:space="preserve">
+    <value>{} 忙碌 + {} 开销，共 {} 个堆</value>
+  </data>
+  <data name="RuntimeStatusDiskWriteBufferValue" xml:space="preserve">
+    <value>已排队 {}；最大设置 {}</value>
+  </data>
+  <data name="RuntimeStatusSocketBuffersValue" xml:space="preserve">
+    <value>接收 {}，发送 {}（0 表示使用系统默认值）</value>
+  </data>
+  <data name="RuntimeStatusDiskJobsValue" xml:space="preserve">
+    <value>已排队 {}，运行中 {}，阻塞 {}，读取 {}，写入 {}</value>
+  </data>
+  <data name="RuntimeStatusDiskTimingValue" xml:space="preserve">
+    <value>读取 {} 毫秒，写入 {} 毫秒，哈希 {} 毫秒，请求延迟 {} 微秒</value>
+  </data>
+  <data name="RuntimeStatusUdpTrackerTrafficValue" xml:space="preserve">
+    <value>包含在 Tracker 接收/发送总量中：{} / {}</value>
+  </data>
+  <data name="RuntimeStatusNatDetectionValue" xml:space="preserve">
+    <value>外部地址 {}；映射 TCP/UDP {} / {}</value>
+  </data>
+  <data name="RuntimeStatusNetworkEventWakeupsValue" xml:space="preserve">
+    <value>读取 {}，写入 {}，计时 {}，UDP {}，接受 {}，磁盘 {}</value>
+  </data>
+  <data name="RuntimeStatusTrackerConnectionDetailsValue" xml:space="preserve">
+    <value>已排队 {}；已接收 {}；已发送 {}</value>
+  </data>
+  <data name="RuntimeStatusDiskSchedulerValue" xml:space="preserve">
+    <value>已排队 {} / 运行中 {} / 阻塞 {}</value>
+  </data>
+  <data name="IpEndpointInputInvalidAddress" xml:space="preserve">
+    <value>请输入 IPv4 或 IPv6 地址。</value>
+  </data>
+  <data name="IpEndpointInputPortRange" xml:space="preserve">
+    <value>端口必须在 0 到 65535 之间。</value>
+  </data>
+  <data name="IpEndpointInputAutomaticPortOnly" xml:space="preserve">
+    <value>端口 0 仅在自动模式下有效。</value>
+  </data>
+  <data name="IpEndpointInputHostNameRejected" xml:space="preserve">
+    <value>不接受主机名，请输入数字 IP 地址。</value>
+  </data>
+  <data name="IpEndpointInputRequireIpv4" xml:space="preserve">
+    <value>请输入 IPv4 地址。</value>
+  </data>
+  <data name="IpEndpointInputRequireIpv6" xml:space="preserve">
+    <value>请输入 IPv6 地址。</value>
+  </data>
+  <data name="IpEndpointInputValidIpv4" xml:space="preserve">
+    <value>有效的 IPv4 端点</value>
+  </data>
+  <data name="IpEndpointInputValidIpv6" xml:space="preserve">
+    <value>有效的 IPv6 端点</value>
+  </data>
+  <data name="IpEndpointInputAutomaticPortSuffix" xml:space="preserve">
+    <value> · 自动端口</value>
+  </data>
+  <data name="IpEndpointInputInvalidNumericAddress" xml:space="preserve">
+    <value>请输入有效的数字 IPv4 或 IPv6 地址。</value>
+  </data>
+  <data name="HttpDownloadFreePrefix" xml:space="preserve">
+    <value>可用空间：</value>
+  </data>
+  <data name="HttpDownloadGiB" xml:space="preserve">
+    <value> GiB</value>
+  </data>
+  <data name="HttpDownloadInvalidUrlTitle" xml:space="preserve">
+    <value>URL 无效</value>
+  </data>
+  <data name="HttpDownloadInvalidUrlMessage" xml:space="preserve">
+    <value>请输入有效的 HTTP、HTTPS 或 FTP URL。</value>
+  </data>
+  <data name="HttpDownloadAddFailedTitle" xml:space="preserve">
+    <value>无法添加下载</value>
+  </data>
+  <data name="HttpDownloadAddFailedMessage" xml:space="preserve">
+    <value>aria2 不可用或拒绝了提供的选项。</value>
+  </data>
+  <data name="HttpDownloadSizeDeterminedByAria2" xml:space="preserve">
+    <value>大小：由 aria2 确定</value>
+  </data>
+  <data name="HttpDownloadResumeDeterminedByServer" xml:space="preserve">
+    <value>续传支持：由服务器确定</value>
+  </data>
+  <data name="HttpDownloadSizePrefix" xml:space="preserve">
+    <value>大小： </value>
+  </data>
+  <data name="HttpDownloadMiB" xml:space="preserve">
+    <value> MiB</value>
+  </data>
+  <data name="HttpDownloadSizeUnknown" xml:space="preserve">
+    <value>大小：未知</value>
+  </data>
+  <data name="HttpDownloadResumeYes" xml:space="preserve">
+    <value>续传支持：是</value>
+  </data>
+  <data name="HttpDownloadResumeNo" xml:space="preserve">
+    <value>续传支持：否</value>
+  </data>
+  <data name="HttpDownloadResumeUnknown" xml:space="preserve">
+    <value>续传支持：未知</value>
+  </data>
+  <data name="HttpDownloadMetadataFailedTitle" xml:space="preserve">
+    <value>无法获取文件信息</value>
+  </data>
+  <data name="ClientFilterRuleSaveFailed" xml:space="preserve">
+    <value>规则已存在或无法保存</value>
+  </data>
+  <data name="ClientFilterRuleAdded" xml:space="preserve">
+    <value>客户端筛选规则已添加</value>
+  </data>
+  <data name="ClientFilterRuleUpdateFailed" xml:space="preserve">
+    <value>规则无法更新，可能与其他规则重复。</value>
+  </data>
+  <data name="ClientFilterRuleUpdated" xml:space="preserve">
+    <value>规则已更新</value>
+  </data>
+  <data name="ClientFilterRulesImportedPrefix" xml:space="preserve">
+    <value>导入了 </value>
+  </data>
+  <data name="ClientFilterRulesImportedSuffix" xml:space="preserve">
+    <value> 条规则</value>
+  </data>
+  <data name="ClientFilterNoValidRulesImported" xml:space="preserve">
+    <value>没有导入新的有效规则</value>
+  </data>
+  <data name="ClientFilterInvalidPatternPrefix" xml:space="preserve">
+    <value>无效模式： </value>
+  </data>
+  <data name="ClientFilterMatchTypeExact" xml:space="preserve">
+    <value>完全匹配</value>
+  </data>
+  <data name="ClientFilterMatchTypeWildcard" xml:space="preserve">
+    <value>通配符</value>
+  </data>
+  <data name="ClientFilterMatchTypeRegex" xml:space="preserve">
+    <value>正则表达式</value>
+  </data>
+  <data name="ClientFilterMatchTypeContains" xml:space="preserve">
+    <value>包含</value>
+  </data>
+  <data name="ClientFilterRuleNumberPrefix" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ClientFilterRuleEnabledMarker" xml:space="preserve">
+    <value>  [已启用]  </value>
+  </data>
+  <data name="ClientFilterRuleDisabledMarker" xml:space="preserve">
+    <value>  [已禁用]  </value>
+  </data>
+  <data name="ClientFilterCaseSensitive" xml:space="preserve">
+    <value> / 区分大小写 / </value>
+  </data>
+  <data name="ClientFilterIgnoreCase" xml:space="preserve">
+    <value> / 不区分大小写 / </value>
+  </data>
+  <data name="ClientFilterDescriptionPrefix" xml:space="preserve">
+    <value>  —  </value>
+  </data>
+  <data name="ClientFilterHitsPrefix" xml:space="preserve">
+    <value>  · 命中 </value>
+  </data>
+  <data name="IPF_NoValidIpInput" xml:space="preserve">
+    <value>输入中没有有效的 IP 地址</value>
+  </data>
+  <data name="IPF_NoValidIpFile" xml:space="preserve">
+    <value>文件中没有有效的 IP 地址</value>
+  </data>
+  <data name="IPF_OpenFolderFailed" xml:space="preserve">
+    <value>无法打开 IP 过滤文件夹</value>
+  </data>
+  <data name="IPF_OpenFolderErrorPrefix" xml:space="preserve">
+    <value>无法打开 IP 过滤文件夹：</value>
+  </data>
+  <data name="IPF_OpenFilePrefix" xml:space="preserve">
+    <value>无法打开 </value>
+  </data>
+  <data name="IPF_ErrorSeparator" xml:space="preserve">
+    <value>： </value>
+  </data>
+  <data name="IPF_InvalidEditedRule" xml:space="preserve">
+    <value>编辑的规则不是有效的 IP 地址、CIDR 网段或范围</value>
+  </data>
+  <data name="IPF_RuleUpdated" xml:space="preserve">
+    <value>规则已更新</value>
+  </data>
+  <data name="IPF_RuleDeleted" xml:space="preserve">
+    <value>规则已删除</value>
+  </data>
+  <data name="IPF_AllRulesCleared" xml:space="preserve">
+    <value>所有规则已清除</value>
+  </data>
+  <data name="WebUiRunning" xml:space="preserve">
+    <value>运行中</value>
+  </data>
+  <data name="WebUiNotRunning" xml:space="preserve">
+    <value>未运行</value>
+  </data>
+  <data name="RssBrowserNewTab" xml:space="preserve">
+    <value>新标签页</value>
+  </data>
+  <data name="RssBrowserLoading" xml:space="preserve">
+    <value>正在加载...</value>
+  </data>
+  <data name="RuntimeStatusNotApplicable" xml:space="preserve">
+    <value>不适用于 OpenNet</value>
+  </data>
+  <data name="DevWindowManualXamlException" xml:space="preserve">
+    <value>手动触发的 XAML 异常（用于测试）。</value>
+  </data>
+  <data name="DevWindowOperationInProgress" xml:space="preserve">
+    <value>操作进行中</value>
+  </data>
+  <data name="DevWindowOperationPleaseWait" xml:space="preserve">
+    <value>请等待操作完成。</value>
+  </data>
+  <data name="ClientFilterDatabaseOpenFailed" xml:space="preserve">
+    <value>无法打开客户端筛选数据库</value>
+  </data>
+  <data name="ClientFilterRuleDeleted" xml:space="preserve">
+    <value>规则已删除</value>
+  </data>
+  <data name="ClientFilterRulesCleared" xml:space="preserve">
+    <value>所有客户端筛选规则已清除</value>
+  </data>
+  <data name="ClientFilterHitHistoryCleared" xml:space="preserve">
+    <value>命中历史已清除</value>
+  </data>
+  <data name="RuntimeStatusNoMountedVolumes" xml:space="preserve">
+    <value>没有已挂载的卷</value>
+  </data>
+  <data name="RuntimeStatusUnableEnumerateVolumes" xml:space="preserve">
+    <value>无法枚举卷</value>
+  </data>
+  <data name="RuntimeStatusFirewallQueryFailedPrefix" xml:space="preserve">
+    <value>无法查询（</value>
+  </data>
+  <data name="RuntimeStatusFirewallDomain" xml:space="preserve">
+    <value>域</value>
+  </data>
+  <data name="RuntimeStatusFirewallPrivate" xml:space="preserve">
+    <value>专用</value>
+  </data>
+  <data name="RuntimeStatusFirewallPublic" xml:space="preserve">
+    <value>公用</value>
+  </data>
+  <data name="RuntimeStatusLastUpdatedPrefix" xml:space="preserve">
+    <value>最后更新 </value>
+  </data>
+  <data name="RuntimeStatusItemsSuffix" xml:space="preserve">
+    <value> 项</value>
+  </data>
+  <data name="RuntimeStatusUnpackagedDev" xml:space="preserve">
+    <value>未打包/开发版</value>
+  </data>
+  <data name="RuntimeStatusReportTitle" xml:space="preserve">
+    <value>OpenNet 完整运行状态</value>
+  </data>
+  <data name="WebUiStopped" xml:space="preserve">
+    <value>已停止</value>
+  </data>
+  <data name="RuntimeStatusNotListeningPrefix" xml:space="preserve">
+    <value>未监听：</value>
+  </data>
+  <data name="RuntimeStatusNotListening" xml:space="preserve">
+    <value>未监听</value>
+  </data>
+  <data name="CommonLoading" xml:space="preserve">
+    <value>加载中</value>
+  </data>
+  <data name="MainViewNavigationFailedPrefix" xml:space="preserve">
+    <value>页面加载失败：</value>
+  </data>
+  <data name="IPF_RuleUpdateFailed" xml:space="preserve">
+    <value>规则无法更新，可能与其他规则重复。</value>
+  </data>
+  <data name="CommonNotAvailable" xml:space="preserve">
+    <value>不可用</value>
+  </data>
+  <data name="CommonUnlimited" xml:space="preserve">
+    <value>无限制</value>
+  </data>
+  <data name="TaskSummaryNotSeeding" xml:space="preserve">
+    <value>未做种</value>
+  </data>
+  <data name="TaskSummaryCheckingResumeData" xml:space="preserve">
+    <value>正在检查恢复数据</value>
+  </data>
+  <data name="TaskSummaryCheckingFiles" xml:space="preserve">
+    <value>正在检查文件</value>
+  </data>
+  <data name="TaskSummaryDownloadingMetadata" xml:space="preserve">
+    <value>正在下载元数据</value>
+  </data>
+  <data name="TaskSummaryAllocating" xml:space="preserve">
+    <value>正在分配</value>
+  </data>
+  <data name="TaskSummaryCheckingFastResume" xml:space="preserve">
+    <value>正在检查快速恢复数据</value>
+  </data>
+  <data name="TaskSummarySha256" xml:space="preserve">
+    <value>SHA-256</value>
+  </data>
+  <data name="TaskSummarySha1" xml:space="preserve">
+    <value>SHA-1</value>
+  </data>
+  <data name="TaskSummaryPieceAligned" xml:space="preserve">
+    <value>按分块对齐</value>
+  </data>
+  <data name="TaskSummaryNotPieceAligned" xml:space="preserve">
+    <value>未按分块对齐</value>
+  </data>
+  <data name="TaskSummaryAutoManaged" xml:space="preserve">
+    <value>自动管理</value>
+  </data>
+  <data name="TaskSummarySequential" xml:space="preserve">
+    <value>顺序下载</value>
+  </data>
+  <data name="TaskSummarySuperSeeding" xml:space="preserve">
+    <value>超级做种</value>
+  </data>
+  <data name="Aria2StatusRemoved" xml:space="preserve">
+    <value>已移除</value>
+  </data>
+  <data name="Aria2StatusActive" xml:space="preserve">
+    <value>活动中</value>
+  </data>
+  <data name="Aria2StatusWaiting" xml:space="preserve">
+    <value>等待中</value>
+  </data>
+  <data name="CommonNone" xml:space="preserve">
+    <value>无</value>
+  </data>
+  <data name="TaskSummaryConnectedOfTotal" xml:space="preserve">
+    <value>已连接 {} / {}</value>
+  </data>
+  <data name="TaskSummaryConnectedCount" xml:space="preserve">
+    <value>已连接 {}</value>
+  </data>
+  <data name="TaskSummaryFirstLastPiecePriority" xml:space="preserve">
+    <value>优先下载首尾分块</value>
+  </data>
+  <data name="TaskSpeedGraphDiskBlocksInUse" xml:space="preserve">
+    <value>libtorrent 正在使用的磁盘块</value>
+  </data>
+  <data name="TaskSpeedGraphFinishedSeedingTasks" xml:space="preserve">
+    <value>已完成和做种任务</value>
+  </data>
+  <data name="PeersGroupConnected" xml:space="preserve">
+    <value>已连接</value>
+  </data>
+  <data name="PeersGroupConnecting" xml:space="preserve">
+    <value>连接中</value>
+  </data>
+  <data name="PeersGroupDisconnecting" xml:space="preserve">
+    <value>断开中</value>
+  </data>
+  <data name="PeersGroupBannedIps" xml:space="preserve">
+    <value>已封禁 IP</value>
+  </data>
+  <data name="PeerStatusDisconnecting" xml:space="preserve">
+    <value>断开中</value>
+  </data>
+  <data name="PeerStatusBanned" xml:space="preserve">
+    <value>已封禁</value>
+  </data>
+  <data name="PeerInitiatorRemote" xml:space="preserve">
+    <value>远端</value>
+  </data>
+  <data name="PeerInitiatorLocal" xml:space="preserve">
+    <value>本地</value>
+  </data>
+  <data name="TaskPieceMapHashPrefix" xml:space="preserve">
+    <value>
+哈希： </value>
+  </data>
+  <data name="PeerConnectionDiscovering" xml:space="preserve">
+    <value>发现中</value>
+  </data>
+  <data name="PeerConnectionConnecting" xml:space="preserve">
+    <value>连接中</value>
+  </data>
+  <data name="PeerConnectionFailed" xml:space="preserve">
+    <value>连接失败</value>
+  </data>
+  <data name="PeerConnectionTimedOut" xml:space="preserve">
+    <value>已超时</value>
+  </data>
+  <data name="ClientFilterEnabledStatus" xml:space="preserve">
+    <value>客户端筛选已启用</value>
+  </data>
+  <data name="ClientFilterDisabledStatus" xml:space="preserve">
+    <value>客户端筛选已禁用，临时封禁已清除</value>
+  </data>
+  <data name="ClientFilterRulesExported" xml:space="preserve">
+    <value>规则已导出</value>
+  </data>
+  <data name="ClientFilterExportFailed" xml:space="preserve">
+    <value>无法导出规则</value>
+  </data>
+  <data name="TaskSpeedGraphCpuAverageSuffix" xml:space="preserve">
+    <value> 平均值</value>
+  </data>
+  <data name="TaskSpeedGraphCpuPeakValue" xml:space="preserve">
+    <value>峰值 {} · {} 个逻辑处理器</value>
+  </data>
+  <data name="MainViewPortStateBlocked" xml:space="preserve">
+    <value>受阻</value>
+  </data>
+  <data name="MainViewPortStateTimedOut" xml:space="preserve">
+    <value>已超时</value>
+  </data>
+  <data name="MainViewPortStateUnavailable" xml:space="preserve">
+    <value>不可用</value>
+  </data>
+  <data name="MainViewGuestUser" xml:space="preserve">
+    <value>访客</value>
+  </data>
+  <data name="MainViewAppStarted" xml:space="preserve">
+    <value>应用已启动</value>
+  </data>
+  <data name="MainViewPortOpenedFirewallRouter" xml:space="preserve">
+    <value>防火墙/路由器已开放</value>
+  </data>
+  <data name="MainViewListenerStatusValue" xml:space="preserve">
+    <value>{}（{}）</value>
+  </data>
+  <data name="MainViewRemoteAccessStatusValue" xml:space="preserve">
+    <value>{}（{}）</value>
+  </data>
+  <data name="MainViewWebUiListening" xml:space="preserve">
+    <value>监听中</value>
+  </data>
+  <data name="MainViewLsdPortEnabledValue" xml:space="preserve">
+    <value>{}（监听中）</value>
+  </data>
+  <data name="MainViewWindowsFirewallStatusValue" xml:space="preserve">
+    <value>Windows 防火墙：{}；TCP {} {}；UDP {} {}；远程 TCP {} {}</value>
+  </data>
+  <data name="MainViewUpnpMappingAddedValue" xml:space="preserve">
+    <value>已添加 [TCP {} → {}；UDP {} → {}]</value>
+  </data>
+  <data name="MainViewUpnpEnabledWaitingMapping" xml:space="preserve">
+    <value>已启用；等待确认映射</value>
+  </data>
+  <data name="MainViewUpnpMappingFailedValue" xml:space="preserve">
+    <value>失败 [{}]</value>
+  </data>
+  <data name="WebUISettingsRunningAt" xml:space="preserve">
+    <value>Web UI 正在运行，地址：</value>
+  </data>
+  <data name="WebUISettingsChangesApplyAutomatically" xml:space="preserve">
+    <value>Web UI 当前未运行；有效设置会自动应用。</value>
+  </data>
+  <data name="WebUISettingsAddressPortFailedRestored" xml:space="preserve">
+    <value>无法打开该地址或端口，已恢复之前的设置。</value>
+  </data>
+  <data name="WebUISettingsChangesAppliedRunning" xml:space="preserve">
+    <value>设置已应用。Web UI 正在运行，地址：</value>
+  </data>
+  <data name="WebUISettingsChangesAppliedDisabled" xml:space="preserve">
+    <value>设置已应用。Web UI 已禁用。</value>
+  </data>
+  <data name="WebUISettingsApiKeyApplying" xml:space="preserve">
+    <value>正在应用新的 API 密钥。</value>
+  </data>
+  <data name="WebUISettingsNoApiKeyToCopy" xml:space="preserve">
+    <value>没有可复制的 API 密钥。</value>
+  </data>
+  <data name="WebUISettingsApiKeyCopied" xml:space="preserve">
+    <value>API 密钥已复制到剪贴板。</value>
+  </data>
+  <data name="WebUISettingsApiKeyRevocationApplying" xml:space="preserve">
+    <value>正在应用 API 密钥撤销操作。</value>
+  </data>
+  <data name="WebUISettingsNotRunningCheckSettings" xml:space="preserve">
+    <value>Web UI 未运行。请检查上方设置。</value>
+  </data>
+  <data name="RuntimeStatusInitialized" xml:space="preserve">
+    <value>已初始化</value>
+  </data>
+  <data name="RuntimeStatusNotInitialized" xml:space="preserve">
+    <value>未初始化</value>
+  </data>
+  <data name="RuntimeStatusAria2Available" xml:space="preserve">
+    <value>Aria2 可用</value>
+  </data>
+  <data name="RuntimeStatusAria2Unavailable" xml:space="preserve">
+    <value>Aria2 不可用</value>
+  </data>
+  <data name="RuntimeStatusPasswordInitialized" xml:space="preserve">
+    <value>已初始化</value>
+  </data>
+  <data name="RuntimeStatusPasswordNeedsInitialization" xml:space="preserve">
+    <value>需要首次运行初始化</value>
+  </data>
+  <data name="RuntimeStatusTaskBreakdownValue" xml:space="preserve">
+    <value>{}（BitTorrent {}，HTTP {}）</value>
+  </data>
+  <data name="RuntimeStatusEnabledPersistedRulesValue" xml:space="preserve">
+    <value>{}；{} 条已保存规则</value>
+  </data>
+  <data name="RuntimeStatusWebUiAccountValue" xml:space="preserve">
+    <value>{}；密码{}</value>
+  </data>
+  <data name="RuntimeStatusDirectProxyConnectionsValue" xml:space="preserve">
+    <value>直连 {}，代理 {}</value>
+  </data>
+  <data name="RuntimeStatusHalfOpenManagedValue" xml:space="preserve">
+    <value>{} / 动态管理</value>
+  </data>
+  <data name="RuntimeStatusPendingConnectionsValue" xml:space="preserve">
+    <value>半开放 {}，待处理接受连接 {}</value>
+  </data>
+  <data name="RuntimeStatusBtConnectionCountValue" xml:space="preserve">
+    <value>报告对等节点 {}；TCP {}，uTP {}，代理 {}</value>
+  </data>
+  <data name="RuntimeStatusHttpConnectionActivityValue" xml:space="preserve">
+    <value>活动任务 {} / 等待任务 {}（Aria2 报告任务数而非套接字数）</value>
+  </data>
+  <data name="RuntimeStatusWanIpv6SeeLanAddress" xml:space="preserve">
+    <value>请查看局域网 IPv6（全局可路由/链路本地范围由操作系统提供）</value>
+  </data>
+  <data name="RuntimeStatusListenerErrorUnknown" xml:space="preserve">
+    <value>未知监听器错误</value>
+  </data>
+  <data name="RuntimeStatusLsdPortEnabled" xml:space="preserve">
+    <value>6771/UDP（已启用）</value>
+  </data>
+  <data name="RuntimeStatusNoneConfirmed" xml:space="preserve">
+    <value>尚无已确认项</value>
+  </data>
+  <data name="RuntimeStatusPortMappingMechanismsValue" xml:space="preserve">
+    <value>TCP：{}；UDP：{}</value>
+  </data>
+  <data name="TorrentPrioritySkip" xml:space="preserve">
+    <value>跳过</value>
+  </data>
+  <data name="TorrentPriorityLowest" xml:space="preserve">
+    <value>最低</value>
+  </data>
+  <data name="TorrentPriorityLow" xml:space="preserve">
+    <value>低</value>
+  </data>
+  <data name="TorrentPriorityBelowNormal" xml:space="preserve">
+    <value>低于普通</value>
+  </data>
+  <data name="TorrentPriorityNormal" xml:space="preserve">
+    <value>普通</value>
+  </data>
+  <data name="TorrentPriorityAboveNormal" xml:space="preserve">
+    <value>高于普通</value>
+  </data>
+  <data name="TorrentPriorityHigh" xml:space="preserve">
+    <value>高</value>
+  </data>
+  <data name="TorrentPriorityHighest" xml:space="preserve">
+    <value>最高</value>
+  </data>
+  <data name="TorrentMetadataLoading" xml:space="preserve">
+    <value>加载中</value>
+  </data>
+  <data name="TorrentMetadataConnectingPeers" xml:space="preserve">
+    <value>正在连接对等节点...</value>
+  </data>
+  <data name="TorrentMetadataReady" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="TorrentMetadataReceived" xml:space="preserve">
+    <value>已收到元数据</value>
+  </data>
+  <data name="SettingsDefaultUserName" xml:space="preserve">
+    <value>访客</value>
+  </data>
+  <data name="SettingsThisPc" xml:space="preserve">
+    <value>此电脑</value>
+  </data>
+  <data name="RuntimeStatusWanIpv4" xml:space="preserve">
+    <value>广域网 IPv4</value>
+  </data>
+  <data name="RuntimeStatusWanIpv6" xml:space="preserve">
+    <value>广域网 IPv6</value>
+  </data>
+  <data name="RuntimeStatusBtTcpListenPort" xml:space="preserve">
+    <value>BT TCP 监听端口</value>
+  </data>
+  <data name="RuntimeStatusIncomingPeerConnectivity" xml:space="preserve">
+    <value>对等节点入站连接能力</value>
+  </data>
+  <data name="RuntimeStatusBtTcpFirewallIpv4" xml:space="preserve">
+    <value>BT TCP 防火墙/路由器状态 IPv4</value>
+  </data>
+  <data name="RuntimeStatusBtTcpFirewallIpv6" xml:space="preserve">
+    <value>BT TCP 防火墙/路由器状态 IPv6</value>
+  </data>
+  <data name="RuntimeStatusBtUdpListenPort" xml:space="preserve">
+    <value>BT UDP 监听端口</value>
+  </data>
+  <data name="RuntimeStatusBtUdpMappedPort" xml:space="preserve">
+    <value>BT UDP 映射端口</value>
+  </data>
+  <data name="RuntimeStatusUtpConnections" xml:space="preserve">
+    <value>uTP 连接</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessPort" xml:space="preserve">
+    <value>远程访问端口</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessConnections" xml:space="preserve">
+    <value>远程访问连接数</value>
+  </data>
+  <data name="RuntimeStatusLsdPort" xml:space="preserve">
+    <value>LSD 端口</value>
+  </data>
+  <data name="RuntimeStatusUpnpNatMapping" xml:space="preserve">
+    <value>UPnP NAT 映射</value>
+  </data>
+  <data name="RuntimeStatusNatPmpMapping" xml:space="preserve">
+    <value>NAT-PMP 映射</value>
+  </data>
+  <data name="RuntimeStatusPortMappingMechanisms" xml:space="preserve">
+    <value>端口映射机制</value>
+  </data>
+  <data name="RuntimeStatusTcpUdpMappedPorts" xml:space="preserve">
+    <value>TCP / UDP 映射端口</value>
+  </data>
+  <data name="RuntimeStatusMetadataCacheFilesValue" xml:space="preserve">
+    <value>{} 个文件 / {}</value>
+  </data>
+  <data name="RuntimeStatusActiveTaskLimitsValue" xml:space="preserve">
+    <value>下载 {}，做种 {}，总计 {}</value>
+  </data>
+  <data name="RuntimeStatusBtUploadSlotsValue" xml:space="preserve">
+    <value>活动 {} / 允许 {}</value>
+  </data>
+  <data name="RuntimeStatusCpuUsageValue" xml:space="preserve">
+    <value>{}%（{} 个物理核心 / {} 个逻辑处理器）</value>
+  </data>
+  <data name="RuntimeStatusApplicationModelBuffersValue" xml:space="preserve">
+    <value>STL/WinRT 容器已计入堆/专用内存总量</value>
+  </data>
+  <data name="RuntimeStatusLoggingBuffersValue" xml:space="preserve">
+    <value>OpenNet 使用 ETW/调试输出；没有固定的 BitComet 式日志内存区</value>
+  </data>
+  <data name="RuntimeStatusReservedVirtualMemoryValue" xml:space="preserve">
+    <value>{} 预留/专用地址空间</value>
+  </data>
+  <data name="RuntimeStatusDiskCacheDataSizeValue" xml:space="preserve">
+    <value>{}（{} 个 16 KiB 块）</value>
+  </data>
+  <data name="RuntimeStatusProcessDiskIoValue" xml:space="preserve">
+    <value>{}，共 {} 次操作</value>
+  </data>
+  <data name="RuntimeStatusDhtRequestTypesValue" xml:space="preserve">
+    <value>ping {}/{}，find_node {}/{}，get_peers {}/{}，announce_peer {}/{}，get {}/{}，put {}/{}</value>
+  </data>
+  <data name="RuntimeStatusRateLimiterQueuesValue" xml:space="preserve">
+    <value>上传 {} 个套接字 / {}；下载 {} 个套接字 / {}</value>
+  </data>
+  <data name="RuntimeStatusTimerMessageImplementationValue" xml:space="preserve">
+    <value>libtorrent ASIO 执行器；BitComet 定时器队列内部实现不适用</value>
+  </data>
+  <data name="RuntimeStatusOpenNetEquivalents" xml:space="preserve">
+    <value>OpenNet 对应实现</value>
+  </data>
+  <data name="RuntimeStatusOpenNetEquivalentsValue" xml:space="preserve">
+    <value>原生 BitTorrent/libtorrent、Aria2 HTTP、ASIO 调度器、内存映射磁盘 I/O</value>
+  </data>
+  <data name="TaskPieceMapUnchecked" xml:space="preserve">
+    <value>未检查</value>
+  </data>
+  <data name="TaskPieceMapEmpty" xml:space="preserve">
+    <value>空</value>
+  </data>
+  <data name="TaskPieceMapTooltipFormat" xml:space="preserve">
+    <value>分块 {}
+状态：{}
+可用性：{}</value>
+  </data>
+  <data name="ClientFilterMatchedRulePrefix" xml:space="preserve">
+    <value>匹配规则 #</value>
+  </data>
+  <data name="ClientFilterRuleDisabled" xml:space="preserve">
+    <value>规则已禁用</value>
+  </data>
+  <data name="ClientFilterRuleEnabled" xml:space="preserve">
+    <value>规则已启用</value>
+  </data>
+  <data name="TaskPieceMapHashUnavailable" xml:space="preserve">
+    <value>\n哈希：此元数据/协议不可用</value>
+  </data>
+  <data name="MBInfo" xml:space="preserve">
+    <value>信息</value>
+  </data>
+  <data name="MBWarn" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="MBError" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="RuntimeStatusDnsResolverStateValue" xml:space="preserve">
+    <value>由 libtorrent/WinHTTP 内部管理；公共 API 不提供缓存队列计数</value>
+  </data>
+  <data name="RuntimeStatusPortMappingError" xml:space="preserve">
+    <value>端口映射错误</value>
+  </data>
+  <data name="RuntimeStatusSectionTransfer" xml:space="preserve">
+    <value>传输</value>
+  </data>
+  <data name="CommonAvailable" xml:space="preserve">
+    <value>可用</value>
+  </data>
+  <data name="NetworkDetectionReady" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="NetworkDetectionInProgress" xml:space="preserve">
+    <value>正在检测...</value>
+  </data>
+  <data name="NetworkDetectionComplete" xml:space="preserve">
+    <value>检测完成</value>
+  </data>
+  <data name="NetworkDetectionFailed" xml:space="preserve">
+    <value>检测失败</value>
+  </data>
+  <data name="NetworkQualityExcellent" xml:space="preserve">
+    <value>优秀</value>
+  </data>
+  <data name="NetworkQualityGood" xml:space="preserve">
+    <value>良好</value>
+  </data>
+  <data name="NetworkQualityFair" xml:space="preserve">
+    <value>一般</value>
+  </data>
+  <data name="NetworkQualityPoor" xml:space="preserve">
+    <value>较差</value>
+  </data>
+  <data name="NetworkQualityVeryPoor" xml:space="preserve">
+    <value>很差</value>
+  </data>
+  <data name="PeerDiscoveryStopped" xml:space="preserve">
+    <value>已停止</value>
+  </data>
+  <data name="PeerDiscoveryInProgress" xml:space="preserve">
+    <value>发现中...</value>
+  </data>
+  <data name="PeerBroadcasting" xml:space="preserve">
+    <value>广播中...</value>
+  </data>
+  <data name="PeerNoPeerSelected" xml:space="preserve">
+    <value>未选择节点</value>
+  </data>
+  <data name="PeerDetailsHeader" xml:space="preserve">
+    <value>节点信息：
+</value>
+  </data>
+  <data name="PeerDetailsNamePrefix" xml:space="preserve">
+    <value>名称： </value>
+  </data>
+  <data name="PeerDetailsDevicePrefix" xml:space="preserve">
+    <value>设备： </value>
+  </data>
+  <data name="PeerDetailsOsPrefix" xml:space="preserve">
+    <value>系统： </value>
+  </data>
+  <data name="PeerDetailsStatusPrefix" xml:space="preserve">
+    <value>状态： </value>
+  </data>
+  <data name="PeerDetailsLocalIpPrefix" xml:space="preserve">
+    <value>本地 IP： </value>
+  </data>
+  <data name="PeerDetailsPublicIpPrefix" xml:space="preserve">
+    <value>公网 IP： </value>
+  </data>
+  <data name="PeerDetailsNatTypePrefix" xml:space="preserve">
+    <value>NAT 类型： </value>
+  </data>
+  <data name="PeerDetailsLatencyPrefix" xml:space="preserve">
+    <value>延迟： </value>
+  </data>
+  <data name="PeerDetailsMillisecondsSuffix" xml:space="preserve">
+    <value> 毫秒</value>
+  </data>
+  <data name="PeerDetailsSignalPrefix" xml:space="preserve">
+    <value>信号强度： </value>
+  </data>
+  <data name="TransferStatusIdle" xml:space="preserve">
+    <value>空闲</value>
+  </data>
+  <data name="TransferStatusPreparing" xml:space="preserve">
+    <value>准备中</value>
+  </data>
+  <data name="TransferStatusTransferring" xml:space="preserve">
+    <value>传输中</value>
+  </data>
 </root>

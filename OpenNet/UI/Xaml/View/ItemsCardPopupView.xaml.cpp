@@ -10,6 +10,7 @@
 #include "UI/Xaml/View/Windows/RuntimeStatusWindow.xaml.h"
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Windows.Foundation;
@@ -55,8 +56,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		WebUIUrlText().Text(url);
 		WebUIStatusText().Text(
 			::OpenNet::Core::WebUI::IsWebUIRunning()
-			? L"Running"
-			: L"Not running");
+			? ResourceGetString(L"WebUiRunning")
+			: ResourceGetString(L"WebUiNotRunning"));
 	}
 
 	void ItemsCardPopupView::OnLoaded(IInspectable const&, RoutedEventArgs const&)
