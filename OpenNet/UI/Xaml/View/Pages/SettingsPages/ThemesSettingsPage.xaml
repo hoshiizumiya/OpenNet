@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
@@ -56,8 +57,8 @@
             <!--  Background  -->
             <essential:SettingsExpander
                 x:Uid="ViewThemesSettingsPageBackgroundExpander"
-                Description="应用的背景类型"
-                Header="背景"
+                Description="App Background Type"
+                Header="Background"
                 IsExpanded="True">
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon
@@ -88,17 +89,33 @@
                         <essential:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE737;" />
                         </essential:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
-                            x:Name="ApplyBackgroundToSecondaryWindowsSwitch"
-                            IsOn="True"
-                            Toggled="ApplyBackgroundToSecondaryWindowsSwitch_Toggled" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <ToggleSwitch
+                                    x:Name="ApplyBackgroundToSecondaryWindowsSwitch"
+                                    Loaded="ApplyBackgroundToSecondaryWindowsSwitch_Loaded"
+                                    Toggled="ApplyBackgroundToSecondaryWindowsSwitch_Changed" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassToggleSwitch
+                                    x:Name="ApplyBackgroundToSecondaryWindowsGlassSwitch"
+                                    Click="ApplyBackgroundToSecondaryWindowsSwitch_Changed"
+                                    Loaded="ApplyBackgroundToSecondaryWindowsSwitch_Loaded" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                     <!--  Acrylic  -->
                     <essential:SettingsCard
                         x:Name="AcrylicTypeCard"
                         x:Uid="ViewThemesSettingsPageAcrylicTypeCard"
-                        Description="背景的亚克力效果模式"
-                        Header="亚克力类型"
+                        Description="Background Acrylic Effect Mode"
+                        Header="Acrylic Type"
                         HeaderIcon="{essential:FontIcon Glyph=&#xF5EF;}"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
@@ -116,8 +133,8 @@
                     <essential:SettingsCard
                         x:Name="MicaTypeCard"
                         x:Uid="ViewThemesSettingsPageMicaTypeCard"
-                        Description="背景的 Mica 效果模式"
-                        Header="Mica 类型"
+                        Description="Background Mica Effect Mode"
+                        Header="Mica Type"
                         HeaderIcon="{essential:FontIcon Glyph=&#xF5EF;}"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
@@ -137,10 +154,26 @@
                         Header="Mica error fallback"
                         IsClickEnabled="False"
                         IsEnabled="{x:Bind MicaComboBoxItem.IsSelected, Mode=OneWay}">
-                        <ToggleSwitch
-                            x:Name="BackdropFallbackSwitch"
-                            IsOn="False"
-                            Toggled="BackdropFallbackSwitch_Toggled" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <ToggleSwitch
+                                    x:Name="BackdropFallbackSwitch"
+                                    Loaded="BackdropFallbackSwitch_Loaded"
+                                    Toggled="BackdropFallbackSwitch_Changed" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassToggleSwitch
+                                    x:Name="BackdropFallbackGlassSwitch"
+                                    Click="BackdropFallbackSwitch_Changed"
+                                    Loaded="BackdropFallbackSwitch_Loaded" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                     <!--  Theme color custom  -->
                     <essential:SettingsCard
@@ -166,18 +199,35 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE9D2;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
-                    x:Name="AnimatedDigitsSwitch"
-                    IsOn="True"
-                    Toggled="AnimatedDigitsSwitch_Toggled" />
+                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch
+                            x:Name="AnimatedDigitsSwitch"
+                            IsOn="True"
+                            Loaded="AnimatedDigitsControl_Loaded"
+                            Toggled="AnimatedDigitsSwitch_Changed" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Name="AnimatedDigitsGlassSwitch"
+                            Click="AnimatedDigitsSwitch_Changed"
+                            Loaded="AnimatedDigitsControl_Loaded" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
             </essential:SettingsCard>
 
-            <!--  图片背景  -->
+            <!--  图片背景 Image Background  -->
             <essential:SettingsExpander
                 x:Name="ImageBackgroundExpander"
                 x:Uid="ViewThemesSettingsPageImageBackgroundExpander"
-                Description="在背景层添加自定义图片"
-                Header="图片背景"
+                Description="Show a local image behind the main content"
+                Header="Image Background"
                 IsExpanded="True">
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon
@@ -221,8 +271,8 @@
                     <essential:SettingsCard
                         x:Name="ImageStretchCard"
                         x:Uid="ViewThemesSettingsPageImageStretchCard"
-                        Description="背景中图片大小的设置方式"
-                        Header="图片拉伸模式"
+                        Description="The way the image is stretched within the background"
+                        Header="Image Stretch Mode"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
                         <ComboBox
@@ -240,20 +290,40 @@
                     <essential:SettingsCard
                         x:Name="ImageOpacityCard"
                         x:Uid="ViewThemesSettingsPageImageOpacityCard"
-                        Description="图片在背景中的透明度，会覆盖窗口色"
-                        Header="透明度"
+                        Description="The opacity of the image within the background, which will override the window color"
+                        Header="Opacity"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
                         <StackPanel Orientation="Horizontal">
-                            <Slider
-                                x:Name="ImageOpacitySlider"
-                                Width="300"
-                                Margin="0,0,10,0"
-                                essential:SliderHelper.AcrylicWorkaround="True"
-                                Maximum="100"
-                                Minimum="0"
-                                ValueChanged="ImageOpacitySlider_ValueChanged"
-                                Value="20" />
+                            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                                <essential:Case>
+                                    <essential:Case.Value>
+                                        <x:Int32>0</x:Int32>
+                                    </essential:Case.Value>
+                                    <Slider
+                                        x:Name="ImageOpacitySlider"
+                                        Width="300"
+                                        Margin="0,0,10,0"
+                                        essential:SliderHelper.AcrylicWorkaround="True"
+                                        Loaded="ImageOpacitySlider_Loaded"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        ValueChanged="ImageOpacitySlider_ValueChanged" />
+                                </essential:Case>
+                                <essential:Case>
+                                    <essential:Case.Value>
+                                        <x:Int32>1</x:Int32>
+                                    </essential:Case.Value>
+                                    <liquid:LiquidGlassSlider
+                                        x:Name="ImageOpacityGlassSlider"
+                                        Width="300"
+                                        Margin="0,0,10,0"
+                                        Loaded="ImageOpacitySlider_Loaded"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        ValueChanged="ImageOpacitySlider_ValueChanged" />
+                                </essential:Case>
+                            </essential:SwitchPresenter>
                         </StackPanel>
                     </essential:SettingsCard>
                     <essential:SettingsCard
@@ -324,14 +394,52 @@
                         x:Uid="ViewThemesSettingsPageVideoMutedCard"
                         Header="Mute background video"
                         HeaderIcon="{essential:FontIcon Glyph=&#xE8D6;}">
-                        <ToggleSwitch x:Name="VideoMutedSwitch" Toggled="VideoMutedSwitch_Toggled" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <ToggleSwitch
+                                    x:Name="VideoMutedSwitch"
+                                    Loaded="VideoMutedSwitch_Loaded"
+                                    Toggled="VideoMutedSwitch_Changed" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassToggleSwitch
+                                    x:Name="VideoMutedGlassSwitch"
+                                    Click="VideoMutedSwitch_Changed"
+                                    Loaded="VideoMutedSwitch_Loaded" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Name="VideoLoopingCard"
                         x:Uid="ViewThemesSettingsPageVideoLoopingCard"
                         Header="Loop video"
                         HeaderIcon="{essential:FontIcon Glyph=&#xE8ED;}">
-                        <ToggleSwitch x:Name="VideoLoopingSwitch" Toggled="VideoLoopingSwitch_Toggled" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <ToggleSwitch
+                                    x:Name="VideoLoopingSwitch"
+                                    Loaded="VideoLoopingSwitch_Loaded"
+                                    Toggled="VideoLoopingSwitch_Changed" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassToggleSwitch
+                                    x:Name="VideoLoopingGlassSwitch"
+                                    Click="VideoLoopingSwitch_Changed"
+                                    Loaded="VideoLoopingSwitch_Loaded" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Name="VideoStretchCard"
@@ -356,13 +464,33 @@
                         Description="Video opacity above the image/backdrop layer"
                         Header="Video opacity"
                         IsClickEnabled="False">
-                        <Slider
-                            x:Name="VideoOpacitySlider"
-                            Width="300"
-                            essential:SliderHelper.AcrylicWorkaround="True"
-                            Maximum="100"
-                            Minimum="0"
-                            ValueChanged="VideoOpacitySlider_ValueChanged" />
+                        <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>0</x:Int32>
+                                </essential:Case.Value>
+                                <Slider
+                                    x:Name="VideoOpacitySlider"
+                                    Width="300"
+                                    essential:SliderHelper.AcrylicWorkaround="True"
+                                    Loaded="VideoOpacitySlider_Loaded"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    ValueChanged="VideoOpacitySlider_ValueChanged" />
+                            </essential:Case>
+                            <essential:Case>
+                                <essential:Case.Value>
+                                    <x:Int32>1</x:Int32>
+                                </essential:Case.Value>
+                                <liquid:LiquidGlassSlider
+                                    x:Name="VideoOpacityGlassSlider"
+                                    Width="300"
+                                    Loaded="VideoOpacitySlider_Loaded"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    ValueChanged="VideoOpacitySlider_ValueChanged" />
+                            </essential:Case>
+                        </essential:SwitchPresenter>
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>

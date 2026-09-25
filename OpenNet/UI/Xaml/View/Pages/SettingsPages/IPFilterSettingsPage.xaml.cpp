@@ -16,8 +16,8 @@ import winrt.OpenNet.UI.Xaml.View.Dialog;
 import OpenNet.Service.Notification.InfoBarService;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.WinUI.LiquidGlass;
 import winrt.Microsoft.UI.Content;
-import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.Windows.Storage.Pickers;
 import winrt.Windows.Storage;
 import winrt.Windows.System;
@@ -39,27 +39,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		constexpr std::size_t MaxVisibleRules = 1000;
 		constexpr std::size_t MaxSubscriptionBytes = 64 * 1024 * 1024;
 		constexpr std::size_t MaxCombinedSubscriptionBytes = 128 * 1024 * 1024;
-
-		winrt::hstring ResourceText(
-			wchar_t const* key, wchar_t const* fallback)
+		std::optional<bool> ToggleIsOn(IInspectable const& sender)
 		{
-			try
-			{
-				auto value = winrt::Microsoft::Windows::ApplicationModel::
-					Resources::ResourceLoader{}.GetString(key);
-				if (!value.empty())
-					return value;
-			}
-			catch (...)
-			{
-			}
-			return fallback;
+			if (!sender) return std::nullopt;
+			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
+			return std::nullopt;
+		}
+		void SetToggleIsOn(IInspectable const& target, bool value)
+		{
+			if (!target) return;
+			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 
 		winrt::hstring FormatTimestamp(std::int64_t timestamp)
 		{
 			if (timestamp <= 0)
-				return ResourceText(L"IPF_Never", L"Never");
+				return ResourceGetString(L"IPF_Never");
 			auto const value = static_cast<std::time_t>(timestamp);
 			std::tm local{};
 			localtime_s(&local, &value);
@@ -185,7 +182,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			if (force && notify)
 			{
 				auto notification = ::OpenNet::Service::Notification::InfoBarMessage::Warning(
-					ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"), ResourceText(L"IPF_NoEnabledSubscriptions", L"No enabled subscription sources."));
+					ResourceGetString(L"IPF_NotifyTitle"), ResourceGetString(L"IPF_NoEnabledSubscriptions"));
 				notification.DelayMilliseconds = 6000;
 				::OpenNet::Service::Notification::InfoBarService::Instance().Show(std::move(notification));
 			}
@@ -291,37 +288,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		std::wstring summary;
 		if (succeeded > 0)
 		{
-			summary = ResourceText(
-				L"IPF_UpdateSummarySuccess", L"Updated sources").c_str();
+			summary = ResourceGetString(L"IPF_UpdateSummarySuccess").c_str();
 			summary += L" " + std::to_wstring(succeeded) + L"/" +
 				std::to_wstring(subscriptions.size());
 			summary += L" · ";
-			summary += ResourceText(
-				L"IPF_UpdateSummaryRules", L"valid rules").c_str();
+			summary += ResourceGetString(L"IPF_UpdateSummaryRules").c_str();
 			summary += L" " + std::to_wstring(downloadedRules);
 			summary += L" · ";
-			summary += ResourceText(
-				L"IPF_UpdateSummaryImported", L"database changes").c_str();
+			summary += ResourceGetString(L"IPF_UpdateSummaryImported").c_str();
 			summary += L" " + std::to_wstring(imported);
 			if (failed > 0)
 			{
 				summary += L" · ";
-				summary += ResourceText(
-					L"IPF_UpdateSummaryFailed", L"failed").c_str();
+				summary += ResourceGetString(L"IPF_UpdateSummaryFailed").c_str();
 				summary += L" " + std::to_wstring(failed);
 			}
 			if (replacementSkipped)
 			{
 				summary += L" · ";
-				summary += ResourceText(
-					L"IPF_ReplacementSkipped",
-					L"replacement skipped to preserve existing rules").c_str();
+				summary += ResourceGetString(L"IPF_ReplacementSkipped").c_str();
 			}
 		}
 		else
 		{
-			summary = ResourceText(
-				L"IPF_UpdateAllFailed", L"All subscription updates failed.").c_str();
+			summary = ResourceGetString(L"IPF_UpdateAllFailed").c_str();
 		}
 
 		manager.SetSubscriptionLastResult(
@@ -336,7 +326,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				: InfoBarSeverity::Success;
 			::OpenNet::Service::Notification::InfoBarMessage notification{
 				severity,
-				ResourceText(L"IPF_NotifyTitle", L"IP filter subscriptions"),
+				ResourceGetString(L"IPF_NotifyTitle"),
 				winrt::hstring{ summary } };
 			notification.DelayMilliseconds = succeeded == 0 ? 0 : 8000;
 			::OpenNet::Service::Notification::InfoBarService::Instance().Show(std::move(notification));
@@ -369,7 +359,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		co_await winrtplus::resume_foreground(dispatcher);
 
 		m_loading = true;
-		EnableFilterToggle().IsOn(enabled);
+		SetToggleIsOn(EnableFilterToggle(), enabled);
+		SetToggleIsOn(EnableFilterGlassToggle(), enabled);
 		m_allRules = std::move(rules);
 		RebuildRuleItems();
 		LoadSubscriptionState();
@@ -432,8 +423,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const wasLoading = m_loading;
 		m_loading = true;
 		m_subscriptions = manager.GetSubscriptions();
-		SubscriptionAutoUpdateToggle().IsOn(
-			manager.SubscriptionAutoUpdateEnabled());
+		SetToggleIsOn(SubscriptionAutoUpdateToggle(), manager.SubscriptionAutoUpdateEnabled());
+		SetToggleIsOn(SubscriptionAutoUpdateGlassToggle(), manager.SubscriptionAutoUpdateEnabled());
 		auto const replace = manager.SubscriptionReplaceExisting();
 		SubscriptionMergeRadio().IsChecked(!replace);
 		SubscriptionReplaceRadio().IsChecked(replace);
@@ -463,19 +454,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			line += L"\n";
 			if (subscription.lastUpdated <= 0)
 			{
-				line += ResourceText(L"IPF_NeverUpdated", L"Not updated yet").c_str();
+				line += ResourceGetString(L"IPF_NeverUpdated").c_str();
 			}
 			else if (subscription.lastStatus == "success")
 			{
-				line += ResourceText(L"IPF_SourceSuccess", L"Success").c_str();
+				line += ResourceGetString(L"IPF_SourceSuccess").c_str();
 				line += L" · " + std::to_wstring(subscription.ruleCount) + L" ";
-				line += ResourceText(L"IPF_Rules", L"rules").c_str();
+				line += ResourceGetString(L"IPF_Rules").c_str();
 				line += L" · " + std::wstring{ FormatTimestamp(
 					subscription.lastUpdated).c_str() };
 			}
 			else
 			{
-				line += ResourceText(L"IPF_SourceFailed", L"Failed").c_str();
+				line += ResourceGetString(L"IPF_SourceFailed").c_str();
 				if (!subscription.lastError.empty())
 				{
 					line += L" · ";
@@ -506,12 +497,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		return m_subscriptions[static_cast<std::size_t>(index)];
 	}
 
-	void IPFilterSettingsPage::OnSubscriptionAutoUpdateToggled(IInspectable const&, RoutedEventArgs const&)
+	void IPFilterSettingsPage::OnSubscriptionAutoUpdateToggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
 		if (m_loading)
 			return;
+		auto const enabled = ToggleIsOn(sender);
+		if (!enabled) return;
+		m_loading = true;
+		SetToggleIsOn(SubscriptionAutoUpdateToggle(), *enabled);
+		SetToggleIsOn(SubscriptionAutoUpdateGlassToggle(), *enabled);
+		m_loading = false;
 		::OpenNet::Core::IPFilterManager::Instance().
-			SubscriptionAutoUpdateEnabled(SubscriptionAutoUpdateToggle().IsOn());
+			SubscriptionAutoUpdateEnabled(*enabled);
+	}
+
+	void IPFilterSettingsPage::SubscriptionAutoUpdateToggle_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		const bool wasLoading = m_loading;
+		m_loading = true;
+		SetToggleIsOn(sender, ::OpenNet::Core::IPFilterManager::Instance().SubscriptionAutoUpdateEnabled());
+		m_loading = wasLoading;
 	}
 
 	void IPFilterSettingsPage::OnSubscriptionModeChanged(IInspectable const&, RoutedEventArgs const&)
@@ -558,21 +563,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (added == 0)
 		{
 			ShowStatus(
-				ResourceText(
-					L"IPF_InvalidOrDuplicateSubscriptions",
-					L"No new valid subscription URLs were found."),
+				ResourceGetString(L"IPF_InvalidOrDuplicateSubscriptions"),
 				InfoBarSeverity::Warning);
 			return;
 		}
 		SubscriptionUrlTextBox().Text(L"");
 		LoadSubscriptionState();
-		std::wstring result = ResourceText(
-			L"IPF_SubscriptionAdded", L"Subscription sources added").c_str();
+		std::wstring result = ResourceGetString(L"IPF_SubscriptionAdded").c_str();
 		result += L": " + std::to_wstring(added);
 		if (rejected > 0)
 		{
 			result += L" · " + std::to_wstring(rejected) + L" ";
-			result += ResourceText(L"IPF_Skipped", L"skipped").c_str();
+			result += ResourceGetString(L"IPF_Skipped").c_str();
 		}
 		ShowStatus(winrt::hstring{ result }, InfoBarSeverity::Success);
 	}
@@ -593,13 +595,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		winrt::OpenNet::UI::Xaml::View::Dialog::FilterEditorDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.ConfigureSubscription(ResourceText(L"IPF_EditSubscriptionTitle", L"Edit subscription"), winrt::to_hstring(selected->url), selected->enabled, ResourceText(L"IPF_Save", L"Save"), ResourceText(L"IPF_Cancel", L"Cancel"));
+		dialog.ConfigureSubscription(ResourceGetString(L"IPF_EditSubscriptionTitle"), winrt::to_hstring(selected->url), selected->enabled, ResourceGetString(L"IPF_Save"), ResourceGetString(L"IPF_Cancel"));
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 		if (!IsHttpSubscriptionUrl(dialog.Url()))
 		{
 			ShowStatus(
-				ResourceText(L"IPF_InvalidSubscriptionUrl", L"Enter a valid HTTP or HTTPS URL."),
+				ResourceGetString(L"IPF_InvalidSubscriptionUrl"),
 				InfoBarSeverity::Warning);
 			co_return;
 		}
@@ -609,7 +611,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			dialog.Enabled()))
 		{
 			ShowStatus(
-				ResourceText(L"IPF_SubscriptionUpdateFailed", L"The subscription could not be saved."),
+				ResourceGetString(L"IPF_SubscriptionUpdateFailed"),
 				InfoBarSeverity::Warning);
 			co_return;
 		}
@@ -625,7 +627,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		winrt::OpenNet::UI::Xaml::View::Dialog::ConfirmationDialog dialog;
 		dialog.XamlRoot(XamlRoot());
-		dialog.Configure(ResourceText(L"IPF_DeleteSubscriptionTitle", L"Delete subscription"), {}, winrt::to_hstring(selected->url), ResourceText(L"IPF_Delete", L"Delete"), ResourceText(L"IPF_Cancel", L"Cancel"), true, false, {});
+		dialog.Configure(ResourceGetString(L"IPF_DeleteSubscriptionTitle"), {}, winrt::to_hstring(selected->url), ResourceGetString(L"IPF_Delete"), ResourceGetString(L"IPF_Cancel"), true, false, {});
 		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary)
 			co_return;
 		::OpenNet::Core::IPFilterManager::Instance().RemoveSubscription(
@@ -650,7 +652,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		catch (...)
 		{
 			ShowStatus(
-				ResourceText(L"IPF_UpdateUnexpectedError", L"The subscription update failed unexpectedly."),
+				ResourceGetString(L"IPF_UpdateUnexpectedError"),
 				InfoBarSeverity::Error);
 		}
 		SetSubscriptionBusy(false);
@@ -663,13 +665,27 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		StatusInfoBar().IsOpen(true);
 	}
 
-	void IPFilterSettingsPage::OnEnableToggled(IInspectable const&, RoutedEventArgs const&)
+	void IPFilterSettingsPage::OnEnableToggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
 		if (m_loading) return;
+		auto const enabled = ToggleIsOn(sender);
+		if (!enabled) return;
+		m_loading = true;
+		SetToggleIsOn(EnableFilterToggle(), *enabled);
+		SetToggleIsOn(EnableFilterGlassToggle(), *enabled);
+		m_loading = false;
 
 		auto& mgr = ::OpenNet::Core::IPFilterManager::Instance();
-		mgr.SetEnabled(EnableFilterToggle().IsOn());
+		mgr.SetEnabled(*enabled);
 		mgr.ApplyToSession();
+	}
+
+	void IPFilterSettingsPage::EnableFilterToggle_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		const bool wasLoading = m_loading;
+		m_loading = true;
+		SetToggleIsOn(sender, ::OpenNet::Core::IPFilterManager::Instance().IsEnabled());
+		m_loading = wasLoading;
 	}
 
 	void IPFilterSettingsPage::OnAddRuleClick(IInspectable const&, RoutedEventArgs const&)
@@ -690,7 +706,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 		else
 		{
-			ShowStatus(L"No valid IP addresses found in input",
+			ShowStatus(ResourceGetString(L"IPF_NoValidIpInput"),
 					   InfoBarSeverity::Warning);
 		}
 	}
@@ -751,7 +767,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 		else
 		{
-			ShowStatus(L"No valid IP addresses found in file",
+			ShowStatus(ResourceGetString(L"IPF_NoValidIpFile"),
 					   InfoBarSeverity::Warning);
 		}
 	}
@@ -767,13 +783,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			auto const launched = co_await winrt::Windows::System::Launcher::
 				LaunchFolderAsync(folder);
 			if (!launched)
-				ShowStatus(L"Could not open the IP filter folder",
+				ShowStatus(ResourceGetString(L"IPF_OpenFolderFailed"),
 						   InfoBarSeverity::Warning);
 		}
 		catch (winrt::hresult_error const& error)
 		{
 			ShowStatus(
-				winrt::hstring{ L"Could not open the IP filter folder: " } +
+				ResourceGetString(L"IPF_OpenFolderErrorPrefix") +
 				error.message(), InfoBarSeverity::Error);
 		}
 	}
@@ -793,13 +809,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			auto const launched = co_await winrt::Windows::System::Launcher::
 				LaunchFileAsync(file);
 			if (!launched)
-				ShowStatus(winrt::hstring{ L"Could not open " } + fileName,
+				ShowStatus(ResourceGetString(L"IPF_OpenFilePrefix") + fileName,
 						   InfoBarSeverity::Warning);
 		}
 		catch (winrt::hresult_error const& error)
 		{
 			ShowStatus(
-				winrt::hstring{ L"Could not open " } + fileName + L": " +
+				ResourceGetString(L"IPF_OpenFilePrefix") + fileName + ResourceGetString(L"IPF_ErrorSeparator") +
 				error.message(), InfoBarSeverity::Error);
 		}
 	}
@@ -853,7 +869,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!::OpenNet::Core::IPFilterManager::ParseIPOrCIDR(
 			entry, first, last))
 		{
-			ShowStatus(L"The edited rule is not a valid IP address, CIDR block, or range",
+			ShowStatus(ResourceGetString(L"IPF_InvalidEditedRule"),
 					   InfoBarSeverity::Warning);
 			co_return;
 		}
@@ -864,14 +880,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto& mgr = ::OpenNet::Core::IPFilterManager::Instance();
 		if (!mgr.UpdateRule(selected->id, first, last, selected->flags, updatedDescription))
 		{
-			ShowStatus(L"The rule could not be updated. It may duplicate another rule.",
+			ShowStatus(ResourceGetString(L"IPF_RuleUpdateFailed"),
 					   InfoBarSeverity::Warning);
 			co_return;
 		}
 
 		mgr.ApplyToSession();
 		RefreshRules();
-		ShowStatus(L"Rule updated", InfoBarSeverity::Success);
+		ShowStatus(ResourceGetString(L"IPF_RuleUpdated"), InfoBarSeverity::Success);
 	}
 
 	winrt::fire_and_forget IPFilterSettingsPage::OnDeleteRuleClick(IInspectable const&, RoutedEventArgs const&)
@@ -893,7 +909,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		mgr.RemoveRule(selected->id);
 		mgr.ApplyToSession();
 		RefreshRules();
-		ShowStatus(L"Rule deleted", InfoBarSeverity::Informational);
+		ShowStatus(ResourceGetString(L"IPF_RuleDeleted"), InfoBarSeverity::Informational);
 	}
 
 	winrt::fire_and_forget IPFilterSettingsPage::OnClearAllClick(IInspectable const&, RoutedEventArgs const&)
@@ -913,6 +929,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		mgr.ApplyToSession();
 
 		RefreshRules();
-		ShowStatus(L"All rules cleared", InfoBarSeverity::Informational);
+		ShowStatus(ResourceGetString(L"IPF_AllRulesCleared"), InfoBarSeverity::Informational);
 	}
 }

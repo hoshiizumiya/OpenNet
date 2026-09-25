@@ -10,6 +10,7 @@
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.WinUI.LiquidGlass;
 import winrt.Microsoft.Windows.Storage.Pickers;
 import OpenNet.Core.Utils.Message;
 import winrt.OpenNet.UI.Xaml.View.Dialog;
@@ -27,6 +28,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	namespace
 	{
 		constexpr std::size_t MaxVisibleRules = 1000;
+		std::optional<bool> ToggleIsOn(IInspectable const& sender)
+		{
+			if (!sender) return std::nullopt;
+			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
+			return std::nullopt;
+		}
+		void SetToggleIsOn(IInspectable const& target, bool value)
+		{
+			if (!target) return;
+			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
+		}
 
 		std::string TrimCopy(std::string value)
 		{
@@ -63,6 +77,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 		}
 
+		winrt::hstring LocalizedMatchTypeName(::OpenNet::Core::ClientMatchType type)
+		{
+			switch (type)
+			{
+				case ::OpenNet::Core::ClientMatchType::Exact: return ResourceGetString(L"ClientFilterMatchTypeExact");
+				case ::OpenNet::Core::ClientMatchType::Wildcard: return ResourceGetString(L"ClientFilterMatchTypeWildcard");
+				case ::OpenNet::Core::ClientMatchType::Regex: return ResourceGetString(L"ClientFilterMatchTypeRegex");
+				case ::OpenNet::Core::ClientMatchType::Contains:
+				default: return ResourceGetString(L"ClientFilterMatchTypeContains");
+			}
+		}
+
 		::OpenNet::Core::ClientMatchType MatchTypeFromIndex(int index)
 		{
 			if (index < 0 || index > 3)
@@ -73,15 +99,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		winrt::hstring RuleDisplayText(
 			::OpenNet::Core::ClientFilterRule const& rule)
 		{
-			auto text = "#" + std::to_string(rule.id) +
-				(rule.enabled ? "  [+]  " : "  [-]  ") +
-				MatchTypeName(rule.matchType) +
-				(rule.caseSensitive ? " / case  " : " / ignore-case  ") +
-				rule.pattern;
+			std::wstring text{ ResourceGetString(L"ClientFilterRuleNumberPrefix").c_str() };
+			text += winrt::to_hstring(rule.id).c_str();
+			text += (rule.enabled
+				? ResourceGetString(L"ClientFilterRuleEnabledMarker")
+				: ResourceGetString(L"ClientFilterRuleDisabledMarker")).c_str();
+			text += LocalizedMatchTypeName(rule.matchType).c_str();
+			text += (rule.caseSensitive
+				? ResourceGetString(L"ClientFilterCaseSensitive")
+				: ResourceGetString(L"ClientFilterIgnoreCase")).c_str();
+			text += L" ";
+			text += winrt::to_hstring(rule.pattern).c_str();
 			if (!rule.description.empty())
-				text += "  —  " + rule.description;
-			text += "  · hits " + std::to_string(rule.hitCount);
-			return winrt::to_hstring(text);
+			{
+				text += ResourceGetString(L"ClientFilterDescriptionPrefix").c_str();
+				text += winrt::to_hstring(rule.description).c_str();
+			}
+			text += ResourceGetString(L"ClientFilterHitsPrefix").c_str();
+			text += winrt::to_hstring(rule.hitCount).c_str();
+			return winrt::hstring{ text };
 		}
 
 		std::string FormatTimestamp(std::int64_t timestamp)
@@ -176,7 +212,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		co_await winrtplus::resume_foreground(dispatcher);
 		m_loading = true;
-		EnableFilterToggle().IsOn(enabled);
+		SetToggleIsOn(EnableFilterToggle(), enabled);
+		SetToggleIsOn(EnableFilterGlassToggle(), enabled);
 		m_loading = false;
 		m_allRules = std::move(rules);
 		m_hits = std::move(hits);
@@ -185,7 +222,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		RebuildHistoryItems();
 
 		if (!initialized)
-			ShowStatus(L"Client filter database could not be opened",
+			ShowStatus(ResourceGetString(L"ClientFilterDatabaseOpenFailed"),
 					   InfoBarSeverity::Error);
 	}
 
@@ -289,18 +326,52 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		DeleteSelectedRuleButton().IsEnabled(hasSelection);
 	}
 
-	void ClientFilterSettingsPage::OnEnableToggled(IInspectable const&, RoutedEventArgs const&)
+	void ClientFilterSettingsPage::OnEnableToggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
 		if (m_loading)
 			return;
-		auto const enabled = EnableFilterToggle().IsOn();
-		::OpenNet::Core::ClientFilterManager::Instance().SetEnabled(enabled);
+		auto const enabled = ToggleIsOn(sender);
+		if (!enabled) return;
+		m_loading = true;
+		SetToggleIsOn(EnableFilterToggle(), *enabled);
+		SetToggleIsOn(EnableFilterGlassToggle(), *enabled);
+		m_loading = false;
+		::OpenNet::Core::ClientFilterManager::Instance().SetEnabled(*enabled);
 		RuntimeBlocksText().Text(L"0");
 		ShowStatus(
-			enabled
-			? L"Client filtering enabled"
-			: L"Client filtering disabled and transient blocks cleared",
+			*enabled
+			? ResourceGetString(L"ClientFilterEnabledStatus")
+			: ResourceGetString(L"ClientFilterDisabledStatus"),
 			InfoBarSeverity::Informational);
+	}
+
+	void ClientFilterSettingsPage::EnableFilterToggle_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		const bool wasLoading = m_loading;
+		m_loading = true;
+		SetToggleIsOn(sender, ::OpenNet::Core::ClientFilterManager::Instance().IsEnabled());
+		m_loading = wasLoading;
+	}
+
+	void ClientFilterSettingsPage::CaseSensitiveToggle_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		const bool wasLoading = m_loading;
+		m_loading = true;
+		SetToggleIsOn(sender, m_caseSensitive);
+		m_loading = wasLoading;
+	}
+
+	void ClientFilterSettingsPage::CaseSensitiveToggle_Changed(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		if (m_loading) return;
+		if (auto enabled = ToggleIsOn(sender))
+		{
+			m_caseSensitive = *enabled;
+			m_loading = true;
+			SetToggleIsOn(CaseSensitiveToggle(), *enabled);
+			SetToggleIsOn(CaseSensitiveGlassToggle(), *enabled);
+			m_loading = false;
+		}
 	}
 
 	void ClientFilterSettingsPage::OnAddRuleClick(IInspectable const&, RoutedEventArgs const&)
@@ -314,7 +385,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			pattern, matchType, &error))
 		{
 			ShowStatus(
-				winrt::hstring{ L"Invalid pattern: " } +
+				ResourceGetString(L"ClientFilterInvalidPatternPrefix") +
 				winrt::to_hstring(error),
 				InfoBarSeverity::Warning);
 			return;
@@ -324,10 +395,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!manager.AddRule(
 			pattern,
 			matchType,
-			CaseSensitiveToggle().IsOn(),
+			m_caseSensitive,
 			TrimCopy(winrt::to_string(DescriptionTextBox().Text()))))
 		{
-			ShowStatus(L"The rule already exists or could not be saved",
+			ShowStatus(ResourceGetString(L"ClientFilterRuleSaveFailed"),
 					   InfoBarSeverity::Warning);
 			return;
 		}
@@ -335,7 +406,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		PatternTextBox().Text(L"");
 		DescriptionTextBox().Text(L"");
 		RefreshSnapshot();
-		ShowStatus(L"Client filter rule added", InfoBarSeverity::Success);
+		ShowStatus(ResourceGetString(L"ClientFilterRuleAdded"), InfoBarSeverity::Success);
 	}
 
 	void ClientFilterSettingsPage::OnTestClick(IInspectable const&, RoutedEventArgs const&)
@@ -358,10 +429,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 
 		TestResultText().Text(
-			winrt::hstring{ L"Matched rule #" } +
+			ResourceGetString(L"ClientFilterMatchedRulePrefix") +
 			winrt::to_hstring(matched->id) + L": " +
 			winrt::to_hstring(matched->pattern) + L" (" +
-			winrt::to_hstring(MatchTypeName(matched->matchType)) + L")");
+			LocalizedMatchTypeName(matched->matchType) + L")");
 	}
 
 	void ClientFilterSettingsPage::OnRefreshClick(IInspectable const&, RoutedEventArgs const&)
@@ -388,7 +459,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			SetRuleEnabled(selected->id, !selected->enabled);
 		RefreshSnapshot();
 		ShowStatus(
-			selected->enabled ? L"Rule disabled" : L"Rule enabled",
+			ResourceGetString(selected->enabled ? L"ClientFilterRuleDisabled" : L"ClientFilterRuleEnabled"),
 			InfoBarSeverity::Informational);
 	}
 
@@ -412,7 +483,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			pattern, matchType, &error))
 		{
 			ShowStatus(
-				winrt::hstring{ L"Invalid pattern: " } +
+				ResourceGetString(L"ClientFilterInvalidPatternPrefix") +
 				winrt::to_hstring(error),
 				InfoBarSeverity::Warning);
 			co_return;
@@ -428,13 +499,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			TrimCopy(winrt::to_string(dialog.Description()))))
 		{
 			ShowStatus(
-				L"The rule could not be updated. It may duplicate another rule.",
+				ResourceGetString(L"ClientFilterRuleUpdateFailed"),
 				InfoBarSeverity::Warning);
 			co_return;
 		}
 
 		RefreshSnapshot();
-		ShowStatus(L"Rule updated", InfoBarSeverity::Success);
+		ShowStatus(ResourceGetString(L"ClientFilterRuleUpdated"), InfoBarSeverity::Success);
 	}
 
 	winrt::fire_and_forget ClientFilterSettingsPage::OnDeleteRuleClick(IInspectable const&, RoutedEventArgs const&)
@@ -453,7 +524,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		::OpenNet::Core::ClientFilterManager::Instance().
 			RemoveRule(selected->id);
 		RefreshSnapshot();
-		ShowStatus(L"Rule deleted", InfoBarSeverity::Informational);
+		ShowStatus(ResourceGetString(L"ClientFilterRuleDeleted"), InfoBarSeverity::Informational);
 	}
 
 	winrt::fire_and_forget ClientFilterSettingsPage::OnImportClick(IInspectable const& sender, RoutedEventArgs const&)
@@ -503,12 +574,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (imported > 0)
 		{
 			ShowStatus(
-				winrt::to_hstring(imported) + L" rule(s) imported",
+				ResourceGetString(L"ClientFilterRulesImportedPrefix") + winrt::to_hstring(imported) + ResourceGetString(L"ClientFilterRulesImportedSuffix"),
 				InfoBarSeverity::Success);
 		}
 		else
 		{
-			ShowStatus(L"No new valid rules were imported",
+			ShowStatus(ResourceGetString(L"ClientFilterNoValidRulesImported"),
 					   InfoBarSeverity::Warning);
 		}
 	}
@@ -550,7 +621,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		co_await winrtplus::resume_foreground(dispatcher);
 
 		ShowStatus(
-			saved ? L"Rules exported" : L"Could not export rules",
+			saved ? ResourceGetString(L"ClientFilterRulesExported") : ResourceGetString(L"ClientFilterExportFailed"),
 			saved ? InfoBarSeverity::Success : InfoBarSeverity::Error);
 	}
 
@@ -565,13 +636,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		::OpenNet::Core::ClientFilterManager::Instance().ClearRules();
 		RefreshSnapshot();
-		ShowStatus(L"All client filter rules cleared", InfoBarSeverity::Informational);
+		ShowStatus(ResourceGetString(L"ClientFilterRulesCleared"), InfoBarSeverity::Informational);
 	}
 
 	void ClientFilterSettingsPage::OnClearHistoryClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		::OpenNet::Core::ClientFilterManager::Instance().ClearHitHistory();
 		RefreshSnapshot();
-		ShowStatus(L"Hit history cleared", InfoBarSeverity::Informational);
+		ShowStatus(ResourceGetString(L"ClientFilterHitHistoryCleared"), InfoBarSeverity::Informational);
 	}
 }

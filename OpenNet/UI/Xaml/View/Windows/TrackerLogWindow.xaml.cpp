@@ -11,6 +11,7 @@ import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.WinUI.LiquidGlass;
 import winrt.Windows.Globalization.DateTimeFormatting;
 import winrt.Windows.Graphics;
 
@@ -101,11 +102,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		EmptyLogText().Visibility(m_entries.Size() == 0 ? Visibility::Visible : Visibility::Collapsed);
 	}
 
-	void TrackerLogWindow::AlwaysOnTopToggle_Toggled(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	void TrackerLogWindow::AlwaysOnTopToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		if (m_loadingAlwaysOnTop) return;
+		bool enabled{};
+		if (auto standard = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>())
+			enabled = standard.IsOn();
+		else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>())
+			enabled = glass.IsOn();
+		else
+			return;
+		if (auto presenter = AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
+		{
+			presenter.IsAlwaysOnTop(enabled);
+		}
+	}
+
+	void TrackerLogWindow::AlwaysOnTopToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		if (auto presenter = AppWindow().Presenter().try_as<winrt::Microsoft::UI::Windowing::OverlappedPresenter>())
 		{
-			presenter.IsAlwaysOnTop(AlwaysOnTopToggle().IsOn());
+			m_loadingAlwaysOnTop = true;
+			if (auto standard = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>()) standard.IsOn(presenter.IsAlwaysOnTop());
+			if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(presenter.IsAlwaysOnTop());
+			m_loadingAlwaysOnTop = false;
 		}
 	}
 }

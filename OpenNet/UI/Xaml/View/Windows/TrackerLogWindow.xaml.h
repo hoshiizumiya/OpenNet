@@ -16,7 +16,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			winrt::hstring const& taskName,
 			winrt::hstring const& trackerUrl);
 
-		void AlwaysOnTopToggle_Toggled(
+		void AlwaysOnTopToggle_Changed(
+			winrt::Windows::Foundation::IInspectable const&,
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void AlwaysOnTopToggle_Loaded(
 			winrt::Windows::Foundation::IInspectable const&,
 			winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
@@ -27,6 +30,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		winrt::hstring m_trackerUrl;
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerToken{};
+		bool m_loadingAlwaysOnTop{};
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_entries{ nullptr };
 	};
 }

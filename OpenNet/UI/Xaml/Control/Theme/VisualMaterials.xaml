@@ -4,7 +4,7 @@
             <hlsl:LiquidGlassBrush x:Key="OpenNetTitleCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="8" DispersionStrength="1.2" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
             <hlsl:LiquidGlassBrush x:Key="OpenNetCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="1.2" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
             <hlsl:LiquidGlassBrush x:Key="OpenNetSurfaceBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="0.8" FallbackColor="#D9FFFFFF" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="50" />
-            <hlsl:LiquidGlassBrush x:Key="OpenNetGuideLiquidGlassBrush" BlurRadius="1" BorderThickness="0" CornerRadius="16" DispersionStrength="6" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" MagnificationStrength="50" RefractionStrength="24" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetGuideLiquidGlassBrush" BlurRadius="1" BorderThickness="0" CornerRadius="16" DispersionStrength="6" FallbackColor="#E6FFFFFF" HighlightStrength="1.6" IsEnabled="False" MagnificationStrength="50" RefractionStrength="24" />
             <StaticResource x:Key="SettingsCardBackground" ResourceKey="OpenNetSurfaceBrush" />
             <StaticResource x:Key="SettingsCardBackgroundPointerOver" ResourceKey="OpenNetSurfaceBrush" />
             <StaticResource x:Key="SettingsCardBackgroundPressed" ResourceKey="OpenNetSurfaceBrush" />
@@ -16,7 +16,7 @@
             <hlsl:LiquidGlassBrush x:Key="OpenNetTitleCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="8" DispersionStrength="1.2" FallbackColor="#D92C2C2C" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
             <hlsl:LiquidGlassBrush x:Key="OpenNetCardBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="1.2" FallbackColor="#D92C2C2C" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="24" />
             <hlsl:LiquidGlassBrush x:Key="OpenNetSurfaceBrush" BlurRadius="1" BorderThickness="0" CornerRadius="4" DispersionStrength="0.8" FallbackColor="#CC2C2C2C" HighlightStrength="1.6" IsEnabled="False" RefractionStrength="50" />
-            <hlsl:LiquidGlassBrush x:Key="OpenNetGuideLiquidGlassBrush" BlurRadius="1" BorderThickness="0" CornerRadius="16" DispersionStrength="6" FallbackColor="#D92C2C2C" HighlightStrength="1.6" MagnificationStrength="50" RefractionStrength="24" />
+            <hlsl:LiquidGlassBrush x:Key="OpenNetGuideLiquidGlassBrush" BlurRadius="1" BorderThickness="0" CornerRadius="16" DispersionStrength="6" FallbackColor="#D92C2C2C" HighlightStrength="1.6" IsEnabled="False" MagnificationStrength="50" RefractionStrength="24" />
             <StaticResource x:Key="SettingsCardBackground" ResourceKey="OpenNetSurfaceBrush" />
             <StaticResource x:Key="SettingsCardBackgroundPointerOver" ResourceKey="OpenNetSurfaceBrush" />
             <StaticResource x:Key="SettingsCardBackgroundPressed" ResourceKey="OpenNetSurfaceBrush" />
@@ -37,6 +37,8 @@
             <StaticResource x:Key="CommandBarOverflowPresenterBackground" ResourceKey="OpenNetSurfaceBrush" />
         </ResourceDictionary>
     </ResourceDictionary.ThemeDictionaries>
+
+    <theme:MaterialControlState xmlns:theme="using:OpenNet.UI.Xaml.Control.Theme" x:Key="MaterialControlState" />
 
     <Style BasedOn="{StaticResource DefaultCommandBarStyle}" TargetType="CommandBar">
         <Setter Property="Background" Value="{ThemeResource OpenNetSurfaceBrush}" />

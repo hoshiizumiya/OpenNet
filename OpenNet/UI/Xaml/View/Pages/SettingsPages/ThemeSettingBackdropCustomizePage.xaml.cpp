@@ -7,6 +7,7 @@
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.WindowHelper;
 import winrt.WinUI3Package;
+import winrt.WinUI.LiquidGlass;
 import winrt.Windows.UI;
 
 using namespace winrt;
@@ -65,9 +66,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	void ThemeSettingBackdropCustomizePage::BackdropValueChanged(IInspectable const&, RoutedEventArgs const&)
+	void ThemeSettingBackdropCustomizePage::BackdropValueChanged(IInspectable const& sender, RoutedEventArgs const&)
 	{
 		if (m_isUpdatingUI) return;
+		if (auto standard = sender.try_as<ToggleSwitch>()) m_enableWhenInactive = standard.IsOn();
+		else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) m_enableWhenInactive = glass.IsOn();
+		UpdateMaterialControls();
 		SaveToSettings();
 		ApplyToCurrentBackdrop();
 	}
@@ -79,9 +83,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		ApplyToCurrentBackdrop();
 	}
 
-	void ThemeSettingBackdropCustomizePage::BackdropValueChanged(IInspectable const&, Controls::Primitives::RangeBaseValueChangedEventArgs const&)
+	void ThemeSettingBackdropCustomizePage::BackdropValueChanged(IInspectable const& sender, Controls::Primitives::RangeBaseValueChangedEventArgs const&)
 	{
 		if (m_isUpdatingUI) return;
+		if (auto slider = sender.try_as<Slider>())
+		{
+			auto const name = slider.Name();
+			if (name == L"LuminosityOpacitySlider" || name == L"LuminosityOpacityGlassSlider") m_luminosityOpacity = slider.Value();
+			else if (name == L"TintOpacitySlider" || name == L"TintOpacityGlassSlider") m_tintOpacity = slider.Value();
+		}
+		UpdateMaterialControls();
 		SaveToSettings();
 		ApplyToCurrentBackdrop();
 	}
@@ -98,10 +109,39 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		m_isUpdatingUI = true;
 		FallbackColorPicker().Color(fallbackColor);
 		TintColorPicker().Color(tintColor);
-		LuminosityOpacitySlider().Value(luminosityOpacity);
-		TintOpacitySlider().Value(tintOpacity);
-		EnableSwitch().IsOn(enableWhenInactive);
+		m_luminosityOpacity = luminosityOpacity;
+		m_tintOpacity = tintOpacity;
+		m_enableWhenInactive = enableWhenInactive;
+		UpdateMaterialControls();
 		m_isUpdatingUI = false;
+	}
+
+	void ThemeSettingBackdropCustomizePage::UpdateMaterialControls()
+	{
+		const bool wasUpdating = m_isUpdatingUI;
+		m_isUpdatingUI = true;
+		if (auto standard = LuminosityOpacitySlider()) standard.Value(m_luminosityOpacity);
+		if (auto glass = LuminosityOpacityGlassSlider()) glass.Value(m_luminosityOpacity);
+		if (auto standard = TintOpacitySlider()) standard.Value(m_tintOpacity);
+		if (auto glass = TintOpacityGlassSlider()) glass.Value(m_tintOpacity);
+		if (auto standard = EnableSwitch()) standard.IsOn(m_enableWhenInactive);
+		if (auto glass = EnableGlassSwitch()) glass.IsOn(m_enableWhenInactive);
+		m_isUpdatingUI = wasUpdating;
+	}
+
+	void ThemeSettingBackdropCustomizePage::MaterialControl_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		const bool wasUpdating = m_isUpdatingUI;
+		m_isUpdatingUI = true;
+		if (auto slider = sender.try_as<Slider>())
+		{
+			auto const name = slider.Name();
+			if (name == L"LuminosityOpacitySlider" || name == L"LuminosityOpacityGlassSlider") slider.Value(m_luminosityOpacity);
+			else if (name == L"TintOpacitySlider" || name == L"TintOpacityGlassSlider") slider.Value(m_tintOpacity);
+		}
+		if (auto standard = sender.try_as<ToggleSwitch>()) standard.IsOn(m_enableWhenInactive);
+		if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(m_enableWhenInactive);
+		m_isUpdatingUI = wasUpdating;
 	}
 
 	void ThemeSettingBackdropCustomizePage::SaveToSettings()
@@ -109,9 +149,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		db.SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropFallbackColorKey, ColorToArgb(FallbackColorPicker().Color()));
 		db.SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintColorKey, ColorToArgb(TintColorPicker().Color()));
-		db.SetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropLuminosityOpacityKey, LuminosityOpacitySlider().Value());
-		db.SetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintOpacityKey, TintOpacitySlider().Value());
-		db.SetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropEnableWhenInactiveKey, EnableSwitch().IsOn());
+		db.SetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropLuminosityOpacityKey, m_luminosityOpacity);
+		db.SetDouble(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropTintOpacityKey, m_tintOpacity);
+		db.SetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropEnableWhenInactiveKey, m_enableWhenInactive);
 	}
 
 	void ThemeSettingBackdropCustomizePage::SyncFromCurrentBackdrop()
@@ -133,19 +173,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (auto mica = backdrop.try_as<winrt::WinUI3Package::CustomMicaBackdrop>())
 		{
 			FallbackColorPicker().Color(mica.FallbackColor());
-			LuminosityOpacitySlider().Value(static_cast<double>(mica.LuminosityOpacity()));
+			m_luminosityOpacity = static_cast<double>(mica.LuminosityOpacity());
 			TintColorPicker().Color(mica.TintColor());
-			TintOpacitySlider().Value(static_cast<double>(mica.TintOpacity()));
-			EnableSwitch().IsOn(mica.EnableWhenInactive());
+			m_tintOpacity = static_cast<double>(mica.TintOpacity());
+			m_enableWhenInactive = mica.EnableWhenInactive();
 		}
 		else if (auto acrylic = backdrop.try_as<winrt::WinUI3Package::CustomAcrylicBackdrop>())
 		{
 			FallbackColorPicker().Color(acrylic.FallbackColor());
-			LuminosityOpacitySlider().Value(static_cast<double>(acrylic.LuminosityOpacity()));
+			m_luminosityOpacity = static_cast<double>(acrylic.LuminosityOpacity());
 			TintColorPicker().Color(acrylic.TintColor());
-			TintOpacitySlider().Value(static_cast<double>(acrylic.TintOpacity()));
-			EnableSwitch().IsOn(acrylic.EnableWhenInactive());
+			m_tintOpacity = static_cast<double>(acrylic.TintOpacity());
+			m_enableWhenInactive = acrylic.EnableWhenInactive();
 		}
+		UpdateMaterialControls();
 
 		m_isUpdatingUI = false;
 		SaveToSettings();
@@ -154,10 +195,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	void ThemeSettingBackdropCustomizePage::ApplyToCurrentBackdrop()
 	{
 		auto const fallbackColor = FallbackColorPicker().Color();
-		auto const luminosityOpacity = static_cast<float>(LuminosityOpacitySlider().Value());
+		auto const luminosityOpacity = static_cast<float>(m_luminosityOpacity);
 		auto const tintColor = TintColorPicker().Color();
-		auto const tintOpacity = static_cast<float>(TintOpacitySlider().Value());
-		auto const enableWhenInactive = EnableSwitch().IsOn();
+		auto const tintOpacity = static_cast<float>(m_tintOpacity);
+		auto const enableWhenInactive = m_enableWhenInactive;
 
 		for (auto const& window : ::OpenNet::Helpers::WinUIWindowHelper::WindowHelper::ActiveWindows())
 		{

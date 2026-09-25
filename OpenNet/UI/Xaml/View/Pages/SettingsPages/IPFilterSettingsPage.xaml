@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
+    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d">
 
@@ -43,7 +44,16 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8D7;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch x:Name="EnableFilterToggle" Toggled="OnEnableToggled" />
+                    <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                        <essential:Case>
+                            <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+                            <ToggleSwitch x:Name="EnableFilterToggle" Loaded="EnableFilterToggle_Loaded" Toggled="OnEnableToggled" />
+                        </essential:Case>
+                        <essential:Case>
+                            <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                            <liquid:LiquidGlassToggleSwitch x:Name="EnableFilterGlassToggle" Loaded="EnableFilterToggle_Loaded" Click="OnEnableToggled" />
+                        </essential:Case>
+                    </essential:SwitchPresenter>
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="IPF_RuleCount">
@@ -149,7 +159,16 @@
                     </StackPanel>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="IPF_SubscriptionAutoUpdate">
-                            <ToggleSwitch x:Name="SubscriptionAutoUpdateToggle" Toggled="OnSubscriptionAutoUpdateToggled" />
+                            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                                <essential:Case>
+                                    <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+                                    <ToggleSwitch x:Name="SubscriptionAutoUpdateToggle" Loaded="SubscriptionAutoUpdateToggle_Loaded" Toggled="OnSubscriptionAutoUpdateToggled" />
+                                </essential:Case>
+                                <essential:Case>
+                                    <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                                    <liquid:LiquidGlassToggleSwitch x:Name="SubscriptionAutoUpdateGlassToggle" Loaded="SubscriptionAutoUpdateToggle_Loaded" Click="OnSubscriptionAutoUpdateToggled" />
+                                </essential:Case>
+                            </essential:SwitchPresenter>
                         </essential:SettingsCard>
 
                         <essential:SettingsCard x:Uid="IPF_SubscriptionAdd">

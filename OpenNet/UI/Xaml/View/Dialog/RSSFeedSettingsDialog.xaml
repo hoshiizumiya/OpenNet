@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     x:Name="ViewDialogRSSFeedSettingsDialog"
@@ -40,20 +41,62 @@
                 Maximum="1440"
                 Minimum="5"
                 SpinButtonPlacementMode="Inline" />
-            <ToggleSwitch
-                x:Name="SettingsEnabledToggle"
-                x:Uid="RSSSettingsEnabledToggle"
-                AutomationProperties.AutomationId="RSSSettingsEnabledToggle"
-                Header="Feed enabled"
-                OffContent="Disabled"
-                OnContent="Enabled" />
-            <ToggleSwitch
-                x:Name="SettingsAutoDownloadToggle"
-                x:Uid="RSSSettingsAutoDownloadToggle"
-                AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
-                Header="Auto Download"
-                OffContent="Disabled"
-                OnContent="Enabled" />
+            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                <essential:Case>
+                    <essential:Case.Value>
+                        <x:Int32>0</x:Int32>
+                    </essential:Case.Value>
+                    <ToggleSwitch
+                        x:Name="SettingsEnabledToggle"
+                        x:Uid="RSSSettingsEnabledToggle"
+                        AutomationProperties.AutomationId="RSSSettingsEnabledToggle"
+                        Header="Feed enabled"
+                        Loaded="SettingsEnabledToggle_Loaded"
+                        OffContent="Disabled"
+                        OnContent="Enabled"
+                        Toggled="SettingsEnabledToggle_Changed" />
+                </essential:Case>
+                <essential:Case>
+                    <essential:Case.Value>
+                        <x:Int32>1</x:Int32>
+                    </essential:Case.Value>
+                    <liquid:LiquidGlassToggleSwitch
+                        x:Name="SettingsEnabledGlassToggle"
+                        x:Uid="RSSSettingsEnabledToggle"
+                        AutomationProperties.AutomationId="RSSSettingsEnabledToggle"
+                        Click="SettingsEnabledToggle_Changed"
+                        Header="Feed enabled"
+                        Loaded="SettingsEnabledToggle_Loaded" />
+                </essential:Case>
+            </essential:SwitchPresenter>
+            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                <essential:Case>
+                    <essential:Case.Value>
+                        <x:Int32>0</x:Int32>
+                    </essential:Case.Value>
+                    <ToggleSwitch
+                        x:Name="SettingsAutoDownloadToggle"
+                        x:Uid="RSSSettingsAutoDownloadToggle"
+                        AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
+                        Header="Auto Download"
+                        Loaded="SettingsAutoDownloadToggle_Loaded"
+                        OffContent="Disabled"
+                        OnContent="Enabled"
+                        Toggled="SettingsAutoDownloadToggle_Changed" />
+                </essential:Case>
+                <essential:Case>
+                    <essential:Case.Value>
+                        <x:Int32>1</x:Int32>
+                    </essential:Case.Value>
+                    <liquid:LiquidGlassToggleSwitch
+                        x:Name="SettingsAutoDownloadGlassToggle"
+                        x:Uid="RSSSettingsAutoDownloadToggle"
+                        AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
+                        Click="SettingsAutoDownloadToggle_Changed"
+                        Header="Auto Download"
+                        Loaded="SettingsAutoDownloadToggle_Loaded" />
+                </essential:Case>
+            </essential:SwitchPresenter>
             <TextBox
                 x:Name="SettingsFilterTextBox"
                 x:Uid="RSSSettingsFilterTextBox"
@@ -70,11 +113,32 @@
                 <ComboBoxItem x:Uid="RSSSettingsDoubleClickAddToTasks" Content="Add to tasks" />
                 <ComboBoxItem x:Uid="RSSSettingsDoubleClickShowDetails" Content="Show details" />
             </ComboBox>
-            <ToggleSwitch
-                x:Name="IsShowWebViewPreviewFlyout"
-                x:Uid="RSSSettingsWebViewPreviewToggle"
-                AutomationProperties.AutomationId="RSSSettingsWebViewPreviewToggle"
-                Header="Show WebView Preview" />
+            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                <essential:Case>
+                    <essential:Case.Value>
+                        <x:Int32>0</x:Int32>
+                    </essential:Case.Value>
+                    <ToggleSwitch
+                        x:Name="IsShowWebViewPreviewFlyout"
+                        x:Uid="RSSSettingsWebViewPreviewToggle"
+                        AutomationProperties.AutomationId="RSSSettingsWebViewPreviewToggle"
+                        Header="Show WebView Preview"
+                        Loaded="WebViewPreviewToggle_Loaded"
+                        Toggled="WebViewPreviewToggle_Changed" />
+                </essential:Case>
+                <essential:Case>
+                    <essential:Case.Value>
+                        <x:Int32>1</x:Int32>
+                    </essential:Case.Value>
+                    <liquid:LiquidGlassToggleSwitch
+                        x:Name="WebViewPreviewGlassToggle"
+                        x:Uid="RSSSettingsWebViewPreviewToggle"
+                        AutomationProperties.AutomationId="RSSSettingsWebViewPreviewToggle"
+                        Click="WebViewPreviewToggle_Changed"
+                        Header="Show WebView Preview"
+                        Loaded="WebViewPreviewToggle_Loaded" />
+                </essential:Case>
+            </essential:SwitchPresenter>
             <InfoBar
                 x:Name="SettingsValidationInfoBar"
                 x:Uid="RSSSettingsValidationInfoBar"

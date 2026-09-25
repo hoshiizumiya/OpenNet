@@ -5,6 +5,7 @@ import std;
 import winrt.Windows.Foundation;
 import winrt.Microsoft.UI.Xaml;
 import winrt.WinUI.Composition.Hlsl;
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 
 export namespace OpenNet::Helpers
 {
@@ -36,12 +37,19 @@ export namespace OpenNet::Helpers
 			if (!app) return;
 			for (auto const& dictionary : app.Resources().MergedDictionaries())
 			{
+				auto const stateKey = winrt::box_value(L"MaterialControlState");
+				if (dictionary.HasKey(stateKey))
+				{
+					auto const state = dictionary.Lookup(stateKey).try_as<winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState>();
+					if (state)
+						state.StyleIndex(static_cast<std::int32_t>(style));
+				}
 				for (auto const& variant : dictionary.ThemeDictionaries())
 				{
 					auto const values = variant.Value().try_as<winrt::Microsoft::UI::Xaml::ResourceDictionary>();
 					if (!values)
 						continue;
-					for (auto const key : { L"OpenNetTitleCardBrush", L"OpenNetCardBrush", L"OpenNetSurfaceBrush" })
+					for (auto const key : { L"OpenNetTitleCardBrush", L"OpenNetCardBrush", L"OpenNetSurfaceBrush", L"OpenNetGuideLiquidGlassBrush" })
 					{
 						auto const boxedKey = winrt::box_value(key);
 						if (!values.HasKey(boxedKey))
