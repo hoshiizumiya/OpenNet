@@ -27,9 +27,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	// Summary: 构造函数，初始化默认设置和集合
 	SettingsViewModel::SettingsViewModel()
-		: m_userName(L"Guest")
-		, m_deviceName(L"This PC")
-		, m_defaultSavePath(L"")
+		: m_defaultSavePath(L"")
 		, m_startWithWindows(false)
 		, m_minimizeToTray(true)
 		, m_showNotifications(true)
@@ -80,6 +78,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_enableTelemetry(false)
 		, m_hasUnsavedChanges(false)
 	{
+		m_userName = GetStringFromResources(L"SettingsDefaultUserName");
+		m_deviceName = GetStringFromResources(L"SettingsThisPc");
 		m_availableLanguages = single_threaded_vector<hstring>();
 
 		// Use resource strings if available, fall back to defaults
@@ -98,16 +98,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 			}
 			else
 			{
-				m_availableLanguages.Append(L"Auto");
-				m_availableLanguages.Append(L"中文");
-				m_availableLanguages.Append(L"English");
+				m_availableLanguages.Append(GetStringFromResources(L"Lang_Auto"));
+				m_availableLanguages.Append(GetStringFromResources(L"Lang_Chinese"));
+				m_availableLanguages.Append(GetStringFromResources(L"Lang_English"));
 			}
 		}
 		catch (...)
 		{
-			m_availableLanguages.Append(L"Auto");
-			m_availableLanguages.Append(L"中文");
-			m_availableLanguages.Append(L"English");
+			m_availableLanguages.Append(GetStringFromResources(L"Lang_Auto"));
+			m_availableLanguages.Append(GetStringFromResources(L"Lang_Chinese"));
+			m_availableLanguages.Append(GetStringFromResources(L"Lang_English"));
 		}
 
 		m_customPorts = single_threaded_observable_vector<hstring>();
@@ -250,10 +250,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			switch (m_currentLanguage)
 			{
-			case Language::Auto: return L"自动 / Auto";
-			case Language::Chinese: return L"中文 / Chinese";
-			case Language::English: return L"English";
-			default: return L"自动 / Auto";
+			case Language::Auto: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
+			case Language::Chinese: return std::wstring(GetStringFromResources(L"Lang_Chinese").c_str());
+			case Language::English: return std::wstring(GetStringFromResources(L"Lang_English").c_str());
+			default: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
 			}
 		}
 	}
@@ -275,7 +275,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		catch (...)
 		{
-			return std::wstring(L"自动选择 / Auto Select");
+			return std::wstring(GetStringFromResources(L"Protocol_Auto").c_str());
 		}
 	}
 
@@ -299,7 +299,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		catch (...)
 		{
-			return std::wstring(L"自动选择 / Auto Select");
+			return std::wstring(GetStringFromResources(L"ConnProtocol_Auto").c_str());
 		}
 	}
 
@@ -318,13 +318,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		catch (...)
 		{
-			switch (m_encryptionLevel)
-			{
-			case EncryptionLevel::None: return L"无加密 / None";
-			case EncryptionLevel::Basic: return L"基础加密 / Basic";
-			case EncryptionLevel::Strong: return L"强加密 / Strong";
-			default: return L"基础加密 / Basic";
-			}
+			return std::wstring(GetStringFromResources(
+				m_encryptionLevel == EncryptionLevel::None ? L"Enc_None" :
+				m_encryptionLevel == EncryptionLevel::Strong ? L"Enc_Strong" :
+				L"Enc_Basic").c_str());
 		}
 	}
 

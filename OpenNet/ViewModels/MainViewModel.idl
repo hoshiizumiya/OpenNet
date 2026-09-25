@@ -16,6 +16,10 @@
 		String IPv4UdpPortState { get; };
 		String IPv6TcpPortState { get; };
 		String IPv6UdpPortState { get; };
+		String IPv4TcpPortStateText { get; };
+		String IPv4UdpPortStateText { get; };
+		String IPv6TcpPortStateText { get; };
+		String IPv6UdpPortStateText { get; };
 		String LanIPv4Address { get; };
 		String LanIPv6Address { get; };
 		String WanIPv4Address { get; };

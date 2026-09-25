@@ -265,7 +265,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			co_await PerformStunTest(server1, 19302, r1);
 			co_await winrtplus::resume_foreground(dispatcher);
 			StunTest1_1().Text(r1->success ? ResourceGetString(L"CommonOk") : ResourceGetString(L"TaskStatusFailed"));
-			StunIP1_1().Text(r1->success ? r1->mappedAddress : L"N/A");
+			StunIP1_1().Text(r1->success ? r1->mappedAddress : ResourceGetString(L"ViewNatToolsPageNA"));
 			StunLatency1_1().Text(winrt::to_hstring(r1->latencyMs) + L" ms");
 
 			// Test 2: Server 1, alt port (simulating different port)
@@ -273,7 +273,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			co_await PerformStunTest(server1alt, 19302, r2);
 			co_await winrtplus::resume_foreground(dispatcher);
 			StunTest1_2().Text(r2->success ? ResourceGetString(L"CommonOk") : ResourceGetString(L"TaskStatusFailed"));
-			StunIP1_2().Text(r2->success ? r2->mappedAddress : L"N/A");
+			StunIP1_2().Text(r2->success ? r2->mappedAddress : ResourceGetString(L"ViewNatToolsPageNA"));
 			StunLatency1_2().Text(winrt::to_hstring(r2->latencyMs) + L" ms");
 
 			// Test 3: Server 2, same port
@@ -281,7 +281,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			co_await PerformStunTest(server2, 3478, r3);
 			co_await winrtplus::resume_foreground(dispatcher);
 			StunTest1_3().Text(r3->success ? ResourceGetString(L"CommonOk") : ResourceGetString(L"TaskStatusFailed"));
-			StunIP1_3().Text(r3->success ? r3->mappedAddress : L"N/A");
+			StunIP1_3().Text(r3->success ? r3->mappedAddress : ResourceGetString(L"ViewNatToolsPageNA"));
 			StunLatency1_3().Text(winrt::to_hstring(r3->latencyMs) + L" ms");
 
 			// Determine NAT type from results
@@ -338,7 +338,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			// Public IP via HTTP
 			auto publicIP = co_await m_detector.GetPublicIPAddressAsync();
 			co_await winrtplus::resume_foreground(dispatcher);
-			PublicIPText().Text(publicIP.empty() ? L"N/A" : publicIP);
+			PublicIPText().Text(publicIP.empty() ? ResourceGetString(L"ViewNatToolsPageNA") : publicIP);
 
 			// IPv6 public IP
 			try
@@ -346,7 +346,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				co_await winrt::resume_background();
 				auto publicIPv6 = co_await m_detector.GetPublicIPAddressAsync(true);
 				co_await winrtplus::resume_foreground(dispatcher);
-				PublicIPv6Text().Text(publicIPv6.empty() ? L"N/A" : publicIPv6);
+				PublicIPv6Text().Text(publicIPv6.empty() ? ResourceGetString(L"ViewNatToolsPageNA") : publicIPv6);
 			}
 			catch (...)
 			{
@@ -408,12 +408,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			if (result)
 			{
-				PortResultText().Text(L"Port " + winrt::to_hstring(port) + L" is OPEN (mapped port matches)");
+				PortResultText().Text(
+					ResourceGetString(L"ViewNatToolsPagePortOpenPrefix") +
+					winrt::to_hstring(port) +
+					ResourceGetString(L"ViewNatToolsPagePortOpenSuffix"));
 				PortMappedText().Text(ResourceGetString(L"ViewNatToolsPageSTUNReportsYourExternalPortMatchesTheLocalPortPeersShouldBeAbleToConnectToYouDirectly"));
 			}
 			else
 			{
-				PortResultText().Text(L"Port " + winrt::to_hstring(port) + L" appears CLOSED or remapped");
+				PortResultText().Text(
+					ResourceGetString(L"ViewNatToolsPagePortClosedPrefix") +
+					winrt::to_hstring(port) +
+					ResourceGetString(L"ViewNatToolsPagePortClosedSuffix"));
 				PortMappedText().Text(ResourceGetString(L"ViewNatToolsPageSTUNMappedPortDiffersFromLocalPortOrNoResponseReceivedYourNATMayBeRewritingThePortConsiderEnablingUpnpOrSettingUpPortForwarding"));
 			}
 		}

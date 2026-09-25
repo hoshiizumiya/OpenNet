@@ -20,6 +20,28 @@ using namespace winrt::Windows::UI;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
+	namespace
+	{
+		hstring FormatPieceTooltip(
+			std::uint32_t index,
+			hstring const& state,
+			int availability)
+		{
+			std::wstring text{ ResourceGetString(L"TaskPieceMapTooltipFormat").c_str() };
+			std::array<std::wstring, 3> values{
+				std::to_wstring(index),
+				std::wstring{ state.c_str() },
+				std::to_wstring(availability) };
+			for (auto const& value : values)
+			{
+				auto const position = text.find(L"{}");
+				if (position == std::wstring::npos) break;
+				text.replace(position, 2, value);
+			}
+			return hstring{ text };
+		}
+	}
+
 	TaskPieceMapPage::~TaskPieceMapPage()
 	{
 	}
@@ -317,23 +339,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			case 1:
 				color = Color{ 255, 215, 47, 154 };
-				stateName = L"Downloading";
+				stateName = ResourceGetString(L"TaskStatusDownloading");
 				break;
 			case 2:
 				color = Color{ 255, 22, 131, 216 };
-				stateName = L"Finished";
+				stateName = ResourceGetString(L"TaskStatusCompleted");
 				break;
 			case 3:
 				color = Color{ 255, 105, 105, 105 };
-				stateName = L"Disabled";
+				stateName = ResourceGetString(L"CommonDisabled");
 				break;
 			case 4:
 				color = Color{ 255, 242, 200, 17 };
-				stateName = L"Unchecked";
+				stateName = ResourceGetString(L"TaskPieceMapUnchecked");
 				break;
 			default:
 				color = Color{ 255, 205, 205, 205 };
-				stateName = L"Empty";
+				stateName = ResourceGetString(L"TaskPieceMapEmpty");
 				break;
 		}
 		piece.Background(SolidColorBrush{ color });
@@ -347,19 +369,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			piece.Child(cross);
 		}
 
-		auto tooltip = std::format(
-			L"Piece {}\nState: {}\nAvailability: {}",
-			index,
-			stateName.c_str(),
-			availability);
+		std::wstring tooltip{ FormatPieceTooltip(static_cast<std::uint32_t>(index), stateName, availability).c_str() };
 		if (!hash.empty())
 		{
-			tooltip.append(L"\nHash: ");
-			tooltip.append(hash.c_str());
+			tooltip += ResourceGetString(L"TaskPieceMapHashPrefix").c_str();
+			tooltip += hash.c_str();
 		}
 		else
 		{
-			tooltip.append(L"\nHash: unavailable for this metadata/protocol");
+			tooltip += ResourceGetString(L"TaskPieceMapHashUnavailable").c_str();
 		}
 		ToolTipService::SetToolTip(piece, box_value(hstring{ tooltip }));
 		return piece;

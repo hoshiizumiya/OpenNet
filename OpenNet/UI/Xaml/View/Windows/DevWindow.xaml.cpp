@@ -10,6 +10,7 @@
 
 import OpenNet.Factory.OperationProgressDialog;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Core.Utils.Message;
 import winrt.Windows.Foundation;
 
 using namespace winrt;
@@ -41,7 +42,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		throw hresult_error(
 			E_FAIL,
-			L"Manually triggered XAML exception for testing purposes.");
+			ResourceGetString(L"DevWindowManualXamlException"));
 	}
 
 	void DevWindow::SendAppNotify_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
@@ -51,8 +52,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	fire_and_forget DevWindow::OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
 	{
 		auto progressDialog = ::OpenNet::Factory::ContentDialog::OperationProgressDialog(
-			L"Operation in Progress",
-			L"Please wait while the operation is being completed.",
+			ResourceGetString(L"DevWindowOperationInProgress"),
+			ResourceGetString(L"DevWindowOperationPleaseWait"),
 			this->XamlRoot());
 		co_await progressDialog.ShowAsync();
 	}

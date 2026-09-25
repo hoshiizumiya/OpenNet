@@ -6,6 +6,7 @@
 
 import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Input;
@@ -52,7 +53,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		icon.FontSize(12);
 		panel.Children().Append(icon);
 		tab->HeaderText = TextBlock{};
-		tab->HeaderText.Text(tab->Title.empty() ? L"New tab" : tab->Title);
+		tab->HeaderText.Text(tab->Title.empty() ? ResourceGetString(L"RssBrowserNewTab") : tab->Title);
 		tab->HeaderText.MaxWidth(220);
 		tab->HeaderText.TextTrimming(TextTrimming::CharacterEllipsis);
 		panel.Children().Append(tab->HeaderText);
@@ -68,7 +69,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		auto tab = std::make_shared<RSSBrowserTab>();
 		tab->Id = L"rss-browser-" + to_hstring(m_nextId++);
-		tab->Title = title.empty() ? L"Loading..." : title;
+		tab->Title = title.empty() ? ResourceGetString(L"RssBrowserLoading") : title;
 		tab->Url = url.empty() ? L"about:blank" : url;
 		tab->WebView = WebView2{};
 		tab->WebView.HorizontalAlignment(HorizontalAlignment::Stretch);
@@ -184,7 +185,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 				{
 					args.Handled(true);
 					if (auto self = weak.get())
-						self->AddNewTab(args.Uri(), L"Loading...");
+					self->AddNewTab(args.Uri(), ResourceGetString(L"RssBrowserLoading"));
 				});
 			}
 			tab->WebView.Source(winrt::Windows::Foundation::Uri(tab->Url));
@@ -242,7 +243,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			}
 		}
 		m_tabs.erase(found);
-		if (m_tabs.empty()) AddNewTab(L"about:blank", L"New tab");
+		if (m_tabs.empty()) AddNewTab(L"about:blank", ResourceGetString(L"RssBrowserNewTab"));
 	}
 
 	void RSSBrowserWindow::SwitchToTab(hstring const& tabId)
@@ -258,7 +259,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	{
 		if (auto tab = FindTab(tabId))
 		{
-			tab->Title = title.empty() ? L"New tab" : title;
+			tab->Title = title.empty() ? ResourceGetString(L"RssBrowserNewTab") : title;
 			if (tab->HeaderText) tab->HeaderText.Text(tab->Title);
 			ToolTipService::SetToolTip(tab->Item, box_value(tab->Title));
 			if (tab == CurrentTab()) WindowTitleBar().Subtitle(tab->Title);
@@ -298,7 +299,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void RSSBrowserWindow::BrowserTabView_AddTabButtonClick(TabView const&, IInspectable const&)
 	{
-		AddNewTab(L"about:blank", L"New tab");
+		AddNewTab(L"about:blank", ResourceGetString(L"RssBrowserNewTab"));
 	}
 
 	void RSSBrowserWindow::BrowserTabView_TabCloseRequested(

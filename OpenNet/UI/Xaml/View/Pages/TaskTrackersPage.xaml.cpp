@@ -379,7 +379,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskTrackersPage::TrackerMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const&)
+	void TaskTrackersPage::TrackerMenu_Opening(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)
 	{
 		auto const hasSelection = !SelectedTrackerUrl().empty();
 		auto const selectedTask = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
@@ -390,21 +390,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			&& (state == winrt::OpenNet::ViewModels::DownloadTaskState::Downloading
 				|| state == winrt::OpenNet::ViewModels::DownloadTaskState::Seeding);
 		UpdateTrackerMenuItem().IsEnabled(canAnnounce);
-		if (auto menu = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::MenuFlyout>())
-		{
-			for (auto const& entry : menu.Items())
-			{
-				if (auto item = entry.try_as<
-					winrt::Microsoft::UI::Xaml::Controls::MenuFlyoutItem>())
-				{
-					auto const text = item.Text();
-					if (item != UpdateTrackerMenuItem()
-						&& (text == L"Remove tracker"
-							|| text == L"View log" || text == L"Clear log"))
-						item.IsEnabled(hasSelection);
-				}
-			}
-		}
+		RemoveTrackerMenuItem().IsEnabled(hasSelection);
+		ViewTrackerLogMenuItem().IsEnabled(hasSelection);
+		ClearTrackerLogMenuItem().IsEnabled(hasSelection);
 	}
 
 	void TaskTrackersPage::OpenTrackerLog(winrt::hstring const& trackerUrl)

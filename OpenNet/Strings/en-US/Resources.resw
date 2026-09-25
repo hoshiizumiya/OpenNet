@@ -1741,7 +1741,7 @@
     <value>Properties...</value>
   </data>
   <data name="ViewThemesSettingsPageImageBackgroundExpander.Header" xml:space="preserve">
-    <value>Image background</value>
+    <value>Image Background</value>
   </data>
   <data name="ViewThemesSettingsPageImageBackgroundExpander.Description" xml:space="preserve">
     <value>Show a local image behind the main content</value>
@@ -3094,16 +3094,16 @@
     <value>Enter tracker URL (e.g., tracker.example.com:6969)</value>
   </data>
   <data name="ViewNetworkSettingsPageBestItem.Content" xml:space="preserve">
-    <value>精选列表（best.txt）</value>
+    <value>Best List（best.txt）</value>
   </data>
   <data name="ViewNetworkSettingsPageAllItem.Content" xml:space="preserve">
-    <value>完整列表（all.txt）</value>
+    <value>Full list（all.txt）</value>
   </data>
   <data name="ViewNetworkSettingsPageHttpItem.Content" xml:space="preserve">
     <value>HTTP(S) 列表（http.txt）</value>
   </data>
   <data name="ViewNetworkSettingsPageNoHttpItem.Content" xml:space="preserve">
-    <value>无 HTTP 列表（nohttp.txt）</value>
+    <value>No HTTP list（nohttp.txt）</value>
   </data>
   <data name="ViewPageNetworkSettingsPageConnectionSettingsHeader.Text" xml:space="preserve">
     <value>Connection</value>
@@ -3196,25 +3196,25 @@
     <value>Enable acrylic when window is inactive</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundExpander.Description" xml:space="preserve">
-    <value>应用的背景类型</value>
+    <value>App Background Type</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundExpander.Header" xml:space="preserve">
-    <value>背景</value>
+    <value>Background</value>
   </data>
   <data name="ViewThemesSettingsPageBackgroundMica.Content" xml:space="preserve">
     <value>Mica</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeCard.Description" xml:space="preserve">
-    <value>背景的亚克力效果模式</value>
+    <value>Background Acrylic Effect Mode</value>
   </data>
   <data name="ViewThemesSettingsPageAcrylicTypeCard.Header" xml:space="preserve">
-    <value>亚克力类型</value>
+    <value>Acrylic Type</value>
   </data>
   <data name="ViewThemesSettingsPageMicaTypeCard.Description" xml:space="preserve">
-    <value>背景的 Mica 效果模式</value>
+    <value>Background Mica Effect Mode</value>
   </data>
   <data name="ViewThemesSettingsPageMicaTypeCard.Header" xml:space="preserve">
-    <value>Mica 类型</value>
+    <value>Mica Type</value>
   </data>
   <data name="ViewThemesSettingsPageMicaErrorFallback.Description" xml:space="preserve">
     <value>Enable fallback when Mica is unavailable (Win10)</value>
@@ -3229,10 +3229,10 @@
     <value>None</value>
   </data>
   <data name="ViewThemesSettingsPageImageStretchCard.Description" xml:space="preserve">
-    <value>背景中图片大小的设置方式</value>
+    <value>The way the image is stretched within the background</value>
   </data>
   <data name="ViewThemesSettingsPageImageStretchCard.Header" xml:space="preserve">
-    <value>图片拉伸模式</value>
+    <value>Image Stretch Mode</value>
   </data>
   <data name="ViewThemeSettingsPageImageStretchComboBoxNone.Content" xml:space="preserve">
     <value>None</value>
@@ -3247,10 +3247,10 @@
     <value>Uniform to fill</value>
   </data>
   <data name="ViewThemesSettingsPageImageOpacityCard.Description" xml:space="preserve">
-    <value>图片在背景中的透明度，会覆盖窗口色</value>
+    <value>The opacity of the image within the background, which will override the window color</value>
   </data>
   <data name="ViewThemesSettingsPageImageOpacityCard.Header" xml:space="preserve">
-    <value>透明度</value>
+    <value>Opacity</value>
   </data>
   <data name="ViewThemesSettingsPageVideoModeNone.Content" xml:space="preserve">
     <value>None</value>
@@ -5330,5 +5330,1410 @@
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
     <value>Enable DHT</value>
+  </data>
+  <data name="CommonNotTested" xml:space="preserve">
+    <value>Not tested</value>
+  </data>
+  <data name="CommonOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeTcpHandshake" xml:space="preserve">
+    <value>TCP connected; BitTorrent handshake sent</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeUtpResponse" xml:space="preserve">
+    <value>Valid uTP response received</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeConnectionRefused" xml:space="preserve">
+    <value>Connection refused</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeTimeout" xml:space="preserve">
+    <value>No response before the traversal timeout</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeUnexpectedUdp" xml:space="preserve">
+    <value>UDP replied, but not with a valid uTP packet</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeNoEvidence" xml:space="preserve">
+    <value>No probe evidence</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeResultFormat" xml:space="preserve">
+    <value>{0} · {1} ms · {2}</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeBlocked" xml:space="preserve">
+    <value>Blocked / unreachable</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeTimedOut" xml:space="preserve">
+    <value>Timed out before the traversal node returned a result</value>
+  </data>
+  <data name="ViewNATDetectorWindowProbeNotAvailable" xml:space="preserve">
+    <value>Not available / not tested</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringNotAvailable" xml:space="preserve">
+    <value>Not available (the traversal node needs a second public IPv4 address)</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringReceived" xml:space="preserve">
+    <value>Received from the requested alternate endpoint</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringNotReceived" xml:space="preserve">
+    <value>Not received before the 3 s STUN timeout</value>
+  </data>
+  <data name="ViewNATDetectorWindowNotObserved" xml:space="preserve">
+    <value>Not observed</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionInternalEndpoint" xml:space="preserve">
+    <value>All mapping requests used the same internal UDP endpoint {0}:{1}. </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionPrimaryObserved" xml:space="preserve">
+    <value>The primary traversal endpoint observed </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionRemotePort" xml:space="preserve">
+    <value>Changing only the remote port produced </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionRemoteAddress" xml:space="preserve">
+    <value>Changing the remote address produced </value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionDirect" xml:space="preserve">
+    <value>The local and observed public IPv4 addresses match, so no IPv4 address translation was observed.</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionEndpointIndependent" xml:space="preserve">
+    <value>The public endpoint stayed constant across remote endpoints (endpoint-independent mapping).</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionAddressDependent" xml:space="preserve">
+    <value>The public endpoint changed when the remote IP changed, but not when only its port changed (address-dependent mapping).</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionAddressAndPortDependent" xml:space="preserve">
+    <value>The same local socket received a different public mapping when the remote endpoint changed. This destination-dependent mapping is the key evidence behind the traditional Symmetric NAT label.</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionUnknown" xml:space="preserve">
+    <value>There was not enough STUN evidence to classify mapping behavior.</value>
+  </data>
+  <data name="ViewNATDetectorWindowConclusionDisclaimer" xml:space="preserve">
+    <value> Mapping describes how outbound traffic is translated; filtering separately describes which remote endpoints may send packets back. Neither result is a conventional port scan.</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoListeningSocket" xml:space="preserve">
+    <value>libtorrent did not open a listening socket.</value>
+  </data>
+  <data name="ViewNATDetectorWindowTcpPending" xml:space="preserve">
+    <value>TCP pending</value>
+  </data>
+  <data name="ViewNATDetectorWindowUdpPending" xml:space="preserve">
+    <value>UDP pending</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForStunTest" xml:space="preserve">
+    <value>Waiting for the full STUN behavior test.</value>
+  </data>
+  <data name="ViewNATDetectorWindowWaitingForEvidence" xml:space="preserve">
+    <value>Waiting for mapping and filtering evidence.</value>
+  </data>
+  <data name="ViewNATDetectorWindowTraversalProbeTimedOut" xml:space="preserve">
+    <value>Traversal probe timed out</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoTraversalProbeResponse" xml:space="preserve">
+    <value>No traversal probe response</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoActiveListener" xml:space="preserve">
+    <value>No active libtorrent IPv4 or IPv6 listener is available.</value>
+  </data>
+  <data name="ViewNATDetectorWindowTestingReachability" xml:space="preserve">
+    <value>Testing IPv4/IPv6 TCP and UDP reachability</value>
+  </data>
+  <data name="ViewNATDetectorWindowQuickPortTestComplete" xml:space="preserve">
+    <value>Quick port test complete</value>
+  </data>
+  <data name="ViewNATDetectorWindowQuickPortTestIncomplete" xml:space="preserve">
+    <value>Quick port test incomplete</value>
+  </data>
+  <data name="ViewNATDetectorWindowQuickPortTestStopped" xml:space="preserve">
+    <value>The quick port test stopped unexpectedly.</value>
+  </data>
+  <data name="ViewNATDetectorWindowTcpMappingFormat" xml:space="preserve">
+    <value>TCP {0} ({1})</value>
+  </data>
+  <data name="ViewNATDetectorWindowUdpMappingFormat" xml:space="preserve">
+    <value>UDP {0} ({1})</value>
+  </data>
+  <data name="ViewNATDetectorWindowNoListeningConfiguredPort" xml:space="preserve">
+    <value>libtorrent is not listening. Set an available port in BitTorrent settings.</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionCancelled" xml:space="preserve">
+    <value>Detection was cancelled.</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionStopped" xml:space="preserve">
+    <value>Detection stopped:</value>
+  </data>
+  <data name="ViewNATDetectorWindowDetectionStoppedUnexpectedly" xml:space="preserve">
+    <value>Detection stopped unexpectedly.</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationEndpointIndependent" xml:space="preserve">
+    <value>A reply from a different public IP and port was received. Once the mapping exists, inbound filtering is endpoint-independent.</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationAddressDependent" xml:space="preserve">
+    <value>A different IP was blocked, while the same IP using a different source port was accepted. Filtering depends on the remote address.</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationAddressAndPortDependent" xml:space="preserve">
+    <value>Replies from both a different IP+port and the same IP with a different port were not received. Filtering depends on the full remote endpoint.</value>
+  </data>
+  <data name="ViewNATDetectorWindowFilteringExplanationUnknown" xml:space="preserve">
+    <value>Filtering behavior could not be classified. A traversal node with two public IPv4 addresses is required for the complete test.</value>
+  </data>
+  <data name="ViewNatToolsPagePortOpenPrefix" xml:space="preserve">
+    <value>Port </value>
+  </data>
+  <data name="ViewNatToolsPagePortOpenSuffix" xml:space="preserve">
+    <value> is OPEN (mapped port matches)</value>
+  </data>
+  <data name="ViewNatToolsPagePortClosedPrefix" xml:space="preserve">
+    <value>Port </value>
+  </data>
+  <data name="ViewNatToolsPagePortClosedSuffix" xml:space="preserve">
+    <value> appears CLOSED or remapped</value>
+  </data>
+  <data name="ViewNetworkSettingsPageActualPortPrefix" xml:space="preserve">
+    <value>Port </value>
+  </data>
+  <data name="ViewNetworkSettingsPageActualListeningPrefix" xml:space="preserve">
+    <value>Currently listening on port </value>
+  </data>
+  <data name="ViewNetworkSettingsPageEditedEndpointInvalidDisplayedListener" xml:space="preserve">
+    <value>The edited endpoint is invalid; the displayed listener still uses the last valid configuration.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageRuntimePortAutoSelected" xml:space="preserve">
+    <value>The operating system selected this runtime port because at least one configured endpoint uses port 0.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageRuntimePortMatchesConfiguration" xml:space="preserve">
+    <value>The runtime listener matches the saved endpoint configuration.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageRuntimePortDiffersConfiguration" xml:space="preserve">
+    <value>The runtime port differs from the saved fixed port. Check whether the configured port is already in use.</value>
+  </data>
+  <data name="ViewNetworkSettingsPageTrackerList" xml:space="preserve">
+    <value>Tracker list</value>
+  </data>
+  <data name="ViewRSSPageOpeningDownload" xml:space="preserve">
+    <value>Opening download:</value>
+  </data>
+  <data name="ViewRSSPageNoDownloadLink" xml:space="preserve">
+    <value>No download link available for:</value>
+  </data>
+  <data name="ViewRSSPageUnableToOpenTorrent" xml:space="preserve">
+    <value>Unable to open torrent:</value>
+  </data>
+  <data name="ViewRSSPageUnableToOpenArticle" xml:space="preserve">
+    <value>Unable to open the article link.</value>
+  </data>
+  <data name="RuntimeStatusSectionApplicationTasks" xml:space="preserve">
+    <value>Application and tasks</value>
+  </data>
+  <data name="RuntimeStatusVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="RuntimeStatusDhtNodesIpv4" xml:space="preserve">
+    <value>DHT nodes IPv4</value>
+  </data>
+  <data name="RuntimeStatusSectionProcessMemory" xml:space="preserve">
+    <value>Process and memory</value>
+  </data>
+  <data name="RuntimeStatusMemoryWorkingSet" xml:space="preserve">
+    <value>Memory working set</value>
+  </data>
+  <data name="RuntimeStatusMemoryCommitPrivate" xml:space="preserve">
+    <value>Memory commit/private</value>
+  </data>
+  <data name="RuntimeStatusProcessHandleCount" xml:space="preserve">
+    <value>Process handle count</value>
+  </data>
+  <data name="RuntimeStatusSectionStorageDiskCache" xml:space="preserve">
+    <value>Storage and disk cache</value>
+  </data>
+  <data name="RuntimeStatusVolumeList" xml:space="preserve">
+    <value>Volume list</value>
+  </data>
+  <data name="RuntimeStatusVolumeEntryValue" xml:space="preserve">
+    <value>{} {} free / {}</value>
+  </data>
+  <data name="RuntimeStatusSectionBitCometCoverage" xml:space="preserve">
+    <value>BitComet-specific subsystem coverage</value>
+  </data>
+  <data name="RuntimeStatusLtSeedProtocol" xml:space="preserve">
+    <value>LTSeed client/server protocol</value>
+  </data>
+  <data name="RuntimeStatusLtSeedUdpQueues" xml:space="preserve">
+    <value>LTSeed UDP queues</value>
+  </data>
+  <data name="RuntimeStatusDiskBoostService" xml:space="preserve">
+    <value>Disk boost service</value>
+  </data>
+  <data name="RuntimeStatusBitCometMessageQueues" xml:space="preserve">
+    <value>BitComet message queue categories</value>
+  </data>
+  <data name="RuntimeStatusBitCometTimerQueues" xml:space="preserve">
+    <value>BitComet timer queue categories</value>
+  </data>
+  <data name="RuntimeStatusSectionConnectionsAddresses" xml:space="preserve">
+    <value>Connections and addresses</value>
+  </data>
+  <data name="RuntimeStatusInternalPeerBans" xml:space="preserve">
+    <value>Internal peer bans</value>
+  </data>
+  <data name="RuntimeStatusLanIpv4" xml:space="preserve">
+    <value>LAN IPv4</value>
+  </data>
+  <data name="RuntimeStatusLanIpv6" xml:space="preserve">
+    <value>LAN IPv6</value>
+  </data>
+  <data name="RuntimeStatusWindowsFirewallState" xml:space="preserve">
+    <value>Windows Firewall state</value>
+  </data>
+  <data name="RuntimeStatusSectionSessionTotals" xml:space="preserve">
+    <value>Session totals</value>
+  </data>
+  <data name="RuntimeStatusSectionUdpDhtDiagnostics" xml:space="preserve">
+    <value>UDP, DHT and detection diagnostics</value>
+  </data>
+  <data name="RuntimeStatusSectionSchedulersTrackers" xml:space="preserve">
+    <value>Schedulers and trackers</value>
+  </data>
+  <data name="RuntimeStatusSectionRawLibtorrentMetrics" xml:space="preserve">
+    <value>Raw libtorrent session metrics</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentEngine" xml:space="preserve">
+    <value>BitTorrent engine</value>
+  </data>
+  <data name="RuntimeStatusUpTime" xml:space="preserve">
+    <value>Up time</value>
+  </data>
+  <data name="RuntimeStatusOverallTasks" xml:space="preserve">
+    <value>Overall tasks</value>
+  </data>
+  <data name="RuntimeStatusRunningTasks" xml:space="preserve">
+    <value>Running tasks</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentTaskStates" xml:space="preserve">
+    <value>BitTorrent task states</value>
+  </data>
+  <data name="RuntimeStatusHttpTaskStates" xml:space="preserve">
+    <value>HTTP task states</value>
+  </data>
+  <data name="RuntimeStatusLongTermSeeding" xml:space="preserve">
+    <value>Long-term seeding</value>
+  </data>
+  <data name="RuntimeStatusMetadataDownloading" xml:space="preserve">
+    <value>Metadata downloading</value>
+  </data>
+  <data name="RuntimeStatusMetadataCacheFiles" xml:space="preserve">
+    <value>Metadata cache files</value>
+  </data>
+  <data name="RuntimeStatusTorrentExchangeBlocklist" xml:space="preserve">
+    <value>Torrent exchange blocklist</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentCore" xml:space="preserve">
+    <value>BitTorrent core</value>
+  </data>
+  <data name="RuntimeStatusHttpCore" xml:space="preserve">
+    <value>HTTP core</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessWebUi" xml:space="preserve">
+    <value>Remote access / Web UI</value>
+  </data>
+  <data name="RuntimeStatusWebUiEndpoint" xml:space="preserve">
+    <value>Web UI endpoint</value>
+  </data>
+  <data name="RuntimeStatusWebUiAccount" xml:space="preserve">
+    <value>Web UI account</value>
+  </data>
+  <data name="RuntimeStatusWebUiActivity" xml:space="preserve">
+    <value>Web UI activity</value>
+  </data>
+  <data name="RuntimeStatusTcpConnectionsEstablished" xml:space="preserve">
+    <value>TCP connections established</value>
+  </data>
+  <data name="RuntimeStatusTcpConnectionsMaximum" xml:space="preserve">
+    <value>TCP connections maximum</value>
+  </data>
+  <data name="RuntimeStatusTcpHalfOpenMaximum" xml:space="preserve">
+    <value>TCP half-open / maximum</value>
+  </data>
+  <data name="RuntimeStatusPendingConnections" xml:space="preserve">
+    <value>Pending connections</value>
+  </data>
+  <data name="RuntimeStatusBtConnectionCount" xml:space="preserve">
+    <value>BT connection count</value>
+  </data>
+  <data name="RuntimeStatusWebTorrentWebRtc" xml:space="preserve">
+    <value>WebTorrent / WebRTC</value>
+  </data>
+  <data name="RuntimeStatusI2pPex" xml:space="preserve">
+    <value>I2P / PEX</value>
+  </data>
+  <data name="RuntimeStatusHttpConnectionActivity" xml:space="preserve">
+    <value>HTTP connection activity</value>
+  </data>
+  <data name="RuntimeStatusHttpTrackerConnectionCount" xml:space="preserve">
+    <value>HTTP tracker connection count</value>
+  </data>
+  <data name="RuntimeStatusOverallDownloadRate" xml:space="preserve">
+    <value>Overall download rate</value>
+  </data>
+  <data name="RuntimeStatusOverallUploadRate" xml:space="preserve">
+    <value>Overall upload rate</value>
+  </data>
+  <data name="RuntimeStatusBtDownloadUploadRate" xml:space="preserve">
+    <value>BitTorrent download / upload rate</value>
+  </data>
+  <data name="RuntimeStatusHttpDownloadUploadRate" xml:space="preserve">
+    <value>HTTP download / upload rate</value>
+  </data>
+  <data name="RuntimeStatusDownloadUploadLimits" xml:space="preserve">
+    <value>Download / upload limits</value>
+  </data>
+  <data name="RuntimeStatusActiveTaskLimits" xml:space="preserve">
+    <value>Active task limits</value>
+  </data>
+  <data name="RuntimeStatusMaximumPeerListPerTask" xml:space="preserve">
+    <value>Maximum peer list per task</value>
+  </data>
+  <data name="RuntimeStatusTrackerReceiveSendRate" xml:space="preserve">
+    <value>Tracker receive / send rate</value>
+  </data>
+  <data name="RuntimeStatusTrackerReceiveSendTotal" xml:space="preserve">
+    <value>Tracker receive / send total</value>
+  </data>
+  <data name="RuntimeStatusBtMetadataMessages" xml:space="preserve">
+    <value>BT metadata messages</value>
+  </data>
+  <data name="RuntimeStatusBtUploadSlots" xml:space="preserve">
+    <value>BT upload slots</value>
+  </data>
+  <data name="RuntimeStatusSeedingUploadRate" xml:space="preserve">
+    <value>Seeding upload rate</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessTransferRate" xml:space="preserve">
+    <value>Remote access transfer rate</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessTransferTotal" xml:space="preserve">
+    <value>Remote access transfer total</value>
+  </data>
+  <data name="RuntimeStatusDhtRoutingCacheTorrentsPeers" xml:space="preserve">
+    <value>DHT routing cache / torrents / peers</value>
+  </data>
+  <data name="RuntimeStatusDnsResolverState" xml:space="preserve">
+    <value>DNS resolver state</value>
+  </data>
+  <data name="RuntimeStatusCpuUsage" xml:space="preserve">
+    <value>CPU usage</value>
+  </data>
+  <data name="RuntimeStatusProcessHeap" xml:space="preserve">
+    <value>Process heap</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskCache" xml:space="preserve">
+    <value>libtorrent disk cache</value>
+  </data>
+  <data name="RuntimeStatusDiskWriteBuffer" xml:space="preserve">
+    <value>Disk write buffer</value>
+  </data>
+  <data name="RuntimeStatusTcpUdpSocketBuffers" xml:space="preserve">
+    <value>TCP/UDP socket buffers</value>
+  </data>
+  <data name="RuntimeStatusApplicationModelBuffers" xml:space="preserve">
+    <value>Application model buffers</value>
+  </data>
+  <data name="RuntimeStatusLoggingBuffers" xml:space="preserve">
+    <value>Logging buffers</value>
+  </data>
+  <data name="RuntimeStatusReservedVirtualMemory" xml:space="preserve">
+    <value>Reserved virtual memory</value>
+  </data>
+  <data name="RuntimeStatusFreePhysicalMemory" xml:space="preserve">
+    <value>Free physical memory</value>
+  </data>
+  <data name="RuntimeStatusFreeVirtualMemory" xml:space="preserve">
+    <value>Free virtual memory</value>
+  </data>
+  <data name="RuntimeStatusFreeProcessAddressSpace" xml:space="preserve">
+    <value>Free process address space</value>
+  </data>
+  <data name="RuntimeStatusStorageTotal" xml:space="preserve">
+    <value>Storage total</value>
+  </data>
+  <data name="RuntimeStatusStorageFree" xml:space="preserve">
+    <value>Storage free</value>
+  </data>
+  <data name="RuntimeStatusDiskCacheDataSize" xml:space="preserve">
+    <value>Disk cache data size</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskReadWrite" xml:space="preserve">
+    <value>libtorrent disk read / write</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentReadWriteOperations" xml:space="preserve">
+    <value>libtorrent read / write operations</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskJobs" xml:space="preserve">
+    <value>libtorrent disk jobs</value>
+  </data>
+  <data name="RuntimeStatusLibtorrentDiskTiming" xml:space="preserve">
+    <value>libtorrent disk timing</value>
+  </data>
+  <data name="RuntimeStatusProcessDiskReadTotal" xml:space="preserve">
+    <value>Process disk read total</value>
+  </data>
+  <data name="RuntimeStatusProcessDiskWriteTotal" xml:space="preserve">
+    <value>Process disk write total</value>
+  </data>
+  <data name="RuntimeStatusPersistedHttpCompletedData" xml:space="preserve">
+    <value>Persisted HTTP completed data</value>
+  </data>
+  <data name="RuntimeStatusLongTermSeedDiskBoost" xml:space="preserve">
+    <value>Long-term seed / disk boost service</value>
+  </data>
+  <data name="RuntimeStatusTotalDownloadedSession" xml:space="preserve">
+    <value>Total downloaded (session)</value>
+  </data>
+  <data name="RuntimeStatusTotalUploadedSession" xml:space="preserve">
+    <value>Total uploaded (session)</value>
+  </data>
+  <data name="RuntimeStatusNetworkPayloadReceiveSend" xml:space="preserve">
+    <value>Network payload receive / send</value>
+  </data>
+  <data name="RuntimeStatusNetworkProtocolReceiveSend" xml:space="preserve">
+    <value>Network protocol receive / send</value>
+  </data>
+  <data name="RuntimeStatusIpOverheadReceiveSend" xml:space="preserve">
+    <value>IP overhead receive / send</value>
+  </data>
+  <data name="RuntimeStatusFailedRedundantDownload" xml:space="preserve">
+    <value>Failed / redundant download</value>
+  </data>
+  <data name="RuntimeStatusPieceChecksPassedFailed" xml:space="preserve">
+    <value>Piece checks passed / failed</value>
+  </data>
+  <data name="RuntimeStatusPersistedHttpDownloaded" xml:space="preserve">
+    <value>Persisted HTTP downloaded</value>
+  </data>
+  <data name="RuntimeStatusPersistedP2pDownloaded" xml:space="preserve">
+    <value>Persisted P2P downloaded</value>
+  </data>
+  <data name="RuntimeStatusPersistedCombinedDownloaded" xml:space="preserve">
+    <value>Persisted combined downloaded</value>
+  </data>
+  <data name="RuntimeStatusDhtBytesReceiveSend" xml:space="preserve">
+    <value>DHT bytes receive / send</value>
+  </data>
+  <data name="RuntimeStatusDhtReceiveSendRate" xml:space="preserve">
+    <value>DHT receive / send rate</value>
+  </data>
+  <data name="RuntimeStatusDhtMessagesReceiveSend" xml:space="preserve">
+    <value>DHT messages receive / send</value>
+  </data>
+  <data name="RuntimeStatusDhtDroppedReceiveSend" xml:space="preserve">
+    <value>DHT dropped receive / send</value>
+  </data>
+  <data name="RuntimeStatusDhtRequestTypesReceiveSend" xml:space="preserve">
+    <value>DHT request types receive / send</value>
+  </data>
+  <data name="RuntimeStatusDhtInvalidRequests" xml:space="preserve">
+    <value>DHT invalid requests</value>
+  </data>
+  <data name="RuntimeStatusDhtPendingRpcObservers" xml:space="preserve">
+    <value>DHT pending RPC observers</value>
+  </data>
+  <data name="RuntimeStatusDhtUploadRateLimit" xml:space="preserve">
+    <value>DHT upload rate limit</value>
+  </data>
+  <data name="RuntimeStatusUtpPacketsReceiveSend" xml:space="preserve">
+    <value>uTP packets receive / send</value>
+  </data>
+  <data name="RuntimeStatusUtpPayloadReceiveSend" xml:space="preserve">
+    <value>uTP payload packets receive / send</value>
+  </data>
+  <data name="RuntimeStatusUtpLossTimeoutResend" xml:space="preserve">
+    <value>uTP loss / timeout / resend</value>
+  </data>
+  <data name="RuntimeStatusUdpTrackerTraffic" xml:space="preserve">
+    <value>UDP tracker traffic</value>
+  </data>
+  <data name="RuntimeStatusNatDetection" xml:space="preserve">
+    <value>NAT detection</value>
+  </data>
+  <data name="RuntimeStatusIpDetection" xml:space="preserve">
+    <value>IP detection</value>
+  </data>
+  <data name="RuntimeStatusDnsFailureDomainCounts" xml:space="preserve">
+    <value>DNS failure domain counts</value>
+  </data>
+  <data name="RuntimeStatusPeerMessagesReceiveSend" xml:space="preserve">
+    <value>Peer messages receive / send</value>
+  </data>
+  <data name="RuntimeStatusRateLimiterQueues" xml:space="preserve">
+    <value>Rate limiter queues</value>
+  </data>
+  <data name="RuntimeStatusNetworkEventWakeups" xml:space="preserve">
+    <value>Network event wakeups</value>
+  </data>
+  <data name="RuntimeStatusQueuedTrackerAnnounces" xml:space="preserve">
+    <value>Queued tracker announces</value>
+  </data>
+  <data name="RuntimeStatusTrackerConnectionDetails" xml:space="preserve">
+    <value>Tracker connection details</value>
+  </data>
+  <data name="RuntimeStatusDiskScheduler" xml:space="preserve">
+    <value>Disk scheduler</value>
+  </data>
+  <data name="RuntimeStatusTimerMessageImplementation" xml:space="preserve">
+    <value>Timer/message implementation</value>
+  </data>
+  <data name="RuntimeStatusNoneDetected" xml:space="preserve">
+    <value>None detected</value>
+  </data>
+  <data name="RuntimeStatusWanIpv4NotObserved" xml:space="preserve">
+    <value>Not observed by port mapping</value>
+  </data>
+  <data name="RuntimeStatusWanIpv6NotObserved" xml:space="preserve">
+    <value>No IPv6 address observed</value>
+  </data>
+  <data name="RuntimeStatusIncomingConnectivityNotObserved" xml:space="preserve">
+    <value>Not observed in this session</value>
+  </data>
+  <data name="RuntimeStatusNoConfirmedExternalMapping" xml:space="preserve">
+    <value>No confirmed external mapping</value>
+  </data>
+  <data name="RuntimeStatusDirectIpv6NoNatMapping" xml:space="preserve">
+    <value>Direct IPv6 reachability; no NAT mapping is required</value>
+  </data>
+  <data name="RuntimeStatusNoConfirmedMapping" xml:space="preserve">
+    <value>No confirmed mapping</value>
+  </data>
+  <data name="RuntimeStatusNotObserved" xml:space="preserve">
+    <value>Not observed</value>
+  </data>
+  <data name="RuntimeStatusIncomingConnectivityObserved" xml:space="preserve">
+    <value>Incoming connectivity observed</value>
+  </data>
+  <data name="RuntimeStatusNoIncomingConnectivityObserved" xml:space="preserve">
+    <value>No incoming connectivity observed</value>
+  </data>
+  <data name="RuntimeStatusResolverDetailsUnavailable" xml:space="preserve">
+    <value>Resolver details are not part of libtorrent's public statistics API</value>
+  </data>
+  <data name="RuntimeStatusBitTorrentTaskStatesValue" xml:space="preserve">
+    <value>Downloading {}, metadata {}, seeding {}, checking {}, paused {}, error {}</value>
+  </data>
+  <data name="RuntimeStatusHttpTaskStatesValue" xml:space="preserve">
+    <value>Pending {}, downloading {}, paused {}, completed {}, failed {}</value>
+  </data>
+  <data name="RuntimeStatusLongTermSeedingValue" xml:space="preserve">
+    <value>{} native seeding tasks; BitComet LTSeed protocol is not used</value>
+  </data>
+  <data name="RuntimeStatusWebUiActivityValue" xml:space="preserve">
+    <value>{} requests, {} active connections, {} failed logins</value>
+  </data>
+  <data name="RuntimeStatusWebTorrentEnabledValue" xml:space="preserve">
+    <value>Enabled; STUN {}; {} offers; {} s timeout</value>
+  </data>
+  <data name="RuntimeStatusI2pEnabledValue" xml:space="preserve">
+    <value>Enabled via {}:{}; mixed mode {}</value>
+  </data>
+  <data name="RuntimeStatusMappedViaValue" xml:space="preserve">
+    <value>Mapped to {} via {}</value>
+  </data>
+  <data name="RuntimeStatusUtpConnectionsValue" xml:space="preserve">
+    <value>Connected {}, SYN sent {}, FIN sent {}, close wait {}, idle {}</value>
+  </data>
+  <data name="RuntimeStatusReceivedSentValue" xml:space="preserve">
+    <value>Received {}, sent {}</value>
+  </data>
+  <data name="RuntimeStatusReceiveSendValue" xml:space="preserve">
+    <value>Receive {} / send {}</value>
+  </data>
+  <data name="RuntimeStatusProcessHeapValue" xml:space="preserve">
+    <value>{} busy + {} overhead across {} heaps</value>
+  </data>
+  <data name="RuntimeStatusDiskWriteBufferValue" xml:space="preserve">
+    <value>{} queued; setting maximum {}</value>
+  </data>
+  <data name="RuntimeStatusSocketBuffersValue" xml:space="preserve">
+    <value>Receive {}, send {} (0 means OS default)</value>
+  </data>
+  <data name="RuntimeStatusDiskJobsValue" xml:space="preserve">
+    <value>Queued {}, running {}, blocked {}, read {}, write {}</value>
+  </data>
+  <data name="RuntimeStatusDiskTimingValue" xml:space="preserve">
+    <value>Read {} ms, write {} ms, hash {} ms, request latency {} us</value>
+  </data>
+  <data name="RuntimeStatusUdpTrackerTrafficValue" xml:space="preserve">
+    <value>Included in tracker receive/send totals: {} / {}</value>
+  </data>
+  <data name="RuntimeStatusNatDetectionValue" xml:space="preserve">
+    <value>External address {}; mapped TCP/UDP {} / {}</value>
+  </data>
+  <data name="RuntimeStatusNetworkEventWakeupsValue" xml:space="preserve">
+    <value>Read {}, write {}, tick {}, UDP {}, accept {}, disk {}</value>
+  </data>
+  <data name="RuntimeStatusTrackerConnectionDetailsValue" xml:space="preserve">
+    <value>Queued {}; received {}; sent {}</value>
+  </data>
+  <data name="RuntimeStatusDiskSchedulerValue" xml:space="preserve">
+    <value>{} queued / {} running / {} blocked</value>
+  </data>
+  <data name="IpEndpointInputInvalidAddress" xml:space="preserve">
+    <value>Enter an IPv4 or IPv6 address.</value>
+  </data>
+  <data name="IpEndpointInputPortRange" xml:space="preserve">
+    <value>Port must be between 0 and 65535.</value>
+  </data>
+  <data name="IpEndpointInputAutomaticPortOnly" xml:space="preserve">
+    <value>Port 0 is only valid in automatic mode.</value>
+  </data>
+  <data name="IpEndpointInputHostNameRejected" xml:space="preserve">
+    <value>Host names are not accepted; enter a numeric IP address.</value>
+  </data>
+  <data name="IpEndpointInputRequireIpv4" xml:space="preserve">
+    <value>Enter an IPv4 address.</value>
+  </data>
+  <data name="IpEndpointInputRequireIpv6" xml:space="preserve">
+    <value>Enter an IPv6 address.</value>
+  </data>
+  <data name="IpEndpointInputValidIpv4" xml:space="preserve">
+    <value>Valid IPv4 endpoint</value>
+  </data>
+  <data name="IpEndpointInputValidIpv6" xml:space="preserve">
+    <value>Valid IPv6 endpoint</value>
+  </data>
+  <data name="IpEndpointInputAutomaticPortSuffix" xml:space="preserve">
+    <value> · automatic port</value>
+  </data>
+  <data name="IpEndpointInputInvalidNumericAddress" xml:space="preserve">
+    <value>Enter a valid numeric IPv4 or IPv6 address.</value>
+  </data>
+  <data name="HttpDownloadFreePrefix" xml:space="preserve">
+    <value>Free: </value>
+  </data>
+  <data name="HttpDownloadGiB" xml:space="preserve">
+    <value> GiB</value>
+  </data>
+  <data name="HttpDownloadInvalidUrlTitle" xml:space="preserve">
+    <value>Invalid URL</value>
+  </data>
+  <data name="HttpDownloadInvalidUrlMessage" xml:space="preserve">
+    <value>Please enter a valid HTTP, HTTPS, or FTP URL.</value>
+  </data>
+  <data name="HttpDownloadAddFailedTitle" xml:space="preserve">
+    <value>Unable to add download</value>
+  </data>
+  <data name="HttpDownloadAddFailedMessage" xml:space="preserve">
+    <value>aria2 is unavailable or rejected the supplied options.</value>
+  </data>
+  <data name="HttpDownloadSizeDeterminedByAria2" xml:space="preserve">
+    <value>Size: Determined by aria2</value>
+  </data>
+  <data name="HttpDownloadResumeDeterminedByServer" xml:space="preserve">
+    <value>Resume support: Determined by server</value>
+  </data>
+  <data name="HttpDownloadSizePrefix" xml:space="preserve">
+    <value>Size: </value>
+  </data>
+  <data name="HttpDownloadMiB" xml:space="preserve">
+    <value> MiB</value>
+  </data>
+  <data name="HttpDownloadSizeUnknown" xml:space="preserve">
+    <value>Size: Unknown</value>
+  </data>
+  <data name="HttpDownloadResumeYes" xml:space="preserve">
+    <value>Resume support: Yes</value>
+  </data>
+  <data name="HttpDownloadResumeNo" xml:space="preserve">
+    <value>Resume support: No</value>
+  </data>
+  <data name="HttpDownloadResumeUnknown" xml:space="preserve">
+    <value>Resume support: Unknown</value>
+  </data>
+  <data name="HttpDownloadMetadataFailedTitle" xml:space="preserve">
+    <value>Unable to retrieve file information</value>
+  </data>
+  <data name="ClientFilterRuleSaveFailed" xml:space="preserve">
+    <value>The rule already exists or could not be saved</value>
+  </data>
+  <data name="ClientFilterRuleAdded" xml:space="preserve">
+    <value>Client filter rule added</value>
+  </data>
+  <data name="ClientFilterRuleUpdateFailed" xml:space="preserve">
+    <value>The rule could not be updated. It may duplicate another rule.</value>
+  </data>
+  <data name="ClientFilterRuleUpdated" xml:space="preserve">
+    <value>Rule updated</value>
+  </data>
+  <data name="ClientFilterRulesImportedPrefix" xml:space="preserve">
+    <value>Imported</value>
+  </data>
+  <data name="ClientFilterRulesImportedSuffix" xml:space="preserve">
+    <value> rule(s) imported</value>
+  </data>
+  <data name="ClientFilterNoValidRulesImported" xml:space="preserve">
+    <value>No new valid rules were imported</value>
+  </data>
+  <data name="ClientFilterInvalidPatternPrefix" xml:space="preserve">
+    <value>Invalid pattern: </value>
+  </data>
+  <data name="ClientFilterMatchTypeExact" xml:space="preserve">
+    <value>Exact</value>
+  </data>
+  <data name="ClientFilterMatchTypeWildcard" xml:space="preserve">
+    <value>Wildcard</value>
+  </data>
+  <data name="ClientFilterMatchTypeRegex" xml:space="preserve">
+    <value>Regex</value>
+  </data>
+  <data name="ClientFilterMatchTypeContains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="ClientFilterRuleNumberPrefix" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="ClientFilterRuleEnabledMarker" xml:space="preserve">
+    <value>  [enabled]  </value>
+  </data>
+  <data name="ClientFilterRuleDisabledMarker" xml:space="preserve">
+    <value>  [disabled]  </value>
+  </data>
+  <data name="ClientFilterCaseSensitive" xml:space="preserve">
+    <value> / case-sensitive / </value>
+  </data>
+  <data name="ClientFilterIgnoreCase" xml:space="preserve">
+    <value> / ignore-case / </value>
+  </data>
+  <data name="ClientFilterDescriptionPrefix" xml:space="preserve">
+    <value>  —  </value>
+  </data>
+  <data name="ClientFilterHitsPrefix" xml:space="preserve">
+    <value>  · hits </value>
+  </data>
+  <data name="IPF_NoValidIpInput" xml:space="preserve">
+    <value>No valid IP addresses found in input</value>
+  </data>
+  <data name="IPF_NoValidIpFile" xml:space="preserve">
+    <value>No valid IP addresses found in file</value>
+  </data>
+  <data name="IPF_OpenFolderFailed" xml:space="preserve">
+    <value>Could not open the IP filter folder</value>
+  </data>
+  <data name="IPF_OpenFolderErrorPrefix" xml:space="preserve">
+    <value>Could not open the IP filter folder: </value>
+  </data>
+  <data name="IPF_OpenFilePrefix" xml:space="preserve">
+    <value>Could not open </value>
+  </data>
+  <data name="IPF_ErrorSeparator" xml:space="preserve">
+    <value>: </value>
+  </data>
+  <data name="IPF_InvalidEditedRule" xml:space="preserve">
+    <value>The edited rule is not a valid IP address, CIDR block, or range</value>
+  </data>
+  <data name="IPF_RuleUpdated" xml:space="preserve">
+    <value>Rule updated</value>
+  </data>
+  <data name="IPF_RuleDeleted" xml:space="preserve">
+    <value>Rule deleted</value>
+  </data>
+  <data name="IPF_AllRulesCleared" xml:space="preserve">
+    <value>All rules cleared</value>
+  </data>
+  <data name="WebUiRunning" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="WebUiNotRunning" xml:space="preserve">
+    <value>Not running</value>
+  </data>
+  <data name="RssBrowserNewTab" xml:space="preserve">
+    <value>New tab</value>
+  </data>
+  <data name="RssBrowserLoading" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
+  <data name="RuntimeStatusNotApplicable" xml:space="preserve">
+    <value>Not applicable to OpenNet</value>
+  </data>
+  <data name="DevWindowManualXamlException" xml:space="preserve">
+    <value>Manually triggered XAML exception for testing purposes.</value>
+  </data>
+  <data name="DevWindowOperationInProgress" xml:space="preserve">
+    <value>Operation in Progress</value>
+  </data>
+  <data name="DevWindowOperationPleaseWait" xml:space="preserve">
+    <value>Please wait while the operation is being completed.</value>
+  </data>
+  <data name="ClientFilterDatabaseOpenFailed" xml:space="preserve">
+    <value>Client filter database could not be opened</value>
+  </data>
+  <data name="ClientFilterRuleDeleted" xml:space="preserve">
+    <value>Rule deleted</value>
+  </data>
+  <data name="ClientFilterRulesCleared" xml:space="preserve">
+    <value>All client filter rules cleared</value>
+  </data>
+  <data name="ClientFilterHitHistoryCleared" xml:space="preserve">
+    <value>Hit history cleared</value>
+  </data>
+  <data name="RuntimeStatusNoMountedVolumes" xml:space="preserve">
+    <value>No mounted volumes</value>
+  </data>
+  <data name="RuntimeStatusUnableEnumerateVolumes" xml:space="preserve">
+    <value>Unable to enumerate volumes</value>
+  </data>
+  <data name="RuntimeStatusFirewallQueryFailedPrefix" xml:space="preserve">
+    <value>Unable to query (</value>
+  </data>
+  <data name="RuntimeStatusFirewallDomain" xml:space="preserve">
+    <value>Domain</value>
+  </data>
+  <data name="RuntimeStatusFirewallPrivate" xml:space="preserve">
+    <value>Private</value>
+  </data>
+  <data name="RuntimeStatusFirewallPublic" xml:space="preserve">
+    <value>Public</value>
+  </data>
+  <data name="RuntimeStatusLastUpdatedPrefix" xml:space="preserve">
+    <value>Last updated </value>
+  </data>
+  <data name="RuntimeStatusItemsSuffix" xml:space="preserve">
+    <value> items</value>
+  </data>
+  <data name="RuntimeStatusUnpackagedDev" xml:space="preserve">
+    <value>Unpackaged/dev</value>
+  </data>
+  <data name="RuntimeStatusReportTitle" xml:space="preserve">
+    <value>OpenNet complete runtime status</value>
+  </data>
+  <data name="WebUiStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="RuntimeStatusNotListeningPrefix" xml:space="preserve">
+    <value>Not listening: </value>
+  </data>
+  <data name="RuntimeStatusNotListening" xml:space="preserve">
+    <value>Not listening</value>
+  </data>
+  <data name="CommonLoading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="MainViewNavigationFailedPrefix" xml:space="preserve">
+    <value>Failed to load page </value>
+  </data>
+  <data name="IPF_RuleUpdateFailed" xml:space="preserve">
+    <value>The rule could not be updated. It may duplicate another rule.</value>
+  </data>
+  <data name="CommonNotAvailable" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="CommonUnlimited" xml:space="preserve">
+    <value>Unlimited</value>
+  </data>
+  <data name="TaskSummaryNotSeeding" xml:space="preserve">
+    <value>Not seeding</value>
+  </data>
+  <data name="TaskSummaryCheckingResumeData" xml:space="preserve">
+    <value>Checking resume data</value>
+  </data>
+  <data name="TaskSummaryCheckingFiles" xml:space="preserve">
+    <value>Checking files</value>
+  </data>
+  <data name="TaskSummaryDownloadingMetadata" xml:space="preserve">
+    <value>Downloading metadata</value>
+  </data>
+  <data name="TaskSummaryAllocating" xml:space="preserve">
+    <value>Allocating</value>
+  </data>
+  <data name="TaskSummaryCheckingFastResume" xml:space="preserve">
+    <value>Checking fast resume</value>
+  </data>
+  <data name="TaskSummarySha256" xml:space="preserve">
+    <value>SHA-256</value>
+  </data>
+  <data name="TaskSummarySha1" xml:space="preserve">
+    <value>SHA-1</value>
+  </data>
+  <data name="TaskSummaryPieceAligned" xml:space="preserve">
+    <value>Piece-aligned</value>
+  </data>
+  <data name="TaskSummaryNotPieceAligned" xml:space="preserve">
+    <value>Not piece-aligned</value>
+  </data>
+  <data name="TaskSummaryAutoManaged" xml:space="preserve">
+    <value>Auto managed</value>
+  </data>
+  <data name="TaskSummarySequential" xml:space="preserve">
+    <value>Sequential</value>
+  </data>
+  <data name="TaskSummarySuperSeeding" xml:space="preserve">
+    <value>Super seeding</value>
+  </data>
+  <data name="Aria2StatusRemoved" xml:space="preserve">
+    <value>Removed</value>
+  </data>
+  <data name="Aria2StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Aria2StatusWaiting" xml:space="preserve">
+    <value>Waiting</value>
+  </data>
+  <data name="CommonNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="TaskSummaryConnectedOfTotal" xml:space="preserve">
+    <value>{} of {} connected</value>
+  </data>
+  <data name="TaskSummaryConnectedCount" xml:space="preserve">
+    <value>{} connected</value>
+  </data>
+  <data name="TaskSummaryFirstLastPiecePriority" xml:space="preserve">
+    <value>First/last piece priority</value>
+  </data>
+  <data name="TaskSpeedGraphDiskBlocksInUse" xml:space="preserve">
+    <value>Libtorrent disk blocks in use</value>
+  </data>
+  <data name="TaskSpeedGraphFinishedSeedingTasks" xml:space="preserve">
+    <value>Finished and seeding tasks</value>
+  </data>
+  <data name="PeersGroupConnected" xml:space="preserve">
+    <value>Connected</value>
+  </data>
+  <data name="PeersGroupConnecting" xml:space="preserve">
+    <value>Connecting</value>
+  </data>
+  <data name="PeersGroupDisconnecting" xml:space="preserve">
+    <value>Disconnecting</value>
+  </data>
+  <data name="PeersGroupBannedIps" xml:space="preserve">
+    <value>Banned IPs</value>
+  </data>
+  <data name="PeerStatusDisconnecting" xml:space="preserve">
+    <value>Disconnecting</value>
+  </data>
+  <data name="PeerStatusBanned" xml:space="preserve">
+    <value>Banned</value>
+  </data>
+  <data name="PeerInitiatorRemote" xml:space="preserve">
+    <value>Remote</value>
+  </data>
+  <data name="PeerInitiatorLocal" xml:space="preserve">
+    <value>Local</value>
+  </data>
+  <data name="TaskPieceMapHashPrefix" xml:space="preserve">
+    <value>
+Hash: </value>
+  </data>
+  <data name="PeerConnectionDiscovering" xml:space="preserve">
+    <value>Discovering</value>
+  </data>
+  <data name="PeerConnectionConnecting" xml:space="preserve">
+    <value>Connecting</value>
+  </data>
+  <data name="PeerConnectionFailed" xml:space="preserve">
+    <value>Connection failed</value>
+  </data>
+  <data name="PeerConnectionTimedOut" xml:space="preserve">
+    <value>Timed out</value>
+  </data>
+  <data name="ClientFilterEnabledStatus" xml:space="preserve">
+    <value>Client filtering enabled</value>
+  </data>
+  <data name="ClientFilterDisabledStatus" xml:space="preserve">
+    <value>Client filtering disabled and transient blocks cleared</value>
+  </data>
+  <data name="ClientFilterRulesExported" xml:space="preserve">
+    <value>Rules exported</value>
+  </data>
+  <data name="ClientFilterExportFailed" xml:space="preserve">
+    <value>Could not export rules</value>
+  </data>
+  <data name="TaskSpeedGraphCpuAverageSuffix" xml:space="preserve">
+    <value> average</value>
+  </data>
+  <data name="TaskSpeedGraphCpuPeakValue" xml:space="preserve">
+    <value>{} peak · {} logical processors</value>
+  </data>
+  <data name="MainViewPortStateBlocked" xml:space="preserve">
+    <value>Blocked</value>
+  </data>
+  <data name="MainViewPortStateTimedOut" xml:space="preserve">
+    <value>Timed out</value>
+  </data>
+  <data name="MainViewPortStateUnavailable" xml:space="preserve">
+    <value>Unavailable</value>
+  </data>
+  <data name="MainViewGuestUser" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="MainViewAppStarted" xml:space="preserve">
+    <value>App started</value>
+  </data>
+  <data name="MainViewPortOpenedFirewallRouter" xml:space="preserve">
+    <value>Opened in Firewall/Router</value>
+  </data>
+  <data name="MainViewListenerStatusValue" xml:space="preserve">
+    <value>{} ({})</value>
+  </data>
+  <data name="MainViewRemoteAccessStatusValue" xml:space="preserve">
+    <value>{} ({})</value>
+  </data>
+  <data name="MainViewWebUiListening" xml:space="preserve">
+    <value>Listening</value>
+  </data>
+  <data name="MainViewLsdPortEnabledValue" xml:space="preserve">
+    <value>{} (Listening)</value>
+  </data>
+  <data name="MainViewWindowsFirewallStatusValue" xml:space="preserve">
+    <value>Windows Firewall: {}; TCP {} {}; UDP {} {}; remote TCP {} {}</value>
+  </data>
+  <data name="MainViewUpnpMappingAddedValue" xml:space="preserve">
+    <value>Added [TCP {} → {}; UDP {} → {}]</value>
+  </data>
+  <data name="MainViewUpnpEnabledWaitingMapping" xml:space="preserve">
+    <value>Enabled; waiting for a confirmed mapping</value>
+  </data>
+  <data name="MainViewUpnpMappingFailedValue" xml:space="preserve">
+    <value>Failed [{}]</value>
+  </data>
+  <data name="WebUISettingsRunningAt" xml:space="preserve">
+    <value>Web UI is running at </value>
+  </data>
+  <data name="WebUISettingsChangesApplyAutomatically" xml:space="preserve">
+    <value>Web UI is not running. Valid changes are applied automatically.</value>
+  </data>
+  <data name="WebUISettingsAddressPortFailedRestored" xml:space="preserve">
+    <value>The address or port could not be opened. Previous settings were restored.</value>
+  </data>
+  <data name="WebUISettingsChangesAppliedRunning" xml:space="preserve">
+    <value>Changes applied. Web UI is running at </value>
+  </data>
+  <data name="WebUISettingsChangesAppliedDisabled" xml:space="preserve">
+    <value>Changes applied. Web UI is disabled.</value>
+  </data>
+  <data name="WebUISettingsApiKeyApplying" xml:space="preserve">
+    <value>A new API key is being applied.</value>
+  </data>
+  <data name="WebUISettingsNoApiKeyToCopy" xml:space="preserve">
+    <value>There is no API key to copy.</value>
+  </data>
+  <data name="WebUISettingsApiKeyCopied" xml:space="preserve">
+    <value>API key copied to the clipboard.</value>
+  </data>
+  <data name="WebUISettingsApiKeyRevocationApplying" xml:space="preserve">
+    <value>API key revocation is being applied.</value>
+  </data>
+  <data name="WebUISettingsNotRunningCheckSettings" xml:space="preserve">
+    <value>Web UI is not running. Check the settings above.</value>
+  </data>
+  <data name="RuntimeStatusInitialized" xml:space="preserve">
+    <value>Initialized</value>
+  </data>
+  <data name="RuntimeStatusNotInitialized" xml:space="preserve">
+    <value>Not initialized</value>
+  </data>
+  <data name="RuntimeStatusAria2Available" xml:space="preserve">
+    <value>Aria2 available</value>
+  </data>
+  <data name="RuntimeStatusAria2Unavailable" xml:space="preserve">
+    <value>Aria2 unavailable</value>
+  </data>
+  <data name="RuntimeStatusPasswordInitialized" xml:space="preserve">
+    <value>initialized</value>
+  </data>
+  <data name="RuntimeStatusPasswordNeedsInitialization" xml:space="preserve">
+    <value>requires first-run initialization</value>
+  </data>
+  <data name="RuntimeStatusTaskBreakdownValue" xml:space="preserve">
+    <value>{} (BitTorrent {}, HTTP {})</value>
+  </data>
+  <data name="RuntimeStatusEnabledPersistedRulesValue" xml:space="preserve">
+    <value>{}; {} persisted rules</value>
+  </data>
+  <data name="RuntimeStatusWebUiAccountValue" xml:space="preserve">
+    <value>{}; password {}</value>
+  </data>
+  <data name="RuntimeStatusDirectProxyConnectionsValue" xml:space="preserve">
+    <value>{} direct, {} proxy</value>
+  </data>
+  <data name="RuntimeStatusHalfOpenManagedValue" xml:space="preserve">
+    <value>{} / dynamically managed</value>
+  </data>
+  <data name="RuntimeStatusPendingConnectionsValue" xml:space="preserve">
+    <value>{} half-open, {} outstanding accepts</value>
+  </data>
+  <data name="RuntimeStatusBtConnectionCountValue" xml:space="preserve">
+    <value>{} reported peers; TCP {}, uTP {}, proxy {}</value>
+  </data>
+  <data name="RuntimeStatusHttpConnectionActivityValue" xml:space="preserve">
+    <value>{} active / {} waiting tasks (Aria2 reports tasks, not sockets)</value>
+  </data>
+  <data name="RuntimeStatusWanIpv6SeeLanAddress" xml:space="preserve">
+    <value>See LAN IPv6 (globally routable/link-local scope is OS supplied)</value>
+  </data>
+  <data name="RuntimeStatusListenerErrorUnknown" xml:space="preserve">
+    <value>unknown listener error</value>
+  </data>
+  <data name="RuntimeStatusLsdPortEnabled" xml:space="preserve">
+    <value>6771/UDP (enabled)</value>
+  </data>
+  <data name="RuntimeStatusNoneConfirmed" xml:space="preserve">
+    <value>none confirmed</value>
+  </data>
+  <data name="RuntimeStatusPortMappingMechanismsValue" xml:space="preserve">
+    <value>TCP: {}; UDP: {}</value>
+  </data>
+  <data name="TorrentPrioritySkip" xml:space="preserve">
+    <value>Skip</value>
+  </data>
+  <data name="TorrentPriorityLowest" xml:space="preserve">
+    <value>Lowest</value>
+  </data>
+  <data name="TorrentPriorityLow" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="TorrentPriorityBelowNormal" xml:space="preserve">
+    <value>Below Normal</value>
+  </data>
+  <data name="TorrentPriorityNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="TorrentPriorityAboveNormal" xml:space="preserve">
+    <value>Above Normal</value>
+  </data>
+  <data name="TorrentPriorityHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="TorrentPriorityHighest" xml:space="preserve">
+    <value>Highest</value>
+  </data>
+  <data name="TorrentMetadataLoading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="TorrentMetadataConnectingPeers" xml:space="preserve">
+    <value>Connecting to peers...</value>
+  </data>
+  <data name="TorrentMetadataReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="TorrentMetadataReceived" xml:space="preserve">
+    <value>Metadata received</value>
+  </data>
+  <data name="SettingsDefaultUserName" xml:space="preserve">
+    <value>Guest</value>
+  </data>
+  <data name="SettingsThisPc" xml:space="preserve">
+    <value>This PC</value>
+  </data>
+  <data name="RuntimeStatusWanIpv4" xml:space="preserve">
+    <value>WAN IPv4</value>
+  </data>
+  <data name="RuntimeStatusWanIpv6" xml:space="preserve">
+    <value>WAN IPv6</value>
+  </data>
+  <data name="RuntimeStatusBtTcpListenPort" xml:space="preserve">
+    <value>BT TCP listen port</value>
+  </data>
+  <data name="RuntimeStatusIncomingPeerConnectivity" xml:space="preserve">
+    <value>Incoming peer connectivity</value>
+  </data>
+  <data name="RuntimeStatusBtTcpFirewallIpv4" xml:space="preserve">
+    <value>BT TCP firewall/router state IPv4</value>
+  </data>
+  <data name="RuntimeStatusBtTcpFirewallIpv6" xml:space="preserve">
+    <value>BT TCP firewall/router state IPv6</value>
+  </data>
+  <data name="RuntimeStatusBtUdpListenPort" xml:space="preserve">
+    <value>BT UDP listen port</value>
+  </data>
+  <data name="RuntimeStatusBtUdpMappedPort" xml:space="preserve">
+    <value>BT UDP mapped port</value>
+  </data>
+  <data name="RuntimeStatusUtpConnections" xml:space="preserve">
+    <value>uTP connections</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessPort" xml:space="preserve">
+    <value>Remote access port</value>
+  </data>
+  <data name="RuntimeStatusRemoteAccessConnections" xml:space="preserve">
+    <value>Remote access connections</value>
+  </data>
+  <data name="RuntimeStatusLsdPort" xml:space="preserve">
+    <value>LSD port</value>
+  </data>
+  <data name="RuntimeStatusUpnpNatMapping" xml:space="preserve">
+    <value>UPnP NAT mapping</value>
+  </data>
+  <data name="RuntimeStatusNatPmpMapping" xml:space="preserve">
+    <value>NAT-PMP mapping</value>
+  </data>
+  <data name="RuntimeStatusPortMappingMechanisms" xml:space="preserve">
+    <value>Port mapping mechanisms</value>
+  </data>
+  <data name="RuntimeStatusTcpUdpMappedPorts" xml:space="preserve">
+    <value>TCP / UDP mapped ports</value>
+  </data>
+  <data name="RuntimeStatusMetadataCacheFilesValue" xml:space="preserve">
+    <value>{} files / {}</value>
+  </data>
+  <data name="RuntimeStatusActiveTaskLimitsValue" xml:space="preserve">
+    <value>Downloads {}, seeds {}, total {}</value>
+  </data>
+  <data name="RuntimeStatusBtUploadSlotsValue" xml:space="preserve">
+    <value>{} active / {} allowed</value>
+  </data>
+  <data name="RuntimeStatusCpuUsageValue" xml:space="preserve">
+    <value>{}% ({} physical cores / {} logical processors)</value>
+  </data>
+  <data name="RuntimeStatusApplicationModelBuffersValue" xml:space="preserve">
+    <value>STL/WinRT containers are included in heap/private memory totals</value>
+  </data>
+  <data name="RuntimeStatusLoggingBuffersValue" xml:space="preserve">
+    <value>OpenNet uses ETW/debug sinks; no fixed BitComet-style log arenas</value>
+  </data>
+  <data name="RuntimeStatusReservedVirtualMemoryValue" xml:space="preserve">
+    <value>{} reserved/private address space</value>
+  </data>
+  <data name="RuntimeStatusDiskCacheDataSizeValue" xml:space="preserve">
+    <value>{} ({} 16-KiB blocks)</value>
+  </data>
+  <data name="RuntimeStatusProcessDiskIoValue" xml:space="preserve">
+    <value>{} in {} operations</value>
+  </data>
+  <data name="RuntimeStatusDhtRequestTypesValue" xml:space="preserve">
+    <value>ping {}/{}, find_node {}/{}, get_peers {}/{}, announce_peer {}/{}, get {}/{}, put {}/{}</value>
+  </data>
+  <data name="RuntimeStatusRateLimiterQueuesValue" xml:space="preserve">
+    <value>Upload {} sockets / {}; download {} sockets / {}</value>
+  </data>
+  <data name="RuntimeStatusTimerMessageImplementationValue" xml:space="preserve">
+    <value>libtorrent ASIO executor; BitComet timer queue internals do not apply</value>
+  </data>
+  <data name="RuntimeStatusOpenNetEquivalents" xml:space="preserve">
+    <value>OpenNet equivalents</value>
+  </data>
+  <data name="RuntimeStatusOpenNetEquivalentsValue" xml:space="preserve">
+    <value>Native BitTorrent/libtorrent, Aria2 HTTP, ASIO scheduler, mmap disk I/O</value>
+  </data>
+  <data name="TaskPieceMapUnchecked" xml:space="preserve">
+    <value>Unchecked</value>
+  </data>
+  <data name="TaskPieceMapEmpty" xml:space="preserve">
+    <value>Empty</value>
+  </data>
+  <data name="TaskPieceMapTooltipFormat" xml:space="preserve">
+    <value>Piece {}
+State: {}
+Availability: {}</value>
+  </data>
+  <data name="ClientFilterMatchedRulePrefix" xml:space="preserve">
+    <value>Matched rule #</value>
+  </data>
+  <data name="ClientFilterRuleDisabled" xml:space="preserve">
+    <value>Rule disabled</value>
+  </data>
+  <data name="ClientFilterRuleEnabled" xml:space="preserve">
+    <value>Rule enabled</value>
+  </data>
+  <data name="TaskPieceMapHashUnavailable" xml:space="preserve">
+    <value>\nHash: unavailable for this metadata/protocol</value>
+  </data>
+  <data name="MBInfo" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="MBWarn" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="MBError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="RuntimeStatusDnsResolverStateValue" xml:space="preserve">
+    <value>Managed internally by libtorrent/WinHTTP; no public cache queue counter</value>
+  </data>
+  <data name="RuntimeStatusPortMappingError" xml:space="preserve">
+    <value>Port mapping error</value>
+  </data>
+  <data name="RuntimeStatusSectionTransfer" xml:space="preserve">
+    <value>Transfer</value>
+  </data>
+  <data name="CommonAvailable" xml:space="preserve">
+    <value>Available</value>
+  </data>
+  <data name="NetworkDetectionReady" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="NetworkDetectionInProgress" xml:space="preserve">
+    <value>Detecting...</value>
+  </data>
+  <data name="NetworkDetectionComplete" xml:space="preserve">
+    <value>Detection completed</value>
+  </data>
+  <data name="NetworkDetectionFailed" xml:space="preserve">
+    <value>Detection failed</value>
+  </data>
+  <data name="NetworkQualityExcellent" xml:space="preserve">
+    <value>Excellent</value>
+  </data>
+  <data name="NetworkQualityGood" xml:space="preserve">
+    <value>Good</value>
+  </data>
+  <data name="NetworkQualityFair" xml:space="preserve">
+    <value>Fair</value>
+  </data>
+  <data name="NetworkQualityPoor" xml:space="preserve">
+    <value>Poor</value>
+  </data>
+  <data name="NetworkQualityVeryPoor" xml:space="preserve">
+    <value>Very poor</value>
+  </data>
+  <data name="PeerDiscoveryStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="PeerDiscoveryInProgress" xml:space="preserve">
+    <value>Discovering...</value>
+  </data>
+  <data name="PeerBroadcasting" xml:space="preserve">
+    <value>Broadcasting...</value>
+  </data>
+  <data name="PeerNoPeerSelected" xml:space="preserve">
+    <value>No peer selected</value>
+  </data>
+  <data name="PeerDetailsHeader" xml:space="preserve">
+    <value>Peer information:
+</value>
+  </data>
+  <data name="PeerDetailsNamePrefix" xml:space="preserve">
+    <value>Name: </value>
+  </data>
+  <data name="PeerDetailsDevicePrefix" xml:space="preserve">
+    <value>Device: </value>
+  </data>
+  <data name="PeerDetailsOsPrefix" xml:space="preserve">
+    <value>OS: </value>
+  </data>
+  <data name="PeerDetailsStatusPrefix" xml:space="preserve">
+    <value>Status: </value>
+  </data>
+  <data name="PeerDetailsLocalIpPrefix" xml:space="preserve">
+    <value>Local IP: </value>
+  </data>
+  <data name="PeerDetailsPublicIpPrefix" xml:space="preserve">
+    <value>Public IP: </value>
+  </data>
+  <data name="PeerDetailsNatTypePrefix" xml:space="preserve">
+    <value>NAT type: </value>
+  </data>
+  <data name="PeerDetailsLatencyPrefix" xml:space="preserve">
+    <value>Latency: </value>
+  </data>
+  <data name="PeerDetailsMillisecondsSuffix" xml:space="preserve">
+    <value> ms</value>
+  </data>
+  <data name="PeerDetailsSignalPrefix" xml:space="preserve">
+    <value>Signal strength: </value>
+  </data>
+  <data name="TransferStatusIdle" xml:space="preserve">
+    <value>Idle</value>
+  </data>
+  <data name="TransferStatusPreparing" xml:space="preserve">
+    <value>Preparing</value>
+  </data>
+  <data name="TransferStatusTransferring" xml:space="preserve">
+    <value>Transferring</value>
   </data>
 </root>

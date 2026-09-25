@@ -4299,24 +4299,158 @@
   <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
     <value>分塊圖</value>
   </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>速度圖表</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>索引標籤寬度模式</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>等寬</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
     <value>每個凸輪寬度相同</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
     <value>配合內容大小</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value>每個分頁會根據分頁內內容調整寬度</value>
   </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>精簡</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
     <value>未選取的分頁會收斂，只顯示其圖示。 選取的索引標籤會調整以顯示索引標籤的內容</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>圖表自訂</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>變更會立即套用，並儲存供下次工作階段使用</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>行為</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>像素</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>歷史保留</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>保留畫面外的資料點，讓放大視窗時可顯示最近的歷史資料</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>畫面寬度</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>平滑曲線</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>以圓滑曲線插值相鄰取樣</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>強調線</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>為圖表取樣值顯示移動標記</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>所有數列中的最高值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>每個數列中的最低值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>所有數列中的最低值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>每個數列中的最高值</value>
   </data>
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>無</value>
   </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>十字</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>動畫持續時間</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>每個資料點</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>網格與畫布</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>選擇畫布圖樣與間距</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>背景圖樣</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>十字間距</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>點間距</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>自訂畫布色彩</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>覆寫會依佈景主題調整的網格與透明畫布預設值</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>畫布色彩</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>選擇啟用自訂色彩時使用的網格與畫布色彩</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>控制取樣、移動、曲線平滑與保留的歷史資料</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>移動與歷史</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>漸層填滿</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>邊界線</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>捲動距離</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>每個捲動期間移動的水平距離</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>捲動持續時間</value>
+  </data>
   <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
     <value>移動設定距離所需的時間</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>取樣間隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>遙測取樣頻率</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>外觀</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>完成日期</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>分享比率</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>種子/節點[全部]</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>種子/節點[全部]</value>
   </data>
   <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
     <value>UPnP 租約期限 (秒)</value>
@@ -4329,6 +4463,30 @@
   </data>
   <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
     <value>兩個前端共用相同的 OpenNet/qBittorrent 相容 API 與設定儲存區。</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>開啟 NAT 與連接埠偵測</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>重新載入</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>前進</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>返回</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>前往</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>在預設系統瀏覽器中開啟</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>已連線種子 / 已連線節點 [所有已知種子 / 所有已知節點]</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>播放檔案</value>
   </data>
   <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
     <value>數字動畫</value>
@@ -5074,198 +5232,6 @@
   <data name="CreateTorrentUnknownFailure" xml:space="preserve">
     <value>製作 Torrent 時發生未知錯誤。</value>
   </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
-    <value>控制項材質</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
-    <value>變更卡片與卡片面板的材質效果</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
-    <value>預設</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
-    <value>液態玻璃</value>
-  </data>
-  <data name="GuideMaterialTitle.Text" xml:space="preserve">
-    <value>選擇控制項材質</value>
-  </data>
-  <data name="GuideMaterialDescription.Text" xml:space="preserve">
-    <value>比較原生 Fluent 表面與液態玻璃，然後選擇 OpenNet 全域使用的控制項材質。</value>
-  </data>
-  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
-    <value>控制項材質</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
-    <value>預設</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
-    <value>原生 Fluent 表面</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
-    <value>液態玻璃</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
-    <value>模糊、折射與邊緣高光</value>
-  </data>
-  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
-    <value>速度圖表</value>
-  </data>
-  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
-    <value>索引標籤寬度模式</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
-    <value>等寬</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
-    <value>精簡</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
-    <value>圖表自訂</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
-    <value>變更會立即套用，並儲存供下次工作階段使用</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
-    <value>行為</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
-    <value>像素</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
-    <value>歷史保留</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
-    <value>保留畫面外的資料點，讓放大視窗時可顯示最近的歷史資料</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
-    <value>畫面寬度</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
-    <value>平滑曲線</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
-    <value>以圓滑曲線插值相鄰取樣</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
-    <value>強調線</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
-    <value>為圖表取樣值顯示移動標記</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
-    <value>所有數列中的最高值</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
-    <value>每個數列中的最低值</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
-    <value>所有數列中的最低值</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
-    <value>每個數列中的最高值</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
-    <value>十字</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
-    <value>動畫持續時間</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
-    <value>每個資料點</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
-    <value>網格與畫布</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
-    <value>選擇畫布圖樣與間距</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
-    <value>背景圖樣</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
-    <value>十字間距</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
-    <value>點間距</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
-    <value>自訂畫布色彩</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
-    <value>覆寫會依佈景主題調整的網格與透明畫布預設值</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
-    <value>畫布色彩</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
-    <value>選擇啟用自訂色彩時使用的網格與畫布色彩</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
-    <value>控制取樣、移動、曲線平滑與保留的歷史資料</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
-    <value>移動與歷史</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
-    <value>漸層填滿</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
-    <value>邊界線</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
-    <value>捲動距離</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
-    <value>每個捲動期間移動的水平距離</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
-    <value>捲動持續時間</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
-    <value>取樣間隔</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
-    <value>遙測取樣頻率</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
-    <value>外觀</value>
-  </data>
-  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
-    <value>完成日期</value>
-  </data>
-  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
-    <value>分享比率</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>種子/節點[全部]</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
-    <value>種子/節點[全部]</value>
-  </data>
-  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
-    <value>開啟 NAT 與連接埠偵測</value>
-  </data>
-  <data name="CommonContentReload.Content" xml:space="preserve">
-    <value>重新載入</value>
-  </data>
-  <data name="CommonContentForward.Content" xml:space="preserve">
-    <value>前進</value>
-  </data>
-  <data name="CommonContentBack.Content" xml:space="preserve">
-    <value>返回</value>
-  </data>
-  <data name="CommonContentGo" xml:space="preserve">
-    <value>前往</value>
-  </data>
-  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
-    <value>在預設系統瀏覽器中開啟</value>
-  </data>
-  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
-    <value>已連線種子 / 已連線節點 [所有已知種子 / 所有已知節點]</value>
-  </data>
-  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
-    <value>播放檔案</value>
-  </data>
   <data name="WebUISettingsEnabledCard.Header" xml:space="preserve">
     <value>啟用 Web UI</value>
   </data>
@@ -5319,6 +5285,39 @@
   </data>
   <data name="TaskHttpServersTab" xml:space="preserve">
     <value>伺服器</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>控制項材質</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>變更卡片與卡片面板的材質效果</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>液態玻璃</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>選擇控制項材質</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>比較原生 Fluent 表面與液態玻璃，然後選擇 OpenNet 全域使用的控制項材質。</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>控制項材質</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>預設</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>原生 Fluent 表面</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>液態玻璃</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>模糊、折射與邊緣高光</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
     <value>與已連線節點交換節點清單</value>

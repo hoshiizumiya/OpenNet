@@ -5,6 +5,7 @@
 #endif
 
 import winrt.Windows.Networking;
+import OpenNet.Core.Utils.Message;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -259,15 +260,15 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 
 		if (address.empty())
 		{
-			m_validationMessage = L"Enter an IPv4 or IPv6 address.";
+			m_validationMessage = ResourceGetString(L"IpEndpointInputInvalidAddress");
 		}
 		else if (!m_portEditorValid || Port() > 65535)
 		{
-			m_validationMessage = L"Port must be between 0 and 65535.";
+			m_validationMessage = ResourceGetString(L"IpEndpointInputPortRange");
 		}
 		else if (!AllowAutomaticPort() && Port() == 0)
 		{
-			m_validationMessage = L"Port 0 is only valid in automatic mode.";
+			m_validationMessage = ResourceGetString(L"IpEndpointInputAutomaticPortOnly");
 		}
 		else
 		{
@@ -287,7 +288,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 				else
 				{
 					m_validationMessage =
-						L"Host names are not accepted; enter a numeric IP address.";
+						ResourceGetString(L"IpEndpointInputHostNameRejected");
 				}
 
 				if (m_addressFamily !=
@@ -301,8 +302,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 						m_validationMessage =
 							required ==
 							OpenNet::UI::Xaml::Control::IpAddressFamily::IPv4
-							? L"Enter an IPv4 address."
-							: L"Enter an IPv6 address.";
+							? ResourceGetString(L"IpEndpointInputRequireIpv4")
+							: ResourceGetString(L"IpEndpointInputRequireIpv6");
 					}
 					else
 					{
@@ -326,14 +327,14 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 						m_validationMessage =
 							m_addressFamily ==
 							OpenNet::UI::Xaml::Control::IpAddressFamily::IPv4
-							? L"Valid IPv4 endpoint"
-							: L"Valid IPv6 endpoint";
+							? ResourceGetString(L"IpEndpointInputValidIpv4")
+							: ResourceGetString(L"IpEndpointInputValidIpv6");
 						if (Port() == 0)
 						{
 							std::wstring message{
 								m_validationMessage.c_str(),
 								m_validationMessage.size() };
-							message.append(L" · automatic port");
+							message.append(ResourceGetString(L"IpEndpointInputAutomaticPortSuffix").c_str());
 							m_validationMessage = hstring{ message };
 						}
 					}
@@ -341,7 +342,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 			}
 			catch (...)
 			{
-				m_validationMessage = L"Enter a valid numeric IPv4 or IPv6 address.";
+				m_validationMessage = ResourceGetString(L"IpEndpointInputInvalidNumericAddress");
 			}
 		}
 

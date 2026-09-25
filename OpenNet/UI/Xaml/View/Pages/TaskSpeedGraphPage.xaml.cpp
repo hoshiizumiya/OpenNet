@@ -8,6 +8,7 @@
 #endif
 
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.Graphics.Canvas;
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Windows.Foundation.Collections;
@@ -587,11 +588,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return {
 				std::move(values),
 				std::vector<hstring>{
-					hstring{ std::format(L"{:.1f}% average", average) },
-					hstring{ std::format(
-						L"{:.1f}% peak · {} logical processors",
-						peak,
-						processorValues.size()) }
+					hstring{ std::format(L"{:.1f}%", average) + ResourceGetString(L"TaskSpeedGraphCpuAverageSuffix") },
+					[&]
+					{
+						auto format = std::wstring{ ResourceGetString(L"TaskSpeedGraphCpuPeakValue").c_str() };
+						auto peakText = std::format(L"{:.1f}%", peak);
+						auto processorCount = std::to_wstring(processorValues.size());
+						return hstring{ std::vformat(format, std::make_wformat_args(peakText, processorCount)) };
+					}()
 				}
 			};
 		}
@@ -648,7 +652,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 						static_cast<double>(stats.diskCacheBytes) },
 					std::vector<hstring>{
 						FormatBytes(stats.diskCacheBytes),
-						hstring{ L"Libtorrent disk blocks in use" } }
+						ResourceGetString(L"TaskSpeedGraphDiskBlocksInUse") }
 				};
 
 			case MetricMode::LongTermSeeding:
@@ -660,7 +664,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 						},
 					std::vector<hstring>{
 						FormatRate(stats.longTermSeedingUploadRate),
-						hstring{ L"Finished and seeding tasks" } }
+						ResourceGetString(L"TaskSpeedGraphFinishedSeedingTasks") }
 				};
 
 			case MetricMode::DhtUdp:
