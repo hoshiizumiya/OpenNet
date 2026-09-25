@@ -5,6 +5,7 @@
 #if __has_include("UI/Xaml/View/Pages/TaskSummaryPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskSummaryPage.g.cpp"
 #endif
+#include "Core/DataGraph/SpeedGraphDatabase.h"
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Aria2.Aria2Models;
@@ -114,6 +115,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			TaskSpeedGraph().Reset();
 			m_graphTaskId = task.TaskId();
+
+			auto const taskId = to_string(task.TaskId());
+			if (!taskId.empty())
+			{
+				auto const points = ::OpenNet::Core::SpeedGraphDatabase::Instance().LoadPoints(taskId);
+				for (auto const& point : points)
+				{
+					TaskSpeedGraph().SetSpeed(
+						static_cast<double>(point.percent),
+						point.speedKB * 1024);
+				}
+			}
 		}
 
 		ResetSummary();

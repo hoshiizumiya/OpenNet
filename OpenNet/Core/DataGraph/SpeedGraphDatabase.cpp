@@ -119,7 +119,7 @@ namespace OpenNet::Core
 		if (!m_db) return result;
 
 		const char* sql =
-			"SELECT percent, speed_kb FROM speed_graph WHERE task_id = ? ORDER BY percent ASC LIMIT 100;";
+			"SELECT percent, speed_kb FROM speed_graph WHERE task_id = ? ORDER BY percent ASC LIMIT 101;";
 
 		sqlite3_stmt* stmt = nullptr;
 		int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
