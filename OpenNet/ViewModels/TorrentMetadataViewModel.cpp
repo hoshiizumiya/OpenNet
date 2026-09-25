@@ -11,6 +11,7 @@
 #endif
 
 import Core.Utils.Misc;
+import OpenNet.Core.Utils.Message;
 import std;
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -56,15 +57,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		switch (m_priority)
 		{
-			case 0: return L"Skip";
-			case 1: return L"Lowest";
-			case 2: return L"Low";
-			case 3: return L"Below Normal";
-			case 4: return L"Normal";
-			case 5: return L"Above Normal";
-			case 6: return L"High";
-			case 7: return L"Highest";
-			default: return L"Normal";
+			case 0: return ResourceGetString(L"TorrentPrioritySkip");
+			case 1: return ResourceGetString(L"TorrentPriorityLowest");
+			case 2: return ResourceGetString(L"TorrentPriorityLow");
+			case 3: return ResourceGetString(L"TorrentPriorityBelowNormal");
+			case 4: return ResourceGetString(L"TorrentPriorityNormal");
+			case 5: return ResourceGetString(L"TorrentPriorityAboveNormal");
+			case 6: return ResourceGetString(L"TorrentPriorityHigh");
+			case 7: return ResourceGetString(L"TorrentPriorityHighest");
+			default: return ResourceGetString(L"TorrentPriorityNormal");
 		}
 	}
 
@@ -166,15 +167,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		switch (m_priority)
 		{
-			case 0: return L"Skip";
-			case 1: return L"Lowest";
-			case 2: return L"Low";
-			case 3: return L"Below Normal";
-			case 4: return L"Normal";
-			case 5: return L"Above Normal";
-			case 6: return L"High";
-			case 7: return L"Highest";
-			default: return L"Normal";
+			case 0: return ResourceGetString(L"TorrentPrioritySkip");
+			case 1: return ResourceGetString(L"TorrentPriorityLowest");
+			case 2: return ResourceGetString(L"TorrentPriorityLow");
+			case 3: return ResourceGetString(L"TorrentPriorityBelowNormal");
+			case 4: return ResourceGetString(L"TorrentPriorityNormal");
+			case 5: return ResourceGetString(L"TorrentPriorityAboveNormal");
+			case 6: return ResourceGetString(L"TorrentPriorityHigh");
+			case 7: return ResourceGetString(L"TorrentPriorityHighest");
+			default: return ResourceGetString(L"TorrentPriorityNormal");
 		}
 	}
 
@@ -192,6 +193,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		: m_files(winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::TorrentFileInfoViewModel>())
 		, m_trackers(winrt::single_threaded_observable_vector<winrt::hstring>())
 	{
+		m_metadataState = 0; // Loading
+		m_metadataStatus = ResourceGetString(L"TorrentMetadataConnectingPeers");
 	}
 
 	TorrentMetadataViewModel::TorrentMetadataViewModel(::OpenNet::Core::Torrent::TorrentMetadataInfo const& metadata)
@@ -199,8 +202,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_trackers(winrt::single_threaded_observable_vector<winrt::hstring>())
 		, m_rawMetadata(metadata)
 	{
-		m_metadataState = L"Ready";
-		m_metadataStatus = L"Metadata received";
+		m_metadataState = 1; // Ready
+		m_metadataStatus = ResourceGetString(L"TorrentMetadataReceived");
 		m_torrentName = winrt::to_hstring(metadata.name);
 		m_infoHash = winrt::to_hstring(metadata.infoHash);
 		m_totalSize = ::Core::Utils::Misc::friendlyUnitCompact(metadata.totalSize);

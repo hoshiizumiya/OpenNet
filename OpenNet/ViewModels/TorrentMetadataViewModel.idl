@@ -65,7 +65,7 @@ namespace OpenNet.ViewModels
 		Int32 PieceLength;
 		Int32 NumPieces;
 		Boolean IsPrivate;
-		String MetadataState;
+		UInt32 MetadataState;
 		String MetadataStatus;
 		
 		// File list (flat list for backward compatibility)

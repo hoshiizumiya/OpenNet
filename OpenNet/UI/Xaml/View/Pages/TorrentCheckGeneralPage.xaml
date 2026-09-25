@@ -10,6 +10,7 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
+    xmlns:ouxm="using:OpenNet.UI.Xaml.Markup"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
@@ -142,7 +143,7 @@
                         HorizontalContentAlignment="Stretch"
                         VerticalContentAlignment="Stretch"
                         Value="{x:Bind ViewModel.MetadataState, Mode=OneWay}">
-                        <essential:Case Value="Loading">
+                        <essential:Case Value="{ouxm:UInt32 Value=0}">
                             <StackPanel
                                 HorizontalAlignment="Center"
                                 VerticalAlignment="Center"
@@ -174,7 +175,7 @@
                                     TextWrapping="Wrap" />
                             </StackPanel>
                         </essential:Case>
-                        <essential:Case Value="Ready">
+                        <essential:Case Value="{ouxm:UInt32 Value=1}">
                             <Grid RowSpacing="8">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
