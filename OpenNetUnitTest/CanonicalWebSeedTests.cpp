@@ -1,8 +1,10 @@
 #include "pch.h"
 
 #include <CppUnitTest.h>
+#define NOMINMAX
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include <Windows.h>
 
 #include <libtorrent/create_torrent.hpp>
 #include <libtorrent/load_torrent.hpp>
@@ -11,12 +13,17 @@
 #include <libtorrent/torrent_handle.hpp>
 
 #include <algorithm>
+#include <array>
 #include <atomic>
 #include <chrono>
 #include <cstdint>
 #include <filesystem>
+#include <format>
 #include <fstream>
+#include <iterator>
+#include <limits>
 #include <mutex>
+#include <stdexcept>
 #include <string>
 #include <string_view>
 #include <thread>
@@ -293,8 +300,22 @@ namespace OpenNetUnitTest
 			std::vector<std::uint8_t> bytes;
 			std::vector<char> metainfo;
 
+			CanonicalFixture() = default;
+			CanonicalFixture(CanonicalFixture const&) = delete;
+			CanonicalFixture& operator=(CanonicalFixture const&) = delete;
+			CanonicalFixture(CanonicalFixture&& other) noexcept
+				: root(std::move(other.root)),
+				bytes(std::move(other.bytes)),
+				metainfo(std::move(other.metainfo))
+			{
+				other.root.clear();
+			}
+			CanonicalFixture& operator=(CanonicalFixture&&) = delete;
+
 			~CanonicalFixture()
 			{
+				if (root.empty())
+					return;
 				std::error_code error;
 				std::filesystem::remove_all(root, error);
 			}
@@ -452,6 +473,30 @@ namespace OpenNetUnitTest
 						return range.starts_with("bytes=");
 					}),
 				L"libtorrent must use HTTP byte ranges for the URL seed");
+		}
+
+		TEST_METHOD(TrailingSlashUrlSeedAppendsCanonicalFilePath)
+		{
+			auto fixture = MakeCanonicalFixture();
+			RangeHttpServer server{ fixture.bytes };
+			auto const output = DownloadFromWebSeed(
+				fixture,
+				server.Url("/origin/"));
+
+			Assert::IsTrue(
+				std::filesystem::is_regular_file(output),
+				L"the trailing-slash fixture must still complete");
+
+			auto const targets = server.Targets();
+			Assert::IsFalse(
+				targets.empty(),
+				L"the web seed must receive at least one request");
+			for (auto const& target : targets)
+			{
+				Assert::IsTrue(
+					target == "/origin/OpenNet.Content.v1/content",
+					L"a trailing-slash URL seed is a base URL and must append the canonical torrent file path");
+			}
 		}
 	};
 }

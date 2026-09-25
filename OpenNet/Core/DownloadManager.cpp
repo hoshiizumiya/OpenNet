@@ -477,6 +477,7 @@ namespace OpenNet::Core
 			&& expectedSha256.has_value()
 			&& options.ResourceContentLength != 0
 			&& !peerFallbackTarget.empty()
+			&& !resourceKeys.empty()
 			&& !hybridWebSeeds.empty();
 
 		try

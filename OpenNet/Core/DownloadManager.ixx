@@ -8,9 +8,9 @@
 
 export module OpenNet.Core.DownloadManager;
 
-import OpenNet.Core.Aria2.Aria2Engine;
+export import OpenNet.Core.Aria2.Aria2Engine;
 export import OpenNet.Core.Aria2.Aria2Models;
-import OpenNet.Core.Content.ContentDirectoryContracts;
+export import OpenNet.Core.Content.ContentDirectoryContracts;
 import OpenNet.Core.Content.ResourceKey;
 import OpenNet.Core.HttpStateManager;
 import winrt.Windows.Foundation;
