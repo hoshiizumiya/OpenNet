@@ -19,7 +19,6 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	void NotifyIconXamlHostWindow::InitializeComponent()
 	{
 		NotifyIconXamlHostWindowT::InitializeComponent();
-		InitializeWindowExBase(false, false);
 		AppWindow().Hide();
 		trayIcon().Guid(IconGuid());
 	}
@@ -28,7 +27,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 	// {F8A9B3C7-2E4D-4F1A-9B8E-6C5D3A2B1E0F}
 	winrt::guid NotifyIconXamlHostWindow::IconGuid()
 	{
-		return { 0xf8a9b3c7, 0x2e4d, 0x4f1a, { 0x9b, 0x8e, 0x6c, 0x5d, 0x3a, 0x2b, 0x1e, 0x0f } };
+		return { 0xf8a9b3c7, 0x2e4d, 0x4f1a,{ 0x9b, 0x8e, 0x6c, 0x5d, 0x3a, 0x2b, 0x1e, 0x0f } };
 	}
 
 	void NotifyIconXamlHostWindow::ShowMainWindow()
