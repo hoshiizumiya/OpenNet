@@ -113,6 +113,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	{
 		SetProperty(m_maximumDownloadRate, static_cast<int64_t>((std::max)(0.0, value)), L"MaximumDownloadRate");
 	}
+	bool HttpDownloadDialog::UseP2PAcceleration() const
+	{
+		return m_useP2PAcceleration;
+	}
+	void HttpDownloadDialog::UseP2PAcceleration(bool const value)
+	{
+		SetProperty(m_useP2PAcceleration, value, L"UseP2PAcceleration");
+	}
 	bool HttpDownloadDialog::StartPaused() const
 	{
 		return m_startPaused;
@@ -380,6 +388,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		options.Username = winrt::to_string(m_username);
 		options.Password = winrt::to_string(m_password);
 		options.Description = winrt::to_string(m_description);
+		options.TransferMode = m_useP2PAcceleration
+			? ::OpenNet::Core::Aria2::HttpTransferMode::P2PPreferred
+			: ::OpenNet::Core::Aria2::HttpTransferMode::Aria2Only;
 		options.ResourceFinalUrl = winrt::to_string(m_resourceFinalUrl);
 		options.ResourceStrongETag = winrt::to_string(m_resourceStrongETag);
 		options.ResourceContentLength = m_resourceContentLength;

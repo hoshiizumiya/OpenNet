@@ -24,6 +24,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		void ConnectionsPerServer(double value);
 		double MaximumDownloadRate() const;
 		void MaximumDownloadRate(double value);
+		bool UseP2PAcceleration() const;
+		void UseP2PAcceleration(bool value);
 		bool StartPaused() const;
 		winrt::hstring Referer() const;
 		void Referer(winrt::hstring const& value);
@@ -76,6 +78,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		bool m_isUrlValid{ false };
 		int32_t m_connectionsPerServer{ 8 };
 		int64_t m_maximumDownloadRate{};
+		bool m_useP2PAcceleration{ true };
 		bool m_startPaused{};
 		winrt::hstring m_referer;
 		winrt::hstring m_userAgent;
