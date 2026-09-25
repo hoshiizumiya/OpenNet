@@ -1446,6 +1446,44 @@ namespace OpenNet::Core::WebUI
 			{
 				std::scoped_lock stateLock(m_stateMutex);
 				options = m_options;
+			}
+
+			// Validate the configuration that Start() is about to load before
+			// destroying a healthy listener. This is especially important when
+			// switching bundled frontends: a missing deployment must not turn a
+			// working Web UI into an unavailable one.
+			try
+			{
+				auto& database =
+					::OpenNet::Core::AppSettingsDatabase::Instance();
+				database.Initialize();
+				auto frontend = ToLower(database.GetString(
+					"webui_host", "frontend").value_or(options.frontend));
+				if (frontend != "vuetorrent")
+					frontend = "qbittorrent";
+				const auto assetRoot = ResolveAssetRoot(
+					options.assetRoot, frontend);
+				if (assetRoot.empty())
+				{
+					OutputDebugStringA((
+						"WebUIHost: restart preflight failed because assets were not found for frontend "
+						+ frontend + ".\n").c_str());
+					return false;
+				}
+				const auto address = database.GetString(
+					"webui_host", "address").value_or(options.address);
+				(void)asio::ip::make_address(address);
+			}
+			catch (const std::exception& exception)
+			{
+				OutputDebugStringA((
+					"WebUIHost: restart preflight failed: "
+					+ std::string(exception.what()) + "\n").c_str());
+				return false;
+			}
+
+			{
+				std::scoped_lock stateLock(m_stateMutex);
 				StopUnlocked();
 			}
 			return Start(std::move(options));
@@ -1569,7 +1607,12 @@ namespace OpenNet::Core::WebUI
 
 		std::optional<std::string> Authenticate(const Request& request, const tcp::endpoint& endpoint)
 		{
-			if (m_options.bypassAuthenticationForLocalhost && endpoint.address().is_loopback())
+			const auto clientAddress = endpoint.address();
+			const bool mappedLoopback = clientAddress.is_v6()
+				&& clientAddress.to_v6().is_v4_mapped()
+				&& clientAddress.to_v6().to_bytes()[12] == 127;
+			const bool localClient = clientAddress.is_loopback() || mappedLoopback;
+			if (m_options.bypassAuthenticationForLocalhost && localClient)
 				return std::string(BypassSession);
 			if (const auto bearer = BearerToken(request))
 			{
@@ -2414,6 +2457,25 @@ namespace OpenNet::Core::WebUI
 				// the OpenNet compatibility layer into every authenticated HTML asset.
 				if (ToLower(file.extension().string()) == ".html")
 				{
+					// Both bundled frontends share one origin. VueTorrent's PWA
+					// worker owns scope / and can keep serving its cached app after
+					// switching back to qBittorrent. Remove the registration from
+					// served HTML and retire an already installed worker.
+					if (m_vueTorrentFrontend)
+					{
+						body = ReplaceAll(std::move(body),
+							"<script id=\"vite-plugin-pwa:register-sw\" src=\"./registerSW.js\"></script>", "");
+					}
+					if (ToLower(file.filename().string()) == "index.html")
+					{
+						const std::string retireWorker =
+							"<script>if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations()"
+							".then(rs => rs.forEach(r => r.unregister()));</script>";
+						if (const auto head = body.find("</head>"); head != std::string::npos)
+							body.insert(head, retireWorker);
+						else
+							body.insert(0, retireWorker);
+					}
 					// Most qBittorrent views (including preferences.html) are HTML
 					// fragments without head/body tags. Inline the compatibility layer
 					// with a fragment fallback so both the desktop and modal content get

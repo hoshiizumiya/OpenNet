@@ -660,6 +660,10 @@
       <DependentUpon>ViewModels\NetworkSettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\WebUISettingsViewModel.h">
+      <DependentUpon>ViewModels\WebUISettingsViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\NetworkViewModel.h">
       <DependentUpon>ViewModels\NetworkViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1239,6 +1243,10 @@
       <DependentUpon>ViewModels\NetworkSettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\WebUISettingsViewModel.cpp">
+      <DependentUpon>ViewModels\WebUISettingsViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\ObservableObject.cpp">
       <DependentUpon>ViewModels\ObservableObject.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1590,6 +1598,9 @@
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
+      <SubType>Code</SubType>
+    </Midl>
+    <Midl Include="ViewModels\WebUISettingsViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
     <Midl Include="ViewModels\NetworkViewModel.idl">
