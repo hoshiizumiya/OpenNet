@@ -1,7 +1,7 @@
 ﻿export module OpenNet.Core.torrentCore.LibtorrentHandle;
 
 import std;
-import OpenNet.Core.torrentCore.TorrentStateManager;
+export import OpenNet.Core.torrentCore.TorrentStateManager;
 
 export namespace OpenNet::Core::Torrent
 {
@@ -127,6 +127,8 @@ export namespace OpenNet::Core::Torrent
 			bool preferUtp);
 		LongSeedSessionStatus GetLongSeedSessionStatus(
 			std::string const& sessionId) const;
+		bool PauseLongSeedSession(std::string const& sessionId);
+		bool ResumeLongSeedSession(std::string const& sessionId);
 		void CloseLongSeedSession(std::string const& sessionId);
 		void CloseAllLongSeedSessions();
 

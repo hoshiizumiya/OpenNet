@@ -1837,6 +1837,52 @@ namespace OpenNet::Core::Torrent
 		return result;
 	}
 
+	bool LibtorrentHandle::PauseLongSeedSession(std::string const& sessionId)
+	{
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end())
+				return false;
+			handle = it->second.handle;
+		}
+		if (!handle.is_valid())
+			return false;
+		try
+		{
+			handle.pause(lt::torrent_handle::graceful_pause);
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	bool LibtorrentHandle::ResumeLongSeedSession(std::string const& sessionId)
+	{
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end())
+				return false;
+			handle = it->second.handle;
+		}
+		if (!handle.is_valid())
+			return false;
+		try
+		{
+			handle.resume();
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
 	void LibtorrentHandle::CloseLongSeedSession(std::string const& sessionId)
 	{
 		lt::torrent_handle handle;

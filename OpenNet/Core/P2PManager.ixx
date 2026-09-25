@@ -1,8 +1,8 @@
 ﻿export module OpenNet.Core.P2PManager;
 
 import std;
-import OpenNet.Core.Content.ContentIdentity;
-import OpenNet.Core.torrentCore.LibtorrentHandle;
+export import OpenNet.Core.Content.ContentIdentity;
+export import OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.torrentCore.TorrentStateManager;
 import winrt.Windows.Foundation;
 
@@ -67,6 +67,8 @@ export namespace OpenNet::Core
 		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus
 			GetLongSeedSessionStatus(
 				std::string const& sessionId);
+		bool PauseLongSeedSession(std::string const& sessionId);
+		bool ResumeLongSeedSession(std::string const& sessionId);
 		void CloseLongSeedSession(std::string const& sessionId);
 		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>
 			GetTorrentPeers(std::string const& taskId);

@@ -97,6 +97,20 @@ namespace OpenNet::Core
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus{};
 	}
 
+	bool P2PManager::PauseLongSeedSession(std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			&& m_torrentCore->PauseLongSeedSession(sessionId);
+	}
+
+	bool P2PManager::ResumeLongSeedSession(std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			&& m_torrentCore->ResumeLongSeedSession(sessionId);
+	}
+
 	void P2PManager::CloseLongSeedSession(std::string const& sessionId)
 	{
 		std::scoped_lock lock(m_torrentMutex);

@@ -9,7 +9,7 @@
 export module OpenNet.Core.DownloadManager;
 
 import OpenNet.Core.Aria2.Aria2Engine;
-import OpenNet.Core.Aria2.Aria2Models;
+export import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.Content.ContentDirectoryContracts;
 import OpenNet.Core.Content.ResourceKey;
 import OpenNet.Core.HttpStateManager;
@@ -132,6 +132,7 @@ export namespace OpenNet::Core
 			std::filesystem::path targetFilePath = {},
 			std::uint64_t expectedSize = 0,
 			bool hybridPrimary = false,
+			bool userRequestedPaused = false,
 			std::vector<std::string> webSeeds = {});
 		void QueuePeerFallback(
 			ResourceDiscoveryJob const& discovery,
@@ -163,6 +164,7 @@ export namespace OpenNet::Core
 			std::filesystem::path targetFilePath;
 			std::uint64_t expectedSize{};
 			bool hybridPrimary{};
+			bool userRequestedPaused{};
 			std::vector<std::string> webSeeds;
 		};
 		std::thread m_resourceDiscoveryThread;
@@ -198,6 +200,8 @@ export namespace OpenNet::Core
 			PeerFallbackPhase phase{ PeerFallbackPhase::Pending };
 			PeerFallbackJob job;
 			bool cancelRequested{};
+			bool userPaused{};
+			bool workerQueued{};
 			int progressPercent{};
 			std::int64_t downloadRate{};
 			std::int64_t completedBytes{};
@@ -210,6 +214,8 @@ export namespace OpenNet::Core
 		std::deque<PeerFallbackJob> m_peerFallbackJobs;
 		std::unordered_map<std::string, PeerFallbackState> m_peerFallbacks;
 		std::unordered_set<std::string> m_peerFallbackSuppressedGids;
+		std::unordered_set<std::string> m_hybridProbeGids;
+		std::unordered_set<std::string> m_userPausedHttpGids;
 		std::vector<std::thread> m_peerFallbackWorkers;
 
 		mutable std::mutex m_mutex;

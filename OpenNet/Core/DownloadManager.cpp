@@ -44,12 +44,30 @@ namespace OpenNet::Core
 				&& options.UserAgent.empty();
 		}
 
+		bool IsDirectFileWebSeedUrl(std::string_view const url)
+		{
+			auto const scheme = url.find("://");
+			if (scheme == std::string_view::npos)
+				return false;
+			auto const pathStart = url.find('/', scheme + 3);
+			if (pathStart == std::string_view::npos)
+				return false;
+			auto const pathEnd = url.find_first_of("?#", pathStart);
+			auto const path = url.substr(
+				pathStart,
+				pathEnd == std::string_view::npos
+					? std::string_view::npos
+					: pathEnd - pathStart);
+			return !path.empty() && !path.ends_with('/');
+		}
+
 		std::vector<std::string> BuildHybridWebSeeds(
 			Aria2::HttpDownloadOptions const& options)
 		{
 			std::vector<std::string> result;
 			if (!options.ResourceSupportsByteRanges
-				|| options.ResourceFinalUrl.empty())
+				|| options.ResourceFinalUrl.empty()
+				|| !IsDirectFileWebSeedUrl(options.ResourceFinalUrl))
 				return result;
 
 			// Reuse the same public-resource policy as ResourceKey discovery.
@@ -225,6 +243,8 @@ namespace OpenNet::Core
 			{
 				std::lock_guard lock(m_peerFallbackMutex);
 				m_peerFallbackSuppressedGids.clear();
+				m_hybridProbeGids.clear();
+				m_userPausedHttpGids.clear();
 				m_peerFallbacks.clear();
 			}
 
@@ -405,6 +425,8 @@ namespace OpenNet::Core
 		if (!IsAria2Available() || options.Uris.empty()) return {};
 
 		bool const resourceHintSafe = IsResourceHintSafe(options);
+		bool const p2pPreferred =
+			options.TransferMode == Aria2::HttpTransferMode::P2PPreferred;
 		std::vector<std::string> initialResourceUris = options.Uris;
 		if (!options.ResourceFinalUrl.empty())
 			initialResourceUris.push_back(options.ResourceFinalUrl);
@@ -433,7 +455,7 @@ namespace OpenNet::Core
 		}
 
 		auto expectedSha256 = ParseExpectedSha256(options.Checksum);
-		auto hybridWebSeeds = resourceHintSafe
+		auto hybridWebSeeds = p2pPreferred && resourceHintSafe
 			? BuildHybridWebSeeds(options)
 			: std::vector<std::string>{};
 
@@ -450,7 +472,7 @@ namespace OpenNet::Core
 		}
 
 		bool const hybridProbe =
-			!options.StartPaused
+			p2pPreferred
 			&& resourceHintSafe
 			&& expectedSha256.has_value()
 			&& options.ResourceContentLength != 0
@@ -522,18 +544,40 @@ namespace OpenNet::Core
 					m_lastHttpStatuses[gid] = effectiveOptions.StartPaused ? Aria2::DownloadStatus::Paused : Aria2::DownloadStatus::Waiting;
 					m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), effectiveOptions.StartPaused ? "Task added in paused state." : "Download task started." });
 					if (!effectiveOptions.Description.empty()) m_httpTaskLogs[gid].push_back({ std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count(), "Description: " + effectiveOptions.Description });
+					m_httpTaskLogs[gid].push_back({
+						std::chrono::duration_cast<std::chrono::seconds>(
+							std::chrono::system_clock::now().time_since_epoch()).count(),
+						p2pPreferred
+							? "Transfer mode: P2P preferred; aria2 is fallback only when canonical metadata is unavailable."
+							: "Transfer mode: aria2 only."
+					});
+					if (p2pPreferred && !hybridProbe)
+					{
+						m_httpTaskLogs[gid].push_back({
+							std::chrono::duration_cast<std::chrono::seconds>(
+								std::chrono::system_clock::now().time_since_epoch()).count(),
+							"P2P acceleration prerequisites are not available; using aria2 directly."
+						});
+					}
 				}
 			}
 
-			if (!gid.empty() && !resourceKeys.empty())
+			if (!gid.empty() && hybridProbe)
 			{
+				{
+					std::lock_guard fallbackLock(m_peerFallbackMutex);
+					m_hybridProbeGids.insert(gid);
+					if (options.StartPaused)
+						m_userPausedHttpGids.insert(gid);
+				}
 				QueueResourceDiscovery(
 					gid,
 					std::move(resourceKeys),
 					std::move(expectedSha256),
 					std::move(peerFallbackTarget),
 					options.ResourceContentLength,
-					hybridProbe,
+					true,
+					options.StartPaused,
 					std::move(hybridWebSeeds));
 			}
 
@@ -631,7 +675,37 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
-		CancelPeerFallback(gid);
+
+		bool hybridOwned = false;
+		std::string sessionId;
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			if (m_hybridProbeGids.contains(gid))
+			{
+				hybridOwned = true;
+				m_userPausedHttpGids.insert(gid);
+			}
+			if (auto const state = m_peerFallbacks.find(gid);
+				state != m_peerFallbacks.end()
+				&& state->second.job.hybridPrimary
+				&& !state->second.cancelRequested
+				&& state->second.phase != PeerFallbackPhase::Failed)
+			{
+				hybridOwned = true;
+				m_userPausedHttpGids.insert(gid);
+				state->second.userPaused = true;
+				if (state->second.phase == PeerFallbackPhase::Downloading)
+					sessionId = state->second.job.sessionId;
+			}
+		}
+
+		if (!sessionId.empty())
+			::OpenNet::Core::P2PManager::Instance()
+				.PauseLongSeedSession(sessionId);
+
+		if (!hybridOwned)
+			CancelPeerFallback(gid);
+
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -646,6 +720,57 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
+
+		bool hybridOwned = false;
+		bool queueWorker = false;
+		std::string sessionId;
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			m_userPausedHttpGids.erase(gid);
+
+			if (auto state = m_peerFallbacks.find(gid);
+				state != m_peerFallbacks.end()
+				&& state->second.job.hybridPrimary
+				&& !state->second.cancelRequested)
+			{
+				if (state->second.phase == PeerFallbackPhase::Failed)
+				{
+					m_peerFallbacks.erase(state);
+					m_hybridProbeGids.erase(gid);
+				}
+				else
+				{
+					hybridOwned = true;
+					state->second.userPaused = false;
+					if (state->second.phase == PeerFallbackPhase::Downloading)
+					{
+						sessionId = state->second.job.sessionId;
+					}
+					else if (state->second.phase == PeerFallbackPhase::Pending
+						&& !state->second.workerQueued)
+					{
+						state->second.workerQueued = true;
+						m_peerFallbackJobs.push_back(state->second.job);
+						queueWorker = true;
+					}
+				}
+			}
+			else if (m_hybridProbeGids.contains(gid))
+			{
+				// Discovery is still deciding whether libtorrent can own the
+				// target. Keep the aria2 control shell paused until it resolves.
+				hybridOwned = true;
+			}
+		}
+
+		if (queueWorker)
+			m_peerFallbackCv.notify_one();
+		if (!sessionId.empty())
+			::OpenNet::Core::P2PManager::Instance()
+				.ResumeLongSeedSession(sessionId);
+		if (hybridOwned)
+			return;
+
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -894,28 +1019,36 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available())
 			return;
+		std::vector<std::string> gids;
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
-			m_aria2->PauseAll();
+			gids = m_aria2->GetTaskList(false);
 		}
 		catch (...)
 		{
+			return;
 		}
+		for (auto const& gid : gids)
+			PauseHttpDownload(gid);
 	}
 
 	void DownloadManager::ResumeAllHttp()
 	{
 		if (!IsAria2Available())
 			return;
+		std::vector<std::string> gids;
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
-			m_aria2->ResumeAll();
+			gids = m_aria2->GetTaskList(false);
 		}
 		catch (...)
 		{
+			return;
 		}
+		for (auto const& gid : gids)
+			ResumeHttpDownload(gid);
 	}
 
 	void DownloadManager::ClearCompletedHttp()
@@ -1001,6 +1134,7 @@ namespace OpenNet::Core
 		std::filesystem::path targetFilePath,
 		std::uint64_t expectedSize,
 		bool hybridPrimary,
+		bool userRequestedPaused,
 		std::vector<std::string> webSeeds)
 	{
 		if (gid.empty() || resourceKeys.empty()) return;
@@ -1013,6 +1147,7 @@ namespace OpenNet::Core
 				std::move(targetFilePath),
 				expectedSize,
 				hybridPrimary,
+				userRequestedPaused,
 				std::move(webSeeds)
 			});
 		}
@@ -1144,20 +1279,34 @@ namespace OpenNet::Core
 			}
 			else if (job.hybridPrimary)
 			{
-				try
+				bool userPaused = false;
+				bool suppressed = false;
 				{
-					std::lock_guard rpcLock(m_aria2->InstanceLock());
-					m_aria2->Resume(job.gid);
+					std::lock_guard fallbackLock(m_peerFallbackMutex);
+					m_hybridProbeGids.erase(job.gid);
+					userPaused = m_userPausedHttpGids.contains(job.gid);
+					suppressed =
+						m_peerFallbackSuppressedGids.contains(job.gid);
 				}
-				catch (...)
+				if (!suppressed && !userPaused)
 				{
+					try
+					{
+						std::lock_guard rpcLock(m_aria2->InstanceLock());
+						m_aria2->Resume(job.gid);
+					}
+					catch (...)
+					{
+					}
 				}
 				std::lock_guard lock(m_mutex);
 				m_httpTaskLogs[job.gid].push_back({
 					std::chrono::duration_cast<std::chrono::seconds>(
 						std::chrono::system_clock::now()
 							.time_since_epoch()).count(),
-					"No trusted canonical resource matched; resumed aria2 origin transfer."
+					userPaused
+						? "Canonical metadata unavailable; aria2 fallback remains paused by user."
+						: "Canonical metadata unavailable; falling back to aria2 origin download."
 				});
 			}
 		}
@@ -1205,11 +1354,15 @@ namespace OpenNet::Core
 				&& !existing->second.cancelRequested)
 				return;
 
+			m_hybridProbeGids.erase(job.gid);
 			PeerFallbackState state;
 			state.phase = PeerFallbackPhase::Pending;
 			state.job = job;
+			state.userPaused = m_userPausedHttpGids.contains(job.gid);
+			state.workerQueued = !state.userPaused;
 			m_peerFallbacks.insert_or_assign(job.gid, state);
-			m_peerFallbackJobs.push_back(job);
+			if (state.workerQueued)
+				m_peerFallbackJobs.push_back(job);
 		}
 
 		{
@@ -1229,7 +1382,13 @@ namespace OpenNet::Core
 					: "Trusted OpenNet peer fallback queued in a separate temporary file."
 			});
 		}
-		m_peerFallbackCv.notify_one();
+		{
+			std::lock_guard lock(m_peerFallbackMutex);
+			auto const state = m_peerFallbacks.find(job.gid);
+			if (state != m_peerFallbacks.end()
+				&& state->second.workerQueued)
+				m_peerFallbackCv.notify_one();
+		}
 	}
 
 	bool DownloadManager::HasPeerFallbackPending(
@@ -1253,6 +1412,8 @@ namespace OpenNet::Core
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
 			m_peerFallbackSuppressedGids.insert(gid);
+			m_hybridProbeGids.erase(gid);
+			m_userPausedHttpGids.erase(gid);
 			auto const it = m_peerFallbacks.find(gid);
 			if (it == m_peerFallbacks.end())
 				return;
@@ -1297,6 +1458,7 @@ namespace OpenNet::Core
 		{
 			::OpenNet::Core::P2PManager::Instance()
 				.CloseLongSeedSession(job.sessionId);
+
 			std::error_code error;
 			if (!job.hybridPrimary)
 			{
@@ -1304,27 +1466,21 @@ namespace OpenNet::Core
 			}
 			else
 			{
-				// The canonical session was the only writer. Remove its
-				// incomplete destination before handing ownership back to
-				// aria2, which has remained paused up to this point.
+				// libtorrent was the only payload writer. Remove its incomplete
+				// output before aria2 is ever allowed to own the path.
 				std::filesystem::remove(job.targetFilePath, error);
-				auto aria2ControlPath = std::filesystem::path{
+				auto const aria2ControlPath = std::filesystem::path{
 					job.targetFilePath.wstring() + L".aria2" };
 				error.clear();
 				std::filesystem::remove(aria2ControlPath, error);
-				try
-				{
-					std::lock_guard rpcLock(m_aria2->InstanceLock());
-					m_aria2->Resume(job.gid);
-				}
-				catch (...)
-				{
-				}
 			}
 
 			bool shouldLog = false;
+			bool resumeAria2 = false;
+			bool userPaused = false;
 			{
 				std::lock_guard lock(m_peerFallbackMutex);
+				m_hybridProbeGids.erase(job.gid);
 				auto const it = m_peerFallbacks.find(job.gid);
 				if (it != m_peerFallbacks.end())
 				{
@@ -1335,9 +1491,28 @@ namespace OpenNet::Core
 					else
 					{
 						it->second.phase = PeerFallbackPhase::Failed;
+						it->second.workerQueued = false;
 						it->second.error = message;
+						userPaused = it->second.userPaused
+							|| m_userPausedHttpGids.contains(job.gid);
+						resumeAria2 =
+							job.hybridPrimary
+							&& !userPaused
+							&& !m_peerFallbackSuppressedGids.contains(job.gid);
 						shouldLog = true;
 					}
+				}
+			}
+
+			if (resumeAria2)
+			{
+				try
+				{
+					std::lock_guard rpcLock(m_aria2->InstanceLock());
+					m_aria2->Resume(job.gid);
+				}
+				catch (...)
+				{
 				}
 			}
 
@@ -1348,9 +1523,12 @@ namespace OpenNet::Core
 					std::chrono::duration_cast<std::chrono::seconds>(
 						std::chrono::system_clock::now()
 							.time_since_epoch()).count(),
-					(job.hybridPrimary
-						? "Canonical HTTP/P2P hybrid failed; aria2 origin resumed: "
-						: "OpenNet peer fallback failed: ") + message
+					job.hybridPrimary
+						? (userPaused
+							? "Canonical HTTP/P2P hybrid failed; aria2 fallback remains paused by user: "
+							: "Canonical HTTP/P2P hybrid failed; falling back to aria2 origin download: ")
+							+ message
+						: "OpenNet peer fallback failed: " + message
 				});
 			}
 		};
@@ -1376,6 +1554,9 @@ namespace OpenNet::Core
 				auto const state = m_peerFallbacks.find(job.gid);
 				if (state == m_peerFallbacks.end()
 					|| state->second.cancelRequested)
+					continue;
+				state->second.workerQueued = false;
+				if (state->second.userPaused)
 					continue;
 				state->second.phase =
 					PeerFallbackPhase::Downloading;
@@ -1427,6 +1608,7 @@ namespace OpenNet::Core
 
 			while (std::chrono::steady_clock::now() < deadline)
 			{
+				bool userPaused = false;
 				{
 					std::lock_guard lock(m_peerFallbackMutex);
 					auto const state = m_peerFallbacks.find(job.gid);
@@ -1437,6 +1619,15 @@ namespace OpenNet::Core
 						cancelled = true;
 						break;
 					}
+					userPaused = state->second.userPaused;
+				}
+				if (userPaused)
+				{
+					// Paused wall-clock time must not consume the transfer timeout.
+					deadline += std::chrono::milliseconds(500);
+					std::this_thread::sleep_for(
+						std::chrono::milliseconds(500));
+					continue;
 				}
 
 				bool originCompleted = false;
@@ -1451,7 +1642,7 @@ namespace OpenNet::Core
 								== Aria2::DownloadStatus::Complete;
 					}
 				}
-				if (originCompleted)
+				if (!job.hybridPrimary && originCompleted)
 				{
 					cancelled = true;
 					break;
@@ -1573,6 +1764,8 @@ namespace OpenNet::Core
 					continue;
 				}
 				state->second.phase = PeerFallbackPhase::Ready;
+				state->second.userPaused = false;
+				state->second.workerQueued = false;
 				state->second.progressPercent = 100;
 				state->second.completedBytes =
 					static_cast<std::int64_t>(job.expectedSize);
@@ -1658,16 +1851,35 @@ namespace OpenNet::Core
 			return false;
 		}
 
-		auto aria2ControlPath = std::filesystem::path{
-			job.targetFilePath.wstring() + L".aria2" };
+		if (job.hybridPrimary)
 		{
-			std::error_code error;
-			std::filesystem::remove(aria2ControlPath, error);
+			// The control shell is still paused, not stopped. Force-remove it
+			// only after libtorrent has completed and released the final target.
+			try
+			{
+				m_aria2->Cancel(gid, true);
+			}
+			catch (...)
+			{
+			}
+			for (int attempt = 0; attempt < 20; ++attempt)
+			{
+				try
+				{
+					auto const status = m_aria2->GetTaskInformation(gid).Status;
+					if (status == Aria2::DownloadStatus::Removed
+						|| status == Aria2::DownloadStatus::Complete
+						|| status == Aria2::DownloadStatus::Error)
+						break;
+				}
+				catch (...)
+				{
+					break;
+				}
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+			}
 		}
 
-		// The task is already in aria2's stopped/error list at this point.
-		// Removing the result prevents the old failed origin from being
-		// restored from the saved aria2 session.
 		try
 		{
 			m_aria2->Remove(gid);
@@ -1675,6 +1887,13 @@ namespace OpenNet::Core
 		}
 		catch (...)
 		{
+		}
+
+		auto const aria2ControlPath = std::filesystem::path{
+			job.targetFilePath.wstring() + L".aria2" };
+		{
+			std::error_code error;
+			std::filesystem::remove(aria2ControlPath, error);
 		}
 
 		auto const finalSize = std::filesystem::file_size(
@@ -1751,6 +1970,8 @@ namespace OpenNet::Core
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
 			m_peerFallbacks.erase(gid);
+			m_hybridProbeGids.erase(gid);
+			m_userPausedHttpGids.erase(gid);
 		}
 
 		::OpenNet::Core::Content::ContentCatalogService::Instance()
@@ -1901,7 +2122,8 @@ namespace OpenNet::Core
 					if (auto const state = m_peerFallbacks.find(gid);
 						state != m_peerFallbacks.end()
 						&& state->second.job.hybridPrimary
-						&& !state->second.cancelRequested)
+						&& !state->second.cancelRequested
+						&& state->second.phase != PeerFallbackPhase::Failed)
 					{
 						hybridState = state->second;
 					}
@@ -1924,8 +2146,8 @@ namespace OpenNet::Core
 						: 0;
 					if (hybridState)
 					{
-						progress.status = hybridState->phase == PeerFallbackPhase::Failed
-							? Aria2::DownloadStatus::Waiting
+						progress.status = hybridState->userPaused
+							? Aria2::DownloadStatus::Paused
 							: Aria2::DownloadStatus::Active;
 						progress.totalLength =
 							hybridState->job.expectedSize;
@@ -1962,6 +2184,9 @@ namespace OpenNet::Core
 								(std::max)(std::int64_t{}, hybridState->completedBytes),
 								static_cast<std::int64_t>(
 									hybridState->job.expectedSize));
+							hsm.UpdateRecordStatus(
+								recordId,
+								hybridState->userPaused ? 2 : 1);
 						}
 						else
 						{
