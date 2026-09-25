@@ -11,6 +11,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 
 		void OnPrimaryButtonClick(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args);
 		void SetFeed(OpenNet::ViewModels::RSSFeedViewModel const& feed);
+		void SettingsEnabledToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void SettingsEnabledToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void SettingsAutoDownloadToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void SettingsAutoDownloadToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void WebViewPreviewToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void WebViewPreviewToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
 		winrt::hstring FeedTitle() const
 		{
@@ -50,6 +56,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		}
 
 	private:
+		bool m_loadingSwitch{};
 		winrt::hstring m_feedTitle;
 		winrt::hstring m_feedUrl;
 		winrt::hstring m_feedSavePath;

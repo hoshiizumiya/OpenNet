@@ -213,7 +213,6 @@
   <data name="Header_Remaining.Text" xml:space="preserve">
     <value>Осталось</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="Header_AddDate.Text" xml:space="preserve">
     <value>Дата добавления</value>
   </data>
@@ -928,8 +927,44 @@
   <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Загружено</value>
   </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>Отдано</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>Расположение</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>Прогресс</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>Скорость загрузки</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>Скорость отдачи</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>Отдано</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>Клиент</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>Состояние</value>
+  </data>
   <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>Причина</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>Протокол</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>Инициатор</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>Источник</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>Нет подключённых пиров</value>
@@ -4264,17 +4299,158 @@
   <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
     <value>Piece Map</value>
   </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>График скорости</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>Режим ширины вкладок</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>Одинаковая ширина</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
     <value>Каждая вкладка имеет одинаковую ширину</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>По размеру содержимого</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value>Каждая вкладка настраивает ширину содержимого на вкладке</value>
   </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>Компактный</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
     <value>Неизбранные вкладки свернуты, чтобы отобразить только их значок. Выбранная вкладка настраивается для отображения содержимого на вкладке</value>
   </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>Настройка графика</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>Изменения применяются сразу и сохраняются для следующего сеанса</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>Поведение</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>Пиксели</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>Запас истории</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>Сохранять точки за пределами экрана, чтобы при расширении окна отображалась недавняя история</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>Ширина экрана</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>Плавные кривые</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>Интерполировать соседние отсчёты плавными закруглёнными кривыми</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>Линия выделения</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>Показывать движущийся маркер для отсчётов графика</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Максимум среди всех рядов</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>Минимум в каждом ряду</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Минимум среди всех рядов</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>Максимум в каждом ряду</value>
+  </data>
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>Нет</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>Крест</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>Длительность анимации</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>Каждая точка</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>Сетка и холст</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>Выберите узор холста и интервалы</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>Узор фона</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Интервал крестов</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Интервал точек</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>Пользовательские цвета холста</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>Переопределить стандартные цвета сетки с учётом темы и прозрачного холста</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>Цвета холста</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>Выберите цвета сетки и холста, используемые при включённых пользовательских цветах</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>Управление выборкой, движением, сглаживанием кривых и сохраняемой историей</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>Движение и история</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>Градиентная заливка</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>Линия границы</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>Расстояние прокрутки</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>Горизонтальное расстояние, пройденное за каждый период прокрутки</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>Длительность прокрутки</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>Время прохождения заданного расстояния</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>Интервал выборки</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>Частота выборки телеметрии</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>Внешний вид</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>Дата завершения</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>Коэффициент раздачи</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Сиды/пиры [всего]</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>Сиды/пиры [всего]</value>
   </data>
   <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
     <value>Срок аренды UPnP (секунды)</value>
@@ -4287,6 +4463,30 @@
   </data>
   <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
     <value>Оба интерфейса используют общий совместимый с OpenNet/qBittorrent API и хранилище настроек.</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>Открыть проверку NAT и портов</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>Перезагрузить</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>Вперёд</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>Назад</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>Перейти</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>Открыть в системном браузере по умолчанию</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>Подключённые сиды / подключённые пиры [все известные сиды / все известные пиры]</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>Воспроизвести файл</value>
   </data>
   <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
     <value>Анимированные числа</value>
@@ -4981,240 +5181,6 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>Максимум ожидающих оповещений libtorrent до отбрасывания низкоприоритетных.</value>
   </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
-    <value>Материал элементов</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
-    <value>Изменяет материал карточек и панелей карточек</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
-    <value>По умолчанию</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
-    <value>Жидкое стекло</value>
-  </data>
-  <data name="GuideMaterialTitle.Text" xml:space="preserve">
-    <value>Выберите материал элементов</value>
-  </data>
-  <data name="GuideMaterialDescription.Text" xml:space="preserve">
-    <value>Сравните исходную поверхность Fluent с жидким стеклом и выберите материал для OpenNet.</value>
-  </data>
-  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
-    <value>Материал элементов</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
-    <value>По умолчанию</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
-    <value>Исходная поверхность Fluent</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
-    <value>Жидкое стекло</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
-    <value>Размытие, преломление и подсветка краёв</value>
-  </data>
-  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
-    <value>Отдано</value>
-  </data>
-  <data name="PeerMenu_IP.Text" xml:space="preserve">
-    <value>IP</value>
-  </data>
-  <data name="PeerMenu_Location.Text" xml:space="preserve">
-    <value>Расположение</value>
-  </data>
-  <data name="PeerMenu_Progress.Text" xml:space="preserve">
-    <value>Прогресс</value>
-  </data>
-  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
-    <value>Скорость загрузки</value>
-  </data>
-  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
-    <value>Скорость отдачи</value>
-  </data>
-  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
-    <value>Отдано</value>
-  </data>
-  <data name="PeerMenu_Client.Text" xml:space="preserve">
-    <value>Клиент</value>
-  </data>
-  <data name="PeerMenu_Status.Text" xml:space="preserve">
-    <value>Состояние</value>
-  </data>
-  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
-    <value>Протокол</value>
-  </data>
-  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
-    <value>Инициатор</value>
-  </data>
-  <data name="PeerMenu_Source.Text" xml:space="preserve">
-    <value>Источник</value>
-  </data>
-  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
-    <value>График скорости</value>
-  </data>
-  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
-    <value>Режим ширины вкладок</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
-    <value>Одинаковая ширина</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
-    <value>По размеру содержимого</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
-    <value>Компактный</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
-    <value>Настройка графика</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
-    <value>Изменения применяются сразу и сохраняются для следующего сеанса</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
-    <value>Поведение</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
-    <value>Пиксели</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
-    <value>Запас истории</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
-    <value>Сохранять точки за пределами экрана, чтобы при расширении окна отображалась недавняя история</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
-    <value>Ширина экрана</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
-    <value>Плавные кривые</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
-    <value>Интерполировать соседние отсчёты плавными закруглёнными кривыми</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
-    <value>Линия выделения</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
-    <value>Показывать движущийся маркер для отсчётов графика</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
-    <value>Максимум среди всех рядов</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
-    <value>Минимум в каждом ряду</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
-    <value>Минимум среди всех рядов</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
-    <value>Максимум в каждом ряду</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
-    <value>Крест</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
-    <value>Длительность анимации</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
-    <value>Каждая точка</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
-    <value>Сетка и холст</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
-    <value>Выберите узор холста и интервалы</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
-    <value>Узор фона</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
-    <value>Интервал крестов</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
-    <value>Интервал точек</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
-    <value>Пользовательские цвета холста</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
-    <value>Переопределить стандартные цвета сетки с учётом темы и прозрачного холста</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
-    <value>Цвета холста</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
-    <value>Выберите цвета сетки и холста, используемые при включённых пользовательских цветах</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
-    <value>Управление выборкой, движением, сглаживанием кривых и сохраняемой историей</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
-    <value>Движение и история</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
-    <value>Градиентная заливка</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
-    <value>Линия границы</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
-    <value>Расстояние прокрутки</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
-    <value>Горизонтальное расстояние, пройденное за каждый период прокрутки</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
-    <value>Длительность прокрутки</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
-    <value>Время прохождения заданного расстояния</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
-    <value>Интервал выборки</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
-    <value>Частота выборки телеметрии</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
-    <value>Внешний вид</value>
-  </data>
-  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
-    <value>Дата завершения</value>
-  </data>
-  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
-    <value>Коэффициент раздачи</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Сиды/пиры [всего]</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
-    <value>Сиды/пиры [всего]</value>
-  </data>
-  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
-    <value>Открыть проверку NAT и портов</value>
-  </data>
-  <data name="CommonContentReload.Content" xml:space="preserve">
-    <value>Перезагрузить</value>
-  </data>
-  <data name="CommonContentForward.Content" xml:space="preserve">
-    <value>Вперёд</value>
-  </data>
-  <data name="CommonContentBack.Content" xml:space="preserve">
-    <value>Назад</value>
-  </data>
-  <data name="CommonContentGo" xml:space="preserve">
-    <value>Перейти</value>
-  </data>
-  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
-    <value>Открыть в системном браузере по умолчанию</value>
-  </data>
-  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
-    <value>Подключённые сиды / подключённые пиры [все известные сиды / все известные пиры]</value>
-  </data>
-  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
-    <value>Воспроизвести файл</value>
-  </data>
   <data name="CreateTorrentFormat.Header" xml:space="preserve">
     <value>Формат торрента</value>
   </data>
@@ -5319,6 +5285,39 @@
   </data>
   <data name="TaskHttpServersTab" xml:space="preserve">
     <value>Серверы</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>Материал элементов</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>Изменяет материал карточек и панелей карточек</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>Жидкое стекло</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>Выберите материал элементов</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>Сравните исходную поверхность Fluent с жидким стеклом и выберите материал для OpenNet.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>Материал элементов</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>По умолчанию</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>Исходная поверхность Fluent</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>Жидкое стекло</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>Размытие, преломление и подсветка краёв</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
     <value>Обмениваться списками пиров с подключёнными пирами</value>

@@ -251,6 +251,9 @@
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
+    <Midl Include="ViewModels\WebUISettingsViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
     <Midl Include="ViewModels\SettingsViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
@@ -377,6 +380,7 @@
     <Midl Include="UI\Xaml\Control\InfoBarTemplateSelector.idl">
       <Filter>UI\Xaml\Control</Filter>
     </Midl>
+    <Midl Include="UI\Xaml\Control\Theme\MaterialControlState.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
@@ -390,6 +394,9 @@
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\NetworkSettingsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\WebUISettingsViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\PeerViewModel.cpp">
@@ -872,6 +879,9 @@
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\NetworkSettingsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\WebUISettingsViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\NetworkViewModel.h">

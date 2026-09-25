@@ -10,6 +10,7 @@ import winrt.Windows.Storage;
 import winrt.Windows.Storage.Pickers;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Input;
+import OpenNet.Core.Utils.Message;
 import std;
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -74,13 +75,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			switch (m_status)
 			{
-				case TransferStatus::Idle: return L"空闲 / Idle";
-				case TransferStatus::Preparing: return L"准备中 / Preparing";
-				case TransferStatus::Transferring: return L"传输中 / Transferring";
-				case TransferStatus::Paused: return L"已暂停 / Paused";
-				case TransferStatus::Completed: return L"已完成 / Completed";
-				case TransferStatus::Failed: return L"失败 / Failed";
-				default: return L"未知 / Unknown";
+				case TransferStatus::Idle: return ResourceGetString(L"TransferStatusIdle");
+				case TransferStatus::Preparing: return ResourceGetString(L"TransferStatusPreparing");
+				case TransferStatus::Transferring: return ResourceGetString(L"TransferStatusTransferring");
+				case TransferStatus::Paused: return ResourceGetString(L"TaskStatusPaused");
+				case TransferStatus::Completed: return ResourceGetString(L"TaskStatusCompleted");
+				case TransferStatus::Failed: return ResourceGetString(L"TaskStatusFailed");
+				default: return ResourceGetString(L"CommonUnknown");
 			}
 		}
 

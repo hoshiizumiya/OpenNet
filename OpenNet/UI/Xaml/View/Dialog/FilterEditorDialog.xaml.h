@@ -15,6 +15,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		std::int32_t MatchType();
 		bool CaseSensitive();
 		bool Enabled();
+		void CaseSensitiveToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void CaseSensitiveToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void EnabledToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void EnabledToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		winrt::hstring Description();
 		bool ReplaceExisting();
 		winrt::hstring Url();
@@ -22,6 +26,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 
 	private:
 		void ShowPanel(winrt::Microsoft::UI::Xaml::FrameworkElement const& panel);
+		bool m_caseSensitive{};
+		bool m_enabled{};
+		bool m_configuring{};
 	};
 }
 

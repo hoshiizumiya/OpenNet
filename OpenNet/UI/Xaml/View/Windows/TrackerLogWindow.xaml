@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
+    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:OpenNet.ViewModels"
     Width="1000"
@@ -52,15 +53,21 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
-            <ToggleSwitch
-                x:Name="AlwaysOnTopToggle"
-                x:Uid="ViewTrackerLogWindowText2"
+            <essential:SwitchPresenter
                 Grid.RowSpan="2"
                 Grid.Column="2"
                 VerticalAlignment="Center"
-                AutomationProperties.AutomationId="ViewTrackerLogWindowText2"
-                Header="Always on top"
-                Toggled="AlwaysOnTopToggle_Toggled" />
+               
+                Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                <essential:Case>
+                    <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+                    <ToggleSwitch x:Name="AlwaysOnTopToggle" x:Uid="ViewTrackerLogWindowText2" AutomationProperties.AutomationId="ViewTrackerLogWindowText2" Header="Always on top" Loaded="AlwaysOnTopToggle_Loaded" Toggled="AlwaysOnTopToggle_Changed" />
+                </essential:Case>
+                <essential:Case>
+                    <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                    <liquid:LiquidGlassToggleSwitch x:Name="AlwaysOnTopGlassToggle" x:Uid="ViewTrackerLogWindowText2" AutomationProperties.AutomationId="ViewTrackerLogWindowText2" Header="Always on top" Loaded="AlwaysOnTopToggle_Loaded" Click="AlwaysOnTopToggle_Changed" />
+                </essential:Case>
+            </essential:SwitchPresenter>
 
             <TextBlock
                 x:Uid="ViewTrackerLogWindowText3"
@@ -116,7 +123,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <essential:SwitchPresenter Value="{x:Bind IsError, Mode=OneWay}">
+                            <essential:SwitchPresenter Value="{Binding IsError, Mode=OneWay}">
                                 <essential:Case>
                                     <essential:Case.Value>
                                         <x:Boolean>True</x:Boolean>

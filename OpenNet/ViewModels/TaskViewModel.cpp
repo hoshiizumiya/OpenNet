@@ -31,6 +31,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TaskViewModel::UpdateSpeedGraph(double percent, uint64_t speedKB)
 	{
+		// Persistence must not depend on the graph/UI update succeeding.
+		// Store one sample for each integer progress boundary (0-100).
+		auto const intPercent = static_cast<int>(percent);
+		if (intPercent > m_lastSavedPercent && intPercent <= 100)
+		{
+			m_lastSavedPercent = intPercent;
+			auto const taskId = winrt::to_string(m_taskId);
+			if (!taskId.empty())
+			{
+				::OpenNet::Core::SpeedGraphDatabase::Instance().SavePoint(taskId, intPercent, speedKB);
+			}
+		}
+
 		try
 		{
 			auto& points = m_speedGraphData.Points();
@@ -41,23 +54,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				RaisePropertyChanged(L"SpeedGraphPoints");
 			}
-
-			// Persist at each 1% boundary
-			int intPercent = static_cast<int>(percent);
-			if (intPercent > m_lastSavedPercent && intPercent <= 100)
-			{
-				m_lastSavedPercent = intPercent;
-				auto taskId = winrt::to_string(m_taskId);
-				if (!taskId.empty())
-				{
-					::OpenNet::Core::SpeedGraphDatabase::Instance().SavePoint(taskId, intPercent, speedKB);
-				}
-			}
 		}
 		catch (...)
 		{
-			// Prevent crash propagation through WinRT ABI boundary
-			OutputDebugStringA("TaskViewModel::UpdateSpeedGraph: exception caught\n");
+			// The persisted history remains valid even if graph projection/update fails.
+			OutputDebugStringA("TaskViewModel::UpdateSpeedGraph: graph update exception caught\n");
 		}
 	}
 }

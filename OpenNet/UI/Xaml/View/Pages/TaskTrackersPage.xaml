@@ -39,17 +39,20 @@
                         Click="UpdateTracker_Click"
                         Text="Update tracker" />
                     <MenuFlyoutItem
+                        x:Name="RemoveTrackerMenuItem"
                         x:Uid="ViewTaskTrackersPageText3"
                         AutomationProperties.AutomationId="ViewTaskTrackersPageText3"
                         Click="RemoveTracker_Click"
                         Text="Remove tracker" />
                     <MenuFlyoutItem
+                        x:Name="ViewTrackerLogMenuItem"
                         x:Uid="ViewTaskTrackersPageText4"
                         AutomationProperties.AutomationId="ViewTaskTrackersPageText4"
                         Click="ViewLog_Click"
                         Text="View log" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutItem
+                        x:Name="ClearTrackerLogMenuItem"
                         x:Uid="ViewTaskTrackersPageText5"
                         AutomationProperties.AutomationId="ViewTaskTrackersPageText5"
                         Click="ClearTrackerLog_Click"

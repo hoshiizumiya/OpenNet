@@ -1,8 +1,11 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
+import "ViewModels/WebUISettingsViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
 {
 	[default_interface]
 	runtimeclass WebUISettingsPage : Microsoft.UI.Xaml.Controls.Page
 	{
 		WebUISettingsPage();
+		OpenNet.ViewModels.WebUISettingsViewModel ViewModel { get; };
 	}
 }

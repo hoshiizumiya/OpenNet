@@ -1,0 +1,10 @@
+namespace OpenNet.UI.Xaml.Control.Theme
+{
+    [default_interface]
+    runtimeclass MaterialControlState : Microsoft.UI.Xaml.DependencyObject
+    {
+        MaterialControlState();
+        Int32 StyleIndex;
+        static Microsoft.UI.Xaml.DependencyProperty StyleIndexProperty{ get; };
+    }
+}

@@ -67,6 +67,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_ipv6UdpPortState;
 		}
+		winrt::hstring IPv4TcpPortStateText() const;
+		winrt::hstring IPv4UdpPortStateText() const;
+		winrt::hstring IPv6TcpPortStateText() const;
+		winrt::hstring IPv6UdpPortStateText() const;
 		winrt::hstring LanIPv4Address() const
 		{
 			return m_lanIPv4Address;
@@ -212,16 +216,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_ipv4UdpPortState{ L"Unknown" };
 		winrt::hstring m_ipv6TcpPortState{ L"Unknown" };
 		winrt::hstring m_ipv6UdpPortState{ L"Unknown" };
-		winrt::hstring m_lanIPv4Address{ L"Detecting…" };
-		winrt::hstring m_lanIPv6Address{ L"Detecting…" };
-		winrt::hstring m_wanIPv4Address{ L"Detecting…" };
-		winrt::hstring m_wanIPv6Address{ L"Detecting…" };
-		winrt::hstring m_bitTorrentTcpStatus{ L"Detecting…" };
-		winrt::hstring m_bitTorrentUdpStatus{ L"Detecting…" };
-		winrt::hstring m_remoteAccessStatus{ L"Detecting…" };
-		winrt::hstring m_lsdStatus{ L"Detecting…" };
-		winrt::hstring m_windowsFirewallStatus{ L"Detecting…" };
-		winrt::hstring m_upnpMappingStatus{ L"Detecting…" };
+		winrt::hstring m_lanIPv4Address;
+		winrt::hstring m_lanIPv6Address;
+		winrt::hstring m_wanIPv4Address;
+		winrt::hstring m_wanIPv6Address;
+		winrt::hstring m_bitTorrentTcpStatus;
+		winrt::hstring m_bitTorrentUdpStatus;
+		winrt::hstring m_remoteAccessStatus;
+		winrt::hstring m_lsdStatus;
+		winrt::hstring m_windowsFirewallStatus;
+		winrt::hstring m_upnpMappingStatus;
 
 		// 导航状态 / Navigation state
 		bool m_isHomeSelected{ true };
@@ -245,8 +249,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_ipv6ListenPortText{ L"—" };
 
 		// 网络状态 / Network status
-		winrt::hstring m_networkStatusText{ L"未知 / Unknown" };
-		winrt::hstring m_networkQualityText{ L"N/A" };
+		winrt::hstring m_networkStatusText;
+		winrt::hstring m_networkQualityText;
 
 		// 活动列表 / Activities
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_recentActivities;

@@ -927,8 +927,44 @@
   <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>Téléchargé</value>
   </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>Téléversé</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>Emplacement</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>Progression</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>Vitesse de téléchargement</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>Vitesse de téléversement</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>Téléversé</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>Client</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>État</value>
+  </data>
   <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>Raison</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>Protocole</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>Initiateur</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>Source</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>Aucun pair connecté</value>
@@ -4263,17 +4299,158 @@
   <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
     <value>Bloc Map</value>
   </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>Graphique de vitesse</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>Mode de largeur des onglets</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>Largeur égale</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
     <value>Chaque onglet a la même largeur</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>Ajuster au contenu</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value>Chaque onglet ajuste sa largeur au contenu de l’onglet</value>
   </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>Compact</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
     <value>Les onglets non sélectionnés s’réduisent pour afficher uniquement leur icône. L’onglet sélectionné s’ajuste pour afficher le contenu dans l’onglet</value>
   </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>Personnalisation du graphique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>Les modifications sont appliquées immédiatement et enregistrées pour la prochaine session</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>Comportement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>Pixels</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>Réserve d’historique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>Conserver les points hors écran afin que l’agrandissement de la fenêtre puisse afficher l’historique récent</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>Largeurs d’écran</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>Courbes lissées</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>Interpoler les échantillons adjacents avec des courbes arrondies</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>Ligne de surbrillance</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>Afficher un marqueur mobile pour les valeurs échantillonnées du graphique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Maximum parmi toutes les séries</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>Minimum de chaque série</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>Minimum parmi toutes les séries</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>Maximum de chaque série</value>
+  </data>
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>Aucun</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>Croix</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>Durée de l’animation</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>Chaque point</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>Grille et canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>Choisir le motif et l’espacement du canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>Motif d’arrière-plan</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Espacement des croix</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>Espacement des points</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>Couleurs personnalisées du canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>Remplacer les couleurs par défaut de la grille adaptées au thème et du canevas transparent</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>Couleurs du canevas</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>Sélectionner les couleurs de la grille et du canevas utilisées lorsque les couleurs personnalisées sont activées</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>Contrôler l’échantillonnage, le mouvement, le lissage des courbes et l’historique conservé</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>Mouvement et historique</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>Remplissage en dégradé</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>Ligne de bordure</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>Distance de défilement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>Distance horizontale parcourue pendant chaque durée de défilement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>Durée du défilement</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>Temps nécessaire pour parcourir la distance configurée</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>Intervalle d’échantillonnage</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>Cadence d’échantillonnage de la télémétrie</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>Apparence</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>Date d’achèvement</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>Ratio de partage</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>Sources/Pairs [total]</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>Sources/Pairs [total]</value>
   </data>
   <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
     <value>Durée du bail UPnP (secondes)</value>
@@ -4286,6 +4463,30 @@
   </data>
   <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
     <value>Les deux interfaces utilisent la même API compatible OpenNet/qBittorrent et le même stockage de paramètres.</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>Ouvrir la détection NAT et des ports</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>Recharger</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>Aller</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>Ouvrir dans le navigateur système par défaut</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>Sources connectées / pairs connectés [toutes les sources connues / tous les pairs connus]</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>Lire le fichier</value>
   </data>
   <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
     <value>Nombres animés</value>
@@ -4980,240 +5181,6 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>Nombre maximal d’alertes libtorrent en attente avant suppression des alertes de faible priorité.</value>
   </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
-    <value>Matériau des contrôles</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
-    <value>Modifie l’effet de matériau des cartes et de leurs panneaux</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
-    <value>Par défaut</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
-    <value>Verre liquide</value>
-  </data>
-  <data name="GuideMaterialTitle.Text" xml:space="preserve">
-    <value>Choisir un matériau de contrôle</value>
-  </data>
-  <data name="GuideMaterialDescription.Text" xml:space="preserve">
-    <value>Comparez la surface Fluent d’origine au verre liquide, puis choisissez le matériau utilisé dans OpenNet.</value>
-  </data>
-  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
-    <value>Matériau des contrôles</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
-    <value>Par défaut</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
-    <value>Surface Fluent d’origine</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
-    <value>Verre liquide</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
-    <value>Flou, réfraction et reflets des bords</value>
-  </data>
-  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
-    <value>Téléversé</value>
-  </data>
-  <data name="PeerMenu_IP.Text" xml:space="preserve">
-    <value>IP</value>
-  </data>
-  <data name="PeerMenu_Location.Text" xml:space="preserve">
-    <value>Emplacement</value>
-  </data>
-  <data name="PeerMenu_Progress.Text" xml:space="preserve">
-    <value>Progression</value>
-  </data>
-  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
-    <value>Vitesse de téléchargement</value>
-  </data>
-  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
-    <value>Vitesse de téléversement</value>
-  </data>
-  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
-    <value>Téléversé</value>
-  </data>
-  <data name="PeerMenu_Client.Text" xml:space="preserve">
-    <value>Client</value>
-  </data>
-  <data name="PeerMenu_Status.Text" xml:space="preserve">
-    <value>État</value>
-  </data>
-  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
-    <value>Protocole</value>
-  </data>
-  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
-    <value>Initiateur</value>
-  </data>
-  <data name="PeerMenu_Source.Text" xml:space="preserve">
-    <value>Source</value>
-  </data>
-  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
-    <value>Graphique de vitesse</value>
-  </data>
-  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
-    <value>Mode de largeur des onglets</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
-    <value>Largeur égale</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
-    <value>Ajuster au contenu</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
-    <value>Compact</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
-    <value>Personnalisation du graphique</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
-    <value>Les modifications sont appliquées immédiatement et enregistrées pour la prochaine session</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
-    <value>Comportement</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
-    <value>Pixels</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
-    <value>Réserve d’historique</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
-    <value>Conserver les points hors écran afin que l’agrandissement de la fenêtre puisse afficher l’historique récent</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
-    <value>Largeurs d’écran</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
-    <value>Courbes lissées</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
-    <value>Interpoler les échantillons adjacents avec des courbes arrondies</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
-    <value>Ligne de surbrillance</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
-    <value>Afficher un marqueur mobile pour les valeurs échantillonnées du graphique</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
-    <value>Maximum parmi toutes les séries</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
-    <value>Minimum de chaque série</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
-    <value>Minimum parmi toutes les séries</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
-    <value>Maximum de chaque série</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
-    <value>Croix</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
-    <value>Durée de l’animation</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
-    <value>Chaque point</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
-    <value>Grille et canevas</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
-    <value>Choisir le motif et l’espacement du canevas</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
-    <value>Motif d’arrière-plan</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
-    <value>Espacement des croix</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
-    <value>Espacement des points</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
-    <value>Couleurs personnalisées du canevas</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
-    <value>Remplacer les couleurs par défaut de la grille adaptées au thème et du canevas transparent</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
-    <value>Couleurs du canevas</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
-    <value>Sélectionner les couleurs de la grille et du canevas utilisées lorsque les couleurs personnalisées sont activées</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
-    <value>Contrôler l’échantillonnage, le mouvement, le lissage des courbes et l’historique conservé</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
-    <value>Mouvement et historique</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
-    <value>Remplissage en dégradé</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
-    <value>Ligne de bordure</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
-    <value>Distance de défilement</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
-    <value>Distance horizontale parcourue pendant chaque durée de défilement</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
-    <value>Durée du défilement</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
-    <value>Temps nécessaire pour parcourir la distance configurée</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
-    <value>Intervalle d’échantillonnage</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
-    <value>Cadence d’échantillonnage de la télémétrie</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
-    <value>Apparence</value>
-  </data>
-  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
-    <value>Date d’achèvement</value>
-  </data>
-  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
-    <value>Ratio de partage</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>Sources/Pairs [total]</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
-    <value>Sources/Pairs [total]</value>
-  </data>
-  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
-    <value>Ouvrir la détection NAT et des ports</value>
-  </data>
-  <data name="CommonContentReload.Content" xml:space="preserve">
-    <value>Recharger</value>
-  </data>
-  <data name="CommonContentForward.Content" xml:space="preserve">
-    <value>Suivant</value>
-  </data>
-  <data name="CommonContentBack.Content" xml:space="preserve">
-    <value>Précédent</value>
-  </data>
-  <data name="CommonContentGo" xml:space="preserve">
-    <value>Aller</value>
-  </data>
-  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
-    <value>Ouvrir dans le navigateur système par défaut</value>
-  </data>
-  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
-    <value>Sources connectées / pairs connectés [toutes les sources connues / tous les pairs connus]</value>
-  </data>
-  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
-    <value>Lire le fichier</value>
-  </data>
   <data name="CreateTorrentFormat.Header" xml:space="preserve">
     <value>Format du torrent</value>
   </data>
@@ -5318,6 +5285,39 @@
   </data>
   <data name="TaskHttpServersTab" xml:space="preserve">
     <value>Serveurs</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>Matériau des contrôles</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>Modifie l’effet de matériau des cartes et de leurs panneaux</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>Verre liquide</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>Choisir un matériau de contrôle</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>Comparez la surface Fluent d’origine au verre liquide, puis choisissez le matériau utilisé dans OpenNet.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>Matériau des contrôles</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>Surface Fluent d’origine</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>Verre liquide</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>Flou, réfraction et reflets des bords</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
     <value>Échanger les listes de pairs avec les pairs connectés</value>

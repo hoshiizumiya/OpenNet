@@ -88,7 +88,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_metadataViewModel =
 			winrt::make<winrt::OpenNet::ViewModels::implementation::
 			TorrentMetadataViewModel>();
-		m_metadataViewModel.MetadataState(L"Loading");
+		m_metadataViewModel.MetadataState(0);
 		m_metadataViewModel.MetadataStatus(L"Connecting to peers...");
 		m_metadataViewModel.TorrentName(L"Magnet download");
 		auto const& defaultPath = ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath;
@@ -334,7 +334,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_hasError = false;
 		if (m_metadataViewModel && !m_metadataReady)
 		{
-			m_metadataViewModel.MetadataState(L"Loading");
+			m_metadataViewModel.MetadataState(0);
 			m_metadataViewModel.MetadataStatus(status);
 		}
 
@@ -351,7 +351,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		m_errorMessage = message;
 		if (m_metadataViewModel && !m_metadataReady)
 		{
-			m_metadataViewModel.MetadataState(L"Loading");
+			m_metadataViewModel.MetadataState(0);
 			m_metadataViewModel.MetadataStatus(message);
 		}
 		if (auto contentPanel = ContentPanel())

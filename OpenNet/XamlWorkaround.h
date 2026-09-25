@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 // Hand-written XAML implementation boundary. Win32 and the STL are established
 // before importing C++/WinRT modules; unlike generated metadata sources, these
@@ -27,6 +27,8 @@
 import std;
 #include "winrt_module_imports.h"
 import winrt.WinUI3Package;
+import winrt.WinUI.Composition.Hlsl;
+import winrt.WinUI.LiquidGlass;
 import winrt.XamlToolkit.WinUI;
 import winrt.XamlToolkit.WinUI.Controls;
 import winrt.XamlToolkit.Labs.WinUI;

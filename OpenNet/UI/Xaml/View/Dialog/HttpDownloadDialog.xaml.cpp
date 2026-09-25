@@ -10,6 +10,7 @@ import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.TorrentSettings;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Content;
 import winrt.Windows.ApplicationModel.DataTransfer;
@@ -25,6 +26,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	HttpDownloadDialog::HttpDownloadDialog()
 	{
 		Style(Application::Current().Resources().Lookup(box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
+		m_fileSizeText = ResourceGetString(L"HttpDownloadSizeUnknown");
+		m_resumeSupportText = ResourceGetString(L"HttpDownloadResumeUnknown");
+		m_errorTitle = ResourceGetString(L"HttpDownloadInvalidUrlTitle");
+		m_errorMessage = ResourceGetString(L"HttpDownloadInvalidUrlMessage");
 		m_saveDir = winrt::hstring{ ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath };
 		UpdateDiskSpace();
 	}
@@ -290,7 +295,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		{
 			// Clipboard access may fail
 		}
-		if (m_isUrlValid && m_fileSizeText == L"Size: Unknown")
+		if (m_isUrlValid && m_fileSizeText == ResourceGetString(L"HttpDownloadSizeUnknown"))
 		{
 			co_await FetchMetadataAsync();
 		}
@@ -306,7 +311,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		if (m_saveDir.empty()) return;
 		std::error_code error;
 		auto const space = std::filesystem::space(std::filesystem::path{ m_saveDir.c_str() }, error);
-		auto const text = error ? hstring{} : hstring{ std::format(L"Free: {:.1f} GiB", static_cast<double>(space.available) / 1073741824.0) };
+		auto const text = error
+			? hstring{}
+			: ResourceGetString(L"HttpDownloadFreePrefix") +
+				hstring{ std::format(L"{:.1f}", static_cast<double>(space.available) / 1073741824.0) } +
+				ResourceGetString(L"HttpDownloadGiB");
 		SetProperty(m_diskSpaceText, text, L"DiskSpaceText");
 	}
 
@@ -350,7 +359,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		auto lifetime = get_strong();
 		if (!ValidateUrl(m_url))
 		{
-			SetError(L"Invalid URL", L"Please enter a valid HTTP, HTTPS, or FTP URL.");
+			SetError(ResourceGetString(L"HttpDownloadInvalidUrlTitle"), ResourceGetString(L"HttpDownloadInvalidUrlMessage"));
 			co_return;
 		}
 		IsPrimaryButtonEnabled(false);
@@ -401,7 +410,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				{
 					self->IsPrimaryButtonEnabled(true);
 					self->IsSecondaryButtonEnabled(true);
-					self->SetError(L"Unable to add download", L"aria2 is unavailable or rejected the supplied options.");
+					self->SetError(ResourceGetString(L"HttpDownloadAddFailedTitle"), ResourceGetString(L"HttpDownloadAddFailedMessage"));
 				}
 			}
 		});
@@ -417,7 +426,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		auto lifetime = get_strong();
 		if (!ValidateUrl(m_url))
 		{
-			SetError(L"Invalid URL", L"Please enter a valid HTTP, HTTPS, or FTP URL.");
+			SetError(ResourceGetString(L"HttpDownloadInvalidUrlTitle"), ResourceGetString(L"HttpDownloadInvalidUrlMessage"));
 			co_return;
 		}
 		m_isMetadataLoading = true;
@@ -429,8 +438,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			auto uri = winrt::Windows::Foundation::Uri{ m_url };
 			if (uri.SchemeName() == L"ftp")
 			{
-				SetProperty(m_fileSizeText, hstring{ L"Size: Determined by aria2" }, L"FileSizeText");
-				SetProperty(m_resumeSupportText, hstring{ L"Resume support: Determined by server" }, L"ResumeSupportText");
+				SetProperty(m_fileSizeText, ResourceGetString(L"HttpDownloadSizeDeterminedByAria2"), L"FileSizeText");
+				SetProperty(m_resumeSupportText, ResourceGetString(L"HttpDownloadResumeDeterminedByServer"), L"ResumeSupportText");
 				if (m_fileName.empty())
 				{
 					auto const path = std::wstring_view{ uri.Path() };
@@ -502,7 +511,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			{
 				if (auto rangeLength = contentRange.Length()) length = rangeLength.Value();
 			}
-			SetProperty(m_fileSizeText, length > 0 ? hstring{ std::format(L"Size: {:.2f} MiB", static_cast<double>(length) / 1048576.0) } : hstring{ L"Size: Unknown" }, L"FileSizeText");
+			SetProperty(m_fileSizeText, length > 0
+				? ResourceGetString(L"HttpDownloadSizePrefix") + hstring{ std::format(L"{:.2f}", static_cast<double>(length) / 1048576.0) } + ResourceGetString(L"HttpDownloadMiB")
+				: ResourceGetString(L"HttpDownloadSizeUnknown"), L"FileSizeText");
 
 			m_resourceFinalUrl =
 				response.RequestMessage().RequestUri().AbsoluteUri();
@@ -542,7 +553,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			// Hybrid routing is stricter than the UI hint: only a successful
 			// active 206 + Content-Range probe enables BEP 19 URL-seed use.
 			m_resourceSupportsByteRanges = rangeVerified;
-			SetProperty(m_resumeSupportText, resumable ? hstring{ L"Resume support: Yes" } : hstring{ L"Resume support: No" }, L"ResumeSupportText");
+			SetProperty(m_resumeSupportText, resumable ? ResourceGetString(L"HttpDownloadResumeYes") : ResourceGetString(L"HttpDownloadResumeNo"), L"ResumeSupportText");
 			if (m_fileName.empty())
 			{
 				if (auto disposition = response.Content().Headers().ContentDisposition())
@@ -577,7 +588,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		}
 		catch (winrt::hresult_error const& error)
 		{
-			SetError(L"Unable to retrieve file information", error.message());
+			SetError(ResourceGetString(L"HttpDownloadMetadataFailedTitle"), error.message());
 		}
 		m_isMetadataLoading = false;
 		RaisePropertyChanged(L"IsMetadataLoading");

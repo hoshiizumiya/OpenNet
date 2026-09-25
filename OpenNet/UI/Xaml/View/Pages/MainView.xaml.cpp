@@ -17,6 +17,7 @@
 #include "Service/Background/BackgroundMediaService.h"
 
 import OpenNet.Helpers.WindowHelper;
+import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.Windows.Storage;
 import winrt.Windows.UI.Xaml.Interop;
 
@@ -256,7 +257,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// https://github.com/microsoft/PowerToys/pull/48457
 		// A page constructor or XAML load failure here would otherwise bubble out of the Frame and crash the launcher.
 		// Log the failure and mark it handled so the flyout can remain available; the next summon will retry navigation.
-		throw winrt::hresult_error(e.Exception(), L"Failed to load Page " + e.SourcePageType().Name);
+		throw winrt::hresult_error(
+			e.Exception(),
+			ResourceGetString(L"MainViewNavigationFailedPrefix") + e.SourcePageType().Name);
 	}
 
 	void MainView::NavItem_More_Tapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::TappedRoutedEventArgs const& /*e*/)

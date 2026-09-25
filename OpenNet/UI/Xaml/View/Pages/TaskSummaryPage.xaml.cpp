@@ -5,6 +5,7 @@
 #if __has_include("UI/Xaml/View/Pages/TaskSummaryPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskSummaryPage.g.cpp"
 #endif
+#include "Core/DataGraph/SpeedGraphDatabase.h"
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Aria2.Aria2Models;
@@ -17,6 +18,23 @@ using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
+	namespace
+	{
+		hstring FormatLocalized(
+			wchar_t const* key,
+			std::initializer_list<hstring> const& values)
+		{
+			std::wstring text{ ResourceGetString(key).c_str() };
+			for (auto const& value : values)
+			{
+				auto const position = text.find(L"{}");
+				if (position == std::wstring::npos) break;
+				text.replace(position, 2, value.c_str());
+			}
+			return hstring{ text };
+		}
+	}
+
 	TaskSummaryPage::TaskSummaryPage()
 	{
 		InitializeComponent();
@@ -114,6 +132,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			TaskSpeedGraph().Reset();
 			m_graphTaskId = task.TaskId();
+
+			auto const taskId = to_string(task.TaskId());
+			if (!taskId.empty())
+			{
+				auto const points = ::OpenNet::Core::SpeedGraphDatabase::Instance().LoadPoints(taskId);
+				for (auto const& point : points)
+				{
+					TaskSpeedGraph().SetSpeed(
+						static_cast<double>(point.percent),
+						point.speedKB * 1024);
+				}
+			}
 		}
 
 		ResetSummary();
@@ -207,25 +237,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		DownloadLimitText().Text(
 			downloadLimit > 0
 			? FormatRate(downloadLimit)
-			: hstring{ L"Unlimited" });
+			: ResourceGetString(L"CommonUnlimited"));
 		UploadLimitText().Text(
 			uploadLimit > 0
 			? FormatRate(uploadLimit)
-			: hstring{ L"Unlimited" });
+			: ResourceGetString(L"CommonUnlimited"));
 		SeedsText().Text(
 			detail.numComplete >= 0
-			? std::format(
-				L"{} of {} connected",
-				detail.numSeeds,
-				std::max(detail.numSeeds, detail.numComplete))
-			: std::format(L"{} connected", detail.numSeeds));
+			? FormatLocalized(L"TaskSummaryConnectedOfTotal", {
+				to_hstring(detail.numSeeds),
+				to_hstring(std::max(detail.numSeeds, detail.numComplete))})
+			: FormatLocalized(L"TaskSummaryConnectedCount", { to_hstring(detail.numSeeds) }));
 		PeersText().Text(
 			detail.numIncomplete >= 0
-			? std::format(
-				L"{} of {} connected",
-				detail.numPeers,
-				std::max(detail.numPeers, detail.numIncomplete))
-			: std::format(L"{} connected", detail.numPeers));
+			? FormatLocalized(L"TaskSummaryConnectedOfTotal", {
+				to_hstring(detail.numPeers),
+				to_hstring(std::max(detail.numPeers, detail.numIncomplete))})
+			: FormatLocalized(L"TaskSummaryConnectedCount", { to_hstring(detail.numPeers) }));
 		ConnectionsText().Text(std::format(L"{}", detail.numConnections));
 		ShareRatioText().Text(std::format(L"{:.2f}", detail.shareRatio));
 
@@ -233,7 +261,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		LongTermUploadSizeText().Text(
 			longTermSeeding
 			? FormatBytes(detail.totalUploaded)
-			: hstring{ L"Not seeding" });
+			: ResourceGetString(L"TaskSummaryNotSeeding"));
 		LongTermUploadSpeedText().Text(
 			longTermSeeding
 			? FormatRate(detail.uploadRate)
@@ -241,7 +269,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		LongTermShareRatioText().Text(
 			longTermSeeding
 			? hstring{ std::format(L"{:.2f}", detail.shareRatio) }
-		: hstring{ L"—" });
+			: ResourceGetString(L"CommonNotAvailable"));
 
 		TaskSizeText().Text(
 			std::format(
@@ -252,15 +280,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			FormatBytes(std::max<std::int64_t>(0, detail.totalSize - detail.totalDone)));
 		InfoHashV1Text().Text(
 			detail.infoHashV1.empty()
-			? hstring{ L"N/A" }
+			? ResourceGetString(L"CommonNotAvailable")
 		: to_hstring(detail.infoHashV1));
 		InfoHashV2Text().Text(
 			detail.infoHashV2.empty()
-			? hstring{ L"N/A" }
+			? ResourceGetString(L"CommonNotAvailable")
 		: to_hstring(detail.infoHashV2));
-		PieceHashesText().Text(
-			!detail.infoHashV2.empty() ? L"SHA-256" :
-			!detail.infoHashV1.empty() ? L"SHA-1" : L"N/A");
+		hstring pieceHashLabel = ResourceGetString(L"CommonNotAvailable");
+		if (!detail.infoHashV2.empty()) pieceHashLabel = ResourceGetString(L"TaskSummarySha256");
+		else if (!detail.infoHashV1.empty()) pieceHashLabel = ResourceGetString(L"TaskSummarySha1");
+		PieceHashesText().Text(pieceHashLabel);
 		AddedOnText().Text(FormatTimestamp(detail.addedTimestamp));
 		FinishedOnText().Text(FormatTimestamp(detail.completedTimestamp));
 		PiecesText().Text(
@@ -270,35 +299,37 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				FormatBytes(detail.pieceSize).c_str()));
 		NumberOfFilesText().Text(std::format(L"{}", detail.files.size()));
 		FileAlignmentText().Text(
-			detail.isPieceAligned ? L"Piece-aligned" : L"Not piece-aligned");
+			detail.isPieceAligned
+			? ResourceGetString(L"TaskSummaryPieceAligned")
+			: ResourceGetString(L"TaskSummaryNotPieceAligned"));
 		QueuePositionText().Text(
 			detail.queuePosition >= 0
 			? hstring{ std::format(L"{}", detail.queuePosition + 1) }
-		: hstring{ L"N/A" });
+			: ResourceGetString(L"CommonNotAvailable"));
 		CreatedByText().Text(
 			detail.creator.empty()
-			? hstring{ L"N/A" }
+			? ResourceGetString(L"CommonNotAvailable")
 		: to_hstring(detail.creator));
 		CreatedOnText().Text(FormatTimestamp(detail.creationTimestamp));
 		PrivateTorrentText().Text(detail.isPrivate ? ResourceGetString(L"CommonYes") : ResourceGetString(L"CommonNo"));
 		DescriptionText().Text(
 			detail.comment.empty()
-			? hstring{ L"—" }
-		: to_hstring(detail.comment));
+			? ResourceGetString(L"CommonNotAvailable")
+			: to_hstring(detail.comment));
 
 		std::vector<hstring> flags;
-		if (detail.isPaused) flags.emplace_back(L"Paused");
-		if (detail.isAutoManaged) flags.emplace_back(L"Auto managed");
-		if (detail.isSequential) flags.emplace_back(L"Sequential");
-		if (detail.isSuperSeeding) flags.emplace_back(L"Super seeding");
-		if (detail.firstLastPiecePriority) flags.emplace_back(L"First/last piece priority");
+		if (detail.isPaused) flags.emplace_back(ResourceGetString(L"TaskStatusPaused"));
+		if (detail.isAutoManaged) flags.emplace_back(ResourceGetString(L"TaskSummaryAutoManaged"));
+		if (detail.isSequential) flags.emplace_back(ResourceGetString(L"TaskSummarySequential"));
+		if (detail.isSuperSeeding) flags.emplace_back(ResourceGetString(L"TaskSummarySuperSeeding"));
+		if (detail.firstLastPiecePriority) flags.emplace_back(ResourceGetString(L"TaskSummaryFirstLastPiecePriority"));
 		std::wstring flagText;
 		for (auto const& flag : flags)
 		{
 			if (!flagText.empty()) flagText.append(L", ");
 			flagText.append(flag.c_str());
 		}
-		TaskFlagsText().Text(flagText.empty() ? L"None" : hstring{ flagText });
+		TaskFlagsText().Text(flagText.empty() ? ResourceGetString(L"CommonNone") : hstring{ flagText });
 
 		std::size_t finished{};
 		std::size_t available{};
@@ -458,7 +489,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		if (timestamp <= 0)
 		{
-			return L"N/A";
+			return ResourceGetString(L"CommonNotAvailable");
 		}
 		constexpr std::int64_t UnixToFileTimeSeconds = 11644473600LL;
 		auto const ticks = static_cast<std::uint64_t>(
@@ -487,19 +518,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		if (paused)
 		{
-			return L"Paused";
+			return ResourceGetString(L"TaskStatusPaused");
 		}
 		switch (state)
 		{
-			case 0: return L"Checking resume data";
-			case 1: return L"Checking files";
-			case 2: return L"Downloading metadata";
-			case 3: return L"Downloading";
-			case 4: return L"Finished";
-			case 5: return L"Seeding";
-			case 6: return L"Allocating";
-			case 7: return L"Checking fast resume";
-			default: return L"Unknown";
+			case 0: return ResourceGetString(L"TaskSummaryCheckingResumeData");
+			case 1: return ResourceGetString(L"TaskSummaryCheckingFiles");
+			case 2: return ResourceGetString(L"TaskSummaryDownloadingMetadata");
+			case 3: return ResourceGetString(L"TaskStatusDownloading");
+			case 4: return ResourceGetString(L"TaskStatusCompleted");
+			case 5: return ResourceGetString(L"TaskStatusSeeding");
+			case 6: return ResourceGetString(L"TaskSummaryAllocating");
+			case 7: return ResourceGetString(L"TaskSummaryCheckingFastResume");
+			default: return ResourceGetString(L"CommonUnknown");
 		}
 	}
 }

@@ -12,6 +12,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		// Unified change handler
 		void OnSettingChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
+		void MaterialToggle_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 		// Folder browse handlers
 		winrt::fire_and_forget BrowseSavePathButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
@@ -23,7 +24,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void SaveSettings();
 		winrt::Windows::Foundation::IAsyncAction PickFolder(winrt::Microsoft::UI::Xaml::Controls::TextBox target);
 
-		bool m_loading{ false };
+		bool m_loading{ true };
+		bool m_preallocateStorage{};
+		bool m_autoStartDownloads{};
+		bool m_recheckBeforeResume{};
+		bool m_moveCompleted{};
 	};
 }
 

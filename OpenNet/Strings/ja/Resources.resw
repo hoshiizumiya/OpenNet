@@ -927,8 +927,44 @@
   <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>ダウンロード済み</value>
   </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>アップロード済み</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>場所</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>進行状況</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>DL 速度</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>UL 速度</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>アップロード済み</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>クライアント</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>状態</value>
+  </data>
   <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>理由</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>プロトコル</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>開始元</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>ソース</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>接続中のピアはありません</value>
@@ -4263,7 +4299,12 @@
   <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
     <value>Piece Map</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>速度グラフ</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>タブ幅モード</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
     <value>等幅</value>
   </data>
@@ -4276,11 +4317,140 @@
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value> 各タブは、タブ内のコンテンツに合わせて幅を調整します</value>
   </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>コンパクト</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
     <value>選択されていないタブが折りたたまれると、そのアイコンのみが表示されます。 選択したタブが調整され、タブ内のコンテンツが表示されます</value>
   </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>グラフのカスタマイズ</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>変更はすぐに適用され、次回のセッション用に保存されます</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>動作</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>ピクセル</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>履歴の保持</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>画面外のポイントを保持し、ウィンドウを広げたときに最近の履歴を表示できるようにします</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>画面幅</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>滑らかな曲線</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>隣接するサンプルを丸みのある曲線で補間します</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>強調線</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>サンプリングされたグラフ値に移動マーカーを表示します</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>全系列の最大値</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>各系列の最小値</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>全系列の最小値</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>各系列の最大値</value>
+  </data>
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>なし</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>十字</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>アニメーション時間</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>各ポイント</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>グリッドとキャンバス</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>キャンバスのパターンと間隔を選択します</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>背景パターン</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>十字の間隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>ドットの間隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>カスタムキャンバス色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>テーマ対応グリッド色と透明キャンバスの既定値を上書きします</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>キャンバス色</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>カスタム色を有効にしたときに使用するグリッド色とキャンバス色を選択します</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>サンプリング、移動、曲線の平滑化、保持する履歴を制御します</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>移動と履歴</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>グラデーション塗りつぶし</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>境界線</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>スクロール距離</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>各スクロール時間内に移動する水平距離</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>スクロール時間</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>設定した距離を移動する時間</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>サンプリング間隔</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>テレメトリのサンプリング周期</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>外観</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>完了日時</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>共有比率</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>シード/ピア［全体］</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>シード/ピア［全体］</value>
   </data>
   <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
     <value>UPnP リース期間 (秒)</value>
@@ -4293,6 +4463,30 @@
   </data>
   <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
     <value>両方のフロントエンドで同じ OpenNet/qBittorrent 互換 API と設定を使用します。</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>NAT とポートの検出を開く</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>再読み込み</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>進む</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>戻る</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>移動</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>既定のシステムブラウザーで開く</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>接続中のシード / 接続中のピア［既知の全シード / 既知の全ピア］</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>ファイルを再生</value>
   </data>
   <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
     <value>数字のアニメーション</value>
@@ -4987,234 +5181,6 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>低優先度アラートが破棄されるまで保持する libtorrent アラートの上限です。</value>
   </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
-    <value>コントロールの素材</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
-    <value>カードとカードパネルの素材効果を変更します</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
-    <value>既定</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
-    <value>リキッドガラス</value>
-  </data>
-  <data name="GuideMaterialTitle.Text" xml:space="preserve">
-    <value>コントロールの素材を選択</value>
-  </data>
-  <data name="GuideMaterialDescription.Text" xml:space="preserve">
-    <value>標準の Fluent サーフェスとリキッドガラスを比較し、OpenNet 全体で使う素材を選択します。</value>
-  </data>
-  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
-    <value>コントロールの素材</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
-    <value>既定</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
-    <value>標準の Fluent サーフェス</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
-    <value>リキッドガラス</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
-    <value>ぼかし、屈折、エッジのハイライト</value>
-  </data>
-  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
-    <value>アップロード済み</value>
-  </data>
-  <data name="PeerMenu_IP.Text" xml:space="preserve">
-    <value>IP</value>
-  </data>
-  <data name="PeerMenu_Location.Text" xml:space="preserve">
-    <value>場所</value>
-  </data>
-  <data name="PeerMenu_Progress.Text" xml:space="preserve">
-    <value>進行状況</value>
-  </data>
-  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
-    <value>DL 速度</value>
-  </data>
-  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
-    <value>UL 速度</value>
-  </data>
-  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
-    <value>アップロード済み</value>
-  </data>
-  <data name="PeerMenu_Client.Text" xml:space="preserve">
-    <value>クライアント</value>
-  </data>
-  <data name="PeerMenu_Status.Text" xml:space="preserve">
-    <value>状態</value>
-  </data>
-  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
-    <value>プロトコル</value>
-  </data>
-  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
-    <value>開始元</value>
-  </data>
-  <data name="PeerMenu_Source.Text" xml:space="preserve">
-    <value>ソース</value>
-  </data>
-  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
-    <value>速度グラフ</value>
-  </data>
-  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
-    <value>タブ幅モード</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
-    <value>コンパクト</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
-    <value>グラフのカスタマイズ</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
-    <value>変更はすぐに適用され、次回のセッション用に保存されます</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
-    <value>動作</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
-    <value>ピクセル</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
-    <value>履歴の保持</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
-    <value>画面外のポイントを保持し、ウィンドウを広げたときに最近の履歴を表示できるようにします</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
-    <value>画面幅</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
-    <value>滑らかな曲線</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
-    <value>隣接するサンプルを丸みのある曲線で補間します</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
-    <value>強調線</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
-    <value>サンプリングされたグラフ値に移動マーカーを表示します</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
-    <value>全系列の最大値</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
-    <value>各系列の最小値</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
-    <value>全系列の最小値</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
-    <value>各系列の最大値</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
-    <value>十字</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
-    <value>アニメーション時間</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
-    <value>各ポイント</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
-    <value>グリッドとキャンバス</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
-    <value>キャンバスのパターンと間隔を選択します</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
-    <value>背景パターン</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
-    <value>十字の間隔</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
-    <value>ドットの間隔</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
-    <value>カスタムキャンバス色</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
-    <value>テーマ対応グリッド色と透明キャンバスの既定値を上書きします</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
-    <value>キャンバス色</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
-    <value>カスタム色を有効にしたときに使用するグリッド色とキャンバス色を選択します</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
-    <value>サンプリング、移動、曲線の平滑化、保持する履歴を制御します</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
-    <value>移動と履歴</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
-    <value>グラデーション塗りつぶし</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
-    <value>境界線</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
-    <value>スクロール距離</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
-    <value>各スクロール時間内に移動する水平距離</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
-    <value>スクロール時間</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
-    <value>設定した距離を移動する時間</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
-    <value>サンプリング間隔</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
-    <value>テレメトリのサンプリング周期</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
-    <value>外観</value>
-  </data>
-  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
-    <value>完了日時</value>
-  </data>
-  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
-    <value>共有比率</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>シード/ピア［全体］</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
-    <value>シード/ピア［全体］</value>
-  </data>
-  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
-    <value>NAT とポートの検出を開く</value>
-  </data>
-  <data name="CommonContentReload.Content" xml:space="preserve">
-    <value>再読み込み</value>
-  </data>
-  <data name="CommonContentForward.Content" xml:space="preserve">
-    <value>進む</value>
-  </data>
-  <data name="CommonContentBack.Content" xml:space="preserve">
-    <value>戻る</value>
-  </data>
-  <data name="CommonContentGo" xml:space="preserve">
-    <value>移動</value>
-  </data>
-  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
-    <value>既定のシステムブラウザーで開く</value>
-  </data>
-  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
-    <value>接続中のシード / 接続中のピア［既知の全シード / 既知の全ピア］</value>
-  </data>
-  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
-    <value>ファイルを再生</value>
-  </data>
   <data name="CreateTorrentFormat.Header" xml:space="preserve">
     <value>Torrent 形式</value>
   </data>
@@ -5319,6 +5285,39 @@
   </data>
   <data name="TaskHttpServersTab" xml:space="preserve">
     <value>サーバー</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>コントロールの素材</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>カードとカードパネルの素材効果を変更します</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>リキッドガラス</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>コントロールの素材を選択</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>標準の Fluent サーフェスとリキッドガラスを比較し、OpenNet 全体で使う素材を選択します。</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>コントロールの素材</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>既定</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>標準の Fluent サーフェス</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>リキッドガラス</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>ぼかし、屈折、エッジのハイライト</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
     <value>接続中のピアとピア一覧を交換します</value>

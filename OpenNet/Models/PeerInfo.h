@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.Windows.Foundation;
+import OpenNet.Core.Utils.Message;
 import std;
 
 namespace winrt::OpenNet::Models
@@ -121,13 +122,13 @@ namespace winrt::OpenNet::Models
 		{
 			switch (status)
 			{
-				case ConnectionStatus::Discovering: return L"发现中 / Discovering";
-				case ConnectionStatus::Connecting: return L"连接中 / Connecting";
-				case ConnectionStatus::Connected: return L"已连接 / Connected";
-				case ConnectionStatus::Disconnected: return L"已断开 / Disconnected";
-				case ConnectionStatus::Failed: return L"连接失败 / Failed";
-				case ConnectionStatus::Timeout: return L"超时 / Timeout";
-				default: return L"未知 / Unknown";
+				case ConnectionStatus::Discovering: return ResourceGetString(L"PeerConnectionDiscovering");
+				case ConnectionStatus::Connecting: return ResourceGetString(L"PeerConnectionConnecting");
+				case ConnectionStatus::Connected: return ResourceGetString(L"ModelNetworkInfoStatusConnected");
+				case ConnectionStatus::Disconnected: return ResourceGetString(L"ModelNetworkInfoStatusDisconnected");
+				case ConnectionStatus::Failed: return ResourceGetString(L"PeerConnectionFailed");
+				case ConnectionStatus::Timeout: return ResourceGetString(L"PeerConnectionTimedOut");
+				default: return ResourceGetString(L"CommonUnknown");
 			}
 		}
 
@@ -136,12 +137,12 @@ namespace winrt::OpenNet::Models
 		{
 			switch (natType)
 			{
-				case NATType::Open: return L"开放 / Open";
-				case NATType::FullCone: return L"完全锥形 / Full Cone";
-				case NATType::RestrictedCone: return L"受限锥形 / Restricted Cone";
-				case NATType::PortRestricted: return L"端口受限 / Port Restricted";
-				case NATType::Symmetric: return L"对称 / Symmetric";
-				default: return L"未知 / Unknown";
+				case NATType::Open: return ResourceGetString(L"CoreNetworkDetectorNATOpenInternet");
+				case NATType::FullCone: return ResourceGetString(L"CoreNetworkDetectorNATFullCone");
+				case NATType::RestrictedCone: return ResourceGetString(L"CoreNetworkDetectorNATRestrictedCone");
+				case NATType::PortRestricted: return ResourceGetString(L"CoreNetworkDetectorNATPortRestrictedCone");
+				case NATType::Symmetric: return ResourceGetString(L"CoreNetworkDetectorNATSymmetric");
+				default: return ResourceGetString(L"CommonUnknown");
 			}
 		}
 
@@ -149,15 +150,15 @@ namespace winrt::OpenNet::Models
 		winrt::hstring GetSignalStrengthString() const
 		{
 			if (signalStrength >= 80)
-				return L"优秀 / Excellent";
+				return ResourceGetString(L"NetworkQualityExcellent");
 			else if (signalStrength >= 60)
-				return L"良好 / Good";
+				return ResourceGetString(L"NetworkQualityGood");
 			else if (signalStrength >= 40)
-				return L"一般 / Fair";
+				return ResourceGetString(L"NetworkQualityFair");
 			else if (signalStrength >= 20)
-				return L"较差 / Poor";
+				return ResourceGetString(L"NetworkQualityPoor");
 			else
-				return L"很差 / Very Poor";
+				return ResourceGetString(L"NetworkQualityVeryPoor");
 		}
 
 		// 检查是否可以直连 / Check if Direct Connection Possible

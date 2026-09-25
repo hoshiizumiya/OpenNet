@@ -927,8 +927,44 @@
   <data name="CommonTextDownloaded.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
     <value>다운로드됨</value>
   </data>
+  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
+    <value>업로드됨</value>
+  </data>
+  <data name="PeerMenu_IP.Text" xml:space="preserve">
+    <value>IP</value>
+  </data>
+  <data name="PeerMenu_Location.Text" xml:space="preserve">
+    <value>위치</value>
+  </data>
+  <data name="PeerMenu_Progress.Text" xml:space="preserve">
+    <value>진행률</value>
+  </data>
+  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
+    <value>다운로드 속도</value>
+  </data>
+  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
+    <value>업로드 속도</value>
+  </data>
+  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
+    <value>업로드됨</value>
+  </data>
+  <data name="PeerMenu_Client.Text" xml:space="preserve">
+    <value>클라이언트</value>
+  </data>
+  <data name="PeerMenu_Status.Text" xml:space="preserve">
+    <value>상태</value>
+  </data>
   <data name="PeerMenu_Reason.Text" xml:space="preserve">
     <value>이유</value>
+  </data>
+  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
+    <value>프로토콜</value>
+  </data>
+  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
+    <value>시작 주체</value>
+  </data>
+  <data name="PeerMenu_Source.Text" xml:space="preserve">
+    <value>소스</value>
   </data>
   <data name="PeersList_EmptyState.Text" xml:space="preserve">
     <value>연결된 피어 없음</value>
@@ -4263,17 +4299,158 @@
   <data name="ViewTasksPageNavigationViewItemPieceMap.Header" xml:space="preserve">
     <value>Piece Map</value>
   </data>
+  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
+    <value>속도 그래프</value>
+  </data>
+  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
+    <value>탭 너비 모드</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
+    <value>동일한 너비</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqualToolTip.Content" xml:space="preserve">
     <value>각 탭의 너비는 동일합니다</value>
+  </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
+    <value>콘텐츠에 맞춤</value>
   </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContentToolTip.Content" xml:space="preserve">
     <value>각 탭은 탭 내의 콘텐츠에 맞게 너비를 조정합니다</value>
   </data>
+  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
+    <value>압축</value>
+  </data>
   <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompactToolTip.Content" xml:space="preserve">
     <value>선택하지 않은 탭은 해당 아이콘만 표시하도록 축소됩니다. 선택한 탭이 탭 내의 콘텐츠를 표시하도록 조정됩니다</value>
   </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
+    <value>그래프 사용자 지정</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
+    <value>변경 사항은 즉시 적용되며 다음 세션을 위해 저장됩니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
+    <value>동작</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
+    <value>픽셀</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
+    <value>기록 보존</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
+    <value>화면 밖의 지점을 유지하여 창을 넓힐 때 최근 기록을 볼 수 있도록 합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
+    <value>화면 너비</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
+    <value>부드러운 곡선</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
+    <value>인접한 샘플을 둥근 곡선으로 보간합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
+    <value>강조선</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
+    <value>샘플링된 그래프 값에 이동 마커를 표시합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
+    <value>모든 계열 중 최댓값</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
+    <value>각 계열의 최솟값</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
+    <value>모든 계열 중 최솟값</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
+    <value>각 계열의 최댓값</value>
+  </data>
   <data name="ViewTaskSpeedGraphPageComboBoxItemNone.Content" xml:space="preserve">
     <value>없음</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
+    <value>십자</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
+    <value>애니메이션 지속 시간</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
+    <value>각 지점</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
+    <value>그리드 및 캔버스</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
+    <value>캔버스 패턴과 간격을 선택합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
+    <value>배경 패턴</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
+    <value>십자 간격</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
+    <value>점 간격</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
+    <value>사용자 지정 캔버스 색</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
+    <value>테마에 맞는 그리드 및 투명 캔버스 기본값을 재정의합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
+    <value>캔버스 색</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
+    <value>사용자 지정 색을 사용할 때 적용할 그리드 및 캔버스 색을 선택합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
+    <value>샘플링, 이동, 곡선 평활화 및 보존 기록을 제어합니다</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
+    <value>움직임 및 기록</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
+    <value>그라데이션 채우기</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
+    <value>테두리 선</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
+    <value>스크롤 거리</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
+    <value>각 스크롤 지속 시간 동안 이동하는 수평 거리</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
+    <value>스크롤 지속 시간</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
+    <value>설정된 거리를 이동하는 데 걸리는 시간</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
+    <value>샘플링 간격</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
+    <value>텔레메트리 샘플링 주기</value>
+  </data>
+  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
+    <value>모양</value>
+  </data>
+  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
+    <value>완료 날짜</value>
+  </data>
+  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
+    <value>공유 비율</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
+    <value>시드/피어[전체]</value>
+  </data>
+  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
+    <value>시드/피어[전체]</value>
   </data>
   <data name="BT_UpnpLeaseDuration.Header" xml:space="preserve">
     <value>UPnP 임대 기간 (초)</value>
@@ -4286,6 +4463,30 @@
   </data>
   <data name="WebUISettingsFrontendCard.Description" xml:space="preserve">
     <value>두 프런트엔드는 동일한 OpenNet/qBittorrent 호환 API와 설정 저장소를 사용합니다.</value>
+  </data>
+  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
+    <value>NAT 및 포트 감지 열기</value>
+  </data>
+  <data name="CommonContentReload.Content" xml:space="preserve">
+    <value>새로 고침</value>
+  </data>
+  <data name="CommonContentForward.Content" xml:space="preserve">
+    <value>앞으로</value>
+  </data>
+  <data name="CommonContentBack.Content" xml:space="preserve">
+    <value>뒤로</value>
+  </data>
+  <data name="CommonContentGo" xml:space="preserve">
+    <value>이동</value>
+  </data>
+  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
+    <value>기본 시스템 브라우저에서 열기</value>
+  </data>
+  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
+    <value>연결된 시드 / 연결된 피어 [알려진 모든 시드 / 알려진 모든 피어]</value>
+  </data>
+  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
+    <value>파일 재생</value>
   </data>
   <data name="ViewThemesSettingsPageAnimatedDigitsCard.Header" xml:space="preserve">
     <value>숫자 애니메이션</value>
@@ -4980,240 +5181,6 @@
   <data name="BT_AlertQueueSize.Description" xml:space="preserve">
     <value>낮은 우선순위 알림을 버리기 전까지 유지할 libtorrent 알림의 최대 수입니다.</value>
   </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
-    <value>컨트롤 재질</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
-    <value>카드와 카드 패널의 재질 효과를 변경합니다</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
-    <value>기본값</value>
-  </data>
-  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
-    <value>리퀴드 글래스</value>
-  </data>
-  <data name="GuideMaterialTitle.Text" xml:space="preserve">
-    <value>컨트롤 재질 선택</value>
-  </data>
-  <data name="GuideMaterialDescription.Text" xml:space="preserve">
-    <value>기본 Fluent 표면과 리퀴드 글래스를 비교하고 OpenNet 전체에 사용할 재질을 선택하세요.</value>
-  </data>
-  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
-    <value>컨트롤 재질</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
-    <value>기본값</value>
-  </data>
-  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
-    <value>기본 Fluent 표면</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
-    <value>리퀴드 글래스</value>
-  </data>
-  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
-    <value>흐림, 굴절 및 가장자리 강조</value>
-  </data>
-  <data name="PeerHeader_Uploaded.Text" xml:space="preserve">
-    <value>업로드됨</value>
-  </data>
-  <data name="PeerMenu_IP.Text" xml:space="preserve">
-    <value>IP</value>
-  </data>
-  <data name="PeerMenu_Location.Text" xml:space="preserve">
-    <value>위치</value>
-  </data>
-  <data name="PeerMenu_Progress.Text" xml:space="preserve">
-    <value>진행률</value>
-  </data>
-  <data name="PeerMenu_DLSpeed.Text" xml:space="preserve">
-    <value>다운로드 속도</value>
-  </data>
-  <data name="PeerMenu_ULSpeed.Text" xml:space="preserve">
-    <value>업로드 속도</value>
-  </data>
-  <data name="PeerMenu_Uploaded.Text" xml:space="preserve">
-    <value>업로드됨</value>
-  </data>
-  <data name="PeerMenu_Client.Text" xml:space="preserve">
-    <value>클라이언트</value>
-  </data>
-  <data name="PeerMenu_Status.Text" xml:space="preserve">
-    <value>상태</value>
-  </data>
-  <data name="PeerMenu_Protocol.Text" xml:space="preserve">
-    <value>프로토콜</value>
-  </data>
-  <data name="PeerMenu_Initiator.Text" xml:space="preserve">
-    <value>시작 주체</value>
-  </data>
-  <data name="PeerMenu_Source.Text" xml:space="preserve">
-    <value>소스</value>
-  </data>
-  <data name="ViewTasksPageNavigationViewItemSpeedGraph.Header" xml:space="preserve">
-    <value>속도 그래프</value>
-  </data>
-  <data name="ViewTasksPageTabViewMenuFlyoutSubItemTabWidthMode.Text" xml:space="preserve">
-    <value>탭 너비 모드</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeEqual.Text" xml:space="preserve">
-    <value>동일한 너비</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeSizeToContent.Text" xml:space="preserve">
-    <value>콘텐츠에 맞춤</value>
-  </data>
-  <data name="ViewTasksPageTabViewToggleMenuFlyoutItemTabWidthModeCompact.Text" xml:space="preserve">
-    <value>압축</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockHeader.Text" xml:space="preserve">
-    <value>그래프 사용자 지정</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockDescription.Text" xml:space="preserve">
-    <value>변경 사항은 즉시 적용되며 다음 세션을 위해 저장됩니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageTextBlockBehavior.Text" xml:space="preserve">
-    <value>동작</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxScrollDistanceUnit.Text" xml:space="preserve">
-    <value>픽셀</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Header" xml:space="preserve">
-    <value>기록 보존</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardHistoryBuffer.Description" xml:space="preserve">
-    <value>화면 밖의 지점을 유지하여 창을 넓힐 때 최근 기록을 볼 수 있도록 합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageNumberBoxHistoryBuffer.Header" xml:space="preserve">
-    <value>화면 너비</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Header" xml:space="preserve">
-    <value>부드러운 곡선</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDistance.Description" xml:space="preserve">
-    <value>인접한 샘플을 둥근 곡선으로 보간합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Header" xml:space="preserve">
-    <value>강조선</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsExpanderHighlight.Description" xml:space="preserve">
-    <value>샘플링된 그래프 값에 이동 마커를 표시합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestAcrossAllSeries.Content" xml:space="preserve">
-    <value>모든 계열 중 최댓값</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestInEachSeries.Content" xml:space="preserve">
-    <value>각 계열의 최솟값</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemLowestAcrossAllSeries.Content" xml:space="preserve">
-    <value>모든 계열 중 최솟값</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemHighestInEachSeries.Content" xml:space="preserve">
-    <value>각 계열의 최댓값</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemCross.Content" xml:space="preserve">
-    <value>십자</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardAnimationDuration.Header" xml:space="preserve">
-    <value>애니메이션 지속 시간</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageComboBoxItemEachPoint.Content" xml:space="preserve">
-    <value>각 지점</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Header" xml:space="preserve">
-    <value>그리드 및 캔버스</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasSettingsExpander.Description" xml:space="preserve">
-    <value>캔버스 패턴과 간격을 선택합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBackgroundPatternSettingsCard.Header" xml:space="preserve">
-    <value>배경 패턴</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCrossSpacingSettingsCard.Header" xml:space="preserve">
-    <value>십자 간격</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageDotSpacingSettingsCard.Header" xml:space="preserve">
-    <value>점 간격</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Header" xml:space="preserve">
-    <value>사용자 지정 캔버스 색</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCustomCanvasColorsSettingsCard.Description" xml:space="preserve">
-    <value>테마에 맞는 그리드 및 투명 캔버스 기본값을 재정의합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Header" xml:space="preserve">
-    <value>캔버스 색</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageCanvasColorsSettingsExpander.Description" xml:space="preserve">
-    <value>사용자 지정 색을 사용할 때 적용할 그리드 및 캔버스 색을 선택합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Description" xml:space="preserve">
-    <value>샘플링, 이동, 곡선 평활화 및 보존 기록을 제어합니다</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsExpander.Header" xml:space="preserve">
-    <value>움직임 및 기록</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceGradientSettingsCard.Header" xml:space="preserve">
-    <value>그라데이션 채우기</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSeriesAppearanceBorderSettingsCard.Header" xml:space="preserve">
-    <value>테두리 선</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Header" xml:space="preserve">
-    <value>스크롤 거리</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageBehaviorSettingsCard.Description" xml:space="preserve">
-    <value>각 스크롤 지속 시간 동안 이동하는 수평 거리</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Header" xml:space="preserve">
-    <value>스크롤 지속 시간</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardScrollDuration.Description" xml:space="preserve">
-    <value>설정된 거리를 이동하는 데 걸리는 시간</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Header" xml:space="preserve">
-    <value>샘플링 간격</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageSettingsCardSampleInterval.Description" xml:space="preserve">
-    <value>텔레메트리 샘플링 주기</value>
-  </data>
-  <data name="ViewTaskSpeedGraphPageAppearanceTextBlock.Text" xml:space="preserve">
-    <value>모양</value>
-  </data>
-  <data name="ViewTasksPageCompletedDateTextBlock.Text" xml:space="preserve">
-    <value>완료 날짜</value>
-  </data>
-  <data name="ViewTasksPageShareRatioTextBlock.Text" xml:space="preserve">
-    <value>공유 비율</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.[using:Microsoft.UI.Xaml.Automation]AutomationProperties.Name" xml:space="preserve">
-    <value>시드/피어[전체]</value>
-  </data>
-  <data name="ViewTasksPageSeedsPeersTextBlock.Text" xml:space="preserve">
-    <value>시드/피어[전체]</value>
-  </data>
-  <data name="ViewMainViewPortButtonToolTip.Content" xml:space="preserve">
-    <value>NAT 및 포트 감지 열기</value>
-  </data>
-  <data name="CommonContentReload.Content" xml:space="preserve">
-    <value>새로 고침</value>
-  </data>
-  <data name="CommonContentForward.Content" xml:space="preserve">
-    <value>앞으로</value>
-  </data>
-  <data name="CommonContentBack.Content" xml:space="preserve">
-    <value>뒤로</value>
-  </data>
-  <data name="CommonContentGo" xml:space="preserve">
-    <value>이동</value>
-  </data>
-  <data name="CommonContentOpenSysBrowser" xml:space="preserve">
-    <value>기본 시스템 브라우저에서 열기</value>
-  </data>
-  <data name="ViewTasksPagePeersToolTip.Content" xml:space="preserve">
-    <value>연결된 시드 / 연결된 피어 [알려진 모든 시드 / 알려진 모든 피어]</value>
-  </data>
-  <data name="ViewTaskFilesPageMenuItemPlayFile.Text" xml:space="preserve">
-    <value>파일 재생</value>
-  </data>
   <data name="CreateTorrentFormat.Header" xml:space="preserve">
     <value>Torrent 형식</value>
   </data>
@@ -5318,6 +5285,39 @@
   </data>
   <data name="TaskHttpServersTab" xml:space="preserve">
     <value>서버</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Header" xml:space="preserve">
+    <value>컨트롤 재질</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialCard.Description" xml:space="preserve">
+    <value>카드와 카드 패널의 재질 효과를 변경합니다</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialDefault.Content" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="ViewThemesSettingsPageControlMaterialLiquidGlass.Content" xml:space="preserve">
+    <value>리퀴드 글래스</value>
+  </data>
+  <data name="GuideMaterialTitle.Text" xml:space="preserve">
+    <value>컨트롤 재질 선택</value>
+  </data>
+  <data name="GuideMaterialDescription.Text" xml:space="preserve">
+    <value>기본 Fluent 표면과 리퀴드 글래스를 비교하고 OpenNet 전체에 사용할 재질을 선택하세요.</value>
+  </data>
+  <data name="GuideMaterialStyleSelector.Header" xml:space="preserve">
+    <value>컨트롤 재질</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewTitle.Text" xml:space="preserve">
+    <value>기본값</value>
+  </data>
+  <data name="GuideMaterialDefaultPreviewDescription.Text" xml:space="preserve">
+    <value>기본 Fluent 표면</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewTitle.Text" xml:space="preserve">
+    <value>리퀴드 글래스</value>
+  </data>
+  <data name="GuideMaterialLiquidGlassPreviewDescription.Text" xml:space="preserve">
+    <value>흐림, 굴절 및 가장자리 강조</value>
   </data>
   <data name="ViewNetworkSettingsPageSettingsCardPEX.Description" xml:space="preserve">
     <value>연결된 피어와 피어 목록을 교환합니다</value>

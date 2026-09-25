@@ -36,7 +36,7 @@
     <AppxPackageSigningTimestampDigestAlgorithm>SHA256</AppxPackageSigningTimestampDigestAlgorithm>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
-    <GenerateTestArtifacts>True</GenerateTestArtifacts>
+    <GenerateTestArtifacts>False</GenerateTestArtifacts>
     <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
@@ -106,12 +106,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
     <ClCompile>
       <PreprocessorDefinitions>TORRENT_USE_ASSERTS;NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp23</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
       <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</FunctionLevelLinking>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">MultiThreadedDebugDLL</RuntimeLibrary>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdcpp23</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdcpplatest</LanguageStandard>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">MultiThreadedDebugDLL</RuntimeLibrary>
@@ -124,12 +124,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
     <ClCompile>
       <PreprocessorDefinitions>NOMINMAX;_WIN32_WINNT=0x0A00;DISABLE_XAML_GENERATED_MAIN;WINRT_ENABLE_LEGACY_COM;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpp23</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdcpplatest</LanguageStandard>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdc17</LanguageStandard_C>
       <RuntimeLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</FunctionLevelLinking>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdcpp23</LanguageStandard>
+      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdcpplatest</LanguageStandard>
       <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">stdc17</LanguageStandard_C>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <WholeProgramOptimization Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">true</WholeProgramOptimization>
@@ -320,6 +320,10 @@
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Effect\AnimatedNumber.h">
       <DependentUpon>UI\Xaml\Control\Effect\AnimatedNumber.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialControlState.h">
+      <DependentUpon>UI\Xaml\Control\Theme\MaterialControlState.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Graph\LiveGraph.h">
@@ -666,6 +670,10 @@
       <DependentUpon>ViewModels\NetworkSettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="ViewModels\WebUISettingsViewModel.h">
+      <DependentUpon>ViewModels\WebUISettingsViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
     <ClInclude Include="ViewModels\NetworkViewModel.h">
       <DependentUpon>ViewModels\NetworkViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -977,6 +985,9 @@
     <ClCompile Include="UI\Xaml\Control\Effect\AnimatedNumber.cpp">
       <DependentUpon>UI\Xaml\Control\Effect\AnimatedNumber.idl</DependentUpon>
     </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialControlState.cpp">
+      <DependentUpon>UI\Xaml\Control\Theme\MaterialControlState.idl</DependentUpon>
+    </ClCompile>
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
       <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
     </ClCompile>
@@ -1249,6 +1260,10 @@
       <DependentUpon>ViewModels\NetworkSettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\WebUISettingsViewModel.cpp">
+      <DependentUpon>ViewModels\WebUISettingsViewModel.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
     <ClCompile Include="ViewModels\ObservableObject.cpp">
       <DependentUpon>ViewModels\ObservableObject.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1328,6 +1343,7 @@
     <Midl Include="UI\Xaml\Control\Effect\AnimatedDigit.idl" />
     <Midl Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.idl" />
     <Midl Include="UI\Xaml\Control\Effect\AnimatedNumber.idl" />
+    <Midl Include="UI\Xaml\Control\Theme\MaterialControlState.idl" />
     <Midl Include="UI\Xaml\Control\Graph\LiveGraph.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -1601,6 +1617,9 @@
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ViewModels\WebUISettingsViewModel.idl">
+      <SubType>Code</SubType>
+    </Midl>
     <Midl Include="ViewModels\NetworkViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -1844,6 +1863,9 @@
     <VcpkgEnableManifest>true</VcpkgEnableManifest>
     <VcpkgTriplet Condition="'$(Platform)'=='x64'">x64-windows-custom</VcpkgTriplet>
     <VcpkgTriplet Condition="'$(Platform)'=='ARM64'">arm64-windows-custom</VcpkgTriplet>
+    <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <!-- Inject module imports into XAML-generated source files -->
@@ -1933,5 +1955,8 @@
     <ClInclude Include="Core\Notification\HttpToastNotification.h" />
     <ClCompile Include="Helpers\MaterialTheme.ixx" />
     <Page Include="UI\Xaml\Control\Theme\VisualMaterials.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
 </Project>

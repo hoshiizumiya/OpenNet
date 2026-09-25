@@ -10,6 +10,7 @@ import OpenNet.Core.DownloadManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.TorrentSettings;
+import OpenNet.Core.Utils.Message;
 import winrtplus_coroutine;
 import winrt.Windows.Networking;
 import winrt.Windows.Networking.Connectivity;
@@ -22,6 +23,29 @@ namespace winrt::OpenNet::ViewModels::implementation
 {
 	namespace
 	{
+		winrt::hstring PortStateText(winrt::hstring const& state)
+		{
+			if (state == L"Open") return ResourceGetString(L"CommonOpen");
+			if (state == L"Blocked") return ResourceGetString(L"MainViewPortStateBlocked");
+			if (state == L"Timed out") return ResourceGetString(L"MainViewPortStateTimedOut");
+			if (state == L"Unavailable") return ResourceGetString(L"MainViewPortStateUnavailable");
+			return ResourceGetString(L"CommonUnknown");
+		}
+
+		std::wstring FormatLocalizedText(
+			wchar_t const* key,
+			std::initializer_list<std::wstring> values)
+		{
+			auto text = std::wstring{ ResourceGetString(key).c_str() };
+			for (auto const& value : values)
+			{
+				auto const position = text.find(L"{}");
+				if (position == std::wstring::npos) break;
+				text.replace(position, 2, value);
+			}
+			return text;
+		}
+
 		struct LocalNetworkAddresses
 		{
 			std::vector<std::wstring> ipv4;
@@ -38,7 +62,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 				if (!result.empty()) result += L", ";
 				result += value;
 			}
-			return result.empty() ? L"Unavailable" : result;
+			return result.empty()
+				? std::wstring{ ResourceGetString(L"CommonNotAvailable").c_str() }
+				: result;
 		}
 
 		LocalNetworkAddresses GetLocalNetworkAddresses()
@@ -78,11 +104,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		std::wstring FormatListenerStatus(int port, std::wstring const& state)
 		{
-			if (port <= 0) return L"Not listening";
-			return std::format(
-				L"{} ({})",
-				port,
-				state == L"Open" ? L"Opened in Firewall/Router" : state);
+			if (port <= 0)
+				return std::wstring{ ResourceGetString(L"RuntimeStatusNotListening").c_str() };
+			auto status = state == L"Open"
+				? ResourceGetString(L"MainViewPortOpenedFirewallRouter")
+				: PortStateText(winrt::hstring{ state });
+			return FormatLocalizedText(L"MainViewListenerStatusValue", {
+				std::to_wstring(port), std::wstring{ status.c_str() }});
 		}
 
 		std::wstring GetWindowsFirewallState()
@@ -91,7 +119,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 			auto const hr = CoCreateInstance(
 				__uuidof(NetFwPolicy2), nullptr, CLSCTX_INPROC_SERVER,
 				IID_PPV_ARGS(&policy));
-			if (FAILED(hr) || !policy) return L"Unavailable";
+			if (FAILED(hr) || !policy)
+				return std::wstring{ ResourceGetString(L"CommonNotAvailable").c_str() };
 			long profiles{};
 			policy->get_CurrentProfileTypes(&profiles);
 			bool enabled = false;
@@ -108,18 +137,37 @@ namespace winrt::OpenNet::ViewModels::implementation
 					enabled = true;
 			}
 			policy->Release();
-			return enabled ? L"On" : L"Off";
+			return std::wstring{ ResourceGetString(enabled ? L"CommonEnabled" : L"CommonDisabled").c_str() };
 		}
 	}
 
 	// Summary: 构造函数，初始化默认状态和集合
 	MainViewModel::MainViewModel()
-		: m_isConnected(false), m_userName(L"Guest"), m_portState(L"Unknown")
+		: m_isConnected(false), m_portState(L"Unknown")
 	{
+		m_userName = ResourceGetString(L"MainViewGuestUser");
+		m_networkStatusText = ResourceGetString(L"CommonUnknown");
+		m_networkQualityText = ResourceGetString(L"CommonNotAvailable");
+		auto const detecting = ResourceGetString(L"CommonDetecting");
+		m_lanIPv4Address = detecting;
+		m_lanIPv6Address = detecting;
+		m_wanIPv4Address = detecting;
+		m_wanIPv6Address = detecting;
+		m_bitTorrentTcpStatus = detecting;
+		m_bitTorrentUdpStatus = detecting;
+		m_remoteAccessStatus = detecting;
+		m_lsdStatus = detecting;
+		m_windowsFirewallStatus = detecting;
+		m_upnpMappingStatus = detecting;
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 		m_recentActivities = single_threaded_observable_vector<hstring>();
-		m_recentActivities.Append(L"应用已启动 / App started");
+		m_recentActivities.Append(ResourceGetString(L"MainViewAppStarted"));
 	}
+
+	hstring MainViewModel::IPv4TcpPortStateText() const { return PortStateText(m_ipv4TcpPortState); }
+	hstring MainViewModel::IPv4UdpPortStateText() const { return PortStateText(m_ipv4UdpPortState); }
+	hstring MainViewModel::IPv6TcpPortStateText() const { return PortStateText(m_ipv6TcpPortState); }
+	hstring MainViewModel::IPv6UdpPortStateText() const { return PortStateText(m_ipv6UdpPortState); }
 
 	MainViewModel::~MainViewModel()
 	{
@@ -475,8 +523,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 						: ::OpenNet::Core::Torrent::LibtorrentHandle::PortMappingStatus{};
 					if (wanIPv4.empty() && !mapping.externalAddress.empty())
 						wanIPv4.assign(mapping.externalAddress.begin(), mapping.externalAddress.end());
-					if (wanIPv4.empty()) wanIPv4 = L"Unavailable";
-					if (wanIPv6.empty()) wanIPv6 = L"Unavailable";
+			if (wanIPv4.empty()) wanIPv4 = ResourceGetString(L"CommonNotAvailable").c_str();
+			if (wanIPv6.empty()) wanIPv6 = ResourceGetString(L"CommonNotAvailable").c_str();
 
 					auto const tcpState = BestProtocolState(ipv4TcpState, ipv6TcpState);
 					auto const udpState = BestProtocolState(ipv4UdpState, ipv6UdpState);
@@ -491,42 +539,45 @@ namespace winrt::OpenNet::ViewModels::implementation
 					auto const webPort = static_cast<int>(
 						database.GetInt("webui_host", "port").value_or(8080));
 					auto const webRunning = ::OpenNet::Core::WebUI::IsWebUIRunning();
-					auto const remoteAccessStatus = std::format(
-						L"{} ({})", webPort, webRunning ? L"Listening" : L"Disabled");
+				auto const remoteAccessStatus = FormatLocalizedText(
+					L"MainViewRemoteAccessStatusValue", {
+					std::to_wstring(webPort), std::wstring{ ResourceGetString(
+						webRunning ? L"MainViewWebUiListening" : L"CommonDisabled").c_str() }});
 
 					auto& torrentSettingsManager =
 						::OpenNet::Core::TorrentSettingsManager::Instance();
 					torrentSettingsManager.Load();
 					auto const torrentSettings = torrentSettingsManager.Get();
-					auto const lsdStatus = torrentSettings.enableLsd
-						? std::wstring{ L"6771 (Listening)" }
-					: std::wstring{ L"Disabled" };
+				auto const lsdStatus = torrentSettings.enableLsd
+					? FormatLocalizedText(L"MainViewLsdPortEnabledValue", { L"6771" })
+					: std::wstring{ ResourceGetString(L"CommonDisabled").c_str() };
 
-					auto const firewallStatus = std::format(
-						L"{} [TCP {} {}; UDP {} {}; remote TCP {} {}]",
-						GetWindowsFirewallState(),
-						listenPort, tcpState,
-						listenPort, udpState,
-						webPort, webRunning ? L"Listening" : L"Disabled");
+				auto const firewallStatus = FormatLocalizedText(
+					L"MainViewWindowsFirewallStatusValue", {
+					GetWindowsFirewallState(),
+					std::to_wstring(listenPort), std::wstring{ PortStateText(winrt::hstring{ tcpState }).c_str() },
+					std::to_wstring(listenPort), std::wstring{ PortStateText(winrt::hstring{ udpState }).c_str() },
+					std::to_wstring(webPort), std::wstring{ ResourceGetString(
+						webRunning ? L"MainViewWebUiListening" : L"CommonDisabled").c_str() }});
 
 					std::wstring upnpStatus;
 					if (mapping.tcpExternalPort > 0 || mapping.udpExternalPort > 0)
 					{
-						upnpStatus = std::format(
-							L"Added [TCP {} → {}; UDP {} → {}]",
-							listenPort, mapping.tcpExternalPort,
-							listenPort, mapping.udpExternalPort);
+						upnpStatus = FormatLocalizedText(
+							L"MainViewUpnpMappingAddedValue", {
+							std::to_wstring(listenPort), std::to_wstring(mapping.tcpExternalPort),
+							std::to_wstring(listenPort), std::to_wstring(mapping.udpExternalPort)});
 					}
 					else if (mapping.upnpEnabled)
 					{
 						upnpStatus = mapping.lastError.empty()
-							? L"Enabled; waiting for a confirmed mapping"
-							: L"Failed [" + std::wstring(
-								mapping.lastError.begin(), mapping.lastError.end()) + L"]";
+							? std::wstring{ ResourceGetString(L"MainViewUpnpEnabledWaitingMapping").c_str() }
+							: FormatLocalizedText(L"MainViewUpnpMappingFailedValue", {
+								std::wstring(mapping.lastError.begin(), mapping.lastError.end())});
 					}
 					else
 					{
-						upnpStatus = L"Disabled";
+						upnpStatus = ResourceGetString(L"CommonDisabled").c_str();
 					}
 					if (m_dispatcher)
 					{
@@ -556,6 +607,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 							SetProperty(m_ipv4UdpPortState, ipv4Udp, L"IPv4UdpPortState");
 							SetProperty(m_ipv6TcpPortState, ipv6Tcp, L"IPv6TcpPortState");
 							SetProperty(m_ipv6UdpPortState, ipv6Udp, L"IPv6UdpPortState");
+							RaisePropertyChanged(L"IPv4TcpPortStateText");
+							RaisePropertyChanged(L"IPv4UdpPortStateText");
+							RaisePropertyChanged(L"IPv6TcpPortStateText");
+							RaisePropertyChanged(L"IPv6UdpPortStateText");
 							SetProperty(m_lanIPv4Address, lan4, L"LanIPv4Address");
 							SetProperty(m_lanIPv6Address, lan6, L"LanIPv6Address");
 							SetProperty(m_wanIPv4Address, wan4, L"WanIPv4Address");

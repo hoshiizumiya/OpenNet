@@ -37,6 +37,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	winrt::fire_and_forget AboutPage::LoadAppVersion()
 	{
+		auto strongThis = get_strong();
 		co_await winrt::resume_background();
 		auto v = winrt::to_hstring(::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetAppVersion().ToString().c_str());
 		co_await winrtplus::resume_foreground(VersionText().DispatcherQueue());
@@ -110,6 +111,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		try
 		{
+			auto strongThis = get_strong();
 			auto result = co_await client.SendRequestAsync(GithubRequest{ L"https://api.github.com/repos/hoshiizumiya/OpenNet" });
 			auto resultStr = co_await result.Content().ReadAsStringAsync();
 
@@ -130,6 +132,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		try
 		{
+			auto strongThis = get_strong();
 			auto result = co_await client.SendRequestAsync(GithubRequest{ L"https://api.github.com/repos/hoshiizumiya/OpenNet/commits?per_page=1" });
 			auto resultStr = co_await result.Content().ReadAsStringAsync();
 			m_commitMessage = winrt::Windows::Data::Json::JsonArray::Parse(resultStr).GetAt(0).GetObject().GetNamedObject(L"commit").GetNamedString(L"message");
