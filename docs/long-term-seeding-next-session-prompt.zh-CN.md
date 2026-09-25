@@ -1,11 +1,11 @@
 # 下一轮对话接手提示词：OpenNet Long-Term Seeding / HTTP P2P
 
 
-> **架构更新 — 2026-09-24**
+> **架构更新 — 2026-09-26**
 >
-> HTTP P2P 的首选路径已经改变。对于隐私安全的 public HTTP 资源，若 caller 提供 WholeFile SHA-256，且 size、BEP52 identity、输出路径、HTTP byte-range 能力都满足可信条件，则 OpenNet 让 aria2 保持 paused，只临时承担现有 GID/UI/SQLite control shell；真正的数据面交给 canonical BitTorrent v2 session。libtorrent 同时接收 final HTTP origin 作为 BEP 19 URL Seed，并接收 OpenNet peers，因此 HTTP origin + P2P 共用同一个 piece picker、同一套校验路径和单一 disk writer。若没有可信 candidate，或 hybrid 启动/运行失败，则恢复 aria2 普通 HTTP 下载。旧的独立临时文件 full-file fallback 只作为兼容路径保留。
+> HTTP Task 已分成 `Aria2Only` 与 `P2PPreferred`。只有 `P2PPreferred` 会先创建 paused aria2 control shell，再向 OpenNet Content Directory 获取并验证 canonical manifest/info-hash；源 HTTP Server 返回普通 SHA-256 不能直接生成 magnet。canonical metadata / caller SHA-256 / size / Range / privacy 任一条件不足，或 libtorrent hybrid 失败，就回落 aria2。
 >
-> 因此自研 aria2/libtorrent `TransferCoordinator` 不再是 public HTTP 加速的默认设计。核心 invariant 仍然是：`one output range -> one writer/owner`。
+> Pause/Resume 已改为真正 pause/resume hidden libtorrent session，不再把 Pause 当 Cancel。canonical `OpenNet.Content.v1/content` 保持不变；direct-file URL Seed 与 trailing-slash base URL 的请求路径已加入 deterministic local Range-server tests。
 
 把下面整段直接交给下一轮 ChatGPT/Codex 使用。
 
@@ -108,6 +108,20 @@ ResourceObservation 有 TTL，并且必须绑定当前 node 的 ContentPresence�
 
 ### HTTP canonical WebSeed hybrid
 
+HTTP 下载模式已显式分流：
+
+```text
+Aria2Only
+  -> aria2 直接下载
+
+P2PPreferred
+  -> canonical discovery / trust checks
+  -> success: libtorrent URL Seed + peers
+  -> unavailable/failure: aria2 fallback
+```
+
+不要把 HTTP Server 返回的 WholeFile SHA-256 当作 magnet。这个 SHA-256 只用于确认候选内容与 caller 期望相同；真正的 BEP52 identity、canonical manifest 和 v2 info-hash 必须从已经登记的 Content/Directory 数据取得.
+
 可信 public HTTP 的主路线已经改成：
 
 ```text
@@ -132,7 +146,17 @@ one piece picker / one writer
 
 `StartLongSeedDownloadAsync` -> `OpenLongSeedDownloadSession` -> `add_torrent_params::url_seeds` 已经贯通。URL Seed 存在时，不要求启动前已经有 ready Peer。
 
-当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 paused。hybrid 失败必须先关闭 libtorrent、删除不完整目标，再 Resume aria2；绝不能两个 writer 共存。
+当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 paused。hybrid 失败必须先关闭 libtorrent、删除不完整目标，再在用户没有主动 Pause 时 Resume aria2；绝不能两个 writer 共存。
+
+HTTP dialog 已有 `P2P acceleration` 开关，默认开启：开启映射到 `P2PPreferred`，关闭映射到 `Aria2Only`.
+
+Pause active hybrid 会调用 hidden libtorrent session pause；Resume 恢复同一 session。Cancel/Remove/Delete 才关闭 session 并 suppress late discovery.
+
+WebSeed path fixture 已加入：
+- 完整 direct-file URL `/file.bin` 必须原样请求；
+- trailing-slash `/origin/` 会被 libtorrent 视为 base URL，并追加 `OpenNet.Content.v1/content`.
+
+因此自动 WebSeed 只接受不以 `/` 结尾的 direct-file final URL。canonical protocol/layout 此轮没有修改，Server validator 不需要同步变化.
 
 旧 `.opennet-p2p-<gid>.part` 整文件 fallback 仍作为兼容/恢复路径。
 
@@ -149,40 +173,50 @@ one piece picker / one writer
 
 ## 下一轮优先任务
 
-### 1. deterministic WebSeed 端到端测试
+### 1. 处理真实编译/测试反馈
 
-本地 HTTP Range server 覆盖：
+当前 client code checkpoint：
+
+- `4bbcfe2e077d8eb2bf86d53929d44c3390f16985`
+
+不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
+
+### 2. 完整 deterministic hybrid integration test
+
+在现有 local HTTP Range fixture 之上继续覆盖：
 
 ```text
-URL -> ResourceKey -> candidate -> wakeup -> manifest
- -> URL Seed + OpenNet peer
- -> BEP52 -> WholeFile SHA-256
- -> HTTP Complete -> ContentCatalog
+ResourceKey
+ -> Directory candidate
+ -> canonical manifest
+ -> URL Seed + local OpenNet peer
+ -> BEP52
+ -> caller WholeFile SHA-256
+ -> HTTP Complete
+ -> ContentCatalog
 ```
 
-同时记录 libtorrent 对当前 `OpenNet.Content.v1` layout 的真实 URL 请求路径，不要猜。
+### 3. lifecycle / persistence hardening
 
-### 2. lifecycle hardening
-
-- shutdown 可取消 wakeup/lookup；
-- Pause/Resume 后重新 discovery；
-- abnormal exit 后 stale partial cleanup；
+- app restart 后恢复 `P2PPreferred` task policy 与必要 discovery 状态；
+- shutdown cooperative cancellation；
+- abnormal exit stale partial cleanup；
 - same-target duplicate task 排他；
-- redirect / Content-Disposition 晚到 filename 后启用 hybrid；
-- aria2 control-shell cleanup/session persistence 的失败恢复。
+- redirect / Content-Disposition 晚到 filename；
+- aria2 control-shell cleanup/session persistence failure recovery.
 
-### 3. Traversal / security / production
+### 4. Traversal / security / production
 
 - verified IPv4/IPv6 candidates；
 - NAT hole punching / relay；
 - node key / signed requests / Peer Ticket；
-- rate limiting / migrations。
+- rate limiting / migrations.
 
-### 4. BitComet
+### 5. BitComet
 
-继续可复现黑盒实验，但不阻塞 native OpenNet protocol。
+继续可复现黑盒实验，但不阻塞 native OpenNet protocol.
 
-`TransferCoordinator` 不再是普通 HTTP P2SP 的下一步；只有未来 source 无法表示为 libtorrent URL Seed / Peer 时再设计。
+`TransferCoordinator` 不再是普通 HTTP P2SP 的默认方案；只有 source 无法表示为 libtorrent URL Seed / Peer 时再设计.
 
 ## 工作方式
 

@@ -1,11 +1,11 @@
-# Long-Term Seeding Development Checkpoint — 2026-09-24
+# Long-Term Seeding Development Checkpoint — 2026-09-26
 
 
-> **Architecture update — 2026-09-24**
+> **Architecture update — 2026-09-26**
 >
-> The preferred HTTP P2P path has changed. For a privacy-safe public HTTP resource with a caller-supplied WholeFile SHA-256, matching size, BEP52 identity, known output path, and verified byte-range support, OpenNet now keeps aria2 paused as a temporary control/UI shell and makes the canonical BitTorrent v2 session the primary data plane. libtorrent receives the final HTTP origin as a BEP 19 URL seed and OpenNet peers as normal peers, so origin + P2P share one piece picker, one cryptographic verification path, and one disk writer. If no trusted candidate is found or the hybrid path fails, aria2 is resumed. The older separate-file full-download fallback remains only as a compatibility path.
+> HTTP transfer policy is now explicit: `Aria2Only` versus `P2PPreferred`. Only the latter creates a paused aria2 control shell and attempts canonical libtorrent download. Ordinary HTTP SHA-256 cannot create a magnet; OpenNet must resolve and validate canonical BEP52/torrent metadata from the Content Directory. Missing metadata or any failed trust/range prerequisite falls back to aria2 without allowing simultaneous writers.
 >
-> A custom aria2/libtorrent `TransferCoordinator` is no longer the default design for public HTTP acceleration. The invariant remains: `one output range -> one writer/owner`.
+> Pause/Resume now preserves and pauses/resumes the hidden libtorrent session instead of closing it. Direct-file BEP19 URL semantics are covered by deterministic local Range-server tests.
 
 This document is the handoff checkpoint for the OpenNet long-term-seeding / HTTP P2P acceleration work.
 
@@ -23,11 +23,16 @@ Feature branch:
 
 - `feat/long-term-seeding-content-catalog`
 
-Current client checkpoint for the canonical HTTP hybrid slice is this document's parent code lineage. It includes ResourceKey discovery, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, HTTP progress bridging, caller SHA-256 verification, and fallback to aria2.
+Current client code checkpoint for this slice:
 
-The implementation commit is based directly on:
+- `4bbcfe2e077d8eb2bf86d53929d44c3390f16985`
+- `test: isolate canonical web-seed fixtures`
 
-- `master` at `420e8d54869d760d2944d30422bc863f80646f46`
+This lineage includes the master merge, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, HTTP progress bridging, caller SHA-256 verification, aria2 fallback, and deterministic WebSeed path fixtures.
+
+The feature lineage has been updated from:
+
+- `master` at `5f9303397cdd6cf3268bb9352ee4694b14f213a3`
 
 ### OpenNet.Server
 
@@ -280,19 +285,16 @@ Current resource-key algorithms:
 
 Secret-bearing request contexts and suspicious signed/auth query names are excluded. The Server stores only ResourceKey digests and finite-lived observations bound to a current node ContentPresence.
 
-The HTTP preflight carries final URI / size / strong ETag into DownloadManager. Lookup runs asynchronously and never blocks `aria2.addUri`.
+The HTTP dialog now selects an explicit transfer mode:
 
-A Server resource match remains untrusted. Automatic peer fallback is queued only when:
+- `Aria2Only`: aria2 starts normally and no pre-download P2P lookup is queued.
+- `P2PPreferred`: only when privacy, caller SHA-256, known size/path, ResourceKey and proven Range prerequisites are present is aria2 created as a paused control shell and Resource Directory lookup queued.
 
-- the caller supplied a WholeFile SHA-256;
-- a candidate contains that exact `WholeFileSha256` alias;
-- known size matches;
-- a BEP52 identity is present;
-- the output filename is known.
+A source server's whole-file SHA-256 is not torrent metadata and cannot be converted into a magnet. A Server candidate remains untrusted until caller WholeFile SHA-256 + size match and a BEP52 identity/canonical manifest validate. If this canonical metadata is unavailable, aria2 becomes the payload writer.
 
-The fallback downloads into a separate `.opennet-p2p-<gid>.part` file. libtorrent verifies BEP52 during transfer; OpenNet hashes the completed temporary file again and verifies the caller SHA-256. If the origin succeeds first, fallback is discarded. If the origin reaches Error and the fallback is verified, the temporary file is atomically promoted and the HTTP record is completed.
+For primary hybrid, libtorrent writes the final target directly and mixes the HTTP URL Seed with OpenNet peers. The older `.opennet-p2p-<gid>.part` promotion route is retained only for legacy compatibility.
 
-Explicit pause/cancel/remove/delete suppresses late resource lookups from resurrecting hidden P2P work.
+Pause now pauses the hidden libtorrent session rather than closing it. Resume resumes the hidden session or a pending hybrid job; Cancel/Remove/Delete still suppress late discovery.
 
 ## Important boundary: one physical output has one active writer
 
@@ -379,11 +381,11 @@ Recommended research remains:
 
 ## Known implementation limitations
 
-- no deterministic end-to-end URL Seed + OpenNet peer hybrid test yet;
-- exact libtorrent WebSeed request-path behavior for the current canonical layout still needs an automated fixture;
+- deterministic local WebSeed tests now cover direct-file versus trailing-slash request-path semantics, but the complete Directory -> manifest -> URL Seed + OpenNet peer integration chain still needs an automated fixture;
+- the new tests are committed but should not be described as CI-passed until the feature workflow reports results;
 - hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
 - in-flight wakeup/lookup is not cooperatively cancellable during shutdown;
-- Resume does not automatically re-run discovery;
+- active-session and pending-session Pause/Resume are handled, but hybrid state is not yet crash/restart persistent;
 - late redirect/Content-Disposition output names cannot yet activate hybrid;
 - stale hybrid/P2P partial cleanup after abnormal termination remains incomplete;
 - same-target duplicate HTTP tasks need explicit exclusion;
@@ -408,12 +410,13 @@ local HTTP Range origin
 
 Recommended order:
 
-1. Add a local deterministic HTTP Range fixture and record libtorrent's real URL requests.
-2. Test the complete hybrid chain without public-network dependencies.
-3. Harden shutdown/cancel/resume, stale partial cleanup and same-target exclusion.
-4. Support late output filenames.
-5. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
-6. Continue BitComet compatibility separately.
+1. Run and harden the committed local WebSeed path fixture in the feature workflow; fix only concrete compiler/test failures.
+2. Extend it to the complete ResourceKey -> Directory -> manifest -> URL Seed + OpenNet peer chain without public-network dependencies.
+3. Persist/recover P2P-preferred task state across app restart and harden shutdown cancellation.
+4. Add stale partial cleanup and same-target exclusion.
+5. Support late output filenames.
+6. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
+7. Continue BitComet compatibility separately.
 
 Do not make `TransferCoordinator` the default HTTP milestone again.
 

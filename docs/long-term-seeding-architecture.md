@@ -1,11 +1,11 @@
 # OpenNet Long-Term Seeding and HTTP P2P Acceleration Architecture
 
 
-> **Architecture update — 2026-09-24**
+> **Architecture update — 2026-09-26**
 >
-> The preferred HTTP P2P path has changed. For a privacy-safe public HTTP resource with a caller-supplied WholeFile SHA-256, matching size, BEP52 identity, known output path, and verified byte-range support, OpenNet now keeps aria2 paused as a temporary control/UI shell and makes the canonical BitTorrent v2 session the primary data plane. libtorrent receives the final HTTP origin as a BEP 19 URL seed and OpenNet peers as normal peers, so origin + P2P share one piece picker, one cryptographic verification path, and one disk writer. If no trusted candidate is found or the hybrid path fails, aria2 is resumed. The older separate-file full-download fallback remains only as a compatibility path.
+> HTTP tasks now have an explicit transfer policy. `Aria2Only` starts aria2 directly and performs no pre-download P2P discovery. `P2PPreferred` attempts the trusted canonical path first: aria2 is created paused as a compatibility shell, OpenNet resolves a canonical manifest/info-hash through the Content Directory, and libtorrent combines the final HTTP URL as a BEP 19 URL Seed with OpenNet peers. Missing/untrusted canonical metadata or a hybrid failure transfers ownership back to aria2.
 >
-> A custom aria2/libtorrent `TransferCoordinator` is no longer the default design for public HTTP acceleration. The invariant remains: `one output range -> one writer/owner`.
+> A normal HTTP SHA-256 response does **not** become a magnet. Whole-file SHA-256 is an authority check; the BitTorrent v2 info-hash and BEP52 file root come from previously built and validated canonical torrent metadata. The invariant remains: `one physical output -> one active writer`.
 
 > Handoff/checkpoint: [long-term-seeding-development-checkpoint.md](long-term-seeding-development-checkpoint.md)  
 > Next-session prompt: [long-term-seeding-next-session-prompt.zh-CN.md](long-term-seeding-next-session-prompt.zh-CN.md)
@@ -642,7 +642,14 @@ The catalog remains resident after the temporary session is removed. These hidde
 
 `ResourceKey` is discovery metadata, not a content identity. Exact URL and validator-qualified keys remain privacy-preserving hints; raw URLs are not uploaded to the public Content Directory, and private/authenticated/signed request contexts are excluded.
 
-Automatic canonical-hybrid routing is deliberately strict. It requires:
+HTTP source SHA-256 and BitTorrent identity are intentionally separate. A source server may provide a whole-file SHA-256, but that digest cannot be converted into a BEP52 Merkle root or a BitTorrent v2 info-hash. OpenNet therefore asks the Content Directory for previously built canonical metadata; if it cannot obtain and validate that metadata, `P2PPreferred` falls back to aria2.
+
+Two explicit task policies are implemented:
+
+- `Aria2Only`: aria2 owns the payload path immediately; no pre-download P2P discovery is attempted.
+- `P2PPreferred`: attempt the canonical libtorrent route first; if any prerequisite is unavailable, use aria2 as the fallback.
+
+Automatic canonical-hybrid routing under `P2PPreferred` is deliberately strict. It requires:
 
 1. a caller-supplied whole-file SHA-256;
 2. an exact matching `WholeFileSha256` alias on the candidate;
@@ -676,11 +683,13 @@ one disk writer
 
 The final public HTTP origin is passed through `add_torrent_params::url_seeds`. A ready OpenNet peer is no longer required before opening the canonical download when a valid URL seed is available. HTTP and P2P therefore contribute pieces through one libtorrent scheduler and one cryptographic verification path.
 
+The current `OpenNet.Content.v1/content` canonical layout does not require a protocol change for direct-file URL Seeds. libtorrent treats a complete single-file URL such as `/file.bin` as the request target verbatim. A URL ending in `/` is instead a base URL and libtorrent appends the torrent file path, producing e.g. `/origin/OpenNet.Content.v1/content`; OpenNet therefore only auto-injects a non-trailing-slash direct-file final URL. Deterministic local HTTP Range tests now encode both path behaviors.
+
 The current primary hybrid writes the destination directly because aria2 remains paused. On hybrid failure, OpenNet closes the hidden canonical session, removes the incomplete libtorrent-owned destination/control residue, and only then resumes aria2. Ownership is transferred, never shared.
 
 After libtorrent finishes, OpenNet also re-hashes the complete file and requires caller WholeFile SHA-256/size to match before marking the HTTP record Complete and cataloguing the final file. The older separate `.opennet-p2p-<gid>.part` path remains available as a compatibility/error-recovery fallback.
 
-Explicit Pause/Cancel/Remove/Delete cancels hidden work and suppresses late discovery results.
+Pause/Resume now preserve an active hidden canonical session: Pause calls libtorrent pause while the aria2 shell remains paused, and Resume resumes that hidden session. Cancel/Remove/Delete still close hidden work and suppress late discovery so stopped tasks cannot be resurrected.
 
 ### TransferCoordinator is not the default HTTP P2SP design
 

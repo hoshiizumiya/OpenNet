@@ -1,11 +1,11 @@
 # OpenNet 长效种子与 HTTP P2P 加速架构
 
 
-> **架构更新 — 2026-09-24**
+> **架构更新 — 2026-09-26**
 >
-> HTTP P2P 的首选路径已经改变。对于隐私安全的 public HTTP 资源，若 caller 提供 WholeFile SHA-256，且 size、BEP52 identity、输出路径、HTTP byte-range 能力都满足可信条件，则 OpenNet 让 aria2 保持 paused，只临时承担现有 GID/UI/SQLite control shell；真正的数据面交给 canonical BitTorrent v2 session。libtorrent 同时接收 final HTTP origin 作为 BEP 19 URL Seed，并接收 OpenNet peers，因此 HTTP origin + P2P 共用同一个 piece picker、同一套校验路径和单一 disk writer。若没有可信 candidate，或 hybrid 启动/运行失败，则恢复 aria2 普通 HTTP 下载。旧的独立临时文件 full-file fallback 只作为兼容路径保留。
+> HTTP Task 现在有明确的传输策略。`Aria2Only` 直接启动 aria2，不做下载前 P2P discovery；`P2PPreferred` 才优先尝试可信 canonical 路线：aria2 只创建 paused control shell，OpenNet 通过 Content Directory 获取 canonical manifest/info-hash，libtorrent 再把 final HTTP URL 作为 BEP 19 URL Seed 与 OpenNet peers 一起调度。拿不到可信 canonical metadata 或 hybrid 失败时，才把写入权交回 aria2。
 >
-> 因此自研 aria2/libtorrent `TransferCoordinator` 不再是 public HTTP 加速的默认设计。核心 invariant 仍然是：`one output range -> one writer/owner`。
+> HTTP 源站即使返回普通 WholeFile SHA-256，也不能把它“直接变成 magnet”。WholeFile SHA-256 只负责确认整文件身份；BitTorrent v2 info-hash / BEP52 file root 必须来自已经构建并验证过的 canonical torrent metadata。核心 invariant 仍然是：`one physical output -> one active writer`。
 
 > 状态：架构基线与实现指南。
 >
@@ -674,7 +674,14 @@ Task inactive
 
 `ResourceKey` 仍然只是发现键，不是 ContentIdentity。Exact URL / validator key 只作为隐私保护 hint；raw URL 不上传公共目录，带 Cookie、凭据、自定义 Header、Referer/User-Agent override、URL credentials 或明显 signed/auth query 的请求都排除。
 
-自动进入 canonical hybrid 必须同时满足：
+HTTP 的 WholeFile SHA-256 与 BitTorrent identity 必须分开理解。源站可以给 SHA-256，但这个 digest 不能反推出 BEP52 Merkle root，也不能反推出 BitTorrent v2 info-hash。OpenNet 必须通过 Content Directory 找到以前已经构建的 canonical metadata；找不到或验证失败时，`P2PPreferred` 就回落 aria2。
+
+当前实现有两个显式 Task policy：
+
+- `Aria2Only`：aria2 立即拥有 payload path，不做下载前 P2P discovery；
+- `P2PPreferred`：优先尝试 canonical libtorrent；任一可信条件缺失时回落 aria2。
+
+`P2PPreferred` 自动进入 canonical hybrid 必须同时满足：
 
 1. caller 明确提供 WholeFile SHA-256；
 2. candidate 中存在完全相同的 `WholeFileSha256` alias；
@@ -708,11 +715,13 @@ canonical OpenNet.Content.v1 torrent
 
 final public HTTP origin 通过 `add_torrent_params::url_seeds` 交给 libtorrent。有有效 URL Seed 时，打开 canonical download 不再要求事先已经有 ready Peer。HTTP 与 P2P 都由同一个 libtorrent scheduler 和同一套密码学校验处理。
 
+当前 `OpenNet.Content.v1/content` canonical layout 不需要为了 direct-file URL Seed 改协议。libtorrent 对完整单文件 URL（例如 `/file.bin`）会直接请求该 path；如果 URL 以 `/` 结尾，则它把这个 URL 当 base URL，并追加 torrent file path，形成 `/origin/OpenNet.Content.v1/content`。因此 OpenNet 自动注入 WebSeed 时只接受不以 `/` 结尾的 direct-file final URL；本地 deterministic HTTP Range tests 已把这两种行为写成断言。
+
 当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 全程 paused。hybrid 失败时，OpenNet 先关闭隐藏 canonical session，删除 libtorrent 尚未完成的目标/控制残留，然后才 Resume aria2。这里是 writer ownership transfer，不是两个 writer 共存。
 
 libtorrent 完成后，OpenNet 仍会重算整文件并要求 caller WholeFile SHA-256/size 完全一致，随后才把 HTTP record 标记 Complete 并写入 ContentCatalog。旧的 `.opennet-p2p-<gid>.part` 独立整文件 fallback 继续作为兼容/恢复路径保留。
 
-Pause/Cancel/Remove/Delete 仍会取消 hidden work，并 suppress 迟到 discovery。
+Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂停 libtorrent session，同时 aria2 shell 继续保持 paused；Resume 恢复该 hidden session。Cancel/Remove/Delete 仍会关闭 hidden work 并 suppress late discovery，避免任务停止后被迟到 discovery 重新拉起。
 
 ### TransferCoordinator 不再是普通 HTTP P2SP 的默认方案
 
