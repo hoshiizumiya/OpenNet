@@ -27,6 +27,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <utility>
 #include <vector>
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -323,13 +324,18 @@ namespace OpenNetUnitTest
 
 		CanonicalFixture MakeCanonicalFixture()
 		{
+			static std::atomic_uint64_t nextFixtureId{};
+			auto const fixtureId =
+				nextFixtureId.fetch_add(1, std::memory_order_relaxed);
+
 			CanonicalFixture fixture;
 			fixture.root =
 				std::filesystem::temp_directory_path()
 				/ std::filesystem::path{
 					std::format(
-						L"OpenNet-WebSeedTest-{}",
-						::GetCurrentProcessId()) };
+						L"OpenNet-WebSeedTest-{}-{}",
+						::GetCurrentProcessId(),
+						fixtureId) };
 			std::filesystem::remove_all(fixture.root);
 			auto const sourceRoot = fixture.root / L"seed";
 			auto const canonicalDirectory =
@@ -343,6 +349,8 @@ namespace OpenNetUnitTest
 
 			auto const sourceFile = canonicalDirectory / L"content";
 			std::ofstream output(sourceFile, std::ios::binary);
+			if (!output)
+				throw std::runtime_error("failed to create canonical source file");
 			output.write(
 				reinterpret_cast<char const*>(fixture.bytes.data()),
 				static_cast<std::streamsize>(fixture.bytes.size()));
