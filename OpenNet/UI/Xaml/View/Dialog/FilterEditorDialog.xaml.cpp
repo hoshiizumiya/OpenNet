@@ -5,12 +5,30 @@
 #endif
 
 import OpenNet.Helpers.ThemeHelper;
+import winrt.WinUI.LiquidGlass;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 
 namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
+	namespace
+	{
+		std::optional<bool> ToggleIsOn(IInspectable const& sender)
+		{
+			if (auto native = sender.try_as<Microsoft::UI::Xaml::Controls::ToggleSwitch>()) return native.IsOn();
+			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
+			return std::nullopt;
+		}
+
+		void SetToggleIsOn(IInspectable const& target, bool value)
+		{
+			if (!target) return;
+			if (auto native = target.try_as<Microsoft::UI::Xaml::Controls::ToggleSwitch>()) native.IsOn(value);
+			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
+		}
+	}
+
 	FilterEditorDialog::FilterEditorDialog()
 	{
 		Style(Application::Current().Resources().Lookup(box_value(L"DefaultContentDialogStyle")).as<Microsoft::UI::Xaml::Style>());
@@ -34,8 +52,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		CloseButtonText(closeButtonText);
 		PatternTextBox().Text(pattern);
 		MatchTypeComboBox().SelectedIndex(std::clamp(matchType, 0, 3));
-		CaseSensitiveToggle().IsOn(caseSensitive);
-		EnabledToggle().IsOn(enabled);
+		m_caseSensitive = caseSensitive;
+		m_enabled = enabled;
+		m_configuring = true;
+		SetToggleIsOn(CaseSensitiveToggle(), caseSensitive);
+		SetToggleIsOn(CaseSensitiveGlassToggle(), caseSensitive);
+		SetToggleIsOn(EnabledToggle(), enabled);
+		SetToggleIsOn(EnabledGlassToggle(), enabled);
+		m_configuring = false;
 		DescriptionTextBox().Text(description);
 	}
 
@@ -79,13 +103,49 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	}
 	bool FilterEditorDialog::CaseSensitive()
 	{
-		return CaseSensitiveToggle().IsOn();
+		return m_caseSensitive;
 	}
 	bool FilterEditorDialog::Enabled()
 	{
-		if (SubscriptionPanel().Visibility() != Visibility::Visible) return EnabledToggle().IsOn();
+		if (SubscriptionPanel().Visibility() != Visibility::Visible) return m_enabled;
 		auto const value = SubscriptionEnabledCheckBox().IsChecked();
 		return value && value.Value();
+	}
+	void FilterEditorDialog::CaseSensitiveToggle_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		m_configuring = true;
+		SetToggleIsOn(sender, m_caseSensitive);
+		m_configuring = false;
+	}
+	void FilterEditorDialog::CaseSensitiveToggle_Changed(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		if (m_configuring) return;
+		if (auto value = ToggleIsOn(sender))
+		{
+			m_caseSensitive = *value;
+			m_configuring = true;
+			SetToggleIsOn(CaseSensitiveToggle(), *value);
+			SetToggleIsOn(CaseSensitiveGlassToggle(), *value);
+			m_configuring = false;
+		}
+	}
+	void FilterEditorDialog::EnabledToggle_Loaded(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		m_configuring = true;
+		SetToggleIsOn(sender, m_enabled);
+		m_configuring = false;
+	}
+	void FilterEditorDialog::EnabledToggle_Changed(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		if (m_configuring) return;
+		if (auto value = ToggleIsOn(sender))
+		{
+			m_enabled = *value;
+			m_configuring = true;
+			SetToggleIsOn(EnabledToggle(), *value);
+			SetToggleIsOn(EnabledGlassToggle(), *value);
+			m_configuring = false;
+		}
 	}
 	hstring FilterEditorDialog::Description()
 	{

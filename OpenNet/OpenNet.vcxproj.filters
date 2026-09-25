@@ -377,6 +377,7 @@
     <Midl Include="UI\Xaml\Control\InfoBarTemplateSelector.idl">
       <Filter>UI\Xaml\Control</Filter>
     </Midl>
+    <Midl Include="UI\Xaml\Control\Theme\MaterialControlState.idl" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ViewModels\MainViewModel.cpp" />
