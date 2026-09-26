@@ -49,7 +49,11 @@ import winrt_base;
 namespace lt = libtorrent;
 using namespace std::chrono_literals;
 
-static_assert(LIBTORRENT_VERSION_MAJOR == 2 && LIBTORRENT_VERSION_MINOR == 1 && LIBTORRENT_VERSION_TINY >= 1);
+static_assert(
+	LIBTORRENT_VERSION_MAJOR == 2
+	&& LIBTORRENT_VERSION_MINOR == 1
+	&& LIBTORRENT_VERSION_TINY >= 2,
+	"OpenNet requires libtorrent >= 2.1.2 for v2 WebSeed, pread and priority fixes.");
 static_assert(TORRENT_USE_RTC == 1);
 
 namespace

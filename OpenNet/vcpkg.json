@@ -2,10 +2,16 @@
   "dependencies": [
     "boost-asio",
     "boost-beast",
-    "libtorrent",
+    {
+      "name": "libtorrent",
+      "version>=": "2.1.2"
+    },
     "sqlite3",
     "nlohmann-json",
-    "sentry-native",
+    {
+      "name": "sentry-native",
+      "version>=": "0.17.1"
+    },
     "zlib"
   ]
 }
