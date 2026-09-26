@@ -292,29 +292,29 @@ namespace OpenNet::Core
 			if (m_resourceDiscoveryThread.joinable())
 				m_resourceDiscoveryThread.join();
 
-			m_peerFallbackStopSource.request_stop();
+			m_canonicalHybridStopSource.request_stop();
 			{
-				std::lock_guard lock(m_peerFallbackMutex);
-				m_stopPeerFallback.store(true);
-				m_peerFallbackJobs.clear();
-				for (auto& [gid, state] : m_peerFallbacks)
+				std::lock_guard lock(m_canonicalHybridMutex);
+				m_stopCanonicalHybrid.store(true);
+				m_canonicalHybridJobs.clear();
+				for (auto& [gid, state] : m_canonicalHybrids)
 				{
 					(void)gid;
 					state.cancelRequested = true;
 				}
 			}
-			m_peerFallbackCv.notify_all();
-			for (auto& worker : m_peerFallbackWorkers)
+			m_canonicalHybridCv.notify_all();
+			for (auto& worker : m_canonicalHybridWorkers)
 			{
 				if (worker.joinable()) worker.join();
 			}
-			m_peerFallbackWorkers.clear();
+			m_canonicalHybridWorkers.clear();
 			{
-				std::lock_guard lock(m_peerFallbackMutex);
-				m_peerFallbackSuppressedGids.clear();
+				std::lock_guard lock(m_canonicalHybridMutex);
+				m_canonicalHybridSuppressedGids.clear();
 				m_hybridProbeGids.clear();
 				m_userPausedHttpGids.clear();
-				m_peerFallbacks.clear();
+				m_canonicalHybrids.clear();
 			}
 
 			if (m_aria2)
@@ -671,14 +671,14 @@ namespace OpenNet::Core
 					ResourceDiscoveryThreadEntry();
 				});
 
-				m_peerFallbackStopSource = std::stop_source{};
-				m_stopPeerFallback.store(false);
-				m_peerFallbackWorkers.clear();
+				m_canonicalHybridStopSource = std::stop_source{};
+				m_stopCanonicalHybrid.store(false);
+				m_canonicalHybridWorkers.clear();
 				for (int index = 0; index < 2; ++index)
 				{
-					m_peerFallbackWorkers.emplace_back([this]()
+					m_canonicalHybridWorkers.emplace_back([this]()
 					{
-						PeerFallbackThreadEntry();
+						CanonicalHybridThreadEntry();
 					});
 				}
 
@@ -724,29 +724,29 @@ namespace OpenNet::Core
 		if (m_resourceDiscoveryThread.joinable())
 			m_resourceDiscoveryThread.join();
 
-		m_peerFallbackStopSource.request_stop();
+		m_canonicalHybridStopSource.request_stop();
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			m_stopPeerFallback.store(true);
-			m_peerFallbackJobs.clear();
-			for (auto& [gid, state] : m_peerFallbacks)
+			std::lock_guard lock(m_canonicalHybridMutex);
+			m_stopCanonicalHybrid.store(true);
+			m_canonicalHybridJobs.clear();
+			for (auto& [gid, state] : m_canonicalHybrids)
 			{
 				(void)gid;
 				state.cancelRequested = true;
 			}
 		}
-		m_peerFallbackCv.notify_all();
-		for (auto& worker : m_peerFallbackWorkers)
+		m_canonicalHybridCv.notify_all();
+		for (auto& worker : m_canonicalHybridWorkers)
 		{
 			if (worker.joinable()) worker.join();
 		}
-		m_peerFallbackWorkers.clear();
+		m_canonicalHybridWorkers.clear();
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			m_peerFallbackSuppressedGids.clear();
+			std::lock_guard lock(m_canonicalHybridMutex);
+			m_canonicalHybridSuppressedGids.clear();
 			m_hybridProbeGids.clear();
 			m_userPausedHttpGids.clear();
-			m_peerFallbacks.clear();
+			m_canonicalHybrids.clear();
 		}
 
 		// Graceful aria2 shutdown following NanaGet pattern:
@@ -832,12 +832,12 @@ namespace OpenNet::Core
 			? BuildHybridWebSeeds(options)
 			: std::vector<std::string>{};
 
-		std::filesystem::path peerFallbackTarget;
+		std::filesystem::path canonicalHybridTarget;
 		if (expectedSha256
 			&& !options.Dir.empty()
 			&& !options.OutFileName.empty())
 		{
-			peerFallbackTarget =
+			canonicalHybridTarget =
 				std::filesystem::path{
 					winrt::to_hstring(options.Dir).c_str() }
 				/ std::filesystem::path{
@@ -849,7 +849,7 @@ namespace OpenNet::Core
 			&& resourceHintSafe
 			&& expectedSha256.has_value()
 			&& options.ResourceContentLength != 0
-			&& !peerFallbackTarget.empty()
+			&& !canonicalHybridTarget.empty()
 			&& !resourceKeys.empty()
 			&& !hybridWebSeeds.empty();
 
@@ -1066,7 +1066,7 @@ namespace OpenNet::Core
 			if (!gid.empty() && hybridProbe)
 			{
 				{
-					std::lock_guard fallbackLock(m_peerFallbackMutex);
+					std::lock_guard fallbackLock(m_canonicalHybridMutex);
 					m_hybridProbeGids.insert(gid);
 					if (options.StartPaused)
 						m_userPausedHttpGids.insert(gid);
@@ -1075,7 +1075,7 @@ namespace OpenNet::Core
 					gid,
 					std::move(resourceKeys),
 					std::move(expectedSha256),
-					std::move(peerFallbackTarget),
+					std::move(canonicalHybridTarget),
 					options.ResourceContentLength,
 					std::move(hybridWebSeeds));
 			}
@@ -1186,21 +1186,21 @@ namespace OpenNet::Core
 		bool hybridOwned = false;
 		std::string sessionId;
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
+			std::lock_guard lock(m_canonicalHybridMutex);
 			if (m_hybridProbeGids.contains(gid))
 			{
 				hybridOwned = true;
 				m_userPausedHttpGids.insert(gid);
 			}
-			if (auto const state = m_peerFallbacks.find(gid);
-				state != m_peerFallbacks.end()
+			if (auto const state = m_canonicalHybrids.find(gid);
+				state != m_canonicalHybrids.end()
 				&& !state->second.cancelRequested
-				&& state->second.phase != PeerFallbackPhase::Failed)
+				&& state->second.phase != CanonicalHybridPhase::Failed)
 			{
 				hybridOwned = true;
 				m_userPausedHttpGids.insert(gid);
 				state->second.userPaused = true;
-				if (state->second.phase == PeerFallbackPhase::Downloading)
+				if (state->second.phase == CanonicalHybridPhase::Downloading)
 					sessionId = state->second.job.sessionId;
 			}
 		}
@@ -1210,7 +1210,7 @@ namespace OpenNet::Core
 				.PauseLongSeedSession(sessionId);
 
 		if (!hybridOwned)
-			CancelPeerFallback(gid);
+			CancelCanonicalHybrid(gid);
 
 		try
 		{
@@ -1239,14 +1239,14 @@ namespace OpenNet::Core
 		bool queueWorker = false;
 		std::string sessionId;
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
+			std::lock_guard lock(m_canonicalHybridMutex);
 			m_userPausedHttpGids.erase(gid);
 
-			if (auto state = m_peerFallbacks.find(gid);
-				state != m_peerFallbacks.end()
+			if (auto state = m_canonicalHybrids.find(gid);
+				state != m_canonicalHybrids.end()
 				&& !state->second.cancelRequested)
 			{
-				if (state->second.phase == PeerFallbackPhase::Failed)
+				if (state->second.phase == CanonicalHybridPhase::Failed)
 				{
 					std::error_code error;
 					std::filesystem::remove(
@@ -1266,7 +1266,7 @@ namespace OpenNet::Core
 					}
 					else
 					{
-						m_peerFallbacks.erase(state);
+						m_canonicalHybrids.erase(state);
 						m_hybridProbeGids.erase(gid);
 					}
 				}
@@ -1274,15 +1274,15 @@ namespace OpenNet::Core
 				{
 					hybridOwned = true;
 					state->second.userPaused = false;
-					if (state->second.phase == PeerFallbackPhase::Downloading)
+					if (state->second.phase == CanonicalHybridPhase::Downloading)
 					{
 						sessionId = state->second.job.sessionId;
 					}
-					else if (state->second.phase == PeerFallbackPhase::Pending
+					else if (state->second.phase == CanonicalHybridPhase::Pending
 						&& !state->second.workerQueued)
 					{
 						state->second.workerQueued = true;
-						m_peerFallbackJobs.push_back(state->second.job);
+						m_canonicalHybridJobs.push_back(state->second.job);
 						queueWorker = true;
 					}
 				}
@@ -1296,7 +1296,7 @@ namespace OpenNet::Core
 		}
 
 		if (queueWorker)
-			m_peerFallbackCv.notify_one();
+			m_canonicalHybridCv.notify_one();
 		if (!sessionId.empty())
 			::OpenNet::Core::P2PManager::Instance()
 				.ResumeLongSeedSession(sessionId);
@@ -1325,7 +1325,7 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
-		CancelPeerFallback(gid);
+		CancelCanonicalHybrid(gid);
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -1340,7 +1340,7 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
-		CancelPeerFallback(gid);
+		CancelCanonicalHybrid(gid);
 		try
 		{
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
@@ -1358,7 +1358,7 @@ namespace OpenNet::Core
 		{
 			return;
 		}
-		CancelPeerFallback(gid);
+		CancelCanonicalHybrid(gid);
 		bool const engineAvailable = IsAria2Available();
 		if (!engineAvailable)
 		{
@@ -1828,18 +1828,18 @@ namespace OpenNet::Core
 				&& job.expectedSha256
 				&& !job.targetFilePath.empty())
 			{
-				QueuePeerFallback(job, summary);
+				QueueCanonicalHybrid(job, summary);
 			}
 			else
 			{
 				bool userPaused = false;
 				bool suppressed = false;
 				{
-					std::lock_guard fallbackLock(m_peerFallbackMutex);
+					std::lock_guard fallbackLock(m_canonicalHybridMutex);
 					m_hybridProbeGids.erase(job.gid);
 					userPaused = m_userPausedHttpGids.contains(job.gid);
 					suppressed =
-						m_peerFallbackSuppressedGids.contains(job.gid);
+						m_canonicalHybridSuppressedGids.contains(job.gid);
 				}
 				if (auto const recordId = GetRecordIdForGid(job.gid);
 					!recordId.empty())
@@ -2028,13 +2028,13 @@ namespace OpenNet::Core
 			return false;
 
 		{
-			std::lock_guard fallbackLock(m_peerFallbackMutex);
+			std::lock_guard fallbackLock(m_canonicalHybridMutex);
 			if (auto const existing =
-				m_peerFallbacks.find(gid);
-				existing != m_peerFallbacks.end()
+				m_canonicalHybrids.find(gid);
+				existing != m_canonicalHybrids.end()
 				&& !existing->second.cancelRequested
 				&& existing->second.phase
-					!= PeerFallbackPhase::Failed)
+					!= CanonicalHybridPhase::Failed)
 			{
 				return true;
 			}
@@ -2044,7 +2044,7 @@ namespace OpenNet::Core
 			// Pause intentionally suppresses late fallback work. An explicit
 			// Resume starts a new ownership decision, so that suppression no
 			// longer applies to this new probe.
-			m_peerFallbackSuppressedGids.erase(gid);
+			m_canonicalHybridSuppressedGids.erase(gid);
 			m_userPausedHttpGids.erase(gid);
 			m_hybridProbeGids.insert(gid);
 		}
@@ -2074,7 +2074,7 @@ namespace OpenNet::Core
 		return true;
 	}
 
-	void DownloadManager::QueuePeerFallback(
+	void DownloadManager::QueueCanonicalHybrid(
 		ResourceDiscoveryJob const& discovery,
 		HttpResourceDiscovery const& summary)
 	{
@@ -2083,7 +2083,7 @@ namespace OpenNet::Core
 			|| discovery.targetFilePath.empty())
 			return;
 
-		PeerFallbackJob job;
+		CanonicalHybridJob job;
 		job.gid = discovery.gid;
 		job.sessionId = "http-hybrid:" + discovery.gid;
 		job.targetFilePath = discovery.targetFilePath;
@@ -2094,25 +2094,25 @@ namespace OpenNet::Core
 		job.webSeeds = discovery.webSeeds;
 
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			if (m_stopPeerFallback.load()
-				|| m_peerFallbackSuppressedGids.contains(job.gid))
+			std::lock_guard lock(m_canonicalHybridMutex);
+			if (m_stopCanonicalHybrid.load()
+				|| m_canonicalHybridSuppressedGids.contains(job.gid))
 				return;
-			if (auto const existing = m_peerFallbacks.find(job.gid);
-				existing != m_peerFallbacks.end()
-				&& existing->second.phase != PeerFallbackPhase::Failed
+			if (auto const existing = m_canonicalHybrids.find(job.gid);
+				existing != m_canonicalHybrids.end()
+				&& existing->second.phase != CanonicalHybridPhase::Failed
 				&& !existing->second.cancelRequested)
 				return;
 
 			m_hybridProbeGids.erase(job.gid);
-			PeerFallbackState state;
-			state.phase = PeerFallbackPhase::Pending;
+			CanonicalHybridState state;
+			state.phase = CanonicalHybridPhase::Pending;
 			state.job = job;
 			state.userPaused = m_userPausedHttpGids.contains(job.gid);
 			state.workerQueued = !state.userPaused;
-			m_peerFallbacks.insert_or_assign(job.gid, state);
+			m_canonicalHybrids.insert_or_assign(job.gid, state);
 			if (state.workerQueued)
-				m_peerFallbackJobs.push_back(job);
+				m_canonicalHybridJobs.push_back(job);
 		}
 
 		{
@@ -2121,7 +2121,7 @@ namespace OpenNet::Core
 				m_httpResourceDiscoveries.find(job.gid);
 				discoveryState != m_httpResourceDiscoveries.end())
 			{
-				discoveryState->second.peerFallbackQueued = true;
+				discoveryState->second.canonicalHybridQueued = true;
 			}
 			m_httpTaskLogs[job.gid].push_back({
 				std::chrono::duration_cast<std::chrono::seconds>(
@@ -2131,55 +2131,55 @@ namespace OpenNet::Core
 			});
 		}
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			auto const state = m_peerFallbacks.find(job.gid);
-			if (state != m_peerFallbacks.end()
+			std::lock_guard lock(m_canonicalHybridMutex);
+			auto const state = m_canonicalHybrids.find(job.gid);
+			if (state != m_canonicalHybrids.end()
 				&& state->second.workerQueued)
-				m_peerFallbackCv.notify_one();
+				m_canonicalHybridCv.notify_one();
 		}
 	}
 
-	bool DownloadManager::HasPeerFallbackPending(
+	bool DownloadManager::HasCanonicalHybridPending(
 		std::string const& gid) const
 	{
-		std::lock_guard lock(m_peerFallbackMutex);
-		auto const it = m_peerFallbacks.find(gid);
-		if (it == m_peerFallbacks.end()
+		std::lock_guard lock(m_canonicalHybridMutex);
+		auto const it = m_canonicalHybrids.find(gid);
+		if (it == m_canonicalHybrids.end()
 			|| it->second.cancelRequested)
 			return false;
-		return it->second.phase == PeerFallbackPhase::Pending
-			|| it->second.phase == PeerFallbackPhase::Downloading
-			|| it->second.phase == PeerFallbackPhase::Ready;
+		return it->second.phase == CanonicalHybridPhase::Pending
+			|| it->second.phase == CanonicalHybridPhase::Downloading
+			|| it->second.phase == CanonicalHybridPhase::Ready;
 	}
 
-	void DownloadManager::CancelPeerFallback(std::string const& gid)
+	void DownloadManager::CancelCanonicalHybrid(std::string const& gid)
 	{
 		if (gid.empty()) return;
 
-		std::optional<PeerFallbackJob> immediateCleanup;
+		std::optional<CanonicalHybridJob> immediateCleanup;
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			m_peerFallbackSuppressedGids.insert(gid);
+			std::lock_guard lock(m_canonicalHybridMutex);
+			m_canonicalHybridSuppressedGids.insert(gid);
 			m_hybridProbeGids.erase(gid);
 			m_userPausedHttpGids.erase(gid);
-			auto const it = m_peerFallbacks.find(gid);
-			if (it == m_peerFallbacks.end())
+			auto const it = m_canonicalHybrids.find(gid);
+			if (it == m_canonicalHybrids.end())
 				return;
 
 			it->second.cancelRequested = true;
 			std::erase_if(
-				m_peerFallbackJobs,
-				[&](PeerFallbackJob const& job)
+				m_canonicalHybridJobs,
+				[&](CanonicalHybridJob const& job)
 				{
 					return job.gid == gid;
 				});
 
-			if (it->second.phase == PeerFallbackPhase::Pending
-				|| it->second.phase == PeerFallbackPhase::Ready
-				|| it->second.phase == PeerFallbackPhase::Failed)
+			if (it->second.phase == CanonicalHybridPhase::Pending
+				|| it->second.phase == CanonicalHybridPhase::Ready
+				|| it->second.phase == CanonicalHybridPhase::Failed)
 			{
 				immediateCleanup = it->second.job;
-				m_peerFallbacks.erase(it);
+				m_canonicalHybrids.erase(it);
 			}
 		}
 
@@ -2188,17 +2188,17 @@ namespace OpenNet::Core
 			::OpenNet::Core::P2PManager::Instance()
 				.CloseLongSeedSession(immediateCleanup->sessionId);
 		}
-		m_peerFallbackCv.notify_all();
+		m_canonicalHybridCv.notify_all();
 	}
 
-	void DownloadManager::PeerFallbackThreadEntry()
+	void DownloadManager::CanonicalHybridThreadEntry()
 	{
 		winrt::init_apartment(winrt::apartment_type::multi_threaded);
 		auto const stopToken =
-			m_peerFallbackStopSource.get_token();
+			m_canonicalHybridStopSource.get_token();
 
 		auto fail = [this](
-			PeerFallbackJob const& job,
+			CanonicalHybridJob const& job,
 			std::string message)
 		{
 			::OpenNet::Core::P2PManager::Instance()
@@ -2235,18 +2235,18 @@ namespace OpenNet::Core
 			bool resumeAria2 = false;
 			bool userPaused = false;
 			{
-				std::lock_guard lock(m_peerFallbackMutex);
+				std::lock_guard lock(m_canonicalHybridMutex);
 				m_hybridProbeGids.erase(job.gid);
-				auto const it = m_peerFallbacks.find(job.gid);
-				if (it != m_peerFallbacks.end())
+				auto const it = m_canonicalHybrids.find(job.gid);
+				if (it != m_canonicalHybrids.end())
 				{
 					if (it->second.cancelRequested)
 					{
-						m_peerFallbacks.erase(it);
+						m_canonicalHybrids.erase(it);
 					}
 					else
 					{
-						it->second.phase = PeerFallbackPhase::Failed;
+						it->second.phase = CanonicalHybridPhase::Failed;
 						it->second.workerQueued = false;
 						it->second.error = message;
 						userPaused = it->second.userPaused
@@ -2254,7 +2254,7 @@ namespace OpenNet::Core
 						resumeAria2 =
 							payloadCleanupSucceeded
 							&& !userPaused
-							&& !m_peerFallbackSuppressedGids.contains(job.gid);
+							&& !m_canonicalHybridSuppressedGids.contains(job.gid);
 						shouldLog = true;
 					}
 				}
@@ -2300,31 +2300,31 @@ namespace OpenNet::Core
 
 		for (;;)
 		{
-			PeerFallbackJob job;
+			CanonicalHybridJob job;
 			{
-				std::unique_lock lock(m_peerFallbackMutex);
-				m_peerFallbackCv.wait(lock, [this]
+				std::unique_lock lock(m_canonicalHybridMutex);
+				m_canonicalHybridCv.wait(lock, [this]
 				{
-					return m_stopPeerFallback.load()
-						|| !m_peerFallbackJobs.empty();
+					return m_stopCanonicalHybrid.load()
+						|| !m_canonicalHybridJobs.empty();
 				});
 
-				if (m_stopPeerFallback.load()
-					&& m_peerFallbackJobs.empty())
+				if (m_stopCanonicalHybrid.load()
+					&& m_canonicalHybridJobs.empty())
 					break;
 
-				job = std::move(m_peerFallbackJobs.front());
-				m_peerFallbackJobs.pop_front();
+				job = std::move(m_canonicalHybridJobs.front());
+				m_canonicalHybridJobs.pop_front();
 
-				auto const state = m_peerFallbacks.find(job.gid);
-				if (state == m_peerFallbacks.end()
+				auto const state = m_canonicalHybrids.find(job.gid);
+				if (state == m_canonicalHybrids.end()
 					|| state->second.cancelRequested)
 					continue;
 				state->second.workerQueued = false;
 				if (state->second.userPaused)
 					continue;
 				state->second.phase =
-					PeerFallbackPhase::Downloading;
+					CanonicalHybridPhase::Downloading;
 			}
 
 			{
@@ -2407,9 +2407,9 @@ namespace OpenNet::Core
 					job.canonicalInfoHashV2);
 			}
 			{
-				std::lock_guard lock(m_peerFallbackMutex);
-				if (auto const state = m_peerFallbacks.find(job.gid);
-					state != m_peerFallbacks.end())
+				std::lock_guard lock(m_canonicalHybridMutex);
+				if (auto const state = m_canonicalHybrids.find(job.gid);
+					state != m_canonicalHybrids.end())
 				{
 					state->second.job.canonicalInfoHashV2 =
 						job.canonicalInfoHashV2;
@@ -2445,10 +2445,10 @@ namespace OpenNet::Core
 			{
 				bool userPaused = false;
 				{
-					std::lock_guard lock(m_peerFallbackMutex);
-					auto const state = m_peerFallbacks.find(job.gid);
-					if (m_stopPeerFallback.load()
-						|| state == m_peerFallbacks.end()
+					std::lock_guard lock(m_canonicalHybridMutex);
+					auto const state = m_canonicalHybrids.find(job.gid);
+					if (m_stopCanonicalHybrid.load()
+						|| state == m_canonicalHybrids.end()
 						|| state->second.cancelRequested)
 					{
 						cancelled = true;
@@ -2484,9 +2484,9 @@ namespace OpenNet::Core
 				}
 
 				{
-					std::lock_guard lock(m_peerFallbackMutex);
-					auto const state = m_peerFallbacks.find(job.gid);
-					if (state != m_peerFallbacks.end())
+					std::lock_guard lock(m_canonicalHybridMutex);
+					auto const state = m_canonicalHybrids.find(job.gid);
+					if (state != m_canonicalHybrids.end())
 					{
 						state->second.progressPercent =
 							status.progressPercent;
@@ -2518,8 +2518,8 @@ namespace OpenNet::Core
 
 			if (cancelled)
 			{
-				std::lock_guard lock(m_peerFallbackMutex);
-				m_peerFallbacks.erase(job.gid);
+				std::lock_guard lock(m_canonicalHybridMutex);
+				m_canonicalHybrids.erase(job.gid);
 				continue;
 			}
 			if (!completed)
@@ -2567,16 +2567,16 @@ namespace OpenNet::Core
 			}
 
 			{
-				std::lock_guard lock(m_peerFallbackMutex);
-				auto const state = m_peerFallbacks.find(job.gid);
-				if (state == m_peerFallbacks.end()
+				std::lock_guard lock(m_canonicalHybridMutex);
+				auto const state = m_canonicalHybrids.find(job.gid);
+				if (state == m_canonicalHybrids.end()
 					|| state->second.cancelRequested)
 				{
-					if (state != m_peerFallbacks.end())
-						m_peerFallbacks.erase(state);
+					if (state != m_canonicalHybrids.end())
+						m_canonicalHybrids.erase(state);
 					continue;
 				}
-				state->second.phase = PeerFallbackPhase::Ready;
+				state->second.phase = CanonicalHybridPhase::Ready;
 				state->second.userPaused = false;
 				state->second.workerQueued = false;
 				state->second.progressPercent = 100;
@@ -2590,7 +2590,7 @@ namespace OpenNet::Core
 					m_httpResourceDiscoveries.find(job.gid);
 					discovery != m_httpResourceDiscoveries.end())
 				{
-					discovery->second.peerFallbackReady = true;
+					discovery->second.canonicalHybridReady = true;
 				}
 				m_httpTaskLogs[job.gid].push_back({
 					std::chrono::duration_cast<std::chrono::seconds>(
@@ -2604,18 +2604,18 @@ namespace OpenNet::Core
 		winrt::uninit_apartment();
 	}
 
-	bool DownloadManager::TryPromotePeerFallback(
+	bool DownloadManager::TryFinalizeCanonicalHybrid(
 		std::string const& gid,
 		Aria2::DownloadInformation const& task,
 		std::string const& recordId)
 	{
-		PeerFallbackJob job;
+		CanonicalHybridJob job;
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			auto const it = m_peerFallbacks.find(gid);
-			if (it == m_peerFallbacks.end()
+			std::lock_guard lock(m_canonicalHybridMutex);
+			auto const it = m_canonicalHybrids.find(gid);
+			if (it == m_canonicalHybrids.end()
 				|| it->second.cancelRequested
-				|| it->second.phase != PeerFallbackPhase::Ready)
+				|| it->second.phase != CanonicalHybridPhase::Ready)
 				return false;
 			job = it->second.job;
 		}
@@ -2626,11 +2626,11 @@ namespace OpenNet::Core
 			existsError)
 			|| existsError)
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			if (auto const it = m_peerFallbacks.find(gid);
-				it != m_peerFallbacks.end())
+			std::lock_guard lock(m_canonicalHybridMutex);
+			if (auto const it = m_canonicalHybrids.find(gid);
+				it != m_canonicalHybrids.end())
 			{
-				it->second.phase = PeerFallbackPhase::Failed;
+				it->second.phase = CanonicalHybridPhase::Failed;
 				it->second.error =
 					"Verified peer fallback file disappeared before promotion.";
 			}
@@ -2725,8 +2725,8 @@ namespace OpenNet::Core
 		}
 
 		{
-			std::lock_guard lock(m_peerFallbackMutex);
-			m_peerFallbacks.erase(gid);
+			std::lock_guard lock(m_canonicalHybridMutex);
+			m_canonicalHybrids.erase(gid);
 			m_hybridProbeGids.erase(gid);
 			m_userPausedHttpGids.erase(gid);
 		}
@@ -2991,7 +2991,7 @@ namespace OpenNet::Core
 								resolvedDir,
 								resolvedName))
 					{
-						CancelPeerFallback(gid);
+						CancelCanonicalHybrid(gid);
 						auto const removed =
 							RemoveAria2TaskUnlocked(*m_aria2, gid);
 						HttpStateManager::Instance()
@@ -3017,23 +3017,23 @@ namespace OpenNet::Core
 				}
 
 				if (task.Status == Aria2::DownloadStatus::Paused
-					&& HasPeerFallbackPending(gid)
-					&& TryPromotePeerFallback(gid, task, recordId))
+					&& HasCanonicalHybridPending(gid)
+					&& TryFinalizeCanonicalHybrid(gid, task, recordId))
 				{
 					continue;
 				}
 
-				bool const peerFallbackHoldingError =
+				bool const canonicalHybridHoldingError =
 					task.Status == Aria2::DownloadStatus::Error
-					&& HasPeerFallbackPending(gid);
+					&& HasCanonicalHybridPending(gid);
 
-				std::optional<PeerFallbackState> hybridState;
+				std::optional<CanonicalHybridState> hybridState;
 				{
-					std::lock_guard fallbackLock(m_peerFallbackMutex);
-					if (auto const state = m_peerFallbacks.find(gid);
-						state != m_peerFallbacks.end()
+					std::lock_guard fallbackLock(m_canonicalHybridMutex);
+					if (auto const state = m_canonicalHybrids.find(gid);
+						state != m_canonicalHybrids.end()
 						&& !state->second.cancelRequested
-						&& state->second.phase != PeerFallbackPhase::Failed)
+						&& state->second.phase != CanonicalHybridPhase::Failed)
 					{
 						hybridState = state->second;
 					}
@@ -3044,7 +3044,7 @@ namespace OpenNet::Core
 					HttpTaskProgress progress;
 					progress.gid = gid;
 					progress.name = Aria2::ToFriendlyName(task);
-					progress.status = peerFallbackHoldingError
+					progress.status = canonicalHybridHoldingError
 						? Aria2::DownloadStatus::Waiting
 						: task.Status;
 					progress.totalLength = task.TotalLength;
@@ -3055,7 +3055,7 @@ namespace OpenNet::Core
 						? static_cast<int>((task.CompletedLength * 100) / task.TotalLength)
 						: 0;
 					{
-						std::lock_guard fallbackLock(m_peerFallbackMutex);
+						std::lock_guard fallbackLock(m_canonicalHybridMutex);
 						if (m_hybridProbeGids.contains(gid))
 							progress.engine =
 								HttpTransferEngine::CanonicalProbe;
@@ -3083,7 +3083,7 @@ namespace OpenNet::Core
 						progress.progressPercent =
 							hybridState->progressPercent;
 						progress.engine =
-							hybridState->phase == PeerFallbackPhase::Pending
+							hybridState->phase == CanonicalHybridPhase::Pending
 								? HttpTransferEngine::CanonicalProbe
 								: HttpTransferEngine::CanonicalHybrid;
 					}
@@ -3122,7 +3122,7 @@ namespace OpenNet::Core
 								task.CompletedLength,
 								task.TotalLength);
 						}
-						if (!peerFallbackHoldingError && !hybridState)
+						if (!canonicalHybridHoldingError && !hybridState)
 						{
 							int const persistedStatus =
 								task.Status == Aria2::DownloadStatus::Paused ? 2
@@ -3141,7 +3141,7 @@ namespace OpenNet::Core
 						previous != m_lastHttpStatuses.end())
 						previousStatus = previous->second;
 
-					if (!peerFallbackHoldingError)
+					if (!canonicalHybridHoldingError)
 					{
 						m_lastHttpStatuses[gid] = task.Status;
 						if (previousStatus
@@ -3172,7 +3172,7 @@ namespace OpenNet::Core
 				{
 					if (previousStatus && *previousStatus != Aria2::DownloadStatus::Complete)
 					{
-						CancelPeerFallback(gid);
+						CancelCanonicalHybrid(gid);
 						// Persist completed status
 						std::string recordId;
 						{
@@ -3273,9 +3273,9 @@ namespace OpenNet::Core
 				}
 				else if (task.Status == Aria2::DownloadStatus::Error)
 				{
-					if (peerFallbackHoldingError)
+					if (canonicalHybridHoldingError)
 					{
-						if (TryPromotePeerFallback(
+						if (TryFinalizeCanonicalHybrid(
 							gid,
 							task,
 							recordId))
@@ -3299,14 +3299,14 @@ namespace OpenNet::Core
 						// still allowed to recover this failed origin task.
 						{
 							std::lock_guard fallbackLock(
-								m_peerFallbackMutex);
+								m_canonicalHybridMutex);
 							if (auto const failed =
-								m_peerFallbacks.find(gid);
-								failed != m_peerFallbacks.end()
+								m_canonicalHybrids.find(gid);
+								failed != m_canonicalHybrids.end()
 								&& failed->second.phase
-									== PeerFallbackPhase::Failed)
+									== CanonicalHybridPhase::Failed)
 							{
-								m_peerFallbacks.erase(failed);
+								m_canonicalHybrids.erase(failed);
 							}
 						}
 						if (!recordId.empty())

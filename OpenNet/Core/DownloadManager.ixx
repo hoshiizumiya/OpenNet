@@ -61,8 +61,8 @@ export namespace OpenNet::Core
 	{
 		bool completed{};
 		bool checksumValidated{};
-		bool peerFallbackQueued{};
-		bool peerFallbackReady{};
+		bool canonicalHybridQueued{};
+		bool canonicalHybridReady{};
 		std::string contentId;
 		std::uint64_t size{};
 		std::uint32_t observationCount{};
@@ -144,19 +144,19 @@ export namespace OpenNet::Core
 			std::filesystem::path targetFilePath,
 			std::uint64_t expectedSize,
 			std::vector<std::string> webSeeds);
-		void QueuePeerFallback(
+		void QueueCanonicalHybrid(
 			ResourceDiscoveryJob const& discovery,
 			HttpResourceDiscovery const& summary);
 		bool TryQueueResumeResourceDiscovery(
 			std::string const& gid,
 			HttpDownloadRecord const& record);
-		void PeerFallbackThreadEntry();
-		bool HasPeerFallbackPending(std::string const& gid) const;
-		bool TryPromotePeerFallback(
+		void CanonicalHybridThreadEntry();
+		bool HasCanonicalHybridPending(std::string const& gid) const;
+		bool TryFinalizeCanonicalHybrid(
 			std::string const& gid,
 			Aria2::DownloadInformation const& task,
 			std::string const& recordId);
-		void CancelPeerFallback(std::string const& gid);
+		void CancelCanonicalHybrid(std::string const& gid);
 		void ShowHttpCompletionToast(std::string const& gid, Aria2::DownloadInformation const& task);
 
 	private:
@@ -185,7 +185,7 @@ export namespace OpenNet::Core
 		std::mutex m_resourceDiscoveryMutex;
 		std::deque<ResourceDiscoveryJob> m_resourceDiscoveryJobs;
 
-		enum class PeerFallbackPhase : std::uint8_t
+		enum class CanonicalHybridPhase : std::uint8_t
 		{
 			Pending,
 			Downloading,
@@ -193,7 +193,7 @@ export namespace OpenNet::Core
 			Failed,
 		};
 
-		struct PeerFallbackJob
+		struct CanonicalHybridJob
 		{
 			std::string gid;
 			std::string sessionId;
@@ -206,10 +206,10 @@ export namespace OpenNet::Core
 			std::vector<std::string> webSeeds;
 		};
 
-		struct PeerFallbackState
+		struct CanonicalHybridState
 		{
-			PeerFallbackPhase phase{ PeerFallbackPhase::Pending };
-			PeerFallbackJob job;
+			CanonicalHybridPhase phase{ CanonicalHybridPhase::Pending };
+			CanonicalHybridJob job;
 			bool cancelRequested{};
 			bool userPaused{};
 			bool workerQueued{};
@@ -222,16 +222,16 @@ export namespace OpenNet::Core
 			std::string error;
 		};
 
-		std::atomic<bool> m_stopPeerFallback{ false };
-		std::stop_source m_peerFallbackStopSource;
-		std::condition_variable m_peerFallbackCv;
-		mutable std::mutex m_peerFallbackMutex;
-		std::deque<PeerFallbackJob> m_peerFallbackJobs;
-		std::unordered_map<std::string, PeerFallbackState> m_peerFallbacks;
-		std::unordered_set<std::string> m_peerFallbackSuppressedGids;
+		std::atomic<bool> m_stopCanonicalHybrid{ false };
+		std::stop_source m_canonicalHybridStopSource;
+		std::condition_variable m_canonicalHybridCv;
+		mutable std::mutex m_canonicalHybridMutex;
+		std::deque<CanonicalHybridJob> m_canonicalHybridJobs;
+		std::unordered_map<std::string, CanonicalHybridState> m_canonicalHybrids;
+		std::unordered_set<std::string> m_canonicalHybridSuppressedGids;
 		std::unordered_set<std::string> m_hybridProbeGids;
 		std::unordered_set<std::string> m_userPausedHttpGids;
-		std::vector<std::thread> m_peerFallbackWorkers;
+		std::vector<std::thread> m_canonicalHybridWorkers;
 
 		mutable std::mutex m_mutex;
 		// Serializes HTTP task creation from duplicate checks through the aria2
