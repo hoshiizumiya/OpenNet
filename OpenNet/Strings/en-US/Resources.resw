@@ -6736,4 +6736,10 @@ Availability: {}</value>
   <data name="TransferStatusTransferring" xml:space="preserve">
     <value>Transferring</value>
   </data>
+  <data name="ViewMainViewBitTorrentReachabilityText" xml:space="preserve">
+    <value>BitTorrent ports reachability</value>
+  </data>
+  <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
+    <value>Listeners and network integration</value>
+  </data>
 </root>

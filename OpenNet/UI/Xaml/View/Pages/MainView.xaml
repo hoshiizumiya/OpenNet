@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Page
-    x:Name="RootPage"
     x:Class="OpenNet.UI.Xaml.View.Pages.MainView"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -151,7 +150,7 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="8">
-                <essential:SwitchPresenter Padding="8" Value="{Binding ViewModel.SpeedLevel, ElementName=RootPage, Mode=OneWay}">
+                <essential:SwitchPresenter Padding="8" Value="{x:Bind ViewModel.SpeedLevel, Mode=OneWay}">
                     <essential:Case IsDefault="True">
                         <FontIcon FontSize="14" Glyph="&#xEC48;" />
                     </essential:Case>
@@ -265,7 +264,7 @@
                                 <TextBlock
                                     FontSize="16"
                                     FontWeight="SemiBold"
-                                    Text="Network and port state" />
+                                    Text="{essential:StringResource Name=ViewMainViewPortButtonToolTip/Content}" />
 
                                 <Border
                                     Padding="12"
@@ -324,7 +323,7 @@
                                 <TextBlock
                                     FontSize="13"
                                     FontWeight="SemiBold"
-                                    Text="BitTorrent reachability" />
+                                    Text="{essential:StringResource Name=ViewMainViewBitTorrentReachabilityText}" />
 
                                 <Grid ColumnSpacing="12" RowSpacing="10">
                                     <Grid.ColumnDefinitions>
@@ -337,7 +336,7 @@
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
 
-                                    <essential:SwitchPresenter Padding="0" Value="{Binding ViewModel.IPv4PortState, ElementName=RootPage, Mode=OneWay}">
+                                    <essential:SwitchPresenter Padding="0" Value="{x:Bind ViewModel.IPv4PortState, Mode=OneWay}">
                                         <essential:Case>
                                             <essential:Case.Value>
                                                 <x:String>Open</x:String>
@@ -394,7 +393,7 @@
                                     <essential:SwitchPresenter
                                         Grid.Row="1"
                                         Padding="0"
-                                        Value="{Binding ViewModel.IPv6PortState, ElementName=RootPage, Mode=OneWay}">
+                                        Value="{x:Bind ViewModel.IPv6PortState, Mode=OneWay}">
                                         <essential:Case>
                                             <essential:Case.Value>
                                                 <x:String>Open</x:String>
@@ -456,7 +455,7 @@
                                 <TextBlock
                                     FontSize="13"
                                     FontWeight="SemiBold"
-                                    Text="Listeners and network integration" />
+                                    Text="{essential:StringResource Name=ViewMainViewListenersAndNetworkIntegrationText}" />
 
                                 <Border
                                     Padding="12"
@@ -537,7 +536,7 @@
                                     HorizontalAlignment="Stretch"
                                     HorizontalContentAlignment="Center"
                                     Click="OpenPortTestWindow_Click"
-                                    Content="Open full NAT and port test" />
+                                    Content="{essential:StringResource Name=NatTools_PortTest/Text}" />
                             </StackPanel>
                         </ScrollViewer>
                     </Flyout>
@@ -546,7 +545,7 @@
                     VerticalAlignment="Center"
                     Orientation="Horizontal"
                     Spacing="6">
-                    <essential:SwitchPresenter Padding="0" Value="{Binding ViewModel.PortState, ElementName=RootPage, Mode=OneWay}">
+                    <essential:SwitchPresenter Padding="0" Value="{x:Bind ViewModel.PortState, Mode=OneWay}">
                         <essential:Case IsDefault="True">
                             <FontIcon
                                 FontFamily="Segoe UI Emoji"

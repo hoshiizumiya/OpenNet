@@ -6736,4 +6736,10 @@
   <data name="TransferStatusTransferring" xml:space="preserve">
     <value>传输中</value>
   </data>
+  <data name="ViewMainViewBitTorrentReachabilityText" xml:space="preserve">
+    <value>比特种子监听端口可达性</value>
+  </data>
+  <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
+    <value>监听和网络集成</value>
+  </data>
 </root>
