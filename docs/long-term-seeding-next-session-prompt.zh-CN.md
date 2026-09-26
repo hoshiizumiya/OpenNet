@@ -220,8 +220,8 @@ ResourceKey
 
 当前 restart recovery 已有原型实现，下一步是补 deterministic crash/restart tests，而不是重新设计：
 - Content Directory shutdown cooperative cancellation 已落地：请求有 deadline，DownloadManager / sync service 会通过 stop token 取消正在进行的 HTTP operation；
-- restart 时 complete-vs-partial SHA recovery 测试；
-- aria2 shell removal failure测试；
+- restart 时 complete-vs-partial SHA recovery 测试；完整 canonical payload 的 recovery 已补齐 ContentCatalog replay，避免 HTTP Complete 与长期做种 catalog 在 crash 后分叉；
+- aria2 shell removal failure / locked partial cleanup 的 blocked recovery 测试；
 - normalized output_key / restored-GID ownership crash 测试；
 - Resume re-discovery 已落地保守版本：只在 aria2 Paused + CompletedLength=0 + payload 可释放 + 已持久化可信 WebSeed/SHA/size/path 时重新进入 CanonicalProbe；
 - redirect / Content-Disposition 晚到 filename 因此也能在上述零进度 Resume 边界重新评估；已有 aria2 partial 不热切换，避免丢进度或双 writer。

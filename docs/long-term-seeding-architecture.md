@@ -827,7 +827,7 @@ Still required before public production:
 - [x] persisted HTTP transfer policy, active engine, user-pause intent and canonical v2 info-hash;
 - [x] caller SHA-256 post-verification and Complete/ContentCatalog integration;
 - [x] hybrid failure cleanup before aria2 ownership resumes;
-- [x] restart recovery for process-local hidden canonical sessions;
+- [x] restart recovery for process-local hidden canonical sessions, including re-cataloguing a fully downloaded canonical payload if the process crashed before normal HTTP completion promotion;
 - [x] obsolete separate-file peer fallback removed; exact legacy prototype temp files are cleaned during startup.
 
 ### Implemented in OpenNet.Server
@@ -846,7 +846,7 @@ Still required before public production:
 - [~] late redirect/Content-Disposition filenames can participate in a later zero-progress Resume re-discovery, but active partial aria2 payloads are intentionally not hot-switched;
 - [ ] stale hybrid/P2P partial cleanup after abnormal termination;
 - [x] same-target active HTTP-task exclusion through normalized SQLite output ownership and restored-GID reconciliation;
-- [ ] stronger crash/recovery semantics around HTTP task-shell cleanup/session persistence;
+- [ ] stronger crash/recovery semantics around failed aria2 shell removal / locked partial cleanup and deterministic fault injection;
 - [ ] Traversal-verified IPv4/IPv6 candidates, hole punching, relay, node keys and peer tickets;
 - [ ] production abuse controls/migrations and BitComet LT wire compatibility.
 

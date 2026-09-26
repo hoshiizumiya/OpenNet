@@ -25,8 +25,8 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `4d130bf779f703754bb692ae2fefd3d62479ee44`
-- `ci: compile native hybrid regression tests`
+- `cd4744a81abb14d9079902be7e2f17e4c3f21ca9`
+- `fix: recatalog recovered canonical HTTP completions`
 
 This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, the sentry-native 0.17 scope-capture API fix, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, a deterministic ResourceKey/Directory/manifest/WebSeed+peer data-plane fixture, and SQL regression coverage for active HTTP writer ownership. x64 Canary now also compiles OpenNetUnitTest so these native regression sources receive compiler feedback.
 
@@ -385,7 +385,7 @@ Recommended research remains:
 - the new/updated tests are committed but should not be described as CI-passed until the feature workflow reports results;
 - hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
 - Content Directory HTTP work is now bounded and cooperatively cancellable during shutdown; cancellation is not treated as heartbeat/network failure;
-- transfer policy / engine / user-pause / canonical hash are now persisted, and process-local canonical sessions have restart recovery; crash-recovery behavior still needs deterministic tests;
+- transfer policy / engine / user-pause / canonical hash are persisted, and process-local canonical sessions have restart recovery; a crash after libtorrent finished but before normal HTTP promotion now replays the missing ContentCatalog transition after whole-file SHA-256 validation; blocked cleanup/shell-removal recovery and deterministic crash tests still need hardening;
 - late redirect/Content-Disposition output names are atomically claimed against active output ownership; if the task is later explicitly resumed while aria2 is paused with zero completed bytes, the persisted verified WebSeed/identity prerequisites can safely trigger a fresh canonical probe; tasks with existing aria2 payload progress deliberately stay on aria2;
 - active HTTP output ownership is enforced by a normalized SQLite `output_key` unique index plus serialized task creation and restored-GID reconciliation;
 - aria2 shell removal and abnormal-exit cleanup now preserve the single-writer invariant but still need stress/crash testing;

@@ -721,7 +721,7 @@ final public HTTP origin 通过 `add_torrent_params::url_seeds` 交给 libtorren
 
 libtorrent 完成后，OpenNet 仍会重算整文件并要求 caller WholeFile SHA-256/size 完全一致，随后才把 HTTP record 标记 Complete 并写入 ContentCatalog。旧的 `.opennet-p2p-<gid>.part` 独立整文件数据面已经从 runtime state machine 删除：当前不再存在第二套 whole-file P2P producer；启动时只会按持久化 target + GID 精确清理旧 prototype 遗留的临时文件。
 
-Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂停 libtorrent session，同时 aria2 shell 继续保持 paused；Resume 恢复该 hidden session。HTTP record 同时持久化 transfer policy、当前 engine、用户真实 Pause 意图和 canonical v2 info-hash。应用重启后，如果上次是 canonical libtorrent writer，OpenNet 会重新计算目标文件 SHA-256：完整且匹配 caller SHA-256 就直接恢复为 Complete；否则先删除 partial，再把 writer ownership 安全交还 aria2。Cancel/Remove/Delete 仍会关闭 hidden work 并 suppress late discovery。
+Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂停 libtorrent session，同时 aria2 shell 继续保持 paused；Resume 恢复该 hidden session。HTTP record 同时持久化 transfer policy、当前 engine、用户真实 Pause 意图和 canonical v2 info-hash。应用重启后，如果上次是 canonical libtorrent writer，OpenNet 会重新计算目标文件 SHA-256：完整且匹配 caller SHA-256 时，会先移除 aria2 shell，再恢复 HTTP Complete，并重新 Enqueue 到 ContentCatalog，以覆盖“payload 已完成但 promotion/catalog 尚未执行就 crash”的窗口；否则先删除 partial，再把 writer ownership 安全交还 aria2。Cancel/Remove/Delete 仍会关闭 hidden work 并 suppress late discovery。
 
 ### TransferCoordinator 不再是普通 HTTP P2SP 的默认方案
 
@@ -873,7 +873,7 @@ BitComet LT UDP == uTP
 - [~] redirect / Content-Disposition 晚到 filename 已可在“零进度 + paused + Resume”安全边界重新进入 hybrid discovery；已有 aria2 partial 的任务故意不做热切换；
 - [ ] 异常退出后的 stale hybrid/P2P partial 清理；
 - [x] same-target active HTTP task 排他（normalized SQLite output_key + serialized creation + restored-GID reconciliation）；
-- [ ] HTTP task-shell cleanup/session persistence 的 crash/recovery 语义；
+- [ ] aria2 shell removal 失败 / partial 文件仍锁定时的 blocked recovery 语义与 deterministic fault injection；
 - [ ] Traversal verified IPv4/IPv6 candidate、hole punching、relay、Node key、Peer Ticket；
 - [ ] production rate limit/migration 与 BitComet LT wire compatibility。
 
