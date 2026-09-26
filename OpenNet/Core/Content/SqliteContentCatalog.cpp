@@ -12,6 +12,78 @@ namespace OpenNet::Core::Content
 {
     namespace
     {
+        std::wstring Utf8ToWide(std::string_view const value)
+        {
+            if (value.empty()) return {};
+            if (value.size()
+                > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
+                throw std::length_error("UTF-8 path is too long.");
+
+            auto const required = ::MultiByteToWideChar(
+                CP_UTF8,
+                MB_ERR_INVALID_CHARS,
+                value.data(),
+                static_cast<int>(value.size()),
+                nullptr,
+                0);
+            if (required <= 0)
+                throw std::runtime_error("Invalid UTF-8 path.");
+
+            std::wstring result(
+                static_cast<std::size_t>(required),
+                L'\0');
+            if (::MultiByteToWideChar(
+                CP_UTF8,
+                MB_ERR_INVALID_CHARS,
+                value.data(),
+                static_cast<int>(value.size()),
+                result.data(),
+                required) != required)
+            {
+                throw std::runtime_error(
+                    "Unable to convert UTF-8 path.");
+            }
+            return result;
+        }
+
+        std::string WideToUtf8(std::wstring_view const value)
+        {
+            if (value.empty()) return {};
+            if (value.size()
+                > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
+                throw std::length_error("UTF-16 path is too long.");
+
+            auto const required = ::WideCharToMultiByte(
+                CP_UTF8,
+                WC_ERR_INVALID_CHARS,
+                value.data(),
+                static_cast<int>(value.size()),
+                nullptr,
+                0,
+                nullptr,
+                nullptr);
+            if (required <= 0)
+                throw std::runtime_error("Invalid UTF-16 path.");
+
+            std::string result(
+                static_cast<std::size_t>(required),
+                '\0');
+            if (::WideCharToMultiByte(
+                CP_UTF8,
+                WC_ERR_INVALID_CHARS,
+                value.data(),
+                static_cast<int>(value.size()),
+                result.data(),
+                required,
+                nullptr,
+                nullptr) != required)
+            {
+                throw std::runtime_error(
+                    "Unable to convert UTF-16 path.");
+            }
+            return result;
+        }
+
         void BindKey(sqlite3_stmt* statement, int index, ContentKey const& key)
         {
             sqlite3_bind_blob(
@@ -208,15 +280,19 @@ namespace OpenNet::Core::Content
         }
     }
 
-    std::string SqliteContentCatalog::PathToUtf8(std::filesystem::path const& path)
+    std::string SqliteContentCatalog::PathToUtf8(
+        std::filesystem::path const& path)
     {
-        return winrt::to_string(winrt::hstring{ path.wstring() });
+        return WideToUtf8(path.wstring());
     }
 
-    std::filesystem::path SqliteContentCatalog::PathFromUtf8(char const* path)
+    std::filesystem::path SqliteContentCatalog::PathFromUtf8(
+        char const* path)
     {
         if (!path) return {};
-        return std::filesystem::path{ winrt::to_hstring(path).c_str() };
+        return std::filesystem::path{
+            Utf8ToWide(path)
+        };
     }
 
     SqliteContentCatalog::PendingJob
