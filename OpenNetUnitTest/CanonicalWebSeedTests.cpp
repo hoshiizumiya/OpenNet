@@ -6,12 +6,16 @@
 #include <WS2tcpip.h>
 #include <Windows.h>
 
+#include <libtorrent/address.hpp>
 #include <libtorrent/create_torrent.hpp>
+#include <libtorrent/hasher.hpp>
 #include <libtorrent/load_torrent.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/session_params.hpp>
 #include <libtorrent/settings_pack.hpp>
+#include <libtorrent/socket.hpp>
 #include <libtorrent/torrent_handle.hpp>
+#include <winrt/Windows.Data.Json.h>
 
 #include <algorithm>
 #include <array>
@@ -159,6 +163,22 @@ namespace OpenNetUnitTest
 				return m_ranges;
 			}
 
+			void SetRangeOnly(bool const value = true) noexcept
+			{
+				m_rangeOnly.store(value);
+			}
+
+			void SetMaxSuccessfulRangeResponses(
+				std::size_t const value) noexcept
+			{
+				m_maxSuccessfulRangeResponses.store(value);
+			}
+
+			std::size_t SuccessfulRangeResponses() const noexcept
+			{
+				return m_successfulRangeResponses.load();
+			}
+
 		private:
 			std::vector<std::uint8_t> const* PayloadFor(
 				std::string const& target) const
@@ -295,10 +315,44 @@ namespace OpenNetUnitTest
 					}
 				}
 
+				if (!partial && m_rangeOnly.load())
+				{
+					constexpr std::string_view rangeRequired =
+						"HTTP/1.1 416 Range Not Satisfiable\r\n"
+						"Content-Length: 0\r\n"
+						"Connection: close\r\n\r\n";
+					SendAll(
+						client,
+						rangeRequired.data(),
+						rangeRequired.size());
+					return;
+				}
+
+				if (partial
+					&& m_successfulRangeResponses.load()
+						>= m_maxSuccessfulRangeResponses.load())
+				{
+					constexpr std::string_view unavailable =
+						"HTTP/1.1 503 Service Unavailable\r\n"
+						"Content-Length: 0\r\n"
+						"Connection: close\r\n\r\n";
+					SendAll(
+						client,
+						unavailable.data(),
+						unavailable.size());
+					return;
+				}
+
 				if (!partial)
 				{
 					begin = 0;
 					end = payload->size() - 1;
+				}
+				else
+				{
+					m_successfulRangeResponses.fetch_add(
+						1,
+						std::memory_order_relaxed);
 				}
 				auto const length = end - begin + 1;
 				auto const header = partial
@@ -330,6 +384,11 @@ namespace OpenNetUnitTest
 			mutable std::mutex m_mutex;
 			std::vector<std::string> m_targets;
 			std::vector<std::string> m_ranges;
+			std::atomic_bool m_rangeOnly{ false };
+			std::atomic_size_t m_maxSuccessfulRangeResponses{
+				(std::numeric_limits<std::size_t>::max)()
+			};
+			std::atomic_size_t m_successfulRangeResponses{};
 			SOCKET m_listener{ INVALID_SOCKET };
 			std::uint16_t m_port{};
 			std::jthread m_thread;
@@ -591,6 +650,363 @@ namespace OpenNetUnitTest
 			fixture.metainfo = creator.generate_buf();
 			return fixture;
 		}
+		std::string Hex(lt::sha256_hash const& hash)
+		{
+			static constexpr char digits[] = "0123456789abcdef";
+			std::string result(64, '\0');
+			auto const* bytes =
+				reinterpret_cast<unsigned char const*>(hash.data());
+			for (std::size_t index = 0; index < 32; ++index)
+			{
+				result[index * 2] = digits[bytes[index] >> 4];
+				result[index * 2 + 1] = digits[bytes[index] & 0x0f];
+			}
+			return result;
+		}
+
+		lt::sha256_hash Sha256(
+			std::span<std::uint8_t const> const bytes)
+		{
+			return lt::hasher256{
+				lt::span<char const>{
+					reinterpret_cast<char const*>(bytes.data()),
+					bytes.size()
+				}
+			}.final();
+		}
+
+		lt::sha256_hash Sha256(std::string_view const text)
+		{
+			return lt::hasher256{
+				lt::span<char const>{
+					text.data(),
+					text.size()
+				}
+			}.final();
+		}
+
+		std::vector<std::uint8_t> Bytes(std::string_view const text)
+		{
+			return {
+				reinterpret_cast<std::uint8_t const*>(text.data()),
+				reinterpret_cast<std::uint8_t const*>(
+					text.data() + text.size())
+			};
+		}
+
+		std::string Text(
+			std::vector<std::uint8_t> const& bytes)
+		{
+			return {
+				reinterpret_cast<char const*>(bytes.data()),
+				bytes.size()
+			};
+		}
+
+		std::vector<std::uint8_t> HttpGetLoopback(
+			std::string_view const url)
+		{
+			constexpr std::string_view prefix = "http://127.0.0.1:";
+			if (!url.starts_with(prefix))
+				throw std::runtime_error(
+					"hybrid fixture only supports loopback HTTP");
+
+			auto const pathStart = url.find('/', prefix.size());
+			if (pathStart == std::string_view::npos)
+				throw std::runtime_error("invalid loopback URL");
+			auto const portText = url.substr(
+				prefix.size(),
+				pathStart - prefix.size());
+			auto const portValue = std::stoul(std::string{ portText });
+			if (portValue == 0 || portValue > 65535)
+				throw std::runtime_error("invalid loopback HTTP port");
+			auto const target = url.substr(pathStart);
+
+			auto socket = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+			if (socket == INVALID_SOCKET)
+				throw std::runtime_error("HTTP client socket failed");
+
+			try
+			{
+				sockaddr_in address{};
+				address.sin_family = AF_INET;
+				address.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+				address.sin_port = htons(
+					static_cast<std::uint16_t>(portValue));
+				if (::connect(
+					socket,
+					reinterpret_cast<sockaddr*>(&address),
+					sizeof(address)) == SOCKET_ERROR)
+				{
+					throw std::runtime_error(
+						"HTTP client connect failed");
+				}
+
+				auto const request = std::format(
+					"GET {} HTTP/1.1\r\n"
+					"Host: 127.0.0.1\r\n"
+					"Connection: close\r\n\r\n",
+					target);
+				SendAll(socket, request.data(), request.size());
+
+				std::vector<std::uint8_t> response;
+				std::array<char, 8192> buffer{};
+				for (;;)
+				{
+					auto const received = ::recv(
+						socket,
+						buffer.data(),
+						static_cast<int>(buffer.size()),
+						0);
+					if (received == 0)
+						break;
+					if (received < 0)
+						throw std::runtime_error(
+							"HTTP client receive failed");
+					response.insert(
+						response.end(),
+						reinterpret_cast<std::uint8_t const*>(
+							buffer.data()),
+						reinterpret_cast<std::uint8_t const*>(
+							buffer.data() + received));
+				}
+
+				::closesocket(socket);
+				socket = INVALID_SOCKET;
+
+				auto const headerEnd = std::search(
+					response.begin(),
+					response.end(),
+					std::begin("\r\n\r\n") - 1,
+					std::end("\r\n\r\n") - 1);
+				if (headerEnd == response.end())
+					throw std::runtime_error(
+						"HTTP response has no header terminator");
+
+				auto const headerSize =
+					static_cast<std::size_t>(
+						std::distance(
+							response.begin(),
+							headerEnd))
+					+ 4;
+				std::string const header{
+					reinterpret_cast<char const*>(response.data()),
+					headerSize
+				};
+				if (!header.starts_with("HTTP/1.1 200"))
+					throw std::runtime_error(
+						"HTTP fixture returned a non-200 response");
+
+				return {
+					response.begin()
+						+ static_cast<std::ptrdiff_t>(headerSize),
+					response.end()
+				};
+			}
+			catch (...)
+			{
+				if (socket != INVALID_SOCKET)
+					::closesocket(socket);
+				throw;
+			}
+		}
+
+		class PeerSeeder
+		{
+		public:
+			PeerSeeder(
+				std::vector<char> const& metainfo,
+				std::filesystem::path const& sourceRoot)
+			{
+				auto params = lt::load_torrent_buffer(
+					lt::span<char const>{
+						metainfo.data(),
+						metainfo.size()
+					});
+				if (!params.ti)
+					throw std::runtime_error(
+						"failed to load peer-seed manifest");
+
+				params.save_path = Utf8Path(sourceRoot);
+				params.flags |=
+					lt::torrent_flags::seed_mode
+					| lt::torrent_flags::disable_dht
+					| lt::torrent_flags::disable_lsd
+					| lt::torrent_flags::disable_pex;
+				params.flags &= ~lt::torrent_flags::auto_managed;
+				params.flags &= ~lt::torrent_flags::paused;
+
+				lt::settings_pack settings;
+				settings.set_str(
+					lt::settings_pack::listen_interfaces,
+					"127.0.0.1:0");
+
+				lt::session_params sessionParameters;
+				sessionParameters.settings = std::move(settings);
+				m_session = std::make_unique<lt::session>(
+					std::move(sessionParameters));
+
+				lt::error_code error;
+				m_handle = m_session->add_torrent(params, error);
+				if (error || !m_handle.is_valid())
+				{
+					throw std::runtime_error(
+						error
+							? error.message()
+							: "invalid peer-seed torrent handle");
+				}
+				m_handle.resume();
+
+				auto const deadline =
+					std::chrono::steady_clock::now() + 10s;
+				while (std::chrono::steady_clock::now() < deadline)
+				{
+					auto const status = m_handle.status(
+						lt::torrent_handle::
+							query_accurate_download_counters);
+					auto const port = m_session->listen_port();
+					if ((status.is_seeding || status.is_finished)
+						&& port > 0)
+					{
+						m_port =
+							static_cast<std::uint16_t>(port);
+						return;
+					}
+					if (status.errc)
+						throw std::runtime_error(
+							status.errc.message());
+					std::this_thread::sleep_for(50ms);
+				}
+
+				throw std::runtime_error(
+					"local OpenNet peer seed did not become ready");
+			}
+
+			std::uint16_t Port() const noexcept
+			{
+				return m_port;
+			}
+
+			std::int64_t UploadedBytes() const
+			{
+				return m_handle.status(
+					lt::torrent_handle::
+						query_accurate_download_counters)
+					.total_upload;
+			}
+
+		private:
+			std::unique_ptr<lt::session> m_session;
+			lt::torrent_handle m_handle;
+			std::uint16_t m_port{};
+		};
+
+		std::filesystem::path DownloadFromHybridSources(
+			std::vector<std::uint8_t> const& manifest,
+			std::filesystem::path const& outputRoot,
+			std::string const& webSeed,
+			std::uint16_t const peerPort,
+			RangeHttpServer const& origin)
+		{
+			auto params = lt::load_torrent_buffer(
+				lt::span<char const>{
+					reinterpret_cast<char const*>(manifest.data()),
+					manifest.size()
+				});
+			if (!params.ti)
+				throw std::runtime_error(
+					"failed to load directory manifest");
+
+			std::filesystem::create_directories(outputRoot);
+			params.save_path = Utf8Path(outputRoot);
+			params.renamed_files.insert_or_assign(
+				lt::file_index_t{0},
+				std::string{"hybrid.bin"});
+			params.url_seeds.push_back(webSeed);
+			params.flags |=
+				lt::torrent_flags::disable_dht
+					| lt::torrent_flags::disable_lsd
+					| lt::torrent_flags::disable_pex;
+			params.flags &= ~lt::torrent_flags::auto_managed;
+			params.flags &= ~lt::torrent_flags::paused;
+
+			lt::settings_pack settings;
+			settings.set_bool(
+				lt::settings_pack::ssrf_mitigation,
+				false);
+			settings.set_int(
+				lt::settings_pack::urlseed_max_request_bytes,
+				256 * 1024);
+			settings.set_str(
+				lt::settings_pack::listen_interfaces,
+				"127.0.0.1:0");
+
+			lt::session_params sessionParameters;
+			sessionParameters.settings = std::move(settings);
+			lt::session session{
+				std::move(sessionParameters)
+			};
+
+			lt::error_code error;
+			auto handle = session.add_torrent(params, error);
+			if (error || !handle.is_valid())
+			{
+				throw std::runtime_error(
+					error
+						? error.message()
+						: "invalid hybrid torrent handle");
+			}
+
+			// Do not connect the peer until one HTTP range has really
+			// completed. The origin is configured to reject later ranges,
+			// which forces the remainder to come from the explicit peer.
+			auto const webSeedDeadline =
+				std::chrono::steady_clock::now() + 10s;
+			while (origin.SuccessfulRangeResponses() == 0
+				&& std::chrono::steady_clock::now()
+					< webSeedDeadline)
+			{
+				auto const status = handle.status(
+					lt::torrent_handle::
+						query_accurate_download_counters);
+				if (status.errc)
+					throw std::runtime_error(
+						status.errc.message());
+				std::this_thread::sleep_for(25ms);
+			}
+			if (origin.SuccessfulRangeResponses() == 0)
+				throw std::runtime_error(
+					"hybrid fixture never consumed the HTTP WebSeed");
+
+			auto const peerAddress =
+				lt::make_address("127.0.0.1", error);
+			if (error)
+				throw std::runtime_error(error.message());
+			handle.connect_peer(
+				lt::tcp::endpoint{
+					peerAddress,
+					peerPort
+				});
+
+			auto const completionDeadline =
+				std::chrono::steady_clock::now() + 30s;
+			while (std::chrono::steady_clock::now()
+				< completionDeadline)
+			{
+				auto const status = handle.status(
+					lt::torrent_handle::
+						query_accurate_download_counters);
+				if (status.errc)
+					throw std::runtime_error(
+						status.errc.message());
+				if (status.is_finished || status.is_seeding)
+					return outputRoot / L"hybrid.bin";
+				std::this_thread::sleep_for(50ms);
+			}
+
+			throw std::runtime_error(
+				"hybrid WebSeed + peer download timed out");
+		}
 	}
 
 	TEST_CLASS(CanonicalWebSeedTests)
@@ -677,6 +1093,310 @@ namespace OpenNetUnitTest
 					"/origin/v2-boundary/second.bin")
 					!= targets.end(),
 				L"the second file must be requested independently");
+		}
+
+		TEST_METHOD(ResourceDirectoryManifestWebSeedAndPeerCompleteCanonicalFile)
+		{
+			auto fixture = MakeCanonicalFixture();
+			auto const sourceRoot = fixture.root / L"seed";
+
+			auto metainfo = lt::load_torrent_buffer(
+				lt::span<char const>{
+					fixture.metainfo.data(),
+					fixture.metainfo.size()
+				});
+			Assert::IsNotNull(
+				metainfo.ti.get(),
+				L"canonical fixture must have torrent metadata");
+
+			auto const fileRoot =
+				metainfo.ti->layout().root(
+					lt::file_index_t{0});
+			auto const bep52Hex = Hex(fileRoot);
+			auto const wholeFileHex =
+				Hex(Sha256(fixture.bytes));
+			auto const infoHashHex =
+				Hex(metainfo.ti->info_hashes().v2);
+
+			RangeHttpServer origin{ fixture.bytes };
+			origin.SetRangeOnly();
+			origin.SetMaxSuccessfulRangeResponses(1);
+			auto const originUrl =
+				origin.Url("/file.bin");
+
+			// For this loopback URL the production canonicalization is
+			// identity-preserving, so the exact ResourceKey input is visible
+			// and deterministic in the fixture.
+			auto const resourceKeyHex = Hex(Sha256(
+				"OpenNet.Resource.ExactUrlSha256V1\n"
+				+ originUrl));
+
+			PeerSeeder peerSeeder{
+				fixture.metainfo,
+				sourceRoot
+			};
+
+			auto const resourceLookupTarget = std::format(
+				"/api/v1/content/resources/lookup"
+				"?algorithm=1&digest={}&maxCandidates=8",
+				resourceKeyHex);
+			auto const contentLookupTarget = std::format(
+				"/api/v1/content/lookup"
+				"?algorithm=1&digest={}"
+				"&maxPeers=20&prepare=true",
+				bep52Hex);
+			constexpr std::string_view manifestTarget =
+				"/api/v1/content/manifests/content-1";
+
+			auto const resourceResponse = std::format(
+				"{{\"candidates\":[{{"
+				"\"contentId\":\"content-1\","
+				"\"size\":{},"
+				"\"observationCount\":2,"
+				"\"identities\":["
+				"{{\"algorithm\":3,\"digest\":\"{}\"}},"
+				"{{\"algorithm\":1,\"digest\":\"{}\"}}"
+				"]"
+				"}}]}}",
+				fixture.bytes.size(),
+				wholeFileHex,
+				bep52Hex);
+			auto const contentResponse = std::format(
+				"{{"
+				"\"contentId\":\"content-1\","
+				"\"size\":{},"
+				"\"canonicalProtocolVersion\":1,"
+				"\"canonicalInfoHashV2\":\"{}\","
+				"\"manifestAvailable\":true,"
+				"\"retryAfterMilliseconds\":0,"
+				"\"peers\":[{{"
+				"\"nodeId\":\"peer-1\","
+				"\"ready\":true,"
+				"\"endpoints\":[{{"
+				"\"address\":\"127.0.0.1\","
+				"\"isIpv6\":false,"
+				"\"port\":{},"
+				"\"transport\":\"Tcp\","
+				"\"verification\":\"deterministic-test\""
+				"}}]"
+				"}}]"
+				"}}",
+				fixture.bytes.size(),
+				infoHashHex,
+				peerSeeder.Port());
+
+			std::vector<std::uint8_t> manifestBytes{
+				reinterpret_cast<std::uint8_t const*>(
+					fixture.metainfo.data()),
+				reinterpret_cast<std::uint8_t const*>(
+					fixture.metainfo.data()
+						+ fixture.metainfo.size())
+			};
+			RangeHttpServer directory{
+				std::unordered_map<
+					std::string,
+					std::vector<std::uint8_t>>{
+					{
+						resourceLookupTarget,
+						Bytes(resourceResponse)
+					},
+					{
+						contentLookupTarget,
+						Bytes(contentResponse)
+					},
+					{
+						std::string{ manifestTarget },
+						manifestBytes
+					}
+				}
+			};
+
+			// ResourceKey -> candidate. The candidate is authoritative only
+			// after caller WholeFile SHA-256 + size match.
+			auto const candidatePayload =
+				HttpGetLoopback(
+					directory.Url(resourceLookupTarget));
+			auto const candidateJson =
+				winrt::Windows::Data::Json::JsonObject::Parse(
+					winrt::to_hstring(
+						Text(candidatePayload)));
+			auto const candidates =
+				candidateJson.GetNamedArray(L"candidates");
+			Assert::AreEqual(
+				std::uint32_t{1},
+				candidates.Size(),
+				L"directory must return one deterministic candidate");
+
+			auto const candidate =
+				candidates.GetObjectAt(0);
+			Assert::AreEqual(
+				static_cast<double>(fixture.bytes.size()),
+				candidate.GetNamedNumber(L"size"),
+				L"candidate size must match the caller-known size");
+
+			bool wholeFileMatched = false;
+			std::string selectedBep52;
+			auto const identities =
+				candidate.GetNamedArray(L"identities");
+			for (std::uint32_t index = 0;
+				index < identities.Size();
+				++index)
+			{
+				auto const identity =
+					identities.GetObjectAt(index);
+				auto const algorithm =
+					static_cast<int>(
+						identity.GetNamedNumber(L"algorithm"));
+				auto const digest = winrt::to_string(
+					identity.GetNamedString(L"digest"));
+				if (algorithm == 3
+					&& digest == wholeFileHex)
+				{
+					wholeFileMatched = true;
+				}
+				else if (algorithm == 1)
+				{
+					selectedBep52 = digest;
+				}
+			}
+			Assert::IsTrue(
+				wholeFileMatched,
+				L"resource candidate must match caller WholeFile SHA-256");
+			Assert::IsTrue(
+				selectedBep52 == bep52Hex,
+				L"candidate must carry the expected BEP52 file root");
+
+			// BEP52 identity -> ready peer + canonical manifest metadata.
+			auto const lookupPayload =
+				HttpGetLoopback(
+					directory.Url(contentLookupTarget));
+			auto const lookupJson =
+				winrt::Windows::Data::Json::JsonObject::Parse(
+					winrt::to_hstring(
+						Text(lookupPayload)));
+			Assert::AreEqual(
+				1.0,
+				lookupJson.GetNamedNumber(
+					L"canonicalProtocolVersion"),
+				L"fixture must use OpenNet canonical protocol v1");
+			Assert::IsTrue(
+				lookupJson.GetNamedBoolean(
+					L"manifestAvailable"),
+				L"canonical manifest must be available");
+			Assert::IsTrue(
+				winrt::to_string(
+					lookupJson.GetNamedString(
+						L"canonicalInfoHashV2"))
+					== infoHashHex,
+				L"directory info-hash must match canonical manifest");
+
+			auto const peers =
+				lookupJson.GetNamedArray(L"peers");
+			Assert::AreEqual(
+				std::uint32_t{1},
+				peers.Size(),
+				L"directory must expose one deterministic peer");
+			auto const endpoint =
+				peers.GetObjectAt(0)
+					.GetNamedArray(L"endpoints")
+					.GetObjectAt(0);
+			Assert::IsTrue(
+				winrt::to_string(
+					endpoint.GetNamedString(L"transport"))
+					== "Tcp",
+				L"fixture peer transport must be TCP");
+			auto const directoryPeerPort =
+				static_cast<std::uint16_t>(
+					endpoint.GetNamedNumber(L"port"));
+			Assert::AreEqual(
+				peerSeeder.Port(),
+				directoryPeerPort,
+				L"download must use the peer endpoint returned by Directory");
+
+			auto const manifest =
+				HttpGetLoopback(
+					directory.Url(manifestTarget));
+			auto validatedManifest =
+				lt::load_torrent_buffer(
+					lt::span<char const>{
+						reinterpret_cast<char const*>(
+							manifest.data()),
+						manifest.size()
+					});
+			Assert::IsNotNull(
+				validatedManifest.ti.get(),
+				L"Directory manifest must parse as torrent metadata");
+			Assert::AreEqual(
+				std::int64_t{
+					static_cast<std::int64_t>(
+						fixture.bytes.size())
+				},
+				validatedManifest.ti->total_size(),
+				L"Directory manifest size must match candidate");
+			Assert::IsTrue(
+				validatedManifest.ti->layout().file_path(
+					lt::file_index_t{0})
+					== "OpenNet.Content.v1/content",
+				L"manifest must use canonical OpenNet.Content.v1 path");
+			Assert::IsTrue(
+				Hex(validatedManifest.ti->layout().root(
+					lt::file_index_t{0}))
+					== selectedBep52,
+				L"manifest BEP52 root must match selected candidate identity");
+			Assert::IsTrue(
+				Hex(validatedManifest.ti->info_hashes().v2)
+					== infoHashHex,
+				L"manifest v2 info-hash must match Directory metadata");
+
+			// One successful bounded HTTP range is allowed; every later range
+			// receives 503. The explicit Directory peer must therefore provide
+			// the remainder, proving both sources feed one libtorrent writer.
+			auto const output = DownloadFromHybridSources(
+				manifest,
+				fixture.root / L"hybrid-download",
+				originUrl,
+				directoryPeerPort,
+				origin);
+
+			std::ifstream input(output, std::ios::binary);
+			std::vector<std::uint8_t> downloaded(
+				std::istreambuf_iterator<char>{ input },
+				std::istreambuf_iterator<char>{});
+			Assert::IsTrue(
+				downloaded == fixture.bytes,
+				L"BEP52-verified hybrid output must match source bytes");
+			Assert::IsTrue(
+				Hex(Sha256(downloaded))
+					== wholeFileHex,
+				L"HTTP Complete gate must pass caller WholeFile SHA-256");
+			Assert::AreEqual(
+				std::size_t{1},
+				origin.SuccessfulRangeResponses(),
+				L"exactly one WebSeed range must contribute payload");
+			Assert::IsTrue(
+				peerSeeder.UploadedBytes() > 0,
+				L"the Directory peer must contribute payload too");
+
+			auto const directoryTargets =
+				directory.Targets();
+			Assert::IsTrue(
+				std::ranges::find(
+					directoryTargets,
+					resourceLookupTarget)
+					!= directoryTargets.end(),
+				L"fixture must perform ResourceKey lookup");
+			Assert::IsTrue(
+				std::ranges::find(
+					directoryTargets,
+					contentLookupTarget)
+					!= directoryTargets.end(),
+				L"fixture must perform canonical content lookup");
+			Assert::IsTrue(
+				std::ranges::find(
+					directoryTargets,
+					std::string{ manifestTarget })
+					!= directoryTargets.end(),
+				L"fixture must fetch the canonical manifest");
 		}
 
 		TEST_METHOD(TrailingSlashUrlSeedAppendsCanonicalFilePath)
