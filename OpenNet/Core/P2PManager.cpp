@@ -493,38 +493,18 @@ namespace OpenNet::Core
 		auto tasks = m_stateManager->LoadAllTasks();
 		for (auto const& task : tasks)
 		{
-			// Load all active tasks (downloading, paused, completed) into the session.
-			// Paused/completed torrents are restored in their correct state via resume data flags.
-			// Without loading them, "Resume" button won't work for paused tasks
-			// since they wouldn't exist in the libtorrent session.
-			if (task.status == 1 || task.status == 2 || task.status == 3 || task.status == 4)
-			{
-				std::string resumedId = m_torrentCore->AddTorrentFromResumeData(task.taskId);
-				if (!resumedId.empty())
-				{
-					OutputDebugStringA(("Resumed task: " + task.taskId + " (status=" + std::to_string(task.status) + ")\n").c_str());
+			auto const policy = m_stateManager->LoadTaskSettings(task.taskId);
+			bool const shouldBeResident = task.status == 1
+				|| (task.status == 3 && policy && policy->completionAction == 1);
+			if (!shouldBeResident) continue;
 
-					// Ensure paused and completed tasks stay stopped even when
-					// older resume data did not preserve that state.
-					auto const policy = m_stateManager->LoadTaskSettings(task.taskId);
-					if (task.status == 2 || task.status == 4
-						|| (task.status == 3 && (!policy || policy->completionAction != 1)))
-					{
-						m_torrentCore->PauseTorrent(task.taskId);
-						if ((task.status == 3 || task.status == 4)
-							&& m_stateManager)
-						{
-							m_stateManager->UpdateTaskStatus(
-								task.taskId, task.status);
-						}
-					}
-					else if (task.status == 3)
-					{
-						m_torrentCore->ResumeTorrent(task.taskId);
-						m_stateManager->UpdateTaskStatus(task.taskId, 3);
-					}
-				}
-			}
+			std::string const resumedId =
+				m_torrentCore->AddTorrentFromResumeData(task.taskId);
+			if (resumedId.empty()) continue;
+			OutputDebugStringA(("Resumed task: " + task.taskId
+				+ " (status=" + std::to_string(task.status) + ")\n").c_str());
+			if (task.status == 3)
+				m_stateManager->UpdateTaskStatus(task.taskId, 3);
 		}
 		m_torrentCore->RestoreQueuePositions();
 	}
@@ -557,10 +537,11 @@ namespace OpenNet::Core
 			auto tasks = m_stateManager->LoadAllTasks();
 			for (auto const& task : tasks)
 			{
-				if (task.status >= 1 && task.status <= 4)
-				{
+				auto const policy = m_stateManager->LoadTaskSettings(task.taskId);
+				bool const shouldBeResident = task.status == 1
+					|| (task.status == 3 && policy && policy->completionAction == 1);
+				if (shouldBeResident)
 					m_torrentCore->AddTorrentFromResumeData(task.taskId);
-				}
 			}
 		}
 

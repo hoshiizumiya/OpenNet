@@ -44,7 +44,7 @@ namespace OpenNet::Application::Tasks
 					if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
 						core && !operation.taskId.empty())
 					{
-						core->PauseTorrent(operation.taskId);
+						core->StopTorrent(operation.taskId);
 					}
 					co_return;
 				}

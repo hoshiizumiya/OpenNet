@@ -1416,21 +1416,15 @@ namespace OpenNet::Core::WebUI
 				options = m_options;
 			}
 
-			// Validate the configuration that Start() is about to load before
-			// destroying a healthy listener. This is especially important when
-			// switching bundled frontends: a missing deployment must not turn a
-			// working Web UI into an unavailable one.
+			bool preserveSessions{};
 			try
 			{
-				auto& database =
-					::OpenNet::Core::AppSettingsDatabase::Instance();
+				auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 				database.Initialize();
 				auto frontend = ToLower(database.GetString(
 					"webui_host", "frontend").value_or(options.frontend));
-				if (frontend != "vuetorrent")
-					frontend = "qbittorrent";
-				const auto assetRoot = ResolveAssetRoot(
-					options.assetRoot, frontend);
+				if (frontend != "vuetorrent") frontend = "qbittorrent";
+				const auto assetRoot = ResolveAssetRoot(options.assetRoot, frontend);
 				if (assetRoot.empty())
 				{
 					OutputDebugStringA((
@@ -1438,9 +1432,26 @@ namespace OpenNet::Core::WebUI
 						+ frontend + ".\n").c_str());
 					return false;
 				}
+
 				const auto address = database.GetString(
 					"webui_host", "address").value_or(options.address);
 				(void)asio::ip::make_address(address);
+				auto port = options.port;
+				if (const auto storedPort = database.GetInt("webui_host", "port");
+					storedPort && *storedPort > 0
+					&& *storedPort <= std::numeric_limits<std::uint16_t>::max())
+				{
+					port = static_cast<std::uint16_t>(*storedPort);
+				}
+				const auto username = database.GetString(
+					"webui_host", "username").value_or(options.username);
+				const auto password = database.GetString(
+					"webui_host", "password").value_or(options.password);
+
+				preserveSessions = address == options.address
+					&& port == options.port
+					&& username == options.username
+					&& password == options.password;
 			}
 			catch (const std::exception& exception)
 			{
@@ -1452,7 +1463,7 @@ namespace OpenNet::Core::WebUI
 
 			{
 				std::scoped_lock stateLock(m_stateMutex);
-				StopUnlocked();
+				StopUnlocked(!preserveSessions);
 			}
 			return Start(std::move(options));
 		}
@@ -1503,7 +1514,7 @@ namespace OpenNet::Core::WebUI
 			std::stop_source stopSource;
 		};
 
-		void StopUnlocked() noexcept
+		void StopUnlocked(bool const clearAuthenticationState = true) noexcept
 		{
 			if (m_listener)
 				m_listener->Close();
@@ -1517,13 +1528,16 @@ namespace OpenNet::Core::WebUI
 			m_threads.clear();
 			m_listener.reset();
 			m_context.reset();
+			if (clearAuthenticationState)
 			{
-				std::scoped_lock lock(m_sessionMutex);
-				m_sessions.clear();
-			}
-			{
-				std::scoped_lock lock(m_loginMutex);
-				m_failedLogins.clear();
+				{
+					std::scoped_lock lock(m_sessionMutex);
+					m_sessions.clear();
+				}
+				{
+					std::scoped_lock lock(m_loginMutex);
+					m_failedLogins.clear();
+				}
 			}
 			m_running.store(false);
 		}
@@ -4925,7 +4939,7 @@ namespace OpenNet::Core::WebUI
 				if (action == "start")
 					core->ResumeTorrent(taskId);
 				else if (action == "stop")
-					core->PauseTorrent(taskId);
+					core->StopTorrent(taskId);
 				else if (action == "delete")
 					core->RemoveTorrent(taskId, deleteFiles);
 				else if (action == "recheck")

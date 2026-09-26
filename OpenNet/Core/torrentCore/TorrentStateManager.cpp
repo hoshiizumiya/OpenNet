@@ -985,29 +985,32 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
-	bool TorrentStateManager::UpdateTaskProgress(std::string const& taskId, std::int64_t const downloadedSize, std::int64_t const uploadedSize, std::int64_t const completedTimestamp)
+	bool TorrentStateManager::UpdateTaskProgress(
+		std::string const& taskId,
+		std::int64_t const totalSize,
+		std::int64_t const downloadedSize,
+		std::int64_t const uploadedSize,
+		std::int64_t const completedTimestamp)
 	{
 		std::lock_guard lk(m_dbMutex);
 		if (!m_db) return false;
-
 		try
 		{
-			const char* sql = "UPDATE tasks SET downloaded_size = ?, uploaded_size = ?, completed_timestamp = CASE WHEN ? > 0 THEN ? ELSE completed_timestamp END, updated_timestamp = ? WHERE task_id = ?;";
+			const char* sql = "UPDATE tasks SET total_size = ?, downloaded_size = ?, uploaded_size = ?, completed_timestamp = CASE WHEN ? > 0 THEN ? ELSE completed_timestamp END, updated_timestamp = ? WHERE task_id = ?;";
 			sqlite3_stmt* stmt = nullptr;
 			int rc = sqlite3_prepare_v2(static_cast<sqlite3*>(m_db), sql, -1, &stmt, nullptr);
 			if (rc != SQLITE_OK) return false;
-
-			sqlite3_bind_int64(stmt, 1, downloadedSize);
-			sqlite3_bind_int64(stmt, 2, uploadedSize);
-			sqlite3_bind_int64(stmt, 3, completedTimestamp);
+			sqlite3_bind_int64(stmt, 1, totalSize);
+			sqlite3_bind_int64(stmt, 2, downloadedSize);
+			sqlite3_bind_int64(stmt, 3, uploadedSize);
 			sqlite3_bind_int64(stmt, 4, completedTimestamp);
-			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count();
-			sqlite3_bind_int64(stmt, 5, updatedTimestamp);
-			sqlite3_bind_text(stmt, 6, taskId.c_str(), -1, SQLITE_TRANSIENT);
-
+			sqlite3_bind_int64(stmt, 5, completedTimestamp);
+			auto const updatedTimestamp = std::chrono::duration_cast<std::chrono::seconds>(
+				std::chrono::system_clock::now().time_since_epoch()).count();
+			sqlite3_bind_int64(stmt, 6, updatedTimestamp);
+			sqlite3_bind_text(stmt, 7, taskId.c_str(), -1, SQLITE_TRANSIENT);
 			rc = sqlite3_step(stmt);
 			sqlite3_finalize(stmt);
-
 			return rc == SQLITE_DONE;
 		}
 		catch (std::exception const& ex)

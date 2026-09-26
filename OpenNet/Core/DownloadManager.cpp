@@ -8,6 +8,7 @@
 module;
 
 #include "Core/Notification/HttpToastNotification.h"
+#include "Core/DataGraph/SpeedGraphDatabase.h"
 #include <Windows.h>
 
 module OpenNet.Core.DownloadManager;
@@ -3131,6 +3132,18 @@ namespace OpenNet::Core
 								: 1;
 							hsm.UpdateRecordStatus(recordId, persistedStatus);
 						}
+
+						auto const graphPercent = hybridState
+							? hybridState->progressPercent
+							: task.TotalLength > 0
+							? static_cast<int>((task.CompletedLength * 100) / task.TotalLength)
+							: 0;
+						auto const graphSpeedBytes = hybridState
+							? static_cast<std::uint64_t>((std::max)(
+								std::int64_t{}, hybridState->downloadRate))
+							: task.DownloadSpeed;
+						::OpenNet::Core::SpeedGraphDatabase::Instance().SavePoint(
+							recordId, graphPercent, graphSpeedBytes / 1024);
 					}
 				}
 

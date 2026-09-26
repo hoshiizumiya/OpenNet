@@ -87,7 +87,7 @@ export namespace OpenNet::Core::Torrent
 		std::optional<TaskSettingsMetadata> LoadTaskSettings(std::string const& taskId);
 		bool DeleteTask(std::string const& taskId);
 		bool UpdateTaskStatus(std::string const& taskId, int status);
-		bool UpdateTaskProgress(std::string const& taskId, std::int64_t downloadedSize, std::int64_t uploadedSize, std::int64_t completedTimestamp);
+		bool UpdateTaskProgress(std::string const& taskId, std::int64_t totalSize, std::int64_t downloadedSize, std::int64_t uploadedSize, std::int64_t completedTimestamp);
 		bool UpdateTaskName(std::string const& taskId, std::string const& name);
 		bool UpdateTaskSavePath(std::string const& taskId, std::string const& savePath);
 		bool UpdateTaskQueuePosition(std::string const& taskId, int queuePosition);

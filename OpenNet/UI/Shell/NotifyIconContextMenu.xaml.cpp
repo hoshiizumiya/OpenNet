@@ -196,7 +196,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			{
 				for (auto const& task : tasks)
 				{
-					core->PauseTorrent(task.taskId);
+					core->StopTorrent(task.taskId);
 				}
 			}
 			http.PauseAllHttp();
