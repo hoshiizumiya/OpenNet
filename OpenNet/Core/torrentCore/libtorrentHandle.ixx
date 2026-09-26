@@ -106,6 +106,7 @@ export namespace OpenNet::Core::Torrent
 			std::int64_t totalWantedDone{};
 			int connectedPeers{};
 			int connectedSeeds{};
+			std::string infoHashV2;
 			std::string error;
 		};
 

@@ -1796,6 +1796,7 @@ namespace OpenNet::Core::Torrent
 			if (it == m_longSeedSessions.end())
 				return result;
 			result.exists = true;
+			result.infoHashV2 = it->second.infoHashV2;
 			handle = it->second.handle;
 		}
 
