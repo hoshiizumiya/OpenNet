@@ -448,6 +448,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 						: winrt::to_hstring(task.name);
 
 					auto vm = self->FindOrCreateItemByTaskId(task.taskId, name);
+					vm.Transport(L"libtorrent · BitTorrent");
 
 					// Set add date from timestamp
 					vm.AddDate(FormatTimestamp(task.addedTimestamp));
@@ -570,6 +571,21 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 					// Set add date
 					vm.AddDate(FormatTimestamp(rec.addedTimestamp));
+					switch (rec.activeEngine)
+					{
+						case 2:
+							vm.Transport(L"libtorrent · HTTP/P2P");
+							break;
+						case 1:
+							vm.Transport(L"P2P discovery");
+							break;
+						default:
+							vm.Transport(
+								rec.transferMode == 1
+									? L"aria2 · P2P fallback"
+									: L"aria2");
+							break;
+					}
 
 					// Set progress
 					if (rec.status == 3) // Completed
@@ -981,8 +997,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		auto ulSpeed = progress.uploadSpeed;
 		auto percent = progress.progressPercent;
 		auto status = progress.status;
+		auto engine = progress.engine;
 
-		dispatcher.TryEnqueue([weak = get_weak(), gid, name, totalLen, completedLen, dlSpeed, ulSpeed, percent, status]()
+		dispatcher.TryEnqueue([weak = get_weak(), gid, name, totalLen, completedLen, dlSpeed, ulSpeed, percent, status, engine]()
 		{
 			if (auto self = weak.get())
 			{
@@ -998,6 +1015,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 				// Update name if it changed (aria2 resolves filename later)
 				if (!name.empty() && item.Name() != name)
 					item.Name(name);
+
+				switch (engine)
+				{
+					case ::OpenNet::Core::HttpTransferEngine::CanonicalHybrid:
+						item.Transport(L"libtorrent · HTTP/P2P");
+						break;
+					case ::OpenNet::Core::HttpTransferEngine::CanonicalProbe:
+						item.Transport(L"P2P discovery");
+						break;
+					default:
+						item.Transport(L"aria2");
+						break;
+				}
 
 				auto const previousState = item.State();
 				auto nextState =
