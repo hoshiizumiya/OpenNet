@@ -927,8 +927,6 @@ namespace OpenNet::Core
 					std::move(expectedSha256),
 					std::move(peerFallbackTarget),
 					options.ResourceContentLength,
-					true,
-					options.StartPaused,
 					std::move(hybridWebSeeds));
 			}
 
@@ -1046,7 +1044,6 @@ namespace OpenNet::Core
 			}
 			if (auto const state = m_peerFallbacks.find(gid);
 				state != m_peerFallbacks.end()
-				&& state->second.job.hybridPrimary
 				&& !state->second.cancelRequested
 				&& state->second.phase != PeerFallbackPhase::Failed)
 			{
@@ -1097,25 +1094,20 @@ namespace OpenNet::Core
 
 			if (auto state = m_peerFallbacks.find(gid);
 				state != m_peerFallbacks.end()
-				&& state->second.job.hybridPrimary
 				&& !state->second.cancelRequested)
 			{
 				if (state->second.phase == PeerFallbackPhase::Failed)
 				{
-					bool fallbackSafe = true;
-					if (state->second.job.hybridPrimary)
-					{
-						std::error_code error;
-						std::filesystem::remove(
+					std::error_code error;
+					std::filesystem::remove(
+						state->second.job.targetFilePath,
+						error);
+					std::error_code existsError;
+					bool const fallbackSafe =
+						!std::filesystem::exists(
 							state->second.job.targetFilePath,
-							error);
-						std::error_code existsError;
-						fallbackSafe =
-							!std::filesystem::exists(
-								state->second.job.targetFilePath,
-								existsError)
-							&& !existsError;
-					}
+							existsError)
+						&& !existsError;
 					if (!fallbackSafe)
 					{
 						// The previous libtorrent writer may still have the
@@ -1537,8 +1529,6 @@ namespace OpenNet::Core
 		std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
 		std::filesystem::path targetFilePath,
 		std::uint64_t expectedSize,
-		bool hybridPrimary,
-		bool userRequestedPaused,
 		std::vector<std::string> webSeeds)
 	{
 		if (gid.empty() || resourceKeys.empty()) return;
@@ -1550,8 +1540,6 @@ namespace OpenNet::Core
 				std::move(expectedSha256),
 				std::move(targetFilePath),
 				expectedSize,
-				hybridPrimary,
-				userRequestedPaused,
 				std::move(webSeeds)
 			});
 		}
@@ -1692,7 +1680,7 @@ namespace OpenNet::Core
 			{
 				QueuePeerFallback(job, summary);
 			}
-			else if (job.hybridPrimary)
+			else
 			{
 				bool userPaused = false;
 				bool suppressed = false;
@@ -1932,8 +1920,6 @@ namespace OpenNet::Core
 			std::move(expectedSha256),
 			std::move(targetFilePath),
 			expectedSize,
-			true,
-			false,
 			{ *persistedWebSeed });
 		return true;
 	}
@@ -1949,22 +1935,12 @@ namespace OpenNet::Core
 
 		PeerFallbackJob job;
 		job.gid = discovery.gid;
-		job.sessionId = discovery.hybridPrimary
-			? "http-hybrid:" + discovery.gid
-			: "http-fallback:" + discovery.gid;
+		job.sessionId = "http-hybrid:" + discovery.gid;
 		job.targetFilePath = discovery.targetFilePath;
-		job.temporaryFilePath = discovery.targetFilePath;
-		if (!discovery.hybridPrimary)
-		{
-			job.temporaryFilePath +=
-				winrt::to_hstring(
-					".opennet-p2p-" + discovery.gid + ".part").c_str();
-		}
 		job.bep52Identity = *summary.bep52Identity;
 		job.expectedSha256 = *discovery.expectedSha256;
 		job.resourceKeys = discovery.resourceKeys;
 		job.expectedSize = summary.size;
-		job.hybridPrimary = discovery.hybridPrimary;
 		job.webSeeds = discovery.webSeeds;
 
 		{
@@ -2001,9 +1977,7 @@ namespace OpenNet::Core
 				std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now()
 						.time_since_epoch()).count(),
-				job.hybridPrimary
-					? "Trusted canonical resource matched; libtorrent hybrid transfer queued with HTTP web seed + OpenNet peers."
-					: "Trusted OpenNet peer fallback queued in a separate temporary file."
+				"Trusted canonical resource matched; libtorrent hybrid transfer queued with HTTP web seed + OpenNet peers."
 			});
 		}
 		{
@@ -2063,11 +2037,6 @@ namespace OpenNet::Core
 		{
 			::OpenNet::Core::P2PManager::Instance()
 				.CloseLongSeedSession(immediateCleanup->sessionId);
-			std::error_code error;
-			if (!immediateCleanup->hybridPrimary)
-				std::filesystem::remove(
-					immediateCleanup->temporaryFilePath,
-					error);
 		}
 		m_peerFallbackCv.notify_all();
 	}
@@ -2086,39 +2055,31 @@ namespace OpenNet::Core
 				.CloseLongSeedSession(job.sessionId);
 
 			std::error_code error;
-			bool payloadCleanupSucceeded = true;
-			if (!job.hybridPrimary)
+			// libtorrent was the only payload writer. Close the hidden torrent
+			// first, then wait until its incomplete payload can be removed
+			// before aria2 is allowed to own the same path.
+			bool payloadCleanupSucceeded = false;
+			for (int attempt = 0; attempt < 40; ++attempt)
 			{
-				std::filesystem::remove(job.temporaryFilePath, error);
+				error.clear();
+				std::filesystem::remove(job.targetFilePath, error);
+				std::error_code existsError;
+				if (!std::filesystem::exists(job.targetFilePath, existsError)
+					&& !existsError)
+				{
+					payloadCleanupSucceeded = true;
+					break;
+				}
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds(50));
 			}
-			else
+			if (!payloadCleanupSucceeded)
 			{
-				// libtorrent was the only payload writer. Close the hidden
-				// torrent first, then wait until its incomplete payload can be
-				// removed before aria2 is allowed to own the same path.
-				payloadCleanupSucceeded = false;
-				for (int attempt = 0; attempt < 40; ++attempt)
-				{
-					error.clear();
-					std::filesystem::remove(job.targetFilePath, error);
-					std::error_code existsError;
-					if (!std::filesystem::exists(job.targetFilePath, existsError)
-						&& !existsError)
-					{
-						payloadCleanupSucceeded = true;
-						break;
-					}
-					std::this_thread::sleep_for(
-						std::chrono::milliseconds(50));
-				}
-				if (!payloadCleanupSucceeded)
-				{
-					message +=
-						" Incomplete libtorrent output could not be removed; aria2 remains paused to preserve single-writer ownership.";
-				}
-				// Do not delete the aria2 .aria2 control file here. aria2 is
-				// the fallback engine and still owns that control state.
+				message +=
+					" Incomplete libtorrent output could not be removed; aria2 remains paused to preserve single-writer ownership.";
 			}
+			// Do not delete the aria2 .aria2 control file here. aria2 is the
+			// fallback control shell and still owns that state.
 
 			bool shouldLog = false;
 			bool resumeAria2 = false;
@@ -2141,8 +2102,7 @@ namespace OpenNet::Core
 						userPaused = it->second.userPaused
 							|| m_userPausedHttpGids.contains(job.gid);
 						resumeAria2 =
-							job.hybridPrimary
-							&& payloadCleanupSucceeded
+							payloadCleanupSucceeded
 							&& !userPaused
 							&& !m_peerFallbackSuppressedGids.contains(job.gid);
 						shouldLog = true;
@@ -2150,7 +2110,7 @@ namespace OpenNet::Core
 				}
 			}
 
-			if (job.hybridPrimary && payloadCleanupSucceeded)
+			if (payloadCleanupSucceeded)
 			{
 				if (auto const recordId = GetRecordIdForGid(job.gid);
 					!recordId.empty())
@@ -2180,12 +2140,10 @@ namespace OpenNet::Core
 					std::chrono::duration_cast<std::chrono::seconds>(
 						std::chrono::system_clock::now()
 							.time_since_epoch()).count(),
-					job.hybridPrimary
-						? (userPaused
-							? "Canonical HTTP/P2P hybrid failed; aria2 fallback remains paused by user: "
-							: "Canonical HTTP/P2P hybrid failed; falling back to aria2 origin download: ")
-							+ message
-						: "OpenNet peer fallback failed: " + message
+					(userPaused
+						? "Canonical HTTP/P2P hybrid failed; aria2 fallback remains paused by user: "
+						: "Canonical HTTP/P2P hybrid failed; falling back to aria2 origin download: ")
+						+ message
 				});
 			}
 		};
@@ -2222,30 +2180,26 @@ namespace OpenNet::Core
 			{
 				std::error_code error;
 				std::filesystem::remove(
-					job.temporaryFilePath,
+					job.targetFilePath,
 					error);
-
-				if (job.hybridPrimary)
+				std::error_code existsError;
+				auto const stillExists =
+					std::filesystem::exists(
+						job.targetFilePath,
+						existsError);
+				if (error
+					|| existsError
+					|| stillExists)
 				{
-					std::error_code existsError;
-					auto const stillExists =
-						std::filesystem::exists(
-							job.temporaryFilePath,
-							existsError);
-					if (error
-						|| existsError
-						|| stillExists)
-					{
-						fail(
-							job,
-							"Paused aria2 payload could not be released before libtorrent ownership transfer.");
-						continue;
-					}
+					fail(
+						job,
+						"Paused aria2 payload could not be released before libtorrent ownership transfer.");
+					continue;
 				}
 			}
 
 			auto const recordId = GetRecordIdForGid(job.gid);
-			if (job.hybridPrimary && !recordId.empty())
+			if (!recordId.empty())
 			{
 				HttpStateManager::Instance().UpdateRecordActiveEngine(
 					recordId,
@@ -2266,7 +2220,7 @@ namespace OpenNet::Core
 					::OpenNet::Core::P2PManager::Instance()
 						.StartLongSeedDownloadAsync(
 							job.bep52Identity,
-							job.temporaryFilePath,
+							job.targetFilePath,
 							20,
 							job.sessionId,
 							job.webSeeds,
@@ -2294,7 +2248,7 @@ namespace OpenNet::Core
 				::OpenNet::Core::P2PManager::Instance()
 					.GetLongSeedSessionStatus(job.sessionId);
 			job.canonicalInfoHashV2 = initialStatus.infoHashV2;
-			if (job.hybridPrimary && !recordId.empty())
+			if (!recordId.empty())
 			{
 				HttpStateManager::Instance().UpdateRecordActiveEngine(
 					recordId,
@@ -2361,24 +2315,6 @@ namespace OpenNet::Core
 					continue;
 				}
 
-				bool originCompleted = false;
-				{
-					std::lock_guard lock(m_mutex);
-					if (auto const task =
-						m_httpTaskSnapshots.find(job.gid);
-						task != m_httpTaskSnapshots.end())
-					{
-						originCompleted =
-							task->second.Status
-								== Aria2::DownloadStatus::Complete;
-					}
-				}
-				if (!job.hybridPrimary && originCompleted)
-				{
-					cancelled = true;
-					break;
-				}
-
 				auto status =
 					::OpenNet::Core::P2PManager::Instance()
 						.GetLongSeedSessionStatus(job.sessionId);
@@ -2432,11 +2368,6 @@ namespace OpenNet::Core
 
 			if (cancelled)
 			{
-				std::error_code error;
-				if (!job.hybridPrimary)
-					std::filesystem::remove(
-						job.temporaryFilePath,
-						error);
 				std::lock_guard lock(m_peerFallbackMutex);
 				m_peerFallbacks.erase(job.gid);
 				continue;
@@ -2455,7 +2386,7 @@ namespace OpenNet::Core
 			{
 				auto hashed =
 					::OpenNet::Core::Content::ContentHasher::HashFile(
-						job.temporaryFilePath);
+						job.targetFilePath);
 
 				bool const sizeMatches =
 					(job.expectedSize == 0
@@ -2491,11 +2422,6 @@ namespace OpenNet::Core
 				if (state == m_peerFallbacks.end()
 					|| state->second.cancelRequested)
 				{
-					std::error_code error;
-					if (!job.hybridPrimary)
-						std::filesystem::remove(
-							job.temporaryFilePath,
-							error);
 					if (state != m_peerFallbacks.end())
 						m_peerFallbacks.erase(state);
 					continue;
@@ -2520,9 +2446,7 @@ namespace OpenNet::Core
 					std::chrono::duration_cast<std::chrono::seconds>(
 						std::chrono::system_clock::now()
 							.time_since_epoch()).count(),
-					job.hybridPrimary
-						? "Canonical HTTP/P2P hybrid completed and passed caller SHA-256 verification."
-						: "OpenNet peer fallback is fully downloaded and locally SHA-256 verified."
+					"Canonical HTTP/P2P hybrid completed and passed caller SHA-256 verification."
 				});
 			}
 		}
@@ -2548,7 +2472,7 @@ namespace OpenNet::Core
 
 		std::error_code existsError;
 		if (!std::filesystem::is_regular_file(
-			job.temporaryFilePath,
+			job.targetFilePath,
 			existsError)
 			|| existsError)
 		{
@@ -2563,50 +2487,11 @@ namespace OpenNet::Core
 			return false;
 		}
 
-		if (job.temporaryFilePath != job.targetFilePath
-			&& !::MoveFileExW(
-				job.temporaryFilePath.c_str(),
-				job.targetFilePath.c_str(),
-				MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH))
-		{
-			auto const error = ::GetLastError();
-			// aria2 may need one more refresh tick to release the failed
-			// output handle. Keep the verified fallback intact and retry.
-			if (error == ERROR_SHARING_VIOLATION
-				|| error == ERROR_LOCK_VIOLATION
-				|| error == ERROR_ACCESS_DENIED)
-				return false;
-
-			std::lock_guard lock(m_peerFallbackMutex);
-			if (auto const it = m_peerFallbacks.find(gid);
-				it != m_peerFallbacks.end())
-			{
-				it->second.phase = PeerFallbackPhase::Failed;
-				it->second.error = std::system_category()
-					.message(static_cast<int>(error));
-			}
+		// ProcessAria2Tasks already owns InstanceLock here. Do not mark the
+		// HTTP task complete until the paused control shell is really gone;
+		// otherwise aria2 may be restored as a ghost task later.
+		if (!RemoveAria2TaskUnlocked(*m_aria2, gid))
 			return false;
-		}
-
-		if (job.hybridPrimary)
-		{
-			// ProcessAria2Tasks already owns InstanceLock here. Do not mark
-			// the HTTP task complete until the paused control shell is really
-			// gone; otherwise aria2 may be restored as a ghost task later.
-			if (!RemoveAria2TaskUnlocked(*m_aria2, gid))
-				return false;
-		}
-		else
-		{
-			try
-			{
-				m_aria2->Remove(gid);
-				m_aria2->SaveSession();
-			}
-			catch (...)
-			{
-			}
-		}
 
 		auto const aria2ControlPath = std::filesystem::path{
 			job.targetFilePath.wstring() + L".aria2" };
@@ -2639,12 +2524,8 @@ namespace OpenNet::Core
 			stateManager.UpdateRecordActiveEngine(
 				recordId,
 				static_cast<int>(
-					job.hybridPrimary
-						? HttpTransferEngine::CanonicalHybrid
-						: HttpTransferEngine::Aria2),
-				job.hybridPrimary
-					? job.canonicalInfoHashV2
-					: std::string{});
+					HttpTransferEngine::CanonicalHybrid),
+				job.canonicalInfoHashV2);
 		}
 
 		Aria2::DownloadInformation completedTask = task;
@@ -2688,9 +2569,7 @@ namespace OpenNet::Core
 				std::chrono::duration_cast<std::chrono::seconds>(
 					std::chrono::system_clock::now()
 						.time_since_epoch()).count(),
-				job.hybridPrimary
-					? "Canonical HTTP/P2P hybrid completed through libtorrent with one writer."
-					: "HTTP origin failed; verified OpenNet peer fallback was promoted atomically."
+				"Canonical HTTP/P2P hybrid completed through libtorrent with one writer."
 			});
 			finishedCallback = m_finishedCb;
 		}
@@ -3003,7 +2882,6 @@ namespace OpenNet::Core
 					std::lock_guard fallbackLock(m_peerFallbackMutex);
 					if (auto const state = m_peerFallbacks.find(gid);
 						state != m_peerFallbacks.end()
-						&& state->second.job.hybridPrimary
 						&& !state->second.cancelRequested
 						&& state->second.phase != PeerFallbackPhase::Failed)
 					{

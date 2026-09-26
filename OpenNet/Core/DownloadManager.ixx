@@ -140,11 +140,9 @@ export namespace OpenNet::Core
 			std::string gid,
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
 			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
-			std::filesystem::path targetFilePath = {},
-			std::uint64_t expectedSize = 0,
-			bool hybridPrimary = false,
-			bool userRequestedPaused = false,
-			std::vector<std::string> webSeeds = {});
+			std::filesystem::path targetFilePath,
+			std::uint64_t expectedSize,
+			std::vector<std::string> webSeeds);
 		void QueuePeerFallback(
 			ResourceDiscoveryJob const& discovery,
 			HttpResourceDiscovery const& summary);
@@ -177,8 +175,6 @@ export namespace OpenNet::Core
 			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256;
 			std::filesystem::path targetFilePath;
 			std::uint64_t expectedSize{};
-			bool hybridPrimary{};
-			bool userRequestedPaused{};
 			std::vector<std::string> webSeeds;
 		};
 		std::thread m_resourceDiscoveryThread;
@@ -201,12 +197,10 @@ export namespace OpenNet::Core
 			std::string gid;
 			std::string sessionId;
 			std::filesystem::path targetFilePath;
-			std::filesystem::path temporaryFilePath;
 			::OpenNet::Core::Content::ContentIdentity bep52Identity;
 			::OpenNet::Core::Content::ContentIdentity expectedSha256;
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
 			std::uint64_t expectedSize{};
-			bool hybridPrimary{};
 			std::string canonicalInfoHashV2;
 			std::vector<std::string> webSeeds;
 		};
