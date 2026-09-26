@@ -28,6 +28,7 @@
 #include <string>
 #include <string_view>
 #include <thread>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -74,6 +75,19 @@ namespace OpenNetUnitTest
 		public:
 			explicit RangeHttpServer(std::vector<std::uint8_t> bytes)
 				: m_bytes(std::move(bytes))
+			{
+				Start();
+			}
+
+			explicit RangeHttpServer(
+				std::unordered_map<std::string, std::vector<std::uint8_t>> routes)
+				: m_routes(std::move(routes))
+			{
+				Start();
+			}
+
+		private:
+			void Start()
 			{
 				WSADATA data{};
 				if (::WSAStartup(MAKEWORD(2, 2), &data) != 0)
@@ -137,6 +151,7 @@ namespace OpenNetUnitTest
 				return m_targets;
 			}
 
+		public:
 			std::vector<std::string> Ranges() const
 			{
 				std::lock_guard lock(m_mutex);
@@ -144,6 +159,15 @@ namespace OpenNetUnitTest
 			}
 
 		private:
+			std::vector<std::uint8_t> const* PayloadFor(
+				std::string const& target) const
+			{
+				if (m_routes.empty())
+					return &m_bytes;
+				auto const route = m_routes.find(target);
+				return route == m_routes.end() ? nullptr : &route->second;
+			}
+
 			void Run(std::stop_token const token)
 			{
 				while (!token.stop_requested())
@@ -227,6 +251,17 @@ namespace OpenNetUnitTest
 					m_ranges.push_back(range);
 				}
 
+				auto const payload = PayloadFor(target);
+				if (!payload)
+				{
+					constexpr std::string_view notFound =
+						"HTTP/1.1 404 Not Found\r\n"
+						"Content-Length: 0\r\n"
+						"Connection: close\r\n\r\n";
+					SendAll(client, notFound.data(), notFound.size());
+					return;
+				}
+
 				if (method == "HEAD")
 				{
 					auto const header = std::format(
@@ -234,13 +269,15 @@ namespace OpenNetUnitTest
 						"Content-Length: {}\r\n"
 						"Accept-Ranges: bytes\r\n"
 						"Connection: close\r\n\r\n",
-						m_bytes.size());
+						payload->size());
 					SendAll(client, header.data(), header.size());
 					return;
 				}
+				if (payload->empty())
+					return;
 
 				std::size_t begin = 0;
-				std::size_t end = m_bytes.empty() ? 0 : m_bytes.size() - 1;
+				std::size_t end = payload->size() - 1;
 				bool partial = false;
 				if (range.starts_with("bytes="))
 				{
@@ -252,15 +289,15 @@ namespace OpenNetUnitTest
 						if (dash + 1 < range.size())
 							end = static_cast<std::size_t>(
 								std::stoull(range.substr(dash + 1)));
-						end = (std::min)(end, m_bytes.size() - 1);
-						partial = begin <= end && end < m_bytes.size();
+						end = (std::min)(end, payload->size() - 1);
+						partial = begin <= end && end < payload->size();
 					}
 				}
 
 				if (!partial)
 				{
 					begin = 0;
-					end = m_bytes.size() - 1;
+					end = payload->size() - 1;
 				}
 				auto const length = end - begin + 1;
 				auto const header = partial
@@ -273,7 +310,7 @@ namespace OpenNetUnitTest
 						length,
 						begin,
 						end,
-						m_bytes.size())
+						payload->size())
 					: std::format(
 						"HTTP/1.1 200 OK\r\n"
 						"Content-Length: {}\r\n"
@@ -283,11 +320,12 @@ namespace OpenNetUnitTest
 				SendAll(client, header.data(), header.size());
 				SendAll(
 					client,
-					reinterpret_cast<char const*>(m_bytes.data() + begin),
+					reinterpret_cast<char const*>(payload->data() + begin),
 					length);
 			}
 
 			std::vector<std::uint8_t> m_bytes;
+			std::unordered_map<std::string, std::vector<std::uint8_t>> m_routes;
 			mutable std::mutex m_mutex;
 			std::vector<std::string> m_targets;
 			std::vector<std::string> m_ranges;
@@ -381,23 +419,25 @@ namespace OpenNetUnitTest
 			return fixture;
 		}
 
-		std::filesystem::path DownloadFromWebSeed(
-			CanonicalFixture const& fixture,
-			std::string const& webSeed)
+		void DownloadMetainfoFromWebSeed(
+			std::vector<char> const& metainfo,
+			std::filesystem::path const& outputRoot,
+			std::string const& webSeed,
+			std::optional<std::pair<lt::file_index_t, std::string>> rename = std::nullopt)
 		{
 			auto params = lt::load_torrent_buffer(
 				lt::span<char const>(
-					fixture.metainfo.data(),
-					fixture.metainfo.size()));
+					metainfo.data(),
+					metainfo.size()));
 			if (!params.ti)
 				throw std::runtime_error("failed to load test torrent");
 
-			auto const outputRoot = fixture.root / L"download";
 			std::filesystem::create_directories(outputRoot);
 			params.save_path = Utf8Path(outputRoot);
-			params.renamed_files.insert_or_assign(
-				lt::file_index_t{0},
-				"download.bin");
+			if (rename)
+				params.renamed_files.insert_or_assign(
+					rename->first,
+					rename->second);
 			params.url_seeds.push_back(webSeed);
 			params.flags |=
 				lt::torrent_flags::disable_dht
@@ -428,7 +468,8 @@ namespace OpenNetUnitTest
 			bool completed = false;
 			while (std::chrono::steady_clock::now() < deadline)
 			{
-				auto const status = handle.status();
+				auto const status = handle.status(
+					lt::torrent_handle::query_accurate_download_counters);
 				if (status.errc)
 					throw std::runtime_error(status.errc.message());
 				if (status.is_finished || status.is_seeding)
@@ -440,8 +481,101 @@ namespace OpenNetUnitTest
 			}
 			if (!completed)
 				throw std::runtime_error("web-seed download timed out");
+		}
 
+		std::filesystem::path DownloadFromWebSeed(
+			CanonicalFixture const& fixture,
+			std::string const& webSeed)
+		{
+			auto const outputRoot = fixture.root / L"download";
+			DownloadMetainfoFromWebSeed(
+				fixture.metainfo,
+				outputRoot,
+				webSeed,
+				std::pair{
+					lt::file_index_t{0},
+					std::string{"download.bin"} });
 			return outputRoot / L"download.bin";
+		}
+		struct MultiFileV2Fixture
+		{
+			std::filesystem::path root;
+			std::vector<std::uint8_t> first;
+			std::vector<std::uint8_t> second;
+			std::vector<char> metainfo;
+
+			~MultiFileV2Fixture()
+			{
+				std::error_code error;
+				std::filesystem::remove_all(root, error);
+			}
+		};
+
+		MultiFileV2Fixture MakeMultiFileV2BoundaryFixture()
+		{
+			static std::atomic_uint64_t nextFixtureId{};
+			auto const fixtureId =
+				nextFixtureId.fetch_add(1, std::memory_order_relaxed);
+
+			MultiFileV2Fixture fixture;
+			fixture.root =
+				std::filesystem::temp_directory_path()
+				/ std::filesystem::path{
+					std::format(
+						L"OpenNet-WebSeedV2Boundary-{}-{}",
+						::GetCurrentProcessId(),
+						fixtureId) };
+			std::filesystem::remove_all(fixture.root);
+
+			auto const sourceRoot = fixture.root / L"seed";
+			auto const sourceDirectory =
+				sourceRoot / L"v2-boundary";
+			std::filesystem::create_directories(sourceDirectory);
+
+			fixture.first.resize(1024 * 1024 + 12345);
+			fixture.second.resize(1024 * 1024 + 23456);
+			for (std::size_t index = 0; index < fixture.first.size(); ++index)
+				fixture.first[index] =
+					static_cast<std::uint8_t>((index * 17u + 11u) & 0xffu);
+			for (std::size_t index = 0; index < fixture.second.size(); ++index)
+				fixture.second[index] =
+					static_cast<std::uint8_t>((index * 29u + 7u) & 0xffu);
+
+			auto writeFile = [](std::filesystem::path const& path,
+				std::vector<std::uint8_t> const& bytes)
+			{
+				std::ofstream output(path, std::ios::binary);
+				if (!output)
+					throw std::runtime_error(
+						"failed to create multi-file WebSeed fixture");
+				output.write(
+					reinterpret_cast<char const*>(bytes.data()),
+					static_cast<std::streamsize>(bytes.size()));
+			};
+			writeFile(sourceDirectory / L"first.bin", fixture.first);
+			writeFile(sourceDirectory / L"second.bin", fixture.second);
+
+			std::vector<lt::create_file_entry> files;
+			files.emplace_back(
+				"v2-boundary/first.bin",
+				static_cast<std::int64_t>(fixture.first.size()));
+			files.emplace_back(
+				"v2-boundary/second.bin",
+				static_cast<std::int64_t>(fixture.second.size()));
+			lt::create_torrent creator(
+				std::move(files),
+				1024 * 1024,
+				lt::create_torrent::v2_only);
+			creator.set_creation_date(0);
+			lt::error_code error;
+			lt::set_piece_hashes(
+				creator,
+				Utf8Path(sourceRoot),
+				error);
+			if (error)
+				throw std::runtime_error(error.message());
+			fixture.metainfo = creator.generate_buf();
+			return fixture;
 		}
 	}
 
@@ -484,6 +618,51 @@ namespace OpenNetUnitTest
 						return range.starts_with("bytes=");
 					}),
 				L"libtorrent must use HTTP byte ranges for the URL seed");
+		}
+
+		TEST_METHOD(V2MultiFileBoundaryDoesNotCoalesceAcrossFiles)
+		{
+			auto fixture = MakeMultiFileV2BoundaryFixture();
+			RangeHttpServer server{
+				std::unordered_map<std::string, std::vector<std::uint8_t>>{
+					{ "/origin/v2-boundary/first.bin", fixture.first },
+					{ "/origin/v2-boundary/second.bin", fixture.second }
+				} };
+			auto const outputRoot = fixture.root / L"download";
+			DownloadMetainfoFromWebSeed(
+				fixture.metainfo,
+				outputRoot,
+				server.Url("/origin/"));
+
+			auto readFile = [](std::filesystem::path const& path)
+			{
+				std::ifstream input(path, std::ios::binary);
+				return std::vector<std::uint8_t>(
+					std::istreambuf_iterator<char>{ input },
+					std::istreambuf_iterator<char>{});
+			};
+			Assert::IsTrue(
+				readFile(outputRoot / L"v2-boundary" / L"first.bin")
+					== fixture.first,
+				L"the first unaligned v2 file must pass its piece hashes");
+			Assert::IsTrue(
+				readFile(outputRoot / L"v2-boundary" / L"second.bin")
+					== fixture.second,
+				L"the second v2 file must not be corrupted by a coalesced request from the previous file");
+
+			auto const targets = server.Targets();
+			Assert::IsTrue(
+				std::ranges::find(
+					targets,
+					"/origin/v2-boundary/first.bin")
+					!= targets.end(),
+				L"the first file must be requested independently");
+			Assert::IsTrue(
+				std::ranges::find(
+					targets,
+					"/origin/v2-boundary/second.bin")
+					!= targets.end(),
+				L"the second file must be requested independently");
 		}
 
 		TEST_METHOD(TrailingSlashUrlSeedAppendsCanonicalFilePath)
