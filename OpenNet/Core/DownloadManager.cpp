@@ -634,6 +634,11 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || options.Uris.empty()) return {};
 
+		// Keep duplicate detection, aria2 creation and persistence association
+		// one transaction-like process operation. The SQLite output_key unique
+		// index remains the durable backstop.
+		std::lock_guard addLock(m_httpAddMutex);
+
 		bool const resourceHintSafe = IsResourceHintSafe(options);
 		bool const p2pPreferred =
 			options.TransferMode == Aria2::HttpTransferMode::P2PPreferred;
@@ -695,22 +700,65 @@ namespace OpenNet::Core
 			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			auto& stateManager = HttpStateManager::Instance();
 			stateManager.Initialize();
-			if (auto const existing = stateManager.FindActiveByUrl(options.Uris.front());
-				existing && !existing->lastGid.empty())
+
+			auto resolveExisting = [&](std::optional<HttpDownloadRecord> existing)
+				-> std::optional<std::string>
 			{
+				if (!existing)
+					return std::nullopt;
+				if (existing->lastGid.empty())
+				{
+					stateManager.UpdateRecordStatus(existing->recordId, 4);
+					return std::nullopt;
+				}
+
 				try
 				{
-					auto const information = m_aria2->GetTaskInformation(existing->lastGid);
-					if (information.Status != Aria2::DownloadStatus::Removed
-						&& information.Status != Aria2::DownloadStatus::Error)
+					auto const information =
+						m_aria2->GetTaskInformation(existing->lastGid);
+					switch (information.Status)
 					{
-						return existing->lastGid;
+						case Aria2::DownloadStatus::Removed:
+						case Aria2::DownloadStatus::Error:
+							stateManager.UpdateRecordStatus(
+								existing->recordId, 4);
+							return std::nullopt;
+						case Aria2::DownloadStatus::Complete:
+							stateManager.UpdateRecordProgress(
+								existing->recordId,
+								static_cast<std::int64_t>(
+									information.CompletedLength),
+								static_cast<std::int64_t>(
+									information.TotalLength));
+							stateManager.UpdateRecordStatus(
+								existing->recordId, 3);
+							return existing->lastGid;
+						default:
+							return existing->lastGid;
 					}
 				}
 				catch (...)
 				{
+					// aria2 no longer knows this control shell. Retire the
+					// stale ownership record before another writer is created.
+					stateManager.UpdateRecordStatus(existing->recordId, 4);
+					return std::nullopt;
 				}
+			};
+
+			if (auto const existing = resolveExisting(
+				stateManager.FindActiveByUrl(options.Uris.front())))
+				return *existing;
+
+			if (!options.Dir.empty() && !options.OutFileName.empty())
+			{
+				if (auto const existing = resolveExisting(
+					stateManager.FindActiveByOutputPath(
+						options.Dir,
+						options.OutFileName)))
+					return *existing;
 			}
+
 			auto& database = AppSettingsDatabase::Instance();
 			database.Initialize();
 			auto effectiveOptions = options;
@@ -726,7 +774,44 @@ namespace OpenNet::Core
 			if (!gid.empty())
 			{
 				if (!effectiveOptions.Description.empty()) database.SetString("http_task_description", gid, effectiveOptions.Description);
-				auto recordId = stateManager.AddRecord(effectiveOptions.Uris.front(), effectiveOptions.Dir, effectiveOptions.OutFileName);
+				auto recordId = stateManager.AddRecord(
+					effectiveOptions.Uris.front(),
+					effectiveOptions.Dir,
+					effectiveOptions.OutFileName);
+				if (recordId.empty())
+				{
+					try
+					{
+						m_aria2->Cancel(gid, true);
+						m_aria2->Remove(gid);
+					}
+					catch (...)
+					{
+					}
+					return {};
+				}
+
+				// A concurrent external aria2 reconciliation can theoretically
+				// publish the same durable record while this RPC is in flight.
+				// Never replace another task's GID: discard our newly-created
+				// shell and keep the existing owner.
+				if (auto const persisted =
+					stateManager.FindByRecordId(recordId);
+					persisted
+					&& !persisted->lastGid.empty()
+					&& persisted->lastGid != gid)
+				{
+					try
+					{
+						m_aria2->Cancel(gid, true);
+						m_aria2->Remove(gid);
+					}
+					catch (...)
+					{
+					}
+					return persisted->lastGid;
+				}
+
 				stateManager.UpdateRecordGid(recordId, gid);
 				stateManager.UpdateRecordTransferPolicy(
 					recordId,

@@ -234,6 +234,10 @@ export namespace OpenNet::Core
 		std::vector<std::thread> m_peerFallbackWorkers;
 
 		mutable std::mutex m_mutex;
+		// Serializes HTTP task creation from duplicate checks through the aria2
+		// RPC + SQLite association. Without this, two callers can both pass the
+		// preflight before either one publishes its output ownership.
+		std::mutex m_httpAddMutex;
 
 		// Cached task GIDs for change detection
 		std::set<std::string> m_knownGids;
