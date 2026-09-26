@@ -25,10 +25,10 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `7978355e1cc80830dc9c4344f1f266a1314c1cb7`
-- `fix: clean persisted canonical WebSeed state`
+- `b979b0c97f09377f3e30e56dfd4b4052f1885b64`
+- `chore: clean legacy HTTP peer fallback temps`
 
-This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory requests, safe zero-progress Resume re-discovery, verified payload-release handoff before every primary hybrid, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, and SQL regression coverage for active HTTP writer ownership.
+This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, and SQL regression coverage for active HTTP writer ownership.
 
 The feature lineage has been updated from:
 
@@ -292,7 +292,7 @@ The HTTP dialog now selects an explicit transfer mode:
 
 A source server's whole-file SHA-256 is not torrent metadata and cannot be converted into a magnet. A Server candidate remains untrusted until caller WholeFile SHA-256 + size match and a BEP52 identity/canonical manifest validate. If this canonical metadata is unavailable, aria2 becomes the payload writer.
 
-For primary hybrid, libtorrent writes the final target directly and mixes the HTTP URL Seed with OpenNet peers. The older `.opennet-p2p-<gid>.part` promotion route is retained only for legacy compatibility.
+For canonical hybrid, libtorrent writes the final target directly and mixes the HTTP URL Seed with OpenNet peers. The older separate-file `.opennet-p2p-<gid>.part` route has been removed from the runtime state machine; startup only removes an exact legacy temp derived from a persisted target + GID so previous prototype leftovers do not accumulate.
 
 Pause now pauses the hidden libtorrent session rather than closing it. Resume resumes the hidden session or a pending hybrid job; Cancel/Remove/Delete still suppress late discovery. HTTP records persist transfer mode, active engine, user pause intent and canonical v2 info-hash. The task list visibly identifies `P2P discovery`, `libtorrent · HTTP/P2P`, and aria2 execution, and hybrid telemetry maps libtorrent upload/download rates plus peer/seed counts into the existing HTTP task model.
 

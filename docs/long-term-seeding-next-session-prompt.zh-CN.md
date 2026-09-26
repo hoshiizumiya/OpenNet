@@ -178,7 +178,7 @@ WebSeed path fixture 已加入：
 
 因此自动 WebSeed 只接受不以 `/` 结尾的 direct-file final URL。canonical protocol/layout 此轮没有修改，Server validator 不需要同步变化.
 
-旧 `.opennet-p2p-<gid>.part` 整文件 fallback 仍作为兼容/恢复路径。
+旧 `.opennet-p2p-<gid>.part` separate-file fallback 已从 runtime 删除；当前 HTTP/P2P 只有 canonical libtorrent 一个数据 writer。启动时仅按持久化 target + GID 精确删除旧 prototype 遗留 temp，不做目录通配清理。
 
 ## 绝对不要做的事
 
@@ -197,7 +197,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `7978355e1cc80830dc9c4344f1f266a1314c1cb7`
+- `b979b0c97f09377f3e30e56dfd4b4052f1885b64`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 

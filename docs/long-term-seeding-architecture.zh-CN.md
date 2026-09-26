@@ -719,7 +719,7 @@ final public HTTP origin 通过 `add_torrent_params::url_seeds` 交给 libtorren
 
 当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 全程 paused。hybrid 失败时，OpenNet 先关闭隐藏 canonical session，只删除 libtorrent 尚未完成的 payload；aria2 自己的 `.aria2` control file 必须保留。确认 libtorrent 目标已经释放/清理之后，才允许 Resume aria2。这里是 writer ownership transfer，不是两个 writer 共存。
 
-libtorrent 完成后，OpenNet 仍会重算整文件并要求 caller WholeFile SHA-256/size 完全一致，随后才把 HTTP record 标记 Complete 并写入 ContentCatalog。旧的 `.opennet-p2p-<gid>.part` 独立整文件 fallback 继续作为兼容/恢复路径保留。
+libtorrent 完成后，OpenNet 仍会重算整文件并要求 caller WholeFile SHA-256/size 完全一致，随后才把 HTTP record 标记 Complete 并写入 ContentCatalog。旧的 `.opennet-p2p-<gid>.part` 独立整文件数据面已经从 runtime state machine 删除：当前不再存在第二套 whole-file P2P producer；启动时只会按持久化 target + GID 精确清理旧 prototype 遗留的临时文件。
 
 Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂停 libtorrent session，同时 aria2 shell 继续保持 paused；Resume 恢复该 hidden session。HTTP record 同时持久化 transfer policy、当前 engine、用户真实 Pause 意图和 canonical v2 info-hash。应用重启后，如果上次是 canonical libtorrent writer，OpenNet 会重新计算目标文件 SHA-256：完整且匹配 caller SHA-256 就直接恢复为 Complete；否则先删除 partial，再把 writer ownership 安全交还 aria2。Cancel/Remove/Delete 仍会关闭 hidden work 并 suppress late discovery。
 
@@ -855,7 +855,7 @@ BitComet LT UDP == uTP
 - [x] hybrid progress 映射回现有 HTTP task UI / persistence；
 - [x] caller SHA-256 二次校验、HTTP Complete 与 ContentCatalog 入库；
 - [x] hybrid 失败后先清理 libtorrent 不完整目标，再把 ownership 交回 aria2；
-- [x] 旧 separate-file peer fallback 继续保留用于兼容/恢复。
+- [x] 旧 separate-file peer fallback 已移除；启动时仅清理旧 prototype 的精确 legacy temp。
 
 ### OpenNet.Server 已实现
 

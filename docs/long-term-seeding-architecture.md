@@ -687,7 +687,7 @@ The current `OpenNet.Content.v1/content` canonical layout does not require a pro
 
 The current primary hybrid writes the destination directly because aria2 remains paused. On hybrid failure, OpenNet closes the hidden canonical session and removes the incomplete libtorrent-owned destination before aria2 is allowed to resume. The aria2 `.aria2` control file is deliberately preserved because it belongs to the fallback engine. Ownership is transferred, never shared.
 
-After libtorrent finishes, OpenNet also re-hashes the complete file and requires caller WholeFile SHA-256/size to match before marking the HTTP record Complete and cataloguing the final file. The older separate `.opennet-p2p-<gid>.part` path remains available as a compatibility/error-recovery fallback.
+After libtorrent finishes, OpenNet also re-hashes the complete file and requires caller WholeFile SHA-256/size to match before marking the HTTP record Complete and cataloguing the final file. The older separate `.opennet-p2p-<gid>.part` data path has been removed: there is no current producer for a second whole-file P2P download. Startup only deletes an exact legacy temp associated with a persisted target/GID from older prototypes.
 
 Pause/Resume now preserve an active hidden canonical session: Pause calls libtorrent pause while the aria2 shell remains paused, and Resume resumes that hidden session. The HTTP record also persists the requested transfer policy, current engine, user-pause intent and canonical v2 info-hash. On restart, an interrupted canonical transfer is re-hashed: a complete caller-SHA-256 match is recovered as Complete; otherwise the partial libtorrent target is removed before aria2 fallback is resumed. Cancel/Remove/Delete still close hidden work and suppress late discovery so stopped tasks cannot be resurrected.
 
@@ -828,7 +828,7 @@ Still required before public production:
 - [x] caller SHA-256 post-verification and Complete/ContentCatalog integration;
 - [x] hybrid failure cleanup before aria2 ownership resumes;
 - [x] restart recovery for process-local hidden canonical sessions;
-- [x] older separate-file peer fallback retained for compatibility/recovery.
+- [x] obsolete separate-file peer fallback removed; exact legacy prototype temp files are cleaned during startup.
 
 ### Implemented in OpenNet.Server
 
