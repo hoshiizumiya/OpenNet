@@ -412,13 +412,23 @@ namespace OpenNet::Core
 			recoverySettings.Initialize();
 			for (auto const& rec : records)
 			{
-				if (rec.status >= 3
+				bool const completedCanonicalRecord =
+					rec.status == 3
+					&& rec.transferMode == static_cast<int>(
+						Aria2::HttpTransferMode::P2PPreferred)
+					&& rec.activeEngine == static_cast<int>(
+						HttpTransferEngine::CanonicalHybrid);
+
+				if (rec.status == 4
 					|| rec.transferMode != static_cast<int>(
 						Aria2::HttpTransferMode::P2PPreferred)
 					|| rec.activeEngine == static_cast<int>(
 						HttpTransferEngine::Aria2)
-					|| rec.lastGid.empty())
+					|| (rec.status < 3 && rec.lastGid.empty())
+					|| (rec.status >= 3 && !completedCanonicalRecord))
+				{
 					continue;
+				}
 
 				// A probe never gave payload ownership to libtorrent, so its
 				// paused shell can immediately become the aria2 fallback.
@@ -457,14 +467,31 @@ namespace OpenNet::Core
 					/ std::filesystem::path{
 						winrt::to_hstring(rec.fileName).c_str() };
 
+				// A completed canonical HTTP record may have crashed after
+				// EnqueueFile() returned but before the catalog worker committed
+				// content_location. Keep replaying that idempotent transition on
+				// later starts until the durable catalog really contains it.
+				if (completedCanonicalRecord)
+				{
+					if (::OpenNet::Core::Content::ContentCatalogService::Instance()
+						.FindByLocation(targetFilePath))
+					{
+						continue;
+					}
+				}
+
 				bool recoveredComplete = false;
 				std::uint64_t recoveredSize{};
+				std::optional<
+					::OpenNet::Core::Content::ContentIdentity>
+					recoveredExpectedSha256;
 				if (auto persistedSha = recoverySettings.GetString(
 					ExpectedSha256Category, rec.recordId))
 				{
 					if (auto expected = ParseExpectedSha256(
 						"sha-256=" + *persistedSha))
 					{
+						recoveredExpectedSha256 = *expected;
 						try
 						{
 							auto const hashed =
@@ -484,6 +511,79 @@ namespace OpenNet::Core
 						{
 						}
 					}
+				}
+
+				auto enqueueRecoveredCatalog =
+					[&](std::optional<
+						::OpenNet::Core::Content::ContentIdentity> expected)
+					{
+						std::vector<
+							::OpenNet::Core::Content::ResourceKey>
+							resourceKeys;
+						if (recoverySettings.GetInt(
+								ResourceHintEligibilityCategory,
+								rec.recordId,
+								0) != 0)
+						{
+							std::vector<std::string> resourceUris;
+							if (!rec.url.empty())
+								resourceUris.push_back(rec.url);
+							if (auto persistedWebSeed =
+								recoverySettings.GetString(
+									CanonicalWebSeedUrlCategory,
+									rec.recordId);
+								persistedWebSeed
+								&& !persistedWebSeed->empty())
+							{
+								resourceUris.push_back(
+									*persistedWebSeed);
+							}
+
+							resourceKeys =
+								BuildResourceKeys(resourceUris);
+							if (auto persistedValidator =
+								recoverySettings.GetString(
+									ResourceValidatorKeyCategory,
+									rec.recordId))
+							{
+								if (auto validatorKey =
+									ParsePersistedResourceKey(
+										*persistedValidator);
+									validatorKey
+									&& std::ranges::find(
+										resourceKeys, *validatorKey)
+										== resourceKeys.end())
+								{
+									resourceKeys.push_back(
+										*validatorKey);
+								}
+							}
+						}
+
+						std::vector<
+							::OpenNet::Core::Content::ContentIdentity>
+							knownIdentities;
+						if (expected)
+							knownIdentities.push_back(*expected);
+
+						::OpenNet::Core::Content::ContentCatalogService::Instance()
+							.EnqueueFile(
+								targetFilePath,
+								{
+									::OpenNet::Core::Content::ContentSourceKind::Http,
+									rec.recordId,
+									std::nullopt
+								},
+								std::move(knownIdentities),
+								std::move(resourceKeys));
+					};
+
+				if (completedCanonicalRecord)
+				{
+					if (recoveredComplete)
+						enqueueRecoveredCatalog(
+							recoveredExpectedSha256);
+					continue;
 				}
 
 				if (recoveredComplete)
@@ -509,66 +609,12 @@ namespace OpenNet::Core
 					HttpStateManager::Instance().UpdateRecordStatus(
 						rec.recordId, 3);
 
-					// A crash may happen after libtorrent has finished the
-					// canonical payload but before normal promotion enqueues
-					// the file into ContentCatalog. Rebuild the durable
-					// discovery aliases and replay that idempotent catalog
-					// transition after the payload has passed the caller's
-					// whole-file SHA-256 gate.
-					std::vector<
-						::OpenNet::Core::Content::ResourceKey>
-						resourceKeys;
-					if (recoverySettings.GetInt(
-							ResourceHintEligibilityCategory,
-							rec.recordId,
-							0) != 0)
-					{
-						std::vector<std::string> resourceUris;
-						if (!rec.url.empty())
-							resourceUris.push_back(rec.url);
-						if (auto persistedWebSeed =
-							recoverySettings.GetString(
-								CanonicalWebSeedUrlCategory,
-								rec.recordId);
-							persistedWebSeed
-							&& !persistedWebSeed->empty())
-						{
-							resourceUris.push_back(
-								*persistedWebSeed);
-						}
-
-						resourceKeys =
-							BuildResourceKeys(resourceUris);
-						if (auto persistedValidator =
-							recoverySettings.GetString(
-								ResourceValidatorKeyCategory,
-								rec.recordId))
-						{
-							if (auto validatorKey =
-								ParsePersistedResourceKey(
-									*persistedValidator);
-								validatorKey
-								&& std::ranges::find(
-									resourceKeys,
-									*validatorKey)
-									== resourceKeys.end())
-							{
-								resourceKeys.push_back(
-									*validatorKey);
-							}
-						}
-					}
-
-					::OpenNet::Core::Content::ContentCatalogService::Instance()
-						.EnqueueFile(
-							targetFilePath,
-							{
-								::OpenNet::Core::Content::ContentSourceKind::Http,
-								rec.recordId,
-								std::nullopt
-							},
-							{},
-							std::move(resourceKeys));
+					// Enqueue is intentionally replayable. If the process dies
+					// before ContentCatalog's worker commits, status==Complete
+					// records are revisited on the next startup until the
+					// location is durably present.
+					enqueueRecoveredCatalog(
+						recoveredExpectedSha256);
 					continue;
 				}
 
