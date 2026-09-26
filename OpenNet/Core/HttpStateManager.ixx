@@ -53,7 +53,7 @@ export namespace OpenNet::Core
         std::string AddRecord(std::string const& url, std::string const& savePath, std::string const& fileName);
         void UpdateRecordGid(std::string const& recordId, std::string const& gid);
         void UpdateRecordName(std::string const& recordId, std::string const& name);
-        void UpdateRecordOutputPath(
+        bool UpdateRecordOutputPath(
             std::string const& recordId,
             std::string const& savePath,
             std::string const& fileName);

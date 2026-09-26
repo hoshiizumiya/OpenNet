@@ -542,13 +542,14 @@ namespace OpenNet::Core
         sqlite3_finalize(stmt);
     }
 
-    void HttpStateManager::UpdateRecordOutputPath(
+    bool HttpStateManager::UpdateRecordOutputPath(
         std::string const& recordId,
         std::string const& savePath,
         std::string const& fileName)
     {
         std::lock_guard lock(m_mutex);
-        if (!m_db || recordId.empty() || savePath.empty() || fileName.empty()) return;
+        if (!m_db || recordId.empty() || savePath.empty() || fileName.empty())
+            return false;
 
         auto const outputKey = NormalizeHttpOutputKey(savePath, fileName);
         constexpr char sql[] =
@@ -559,8 +560,9 @@ namespace OpenNet::Core
         sqlite3_bind_text(stmt, 2, fileName.c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 3, outputKey.c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 4, recordId.c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_step(stmt);
+        auto const result = sqlite3_step(stmt);
         sqlite3_finalize(stmt);
+        return result == SQLITE_DONE;
     }
 
     void HttpStateManager::UpdateRecordProgress(std::string const& recordId, int64_t completedSize, int64_t totalSize)

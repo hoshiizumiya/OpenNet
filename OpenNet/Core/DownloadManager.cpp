@@ -2550,6 +2550,66 @@ namespace OpenNet::Core
 					}
 				}
 
+				// aria2 may learn the final filename only after redirects or
+				// Content-Disposition. Claim that physical path as soon as it is
+				// observable. The SQLite unique output_key makes this atomic with
+				// every other active HTTP record.
+				if (!recordId.empty()
+					&& !task.Files.empty()
+					&& !task.Files.front().Path.empty())
+				{
+					auto const resolvedPath = std::filesystem::path{
+						winrt::to_hstring(
+							task.Files.front().Path).c_str() };
+					auto const resolvedDir = winrt::to_string(
+						winrt::hstring{
+							resolvedPath.parent_path().wstring() });
+					auto const resolvedName = winrt::to_string(
+						winrt::hstring{
+							resolvedPath.filename().wstring() });
+
+					auto const persisted =
+						HttpStateManager::Instance()
+							.FindByRecordId(recordId);
+					bool const changed =
+						persisted
+						&& (persisted->savePath != resolvedDir
+							|| persisted->fileName != resolvedName);
+					if (changed
+						&& !HttpStateManager::Instance()
+							.UpdateRecordOutputPath(
+								recordId,
+								resolvedDir,
+								resolvedName))
+					{
+						CancelPeerFallback(gid);
+						try
+						{
+							m_aria2->Cancel(gid, true);
+						}
+						catch (...)
+						{
+						}
+						HttpStateManager::Instance()
+							.UpdateRecordStatus(recordId, 4);
+						{
+							std::lock_guard lock(m_mutex);
+							m_httpTaskLogs[gid].push_back({
+								std::chrono::duration_cast<
+									std::chrono::seconds>(
+										std::chrono::system_clock::now()
+											.time_since_epoch()).count(),
+								"Download stopped: the resolved output path is already owned by another active HTTP task."
+							});
+						}
+						if (errorCb)
+							errorCb(
+								gid,
+								"Resolved output path conflicts with another active HTTP task.");
+						continue;
+					}
+				}
+
 				if (task.Status == Aria2::DownloadStatus::Paused
 					&& HasPeerFallbackPending(gid)
 					&& TryPromotePeerFallback(gid, task, recordId))
