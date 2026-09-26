@@ -508,6 +508,67 @@ namespace OpenNet::Core
 						static_cast<std::int64_t>(recoveredSize));
 					HttpStateManager::Instance().UpdateRecordStatus(
 						rec.recordId, 3);
+
+					// A crash may happen after libtorrent has finished the
+					// canonical payload but before normal promotion enqueues
+					// the file into ContentCatalog. Rebuild the durable
+					// discovery aliases and replay that idempotent catalog
+					// transition after the payload has passed the caller's
+					// whole-file SHA-256 gate.
+					std::vector<
+						::OpenNet::Core::Content::ResourceKey>
+						resourceKeys;
+					if (recoverySettings.GetInt(
+							ResourceHintEligibilityCategory,
+							rec.recordId,
+							0) != 0)
+					{
+						std::vector<std::string> resourceUris;
+						if (!rec.url.empty())
+							resourceUris.push_back(rec.url);
+						if (auto persistedWebSeed =
+							recoverySettings.GetString(
+								CanonicalWebSeedUrlCategory,
+								rec.recordId);
+							persistedWebSeed
+							&& !persistedWebSeed->empty())
+						{
+							resourceUris.push_back(
+								*persistedWebSeed);
+						}
+
+						resourceKeys =
+							BuildResourceKeys(resourceUris);
+						if (auto persistedValidator =
+							recoverySettings.GetString(
+								ResourceValidatorKeyCategory,
+								rec.recordId))
+						{
+							if (auto validatorKey =
+								ParsePersistedResourceKey(
+									*persistedValidator);
+								validatorKey
+								&& std::ranges::find(
+									resourceKeys,
+									*validatorKey)
+									== resourceKeys.end())
+							{
+								resourceKeys.push_back(
+									*validatorKey);
+							}
+						}
+					}
+
+					::OpenNet::Core::Content::ContentCatalogService::Instance()
+						.EnqueueFile(
+							targetFilePath,
+							{
+								::OpenNet::Core::Content::ContentSourceKind::Http,
+								rec.recordId,
+								std::nullopt
+							},
+							{},
+							std::move(resourceKeys));
 					continue;
 				}
 
