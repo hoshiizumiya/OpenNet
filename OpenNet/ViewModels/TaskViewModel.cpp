@@ -19,6 +19,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_shareRatio = L"0.00";
 		m_seeds = L"-";
 		m_peers = L"-";
+		m_transport = L"-";
 		// Initialize the speed graph data with a valid PointCollection
 		// WinRT PointCollection defaults to nullptr; must be explicitly created
 		(void)m_speedGraphData.Points(); // Force initialization
