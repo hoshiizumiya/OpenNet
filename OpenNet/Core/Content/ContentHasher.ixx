@@ -1,6 +1,6 @@
 export module OpenNet.Core.Content.ContentHasher;
 
-import std;
+export import std;
 export import OpenNet.Core.Content.ContentCatalog;
 
 export namespace OpenNet::Core::Content
@@ -21,6 +21,8 @@ export namespace OpenNet::Core::Content
 
         // Hashes a completed file. The BEP 52 identity is the SHA-256 Merkle
         // root over 16 KiB leaves. Empty files have no pieces-root identity.
-        static ContentHashResult HashFile(std::filesystem::path const& path);
+        static ContentHashResult HashFile(
+            std::filesystem::path const& path,
+            std::stop_token stopToken = {});
     };
 }

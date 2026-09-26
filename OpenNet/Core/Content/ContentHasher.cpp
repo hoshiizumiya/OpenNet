@@ -155,8 +155,13 @@ namespace OpenNet::Core::Content
         }
     }
 
-    ContentHashResult ContentHasher::HashFile(std::filesystem::path const& path)
+    ContentHashResult ContentHasher::HashFile(
+        std::filesystem::path const& path,
+        std::stop_token stopToken)
     {
+        if (stopToken.stop_requested())
+            throw std::runtime_error("Content hashing cancelled.");
+
         std::error_code sizeError;
         auto const expectedSize = std::filesystem::file_size(path, sizeError);
         if (sizeError)
@@ -179,6 +184,9 @@ namespace OpenNet::Core::Content
 
         while (stream)
         {
+            if (stopToken.stop_requested())
+                throw std::runtime_error("Content hashing cancelled.");
+
             stream.read(
                 reinterpret_cast<char*>(buffer.data()),
                 static_cast<std::streamsize>(buffer.size()));
@@ -204,6 +212,8 @@ namespace OpenNet::Core::Content
             }
         }
 
+        if (stopToken.stop_requested())
+            throw std::runtime_error("Content hashing cancelled.");
         if (!stream.eof() && stream.fail())
             throw std::runtime_error("Unable to read file while hashing content.");
         if (total != expectedSize)

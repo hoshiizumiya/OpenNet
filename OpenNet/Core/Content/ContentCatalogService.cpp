@@ -26,6 +26,7 @@ namespace OpenNet::Core::Content
         if (m_initialized) return true;
         if (!m_catalog.Initialize()) return false;
 
+        m_stopSource = std::stop_source{};
         m_stopping = false;
         m_initialized = true;
         ValidateLocations();
@@ -42,6 +43,7 @@ namespace OpenNet::Core::Content
             std::lock_guard lock(m_mutex);
             if (!m_initialized) return;
             m_stopping = true;
+            m_stopSource.request_stop();
         }
         m_condition.notify_all();
         if (m_worker.joinable()) m_worker.join();
@@ -148,6 +150,7 @@ namespace OpenNet::Core::Content
             if (!m_initialized)
             {
                 if (!m_catalog.Initialize()) return;
+                m_stopSource = std::stop_source{};
                 m_stopping = false;
                 m_initialized = true;
                 ValidateLocations();
@@ -197,6 +200,7 @@ namespace OpenNet::Core::Content
 
     void ContentCatalogService::WorkerLoop()
     {
+        auto const stopToken = m_stopSource.get_token();
         for (;;)
         {
             PendingJob job;
@@ -206,33 +210,49 @@ namespace OpenNet::Core::Content
                 {
                     return m_stopping || !m_jobs.empty();
                 });
-                if (m_stopping && m_jobs.empty()) return;
+
+                // Pending jobs are durable. Once shutdown begins, leave queued
+                // work in SQLite for the next process instead of extending app
+                // shutdown by hashing every remaining file.
+                if (m_stopping || stopToken.stop_requested())
+                    return;
+
                 job = std::move(m_jobs.front());
                 m_jobs.pop_front();
             }
 
             try
             {
-                CatalogFile(job);
+                CatalogFile(job, stopToken);
+                if (stopToken.stop_requested())
+                    return;
                 m_catalog.CompletePendingJob(
                     job.path,
                     job.generation);
             }
             catch (std::exception const& exception)
             {
+                if (stopToken.stop_requested())
+                    return;
                 OutputDebugStringA((
                     "ContentCatalogService: cataloging failed: "
                     + std::string(exception.what()) + "\n").c_str());
             }
             catch (...)
             {
+                if (stopToken.stop_requested())
+                    return;
                 OutputDebugStringA("ContentCatalogService: cataloging failed\n");
             }
         }
     }
 
-    void ContentCatalogService::CatalogFile(PendingJob const& job)
+    void ContentCatalogService::CatalogFile(
+        PendingJob const& job,
+        std::stop_token stopToken)
     {
+        if (stopToken.stop_requested())
+            throw std::runtime_error("Content cataloging cancelled.");
         if (!std::filesystem::is_regular_file(job.path)) return;
 
         auto const submittedFingerprint = job.fingerprint;
@@ -265,7 +285,9 @@ namespace OpenNet::Core::Content
         std::optional<CanonicalPieceLayer> hashedPieceLayer;
         if (!hasAuthoritativeTreeRoot)
         {
-            auto hashed = ContentHasher::HashFile(job.path);
+            auto hashed = ContentHasher::HashFile(
+                job.path,
+                stopToken);
             size = hashed.size;
             hashedPieceLayer = std::move(hashed.canonicalPieceLayer);
             for (auto& identity : hashed.identities)
@@ -275,6 +297,8 @@ namespace OpenNet::Core::Content
             }
         }
 
+        if (stopToken.stop_requested())
+            throw std::runtime_error("Content cataloging cancelled.");
         if (identities.empty()) return;
 
         // Hashing may take a long time. Re-check cheap file metadata before
@@ -345,6 +369,8 @@ namespace OpenNet::Core::Content
                 == record.sources.end())
             record.sources.push_back(job.source);
 
+        if (stopToken.stop_requested())
+            throw std::runtime_error("Content cataloging cancelled.");
         m_catalog.Upsert(std::move(record));
         NotifyChanged();
     }

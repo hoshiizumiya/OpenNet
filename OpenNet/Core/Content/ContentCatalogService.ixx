@@ -50,7 +50,9 @@ export namespace OpenNet::Core::Content
         ContentCatalogService& operator=(ContentCatalogService const&) = delete;
 
         void WorkerLoop();
-        void CatalogFile(PendingJob const& job);
+        void CatalogFile(
+            PendingJob const& job,
+            std::stop_token stopToken);
         void ValidateLocations();
         void NotifyChanged();
         static ContentKey CreateContentKey();
@@ -62,6 +64,7 @@ export namespace OpenNet::Core::Content
         std::deque<PendingJob> m_jobs;
         std::condition_variable m_condition;
         std::thread m_worker;
+        std::stop_source m_stopSource;
         std::function<void()> m_changedCallback;
         bool m_initialized{};
         bool m_stopping{};
