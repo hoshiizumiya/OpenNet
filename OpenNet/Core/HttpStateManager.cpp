@@ -21,80 +21,6 @@ namespace OpenNet::Core
 {
     namespace
     {
-        std::wstring Utf8ToWide(std::string_view const value)
-        {
-            if (value.empty())
-                return {};
-            if (value.size()
-                > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
-                throw std::length_error("UTF-8 path is too long.");
-
-            auto const required = ::MultiByteToWideChar(
-                CP_UTF8,
-                MB_ERR_INVALID_CHARS,
-                value.data(),
-                static_cast<int>(value.size()),
-                nullptr,
-                0);
-            if (required <= 0)
-                throw std::runtime_error("Invalid UTF-8 path.");
-
-            std::wstring result(
-                static_cast<std::size_t>(required),
-                L'\0');
-            if (::MultiByteToWideChar(
-                CP_UTF8,
-                MB_ERR_INVALID_CHARS,
-                value.data(),
-                static_cast<int>(value.size()),
-                result.data(),
-                required) != required)
-            {
-                throw std::runtime_error(
-                    "Unable to convert UTF-8 path.");
-            }
-            return result;
-        }
-
-        std::string WideToUtf8(std::wstring_view const value)
-        {
-            if (value.empty())
-                return {};
-            if (value.size()
-                > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
-                throw std::length_error("UTF-16 path is too long.");
-
-            auto const required = ::WideCharToMultiByte(
-                CP_UTF8,
-                WC_ERR_INVALID_CHARS,
-                value.data(),
-                static_cast<int>(value.size()),
-                nullptr,
-                0,
-                nullptr,
-                nullptr);
-            if (required <= 0)
-                throw std::runtime_error("Invalid UTF-16 path.");
-
-            std::string result(
-                static_cast<std::size_t>(required),
-                '\0');
-            if (::WideCharToMultiByte(
-                CP_UTF8,
-                WC_ERR_INVALID_CHARS,
-                value.data(),
-                static_cast<int>(value.size()),
-                result.data(),
-                required,
-                nullptr,
-                nullptr) != required)
-            {
-                throw std::runtime_error(
-                    "Unable to convert UTF-16 path.");
-            }
-            return result;
-        }
-
         std::string NormalizeHttpOutputKey(
             std::string const& savePath,
             std::string const& fileName)
@@ -105,9 +31,9 @@ namespace OpenNet::Core
             try
             {
                 auto path = std::filesystem::path{
-                    Utf8ToWide(savePath) }
+                    winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(savePath) }
                     / std::filesystem::path{
-                        Utf8ToWide(fileName) };
+                        winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(fileName) };
 
                 std::error_code error;
                 auto const absolute = std::filesystem::absolute(path, error);
@@ -124,7 +50,7 @@ namespace OpenNet::Core
                         return static_cast<wchar_t>(
                             std::towlower(value));
                     });
-                return WideToUtf8(folded);
+                return winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(folded);
             }
             catch (...)
             {
@@ -166,7 +92,7 @@ namespace OpenNet::Core
 
         m_dbPath = m_folderPath + L"\\http_downloads.db";
 
-        std::string dbPathUtf8 = WideToUtf8(m_dbPath);
+        std::string dbPathUtf8 = winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(m_dbPath);
         int rc = sqlite3_open(dbPathUtf8.c_str(), &m_db);
         if (rc != SQLITE_OK)
         {

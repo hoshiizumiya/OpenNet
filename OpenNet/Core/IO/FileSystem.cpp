@@ -28,6 +28,51 @@ namespace winrt::OpenNet::Core::IO
 	winrt::hstring FileSystem::AppDownloadPathW;
 
 	// Never use it
+	std::wstring FileSystem::Utf8ToWide(std::string_view const value)
+	{
+		if (value.empty()) return {};
+		if (value.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
+			throw std::length_error("UTF-8 text is too long.");
+
+		auto const required = ::MultiByteToWideChar(
+			CP_UTF8, MB_ERR_INVALID_CHARS, value.data(),
+			static_cast<int>(value.size()), nullptr, 0);
+		if (required <= 0)
+			throw std::runtime_error("Invalid UTF-8 text.");
+
+		std::wstring result(static_cast<std::size_t>(required), L'\0');
+		if (::MultiByteToWideChar(
+			CP_UTF8, MB_ERR_INVALID_CHARS, value.data(),
+			static_cast<int>(value.size()), result.data(), required) != required)
+		{
+			throw std::runtime_error("Unable to convert UTF-8 text.");
+		}
+		return result;
+	}
+
+	std::string FileSystem::WideToUtf8(std::wstring_view const value)
+	{
+		if (value.empty()) return {};
+		if (value.size() > static_cast<std::size_t>((std::numeric_limits<int>::max)()))
+			throw std::length_error("UTF-16 text is too long.");
+
+		auto const required = ::WideCharToMultiByte(
+			CP_UTF8, WC_ERR_INVALID_CHARS, value.data(),
+			static_cast<int>(value.size()), nullptr, 0, nullptr, nullptr);
+		if (required <= 0)
+			throw std::runtime_error("Invalid UTF-16 text.");
+
+		std::string result(static_cast<std::size_t>(required), '\0');
+		if (::WideCharToMultiByte(
+			CP_UTF8, WC_ERR_INVALID_CHARS, value.data(),
+			static_cast<int>(value.size()), result.data(), required,
+			nullptr, nullptr) != required)
+		{
+			throw std::runtime_error("Unable to convert UTF-16 text.");
+		}
+		return result;
+	}
+
 	bool FileSystem::CreateAppDirectory(const std::wstring& path)
 	{
 		try
