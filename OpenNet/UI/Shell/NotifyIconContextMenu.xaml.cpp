@@ -29,6 +29,34 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace winrt::OpenNet::UI::Shell::implementation
 {
+	namespace
+	{
+		bool IsValidHttpDownloadClipboardUrl(winrt::hstring const& text)
+		{
+			try
+			{
+				winrt::Windows::Foundation::Uri const uri{ text };
+				auto scheme = std::wstring{ uri.SchemeName() };
+				std::ranges::transform(
+					scheme,
+					scheme.begin(),
+					::towlower);
+
+				// Keep tray capture aligned with HttpDownloadDialog validation.
+				// A scheme prefix alone (for example "https://") is not a URL
+				// and must never wake the hidden main window.
+				return (scheme == L"http"
+						|| scheme == L"https"
+						|| scheme == L"ftp")
+					&& !uri.Host().empty();
+			}
+			catch (...)
+			{
+				return false;
+			}
+		}
+	}
+
 	NotifyIconContextMenu::~NotifyIconContextMenu()
 	{
 		try
@@ -463,14 +491,22 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			normalized = normalized.substr(first, last - first + 1);
 			text = winrt::hstring{ normalized };
 			std::wstring lower(text);
-			std::transform(lower.begin(), lower.end(), lower.begin(), ::towlower);
-			const bool torrent = lower.starts_with(L"magnet:");
-			const bool http = lower.starts_with(L"http://") || lower.starts_with(L"https://") || lower.starts_with(L"ftp://");
-			if ((!torrent && !http) || text == m_lastCapturedClipboardUrl)
+			std::transform(
+				lower.begin(),
+				lower.end(),
+				lower.begin(),
+				::towlower);
+			bool const torrent = lower.starts_with(L"magnet:");
+			bool const httpDownload =
+				IsValidHttpDownloadClipboardUrl(text);
+			if ((!torrent && !httpDownload)
+				|| text == m_lastCapturedClipboardUrl)
 			{
 				co_return;
 			}
 
+			// Do not mutate capture state or activate the main window until the
+			// clipboard value has passed the protocol-specific validation.
 			m_lastCapturedClipboardUrl = text;
 			m_clipboardDialogOpen = true;
 			if (torrent)
