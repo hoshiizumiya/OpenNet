@@ -29,6 +29,7 @@
 #include <limits>
 #include <mutex>
 #include <optional>
+#include <span>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -1231,9 +1232,10 @@ namespace OpenNetUnitTest
 
 			auto const candidate =
 				candidates.GetObjectAt(0);
-			Assert::AreEqual(
-				static_cast<double>(fixture.bytes.size()),
-				candidate.GetNamedNumber(L"size"),
+			Assert::IsTrue(
+				static_cast<std::uint64_t>(
+					candidate.GetNamedNumber(L"size"))
+					== fixture.bytes.size(),
 				L"candidate size must match the caller-known size");
 
 			bool wholeFileMatched = false;
@@ -1276,10 +1278,11 @@ namespace OpenNetUnitTest
 				winrt::Windows::Data::Json::JsonObject::Parse(
 					winrt::to_hstring(
 						Text(lookupPayload)));
-			Assert::AreEqual(
-				1.0,
-				lookupJson.GetNamedNumber(
-					L"canonicalProtocolVersion"),
+			Assert::IsTrue(
+				static_cast<std::uint32_t>(
+					lookupJson.GetNamedNumber(
+						L"canonicalProtocolVersion"))
+					== 1,
 				L"fixture must use OpenNet canonical protocol v1");
 			Assert::IsTrue(
 				lookupJson.GetNamedBoolean(
