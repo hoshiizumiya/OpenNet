@@ -861,3 +861,12 @@ Still required before public production:
 7. Continue BitComet compatibility work independently.
 
 Do not reintroduce a general `TransferCoordinator` as the default HTTP path unless a future source type cannot be represented as a libtorrent URL Seed or peer.
+
+
+## Durable asynchronous content learning
+
+Completion-to-catalog processing is now crash durable. ContentCatalogService persists a pending job before publishing it to the hashing worker. The row contains the completion-time file fingerprint plus source/identity/ResourceKey aliases, and uses a generation guard so stale workers cannot acknowledge newer jobs for the same path. The worker validates the fingerprint both before and after hashing before it is allowed to bind ResourceKeys to content bytes.
+
+This means the first ordinary aria2 download can safely be the learning pass even if the process exits before ContentCatalog hashing finishes. On the next start the pending job is restored. Shutdown does not drain the durable queue; active hashing accepts a stop token and queued work is left for the next process.
+
+The Download settings page also exposes a persisted default for new HTTP tasks: prefer canonical P2P acceleration or use aria2 directly. The per-task switch remains authoritative for that task.

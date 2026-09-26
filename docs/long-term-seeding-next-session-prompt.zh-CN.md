@@ -197,7 +197,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `8e79958f621e363b95f515e5af2586c5e3194f89`
+- `a83076fedc02ae0ae85e0d5f57f67d08dab3a65e`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 
@@ -247,3 +247,12 @@ ResourceKey
 - 不读巨大的 CI log；优先使用用户给出的错误片段或精确 job 输出。
 - 一轮集中一个 coherent slice，最后一次性 fast-forward feature branch。
 - 不把未验证行为写成事实。
+
+
+新增 checkpoint：
+- ContentCatalog EnqueueFile 已改成 crash-durable pending queue；SQLite 保存 path/source/fingerprint/known identities/ResourceKeys/generation；
+- worker 成功 Upsert 后才按 path+generation ACK，旧 generation 不能删除新 job；
+- hash 前后检查 completion fingerprint，避免 stale ResourceKey 绑定到被修改的文件；
+- ContentHasher 支持 stop_token；shutdown 不再 drain durable queue；
+- Canary x64 在重型 MSVC/vcpkg 步骤之前运行 torrent/http/content-catalog 三组 Python SQLite regression tests；
+- Download Settings 新增 HTTP 默认 Prefer P2P 开关，并修正 aria2_connections_per_server 之前只保存不生效的问题。

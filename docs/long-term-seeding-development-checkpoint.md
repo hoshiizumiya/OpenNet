@@ -25,8 +25,8 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `8e79958f621e363b95f515e5af2586c5e3194f89`
-- `fix: re-export HTTP P2P module API dependencies`
+- `a83076fedc02ae0ae85e0d5f57f67d08dab3a65e`
+- `perf: cancel durable catalog hashing on shutdown`
 
 This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, the sentry-native 0.17 scope-capture API fix, removal of the accidental WinRT string-helper dependency from HttpStateManager, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, replay-until-durable ContentCatalog recovery for completed canonical HTTP records, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, HTTP/P2P module API dependency re-exports, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, a deterministic ResourceKey/Directory/manifest/WebSeed+peer data-plane fixture, and SQL regression coverage for active HTTP writer ownership. x64 Canary compiles OpenNetUnitTest so these native regression sources receive compiler feedback.
 
@@ -460,3 +460,12 @@ Server:
 - Do not call generic SHA-1 "BEP47".
 - Do not assume BitComet proprietary details without evidence.
 - Batch changes; do not block development waiting for the long Windows Canary workflow.
+
+
+### Durable content-learning queue
+
+ContentCatalogService no longer treats completion hashing as process-local work only. EnqueueFile first records a durable pending job in content_catalog.db with the completed path, source, known identities, ResourceKeys and the file-size/last-write fingerprint observed at submission time. The background worker restores pending jobs after restart, validates the fingerprint before and after hashing, commits the final ContentRecord, and acknowledges only the same (path, generation). An older worker therefore cannot delete a newer submission for the same path.
+
+This closes the first-encounter learning crash gap: an ordinary aria2 HTTP completion may crash before hashing finishes without losing the URL ResourceKey -> content identity observation permanently. Hashing is also cancellable during shutdown; queued jobs remain durable instead of extending shutdown merely to drain the queue.
+
+Download Settings now also persists the default HTTP transfer preference (Prefer P2P vs aria2-only) and the existing aria2 connections-per-server setting is actually consumed by new HttpDownloadDialog instances. Per-task selection still overrides the default.

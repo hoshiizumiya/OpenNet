@@ -888,3 +888,14 @@ BitComet LT UDP == uTP
 7. BitComet compatibility 独立推进。
 
 除非未来 source 无法表达成 libtorrent URL Seed / Peer，否则不要把通用 `TransferCoordinator` 重新作为 HTTP 主路线。
+
+
+## 可持久化的异步 Content 学习队列
+
+下载完成后的 ContentCatalog 处理现在不再只是进程内队列。ContentCatalogService 会先把 pending job 写入 content_catalog.db，再交给后台 hash worker。pending row 保存完成时的文件 size / last-write fingerprint、source、known identities 与 ResourceKeys，并通过 generation 防止旧 worker 误 ACK 同一路径的新任务。
+
+因此第一次未知 URL 即使走纯 aria2，也可以安全承担“学习”过程：即使程序在下载完成后、hash/ContentCatalog 落库前崩溃，下次启动仍会恢复 pending job，重新 hash 并建立 ResourceKey -> ContentIdentity。worker 在 hash 前后都会重新核对 fingerprint，避免异步窗口中文件已被修改却把旧 URL 错绑到新字节。
+
+由于 job 已经 durable，Shutdown 不再为了清空队列而继续 hash；正在 hash 的任务支持 stop_token，尚未执行的任务留到下一次启动。
+
+Download Settings 现在还持久化“新 HTTP 任务默认 Prefer P2P / aria2 only”的全局偏好；单任务对话框里的 P2P acceleration 开关仍可覆盖全局默认。同时已有的 aria2 connections-per-server 设置也真正用于新建 HTTP 任务。
