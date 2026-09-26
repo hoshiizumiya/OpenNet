@@ -88,6 +88,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		Aria2ConnectionsNumberBox().Value(static_cast<double>(database.GetInt(
 			::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
 			"aria2_connections_per_server", 8)));
+		m_httpP2PPreferred = database.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
+			"http_p2p_preferred",
+			true).value_or(true);
+		SetToggleIsOn(
+			HttpP2PPreferredToggle(),
+			m_httpP2PPreferred);
+		SetToggleIsOn(
+			HttpP2PPreferredGlassToggle(),
+			m_httpP2PPreferred);
 	}
 
 	void DownloadSettingsPage::OnSettingChanged(IInspectable const& sender, IInspectable const&)
@@ -101,6 +111,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			else if (name == L"AutoStartDownloadsToggle" || name == L"AutoStartDownloadsGlassToggle") m_autoStartDownloads = *value;
 			else if (name == L"RecheckBeforeResumeToggle" || name == L"RecheckBeforeResumeGlassToggle") m_recheckBeforeResume = *value;
 			else if (name == L"MoveCompletedToggle" || name == L"MoveCompletedGlassToggle") m_moveCompleted = *value;
+			else if (name == L"HttpP2PPreferredToggle" || name == L"HttpP2PPreferredGlassToggle") m_httpP2PPreferred = *value;
 		}
 		SaveSettings();
 	}
@@ -114,6 +125,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		else if (name == L"AutoStartDownloadsToggle" || name == L"AutoStartDownloadsGlassToggle") SetToggleIsOn(sender, m_autoStartDownloads);
 		else if (name == L"RecheckBeforeResumeToggle" || name == L"RecheckBeforeResumeGlassToggle") SetToggleIsOn(sender, m_recheckBeforeResume);
 		else if (name == L"MoveCompletedToggle" || name == L"MoveCompletedGlassToggle") SetToggleIsOn(sender, m_moveCompleted);
+		else if (name == L"HttpP2PPreferredToggle" || name == L"HttpP2PPreferredGlassToggle") SetToggleIsOn(sender, m_httpP2PPreferred);
 		m_loading = wasLoading;
 	}
 
@@ -135,6 +147,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 						"aria2_connections_per_server",
 						static_cast<std::int64_t>(std::clamp(
 							Aria2ConnectionsNumberBox().Value(), 1.0, 16.0)));
+		database.SetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
+			"http_p2p_preferred",
+			m_httpP2PPreferred);
 	}
 
 	winrt::fire_and_forget DownloadSettingsPage::BrowseSavePathButton_Click(IInspectable const& sender, RoutedEventArgs const&)

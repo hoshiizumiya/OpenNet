@@ -9,6 +9,7 @@ import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Aria2.Aria2Models;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.TorrentSettings;
 import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -31,6 +32,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		m_errorTitle = ResourceGetString(L"HttpDownloadInvalidUrlTitle");
 		m_errorMessage = ResourceGetString(L"HttpDownloadInvalidUrlMessage");
 		m_saveDir = winrt::hstring{ ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath };
+
+		auto& database =
+			::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		m_connectionsPerServer = static_cast<std::int32_t>(
+			std::clamp<std::int64_t>(
+				database.GetInt(
+					::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
+					"aria2_connections_per_server",
+					8),
+				1,
+				16));
+		m_useP2PAcceleration = database.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
+			"http_p2p_preferred",
+			true).value_or(true);
+
 		UpdateDiskSpace();
 	}
 
