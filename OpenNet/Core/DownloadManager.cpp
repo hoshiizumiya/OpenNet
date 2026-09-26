@@ -145,6 +145,69 @@ namespace OpenNet::Core
 			return keys;
 		}
 
+		bool RemoveAria2ControlShellUnlocked(
+			Aria2::LocalAria2Instance& aria2,
+			std::string const& gid)
+		{
+			try
+			{
+				aria2.Cancel(gid, true);
+			}
+			catch (...)
+			{
+			}
+
+			bool stopped = false;
+			for (int attempt = 0; attempt < 20; ++attempt)
+			{
+				try
+				{
+					auto const status =
+						aria2.GetTaskInformation(gid).Status;
+					if (status == Aria2::DownloadStatus::Removed
+						|| status == Aria2::DownloadStatus::Complete
+						|| status == Aria2::DownloadStatus::Error)
+					{
+						stopped = true;
+						break;
+					}
+				}
+				catch (...)
+				{
+					// tellStatus fails once the result is already gone.
+					return true;
+				}
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds(50));
+			}
+			if (!stopped)
+				return false;
+
+			for (int attempt = 0; attempt < 20; ++attempt)
+			{
+				try
+				{
+					aria2.Remove(gid);
+					aria2.SaveSession();
+					return true;
+				}
+				catch (...)
+				{
+					try
+					{
+						(void)aria2.GetTaskInformation(gid);
+					}
+					catch (...)
+					{
+						return true;
+					}
+				}
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds(50));
+			}
+			return false;
+		}
+
 		std::optional<::OpenNet::Core::Content::ResourceKey>
 			ParsePersistedResourceKey(std::string_view value)
 		{
@@ -348,6 +411,7 @@ namespace OpenNet::Core
 						winrt::to_hstring(rec.fileName).c_str() };
 
 				bool recoveredComplete = false;
+				std::uint64_t recoveredSize{};
 				if (auto persistedSha = recoverySettings.GetString(
 					ExpectedSha256Category, rec.recordId))
 				{
@@ -359,6 +423,7 @@ namespace OpenNet::Core
 							auto const hashed =
 								::OpenNet::Core::Content::ContentHasher::HashFile(
 									targetFilePath);
+							recoveredSize = hashed.size;
 							recoveredComplete =
 								(rec.totalSize == 0
 									|| hashed.size
@@ -376,24 +441,24 @@ namespace OpenNet::Core
 
 				if (recoveredComplete)
 				{
-					try
+					bool shellRemoved = false;
 					{
 						std::lock_guard rpcLock(m_aria2->InstanceLock());
-						m_aria2->Cancel(rec.lastGid, true);
-						m_aria2->Remove(rec.lastGid);
-						m_aria2->SaveSession();
+						shellRemoved =
+							RemoveAria2ControlShellUnlocked(
+								*m_aria2, rec.lastGid);
 					}
-					catch (...)
-					{
-					}
+					if (!shellRemoved)
+						continue;
+
 					auto const aria2ControlPath = std::filesystem::path{
 						targetFilePath.wstring() + L".aria2" };
 					std::error_code error;
 					std::filesystem::remove(aria2ControlPath, error);
 					HttpStateManager::Instance().UpdateRecordProgress(
 						rec.recordId,
-						rec.totalSize,
-						rec.totalSize);
+						static_cast<std::int64_t>(recoveredSize),
+						static_cast<std::int64_t>(recoveredSize));
 					HttpStateManager::Instance().UpdateRecordStatus(
 						rec.recordId, 3);
 					continue;
@@ -2144,40 +2209,22 @@ namespace OpenNet::Core
 
 		if (job.hybridPrimary)
 		{
-			// The control shell is still paused, not stopped. Force-remove it
-			// only after libtorrent has completed and released the final target.
+			// ProcessAria2Tasks already owns InstanceLock here. Do not mark
+			// the HTTP task complete until the paused control shell is really
+			// gone; otherwise aria2 may be restored as a ghost task later.
+			if (!RemoveAria2ControlShellUnlocked(*m_aria2, gid))
+				return false;
+		}
+		else
+		{
 			try
 			{
-				m_aria2->Cancel(gid, true);
+				m_aria2->Remove(gid);
+				m_aria2->SaveSession();
 			}
 			catch (...)
 			{
 			}
-			for (int attempt = 0; attempt < 20; ++attempt)
-			{
-				try
-				{
-					auto const status = m_aria2->GetTaskInformation(gid).Status;
-					if (status == Aria2::DownloadStatus::Removed
-						|| status == Aria2::DownloadStatus::Complete
-						|| status == Aria2::DownloadStatus::Error)
-						break;
-				}
-				catch (...)
-				{
-					break;
-				}
-				std::this_thread::sleep_for(std::chrono::milliseconds(50));
-			}
-		}
-
-		try
-		{
-			m_aria2->Remove(gid);
-			m_aria2->SaveSession();
-		}
-		catch (...)
-		{
 		}
 
 		auto const aria2ControlPath = std::filesystem::path{
