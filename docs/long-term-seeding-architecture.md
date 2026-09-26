@@ -840,22 +840,22 @@ Still required before public production:
 ### Remaining gaps
 
 - [ ] deterministic end-to-end HTTP Range + WebSeed + OpenNet peer hybrid test;
-- [ ] automated confirmation of the exact libtorrent request-path semantics for the current canonical single-file layout;
-- [ ] cooperative cancellation of in-flight wakeup/lookup during shutdown;
+- [x] automated confirmation of the exact libtorrent request-path semantics for the current canonical single-file layout;
+- [x] cooperative cancellation plus bounded waits for Content Directory HTTP work during shutdown;
 - [ ] automatic re-discovery after Resume;
 - [ ] activating hybrid when the output filename arrives late via redirect/Content-Disposition;
 - [ ] stale hybrid/P2P partial cleanup after abnormal termination;
-- [ ] same-target duplicate HTTP-task exclusion;
+- [x] same-target active HTTP-task exclusion through normalized SQLite output ownership and restored-GID reconciliation;
 - [ ] stronger crash/recovery semantics around HTTP task-shell cleanup/session persistence;
 - [ ] Traversal-verified IPv4/IPv6 candidates, hole punching, relay, node keys and peer tickets;
 - [ ] production abuse controls/migrations and BitComet LT wire compatibility.
 
 ## 22. Recommended next implementation sequence
 
-1. Add a deterministic local HTTP Range server fixture and record the exact libtorrent WebSeed request path for `OpenNet.Content.v1`.
-2. Test URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog end to end.
-3. Harden shutdown/cancel/resume, stale partial cleanup and same-target exclusion.
-4. Support output names discovered after task creation.
+1. Test URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog end to end.
+2. Add deterministic restart/crash tests for P2PPreferred state, output ownership and aria2 task-removal recovery.
+3. Harden stale partial cleanup and automatic re-discovery after Resume.
+4. Support output names discovered after task creation without transferring writer ownership after aria2 has started writing.
 5. Integrate OpenNet.Traversal for verified IPv4/IPv6 candidates and hole punching.
 6. Add node keys, request signatures, peer tickets, rate limits and production migrations.
 7. Continue BitComet compatibility work independently.

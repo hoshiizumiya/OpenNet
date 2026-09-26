@@ -197,7 +197,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `7e12c2647d609f5b9a3b1649bd2d9bb26b14c173`
+- `05e23a0ca3d81735321ee3ed935d9fa2db939eb5`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 
@@ -219,7 +219,7 @@ ResourceKey
 ### 3. lifecycle / persistence hardening
 
 当前 restart recovery 已有原型实现，下一步是补 deterministic crash/restart tests，而不是重新设计：
-- shutdown cooperative cancellation；
+- Content Directory shutdown cooperative cancellation 已落地：请求有 deadline，DownloadManager / sync service 会通过 stop token 取消正在进行的 HTTP operation；
 - restart 时 complete-vs-partial SHA recovery 测试；
 - aria2 shell removal failure测试；
 - normalized output_key / restored-GID ownership crash 测试；
