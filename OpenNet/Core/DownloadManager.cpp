@@ -1410,6 +1410,9 @@ namespace OpenNet::Core
 			settings.Delete(
 				ExpectedSha256Category,
 				resourceRecordId);
+			settings.Delete(
+				CanonicalWebSeedUrlCategory,
+				resourceRecordId);
 		}
 	}
 
