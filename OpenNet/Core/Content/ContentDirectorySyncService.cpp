@@ -68,6 +68,7 @@ namespace OpenNet::Core::Content
         std::lock_guard lock(m_mutex);
         if (m_started) return;
 
+        m_stopSource = std::stop_source{};
         m_stopping = false;
         ++m_revision;
         m_syncedRevision = 0;
@@ -84,6 +85,7 @@ namespace OpenNet::Core::Content
             std::lock_guard lock(m_mutex);
             if (!m_started) return;
             m_stopping = true;
+            m_stopSource.request_stop();
         }
 
         ::OpenNet::Core::Content::ContentCatalogService::Instance()
@@ -109,6 +111,7 @@ namespace OpenNet::Core::Content
     void ContentDirectorySyncService::WorkerLoop()
     {
         winrt::init_apartment(winrt::apartment_type::multi_threaded);
+        auto const stopToken = m_stopSource.get_token();
 
         std::unordered_map<std::string, std::chrono::steady_clock::time_point>
             activeSeedSessions;
@@ -139,7 +142,8 @@ namespace OpenNet::Core::Content
             {
                 {
                     std::lock_guard lock(m_mutex);
-                    if (m_stopping) break;
+                    if (m_stopping || stopToken.stop_requested())
+                        break;
                 }
 
                 bool directoryReachable = false;
@@ -221,7 +225,8 @@ namespace OpenNet::Core::Content
                                 *pendingRegistrationId,
                                 leaseId,
                                 records,
-                                endpoints);
+                                endpoints,
+                                stopToken);
                             if (result)
                             {
                                 generation = result->acceptedGeneration;
@@ -251,7 +256,10 @@ namespace OpenNet::Core::Content
                         else if (leaseId
                             && now - lastHeartbeat >= std::chrono::seconds(90))
                         {
-                            if (client.Heartbeat(nodeId, *leaseId))
+                            if (client.Heartbeat(
+                                nodeId,
+                                *leaseId,
+                                stopToken))
                             {
                                 lastHeartbeat = now;
                                 directoryReachable = true;
@@ -290,6 +298,9 @@ namespace OpenNet::Core::Content
 
                                 for (auto const& record : records)
                                 {
+                                    if (stopToken.stop_requested())
+                                        break;
+
                                     auto identity = std::ranges::find_if(
                                         record.identities,
                                         [](ContentIdentity const& value)
@@ -303,11 +314,15 @@ namespace OpenNet::Core::Content
                                     for (auto const& resourceKey
                                         : record.resourceKeys)
                                     {
+                                        if (stopToken.stop_requested())
+                                            break;
+
                                         if (!client.AnnounceResource(
                                             nodeId,
                                             *leaseId,
                                             resourceKey,
-                                            *identity))
+                                            *identity,
+                                            stopToken))
                                         {
                                             allAnnounced = false;
                                         }
@@ -323,18 +338,27 @@ namespace OpenNet::Core::Content
                             }
 
                             auto wakeups = client.PollWakeups(
-                                nodeId, *leaseId, 32);
+                                nodeId,
+                                *leaseId,
+                                32,
+                                stopToken);
                             if (wakeups)
                             {
                                 directoryReachable = true;
                                 for (auto const& wakeup : *wakeups)
                                 {
+                                    if (stopToken.stop_requested())
+                                        break;
+
                                     bool completed = false;
                                     std::string failure =
                                         "No matching available local content.";
 
                                     for (auto const& identity : wakeup.identities)
                                     {
+                                        if (stopToken.stop_requested())
+                                            break;
+
                                         auto record =
                                             ::OpenNet::Core::Content::ContentCatalogService::Instance()
                                                 .EnsureCanonicalPieceLayer(identity);
@@ -385,7 +409,9 @@ namespace OpenNet::Core::Content
                                                 wakeup.wakeRequestId,
                                                 true,
                                                 opened.infoHashV2,
-                                                canonical.metainfo))
+                                                canonical.metainfo,
+                                                {},
+                                                stopToken))
                                             {
                                                 activeSeedSessions.insert_or_assign(
                                                     sessionId,
@@ -403,7 +429,8 @@ namespace OpenNet::Core::Content
                                         }
                                     }
 
-                                    if (!completed)
+                                    if (!completed
+                                        && !stopToken.stop_requested())
                                     {
                                         (void)client.CompleteWakeup(
                                             nodeId,
@@ -412,13 +439,17 @@ namespace OpenNet::Core::Content
                                             false,
                                             {},
                                             {},
-                                            failure);
+                                            failure,
+                                            stopToken);
                                     }
                                 }
                             }
                         }
                     }
                 }
+
+                if (stopToken.stop_requested())
+                    break;
 
                 auto const now = std::chrono::steady_clock::now();
                 std::vector<std::string> expired;

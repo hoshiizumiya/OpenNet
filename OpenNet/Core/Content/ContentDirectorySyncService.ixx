@@ -26,6 +26,7 @@ export namespace OpenNet::Core::Content
         std::mutex m_mutex;
         std::condition_variable m_condition;
         std::thread m_worker;
+        std::stop_source m_stopSource;
         bool m_started{};
         bool m_stopping{};
         std::uint64_t m_revision{ 1 };

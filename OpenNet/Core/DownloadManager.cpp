@@ -280,6 +280,7 @@ namespace OpenNet::Core
 			if (m_refreshThread.joinable())
 				m_refreshThread.join();
 
+			m_resourceDiscoveryStopSource.request_stop();
 			{
 				std::lock_guard lock(m_resourceDiscoveryMutex);
 				m_stopResourceDiscovery.store(true);
@@ -510,6 +511,7 @@ namespace OpenNet::Core
 				{
 					RefreshThreadEntry();
 				});
+				m_resourceDiscoveryStopSource = std::stop_source{};
 				m_stopResourceDiscovery.store(false);
 				m_resourceDiscoveryThread = std::thread([this]()
 				{
@@ -558,6 +560,7 @@ namespace OpenNet::Core
 		if (m_refreshThread.joinable())
 			m_refreshThread.join();
 
+		m_resourceDiscoveryStopSource.request_stop();
 		{
 			std::lock_guard lock(m_resourceDiscoveryMutex);
 			m_stopResourceDiscovery.store(true);
@@ -1519,6 +1522,8 @@ namespace OpenNet::Core
 	{
 		winrt::init_apartment(winrt::apartment_type::multi_threaded);
 		::OpenNet::Core::Content::ContentDirectoryClient client;
+		auto const stopToken =
+			m_resourceDiscoveryStopSource.get_token();
 
 		for (;;)
 		{
@@ -1543,7 +1548,13 @@ namespace OpenNet::Core
 
 			for (auto const& key : job.resourceKeys)
 			{
-				auto lookup = client.LookupResource(key, 8);
+				if (stopToken.stop_requested())
+					break;
+
+				auto lookup = client.LookupResource(
+					key,
+					8,
+					stopToken);
 				if (!lookup || lookup->candidates.empty())
 					continue;
 
@@ -1601,6 +1612,9 @@ namespace OpenNet::Core
 				if (summary.checksumValidated)
 					break;
 			}
+
+			if (stopToken.stop_requested())
+				break;
 
 			{
 				std::lock_guard lock(m_mutex);

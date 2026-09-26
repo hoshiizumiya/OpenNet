@@ -180,6 +180,7 @@ export namespace OpenNet::Core
 		};
 		std::thread m_resourceDiscoveryThread;
 		std::atomic<bool> m_stopResourceDiscovery{ false };
+		std::stop_source m_resourceDiscoveryStopSource;
 		std::condition_variable m_resourceDiscoveryCv;
 		std::mutex m_resourceDiscoveryMutex;
 		std::deque<ResourceDiscoveryJob> m_resourceDiscoveryJobs;
