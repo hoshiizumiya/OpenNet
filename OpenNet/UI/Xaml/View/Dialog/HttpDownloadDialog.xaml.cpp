@@ -303,14 +303,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				strong->RaisePropertyChanged(L"ClipboardPreviewVisibility");
 			});
 
-			auto clipboardContent = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
-			if (clipboardContent.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
+			auto clipboardContent =
+				winrt::Windows::ApplicationModel::DataTransfer::Clipboard::
+					GetContent();
+			if (clipboardContent.Contains(
+					winrt::Windows::ApplicationModel::DataTransfer::
+						StandardDataFormats::Text()))
 			{
 				auto const text = co_await clipboardContent.GetTextAsync();
-				SetProperty(m_clipboardPreviewText, text, L"ClipboardPreviewText");
-				m_clipboardPreviewVisibility = text.empty() ? Visibility::Collapsed : Visibility::Visible;
+				SetProperty(
+					m_clipboardPreviewText,
+					text,
+					L"ClipboardPreviewText");
+				m_clipboardPreviewVisibility =
+					text.empty()
+						? Visibility::Collapsed
+						: Visibility::Visible;
 				RaisePropertyChanged(L"ClipboardPreviewVisibility");
-				if (ValidateUrl(text))
+
+				// Tray clipboard capture supplies a validated snapshot before
+				// ShowAsync(). Do not overwrite it by sampling the clipboard a
+				// second time after the main window becomes visible.
+				if (m_url.empty() && ValidateUrl(text))
 				{
 					Url(text);
 					co_await FetchMetadataAsync();

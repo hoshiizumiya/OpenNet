@@ -20,7 +20,9 @@ namespace winrt::OpenNet::implementation
 
 		// Navigation (delegated to MainContentView)
 		void Navigate(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType);
-		winrt::Windows::Foundation::IAsyncAction ShowAddTaskDialogAsync(winrt::hstring const& kind);
+		winrt::Windows::Foundation::IAsyncAction ShowAddTaskDialogAsync(
+			winrt::hstring const& kind,
+			winrt::hstring const& initialValue = {});
 
 		// Event handlers (XAML wired)
 		void AppTitleBar_BackRequested(winrt::Microsoft::UI::Xaml::Controls::TitleBar const&, winrt::Windows::Foundation::IInspectable const&);

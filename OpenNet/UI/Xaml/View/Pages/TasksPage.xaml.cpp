@@ -648,25 +648,44 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	// Show HTTP download dialog for adding HTTP/HTTPS/FTP downloads
-	winrt::Windows::Foundation::IAsyncAction TasksPage::MenuItemAddFromHttp_ClickAsync(winrt::Windows::Foundation::IInspectable const& /*sender*/, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	// Show HTTP download dialog for adding HTTP/HTTPS/FTP downloads.
+	winrt::Windows::Foundation::IAsyncAction
+		TasksPage::MenuItemAddFromHttp_ClickAsync(
+			winrt::Windows::Foundation::IInspectable const& /*sender*/,
+			winrt::Microsoft::UI::Xaml::RoutedEventArgs const& /*e*/)
+	{
+		co_await ShowHttpDownloadDialogAsync({});
+	}
+
+	winrt::Windows::Foundation::IAsyncAction
+		TasksPage::ShowHttpDownloadDialogAsync(
+			winrt::hstring const& initialUrl)
 	{
 		auto lifetime = get_strong();
 		try
 		{
 			auto const xamlRoot = XamlRoot();
 			if (!xamlRoot) co_return;
-			auto dialog = make<winrt::OpenNet::UI::Xaml::View::Dialog::implementation::HttpDownloadDialog>();
+
+			auto dialog = make<
+				winrt::OpenNet::UI::Xaml::View::Dialog::implementation::
+					HttpDownloadDialog>();
+			if (!initialUrl.empty())
+				dialog.Url(initialUrl);
 			dialog.XamlRoot(xamlRoot);
 			co_await dialog.ShowAsync();
 		}
 		catch (const std::exception& ex)
 		{
-			OutputDebugStringW((L"HttpDownloadDialog error: " + std::wstring(winrt::to_hstring(ex.what()).c_str()) + L"\n").c_str());
+			OutputDebugStringW((
+				L"HttpDownloadDialog error: "
+				+ std::wstring(winrt::to_hstring(ex.what()).c_str())
+				+ L"\n").c_str());
 		}
 		catch (...)
 		{
-			OutputDebugStringA("HttpDownloadDialog unknown error\n");
+			OutputDebugStringA(
+				"HttpDownloadDialog unknown error\n");
 		}
 	}
 

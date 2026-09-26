@@ -266,7 +266,9 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::OpenAddDialogAsync(hstring kind)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::OpenAddDialogAsync(
+		hstring kind,
+		hstring initialValue)
 	{
 		auto strong = get_strong();
 		try
@@ -287,8 +289,12 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		{
 			co_return;
 		}
-		auto implementation = winrt::get_self<winrt::OpenNet::implementation::MainWindow>(mainWindow);
-		co_await implementation->ShowAddTaskDialogAsync(kind);
+		auto implementation =
+			winrt::get_self<winrt::OpenNet::implementation::MainWindow>(
+				mainWindow);
+		co_await implementation->ShowAddTaskDialogAsync(
+			kind,
+			initialValue);
 	}
 
 	void NotifyIconContextMenu::ApplyTransferLimit(bool download, int bytesPerSecond)
@@ -527,7 +533,10 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			}
 			else
 			{
-				co_await OpenAddDialogAsync(L"http");
+				// Pass the exact snapshot that was validated above. The dialog
+				// must not re-read a different clipboard value after the main
+				// window has been activated.
+				co_await OpenAddDialogAsync(L"http", text);
 			}
 			m_clipboardDialogOpen = false;
 		}

@@ -25,7 +25,9 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		void SetClipboardCaptureEnabled(bool enabled);
 		winrt::fire_and_forget HandleClipboardChangedAsync();
 		winrt::Windows::Foundation::IAsyncAction RunBulkOperationAsync(winrt::hstring operation);
-		winrt::Windows::Foundation::IAsyncAction OpenAddDialogAsync(winrt::hstring kind);
+		winrt::Windows::Foundation::IAsyncAction OpenAddDialogAsync(
+			winrt::hstring kind,
+			winrt::hstring initialValue = {});
 		void ApplyTransferLimit(bool download, int bytesPerSecond);
 		void UpdateTransferLimitChecks(int downloadLimit, int uploadLimit);
 	public:

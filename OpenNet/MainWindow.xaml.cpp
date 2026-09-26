@@ -121,7 +121,9 @@ namespace winrt::OpenNet::implementation
 		MainContentView().Navigate(pageType);
 	}
 
-	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(hstring const& kind)
+	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(
+		hstring const& kind,
+		hstring const& initialValue)
 	{
 		auto strong = get_strong();
 		Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>());
@@ -148,7 +150,8 @@ namespace winrt::OpenNet::implementation
 		}
 		else if (kind == L"http")
 		{
-			co_await tasksPageImpl->MenuItemAddFromHttp_ClickAsync(tasksPage, args);
+			co_await tasksPageImpl->ShowHttpDownloadDialogAsync(
+				initialValue);
 		}
 		else if (kind == L"http-batch")
 		{
