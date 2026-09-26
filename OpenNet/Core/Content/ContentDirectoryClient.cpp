@@ -30,9 +30,55 @@ namespace OpenNet::Core::Content
             return result;
         }
 
-        void InitializeServerDomain()
+        constexpr auto DirectoryInitializationTimeout =
+            std::chrono::seconds(6);
+        constexpr auto DirectoryRequestTimeout =
+            std::chrono::seconds(15);
+        constexpr auto DirectoryPollInterval =
+            std::chrono::milliseconds(25);
+
+        template<typename TAsync>
+        bool WaitForCompletion(
+            TAsync const& operation,
+            std::stop_token const& stopToken,
+            std::chrono::steady_clock::duration const timeout)
         {
-            ::OpenNet::Web::ServerDomain::InitializeAsync().get();
+            auto const deadline =
+                std::chrono::steady_clock::now() + timeout;
+            for (;;)
+            {
+                if (stopToken.stop_requested())
+                {
+                    operation.Cancel();
+                    return false;
+                }
+
+                auto const status = operation.Status();
+                if (status == AsyncStatus::Completed)
+                    return true;
+                if (status != AsyncStatus::Started)
+                    return false;
+                if (std::chrono::steady_clock::now() >= deadline)
+                {
+                    operation.Cancel();
+                    return false;
+                }
+
+                std::this_thread::sleep_for(DirectoryPollInterval);
+            }
+        }
+
+        bool InitializeServerDomain(std::stop_token const& stopToken)
+        {
+            auto operation =
+                ::OpenNet::Web::ServerDomain::InitializeAsync();
+            if (!WaitForCompletion(
+                operation,
+                stopToken,
+                DirectoryInitializationTimeout))
+                return false;
+            operation.GetResults();
+            return true;
         }
 
         JsonObject IdentityJson(ContentIdentity const& identity)
@@ -127,11 +173,13 @@ namespace OpenNet::Core::Content
         std::string const& registrationId,
         std::optional<std::string> const& previousLeaseId,
         std::vector<ContentRecord> const& contents,
-        std::vector<ContentDirectoryEndpoint> const& endpoints)
+        std::vector<ContentDirectoryEndpoint> const& endpoints,
+        std::stop_token stopToken)
     {
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return std::nullopt;
 
             JsonObject request;
             request.Insert(L"nodeId", JsonValue::CreateStringValue(
@@ -187,13 +235,26 @@ namespace OpenNet::Core::Content
                 UnicodeEncoding::Utf8,
                 L"application/json"
             };
-            auto response = http.PostAsync(
+            auto requestOperation = http.PostAsync(
                 Uri{ ApiUri(L"/api/v1/content/nodes/register") },
-                body).get();
+                body);
+            if (!WaitForCompletion(
+                requestOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
+            auto response = requestOperation.GetResults();
             if (!response.IsSuccessStatusCode()) return std::nullopt;
 
+            auto readOperation =
+                response.Content().ReadAsStringAsync();
+            if (!WaitForCompletion(
+                readOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
             JsonObject json = JsonObject::Parse(
-                response.Content().ReadAsStringAsync().get());
+                readOperation.GetResults());
             ContentDirectoryLease lease;
             lease.leaseId = winrt::to_string(
                 json.GetNamedString(L"leaseId"));
@@ -211,11 +272,13 @@ namespace OpenNet::Core::Content
 
     bool ContentDirectoryClient::Heartbeat(
         std::string const& nodeId,
-        std::string const& leaseId)
+        std::string const& leaseId,
+        std::stop_token stopToken)
     {
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return false;
             JsonObject request;
             request.Insert(L"leaseId", JsonValue::CreateStringValue(
                 winrt::to_hstring(leaseId)));
@@ -229,8 +292,14 @@ namespace OpenNet::Core::Content
             std::wstring relative = L"/api/v1/content/nodes/";
             relative += winrt::to_hstring(nodeId).c_str();
             relative += L"/heartbeat";
-            return http.PostAsync(Uri{ ApiUri(relative) }, body)
-                .get().IsSuccessStatusCode();
+            auto operation =
+                http.PostAsync(Uri{ ApiUri(relative) }, body);
+            if (!WaitForCompletion(
+                operation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return false;
+            return operation.GetResults().IsSuccessStatusCode();
         }
         catch (...)
         {
@@ -242,11 +311,13 @@ namespace OpenNet::Core::Content
         ContentDirectoryClient::PollWakeups(
             std::string const& nodeId,
             std::string const& leaseId,
-            std::uint32_t maxItems)
+            std::uint32_t maxItems,
+            std::stop_token stopToken)
     {
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return std::nullopt;
             std::wstring relative = std::format(
                 L"/api/v1/content/nodes/{}/wakeups?leaseId={}&maxItems={}",
                 winrt::to_hstring(nodeId).c_str(),
@@ -254,11 +325,25 @@ namespace OpenNet::Core::Content
                 (std::min)(maxItems, 256u));
 
             auto http = CreateClient();
-            auto response = http.GetAsync(Uri{ ApiUri(relative) }).get();
+            auto requestOperation =
+                http.GetAsync(Uri{ ApiUri(relative) });
+            if (!WaitForCompletion(
+                requestOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
+            auto response = requestOperation.GetResults();
             if (!response.IsSuccessStatusCode()) return std::nullopt;
 
+            auto readOperation =
+                response.Content().ReadAsStringAsync();
+            if (!WaitForCompletion(
+                readOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
             JsonArray array = JsonArray::Parse(
-                response.Content().ReadAsStringAsync().get());
+                readOperation.GetResults());
             std::vector<ContentWakeup> result;
             result.reserve(array.Size());
             for (std::uint32_t i = 0; i < array.Size(); ++i)
@@ -298,11 +383,13 @@ namespace OpenNet::Core::Content
         bool succeeded,
         std::string const& canonicalInfoHashV2,
         std::vector<std::uint8_t> const& canonicalTorrent,
-        std::string const& error)
+        std::string const& error,
+        std::stop_token stopToken)
     {
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return false;
             JsonObject request;
             request.Insert(L"leaseId", JsonValue::CreateStringValue(
                 winrt::to_hstring(leaseId)));
@@ -335,8 +422,14 @@ namespace OpenNet::Core::Content
                 UnicodeEncoding::Utf8,
                 L"application/json"
             };
-            return http.PostAsync(Uri{ ApiUri(relative) }, body)
-                .get().IsSuccessStatusCode();
+            auto operation =
+                http.PostAsync(Uri{ ApiUri(relative) }, body);
+            if (!WaitForCompletion(
+                operation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return false;
+            return operation.GetResults().IsSuccessStatusCode();
         }
         catch (...)
         {
@@ -348,7 +441,8 @@ namespace OpenNet::Core::Content
         std::string const& nodeId,
         std::string const& leaseId,
         ResourceKey const& resourceKey,
-        ContentIdentity const& contentIdentity)
+        ContentIdentity const& contentIdentity,
+        std::stop_token stopToken)
     {
         if (nodeId.empty()
             || leaseId.empty()
@@ -357,7 +451,8 @@ namespace OpenNet::Core::Content
 
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return false;
 
             JsonObject keyJson;
             keyJson.Insert(L"algorithm", JsonValue::CreateNumberValue(
@@ -381,9 +476,14 @@ namespace OpenNet::Core::Content
                 UnicodeEncoding::Utf8,
                 L"application/json"
             };
-            return http.PostAsync(
-                Uri{ ApiUri(relative) }, body)
-                .get().IsSuccessStatusCode();
+            auto operation = http.PostAsync(
+                Uri{ ApiUri(relative) }, body);
+            if (!WaitForCompletion(
+                operation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return false;
+            return operation.GetResults().IsSuccessStatusCode();
         }
         catch (...)
         {
@@ -394,11 +494,13 @@ namespace OpenNet::Core::Content
     std::optional<ResourceLookupResult>
         ContentDirectoryClient::LookupResource(
             ResourceKey const& resourceKey,
-            std::uint32_t maxCandidates)
+            std::uint32_t maxCandidates,
+            std::stop_token stopToken)
     {
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return std::nullopt;
 
             std::wstring relative = std::format(
                 L"/api/v1/content/resources/lookup"
@@ -408,13 +510,26 @@ namespace OpenNet::Core::Content
                 (std::min)(maxCandidates, 32u));
 
             auto http = CreateClient();
-            auto response = http.GetAsync(
-                Uri{ ApiUri(relative) }).get();
+            auto requestOperation = http.GetAsync(
+                Uri{ ApiUri(relative) });
+            if (!WaitForCompletion(
+                requestOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
+            auto response = requestOperation.GetResults();
             if (!response.IsSuccessStatusCode())
                 return std::nullopt;
 
+            auto readOperation =
+                response.Content().ReadAsStringAsync();
+            if (!WaitForCompletion(
+                readOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
             JsonObject json = JsonObject::Parse(
-                response.Content().ReadAsStringAsync().get());
+                readOperation.GetResults());
 
             ResourceLookupResult result;
             result.key = resourceKey;
@@ -466,13 +581,15 @@ namespace OpenNet::Core::Content
         ContentIdentity const& identity,
         std::optional<std::string> const& excludeNodeId,
         std::uint32_t maxPeers,
-        bool prepare)
+        bool prepare,
+        std::stop_token stopToken)
     {
         if (!identity.IsWellFormed()) return std::nullopt;
 
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return std::nullopt;
             std::wstring relative = std::format(
                 L"/api/v1/content/lookup?algorithm={}&digest={}&maxPeers={}&prepare={}",
                 static_cast<int>(identity.algorithm),
@@ -486,11 +603,25 @@ namespace OpenNet::Core::Content
             }
 
             auto http = CreateClient();
-            auto response = http.GetAsync(Uri{ ApiUri(relative) }).get();
+            auto requestOperation =
+                http.GetAsync(Uri{ ApiUri(relative) });
+            if (!WaitForCompletion(
+                requestOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
+            auto response = requestOperation.GetResults();
             if (!response.IsSuccessStatusCode()) return std::nullopt;
 
+            auto readOperation =
+                response.Content().ReadAsStringAsync();
+            if (!WaitForCompletion(
+                readOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
             JsonObject json = JsonObject::Parse(
-                response.Content().ReadAsStringAsync().get());
+                readOperation.GetResults());
             ContentLookupResult result;
             result.contentId = winrt::to_string(
                 json.GetNamedString(L"contentId"));
@@ -546,20 +677,37 @@ namespace OpenNet::Core::Content
     }
 
     std::optional<std::vector<std::uint8_t>>
-        ContentDirectoryClient::GetManifest(std::string const& contentId)
+        ContentDirectoryClient::GetManifest(
+            std::string const& contentId,
+            std::stop_token stopToken)
     {
         if (contentId.empty()) return std::nullopt;
         try
         {
-            InitializeServerDomain();
+            if (!InitializeServerDomain(stopToken))
+                return std::nullopt;
             std::wstring relative = L"/api/v1/content/manifests/";
             relative += winrt::to_hstring(contentId).c_str();
 
             auto http = CreateClient();
-            auto response = http.GetAsync(Uri{ ApiUri(relative) }).get();
+            auto requestOperation =
+                http.GetAsync(Uri{ ApiUri(relative) });
+            if (!WaitForCompletion(
+                requestOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
+            auto response = requestOperation.GetResults();
             if (!response.IsSuccessStatusCode()) return std::nullopt;
 
-            auto buffer = response.Content().ReadAsBufferAsync().get();
+            auto readOperation =
+                response.Content().ReadAsBufferAsync();
+            if (!WaitForCompletion(
+                readOperation,
+                stopToken,
+                DirectoryRequestTimeout))
+                return std::nullopt;
+            auto buffer = readOperation.GetResults();
             DataReader reader = DataReader::FromBuffer(buffer);
             std::vector<std::uint8_t> bytes(buffer.Length());
             if (!bytes.empty())
