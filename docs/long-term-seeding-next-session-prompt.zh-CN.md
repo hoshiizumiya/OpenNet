@@ -150,7 +150,21 @@ one piece picker / one writer
 
 HTTP dialog 已有 `P2P acceleration` 开关，默认开启：开启映射到 `P2PPreferred`，关闭映射到 `Aria2Only`.
 
-Pause active hybrid 会调用 hidden libtorrent session pause；Resume 恢复同一 session。Cancel/Remove/Delete 才关闭 session 并 suppress late discovery.
+Pause active hybrid 会调用 hidden libtorrent session pause；Resume 恢复同一 session。Cancel/Remove/Delete 才关闭 session 并 suppress late discovery。
+
+HTTP record 现在持久化：
+- `transferMode`；
+- `activeEngine`；
+- `userRequestedPaused`；
+- `canonicalInfoHashV2`。
+
+caller WholeFile SHA-256 也作为本地 recovery authority 保存。应用重启时，如果上次 hidden canonical session 已消失：
+- Probe 阶段可以直接安全回落 aria2；
+- Hybrid 阶段先重新 hash 最终文件；
+- SHA-256/size 完整匹配则恢复 HTTP Complete；
+- 否则删除 libtorrent partial，确认目标释放后才 Resume aria2。
+
+TasksPage 名称下方现在直接显示 `P2P discovery` / `libtorrent · HTTP/P2P` / `aria2`，hybrid 的 download/upload rate、peer/seed 连接数也投影进现有 HTTP task telemetry。Task Log 会记录实际 canonical v2 info-hash。
 
 WebSeed path fixture 已加入：
 - 完整 direct-file URL `/file.bin` 必须原样请求；
@@ -177,7 +191,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `f2a9e571c536ec1402a393251f8e23bc65ac2549`
+- `4a6623aad36f9fcbbe16c3e116f2cf5095929298`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 
@@ -198,12 +212,12 @@ ResourceKey
 
 ### 3. lifecycle / persistence hardening
 
-- app restart 后恢复 `P2PPreferred` task policy 与必要 discovery 状态；
+当前 restart recovery 已有原型实现，下一步是补 deterministic crash/restart tests，而不是重新设计：
 - shutdown cooperative cancellation；
-- abnormal exit stale partial cleanup；
+- restart 时 complete-vs-partial SHA recovery 测试；
+- aria2 shell removal failure 测试；
 - same-target duplicate task 排他；
-- redirect / Content-Disposition 晚到 filename；
-- aria2 control-shell cleanup/session persistence failure recovery.
+- redirect / Content-Disposition 晚到 filename。
 
 ### 4. Traversal / security / production
 

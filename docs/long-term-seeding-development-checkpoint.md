@@ -25,10 +25,10 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `f2a9e571c536ec1402a393251f8e23bc65ac2549`
-- `fix: use libtorrent ABI 4 session API in web-seed tests`
+- `4a6623aad36f9fcbbe16c3e116f2cf5095929298`
+- `feat: expose canonical transfer identity and telemetry`
 
-This lineage includes the master merge, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, HTTP progress bridging, caller SHA-256 verification, aria2 fallback, and deterministic WebSeed path fixtures.
+This lineage includes the master merge, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid upload/download/peer telemetry, and deterministic WebSeed path fixtures.
 
 The feature lineage has been updated from:
 
@@ -294,7 +294,7 @@ A source server's whole-file SHA-256 is not torrent metadata and cannot be conve
 
 For primary hybrid, libtorrent writes the final target directly and mixes the HTTP URL Seed with OpenNet peers. The older `.opennet-p2p-<gid>.part` promotion route is retained only for legacy compatibility.
 
-Pause now pauses the hidden libtorrent session rather than closing it. Resume resumes the hidden session or a pending hybrid job; Cancel/Remove/Delete still suppress late discovery.
+Pause now pauses the hidden libtorrent session rather than closing it. Resume resumes the hidden session or a pending hybrid job; Cancel/Remove/Delete still suppress late discovery. HTTP records persist transfer mode, active engine, user pause intent and canonical v2 info-hash. The task list visibly identifies `P2P discovery`, `libtorrent · HTTP/P2P`, and aria2 execution, and hybrid telemetry maps libtorrent upload/download rates plus peer/seed counts into the existing HTTP task model.
 
 ## Important boundary: one physical output has one active writer
 
@@ -385,11 +385,10 @@ Recommended research remains:
 - the new tests are committed but should not be described as CI-passed until the feature workflow reports results;
 - hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
 - in-flight wakeup/lookup is not cooperatively cancellable during shutdown;
-- active-session and pending-session Pause/Resume are handled, but hybrid state is not yet crash/restart persistent;
+- transfer policy / engine / user-pause / canonical hash are now persisted, and process-local canonical sessions have restart recovery; crash-recovery behavior still needs deterministic tests;
 - late redirect/Content-Disposition output names cannot yet activate hybrid;
-- stale hybrid/P2P partial cleanup after abnormal termination remains incomplete;
 - same-target duplicate HTTP tasks need explicit exclusion;
-- task-shell cleanup/session persistence needs stronger crash-recovery testing;
+- aria2 shell removal and abnormal-exit cleanup now preserve the single-writer invariant but still need stress/crash testing;
 - Traversal/NAT/security/production hardening and BitComet wire compatibility remain future work.
 
 ## Next milestone
@@ -410,13 +409,12 @@ local HTTP Range origin
 
 Recommended order:
 
-1. Run and harden the committed local WebSeed path fixture in the feature workflow; fix only concrete compiler/test failures.
-2. Extend it to the complete ResourceKey -> Directory -> manifest -> URL Seed + OpenNet peer chain without public-network dependencies.
-3. Persist/recover P2P-preferred task state across app restart and harden shutdown cancellation.
-4. Add stale partial cleanup and same-target exclusion.
-5. Support late output filenames.
-6. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
-7. Continue BitComet compatibility separately.
+1. Run and harden the committed prototype in the feature workflow; fix only concrete compiler/test failures.
+2. Add one deterministic end-to-end fixture for ResourceKey -> Directory candidate -> canonical manifest -> URL Seed + local OpenNet peer -> HTTP Complete.
+3. Add deterministic restart/crash tests for the persisted P2PPreferred routing state and aria2 control-shell recovery.
+4. Add same-target exclusion and support late redirect/Content-Disposition output filenames.
+5. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
+6. Continue BitComet compatibility separately.
 
 Do not make `TransferCoordinator` the default HTTP milestone again.
 
