@@ -448,6 +448,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 						: winrt::to_hstring(task.name);
 
 					auto vm = self->FindOrCreateItemByTaskId(task.taskId, name);
+					vm.Transport(L"libtorrent · BitTorrent");
 
 					// Set add date from timestamp
 					vm.AddDate(FormatTimestamp(task.addedTimestamp));
@@ -570,6 +571,21 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 					// Set add date
 					vm.AddDate(FormatTimestamp(rec.addedTimestamp));
+					switch (rec.activeEngine)
+					{
+						case 2:
+							vm.Transport(L"libtorrent · HTTP/P2P");
+							break;
+						case 1:
+							vm.Transport(L"P2P discovery");
+							break;
+						default:
+							vm.Transport(
+								rec.transferMode == 1
+									? L"aria2 · P2P fallback"
+									: L"aria2");
+							break;
+					}
 
 					// Set progress
 					if (rec.status == 3) // Completed
@@ -814,6 +830,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateItemByTaskId(e.taskId, name);
+				item.Transport(L"libtorrent · BitTorrent");
 				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
 				if (!name.empty() && item.Name() != name)
 				{
@@ -979,10 +996,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 		auto completedLen = progress.completedLength;
 		auto dlSpeed = progress.downloadSpeed;
 		auto ulSpeed = progress.uploadSpeed;
+		auto connectedPeers = progress.connectedPeers;
+		auto connectedSeeds = progress.connectedSeeds;
 		auto percent = progress.progressPercent;
 		auto status = progress.status;
+		auto engine = progress.engine;
 
-		dispatcher.TryEnqueue([weak = get_weak(), gid, name, totalLen, completedLen, dlSpeed, ulSpeed, percent, status]()
+		dispatcher.TryEnqueue([weak = get_weak(), gid, name, totalLen, completedLen, dlSpeed, ulSpeed, connectedPeers, connectedSeeds, percent, status, engine]()
 		{
 			if (auto self = weak.get())
 			{
@@ -998,6 +1018,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 				// Update name if it changed (aria2 resolves filename later)
 				if (!name.empty() && item.Name() != name)
 					item.Name(name);
+
+				switch (engine)
+				{
+					case ::OpenNet::Core::HttpTransferEngine::CanonicalHybrid:
+						item.Transport(L"libtorrent · HTTP/P2P");
+						break;
+					case ::OpenNet::Core::HttpTransferEngine::CanonicalProbe:
+						item.Transport(L"P2P discovery");
+						break;
+					default:
+						item.Transport(L"aria2");
+						break;
+				}
 
 				auto const previousState = item.State();
 				auto nextState =
@@ -1035,8 +1068,21 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.UploadSize(Core::Utils::Misc::friendlyUnit(0));
 				item.TotalUploadSize(Core::Utils::Misc::friendlyUnit(0));
 				item.ShareRatio(L"0.00");
-				item.Seeds(L"-");
-				item.Peers(L"-");
+				if (engine == ::OpenNet::Core::HttpTransferEngine::CanonicalHybrid)
+				{
+					item.Seeds(FormatSeedsPeers(
+						connectedSeeds,
+						(std::max)(0, connectedPeers - connectedSeeds),
+						-1,
+						-1));
+					item.Peers(winrt::to_hstring(
+						(std::max)(0, connectedPeers - connectedSeeds)));
+				}
+				else
+				{
+					item.Seeds(L"-");
+					item.Peers(L"-");
+				}
 				if (nextState == winrt::OpenNet::ViewModels::DownloadTaskState::Completed &&
 					(item.CompletedDate().empty() || item.CompletedDate() == L"-"))
 				{

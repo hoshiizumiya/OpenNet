@@ -67,6 +67,15 @@ jobs:
         with:
           submodules: recursive
       
+      - name: Run persistence SQL regression tests
+        if: matrix.platform == 'x64'
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/test_torrent_persistence_sql.py
+          python scripts/test_http_persistence_sql.py
+          python scripts/test_content_catalog_pending_sql.py
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
         with:
@@ -158,6 +167,7 @@ jobs:
           }
 
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install `
+            --debug `
             --triplet $triplet `
             --vcpkg-root "$env:VCPKG_INSTALLATION_ROOT" `
             --x-manifest-root "$env:GITHUB_WORKSPACE\OpenNet" `
@@ -252,6 +262,22 @@ jobs:
             /p:CGTHREADS=1 `
             /m:1
 
+      - name: Build native unit tests
+        if: matrix.platform == 'x64'
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,read"
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          msbuild OpenNetUnitTest\OpenNetUnitTest.vcxproj `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:Platform=x64 `
+            /p:PreferredToolArchitecture=x64 `
+            /p:GenerateAppxPackageOnBuild=false `
+            /p:AppxPackageSigningEnabled=false `
+            /p:CGTHREADS=1 `
+            /m:1
+
       - name: Cleanup certificate
         if: always()
         shell: pwsh
@@ -324,6 +350,7 @@ jobs:
   cleanup-cache:
     needs: prerelease
     runs-on: ubuntu-latest
+    if: false # Disabled for now, test ABI issue
   
     permissions:
       packages: write

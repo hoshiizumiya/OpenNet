@@ -13,7 +13,7 @@ struct sqlite3;
 
 export module OpenNet.Core.HttpStateManager;
 
-import std;
+export import std;
 
 export namespace OpenNet::Core
 {
@@ -31,6 +31,10 @@ export namespace OpenNet::Core
         std::int64_t     completedSize{};    // Downloaded size in bytes
         int         status{};           // 0=pending, 1=downloading, 2=paused, 3=completed, 4=failed
         std::string lastGid;            // Last known Aria2 GID (for session re-association)
+        int transferMode{};             // 0=Aria2Only, 1=P2PPreferred
+        int activeEngine{};             // 0=aria2, 1=canonical probe, 2=canonical libtorrent
+        bool userRequestedPaused{};     // User intent, not the internal hybrid shell pause
+        std::string canonicalInfoHashV2;
     };
 
     // Manages HTTP download record persistence via SQLite
@@ -49,18 +53,29 @@ export namespace OpenNet::Core
         std::string AddRecord(std::string const& url, std::string const& savePath, std::string const& fileName);
         void UpdateRecordGid(std::string const& recordId, std::string const& gid);
         void UpdateRecordName(std::string const& recordId, std::string const& name);
-        void UpdateRecordOutputPath(
+        bool UpdateRecordOutputPath(
             std::string const& recordId,
             std::string const& savePath,
             std::string const& fileName);
         void UpdateRecordProgress(std::string const& recordId, int64_t completedSize, int64_t totalSize);
         void UpdateRecordStatus(std::string const& recordId, int status);
+        void UpdateRecordTransferPolicy(
+            std::string const& recordId,
+            int transferMode,
+            bool userRequestedPaused);
+        void UpdateRecordActiveEngine(
+            std::string const& recordId,
+            int activeEngine,
+            std::string const& canonicalInfoHashV2 = {});
         void DeleteRecord(std::string const& recordId);
 
         // Lookup
         std::optional<HttpDownloadRecord> FindByGid(std::string const& gid) const;
         std::optional<HttpDownloadRecord> FindByRecordId(std::string const& recordId) const;
         std::optional<HttpDownloadRecord> FindActiveByUrl(std::string const& url) const;
+        std::optional<HttpDownloadRecord> FindActiveByOutputPath(
+            std::string const& savePath,
+            std::string const& fileName) const;
         std::vector<HttpDownloadRecord> LoadAllRecords() const;
 
         // Flush changes to disk (no-op for SQLite WAL, kept for API compat)

@@ -267,6 +267,8 @@
                     ContainerContentChanging="TasksList_ContainerContentChanging"
                     ItemsSource="{x:Bind ViewModel.FilteredTasks, Mode=OneWay}"
                     RightTapped="TasksList_RightTapped"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollMode="Enabled"
                     SelectionChanged="TasksList_SelectionChanged"
                     SelectionMode="Single">
                     <ListView.ItemContainerTransitions>
@@ -891,15 +893,24 @@
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
                                     <ouxc:TaskStatusIndicator Grid.Column="0" State="{x:Bind StateValue, Mode=OneWay}" />
-                                    <TextBlock
-                                        x:Name="NameTextBlock"
+                                    <StackPanel
                                         Grid.Column="1"
                                         Margin="0,0,8,0"
                                         HorizontalAlignment="Left"
-                                        IsTextSelectionEnabled="True"
-                                        Text="{x:Bind Name, Mode=OneWay}"
-                                        TextTrimming="CharacterEllipsis"
-                                        TextWrapping="NoWrap" />
+                                        Spacing="0">
+                                        <TextBlock
+                                            x:Name="NameTextBlock"
+                                            IsTextSelectionEnabled="True"
+                                            Text="{x:Bind Name, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
+                                        <TextBlock
+                                            FontSize="11"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="{x:Bind Transport, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
+                                    </StackPanel>
                                 </Grid>
                                 <TextBlock
                                     x:Name="SizeTextBlock"

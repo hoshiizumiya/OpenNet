@@ -136,6 +136,16 @@
             <TabView IsAddTabButtonVisible="False" TabWidthMode="SizeToContent">
                 <TabViewItem Header="Acceleration" IsClosable="False">
                     <StackPanel Padding="4,12" Spacing="10">
+                        <ToggleSwitch
+                            x:Name="P2PAccelerationToggle"
+                            Header="P2P acceleration"
+                            IsOn="{x:Bind UseP2PAcceleration, Mode=TwoWay}"
+                            OffContent="Aria2 only"
+                            OnContent="Prefer P2P + HTTP Web Seed" />
+                        <TextBlock
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="P2P mode uses libtorrent only when verified canonical metadata and HTTP byte ranges are available; otherwise the task falls back to aria2."
+                            TextWrapping="Wrap" />
                         <NumberBox
                             x:Name="ConnectionsNumberBox"
                             Header="Connections per server"

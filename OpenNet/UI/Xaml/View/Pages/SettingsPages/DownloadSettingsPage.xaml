@@ -82,6 +82,31 @@
 			</essential:SettingsCard>
 
             <essential:SettingsCard
+                x:Uid="DL_HttpP2PPreferred"
+                Header="Prefer P2P acceleration for HTTP downloads"
+                Description="New HTTP tasks try the verified libtorrent HTTP/P2P path first and fall back to aria2 when canonical metadata is unavailable.">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE968;" />
+                </essential:SettingsCard.HeaderIcon>
+                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+                        <ToggleSwitch
+                            x:Name="HttpP2PPreferredToggle"
+                            Loaded="MaterialToggle_Loaded"
+                            Toggled="OnSettingChanged" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Name="HttpP2PPreferredGlassToggle"
+                            Loaded="MaterialToggle_Loaded"
+                            Click="OnSettingChanged" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
+            </essential:SettingsCard>
+
+            <essential:SettingsCard
                 x:Uid="DL_Aria2Connections"
                 Description="Connections used for each HTTP download"
                 Header="HTTP download connections">

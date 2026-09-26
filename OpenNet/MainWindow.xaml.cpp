@@ -15,6 +15,7 @@
 #include "MainWindow.g.cpp"
 #endif
 
+import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
@@ -121,7 +122,9 @@ namespace winrt::OpenNet::implementation
 		MainContentView().Navigate(pageType);
 	}
 
-	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(hstring const& kind)
+	winrt::Windows::Foundation::IAsyncAction MainWindow::ShowAddTaskDialogAsync(
+		hstring const& kind,
+		hstring const& initialValue)
 	{
 		auto strong = get_strong();
 		Navigate(xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::TasksPage>());
@@ -148,7 +151,8 @@ namespace winrt::OpenNet::implementation
 		}
 		else if (kind == L"http")
 		{
-			co_await tasksPageImpl->MenuItemAddFromHttp_ClickAsync(tasksPage, args);
+			co_await tasksPageImpl->ShowHttpDownloadDialogAsync(
+				initialValue);
 		}
 		else if (kind == L"http-batch")
 		{
@@ -185,12 +189,8 @@ namespace winrt::OpenNet::implementation
 				const auto last = line.find_last_not_of(L" \t\r");
 				line = line.substr(first, last - first + 1);
 
-				std::wstring lower = line;
-				std::transform(
-					lower.begin(), lower.end(), lower.begin(), ::towlower);
-				if (lower.starts_with(L"http://")
-					|| lower.starts_with(L"https://")
-					|| lower.starts_with(L"ftp://"))
+				if (Core::Utils::Misc::isHttpDownloadUrl(
+					winrt::hstring{ line }))
 				{
 					parsedUrls.push_back(winrt::to_string(line));
 				}

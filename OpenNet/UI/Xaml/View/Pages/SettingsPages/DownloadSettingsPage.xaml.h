@@ -29,6 +29,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		bool m_autoStartDownloads{};
 		bool m_recheckBeforeResume{};
 		bool m_moveCompleted{};
+		bool m_httpP2PPreferred{ true };
 	};
 }
 

@@ -4,6 +4,7 @@
 #pragma comment(lib, "crypt32.lib")
 #include "LibtorrentIncludeGuard.h"
 #include <libtorrent/sha1_hash.hpp>
+#include <libtorrent/version.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_handle.hpp>
@@ -29,6 +30,8 @@
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/pread_disk_io.hpp>
 #include <libtorrent/time.hpp>
+#include <libtorrent/address.hpp>
+#include <libtorrent/pex_flags.hpp>
 #include <boost/asio/ip/address.hpp>
 #include "TorrentSettingsAdapter.h"
 #include "LibtorrentIncludeRestore.h"
@@ -36,6 +39,8 @@
 module OpenNet.Core.torrentCore.LibtorrentHandle;
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Content.ContentCatalogService;
+import OpenNet.Core.Content.ContentIdentity;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Core.torrentCore.TorrentStateManager;
@@ -45,13 +50,81 @@ import winrt_base;
 namespace lt = libtorrent;
 using namespace std::chrono_literals;
 
-static_assert(LIBTORRENT_VERSION_MAJOR == 2 && LIBTORRENT_VERSION_MINOR == 1 && LIBTORRENT_VERSION_TINY >= 1);
+static_assert(
+	LIBTORRENT_VERSION_MAJOR == 2
+	&& LIBTORRENT_VERSION_MINOR == 1
+	&& LIBTORRENT_VERSION_TINY >= 2,
+	"OpenNet requires libtorrent >= 2.1.2 for v2 WebSeed, pread and priority fixes.");
 static_assert(TORRENT_USE_RTC == 1);
 
 namespace
 {
 	constexpr auto TorrentTaskSettingsCategory = "torrent_task_settings";
 	constexpr auto TorrentTlsCategory = "torrent_tls_protected";
+
+	void CatalogCompletedTorrent(
+		lt::torrent_handle const& handle,
+		std::string const& taskId)
+	{
+		try
+		{
+			if (!handle.is_valid() || taskId.empty()) return;
+			auto const info = handle.torrent_file();
+			if (!info || !info->is_valid() || info->priv()) return;
+
+			auto const& files = info->layout();
+			auto const priorities = handle.get_file_priorities();
+			auto const renamedFiles = handle.get_renamed_files();
+			lt::filenames const currentNames(files, renamedFiles);
+			auto const status = handle.status();
+			auto const saveRoot = std::filesystem::path{
+				winrt::to_hstring(status.save_path).c_str() };
+
+			for (auto const index : files.file_range())
+			{
+				auto const ordinal = static_cast<int>(index);
+				if (files.pad_file_at(index)) continue;
+				if (ordinal < static_cast<int>(priorities.size())
+					&& static_cast<std::uint8_t>(priorities[ordinal]) == 0)
+					continue;
+
+				auto const relativePath = currentNames.file_path(index);
+				auto const path = saveRoot
+					/ std::filesystem::path{ winrt::to_hstring(relativePath).c_str() };
+
+				std::vector<::OpenNet::Core::Content::ContentIdentity> identities;
+				auto const root = files.root(index);
+				if (!root.is_all_zeros())
+				{
+					auto const* first = reinterpret_cast<std::uint8_t const*>(root.data());
+					identities.push_back({
+						::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256,
+						std::vector<std::uint8_t>(first, first + root.size())
+					});
+				}
+
+				::OpenNet::Core::Content::ContentCatalogService::Instance().EnqueueFile(
+					path,
+					{
+						::OpenNet::Core::Content::ContentSourceKind::Torrent,
+						taskId,
+						ordinal
+					},
+					std::move(identities));
+			}
+		}
+		catch (std::exception const& exception)
+		{
+			OutputDebugStringA((
+				"LibtorrentHandle: failed to catalog completed torrent: "
+				+ std::string(exception.what()) + "\n").c_str());
+		}
+		catch (...)
+		{
+			OutputDebugStringA(
+				"LibtorrentHandle: failed to catalog completed torrent\n");
+		}
+	}
 
 	bool ValidateTlsBuffers(std::string const& certificate, std::string const& key,
 		std::string const& dh)
@@ -331,6 +404,14 @@ namespace OpenNet::Core::Torrent
 		std::unordered_map<lt::torrent_handle, std::string,
 			std::hash<lt::torrent_handle>> m_handleToTaskId;
 		mutable std::mutex m_torrentMapMutex;
+
+		struct LongSeedSession
+		{
+			lt::torrent_handle handle;
+			std::string infoHashV2;
+		};
+		std::unordered_map<std::string, LongSeedSession> m_longSeedSessions;
+		mutable std::mutex m_longSeedMutex;
 		std::mutex m_addRemoveMutex;
 		std::mutex m_taskCommandMutex;
 		std::mutex m_detailRequestMutex;
@@ -419,6 +500,10 @@ namespace OpenNet::Core::Torrent
 		std::string m_ipv6ListenError;
 		int m_ipv4ListenPort{};
 		int m_ipv6ListenPort{};
+		int m_ipv4TcpListenPort{};
+		int m_ipv4UtpListenPort{};
+		int m_ipv6TcpListenPort{};
+		int m_ipv6UtpListenPort{};
 
 		mutable std::mutex m_sessionStatsMutex;
 		std::int64_t m_sessionTotalDownload{};
@@ -507,6 +592,8 @@ namespace OpenNet::Core::Torrent
 #define m_taskIdToHandle m_impl->m_taskIdToHandle
 #define m_handleToTaskId m_impl->m_handleToTaskId
 #define m_torrentMapMutex m_impl->m_torrentMapMutex
+#define m_longSeedSessions m_impl->m_longSeedSessions
+#define m_longSeedMutex m_impl->m_longSeedMutex
 #define m_addRemoveMutex m_impl->m_addRemoveMutex
 #define m_taskCommandMutex m_impl->m_taskCommandMutex
 #define m_detailRequestMutex m_impl->m_detailRequestMutex
@@ -549,6 +636,10 @@ namespace OpenNet::Core::Torrent
 #define m_ipv6ListenError m_impl->m_ipv6ListenError
 #define m_ipv4ListenPort m_impl->m_ipv4ListenPort
 #define m_ipv6ListenPort m_impl->m_ipv6ListenPort
+#define m_ipv4TcpListenPort m_impl->m_ipv4TcpListenPort
+#define m_ipv4UtpListenPort m_impl->m_ipv4UtpListenPort
+#define m_ipv6TcpListenPort m_impl->m_ipv6TcpListenPort
+#define m_ipv6UtpListenPort m_impl->m_ipv6UtpListenPort
 #define m_sessionStatsMutex m_impl->m_sessionStatsMutex
 #define m_sessionTotalDownload m_impl->m_sessionTotalDownload
 #define m_sessionTotalUpload m_impl->m_sessionTotalUpload
@@ -1192,6 +1283,11 @@ namespace OpenNet::Core::Torrent
 			}
 		}
 
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			m_longSeedSessions.clear();
+		}
+
 		// Clear session using abort() + session_proxy for non-blocking shutdown.
 		// session::abort() starts an asynchronous shutdown (notifying trackers etc.)
 		// and returns a session_proxy. Destroying the session after abort() is
@@ -1553,6 +1649,406 @@ namespace OpenNet::Core::Torrent
 			if (m_errorCb)
 				m_errorCb(std::string("AddTorrentFile error: ") + ex.what());
 			return { AddTorrentOutcome::Failed, {}, ex.what() };
+		}
+	}
+
+	LibtorrentHandle::LongSeedSessionResult LibtorrentHandle::OpenLongSeedSession(
+		std::string const& sessionId,
+		std::vector<std::uint8_t> const& metainfo,
+		std::filesystem::path const& localFilePath)
+	{
+		if (sessionId.empty())
+			return { false, {}, "Long-seed session ID is empty" };
+		if (metainfo.empty())
+			return { false, {}, "Canonical torrent metadata is empty" };
+		if (!std::filesystem::is_regular_file(localFilePath))
+			return { false, {}, "Long-seed source file is unavailable" };
+		if (!Initialize())
+			return { false, {}, "Failed to initialize the torrent session" };
+
+		try
+		{
+			{
+				std::lock_guard lock(m_longSeedMutex);
+				auto const existing = m_longSeedSessions.find(sessionId);
+				if (existing != m_longSeedSessions.end()
+					&& existing->second.handle.is_valid())
+				{
+					return { true, existing->second.infoHashV2, {} };
+				}
+			}
+
+			lt::load_torrent_limits limits;
+			limits.max_directory_depth = 16;
+			auto params = lt::load_torrent_buffer(
+				lt::span<char const>(
+					reinterpret_cast<char const*>(metainfo.data()),
+					metainfo.size()),
+				limits);
+			if (!params.ti || !params.ti->info_hashes().has_v2())
+				return { false, {}, "Canonical torrent is not BitTorrent v2 metadata" };
+			if (params.ti->num_files() != 1)
+				return { false, {}, "Canonical torrent must contain exactly one file" };
+			if (params.ti->total_size()
+				!= static_cast<std::int64_t>(std::filesystem::file_size(localFilePath)))
+				return { false, {}, "Canonical torrent size does not match local file" };
+
+			auto const parent = localFilePath.parent_path();
+			auto const filename = localFilePath.filename();
+			if (parent.empty() || filename.empty())
+				return { false, {}, "Long-seed source path must have a parent and filename" };
+
+			params.save_path = winrt::to_string(
+				winrt::hstring{ parent.wstring() });
+			params.renamed_files.insert_or_assign(
+				lt::file_index_t{0},
+				winrt::to_string(winrt::hstring{ filename.wstring() }));
+
+			params.flags |= lt::torrent_flags::seed_mode
+				| lt::torrent_flags::duplicate_is_error
+				| lt::torrent_flags::disable_dht
+				| lt::torrent_flags::disable_lsd
+				| lt::torrent_flags::disable_pex;
+			params.flags &= ~lt::torrent_flags::auto_managed;
+			params.flags &= ~lt::torrent_flags::paused;
+
+			std::scoped_lock addLock(m_addRemoveMutex);
+			lt::error_code error;
+			auto handle = m_session->add_torrent(params, error);
+			if (error || !handle.is_valid())
+			{
+				return {
+					false,
+					{},
+					error ? error.message()
+						: "libtorrent returned an invalid long-seed handle"
+				};
+			}
+
+			auto const infoHash = HexDigest(params.ti->info_hashes().v2);
+			{
+				std::lock_guard lock(m_longSeedMutex);
+				auto [it, inserted] = m_longSeedSessions.emplace(
+					sessionId,
+					Impl::LongSeedSession{ handle, infoHash });
+				if (!inserted)
+				{
+					m_session->remove_torrent(handle);
+					if (it->second.handle.is_valid())
+						return { true, it->second.infoHashV2, {} };
+					it->second = { handle, infoHash };
+				}
+			}
+
+			handle.resume();
+			return { true, infoHash, {} };
+		}
+		catch (std::exception const& exception)
+		{
+			return { false, {}, exception.what() };
+		}
+		catch (...)
+		{
+			return { false, {}, "Unknown long-seed session error" };
+		}
+	}
+
+	bool LibtorrentHandle::ConnectLongSeedPeer(
+		std::string const& sessionId,
+		std::string const& address,
+		std::uint16_t port,
+		bool preferUtp)
+	{
+		if (address.empty() || port == 0) return false;
+
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end()
+				|| !it->second.handle.is_valid())
+				return false;
+			handle = it->second.handle;
+		}
+
+		try
+		{
+			lt::error_code error;
+			auto const ip = lt::make_address(address, error);
+			if (error) return false;
+
+			lt::pex_flags_t flags{};
+			if (preferUtp)
+				flags |= lt::pex_utp;
+			handle.connect_peer(lt::tcp::endpoint{ ip, port }, {}, flags);
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	LibtorrentHandle::LongSeedSessionStatus
+		LibtorrentHandle::GetLongSeedSessionStatus(
+			std::string const& sessionId) const
+	{
+		LongSeedSessionStatus result;
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end())
+				return result;
+			result.exists = true;
+			result.infoHashV2 = it->second.infoHashV2;
+			handle = it->second.handle;
+		}
+
+		if (!handle.is_valid())
+			return result;
+
+		result.valid = true;
+		try
+		{
+			// This path is polled by the HTTP/P2P coordinator while a hidden
+			// canonical transfer is active. status() is synchronous, and its
+			// default requests every optional field (torrent_file, name,
+			// save_path, renamed files, etc.). None of those are needed here.
+			// Request only accurate byte counters; the basic state/rate/peer
+			// fields remain part of torrent_status.
+			auto const status = handle.status(
+				lt::torrent_handle::query_accurate_download_counters);
+			result.seeding = status.is_seeding;
+			result.finished = status.is_finished || status.is_seeding;
+			result.progressPercent = std::clamp(
+				status.progress_ppm / 10000,
+				0,
+				100);
+			result.downloadRate = status.download_rate;
+			result.uploadRate = status.upload_rate;
+			result.totalWanted = status.total_wanted;
+			result.totalWantedDone = status.total_wanted_done;
+			result.connectedPeers = status.num_peers;
+			result.connectedSeeds = status.num_seeds;
+			if (status.errc)
+			{
+				result.hasError = true;
+				result.error = status.errc.message();
+			}
+		}
+		catch (std::exception const& exception)
+		{
+			result.hasError = true;
+			result.error = exception.what();
+		}
+		catch (...)
+		{
+			result.hasError = true;
+			result.error = "Unknown long-seed session status error";
+		}
+		return result;
+	}
+
+	bool LibtorrentHandle::PauseLongSeedSession(std::string const& sessionId)
+	{
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end())
+				return false;
+			handle = it->second.handle;
+		}
+		if (!handle.is_valid())
+			return false;
+		try
+		{
+			handle.pause(lt::torrent_handle::graceful_pause);
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	bool LibtorrentHandle::ResumeLongSeedSession(std::string const& sessionId)
+	{
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end())
+				return false;
+			handle = it->second.handle;
+		}
+		if (!handle.is_valid())
+			return false;
+		try
+		{
+			handle.resume();
+			return true;
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
+	void LibtorrentHandle::CloseLongSeedSession(std::string const& sessionId)
+	{
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			auto const it = m_longSeedSessions.find(sessionId);
+			if (it == m_longSeedSessions.end()) return;
+			handle = it->second.handle;
+			m_longSeedSessions.erase(it);
+		}
+
+		if (m_session && handle.is_valid())
+		{
+			try
+			{
+				m_session->remove_torrent(handle);
+			}
+			catch (...)
+			{
+			}
+		}
+	}
+
+	void LibtorrentHandle::CloseAllLongSeedSessions()
+	{
+		std::vector<lt::torrent_handle> handles;
+		{
+			std::lock_guard lock(m_longSeedMutex);
+			handles.reserve(m_longSeedSessions.size());
+			for (auto const& [id, state] : m_longSeedSessions)
+			{
+				(void)id;
+				if (state.handle.is_valid())
+					handles.push_back(state.handle);
+			}
+			m_longSeedSessions.clear();
+		}
+
+		if (!m_session) return;
+		for (auto const& handle : handles)
+		{
+			try
+			{
+				m_session->remove_torrent(handle);
+			}
+			catch (...)
+			{
+			}
+		}
+	}
+
+	LibtorrentHandle::LongSeedSessionResult
+		LibtorrentHandle::OpenLongSeedDownloadSession(
+			std::string const& sessionId,
+			std::vector<std::uint8_t> const& metainfo,
+			std::filesystem::path const& targetFilePath,
+			std::vector<std::string> const& urlSeeds)
+	{
+		if (sessionId.empty())
+			return { false, {}, "Long-seed download session ID is empty" };
+		if (metainfo.empty())
+			return { false, {}, "Canonical torrent metadata is empty" };
+		if (targetFilePath.empty()
+			|| targetFilePath.parent_path().empty()
+			|| targetFilePath.filename().empty())
+			return { false, {}, "Long-seed target path is invalid" };
+		if (!Initialize())
+			return { false, {}, "Failed to initialize the torrent session" };
+
+		try
+		{
+			{
+				std::lock_guard lock(m_longSeedMutex);
+				auto const existing = m_longSeedSessions.find(sessionId);
+				if (existing != m_longSeedSessions.end()
+					&& existing->second.handle.is_valid())
+					return { true, existing->second.infoHashV2, {} };
+			}
+
+			lt::load_torrent_limits limits;
+			limits.max_directory_depth = 16;
+			auto params = lt::load_torrent_buffer(
+				lt::span<char const>(
+					reinterpret_cast<char const*>(metainfo.data()),
+					metainfo.size()),
+				limits);
+			if (!params.ti || !params.ti->info_hashes().has_v2())
+				return { false, {}, "Canonical torrent is not BitTorrent v2 metadata" };
+			if (params.ti->num_files() != 1)
+				return { false, {}, "Canonical torrent must contain exactly one file" };
+
+			std::filesystem::create_directories(
+				targetFilePath.parent_path());
+			params.save_path = winrt::to_string(
+				winrt::hstring{ targetFilePath.parent_path().wstring() });
+			params.renamed_files.insert_or_assign(
+				lt::file_index_t{0},
+				winrt::to_string(
+					winrt::hstring{ targetFilePath.filename().wstring() }));
+			for (auto const& urlSeed : urlSeeds)
+			{
+				if (!urlSeed.empty())
+					params.url_seeds.push_back(urlSeed);
+			}
+
+			params.flags |= lt::torrent_flags::duplicate_is_error
+				| lt::torrent_flags::disable_dht
+				| lt::torrent_flags::disable_lsd
+				| lt::torrent_flags::disable_pex;
+			params.flags &= ~lt::torrent_flags::seed_mode;
+			params.flags &= ~lt::torrent_flags::auto_managed;
+			params.flags &= ~lt::torrent_flags::paused;
+
+			std::scoped_lock addLock(m_addRemoveMutex);
+			lt::error_code error;
+			auto handle = m_session->add_torrent(params, error);
+			if (error || !handle.is_valid())
+			{
+				return {
+					false,
+					{},
+					error ? error.message()
+						: "libtorrent returned an invalid long-seed download handle"
+				};
+			}
+
+			auto const infoHash = HexDigest(params.ti->info_hashes().v2);
+			{
+				std::lock_guard lock(m_longSeedMutex);
+				auto [it, inserted] = m_longSeedSessions.emplace(
+					sessionId,
+					Impl::LongSeedSession{ handle, infoHash });
+				if (!inserted)
+				{
+					m_session->remove_torrent(handle);
+					return it->second.handle.is_valid()
+						? LongSeedSessionResult{
+							true, it->second.infoHashV2, {} }
+						: LongSeedSessionResult{
+							false, {}, "Long-seed session ID collision" };
+				}
+			}
+
+			handle.resume();
+			return { true, infoHash, {} };
+		}
+		catch (std::exception const& exception)
+		{
+			return { false, {}, exception.what() };
+		}
+		catch (...)
+		{
+			return { false, {}, "Unknown long-seed download session error" };
 		}
 	}
 
@@ -2887,6 +3383,7 @@ namespace OpenNet::Core::Torrent
 				RequestResumeDataForTorrent(moved->handle);
 				if (completedMove)
 				{
+					CatalogCompletedTorrent(moved->handle, taskId);
 					FinishedCallback callback;
 					{
 						std::lock_guard callbackLock(m_cbMutex);
@@ -2936,6 +3433,8 @@ namespace OpenNet::Core::Torrent
 				}
 				if (errorCallback)
 					errorCallback("Storage move failed: " + moveFailed->message());
+				if (completedMove)
+					CatalogCompletedTorrent(moveFailed->handle, taskId);
 				if (completedMove && finishedCallback)
 				{
 					try
@@ -3026,6 +3525,7 @@ namespace OpenNet::Core::Torrent
 					// Save after changing flags so the completed/paused state is
 					// what is restored on the next launch.
 					RequestResumeDataForTorrent(tf->handle);
+					CatalogCompletedTorrent(tf->handle, taskId);
 				}
 
 				FinishedCallback finishedCbCopy;
@@ -3102,12 +3602,24 @@ namespace OpenNet::Core::Torrent
 				m_lastListenError.clear();
 				if (listenSucceeded->address.is_v4())
 				{
-					m_ipv4ListenPort = listenSucceeded->port;
+					if (listenSucceeded->socket_type == lt::socket_type_t::tcp)
+						m_ipv4TcpListenPort = listenSucceeded->port;
+					else if (listenSucceeded->socket_type == lt::socket_type_t::utp)
+						m_ipv4UtpListenPort = listenSucceeded->port;
+					m_ipv4ListenPort = m_ipv4TcpListenPort > 0
+						? m_ipv4TcpListenPort
+						: m_ipv4UtpListenPort;
 					m_ipv4ListenError.clear();
 				}
 				else if (listenSucceeded->address.is_v6())
 				{
-					m_ipv6ListenPort = listenSucceeded->port;
+					if (listenSucceeded->socket_type == lt::socket_type_t::tcp)
+						m_ipv6TcpListenPort = listenSucceeded->port;
+					else if (listenSucceeded->socket_type == lt::socket_type_t::utp)
+						m_ipv6UtpListenPort = listenSucceeded->port;
+					m_ipv6ListenPort = m_ipv6TcpListenPort > 0
+						? m_ipv6TcpListenPort
+						: m_ipv6UtpListenPort;
 					m_ipv6ListenError.clear();
 				}
 			}
@@ -3434,10 +3946,20 @@ namespace OpenNet::Core::Torrent
 
 		{
 			std::lock_guard lock(m_listenStateMutex);
-			status.ipv4Port = m_ipv4ListenPort;
-			status.ipv6Port = m_ipv6ListenPort;
-			status.isListeningIPv4 = status.ipv4Port > 0;
-			status.isListeningIPv6 = status.ipv6Port > 0;
+			status.ipv4TcpPort = m_ipv4TcpListenPort;
+			status.ipv4UtpPort = m_ipv4UtpListenPort;
+			status.ipv6TcpPort = m_ipv6TcpListenPort;
+			status.ipv6UtpPort = m_ipv6UtpListenPort;
+			status.ipv4Port = status.ipv4TcpPort > 0
+				? status.ipv4TcpPort
+				: status.ipv4UtpPort;
+			status.ipv6Port = status.ipv6TcpPort > 0
+				? status.ipv6TcpPort
+				: status.ipv6UtpPort;
+			status.isListeningIPv4 =
+				status.ipv4TcpPort > 0 || status.ipv4UtpPort > 0;
+			status.isListeningIPv6 =
+				status.ipv6TcpPort > 0 || status.ipv6UtpPort > 0;
 			status.error = m_lastListenError;
 			status.ipv4Error = m_ipv4ListenError;
 			status.ipv6Error = m_ipv6ListenError;
@@ -3502,6 +4024,10 @@ namespace OpenNet::Core::Torrent
 			std::lock_guard lock(m_listenStateMutex);
 			m_ipv4ListenPort = 0;
 			m_ipv6ListenPort = 0;
+			m_ipv4TcpListenPort = 0;
+			m_ipv4UtpListenPort = 0;
+			m_ipv6TcpListenPort = 0;
+			m_ipv6UtpListenPort = 0;
 			m_ipv4ListenError.clear();
 			m_ipv6ListenError.clear();
 		}

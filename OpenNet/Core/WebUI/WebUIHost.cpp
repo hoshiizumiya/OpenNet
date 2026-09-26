@@ -25,6 +25,7 @@
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.GeoIP.GeoIPManager;
+import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.RSS.RSSManager;
 import OpenNet.Core.Torrent.TorrentCreator;
@@ -491,39 +492,6 @@ namespace OpenNet::Core::WebUI
 			return std::filesystem::path(std::u8string(
 				reinterpret_cast<const char8_t*>(value.data()),
 				value.size()));
-		}
-
-		std::wstring Utf8ToWide(const std::string_view value)
-		{
-			if (value.empty())
-				return {};
-			const int required = MultiByteToWideChar(
-				CP_UTF8, MB_ERR_INVALID_CHARS, value.data(),
-				static_cast<int>(value.size()), nullptr, 0);
-			if (required <= 0)
-				throw std::invalid_argument("Invalid UTF-8 text");
-			std::wstring result(static_cast<std::size_t>(required), L'\0');
-			MultiByteToWideChar(
-				CP_UTF8, MB_ERR_INVALID_CHARS, value.data(),
-				static_cast<int>(value.size()), result.data(), required);
-			return result;
-		}
-
-		std::string WideToUtf8(const std::wstring_view value)
-		{
-			if (value.empty())
-				return {};
-			const int required = WideCharToMultiByte(
-				CP_UTF8, WC_ERR_INVALID_CHARS, value.data(),
-				static_cast<int>(value.size()), nullptr, 0, nullptr, nullptr);
-			if (required <= 0)
-				throw std::invalid_argument("Invalid Unicode text");
-			std::string result(static_cast<std::size_t>(required), '\0');
-			WideCharToMultiByte(
-				CP_UTF8, WC_ERR_INVALID_CHARS, value.data(),
-				static_cast<int>(value.size()), result.data(), required,
-				nullptr, nullptr);
-			return result;
 		}
 
 		Json SerializeMetadata(
@@ -5817,7 +5785,7 @@ namespace OpenNet::Core::WebUI
 			const auto findFeed = [&](const std::string& path)
 				-> std::optional<::OpenNet::Core::RSS::RSSFeed>
 			{
-				const auto widePath = Utf8ToWide(path);
+				const auto widePath = winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(path);
 				for (const auto& feed : manager.GetAllFeeds())
 				{
 					if (feed.id == widePath || feed.title == widePath
@@ -5851,8 +5819,8 @@ namespace OpenNet::Core::WebUI
 				for (const auto& feed : manager.GetAllFeeds())
 				{
 					Json value{
-						{"uid", WideToUtf8(feed.id)},
-						{"url", WideToUtf8(feed.url)},
+						{"uid", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(feed.id)},
+						{"url", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(feed.url)},
 						{"status", "default"},
 						{"hasError", false}
 					};
@@ -5862,23 +5830,23 @@ namespace OpenNet::Core::WebUI
 						for (const auto& item : feed.items)
 						{
 							articles.push_back(Json{
-								{"id", WideToUtf8(item.guid)},
-								{"title", WideToUtf8(item.title)},
+								{"id", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(item.guid)},
+								{"title", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(item.title)},
 								{"date", std::chrono::duration_cast<
 									std::chrono::seconds>(
 									item.pubDate.time_since_epoch()).count()},
 								{"author", ""},
-								{"description", WideToUtf8(item.description)},
-								{"link", WideToUtf8(item.link)},
-								{"torrentURL", WideToUtf8(item.enclosureUrl)},
+								{"description", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(item.description)},
+								{"link", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(item.link)},
+								{"torrentURL", winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(item.enclosureUrl)},
 								{"isRead", item.isDownloaded}
 											   });
 						}
 						value["articles"] = std::move(articles);
 					}
-					std::string name = WideToUtf8(feed.title);
+					std::string name = winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(feed.title);
 					if (name.empty())
-						name = WideToUtf8(feed.url);
+						name = winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(feed.url);
 					result[name] = std::move(value);
 				}
 				return JsonResponse(request, result);
@@ -5919,9 +5887,9 @@ namespace OpenNet::Core::WebUI
 						request, http::status::bad_request,
 						"Missing feed parameter");
 				::OpenNet::Core::RSS::RSSSubscription subscription;
-				subscription.id = Utf8ToWide(RandomHex(16));
-				subscription.url = Utf8ToWide(parameters.at("url"));
-				subscription.name = Utf8ToWide(
+				subscription.id = winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(RandomHex(16));
+				subscription.url = winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(parameters.at("url"));
+				subscription.name = winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(
 					parameters.at("path").empty()
 					? parameters.at("url") : parameters.at("path"));
 				if (parameters.contains("refreshInterval"))
@@ -5974,7 +5942,7 @@ namespace OpenNet::Core::WebUI
 					if (parameters.contains("articleId"))
 					{
 						manager.MarkItemAsDownloaded(
-							feed->id, Utf8ToWide(parameters.at("articleId")));
+							feed->id, winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(parameters.at("articleId")));
 					}
 					else
 					{
@@ -6005,7 +5973,7 @@ namespace OpenNet::Core::WebUI
 						return TextResponse(
 							request, http::status::bad_request,
 							"Missing parameter: url");
-					subscription.url = Utf8ToWide(parameters.at("url"));
+					subscription.url = winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(parameters.at("url"));
 				}
 				else if (operation == "setFeedRefreshInterval")
 				{
@@ -6028,7 +5996,7 @@ namespace OpenNet::Core::WebUI
 						return TextResponse(
 							request, http::status::bad_request,
 							"Missing parameter: destPath");
-					subscription.name = Utf8ToWide(parameters.at("destPath"));
+					subscription.name = winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(parameters.at("destPath"));
 				}
 				if (!manager.UpdateSubscription(subscription))
 					return TextResponse(

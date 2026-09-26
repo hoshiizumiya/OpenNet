@@ -24,6 +24,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		void ConnectionsPerServer(double value);
 		double MaximumDownloadRate() const;
 		void MaximumDownloadRate(double value);
+		bool UseP2PAcceleration() const;
+		void UseP2PAcceleration(bool value);
 		bool StartPaused() const;
 		winrt::hstring Referer() const;
 		void Referer(winrt::hstring const& value);
@@ -62,7 +64,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		winrt::Windows::Foundation::IAsyncAction PasteUrlButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction BrowseDirButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	private:
-		bool ValidateUrl(winrt::hstring const& url) const;
 		void CaptureValues(bool startPaused);
 		void UpdateDiskSpace();
 		winrt::Windows::Foundation::IAsyncAction FetchMetadataAsync();
@@ -76,6 +77,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		bool m_isUrlValid{ false };
 		int32_t m_connectionsPerServer{ 8 };
 		int64_t m_maximumDownloadRate{};
+		bool m_useP2PAcceleration{ true };
 		bool m_startPaused{};
 		winrt::hstring m_referer;
 		winrt::hstring m_userAgent;
@@ -86,6 +88,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		winrt::hstring m_description;
 		winrt::hstring m_username;
 		winrt::hstring m_password;
+		winrt::hstring m_resourceFinalUrl;
+		winrt::hstring m_resourceStrongETag;
+		std::uint64_t m_resourceContentLength{};
+		bool m_resourceSupportsByteRanges{};
 		winrt::hstring m_clipboardPreviewText;
 		winrt::Microsoft::UI::Xaml::Visibility m_clipboardPreviewVisibility{ winrt::Microsoft::UI::Xaml::Visibility::Collapsed };
 		winrt::hstring m_fileSizeText;

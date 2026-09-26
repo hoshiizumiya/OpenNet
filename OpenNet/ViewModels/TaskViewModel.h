@@ -153,6 +153,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_peers, v, L"Peers");
 		}
 
+		winrt::hstring Transport() const
+		{
+			return m_transport;
+		}
+		void Transport(winrt::hstring const& value)
+		{
+			SetProperty(m_transport, value, L"Transport");
+		}
+
 		// Download task type
 		winrt::OpenNet::ViewModels::DownloadTaskType TaskType() const
 		{
@@ -241,6 +250,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_shareRatio;
 		winrt::hstring m_seeds;
 		winrt::hstring m_peers;
+		winrt::hstring m_transport;
 		winrt::hstring m_gid;
 		winrt::hstring m_taskId;
 		winrt::OpenNet::ViewModels::DownloadTaskType m_taskType{ winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent };

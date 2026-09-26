@@ -1,7 +1,7 @@
 ﻿export module OpenNet.Core.IO.FileSystem;
 
-import std;
-import winrt.Windows.Foundation;
+export import std;
+export import winrt.Windows.Foundation;
 
 export namespace winrt::OpenNet::Core::IO
 {
@@ -12,6 +12,9 @@ export namespace winrt::OpenNet::Core::IO
         static std::wstring_view GetAppDataPathW();
         static std::wstring_view GetAppTempPathW();
         static winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> GetDownloadsPathW();
+
+        static std::wstring Utf8ToWide(std::string_view value);
+        static std::string WideToUtf8(std::wstring_view value);
 
         // Create directory if not exists
         static bool CreateAppDirectory(const std::wstring& path);

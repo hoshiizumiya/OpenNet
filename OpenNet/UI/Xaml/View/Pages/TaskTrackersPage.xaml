@@ -23,7 +23,11 @@
     </Page.Resources>
 
     <Grid Padding="0,8,0,0">
-        <ListView x:Name="TrackersListView" SelectionMode="Single">
+        <ListView
+            x:Name="TrackersListView"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollMode="Enabled"
+            SelectionMode="Single">
             <ListView.ContextFlyout>
                 <MenuFlyout Opening="TrackerMenu_Opening">
                     <MenuFlyoutItem

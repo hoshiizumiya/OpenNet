@@ -1,7 +1,7 @@
 ﻿export module OpenNet.Core.torrentCore.LibtorrentHandle;
 
-import std;
-import OpenNet.Core.torrentCore.TorrentStateManager;
+export import std;
+export import OpenNet.Core.torrentCore.TorrentStateManager;
 
 export namespace OpenNet::Core::Torrent
 {
@@ -85,6 +85,54 @@ export namespace OpenNet::Core::Torrent
 			bool startImmediately = true,
 			bool seedMode = false);
 
+		struct LongSeedSessionResult
+		{
+			bool succeeded{};
+			std::string infoHashV2;
+			std::string error;
+		};
+
+		struct LongSeedSessionStatus
+		{
+			bool exists{};
+			bool valid{};
+			bool finished{};
+			bool seeding{};
+			bool hasError{};
+			int progressPercent{};
+			std::int64_t downloadRate{};
+			std::int64_t uploadRate{};
+			std::int64_t totalWanted{};
+			std::int64_t totalWantedDone{};
+			int connectedPeers{};
+			int connectedSeeds{};
+			std::string infoHashV2;
+			std::string error;
+		};
+
+		// Hidden OpenNet.Content.v1 torrents are intentionally separate from
+		// user task persistence and UI-visible task maps.
+		LongSeedSessionResult OpenLongSeedSession(
+			std::string const& sessionId,
+			std::vector<std::uint8_t> const& metainfo,
+			std::filesystem::path const& localFilePath);
+		LongSeedSessionResult OpenLongSeedDownloadSession(
+			std::string const& sessionId,
+			std::vector<std::uint8_t> const& metainfo,
+			std::filesystem::path const& targetFilePath,
+			std::vector<std::string> const& urlSeeds = {});
+		bool ConnectLongSeedPeer(
+			std::string const& sessionId,
+			std::string const& address,
+			std::uint16_t port,
+			bool preferUtp);
+		LongSeedSessionStatus GetLongSeedSessionStatus(
+			std::string const& sessionId) const;
+		bool PauseLongSeedSession(std::string const& sessionId);
+		bool ResumeLongSeedSession(std::string const& sessionId);
+		void CloseLongSeedSession(std::string const& sessionId);
+		void CloseAllLongSeedSessions();
+
 		// Resume torrent from saved state (returns task ID if successful)
 		std::string AddTorrentFromResumeData(std::string const& taskId);
 
@@ -137,6 +185,10 @@ export namespace OpenNet::Core::Torrent
 			int port{};
 			int ipv4Port{};
 			int ipv6Port{};
+			int ipv4TcpPort{};
+			int ipv4UtpPort{};
+			int ipv6TcpPort{};
+			int ipv6UtpPort{};
 			bool isListening{};
 			bool isListeningIPv4{};
 			bool isListeningIPv6{};

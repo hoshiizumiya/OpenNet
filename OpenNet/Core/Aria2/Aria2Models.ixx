@@ -15,6 +15,12 @@ export module OpenNet.Core.Aria2.Aria2Models;
 
 export namespace OpenNet::Core::Aria2
 {
+	enum class HttpTransferMode : std::int32_t
+	{
+		Aria2Only = 0,
+		P2PPreferred = 1,
+	};
+
 	struct HttpDownloadOptions
 	{
 		std::vector<std::string> Uris;
@@ -31,6 +37,14 @@ export namespace OpenNet::Core::Aria2
 		std::string Password;
 		std::string Checksum;
 		std::string Description;
+		HttpTransferMode TransferMode = HttpTransferMode::Aria2Only;
+
+		// Optional public-resource metadata collected by a preflight request.
+		// These fields are discovery hints only and are never passed to aria2.
+		std::string ResourceFinalUrl;
+		std::string ResourceStrongETag;
+		std::uint64_t ResourceContentLength = 0;
+		bool ResourceSupportsByteRanges = false;
 	};
 
 	bool ToBoolean(nlohmann::json const& Value);

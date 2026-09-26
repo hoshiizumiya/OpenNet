@@ -449,7 +449,7 @@ export namespace OpenNet::Core::ExceptionService
 						utf8Details.size(),
 						"exception-details.txt");
 
-					return sentry_scope_capture_event(scope, event);
+					return sentry_scope_capture_event(scope, event, nullptr);
 				}
 
 				// Preserve capture under severe allocation pressure.

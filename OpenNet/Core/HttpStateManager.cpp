@@ -19,6 +19,46 @@ using json = nlohmann::json;
 
 namespace OpenNet::Core
 {
+    namespace
+    {
+        std::string NormalizeHttpOutputKey(
+            std::string const& savePath,
+            std::string const& fileName)
+        {
+            if (savePath.empty() || fileName.empty())
+                return {};
+
+            try
+            {
+                auto path = std::filesystem::path{
+                    winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(savePath) }
+                    / std::filesystem::path{
+                        winrt::OpenNet::Core::IO::FileSystem::Utf8ToWide(fileName) };
+
+                std::error_code error;
+                auto const absolute = std::filesystem::absolute(path, error);
+                if (!error)
+                    path = absolute;
+                path = path.lexically_normal();
+
+                auto folded = path.wstring();
+                std::ranges::transform(
+                    folded,
+                    folded.begin(),
+                    [](wchar_t const value)
+                    {
+                        return static_cast<wchar_t>(
+                            std::towlower(value));
+                    });
+                return winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(folded);
+            }
+            catch (...)
+            {
+                return {};
+            }
+        }
+    }
+
     // ------------------------------------------------------------------
     //  Singleton
     // ------------------------------------------------------------------
@@ -52,7 +92,7 @@ namespace OpenNet::Core
 
         m_dbPath = m_folderPath + L"\\http_downloads.db";
 
-        std::string dbPathUtf8 = winrt::to_string(m_dbPath);
+        std::string dbPathUtf8 = winrt::OpenNet::Core::IO::FileSystem::WideToUtf8(m_dbPath);
         int rc = sqlite3_open(dbPathUtf8.c_str(), &m_db);
         if (rc != SQLITE_OK)
         {
@@ -102,7 +142,12 @@ namespace OpenNet::Core
                 completed_size  INTEGER NOT NULL DEFAULT 0,
                 status          INTEGER NOT NULL DEFAULT 0,
                 last_gid        TEXT NOT NULL DEFAULT '',
-                completed_timestamp INTEGER NOT NULL DEFAULT 0
+                completed_timestamp INTEGER NOT NULL DEFAULT 0,
+                transfer_mode   INTEGER NOT NULL DEFAULT 0,
+                active_engine   INTEGER NOT NULL DEFAULT 0,
+                user_requested_paused INTEGER NOT NULL DEFAULT 0,
+                canonical_info_hash_v2 TEXT NOT NULL DEFAULT '',
+                output_key      TEXT NOT NULL DEFAULT ''
             );
             CREATE INDEX IF NOT EXISTS idx_http_gid ON http_downloads(last_gid);
         )";
@@ -127,7 +172,10 @@ namespace OpenNet::Core
                   AND preferred.status < 3
                   AND (preferred.completed_size > duplicate.completed_size
                     OR (preferred.completed_size = duplicate.completed_size
-                        AND preferred.added_timestamp < duplicate.added_timestamp))
+                        AND preferred.added_timestamp < duplicate.added_timestamp)
+                    OR (preferred.completed_size = duplicate.completed_size
+                        AND preferred.added_timestamp = duplicate.added_timestamp
+                        AND preferred.record_id < duplicate.record_id))
               );
             CREATE UNIQUE INDEX IF NOT EXISTS idx_http_active_url
             ON http_downloads(url) WHERE status < 3;
@@ -143,6 +191,89 @@ namespace OpenNet::Core
             // SQLITE_ERROR is expected when the column already exists.
             sqlite3_free(errMsg);
         }
+
+        auto addColumnIfMissing = [this](char const* statement)
+        {
+            char* error = nullptr;
+            auto const result = sqlite3_exec(
+                m_db, statement, nullptr, nullptr, &error);
+            if (result != SQLITE_OK && error)
+                sqlite3_free(error);
+        };
+        addColumnIfMissing(
+            "ALTER TABLE http_downloads ADD COLUMN transfer_mode INTEGER NOT NULL DEFAULT 0;");
+        addColumnIfMissing(
+            "ALTER TABLE http_downloads ADD COLUMN active_engine INTEGER NOT NULL DEFAULT 0;");
+        addColumnIfMissing(
+            "ALTER TABLE http_downloads ADD COLUMN user_requested_paused INTEGER NOT NULL DEFAULT 0;");
+        addColumnIfMissing(
+            "ALTER TABLE http_downloads ADD COLUMN canonical_info_hash_v2 TEXT NOT NULL DEFAULT '';");
+        addColumnIfMissing(
+            "ALTER TABLE http_downloads ADD COLUMN output_key TEXT NOT NULL DEFAULT '';");
+
+        // Normalize pre-existing active outputs before enforcing the physical
+        // writer invariant. The key is intentionally conservative on Windows:
+        // absolute + lexical normalization + case folding.
+        sqlite3_stmt* readOutputs = nullptr;
+        sqlite3_stmt* writeOutputKey = nullptr;
+        sqlite3_prepare_v2(
+            m_db,
+            "SELECT record_id, save_path, file_name FROM http_downloads WHERE output_key = '';",
+            -1,
+            &readOutputs,
+            nullptr);
+        sqlite3_prepare_v2(
+            m_db,
+            "UPDATE http_downloads SET output_key = ? WHERE record_id = ?;",
+            -1,
+            &writeOutputKey,
+            nullptr);
+        while (readOutputs
+            && writeOutputKey
+            && sqlite3_step(readOutputs) == SQLITE_ROW)
+        {
+            auto const text = [&](int const column) -> char const*
+            {
+                auto const value = reinterpret_cast<char const*>(
+                    sqlite3_column_text(readOutputs, column));
+                return value ? value : "";
+            };
+            auto const recordId = std::string{ text(0) };
+            auto const key = NormalizeHttpOutputKey(text(1), text(2));
+            if (recordId.empty() || key.empty())
+                continue;
+
+            sqlite3_reset(writeOutputKey);
+            sqlite3_clear_bindings(writeOutputKey);
+            sqlite3_bind_text(
+                writeOutputKey, 1, key.c_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_bind_text(
+                writeOutputKey, 2, recordId.c_str(), -1, SQLITE_TRANSIENT);
+            sqlite3_step(writeOutputKey);
+        }
+        if (readOutputs) sqlite3_finalize(readOutputs);
+        if (writeOutputKey) sqlite3_finalize(writeOutputKey);
+
+        sqlite3_exec(m_db, R"(
+            DELETE FROM http_downloads AS duplicate
+            WHERE duplicate.status < 3
+              AND duplicate.output_key <> ''
+              AND EXISTS (
+                SELECT 1 FROM http_downloads AS preferred
+                WHERE preferred.output_key = duplicate.output_key
+                  AND preferred.status < 3
+                  AND preferred.record_id <> duplicate.record_id
+                  AND (preferred.completed_size > duplicate.completed_size
+                    OR (preferred.completed_size = duplicate.completed_size
+                        AND preferred.added_timestamp < duplicate.added_timestamp)
+                    OR (preferred.completed_size = duplicate.completed_size
+                        AND preferred.added_timestamp = duplicate.added_timestamp
+                        AND preferred.record_id < duplicate.record_id))
+              );
+            CREATE UNIQUE INDEX IF NOT EXISTS idx_http_active_output
+            ON http_downloads(output_key)
+            WHERE status < 3 AND output_key <> '';
+        )", nullptr, nullptr, nullptr);
     }
 
     // ------------------------------------------------------------------
@@ -168,8 +299,8 @@ namespace OpenNet::Core
             // Insert each record into SQLite (skip duplicates)
             const char* insertSql = R"(
                 INSERT OR IGNORE INTO http_downloads
-                    (record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    (record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, output_key)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             )";
 
             sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
@@ -203,6 +334,10 @@ namespace OpenNet::Core
                 sqlite3_bind_int64(stmt, 8, completedSize);
                 sqlite3_bind_int(stmt, 9, status);
                 sqlite3_bind_text(stmt, 10, lastGid.c_str(), -1, SQLITE_TRANSIENT);
+                auto const outputKey =
+                    NormalizeHttpOutputKey(savePath, fileName);
+                sqlite3_bind_text(
+                    stmt, 11, outputKey.c_str(), -1, SQLITE_TRANSIENT);
 
                 sqlite3_step(stmt);
             }
@@ -246,7 +381,7 @@ namespace OpenNet::Core
         if (!m_db) return std::nullopt;
 
         // status: 0=pending, 1=downloading, 2=paused → active
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp "
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp, transfer_mode, active_engine, user_requested_paused, canonical_info_hash_v2 "
             "FROM http_downloads WHERE url = ? AND status < 3 LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
@@ -272,6 +407,10 @@ namespace OpenNet::Core
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = safeText(9);
             rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
+            rec.transferMode = sqlite3_column_int(stmt, 11);
+            rec.activeEngine = sqlite3_column_int(stmt, 12);
+            rec.userRequestedPaused = sqlite3_column_int(stmt, 13) != 0;
+            rec.canonicalInfoHashV2 = safeText(14);
             result = std::move(rec);
         }
 
@@ -279,17 +418,73 @@ namespace OpenNet::Core
         return result;
     }
 
+    std::optional<HttpDownloadRecord> HttpStateManager::FindActiveByOutputPath(
+        std::string const& savePath,
+        std::string const& fileName) const
+    {
+        auto const outputKey = NormalizeHttpOutputKey(savePath, fileName);
+        if (outputKey.empty())
+            return std::nullopt;
+
+        std::lock_guard lock(m_mutex);
+        if (!m_db) return std::nullopt;
+
+        constexpr char sql[] =
+            "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp, transfer_mode, active_engine, user_requested_paused, canonical_info_hash_v2 "
+            "FROM http_downloads WHERE output_key = ? AND status < 3 LIMIT 1;";
+        sqlite3_stmt* stmt = nullptr;
+        sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+        sqlite3_bind_text(
+            stmt, 1, outputKey.c_str(), -1, SQLITE_TRANSIENT);
+
+        std::optional<HttpDownloadRecord> result;
+        if (sqlite3_step(stmt) == SQLITE_ROW)
+        {
+            auto const text = [&](int const column) -> char const*
+            {
+                auto const value = reinterpret_cast<char const*>(
+                    sqlite3_column_text(stmt, column));
+                return value ? value : "";
+            };
+            HttpDownloadRecord rec;
+            rec.recordId = text(0);
+            rec.url = text(1);
+            rec.savePath = text(2);
+            rec.fileName = text(3);
+            rec.name = text(4);
+            rec.addedTimestamp = sqlite3_column_int64(stmt, 5);
+            rec.totalSize = sqlite3_column_int64(stmt, 6);
+            rec.completedSize = sqlite3_column_int64(stmt, 7);
+            rec.status = sqlite3_column_int(stmt, 8);
+            rec.lastGid = text(9);
+            rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
+            rec.transferMode = sqlite3_column_int(stmt, 11);
+            rec.activeEngine = sqlite3_column_int(stmt, 12);
+            rec.userRequestedPaused = sqlite3_column_int(stmt, 13) != 0;
+            rec.canonicalInfoHashV2 = text(14);
+            result = std::move(rec);
+        }
+        sqlite3_finalize(stmt);
+        return result;
+    }
+
     std::string HttpStateManager::AddRecord(std::string const& url, std::string const& savePath, std::string const& fileName)
     {
-        // Check for existing active record with the same URL to prevent duplicates.
-        // Note: FindActiveByUrl also takes m_mutex, so call it before locking.
-        auto existing = FindActiveByUrl(url);
-        if (existing.has_value())
+        // These lookups intentionally happen before taking m_mutex because the
+        // lookup methods lock the same mutex. URL identity and physical output
+        // identity are both active-task uniqueness constraints.
+        if (auto existing = FindActiveByUrl(url))
         {
             OutputDebugStringA(("HttpStateManager: Duplicate URL detected, returning existing recordId: " + existing->recordId + "\n").c_str());
             return existing->recordId;
         }
+        if (auto existing = FindActiveByOutputPath(savePath, fileName))
+        {
+            OutputDebugStringA(("HttpStateManager: Duplicate output path detected, returning existing recordId: " + existing->recordId + "\n").c_str());
+            return existing->recordId;
+        }
 
+        auto const outputKey = NormalizeHttpOutputKey(savePath, fileName);
         std::lock_guard lock(m_mutex);
         if (!m_db) return {};
 
@@ -300,8 +495,8 @@ namespace OpenNet::Core
 
         const char* sql = R"(
             INSERT INTO http_downloads
-                (record_id, url, save_path, file_name, name, added_timestamp, status)
-            VALUES (?, ?, ?, ?, ?, ?, 0);
+                (record_id, url, save_path, file_name, name, added_timestamp, status, output_key)
+            VALUES (?, ?, ?, ?, ?, ?, 0, ?);
         )";
 
         sqlite3_stmt* stmt = nullptr;
@@ -312,6 +507,7 @@ namespace OpenNet::Core
         sqlite3_bind_text(stmt, 4, fileName.c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 5, name.c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_int64(stmt, 6, addedTs);
+        sqlite3_bind_text(stmt, 7, outputKey.c_str(), -1, SQLITE_TRANSIENT);
 
         int rc = sqlite3_step(stmt);
         sqlite3_finalize(stmt);
@@ -353,23 +549,27 @@ namespace OpenNet::Core
         sqlite3_finalize(stmt);
     }
 
-    void HttpStateManager::UpdateRecordOutputPath(
+    bool HttpStateManager::UpdateRecordOutputPath(
         std::string const& recordId,
         std::string const& savePath,
         std::string const& fileName)
     {
         std::lock_guard lock(m_mutex);
-        if (!m_db || recordId.empty() || savePath.empty() || fileName.empty()) return;
+        if (!m_db || recordId.empty() || savePath.empty() || fileName.empty())
+            return false;
 
+        auto const outputKey = NormalizeHttpOutputKey(savePath, fileName);
         constexpr char sql[] =
-            "UPDATE http_downloads SET save_path = ?, file_name = ? WHERE record_id = ?;";
+            "UPDATE http_downloads SET save_path = ?, file_name = ?, output_key = ? WHERE record_id = ?;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_text(stmt, 1, savePath.c_str(), -1, SQLITE_TRANSIENT);
         sqlite3_bind_text(stmt, 2, fileName.c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_bind_text(stmt, 3, recordId.c_str(), -1, SQLITE_TRANSIENT);
-        sqlite3_step(stmt);
+        sqlite3_bind_text(stmt, 3, outputKey.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 4, recordId.c_str(), -1, SQLITE_TRANSIENT);
+        auto const result = sqlite3_step(stmt);
         sqlite3_finalize(stmt);
+        return result == SQLITE_DONE;
     }
 
     void HttpStateManager::UpdateRecordProgress(std::string const& recordId, int64_t completedSize, int64_t totalSize)
@@ -407,6 +607,45 @@ namespace OpenNet::Core
         sqlite3_finalize(stmt);
     }
 
+    void HttpStateManager::UpdateRecordTransferPolicy(
+        std::string const& recordId,
+        int const transferMode,
+        bool const userRequestedPaused)
+    {
+        std::lock_guard lock(m_mutex);
+        if (!m_db || recordId.empty()) return;
+
+        constexpr char sql[] =
+            "UPDATE http_downloads SET transfer_mode = ?, user_requested_paused = ? WHERE record_id = ?;";
+        sqlite3_stmt* stmt = nullptr;
+        sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+        sqlite3_bind_int(stmt, 1, transferMode);
+        sqlite3_bind_int(stmt, 2, userRequestedPaused ? 1 : 0);
+        sqlite3_bind_text(stmt, 3, recordId.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }
+
+    void HttpStateManager::UpdateRecordActiveEngine(
+        std::string const& recordId,
+        int const activeEngine,
+        std::string const& canonicalInfoHashV2)
+    {
+        std::lock_guard lock(m_mutex);
+        if (!m_db || recordId.empty()) return;
+
+        constexpr char sql[] =
+            "UPDATE http_downloads SET active_engine = ?, canonical_info_hash_v2 = ? WHERE record_id = ?;";
+        sqlite3_stmt* stmt = nullptr;
+        sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
+        sqlite3_bind_int(stmt, 1, activeEngine);
+        sqlite3_bind_text(
+            stmt, 2, canonicalInfoHashV2.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_text(stmt, 3, recordId.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_step(stmt);
+        sqlite3_finalize(stmt);
+    }
+
     void HttpStateManager::DeleteRecord(std::string const& recordId)
     {
         std::lock_guard lock(m_mutex);
@@ -428,7 +667,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return std::nullopt;
 
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp FROM http_downloads WHERE last_gid = ? LIMIT 1;";
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp, transfer_mode, active_engine, user_requested_paused, canonical_info_hash_v2 FROM http_downloads WHERE last_gid = ? LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_text(stmt, 1, gid.c_str(), -1, SQLITE_TRANSIENT);
@@ -454,6 +693,10 @@ namespace OpenNet::Core
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = safeText(9);
             rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
+            rec.transferMode = sqlite3_column_int(stmt, 11);
+            rec.activeEngine = sqlite3_column_int(stmt, 12);
+            rec.userRequestedPaused = sqlite3_column_int(stmt, 13) != 0;
+            rec.canonicalInfoHashV2 = safeText(14);
             result = std::move(rec);
         }
 
@@ -466,7 +709,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return std::nullopt;
 
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp FROM http_downloads WHERE record_id = ? LIMIT 1;";
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp, transfer_mode, active_engine, user_requested_paused, canonical_info_hash_v2 FROM http_downloads WHERE record_id = ? LIMIT 1;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
         sqlite3_bind_text(stmt, 1, recordId.c_str(), -1, SQLITE_TRANSIENT);
@@ -475,17 +718,27 @@ namespace OpenNet::Core
         if (sqlite3_step(stmt) == SQLITE_ROW)
         {
             HttpDownloadRecord rec;
-            rec.recordId       = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 0));
-            rec.url            = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 1));
-            rec.savePath       = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 2));
-            rec.fileName       = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 3));
-            rec.name           = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 4));
-            rec.addedTimestamp  = sqlite3_column_int64(stmt, 5);
-            rec.totalSize      = sqlite3_column_int64(stmt, 6);
-            rec.completedSize  = sqlite3_column_int64(stmt, 7);
-            rec.status         = sqlite3_column_int(stmt, 8);
-            rec.lastGid        = reinterpret_cast<const char*>(sqlite3_column_text(stmt, 9));
+            auto safeText = [&](int const column) -> char const*
+            {
+                auto const value = reinterpret_cast<char const*>(
+                    sqlite3_column_text(stmt, column));
+                return value ? value : "";
+            };
+            rec.recordId = safeText(0);
+            rec.url = safeText(1);
+            rec.savePath = safeText(2);
+            rec.fileName = safeText(3);
+            rec.name = safeText(4);
+            rec.addedTimestamp = sqlite3_column_int64(stmt, 5);
+            rec.totalSize = sqlite3_column_int64(stmt, 6);
+            rec.completedSize = sqlite3_column_int64(stmt, 7);
+            rec.status = sqlite3_column_int(stmt, 8);
+            rec.lastGid = safeText(9);
             rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
+            rec.transferMode = sqlite3_column_int(stmt, 11);
+            rec.activeEngine = sqlite3_column_int(stmt, 12);
+            rec.userRequestedPaused = sqlite3_column_int(stmt, 13) != 0;
+            rec.canonicalInfoHashV2 = safeText(14);
             result = std::move(rec);
         }
 
@@ -498,7 +751,7 @@ namespace OpenNet::Core
         std::lock_guard lock(m_mutex);
         if (!m_db) return {};
 
-        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp FROM http_downloads ORDER BY added_timestamp DESC;";
+        const char* sql = "SELECT record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, completed_timestamp, transfer_mode, active_engine, user_requested_paused, canonical_info_hash_v2 FROM http_downloads ORDER BY added_timestamp DESC;";
         sqlite3_stmt* stmt = nullptr;
         sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
 
@@ -522,6 +775,10 @@ namespace OpenNet::Core
             rec.status         = sqlite3_column_int(stmt, 8);
             rec.lastGid        = safeText(9);
             rec.completedTimestamp = sqlite3_column_int64(stmt, 10);
+            rec.transferMode = sqlite3_column_int(stmt, 11);
+            rec.activeEngine = sqlite3_column_int(stmt, 12);
+            rec.userRequestedPaused = sqlite3_column_int(stmt, 13) != 0;
+            rec.canonicalInfoHashV2 = safeText(14);
             records.push_back(std::move(rec));
         }
 

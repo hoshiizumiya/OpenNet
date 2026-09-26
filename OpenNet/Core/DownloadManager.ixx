@@ -8,10 +8,13 @@
 
 export module OpenNet.Core.DownloadManager;
 
-import OpenNet.Core.Aria2.Aria2Engine;
-import OpenNet.Core.Aria2.Aria2Models;
-import OpenNet.Core.HttpStateManager;
-import winrt.Windows.Foundation;
+export import std;
+export import OpenNet.Core.Aria2.Aria2Engine;
+export import OpenNet.Core.Aria2.Aria2Models;
+export import OpenNet.Core.Content.ContentDirectoryContracts;
+export import OpenNet.Core.Content.ResourceKey;
+export import OpenNet.Core.HttpStateManager;
+export import winrt.Windows.Foundation;
 
 export namespace OpenNet::Core
 {
@@ -20,8 +23,15 @@ export namespace OpenNet::Core
 	// ------------------------------------------------------------------
 	enum class DownloadTaskType
 	{
-		Http,       // HTTP/HTTPS/FTP via Aria2
-		BitTorrent, // Managed by libtorrent (existing P2PManager)
+		Http,
+		BitTorrent,
+	};
+
+	enum class HttpTransferEngine : std::int32_t
+	{
+		Aria2 = 0,
+		CanonicalProbe = 1,
+		CanonicalHybrid = 2,
 	};
 
 	// ------------------------------------------------------------------
@@ -36,12 +46,28 @@ export namespace OpenNet::Core
 		std::uint64_t completedLength;
 		std::uint64_t downloadSpeed;
 		std::uint64_t uploadSpeed;
+		int connectedPeers{};
+		int connectedSeeds{};
 		int progressPercent; // 0-100
+		HttpTransferEngine engine{ HttpTransferEngine::Aria2 };
 	};
 	struct HttpTaskLogEntry
 	{
 		std::int64_t timestamp{};
 		std::string content;
+	};
+
+	struct HttpResourceDiscovery
+	{
+		bool completed{};
+		bool checksumValidated{};
+		bool canonicalHybridQueued{};
+		bool canonicalHybridReady{};
+		std::string contentId;
+		std::uint64_t size{};
+		std::uint32_t observationCount{};
+		std::optional<::OpenNet::Core::Content::ContentIdentity> bep52Identity;
+		std::string canonicalInfoHashV2;
 	};
 
 	using HttpProgressCallback = std::function<void(HttpTaskProgress const&)>;
@@ -67,6 +93,8 @@ export namespace OpenNet::Core
 		std::optional<Aria2::DownloadInformation> GetHttpTaskInformation(std::string const& gid);
 		std::vector<Aria2::ServersInformation> GetHttpTaskServers(std::string const& gid);
 		std::vector<HttpTaskLogEntry> GetHttpTaskLog(std::string const& gid) const;
+		std::optional<HttpResourceDiscovery> GetHttpResourceDiscovery(
+			std::string const& gid) const;
 		// Get the record-id associated with a GID (set after AddHttpDownload)
 		std::string GetRecordIdForGid(std::string const& gid) const;
 		void PauseHttpDownload(std::string const& gid);
@@ -98,6 +126,8 @@ export namespace OpenNet::Core
 		}
 
 	private:
+		struct ResourceDiscoveryJob;
+
 		DownloadManager() = default;
 		~DownloadManager();
 
@@ -106,6 +136,27 @@ export namespace OpenNet::Core
 
 		void RefreshThreadEntry();
 		void ProcessAria2Tasks();
+		void ResourceDiscoveryThreadEntry();
+		void QueueResourceDiscovery(
+			std::string gid,
+			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys,
+			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256,
+			std::filesystem::path targetFilePath,
+			std::uint64_t expectedSize,
+			std::vector<std::string> webSeeds);
+		void QueueCanonicalHybrid(
+			ResourceDiscoveryJob const& discovery,
+			HttpResourceDiscovery const& summary);
+		bool TryQueueResumeResourceDiscovery(
+			std::string const& gid,
+			HttpDownloadRecord const& record);
+		void CanonicalHybridThreadEntry();
+		bool HasCanonicalHybridPending(std::string const& gid) const;
+		bool TryFinalizeCanonicalHybrid(
+			std::string const& gid,
+			Aria2::DownloadInformation const& task,
+			std::string const& recordId);
+		void CancelCanonicalHybrid(std::string const& gid);
 		void ShowHttpCompletionToast(std::string const& gid, Aria2::DownloadInformation const& task);
 
 	private:
@@ -117,7 +168,76 @@ export namespace OpenNet::Core
 		std::atomic<bool> m_stopRefresh{ false };
 		std::condition_variable m_stopCv;
 		std::mutex m_stopMutex;
+
+		struct ResourceDiscoveryJob
+		{
+			std::string gid;
+			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
+			std::optional<::OpenNet::Core::Content::ContentIdentity> expectedSha256;
+			std::filesystem::path targetFilePath;
+			std::uint64_t expectedSize{};
+			std::vector<std::string> webSeeds;
+		};
+		std::thread m_resourceDiscoveryThread;
+		std::atomic<bool> m_stopResourceDiscovery{ false };
+		std::stop_source m_resourceDiscoveryStopSource;
+		std::condition_variable m_resourceDiscoveryCv;
+		std::mutex m_resourceDiscoveryMutex;
+		std::deque<ResourceDiscoveryJob> m_resourceDiscoveryJobs;
+
+		enum class CanonicalHybridPhase : std::uint8_t
+		{
+			Pending,
+			Downloading,
+			Ready,
+			Failed,
+		};
+
+		struct CanonicalHybridJob
+		{
+			std::string gid;
+			std::string sessionId;
+			std::filesystem::path targetFilePath;
+			::OpenNet::Core::Content::ContentIdentity bep52Identity;
+			::OpenNet::Core::Content::ContentIdentity expectedSha256;
+			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
+			std::uint64_t expectedSize{};
+			std::string canonicalInfoHashV2;
+			std::vector<std::string> webSeeds;
+		};
+
+		struct CanonicalHybridState
+		{
+			CanonicalHybridPhase phase{ CanonicalHybridPhase::Pending };
+			CanonicalHybridJob job;
+			bool cancelRequested{};
+			bool userPaused{};
+			bool workerQueued{};
+			int progressPercent{};
+			std::int64_t downloadRate{};
+			std::int64_t uploadRate{};
+			std::int64_t completedBytes{};
+			int connectedPeers{};
+			int connectedSeeds{};
+			std::string error;
+		};
+
+		std::atomic<bool> m_stopCanonicalHybrid{ false };
+		std::stop_source m_canonicalHybridStopSource;
+		std::condition_variable m_canonicalHybridCv;
+		mutable std::mutex m_canonicalHybridMutex;
+		std::deque<CanonicalHybridJob> m_canonicalHybridJobs;
+		std::unordered_map<std::string, CanonicalHybridState> m_canonicalHybrids;
+		std::unordered_set<std::string> m_canonicalHybridSuppressedGids;
+		std::unordered_set<std::string> m_hybridProbeGids;
+		std::unordered_set<std::string> m_userPausedHttpGids;
+		std::vector<std::thread> m_canonicalHybridWorkers;
+
 		mutable std::mutex m_mutex;
+		// Serializes HTTP task creation from duplicate checks through the aria2
+		// RPC + SQLite association. Without this, two callers can both pass the
+		// preflight before either one publishes its output ownership.
+		std::mutex m_httpAddMutex;
 
 		// Cached task GIDs for change detection
 		std::set<std::string> m_knownGids;
@@ -125,6 +245,7 @@ export namespace OpenNet::Core
 		std::unordered_map<std::string, Aria2::DownloadInformation> m_httpTaskSnapshots;
 		std::unordered_map<std::string, std::vector<Aria2::ServersInformation>> m_httpServerSnapshots;
 		std::unordered_map<std::string, std::vector<HttpTaskLogEntry>> m_httpTaskLogs;
+		std::unordered_map<std::string, HttpResourceDiscovery> m_httpResourceDiscoveries;
 
 		// GID -> HttpStateManager record-id mapping (mutable: acts as a cache)
 		mutable std::unordered_map<std::string, std::string> m_gidToRecordId;

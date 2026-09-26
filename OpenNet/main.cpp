@@ -18,6 +18,15 @@ using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
 using namespace winrt::Microsoft::Windows::AppLifecycle;
 
+namespace
+{
+	void CloseSentryIfEnabled() noexcept
+	{
+		if (sentry_is_enabled())
+			sentry_close();
+	}
+}
+
 // 重定向激活到主实例的辅助函数
 // 这是一个非阻塞的实现，使用线程和事件来等待重定向完成
 void RedirectActivationTo(AppActivationArguments const& args, AppInstance const& keyInstance)
@@ -198,7 +207,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	if (shouldRedirect)
 	{
 		// 需要重定向，退出当前实例
-		sentry_close();
+		CloseSentryIfEnabled();
 		return 0;
 	}
 
@@ -221,7 +230,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	{
 		winrt::make<winrt::OpenNet::implementation::App>();
 	});
-	sentry_close();
+	CloseSentryIfEnabled();
 
 	return 0;
 }

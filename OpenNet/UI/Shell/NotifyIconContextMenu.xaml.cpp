@@ -10,6 +10,7 @@
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 
+import Core.Utils.Misc;
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.P2PManager;
@@ -238,7 +239,9 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		}
 	}
 
-	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::OpenAddDialogAsync(hstring kind)
+	winrt::Windows::Foundation::IAsyncAction NotifyIconContextMenu::OpenAddDialogAsync(
+		hstring kind,
+		hstring initialValue)
 	{
 		auto strong = get_strong();
 		try
@@ -259,8 +262,12 @@ namespace winrt::OpenNet::UI::Shell::implementation
 		{
 			co_return;
 		}
-		auto implementation = winrt::get_self<winrt::OpenNet::implementation::MainWindow>(mainWindow);
-		co_await implementation->ShowAddTaskDialogAsync(kind);
+		auto implementation =
+			winrt::get_self<winrt::OpenNet::implementation::MainWindow>(
+				mainWindow);
+		co_await implementation->ShowAddTaskDialogAsync(
+			kind,
+			initialValue);
 	}
 
 	void NotifyIconContextMenu::ApplyTransferLimit(bool download, int bytesPerSecond)
@@ -463,14 +470,22 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			normalized = normalized.substr(first, last - first + 1);
 			text = winrt::hstring{ normalized };
 			std::wstring lower(text);
-			std::transform(lower.begin(), lower.end(), lower.begin(), ::towlower);
-			const bool torrent = lower.starts_with(L"magnet:");
-			const bool http = lower.starts_with(L"http://") || lower.starts_with(L"https://") || lower.starts_with(L"ftp://");
-			if ((!torrent && !http) || text == m_lastCapturedClipboardUrl)
+			std::transform(
+				lower.begin(),
+				lower.end(),
+				lower.begin(),
+				::towlower);
+			bool const torrent = lower.starts_with(L"magnet:");
+			bool const httpDownload =
+				Core::Utils::Misc::isHttpDownloadUrl(text);
+			if ((!torrent && !httpDownload)
+				|| text == m_lastCapturedClipboardUrl)
 			{
 				co_return;
 			}
 
+			// Do not mutate capture state or activate the main window until the
+			// clipboard value has passed the protocol-specific validation.
 			m_lastCapturedClipboardUrl = text;
 			m_clipboardDialogOpen = true;
 			if (torrent)
@@ -491,7 +506,10 @@ namespace winrt::OpenNet::UI::Shell::implementation
 			}
 			else
 			{
-				co_await OpenAddDialogAsync(L"http");
+				// Pass the exact snapshot that was validated above. The dialog
+				// must not re-read a different clipboard value after the main
+				// window has been activated.
+				co_await OpenAddDialogAsync(L"http", text);
 			}
 			m_clipboardDialogOpen = false;
 		}

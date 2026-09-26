@@ -32,6 +32,8 @@
             Grid.Row="1"
             DoubleTapped="FilesListView_DoubleTapped"
             RightTapped="FilesListView_RightTapped"
+            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+            ScrollViewer.HorizontalScrollMode="Enabled"
             SelectionMode="Single">
             <ListView.ItemContainerTransitions>
                 <TransitionCollection>

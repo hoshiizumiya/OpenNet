@@ -3,6 +3,9 @@
 
 module OpenNet.Core.P2PManager;
 
+import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Core.Content.CanonicalV2Swarm;
+import OpenNet.Core.Content.ContentDirectoryClient;
 import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Core.TorrentSettings;
 
@@ -32,6 +35,235 @@ namespace OpenNet::Core
 		return m_torrentCore
 			? m_torrentCore->GetPerformanceStats()
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats{};
+	}
+
+	::OpenNet::Core::Torrent::LibtorrentHandle::ListenStatus
+		P2PManager::GetListenStatus()
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->GetListenStatus()
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::ListenStatus{};
+	}
+
+	::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
+		P2PManager::OpenLongSeedSession(
+			std::string const& sessionId,
+			std::vector<std::uint8_t> const& metainfo,
+			std::filesystem::path const& localFilePath)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->OpenLongSeedSession(
+				sessionId, metainfo, localFilePath)
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult{
+				false, {}, "Torrent core is unavailable" };
+	}
+
+	::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
+		P2PManager::OpenLongSeedDownloadSession(
+			std::string const& sessionId,
+			std::vector<std::uint8_t> const& metainfo,
+			std::filesystem::path const& targetFilePath,
+			std::vector<std::string> const& urlSeeds)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->OpenLongSeedDownloadSession(
+				sessionId, metainfo, targetFilePath, urlSeeds)
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult{
+				false, {}, "Torrent core is unavailable" };
+	}
+
+	bool P2PManager::ConnectLongSeedPeer(
+		std::string const& sessionId,
+		std::string const& address,
+		std::uint16_t port,
+		bool preferUtp)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			&& m_torrentCore->ConnectLongSeedPeer(
+				sessionId, address, port, preferUtp);
+	}
+
+	::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus
+		P2PManager::GetLongSeedSessionStatus(
+			std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			? m_torrentCore->GetLongSeedSessionStatus(sessionId)
+			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus{};
+	}
+
+	bool P2PManager::PauseLongSeedSession(std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			&& m_torrentCore->PauseLongSeedSession(sessionId);
+	}
+
+	bool P2PManager::ResumeLongSeedSession(std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_torrentCore
+			&& m_torrentCore->ResumeLongSeedSession(sessionId);
+	}
+
+	void P2PManager::CloseLongSeedSession(std::string const& sessionId)
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		if (m_torrentCore)
+			m_torrentCore->CloseLongSeedSession(sessionId);
+	}
+
+	winrt::Windows::Foundation::IAsyncOperation<bool>
+		P2PManager::StartLongSeedDownloadAsync(
+			::OpenNet::Core::Content::ContentIdentity identity,
+			std::filesystem::path targetFilePath,
+			std::uint32_t maxPeers,
+			std::string sessionId,
+			std::vector<std::string> urlSeeds,
+			std::stop_token stopToken)
+	{
+		if (stopToken.stop_requested()
+			|| !identity.IsWellFormed()
+			|| identity.algorithm
+				!= ::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256
+			|| targetFilePath.empty())
+			co_return false;
+
+		co_await EnsureTorrentCoreInitializedAsync();
+		if (stopToken.stop_requested())
+			co_return false;
+		co_await winrt::resume_background();
+		if (stopToken.stop_requested())
+			co_return false;
+
+		::OpenNet::Core::Content::ContentDirectoryClient client;
+		std::optional<::OpenNet::Core::Content::ContentLookupResult> lookup;
+		auto& settingsDb = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		settingsDb.Initialize();
+		auto const selfNodeId = settingsDb.GetString(
+			"content_directory", "node_id");
+		auto const deadline =
+			std::chrono::steady_clock::now() + std::chrono::seconds(12);
+
+		do
+		{
+			lookup = client.Lookup(
+				identity,
+				selfNodeId,
+				maxPeers,
+				true,
+				stopToken);
+			if (stopToken.stop_requested())
+				co_return false;
+			if (!lookup) co_return false;
+
+			bool const hasReadyPeer = std::ranges::any_of(
+				lookup->peers,
+				[](auto const& peer) { return peer.ready; });
+			if (lookup->manifestAvailable
+				&& lookup->canonicalProtocolVersion == 1
+				&& !lookup->canonicalInfoHashV2.empty()
+				&& (hasReadyPeer || !urlSeeds.empty()))
+				break;
+
+			auto const delay = std::chrono::milliseconds(
+				std::clamp<std::uint32_t>(
+					lookup->retryAfterMilliseconds, 250, 2000));
+			auto const retryAt =
+				std::chrono::steady_clock::now() + delay;
+			while (std::chrono::steady_clock::now() < retryAt)
+			{
+				if (stopToken.stop_requested())
+					co_return false;
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds(50));
+			}
+		}
+		while (!stopToken.stop_requested()
+			&& std::chrono::steady_clock::now() < deadline);
+
+		if (stopToken.stop_requested()
+			|| !lookup
+			|| !lookup->manifestAvailable)
+			co_return false;
+
+		auto manifest = client.GetManifest(
+			lookup->contentId,
+			stopToken);
+		if (stopToken.stop_requested()
+			|| !manifest
+			|| manifest->empty())
+			co_return false;
+		if (!::OpenNet::Core::Content::CanonicalV2Swarm::ValidateManifest(
+			identity,
+			lookup->size,
+			*manifest,
+			lookup->canonicalInfoHashV2))
+			co_return false;
+
+		if (sessionId.empty())
+		{
+			sessionId = "download:" + lookup->contentId + ":"
+				+ std::to_string(
+					std::hash<std::wstring>{}(
+						targetFilePath.lexically_normal().wstring()));
+		}
+		if (stopToken.stop_requested())
+			co_return false;
+
+		auto opened = OpenLongSeedDownloadSession(
+			sessionId, *manifest, targetFilePath, urlSeeds);
+		if (!opened.succeeded
+			|| opened.infoHashV2 != lookup->canonicalInfoHashV2)
+		{
+			CloseLongSeedSession(sessionId);
+			co_return false;
+		}
+
+		std::size_t connected{};
+		for (bool utpPass : { true, false })
+		{
+			for (auto const& peer : lookup->peers)
+			{
+				if (stopToken.stop_requested())
+				{
+					CloseLongSeedSession(sessionId);
+					co_return false;
+				}
+				if (!peer.ready) continue;
+				for (auto const& endpoint : peer.endpoints)
+				{
+					if (stopToken.stop_requested())
+					{
+						CloseLongSeedSession(sessionId);
+						co_return false;
+					}
+					bool const isUtp =
+						endpoint.transport
+						== ::OpenNet::Core::Content::ContentPeerTransport::Utp;
+					if (isUtp != utpPass) continue;
+					if (ConnectLongSeedPeer(
+						sessionId,
+						endpoint.address,
+						endpoint.port,
+						isUtp))
+						++connected;
+				}
+			}
+			if (connected != 0) break;
+		}
+
+		if (connected == 0 && urlSeeds.empty())
+		{
+			CloseLongSeedSession(sessionId);
+			co_return false;
+		}
+		co_return true;
 	}
 
 	std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>

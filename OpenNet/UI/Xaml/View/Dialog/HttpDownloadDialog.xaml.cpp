@@ -9,6 +9,7 @@ import OpenNet.Helpers.ThemeHelper;
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Aria2.Aria2Models;
+import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.TorrentSettings;
 import OpenNet.Core.Utils.Message;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -31,6 +32,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		m_errorTitle = ResourceGetString(L"HttpDownloadInvalidUrlTitle");
 		m_errorMessage = ResourceGetString(L"HttpDownloadInvalidUrlMessage");
 		m_saveDir = winrt::hstring{ ::OpenNet::Core::TorrentSettingsManager::Instance().Get().defaultSavePath };
+
+		auto& database =
+			::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		m_connectionsPerServer = static_cast<std::int32_t>(
+			std::clamp<std::int64_t>(
+				database.GetInt(
+					::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
+					"aria2_connections_per_server",
+					8),
+				1,
+				16));
+		m_useP2PAcceleration = database.GetBool(
+			::OpenNet::Core::AppSettingsDatabase::CAT_DOWNLOAD,
+			"http_p2p_preferred",
+			true).value_or(true);
+
 		UpdateDiskSpace();
 	}
 
@@ -56,7 +74,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		auto normalized = first == std::wstring_view::npos
 			? hstring{}
 		: hstring{ text.substr(first, last - first + 1) };
-		if (!normalized.empty() && !ValidateUrl(normalized))
+		if (!normalized.empty() && !Core::Utils::Misc::isHttpDownloadUrl(normalized))
 		{
 			auto const candidate = std::wstring_view{ normalized };
 			if (candidate.find(L' ') == std::wstring_view::npos
@@ -67,7 +85,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			}
 		}
 		if (!SetProperty(m_url, normalized, L"Url")) return;
-		m_isUrlValid = ValidateUrl(m_url);
+		m_resourceFinalUrl.clear();
+		m_resourceStrongETag.clear();
+		m_resourceContentLength = 0;
+		m_resourceSupportsByteRanges = false;
+		m_isUrlValid = Core::Utils::Misc::isHttpDownloadUrl(m_url);
 		RaisePropertyChanged(L"IsUrlValid");
 		RaisePropertyChanged(L"CanFetchMetadata");
 		m_isErrorOpen = !m_url.empty() && !m_isUrlValid;
@@ -108,6 +130,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	void HttpDownloadDialog::MaximumDownloadRate(double const value)
 	{
 		SetProperty(m_maximumDownloadRate, static_cast<int64_t>((std::max)(0.0, value)), L"MaximumDownloadRate");
+	}
+	bool HttpDownloadDialog::UseP2PAcceleration() const
+	{
+		return m_useP2PAcceleration;
+	}
+	void HttpDownloadDialog::UseP2PAcceleration(bool const value)
+	{
+		SetProperty(m_useP2PAcceleration, value, L"UseP2PAcceleration");
 	}
 	bool HttpDownloadDialog::StartPaused() const
 	{
@@ -230,22 +260,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	//  URL validation
 	// ------------------------------------------------------------------
 
-	bool HttpDownloadDialog::ValidateUrl(winrt::hstring const& url) const
-	{
-		if (url.empty()) return false;
-		try
-		{
-			winrt::Windows::Foundation::Uri const uri{ url };
-			auto scheme = std::wstring{ uri.SchemeName() };
-			std::ranges::transform(scheme, scheme.begin(), ::towlower);
-			return (scheme == L"http" || scheme == L"https" || scheme == L"ftp")
-				&& !uri.Host().empty();
-		}
-		catch (...)
-		{
-			return false;
-		}
-	}
 
 	// ------------------------------------------------------------------
 	//  XAML event handlers
@@ -273,14 +287,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				strong->RaisePropertyChanged(L"ClipboardPreviewVisibility");
 			});
 
-			auto clipboardContent = winrt::Windows::ApplicationModel::DataTransfer::Clipboard::GetContent();
-			if (clipboardContent.Contains(winrt::Windows::ApplicationModel::DataTransfer::StandardDataFormats::Text()))
+			auto clipboardContent =
+				winrt::Windows::ApplicationModel::DataTransfer::Clipboard::
+					GetContent();
+			if (clipboardContent.Contains(
+					winrt::Windows::ApplicationModel::DataTransfer::
+						StandardDataFormats::Text()))
 			{
 				auto const text = co_await clipboardContent.GetTextAsync();
-				SetProperty(m_clipboardPreviewText, text, L"ClipboardPreviewText");
-				m_clipboardPreviewVisibility = text.empty() ? Visibility::Collapsed : Visibility::Visible;
+				SetProperty(
+					m_clipboardPreviewText,
+					text,
+					L"ClipboardPreviewText");
+				m_clipboardPreviewVisibility =
+					text.empty()
+						? Visibility::Collapsed
+						: Visibility::Visible;
 				RaisePropertyChanged(L"ClipboardPreviewVisibility");
-				if (ValidateUrl(text))
+
+				// Tray clipboard capture supplies a validated snapshot before
+				// ShowAsync(). Do not overwrite it by sampling the clipboard a
+				// second time after the main window becomes visible.
+				if (m_url.empty() && Core::Utils::Misc::isHttpDownloadUrl(text))
 				{
 					Url(text);
 					co_await FetchMetadataAsync();
@@ -353,7 +381,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	winrt::fire_and_forget HttpDownloadDialog::StartDownloadAsync(bool const startPaused)
 	{
 		auto lifetime = get_strong();
-		if (!ValidateUrl(m_url))
+		if (!Core::Utils::Misc::isHttpDownloadUrl(m_url))
 		{
 			SetError(ResourceGetString(L"HttpDownloadInvalidUrlTitle"), ResourceGetString(L"HttpDownloadInvalidUrlMessage"));
 			co_return;
@@ -376,6 +404,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		options.Username = winrt::to_string(m_username);
 		options.Password = winrt::to_string(m_password);
 		options.Description = winrt::to_string(m_description);
+		options.TransferMode = m_useP2PAcceleration
+			? ::OpenNet::Core::Aria2::HttpTransferMode::P2PPreferred
+			: ::OpenNet::Core::Aria2::HttpTransferMode::Aria2Only;
+		options.ResourceFinalUrl = winrt::to_string(m_resourceFinalUrl);
+		options.ResourceStrongETag = winrt::to_string(m_resourceStrongETag);
+		options.ResourceContentLength = m_resourceContentLength;
+		options.ResourceSupportsByteRanges = m_resourceSupportsByteRanges;
 		auto checksum = winrt::to_string(m_checksum);
 		std::erase_if(checksum, [](unsigned char value)
 		{
@@ -416,7 +451,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	winrt::Windows::Foundation::IAsyncAction HttpDownloadDialog::FetchMetadataAsync()
 	{
 		auto lifetime = get_strong();
-		if (!ValidateUrl(m_url))
+		if (!Core::Utils::Misc::isHttpDownloadUrl(m_url))
 		{
 			SetError(ResourceGetString(L"HttpDownloadInvalidUrlTitle"), ResourceGetString(L"HttpDownloadInvalidUrlMessage"));
 			co_return;
@@ -456,6 +491,47 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			}
 			if (!response.IsSuccessStatusCode()) throw winrt::hresult_error(E_FAIL, L"HTTP " + winrt::to_hstring(static_cast<int>(response.StatusCode())));
 
+			// BEP 19 routing requires observed byte-range behavior. An
+			// Accept-Ranges advertisement is useful for UI, but it is not
+			// sufficient to let libtorrent depend on this origin as a URL seed.
+			bool rangeVerified =
+				response.StatusCode()
+					== winrt::Windows::Web::Http::HttpStatusCode::PartialContent
+				&& static_cast<bool>(
+					response.Content().Headers().ContentRange());
+			if (!rangeVerified)
+			{
+				try
+				{
+					auto const finalUri =
+						response.RequestMessage().RequestUri();
+					winrt::Windows::Web::Http::HttpRequestMessage rangeRequest{
+						winrt::Windows::Web::Http::HttpMethod::Get(),
+						finalUri };
+					rangeRequest.Headers().TryAppendWithoutValidation(
+						L"Range", L"bytes=0-0");
+					auto rangeResponse = co_await client.SendRequestAsync(
+						rangeRequest,
+						winrt::Windows::Web::Http::HttpCompletionOption::ResponseHeadersRead);
+					if (rangeResponse.StatusCode()
+							== winrt::Windows::Web::Http::HttpStatusCode::PartialContent
+						&& static_cast<bool>(
+							rangeResponse.Content().Headers().ContentRange()))
+					{
+						rangeVerified = true;
+						// This probe only proves BEP 19 range capability.
+						// Preserve the original metadata response because a
+						// 206 response is not required to repeat ETag,
+						// Content-Disposition, or other useful headers.
+					}
+				}
+				catch (...)
+				{
+					// HEAD metadata may still be useful. Only the canonical
+					// URL-seed route is disabled when this active probe fails.
+				}
+			}
+
 			std::uint64_t length{};
 			if (auto contentLength = response.Content().Headers().ContentLength()) length = contentLength.Value();
 			if (auto contentRange = response.Content().Headers().ContentRange())
@@ -466,15 +542,44 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				? ResourceGetString(L"HttpDownloadSizePrefix") + hstring{ std::format(L"{:.2f}", static_cast<double>(length) / 1048576.0) } + ResourceGetString(L"HttpDownloadMiB")
 				: ResourceGetString(L"HttpDownloadSizeUnknown"), L"FileSizeText");
 
-			bool resumable = response.StatusCode() == winrt::Windows::Web::Http::HttpStatusCode::PartialContent;
+			m_resourceFinalUrl =
+				response.RequestMessage().RequestUri().AbsoluteUri();
+			m_resourceContentLength = length;
+			m_resourceStrongETag.clear();
 			for (auto const& header : response.Headers())
 			{
-				if (header.Key() == L"Accept-Ranges" && std::wstring_view{ header.Value() }.find(L"bytes") != std::wstring_view::npos)
+				if (_wcsicmp(header.Key().c_str(), L"ETag") == 0)
+				{
+					auto value = header.Value();
+					auto view = std::wstring_view{ value };
+					auto const first = view.find_first_not_of(L" \t\r\n");
+					if (first != std::wstring_view::npos)
+					{
+						auto const last = view.find_last_not_of(L" \t\r\n");
+						auto trimmed = hstring{
+							view.substr(first, last - first + 1) };
+						if (!std::wstring_view{ trimmed }.starts_with(L"W/")
+							&& !std::wstring_view{ trimmed }.starts_with(L"w/"))
+							m_resourceStrongETag = trimmed;
+					}
+					break;
+				}
+			}
+
+			bool resumable = rangeVerified;
+			for (auto const& header : response.Headers())
+			{
+				if (header.Key() == L"Accept-Ranges"
+					&& std::wstring_view{ header.Value() }.find(L"bytes")
+						!= std::wstring_view::npos)
 				{
 					resumable = true;
 					break;
 				}
 			}
+			// Hybrid routing is stricter than the UI hint: only a successful
+			// active 206 + Content-Range probe enables BEP 19 URL-seed use.
+			m_resourceSupportsByteRanges = rangeVerified;
 			SetProperty(m_resumeSupportText, resumable ? ResourceGetString(L"HttpDownloadResumeYes") : ResourceGetString(L"HttpDownloadResumeNo"), L"ResumeSupportText");
 			if (m_fileName.empty())
 			{

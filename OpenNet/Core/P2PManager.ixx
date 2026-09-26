@@ -1,9 +1,10 @@
 ﻿export module OpenNet.Core.P2PManager;
 
-import std;
-import OpenNet.Core.torrentCore.LibtorrentHandle;
-import OpenNet.Core.torrentCore.TorrentStateManager;
-import winrt.Windows.Foundation;
+export import std;
+export import OpenNet.Core.Content.ContentIdentity;
+export import OpenNet.Core.torrentCore.LibtorrentHandle;
+export import OpenNet.Core.torrentCore.TorrentStateManager;
+export import winrt.Windows.Foundation;
 
 export namespace OpenNet::Core
 {
@@ -33,6 +34,43 @@ export namespace OpenNet::Core
 			GetSessionStats();
 		::OpenNet::Core::Torrent::LibtorrentHandle::SessionStats
 			GetPerformanceStats();
+		::OpenNet::Core::Torrent::LibtorrentHandle::ListenStatus
+			GetListenStatus();
+		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
+			OpenLongSeedSession(
+				std::string const& sessionId,
+				std::vector<std::uint8_t> const& metainfo,
+				std::filesystem::path const& localFilePath);
+		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
+			OpenLongSeedDownloadSession(
+				std::string const& sessionId,
+				std::vector<std::uint8_t> const& metainfo,
+				std::filesystem::path const& targetFilePath,
+				std::vector<std::string> const& urlSeeds = {});
+
+		// Hidden canonical fetch. URL seeds and BitTorrent peers may be mixed
+		// because libtorrent owns both the piece picker and the single disk
+		// writer. Never point this at a destination concurrently written by
+		// aria2 or another independent transfer engine.
+		winrt::Windows::Foundation::IAsyncOperation<bool>
+			StartLongSeedDownloadAsync(
+				::OpenNet::Core::Content::ContentIdentity identity,
+				std::filesystem::path targetFilePath,
+				std::uint32_t maxPeers = 20,
+				std::string sessionId = {},
+				std::vector<std::string> urlSeeds = {},
+				std::stop_token stopToken = {});
+		bool ConnectLongSeedPeer(
+			std::string const& sessionId,
+			std::string const& address,
+			std::uint16_t port,
+			bool preferUtp);
+		::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionStatus
+			GetLongSeedSessionStatus(
+				std::string const& sessionId);
+		bool PauseLongSeedSession(std::string const& sessionId);
+		bool ResumeLongSeedSession(std::string const& sessionId);
+		void CloseLongSeedSession(std::string const& sessionId);
 		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo>
 			GetTorrentPeers(std::string const& taskId);
 

@@ -42,6 +42,7 @@ namespace OpenNet.ViewModels
         String ShareRatio;
         String Seeds;
         String Peers;
+        String Transport;
 
         // Download task type (BitTorrent or Http)
         DownloadTaskType TaskType;

@@ -45,6 +45,7 @@ module Core.Utils.Misc;
 import winrt.Windows.System.UserProfile;
 import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Windows.Globalization;
+import winrt.Windows.Foundation;
 
 namespace
 {
@@ -131,6 +132,27 @@ namespace
 
 namespace Core::Utils::Misc
 {
+	bool isHttpDownloadUrl(winrt::hstring const& value)
+	{
+		if (value.empty())
+			return false;
+
+		try
+		{
+			winrt::Windows::Foundation::Uri const uri{ value };
+			auto scheme = std::wstring{ uri.SchemeName() };
+			std::ranges::transform(scheme, scheme.begin(), ::towlower);
+			return (scheme == L"http"
+					|| scheme == L"https"
+					|| scheme == L"ftp")
+				&& !uri.Host().empty();
+		}
+		catch (...)
+		{
+			return false;
+		}
+	}
+
 	winrt::hstring Core::Utils::Misc::unitString(const SizeUnit unit, const bool isSpeed)
 	{
 		const auto& unitStr = units[static_cast<int>(unit)];
