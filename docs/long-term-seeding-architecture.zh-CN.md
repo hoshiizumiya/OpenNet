@@ -715,7 +715,7 @@ canonical OpenNet.Content.v1 torrent
 
 final public HTTP origin 通过 `add_torrent_params::url_seeds` 交给 libtorrent。有有效 URL Seed 时，打开 canonical download 不再要求事先已经有 ready Peer。HTTP 与 P2P 都由同一个 libtorrent scheduler 和同一套密码学校验处理。
 
-当前 `OpenNet.Content.v1/content` canonical layout 不需要为了 direct-file URL Seed 改协议。libtorrent 对完整单文件 URL（例如 `/file.bin`）会直接请求该 path；如果 URL 以 `/` 结尾，则它把这个 URL 当 base URL，并追加 torrent file path，形成 `/origin/OpenNet.Content.v1/content`。因此 OpenNet 自动注入 WebSeed 时只接受不以 `/` 结尾的 direct-file final URL；本地 deterministic HTTP Range tests 已把这两种行为写成断言。
+当前 `OpenNet.Content.v1/content` canonical layout 不需要为了 direct-file URL Seed 改协议。libtorrent 对完整单文件 URL（例如 `/file.bin`）会直接请求该 path；如果 URL 以 `/` 结尾，则它把这个 URL 当 base URL，并追加 torrent file path，形成 `/origin/OpenNet.Content.v1/content`。因此 OpenNet 自动注入 WebSeed 时只接受不以 `/` 结尾的 direct-file final URL；本地 deterministic HTTP Range tests 已把这两种行为写成断言。OpenNet 现在要求 libtorrent >= 2.1.2，并新增了 v2 multi-file、非 piece 对齐边界的 WebSeed regression fixture，专门覆盖 2.1.2 修复的 request coalescing 类问题。
 
 当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 全程 paused。hybrid 失败时，OpenNet 先关闭隐藏 canonical session，只删除 libtorrent 尚未完成的 payload；aria2 自己的 `.aria2` control file 必须保留。确认 libtorrent 目标已经释放/清理之后，才允许 Resume aria2。这里是 writer ownership transfer，不是两个 writer 共存。
 
@@ -733,7 +733,7 @@ Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂�
 one physical output -> one active data writer
 ```
 
-绝不能让 active aria2 与 libtorrent 同时写同一个物理文件。只有未来出现无法表达成 libtorrent URL Seed / Peer 的异构 source 时，才需要独立 `TransferCoordinator`。
+绝不能让 active aria2 与 libtorrent 同时写同一个物理文件。现在 active HTTP record 还会在 SQLite 中声明规范化后的物理 `output_key`：task 创建会串行覆盖 duplicate check -> aria2 RPC -> record association；redirect / Content-Disposition 晚到的 filename 也必须原子 claim 同一个 key，否则当前重复 aria2 writer 会被停止；aria2 session 恢复出来的 GID 也不能再按 progress 大小启发式覆盖旧 owner。只有未来出现无法表达成 libtorrent URL Seed / Peer 的异构 source 时，才需要独立 `TransferCoordinator`。
 
 ## 18. Content Integrity 和传输加密不是一个问题
 
@@ -867,12 +867,12 @@ BitComet LT UDP == uTP
 ### 尚未实现 / 仍需加固
 
 - [ ] deterministic HTTP Range + WebSeed + OpenNet Peer 端到端测试；
-- [ ] 自动确认当前 canonical single-file layout 对应的 libtorrent WebSeed 真实请求路径；
+- [x] deterministic fixture 已确认 canonical single-file direct URL / base URL 的 libtorrent WebSeed 请求路径，并增加 libtorrent 2.1.2 v2 multi-file 边界 regression fixture；
 - [ ] shutdown 时协作取消正在进行的 wakeup/lookup；
 - [ ] Resume 后自动重新 discovery；
 - [ ] redirect / Content-Disposition 晚到 filename 后启用 hybrid；
 - [ ] 异常退出后的 stale hybrid/P2P partial 清理；
-- [ ] same-target duplicate HTTP task 排他；
+- [x] same-target active HTTP task 排他（normalized SQLite output_key + serialized creation + restored-GID reconciliation）；
 - [ ] HTTP task-shell cleanup/session persistence 的 crash/recovery 语义；
 - [ ] Traversal verified IPv4/IPv6 candidate、hole punching、relay、Node key、Peer Ticket；
 - [ ] production rate limit/migration 与 BitComet LT wire compatibility。
@@ -881,8 +881,8 @@ BitComet LT UDP == uTP
 
 1. 增加 deterministic local HTTP Range server fixture，记录 libtorrent 对 `OpenNet.Content.v1` 的实际 WebSeed 请求路径。
 2. 端到端覆盖 URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + Peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog。
-3. 收紧 shutdown/cancel/resume、stale partial cleanup 与 same-target 排他。
-4. 支持任务创建后才确定的 output filename。
+3. 收紧 shutdown/cancel/resume、stale partial cleanup，并为 output ownership / restart recovery 增加 deterministic crash tests。
+4. 在 payload ownership 尚未提交时，让任务创建后才确定的 output filename 可以安全重新评估并进入 hybrid。
 5. 接 OpenNet.Traversal verified IPv4/IPv6 candidate 与 hole punching。
 6. 公网部署前加入 Node key、请求签名、Peer Ticket、rate limit 与 production migrations。
 7. BitComet compatibility 独立推进。

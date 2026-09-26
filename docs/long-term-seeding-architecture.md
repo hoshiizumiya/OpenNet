@@ -683,7 +683,7 @@ one disk writer
 
 The final public HTTP origin is passed through `add_torrent_params::url_seeds`. A ready OpenNet peer is no longer required before opening the canonical download when a valid URL seed is available. HTTP and P2P therefore contribute pieces through one libtorrent scheduler and one cryptographic verification path.
 
-The current `OpenNet.Content.v1/content` canonical layout does not require a protocol change for direct-file URL Seeds. libtorrent treats a complete single-file URL such as `/file.bin` as the request target verbatim. A URL ending in `/` is instead a base URL and libtorrent appends the torrent file path, producing e.g. `/origin/OpenNet.Content.v1/content`; OpenNet therefore only auto-injects a non-trailing-slash direct-file final URL. Deterministic local HTTP Range tests now encode both path behaviors.
+The current `OpenNet.Content.v1/content` canonical layout does not require a protocol change for direct-file URL Seeds. libtorrent treats a complete single-file URL such as `/file.bin` as the request target verbatim. A URL ending in `/` is instead a base URL and libtorrent appends the torrent file path, producing e.g. `/origin/OpenNet.Content.v1/content`; OpenNet therefore only auto-injects a non-trailing-slash direct-file final URL. Deterministic local HTTP Range tests encode both path behaviors. OpenNet now requires libtorrent >= 2.1.2 and also carries a v2 multi-file, non-piece-aligned WebSeed regression fixture for the 2.1.2 request-coalescing fix.
 
 The current primary hybrid writes the destination directly because aria2 remains paused. On hybrid failure, OpenNet closes the hidden canonical session and removes the incomplete libtorrent-owned destination before aria2 is allowed to resume. The aria2 `.aria2` control file is deliberately preserved because it belongs to the fallback engine. Ownership is transferred, never shared.
 
@@ -701,7 +701,7 @@ The invariant is:
 one physical output -> one active data writer
 ```
 
-OpenNet must never point active aria2 and libtorrent sessions at the same physical file. A future `TransferCoordinator` is only justified for heterogeneous sources that cannot be represented as libtorrent URL Seeds or peers.
+OpenNet must never point active aria2 and libtorrent sessions at the same physical file. Active HTTP records therefore also claim a normalized physical `output_key` in SQLite. Task creation is serialized across duplicate checks, aria2 RPC creation and record association; a filename learned later from redirect/Content-Disposition must atomically claim the same key or the duplicate aria2 writer is stopped. Restored aria2 GIDs are reconciled against the existing owner instead of replacing it by progress heuristics. A future `TransferCoordinator` is only justified for heterogeneous sources that cannot be represented as libtorrent URL Seeds or peers.
 
 ## 18. Content integrity vs transport encryption
 

@@ -166,9 +166,15 @@ caller WholeFile SHA-256 也作为本地 recovery authority 保存。应用重�
 
 TasksPage 名称下方现在直接显示 `P2P discovery` / `libtorrent · HTTP/P2P` / `aria2`，hybrid 的 download/upload rate、peer/seed 连接数也投影进现有 HTTP task telemetry。Task Log 会记录实际 canonical v2 info-hash。
 
+依赖基线已升级并显式约束：
+- libtorrent >= 2.1.2；
+- sentry-native >= 0.17.1。
+OpenNet 没有使用 libtorrent 2.1.2 新弃用的内部 file_storage helper，也没有使用 sentry-native 0.17.x 发生 breaking change 的 attachment/before_send/on_crash/logs/metrics API，因此不要为了版本升级制造无关迁移。
+
 WebSeed path fixture 已加入：
 - 完整 direct-file URL `/file.bin` 必须原样请求；
-- trailing-slash `/origin/` 会被 libtorrent 视为 base URL，并追加 `OpenNet.Content.v1/content`.
+- trailing-slash `/origin/` 会被 libtorrent 视为 base URL，并追加 `OpenNet.Content.v1/content`；
+- 新增 v2 multi-file 非 piece 对齐边界 fixture，覆盖 libtorrent 2.1.2 的 WebSeed request-coalescing regression 类别。
 
 因此自动 WebSeed 只接受不以 `/` 结尾的 direct-file final URL。canonical protocol/layout 此轮没有修改，Server validator 不需要同步变化.
 
@@ -191,7 +197,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `4a6623aad36f9fcbbe16c3e116f2cf5095929298`
+- `7e12c2647d609f5b9a3b1649bd2d9bb26b14c173`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 
@@ -215,9 +221,9 @@ ResourceKey
 当前 restart recovery 已有原型实现，下一步是补 deterministic crash/restart tests，而不是重新设计：
 - shutdown cooperative cancellation；
 - restart 时 complete-vs-partial SHA recovery 测试；
-- aria2 shell removal failure 测试；
-- same-target duplicate task 排他；
-- redirect / Content-Disposition 晚到 filename。
+- aria2 shell removal failure测试；
+- normalized output_key / restored-GID ownership crash 测试；
+- redirect / Content-Disposition 晚到 filename 当前已做 collision claim，但还需要在 payload ownership 提交前安全重新评估 hybrid eligibility。
 
 ### 4. Traversal / security / production
 

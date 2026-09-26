@@ -25,10 +25,10 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `4a6623aad36f9fcbbe16c3e116f2cf5095929298`
-- `feat: expose canonical transfer identity and telemetry`
+- `7e12c2647d609f5b9a3b1649bd2d9bb26b14c173`
+- `fix: reconcile HTTP writer ownership conservatively`
 
-This lineage includes the master merge, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid upload/download/peer telemetry, and deterministic WebSeed path fixtures.
+This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, and a public-API v2 multi-file WebSeed boundary regression fixture.
 
 The feature lineage has been updated from:
 
@@ -381,13 +381,13 @@ Recommended research remains:
 
 ## Known implementation limitations
 
-- deterministic local WebSeed tests now cover direct-file versus trailing-slash request-path semantics, but the complete Directory -> manifest -> URL Seed + OpenNet peer integration chain still needs an automated fixture;
-- the new tests are committed but should not be described as CI-passed until the feature workflow reports results;
+- deterministic local WebSeed tests cover direct-file versus trailing-slash request-path semantics and now include a libtorrent 2.1.2 v2 multi-file unaligned-boundary regression fixture; the complete Directory -> manifest -> URL Seed + OpenNet peer integration chain still needs an automated fixture;
+- the new/updated tests are committed but should not be described as CI-passed until the feature workflow reports results;
 - hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
 - in-flight wakeup/lookup is not cooperatively cancellable during shutdown;
 - transfer policy / engine / user-pause / canonical hash are now persisted, and process-local canonical sessions have restart recovery; crash-recovery behavior still needs deterministic tests;
-- late redirect/Content-Disposition output names cannot yet activate hybrid;
-- same-target duplicate HTTP tasks need explicit exclusion;
+- late redirect/Content-Disposition output names are now atomically claimed against active output ownership, but they still cannot activate a hybrid that was ineligible when the task was created;
+- active HTTP output ownership is enforced by a normalized SQLite `output_key` unique index plus serialized task creation and restored-GID reconciliation;
 - aria2 shell removal and abnormal-exit cleanup now preserve the single-writer invariant but still need stress/crash testing;
 - Traversal/NAT/security/production hardening and BitComet wire compatibility remain future work.
 
@@ -411,8 +411,8 @@ Recommended order:
 
 1. Run and harden the committed prototype in the feature workflow; fix only concrete compiler/test failures.
 2. Add one deterministic end-to-end fixture for ResourceKey -> Directory candidate -> canonical manifest -> URL Seed + local OpenNet peer -> HTTP Complete.
-3. Add deterministic restart/crash tests for the persisted P2PPreferred routing state and aria2 control-shell recovery.
-4. Add same-target exclusion and support late redirect/Content-Disposition output filenames.
+3. Add deterministic restart/crash tests for the persisted P2PPreferred routing state, output ownership and aria2 task-removal recovery.
+4. Allow a safe late-resolved redirect/Content-Disposition filename to activate hybrid before payload ownership is committed.
 5. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
 6. Continue BitComet compatibility separately.
 
