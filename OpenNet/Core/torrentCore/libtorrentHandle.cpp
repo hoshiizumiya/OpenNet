@@ -4,6 +4,7 @@
 #pragma comment(lib, "crypt32.lib")
 #include "LibtorrentIncludeGuard.h"
 #include <libtorrent/sha1_hash.hpp>
+#include <libtorrent/version.hpp>
 #include <libtorrent/session.hpp>
 #include <libtorrent/add_torrent_params.hpp>
 #include <libtorrent/torrent_handle.hpp>
@@ -1810,7 +1811,14 @@ namespace OpenNet::Core::Torrent
 		result.valid = true;
 		try
 		{
-			auto const status = handle.status();
+			// This path is polled by the HTTP/P2P coordinator while a hidden
+			// canonical transfer is active. status() is synchronous, and its
+			// default requests every optional field (torrent_file, name,
+			// save_path, renamed files, etc.). None of those are needed here.
+			// Request only accurate byte counters; the basic state/rate/peer
+			// fields remain part of torrent_status.
+			auto const status = handle.status(
+				lt::torrent_handle::query_accurate_download_counters);
 			result.seeding = status.is_seeding;
 			result.finished = status.is_finished || status.is_seeding;
 			result.progressPercent = std::clamp(
