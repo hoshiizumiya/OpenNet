@@ -169,6 +169,34 @@ namespace OpenNet::Core::Content
             );
             CREATE INDEX IF NOT EXISTS idx_content_resource_key_content
                 ON content_resource_key(content_key);
+
+            CREATE TABLE IF NOT EXISTS content_pending_job (
+                local_path TEXT PRIMARY KEY,
+                generation INTEGER NOT NULL,
+                source_kind INTEGER NOT NULL,
+                source_id TEXT NOT NULL,
+                source_file_index INTEGER,
+                file_size INTEGER NOT NULL,
+                last_write_ticks INTEGER NOT NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS content_pending_identity (
+                local_path TEXT NOT NULL,
+                algorithm INTEGER NOT NULL,
+                digest BLOB NOT NULL,
+                PRIMARY KEY (local_path, algorithm, digest),
+                FOREIGN KEY (local_path) REFERENCES content_pending_job(local_path)
+                    ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS content_pending_resource_key (
+                local_path TEXT NOT NULL,
+                algorithm INTEGER NOT NULL,
+                digest BLOB NOT NULL,
+                PRIMARY KEY (local_path, algorithm, digest),
+                FOREIGN KEY (local_path) REFERENCES content_pending_job(local_path)
+                    ON DELETE CASCADE
+            );
         )";
 
         char* message{};
@@ -189,6 +217,455 @@ namespace OpenNet::Core::Content
     {
         if (!path) return {};
         return std::filesystem::path{ winrt::to_hstring(path).c_str() };
+    }
+
+    SqliteContentCatalog::PendingJob
+        SqliteContentCatalog::PersistPendingJob(PendingJob job)
+    {
+        std::lock_guard lock(m_mutex);
+        if (!EnsureInitialized())
+            throw std::runtime_error("Content catalog is unavailable.");
+        if (job.path.empty())
+            throw std::invalid_argument("Pending catalog path is empty.");
+        if (job.fingerprint.fileSize
+            > static_cast<std::uint64_t>(
+                (std::numeric_limits<sqlite3_int64>::max)()))
+            throw std::overflow_error(
+                "Pending catalog file size cannot be represented by SQLite.");
+
+        std::erase_if(
+            job.knownIdentities,
+            [](ContentIdentity const& identity)
+            {
+                return !identity.IsWellFormed();
+            });
+
+        auto const path = PathToUtf8(job.path);
+        if (sqlite3_exec(
+            m_db,
+            "BEGIN IMMEDIATE;",
+            nullptr,
+            nullptr,
+            nullptr) != SQLITE_OK)
+        {
+            ThrowSqlite(m_db, "BEGIN pending catalog transaction");
+        }
+
+        try
+        {
+            bool mergeAliases = false;
+            std::int64_t previousGeneration{};
+            {
+                sqlite3_stmt* statement{};
+                if (sqlite3_prepare_v2(
+                    m_db,
+                    "SELECT generation, file_size, last_write_ticks "
+                    "FROM content_pending_job WHERE local_path=?;",
+                    -1,
+                    &statement,
+                    nullptr) != SQLITE_OK)
+                {
+                    ThrowSqlite(m_db, "Prepare pending catalog read");
+                }
+                sqlite3_bind_text(
+                    statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+                if (sqlite3_step(statement) == SQLITE_ROW)
+                {
+                    previousGeneration =
+                        sqlite3_column_int64(statement, 0);
+                    mergeAliases =
+                        static_cast<std::uint64_t>(
+                            sqlite3_column_int64(statement, 1))
+                            == job.fingerprint.fileSize
+                        && sqlite3_column_int64(statement, 2)
+                            == job.fingerprint.lastWriteTicks;
+                }
+                sqlite3_finalize(statement);
+            }
+
+            if (mergeAliases)
+            {
+                sqlite3_stmt* statement{};
+                if (sqlite3_prepare_v2(
+                    m_db,
+                    "SELECT algorithm, digest FROM content_pending_identity "
+                    "WHERE local_path=?;",
+                    -1,
+                    &statement,
+                    nullptr) != SQLITE_OK)
+                {
+                    ThrowSqlite(
+                        m_db,
+                        "Prepare pending identity merge");
+                }
+                sqlite3_bind_text(
+                    statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+                while (sqlite3_step(statement) == SQLITE_ROW)
+                {
+                    ContentIdentity identity;
+                    identity.algorithm =
+                        static_cast<ContentIdentityAlgorithm>(
+                            sqlite3_column_int(statement, 0));
+                    identity.digest = ReadBlob(statement, 1);
+                    if (identity.IsWellFormed()
+                        && std::ranges::find(
+                            job.knownIdentities, identity)
+                            == job.knownIdentities.end())
+                    {
+                        job.knownIdentities.push_back(
+                            std::move(identity));
+                    }
+                }
+                sqlite3_finalize(statement);
+
+                if (sqlite3_prepare_v2(
+                    m_db,
+                    "SELECT algorithm, digest "
+                    "FROM content_pending_resource_key "
+                    "WHERE local_path=?;",
+                    -1,
+                    &statement,
+                    nullptr) != SQLITE_OK)
+                {
+                    ThrowSqlite(
+                        m_db,
+                        "Prepare pending resource-key merge");
+                }
+                sqlite3_bind_text(
+                    statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+                while (sqlite3_step(statement) == SQLITE_ROW)
+                {
+                    auto const digest = ReadBlob(statement, 1);
+                    if (digest.size() != 32)
+                        continue;
+                    ResourceKey key;
+                    key.algorithm =
+                        static_cast<ResourceKeyAlgorithm>(
+                            sqlite3_column_int(statement, 0));
+                    std::copy_n(
+                        digest.data(),
+                        key.digest.size(),
+                        key.digest.begin());
+                    if (std::ranges::find(
+                        job.resourceKeys, key)
+                        == job.resourceKeys.end())
+                    {
+                        job.resourceKeys.push_back(key);
+                    }
+                }
+                sqlite3_finalize(statement);
+            }
+
+            job.generation =
+                previousGeneration < (std::numeric_limits<std::int64_t>::max)()
+                    ? previousGeneration + 1
+                    : 1;
+
+            {
+                sqlite3_stmt* statement{};
+                char const* sql =
+                    "INSERT INTO content_pending_job("
+                    "local_path, generation, source_kind, source_id, "
+                    "source_file_index, file_size, last_write_ticks) "
+                    "VALUES(?, ?, ?, ?, ?, ?, ?) "
+                    "ON CONFLICT(local_path) DO UPDATE SET "
+                    "generation=excluded.generation, "
+                    "source_kind=excluded.source_kind, "
+                    "source_id=excluded.source_id, "
+                    "source_file_index=excluded.source_file_index, "
+                    "file_size=excluded.file_size, "
+                    "last_write_ticks=excluded.last_write_ticks;";
+                if (sqlite3_prepare_v2(
+                    m_db, sql, -1, &statement, nullptr) != SQLITE_OK)
+                {
+                    ThrowSqlite(m_db, "Prepare pending catalog upsert");
+                }
+                sqlite3_bind_text(
+                    statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_int64(
+                    statement, 2, job.generation);
+                sqlite3_bind_int(
+                    statement, 3, static_cast<int>(job.source.kind));
+                sqlite3_bind_text(
+                    statement, 4,
+                    job.source.sourceId.c_str(),
+                    -1,
+                    SQLITE_TRANSIENT);
+                if (job.source.sourceFileIndex)
+                    sqlite3_bind_int(
+                        statement, 5, *job.source.sourceFileIndex);
+                else
+                    sqlite3_bind_null(statement, 5);
+                sqlite3_bind_int64(
+                    statement,
+                    6,
+                    static_cast<sqlite3_int64>(
+                        job.fingerprint.fileSize));
+                sqlite3_bind_int64(
+                    statement,
+                    7,
+                    job.fingerprint.lastWriteTicks);
+                auto const result = sqlite3_step(statement);
+                sqlite3_finalize(statement);
+                if (result != SQLITE_DONE)
+                    ThrowSqlite(m_db, "Upsert pending catalog job");
+            }
+
+            sqlite3_stmt* statement{};
+            if (sqlite3_prepare_v2(
+                m_db,
+                "DELETE FROM content_pending_identity "
+                "WHERE local_path=?;",
+                -1,
+                &statement,
+                nullptr) != SQLITE_OK)
+            {
+                ThrowSqlite(m_db, "Prepare pending identity reset");
+            }
+            sqlite3_bind_text(
+                statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+            if (sqlite3_step(statement) != SQLITE_DONE)
+            {
+                sqlite3_finalize(statement);
+                ThrowSqlite(m_db, "Reset pending identities");
+            }
+            sqlite3_finalize(statement);
+
+            if (sqlite3_prepare_v2(
+                m_db,
+                "DELETE FROM content_pending_resource_key "
+                "WHERE local_path=?;",
+                -1,
+                &statement,
+                nullptr) != SQLITE_OK)
+            {
+                ThrowSqlite(m_db, "Prepare pending resource-key reset");
+            }
+            sqlite3_bind_text(
+                statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+            if (sqlite3_step(statement) != SQLITE_DONE)
+            {
+                sqlite3_finalize(statement);
+                ThrowSqlite(m_db, "Reset pending resource keys");
+            }
+            sqlite3_finalize(statement);
+
+            for (auto const& identity : job.knownIdentities)
+            {
+                if (sqlite3_prepare_v2(
+                    m_db,
+                    "INSERT OR IGNORE INTO content_pending_identity("
+                    "local_path, algorithm, digest) VALUES(?, ?, ?);",
+                    -1,
+                    &statement,
+                    nullptr) != SQLITE_OK)
+                {
+                    ThrowSqlite(m_db, "Prepare pending identity upsert");
+                }
+                sqlite3_bind_text(
+                    statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_int(
+                    statement, 2, static_cast<int>(identity.algorithm));
+                sqlite3_bind_blob(
+                    statement,
+                    3,
+                    identity.digest.data(),
+                    static_cast<int>(identity.digest.size()),
+                    SQLITE_TRANSIENT);
+                auto const result = sqlite3_step(statement);
+                sqlite3_finalize(statement);
+                if (result != SQLITE_DONE)
+                    ThrowSqlite(m_db, "Upsert pending identity");
+            }
+
+            for (auto const& key : job.resourceKeys)
+            {
+                if (sqlite3_prepare_v2(
+                    m_db,
+                    "INSERT OR IGNORE INTO content_pending_resource_key("
+                    "local_path, algorithm, digest) VALUES(?, ?, ?);",
+                    -1,
+                    &statement,
+                    nullptr) != SQLITE_OK)
+                {
+                    ThrowSqlite(
+                        m_db,
+                        "Prepare pending resource-key upsert");
+                }
+                sqlite3_bind_text(
+                    statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+                sqlite3_bind_int(
+                    statement, 2, static_cast<int>(key.algorithm));
+                sqlite3_bind_blob(
+                    statement,
+                    3,
+                    key.digest.data(),
+                    static_cast<int>(key.digest.size()),
+                    SQLITE_TRANSIENT);
+                auto const result = sqlite3_step(statement);
+                sqlite3_finalize(statement);
+                if (result != SQLITE_DONE)
+                    ThrowSqlite(m_db, "Upsert pending resource key");
+            }
+
+            if (sqlite3_exec(
+                m_db, "COMMIT;", nullptr, nullptr, nullptr) != SQLITE_OK)
+            {
+                ThrowSqlite(m_db, "COMMIT pending catalog transaction");
+            }
+            return job;
+        }
+        catch (...)
+        {
+            sqlite3_exec(
+                m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+            throw;
+        }
+    }
+
+    std::vector<SqliteContentCatalog::PendingJob>
+        SqliteContentCatalog::LoadPendingJobs() const
+    {
+        std::lock_guard lock(m_mutex);
+        std::vector<PendingJob> jobs;
+        if (!const_cast<SqliteContentCatalog*>(this)
+            ->EnsureInitialized())
+        {
+            return jobs;
+        }
+
+        sqlite3_stmt* statement{};
+        if (sqlite3_prepare_v2(
+            m_db,
+            "SELECT local_path, generation, source_kind, source_id, "
+            "source_file_index, file_size, last_write_ticks "
+            "FROM content_pending_job ORDER BY rowid;",
+            -1,
+            &statement,
+            nullptr) != SQLITE_OK)
+        {
+            ThrowSqlite(m_db, "Prepare pending catalog snapshot");
+        }
+
+        while (sqlite3_step(statement) == SQLITE_ROW)
+        {
+            PendingJob job;
+            job.path = PathFromUtf8(
+                reinterpret_cast<char const*>(
+                    sqlite3_column_text(statement, 0)));
+            job.generation = sqlite3_column_int64(statement, 1);
+            job.source.kind = static_cast<ContentSourceKind>(
+                sqlite3_column_int(statement, 2));
+            if (auto const* sourceId =
+                reinterpret_cast<char const*>(
+                    sqlite3_column_text(statement, 3)))
+            {
+                job.source.sourceId = sourceId;
+            }
+            if (sqlite3_column_type(statement, 4) != SQLITE_NULL)
+                job.source.sourceFileIndex =
+                    sqlite3_column_int(statement, 4);
+            job.fingerprint.fileSize =
+                static_cast<std::uint64_t>(
+                    sqlite3_column_int64(statement, 5));
+            job.fingerprint.lastWriteTicks =
+                sqlite3_column_int64(statement, 6);
+            jobs.push_back(std::move(job));
+        }
+        sqlite3_finalize(statement);
+
+        for (auto& job : jobs)
+        {
+            auto const path = PathToUtf8(job.path);
+
+            if (sqlite3_prepare_v2(
+                m_db,
+                "SELECT algorithm, digest FROM content_pending_identity "
+                "WHERE local_path=?;",
+                -1,
+                &statement,
+                nullptr) != SQLITE_OK)
+            {
+                ThrowSqlite(m_db, "Prepare pending identity snapshot");
+            }
+            sqlite3_bind_text(
+                statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+            while (sqlite3_step(statement) == SQLITE_ROW)
+            {
+                ContentIdentity identity;
+                identity.algorithm =
+                    static_cast<ContentIdentityAlgorithm>(
+                        sqlite3_column_int(statement, 0));
+                identity.digest = ReadBlob(statement, 1);
+                if (identity.IsWellFormed())
+                    job.knownIdentities.push_back(
+                        std::move(identity));
+            }
+            sqlite3_finalize(statement);
+
+            if (sqlite3_prepare_v2(
+                m_db,
+                "SELECT algorithm, digest "
+                "FROM content_pending_resource_key "
+                "WHERE local_path=?;",
+                -1,
+                &statement,
+                nullptr) != SQLITE_OK)
+            {
+                ThrowSqlite(
+                    m_db,
+                    "Prepare pending resource-key snapshot");
+            }
+            sqlite3_bind_text(
+                statement, 1, path.c_str(), -1, SQLITE_TRANSIENT);
+            while (sqlite3_step(statement) == SQLITE_ROW)
+            {
+                auto const digest = ReadBlob(statement, 1);
+                if (digest.size() != 32)
+                    continue;
+                ResourceKey key;
+                key.algorithm =
+                    static_cast<ResourceKeyAlgorithm>(
+                        sqlite3_column_int(statement, 0));
+                std::copy_n(
+                    digest.data(),
+                    key.digest.size(),
+                    key.digest.begin());
+                job.resourceKeys.push_back(key);
+            }
+            sqlite3_finalize(statement);
+        }
+
+        return jobs;
+    }
+
+    void SqliteContentCatalog::CompletePendingJob(
+        std::filesystem::path const& path,
+        std::int64_t generation)
+    {
+        std::lock_guard lock(m_mutex);
+        if (!EnsureInitialized() || path.empty())
+            return;
+
+        auto const utf8 = PathToUtf8(path);
+        sqlite3_stmt* statement{};
+        if (sqlite3_prepare_v2(
+            m_db,
+            "DELETE FROM content_pending_job "
+            "WHERE local_path=? AND generation=?;",
+            -1,
+            &statement,
+            nullptr) != SQLITE_OK)
+        {
+            ThrowSqlite(m_db, "Prepare pending catalog completion");
+        }
+        sqlite3_bind_text(
+            statement, 1, utf8.c_str(), -1, SQLITE_TRANSIENT);
+        sqlite3_bind_int64(statement, 2, generation);
+        auto const result = sqlite3_step(statement);
+        sqlite3_finalize(statement);
+        if (result != SQLITE_DONE)
+            ThrowSqlite(m_db, "Complete pending catalog job");
     }
 
     void SqliteContentCatalog::Upsert(ContentRecord record)

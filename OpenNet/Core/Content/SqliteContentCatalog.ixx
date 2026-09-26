@@ -4,7 +4,7 @@ struct sqlite3;
 
 export module OpenNet.Core.Content.SqliteContentCatalog;
 
-import std;
+export import std;
 export import OpenNet.Core.Content.ContentCatalog;
 
 export namespace OpenNet::Core::Content
@@ -12,6 +12,16 @@ export namespace OpenNet::Core::Content
     class SqliteContentCatalog final : public IContentCatalog
     {
     public:
+        struct PendingJob
+        {
+            std::filesystem::path path;
+            ContentSourceReference source;
+            ContentFileFingerprint fingerprint;
+            std::vector<ContentIdentity> knownIdentities;
+            std::vector<ResourceKey> resourceKeys;
+            std::int64_t generation{};
+        };
+
         SqliteContentCatalog() = default;
         ~SqliteContentCatalog();
 
@@ -32,6 +42,15 @@ export namespace OpenNet::Core::Content
             std::filesystem::path const& path,
             ContentAvailability availability) override;
         void RemoveLocation(std::filesystem::path const& path) override;
+
+        // Crash-safe background catalog queue. PersistPendingJob merges aliases
+        // only when the same path still has the same completion fingerprint and
+        // returns the durable generation assigned to this submission.
+        PendingJob PersistPendingJob(PendingJob job);
+        std::vector<PendingJob> LoadPendingJobs() const;
+        void CompletePendingJob(
+            std::filesystem::path const& path,
+            std::int64_t generation);
 
     private:
         bool EnsureInitialized();
