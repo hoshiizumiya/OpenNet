@@ -830,6 +830,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateItemByTaskId(e.taskId, name);
+				item.Transport(L"libtorrent · BitTorrent");
 				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
 				if (!name.empty() && item.Name() != name)
 				{

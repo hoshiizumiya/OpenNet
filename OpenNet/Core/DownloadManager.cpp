@@ -1953,6 +1953,13 @@ namespace OpenNet::Core
 					discovery->second.canonicalInfoHashV2 =
 						job.canonicalInfoHashV2;
 				}
+				m_httpTaskLogs[job.gid].push_back({
+					std::chrono::duration_cast<std::chrono::seconds>(
+						std::chrono::system_clock::now()
+							.time_since_epoch()).count(),
+					"Canonical libtorrent session started; v2 info-hash: "
+						+ job.canonicalInfoHashV2
+				});
 			}
 
 			auto deadline =
