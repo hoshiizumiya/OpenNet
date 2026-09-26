@@ -15,6 +15,7 @@
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/socket.hpp>
 #include <libtorrent/torrent_handle.hpp>
+#include <winrt/Windows.Foundation.Collections.h>
 #include <winrt/Windows.Data.Json.h>
 
 #include <algorithm>
@@ -48,6 +49,19 @@ namespace OpenNetUnitTest
 	{
 		namespace lt = libtorrent;
 		using namespace std::chrono_literals;
+
+		using LtCharSpan = lt::span<char const>;
+
+		LtCharSpan::difference_type LtSpanLength(std::size_t const size)
+		{
+			auto const maximum = static_cast<std::size_t>(
+				(std::numeric_limits<
+					LtCharSpan::difference_type>::max)());
+			if (size > maximum)
+				throw std::length_error(
+					"libtorrent span length is out of range");
+			return static_cast<LtCharSpan::difference_type>(size);
+		}
 
 		std::string Utf8Path(std::filesystem::path const& path)
 		{
@@ -671,7 +685,7 @@ namespace OpenNetUnitTest
 			return lt::hasher256{
 				lt::span<char const>{
 					reinterpret_cast<char const*>(bytes.data()),
-					bytes.size()
+					LtSpanLength(bytes.size())
 				}
 			}.final();
 		}
@@ -681,7 +695,7 @@ namespace OpenNetUnitTest
 			return lt::hasher256{
 				lt::span<char const>{
 					text.data(),
-					text.size()
+					LtSpanLength(text.size())
 				}
 			}.final();
 		}
@@ -824,7 +838,7 @@ namespace OpenNetUnitTest
 				auto params = lt::load_torrent_buffer(
 					lt::span<char const>{
 						metainfo.data(),
-						metainfo.size()
+						LtSpanLength(metainfo.size())
 					});
 				if (!params.ti)
 					throw std::runtime_error(
@@ -914,7 +928,7 @@ namespace OpenNetUnitTest
 			auto params = lt::load_torrent_buffer(
 				lt::span<char const>{
 					reinterpret_cast<char const*>(manifest.data()),
-					manifest.size()
+					LtSpanLength(manifest.size())
 				});
 			if (!params.ti)
 				throw std::runtime_error(
@@ -1106,7 +1120,7 @@ namespace OpenNetUnitTest
 			auto metainfo = lt::load_torrent_buffer(
 				lt::span<char const>{
 					fixture.metainfo.data(),
-					fixture.metainfo.size()
+					LtSpanLength(fixture.metainfo.size())
 				});
 			Assert::IsNotNull(
 				metainfo.ti.get(),
@@ -1225,7 +1239,7 @@ namespace OpenNetUnitTest
 						Text(candidatePayload)));
 			auto const candidates =
 				candidateJson.GetNamedArray(L"candidates");
-			Assert::AreEqual(
+			Assert::AreEqual<std::uint32_t>(
 				std::uint32_t{1},
 				candidates.Size(),
 				L"directory must return one deterministic candidate");
@@ -1297,7 +1311,7 @@ namespace OpenNetUnitTest
 
 			auto const peers =
 				lookupJson.GetNamedArray(L"peers");
-			Assert::AreEqual(
+			Assert::AreEqual<std::uint32_t>(
 				std::uint32_t{1},
 				peers.Size(),
 				L"directory must expose one deterministic peer");
@@ -1325,7 +1339,7 @@ namespace OpenNetUnitTest
 					lt::span<char const>{
 						reinterpret_cast<char const*>(
 							manifest.data()),
-						manifest.size()
+						LtSpanLength(manifest.size())
 					});
 			Assert::IsNotNull(
 				validatedManifest.ti.get(),
