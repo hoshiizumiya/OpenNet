@@ -22,8 +22,15 @@ export namespace OpenNet::Core
 	// ------------------------------------------------------------------
 	enum class DownloadTaskType
 	{
-		Http,       // HTTP/HTTPS/FTP via Aria2
-		BitTorrent, // Managed by libtorrent (existing P2PManager)
+		Http,
+		BitTorrent,
+	};
+
+	enum class HttpTransferEngine : std::int32_t
+	{
+		Aria2 = 0,
+		CanonicalProbe = 1,
+		CanonicalHybrid = 2,
 	};
 
 	// ------------------------------------------------------------------
@@ -39,6 +46,7 @@ export namespace OpenNet::Core
 		std::uint64_t downloadSpeed;
 		std::uint64_t uploadSpeed;
 		int progressPercent; // 0-100
+		HttpTransferEngine engine{ HttpTransferEngine::Aria2 };
 	};
 	struct HttpTaskLogEntry
 	{
@@ -56,6 +64,7 @@ export namespace OpenNet::Core
 		std::uint64_t size{};
 		std::uint32_t observationCount{};
 		std::optional<::OpenNet::Core::Content::ContentIdentity> bep52Identity;
+		std::string canonicalInfoHashV2;
 	};
 
 	using HttpProgressCallback = std::function<void(HttpTaskProgress const&)>;
@@ -192,6 +201,7 @@ export namespace OpenNet::Core
 			std::vector<::OpenNet::Core::Content::ResourceKey> resourceKeys;
 			std::uint64_t expectedSize{};
 			bool hybridPrimary{};
+			std::string canonicalInfoHashV2;
 			std::vector<std::string> webSeeds;
 		};
 

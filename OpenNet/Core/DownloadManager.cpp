@@ -29,6 +29,8 @@ namespace OpenNet::Core
 			"http_resource_hint_eligible";
 		constexpr auto ResourceValidatorKeyCategory =
 			"http_resource_validator_key";
+		constexpr auto ExpectedSha256Category =
+			"http_expected_sha256";
 
 		bool IsResourceHintSafe(
 			Aria2::HttpDownloadOptions const& options)
@@ -287,16 +289,157 @@ namespace OpenNet::Core
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
 				m_aria2 = std::move(aria2);
-
 				for (auto const& rec : records)
 				{
 					if (!rec.lastGid.empty())
-					{
 						m_gidToRecordId[rec.lastGid] = rec.recordId;
+				}
+			}
+
+			// Hidden canonical sessions are process-local. Recover any persisted
+			// ownership before refresh callbacks can observe the aria2 shell.
+			auto& recoverySettings = AppSettingsDatabase::Instance();
+			recoverySettings.Initialize();
+			for (auto const& rec : records)
+			{
+				if (rec.status >= 3
+					|| rec.transferMode != static_cast<int>(
+						Aria2::HttpTransferMode::P2PPreferred)
+					|| rec.activeEngine == static_cast<int>(
+						HttpTransferEngine::Aria2)
+					|| rec.lastGid.empty())
+					continue;
+
+				// A probe never gave payload ownership to libtorrent, so its
+				// paused shell can immediately become the aria2 fallback.
+				if (rec.activeEngine == static_cast<int>(
+					HttpTransferEngine::CanonicalProbe))
+				{
+					HttpStateManager::Instance().UpdateRecordActiveEngine(
+						rec.recordId,
+						static_cast<int>(HttpTransferEngine::Aria2));
+					if (!rec.userRequestedPaused)
+					{
+						try
+						{
+							std::lock_guard rpcLock(m_aria2->InstanceLock());
+							m_aria2->Resume(rec.lastGid);
+						}
+						catch (...)
+						{
+						}
+					}
+					HttpStateManager::Instance().UpdateRecordStatus(
+						rec.recordId,
+						rec.userRequestedPaused ? 2 : 1);
+					continue;
+				}
+
+				if (rec.activeEngine != static_cast<int>(
+					HttpTransferEngine::CanonicalHybrid)
+					|| rec.savePath.empty()
+					|| rec.fileName.empty())
+					continue;
+
+				auto const targetFilePath =
+					std::filesystem::path{
+						winrt::to_hstring(rec.savePath).c_str() }
+					/ std::filesystem::path{
+						winrt::to_hstring(rec.fileName).c_str() };
+
+				bool recoveredComplete = false;
+				if (auto persistedSha = recoverySettings.GetString(
+					ExpectedSha256Category, rec.recordId))
+				{
+					if (auto expected = ParseExpectedSha256(
+						"sha-256=" + *persistedSha))
+					{
+						try
+						{
+							auto const hashed =
+								::OpenNet::Core::Content::ContentHasher::HashFile(
+									targetFilePath);
+							recoveredComplete =
+								(rec.totalSize == 0
+									|| hashed.size
+										== static_cast<std::uint64_t>(
+											rec.totalSize))
+								&& std::ranges::find(
+									hashed.identities, *expected)
+									!= hashed.identities.end();
+						}
+						catch (...)
+						{
+						}
 					}
 				}
 
-				// Start periodic refresh and resource-discovery workers.
+				if (recoveredComplete)
+				{
+					try
+					{
+						std::lock_guard rpcLock(m_aria2->InstanceLock());
+						m_aria2->Cancel(rec.lastGid, true);
+						m_aria2->Remove(rec.lastGid);
+						m_aria2->SaveSession();
+					}
+					catch (...)
+					{
+					}
+					auto const aria2ControlPath = std::filesystem::path{
+						targetFilePath.wstring() + L".aria2" };
+					std::error_code error;
+					std::filesystem::remove(aria2ControlPath, error);
+					HttpStateManager::Instance().UpdateRecordProgress(
+						rec.recordId,
+						rec.totalSize,
+						rec.totalSize);
+					HttpStateManager::Instance().UpdateRecordStatus(
+						rec.recordId, 3);
+					continue;
+				}
+
+				bool payloadCleanupSucceeded = false;
+				for (int attempt = 0; attempt < 40; ++attempt)
+				{
+					std::error_code error;
+					std::filesystem::remove(targetFilePath, error);
+					std::error_code existsError;
+					if (!std::filesystem::exists(
+							targetFilePath, existsError)
+						&& !existsError)
+					{
+						payloadCleanupSucceeded = true;
+						break;
+					}
+					std::this_thread::sleep_for(
+						std::chrono::milliseconds(50));
+				}
+				if (!payloadCleanupSucceeded)
+				continue;
+
+				HttpStateManager::Instance().UpdateRecordActiveEngine(
+					rec.recordId,
+					static_cast<int>(HttpTransferEngine::Aria2));
+				if (!rec.userRequestedPaused)
+				{
+					try
+					{
+						std::lock_guard rpcLock(m_aria2->InstanceLock());
+						m_aria2->Resume(rec.lastGid);
+					}
+					catch (...)
+					{
+					}
+				}
+				HttpStateManager::Instance().UpdateRecordStatus(
+					rec.recordId,
+					rec.userRequestedPaused ? 2 : 1);
+			}
+
+			{
+				std::lock_guard<std::mutex> lock(m_mutex);
+				// Start refresh/discovery only after writer ownership recovery.
 				m_stopRefresh.store(false);
 				m_refreshThread = std::thread([this]()
 				{
@@ -520,6 +663,29 @@ namespace OpenNet::Core
 				if (!effectiveOptions.Description.empty()) database.SetString("http_task_description", gid, effectiveOptions.Description);
 				auto recordId = stateManager.AddRecord(effectiveOptions.Uris.front(), effectiveOptions.Dir, effectiveOptions.OutFileName);
 				stateManager.UpdateRecordGid(recordId, gid);
+				stateManager.UpdateRecordTransferPolicy(
+					recordId,
+					static_cast<int>(options.TransferMode),
+					options.StartPaused);
+				stateManager.UpdateRecordActiveEngine(
+					recordId,
+					static_cast<int>(
+						hybridProbe
+							? HttpTransferEngine::CanonicalProbe
+							: HttpTransferEngine::Aria2));
+				if (expectedSha256)
+				{
+					database.SetString(
+						ExpectedSha256Category,
+						recordId,
+						expectedSha256->ToHex());
+				}
+				else
+				{
+					database.Delete(
+						ExpectedSha256Category,
+						recordId);
+				}
 				database.SetInt(
 					ResourceHintEligibilityCategory,
 					recordId,
@@ -679,6 +845,14 @@ namespace OpenNet::Core
 		if (!IsAria2Available() || gid.empty())
 			return;
 
+		if (auto record = HttpStateManager::Instance().FindByGid(gid))
+		{
+			HttpStateManager::Instance().UpdateRecordTransferPolicy(
+				record->recordId,
+				record->transferMode,
+				true);
+		}
+
 		bool hybridOwned = false;
 		std::string sessionId;
 		{
@@ -723,6 +897,14 @@ namespace OpenNet::Core
 	{
 		if (!IsAria2Available() || gid.empty())
 			return;
+
+		if (auto record = HttpStateManager::Instance().FindByGid(gid))
+		{
+			HttpStateManager::Instance().UpdateRecordTransferPolicy(
+				record->recordId,
+				record->transferMode,
+				false);
+		}
 
 		bool hybridOwned = false;
 		bool queueWorker = false;
@@ -1038,6 +1220,9 @@ namespace OpenNet::Core
 			settings.Delete(
 				ResourceValidatorKeyCategory,
 				resourceRecordId);
+			settings.Delete(
+				ExpectedSha256Category,
+				resourceRecordId);
 		}
 	}
 
@@ -1314,6 +1499,13 @@ namespace OpenNet::Core
 					suppressed =
 						m_peerFallbackSuppressedGids.contains(job.gid);
 				}
+				if (auto const recordId = GetRecordIdForGid(job.gid);
+					!recordId.empty())
+				{
+					HttpStateManager::Instance().UpdateRecordActiveEngine(
+						recordId,
+						static_cast<int>(HttpTransferEngine::Aria2));
+				}
 				if (!suppressed && !userPaused)
 				{
 					try
@@ -1550,6 +1742,17 @@ namespace OpenNet::Core
 				}
 			}
 
+			if (job.hybridPrimary && payloadCleanupSucceeded)
+			{
+				if (auto const recordId = GetRecordIdForGid(job.gid);
+					!recordId.empty())
+				{
+					HttpStateManager::Instance().UpdateRecordActiveEngine(
+						recordId,
+						static_cast<int>(HttpTransferEngine::Aria2));
+				}
+			}
+
 			if (resumeAria2)
 			{
 				try
@@ -1615,6 +1818,15 @@ namespace OpenNet::Core
 					error);
 			}
 
+			auto const recordId = GetRecordIdForGid(job.gid);
+			if (job.hybridPrimary && !recordId.empty())
+			{
+				HttpStateManager::Instance().UpdateRecordActiveEngine(
+					recordId,
+					static_cast<int>(
+						HttpTransferEngine::CanonicalHybrid));
+			}
+
 			bool started = false;
 			try
 			{
@@ -1643,6 +1855,39 @@ namespace OpenNet::Core
 			{
 				fail(job, "No ready canonical swarm was available.");
 				continue;
+			}
+
+			auto const initialStatus =
+				::OpenNet::Core::P2PManager::Instance()
+					.GetLongSeedSessionStatus(job.sessionId);
+			job.canonicalInfoHashV2 = initialStatus.infoHashV2;
+			if (job.hybridPrimary && !recordId.empty())
+			{
+				HttpStateManager::Instance().UpdateRecordActiveEngine(
+					recordId,
+					static_cast<int>(
+						HttpTransferEngine::CanonicalHybrid),
+					job.canonicalInfoHashV2);
+			}
+			{
+				std::lock_guard lock(m_peerFallbackMutex);
+				if (auto const state = m_peerFallbacks.find(job.gid);
+					state != m_peerFallbacks.end())
+				{
+					state->second.job.canonicalInfoHashV2 =
+						job.canonicalInfoHashV2;
+				}
+			}
+			if (!job.canonicalInfoHashV2.empty())
+			{
+				std::lock_guard lock(m_mutex);
+				if (auto discovery =
+					m_httpResourceDiscoveries.find(job.gid);
+					discovery != m_httpResourceDiscoveries.end())
+				{
+					discovery->second.canonicalInfoHashV2 =
+						job.canonicalInfoHashV2;
+				}
 			}
 
 			auto deadline =
@@ -1963,6 +2208,15 @@ namespace OpenNet::Core
 				static_cast<std::int64_t>(completedSize),
 				static_cast<std::int64_t>(completedSize));
 			stateManager.UpdateRecordStatus(recordId, 3);
+			stateManager.UpdateRecordActiveEngine(
+				recordId,
+				static_cast<int>(
+					job.hybridPrimary
+						? HttpTransferEngine::CanonicalHybrid
+						: HttpTransferEngine::Aria2),
+				job.hybridPrimary
+					? job.canonicalInfoHashV2
+					: std::string{});
 		}
 
 		Aria2::DownloadInformation completedTask = task;
@@ -2190,6 +2444,12 @@ namespace OpenNet::Core
 					progress.progressPercent = (task.TotalLength > 0)
 						? static_cast<int>((task.CompletedLength * 100) / task.TotalLength)
 						: 0;
+					{
+						std::lock_guard fallbackLock(m_peerFallbackMutex);
+						if (m_hybridProbeGids.contains(gid))
+							progress.engine =
+								HttpTransferEngine::CanonicalProbe;
+					}
 					if (hybridState)
 					{
 						progress.status = hybridState->userPaused
@@ -2205,6 +2465,10 @@ namespace OpenNet::Core
 								std::int64_t{}, hybridState->downloadRate));
 						progress.progressPercent =
 							hybridState->progressPercent;
+						progress.engine =
+							hybridState->phase == PeerFallbackPhase::Pending
+								? HttpTransferEngine::CanonicalProbe
+								: HttpTransferEngine::CanonicalHybrid;
 					}
 
 					progressCb(progress);
