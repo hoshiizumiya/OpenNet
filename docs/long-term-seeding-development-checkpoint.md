@@ -25,8 +25,8 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `4bbcfe2e077d8eb2bf86d53929d44c3390f16985`
-- `test: isolate canonical web-seed fixtures`
+- `f2a9e571c536ec1402a393251f8e23bc65ac2549`
+- `fix: use libtorrent ABI 4 session API in web-seed tests`
 
 This lineage includes the master merge, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, HTTP progress bridging, caller SHA-256 verification, aria2 fallback, and deterministic WebSeed path fixtures.
 
