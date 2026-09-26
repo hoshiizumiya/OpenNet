@@ -58,7 +58,8 @@ export namespace OpenNet::Core
 				std::filesystem::path targetFilePath,
 				std::uint32_t maxPeers = 20,
 				std::string sessionId = {},
-				std::vector<std::string> urlSeeds = {});
+				std::vector<std::string> urlSeeds = {},
+				std::stop_token stopToken = {});
 		bool ConnectLongSeedPeer(
 			std::string const& sessionId,
 			std::string const& address,

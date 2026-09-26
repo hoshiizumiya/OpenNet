@@ -228,6 +228,7 @@ export namespace OpenNet::Core
 		};
 
 		std::atomic<bool> m_stopPeerFallback{ false };
+		std::stop_source m_peerFallbackStopSource;
 		std::condition_variable m_peerFallbackCv;
 		mutable std::mutex m_peerFallbackMutex;
 		std::deque<PeerFallbackJob> m_peerFallbackJobs;

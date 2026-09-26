@@ -124,16 +124,22 @@ namespace OpenNet::Core
 			std::filesystem::path targetFilePath,
 			std::uint32_t maxPeers,
 			std::string sessionId,
-			std::vector<std::string> urlSeeds)
+			std::vector<std::string> urlSeeds,
+			std::stop_token stopToken)
 	{
-		if (!identity.IsWellFormed()
+		if (stopToken.stop_requested()
+			|| !identity.IsWellFormed()
 			|| identity.algorithm
 				!= ::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256
 			|| targetFilePath.empty())
 			co_return false;
 
 		co_await EnsureTorrentCoreInitializedAsync();
+		if (stopToken.stop_requested())
+			co_return false;
 		co_await winrt::resume_background();
+		if (stopToken.stop_requested())
+			co_return false;
 
 		::OpenNet::Core::Content::ContentDirectoryClient client;
 		std::optional<::OpenNet::Core::Content::ContentLookupResult> lookup;
@@ -146,7 +152,14 @@ namespace OpenNet::Core
 
 		do
 		{
-			lookup = client.Lookup(identity, selfNodeId, maxPeers, true);
+			lookup = client.Lookup(
+				identity,
+				selfNodeId,
+				maxPeers,
+				true,
+				stopToken);
+			if (stopToken.stop_requested())
+				co_return false;
 			if (!lookup) co_return false;
 
 			bool const hasReadyPeer = std::ranges::any_of(
@@ -161,15 +174,30 @@ namespace OpenNet::Core
 			auto const delay = std::chrono::milliseconds(
 				std::clamp<std::uint32_t>(
 					lookup->retryAfterMilliseconds, 250, 2000));
-			std::this_thread::sleep_for(delay);
+			auto const retryAt =
+				std::chrono::steady_clock::now() + delay;
+			while (std::chrono::steady_clock::now() < retryAt)
+			{
+				if (stopToken.stop_requested())
+					co_return false;
+				std::this_thread::sleep_for(
+					std::chrono::milliseconds(50));
+			}
 		}
-		while (std::chrono::steady_clock::now() < deadline);
+		while (!stopToken.stop_requested()
+			&& std::chrono::steady_clock::now() < deadline);
 
-		if (!lookup || !lookup->manifestAvailable)
+		if (stopToken.stop_requested()
+			|| !lookup
+			|| !lookup->manifestAvailable)
 			co_return false;
 
-		auto manifest = client.GetManifest(lookup->contentId);
-		if (!manifest || manifest->empty())
+		auto manifest = client.GetManifest(
+			lookup->contentId,
+			stopToken);
+		if (stopToken.stop_requested()
+			|| !manifest
+			|| manifest->empty())
 			co_return false;
 		if (!::OpenNet::Core::Content::CanonicalV2Swarm::ValidateManifest(
 			identity,
@@ -185,6 +213,9 @@ namespace OpenNet::Core
 					std::hash<std::wstring>{}(
 						targetFilePath.lexically_normal().wstring()));
 		}
+		if (stopToken.stop_requested())
+			co_return false;
+
 		auto opened = OpenLongSeedDownloadSession(
 			sessionId, *manifest, targetFilePath, urlSeeds);
 		if (!opened.succeeded
@@ -199,9 +230,19 @@ namespace OpenNet::Core
 		{
 			for (auto const& peer : lookup->peers)
 			{
+				if (stopToken.stop_requested())
+				{
+					CloseLongSeedSession(sessionId);
+					co_return false;
+				}
 				if (!peer.ready) continue;
 				for (auto const& endpoint : peer.endpoints)
 				{
+					if (stopToken.stop_requested())
+					{
+						CloseLongSeedSession(sessionId);
+						co_return false;
+					}
 					bool const isUtp =
 						endpoint.transport
 						== ::OpenNet::Core::Content::ContentPeerTransport::Utp;

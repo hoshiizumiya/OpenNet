@@ -292,6 +292,7 @@ namespace OpenNet::Core
 			if (m_resourceDiscoveryThread.joinable())
 				m_resourceDiscoveryThread.join();
 
+			m_peerFallbackStopSource.request_stop();
 			{
 				std::lock_guard lock(m_peerFallbackMutex);
 				m_stopPeerFallback.store(true);
@@ -520,6 +521,7 @@ namespace OpenNet::Core
 					ResourceDiscoveryThreadEntry();
 				});
 
+				m_peerFallbackStopSource = std::stop_source{};
 				m_stopPeerFallback.store(false);
 				m_peerFallbackWorkers.clear();
 				for (int index = 0; index < 2; ++index)
@@ -572,6 +574,7 @@ namespace OpenNet::Core
 		if (m_resourceDiscoveryThread.joinable())
 			m_resourceDiscoveryThread.join();
 
+		m_peerFallbackStopSource.request_stop();
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
 			m_stopPeerFallback.store(true);
@@ -2072,6 +2075,8 @@ namespace OpenNet::Core
 	void DownloadManager::PeerFallbackThreadEntry()
 	{
 		winrt::init_apartment(winrt::apartment_type::multi_threaded);
+		auto const stopToken =
+			m_peerFallbackStopSource.get_token();
 
 		auto fail = [this](
 			PeerFallbackJob const& job,
@@ -2248,6 +2253,12 @@ namespace OpenNet::Core
 						HttpTransferEngine::CanonicalHybrid));
 			}
 
+			if (stopToken.stop_requested())
+			{
+				fail(job, "Canonical transfer cancelled during shutdown.");
+				continue;
+			}
+
 			bool started = false;
 			try
 			{
@@ -2258,7 +2269,8 @@ namespace OpenNet::Core
 							job.temporaryFilePath,
 							20,
 							job.sessionId,
-							job.webSeeds)
+							job.webSeeds,
+							stopToken)
 						.get();
 			}
 			catch (std::exception const& exception)
