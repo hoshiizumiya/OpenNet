@@ -1,7 +1,7 @@
 ﻿export module OpenNet.Core.IO.FileSystem;
 
 export import std;
-import winrt.Windows.Foundation;
+export import winrt.Windows.Foundation;
 
 export namespace winrt::OpenNet::Core::IO
 {
