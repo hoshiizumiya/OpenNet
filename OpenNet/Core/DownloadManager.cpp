@@ -2031,8 +2031,14 @@ namespace OpenNet::Core
 							status.progressPercent;
 						state->second.downloadRate =
 							status.downloadRate;
+						state->second.uploadRate =
+							status.uploadRate;
 						state->second.completedBytes =
 							status.totalWantedDone;
+						state->second.connectedPeers =
+							status.connectedPeers;
+						state->second.connectedSeeds =
+							status.connectedSeeds;
 					}
 				}
 
@@ -2510,6 +2516,13 @@ namespace OpenNet::Core
 						progress.downloadSpeed =
 							static_cast<std::uint64_t>((std::max)(
 								std::int64_t{}, hybridState->downloadRate));
+						progress.uploadSpeed =
+							static_cast<std::uint64_t>((std::max)(
+								std::int64_t{}, hybridState->uploadRate));
+						progress.connectedPeers =
+							hybridState->connectedPeers;
+						progress.connectedSeeds =
+							hybridState->connectedSeeds;
 						progress.progressPercent =
 							hybridState->progressPercent;
 						progress.engine =

@@ -995,11 +995,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 		auto completedLen = progress.completedLength;
 		auto dlSpeed = progress.downloadSpeed;
 		auto ulSpeed = progress.uploadSpeed;
+		auto connectedPeers = progress.connectedPeers;
+		auto connectedSeeds = progress.connectedSeeds;
 		auto percent = progress.progressPercent;
 		auto status = progress.status;
 		auto engine = progress.engine;
 
-		dispatcher.TryEnqueue([weak = get_weak(), gid, name, totalLen, completedLen, dlSpeed, ulSpeed, percent, status, engine]()
+		dispatcher.TryEnqueue([weak = get_weak(), gid, name, totalLen, completedLen, dlSpeed, ulSpeed, connectedPeers, connectedSeeds, percent, status, engine]()
 		{
 			if (auto self = weak.get())
 			{
@@ -1065,8 +1067,21 @@ namespace winrt::OpenNet::ViewModels::implementation
 				item.UploadSize(Core::Utils::Misc::friendlyUnit(0));
 				item.TotalUploadSize(Core::Utils::Misc::friendlyUnit(0));
 				item.ShareRatio(L"0.00");
-				item.Seeds(L"-");
-				item.Peers(L"-");
+				if (engine == ::OpenNet::Core::HttpTransferEngine::CanonicalHybrid)
+				{
+					item.Seeds(FormatSeedsPeers(
+						connectedSeeds,
+						(std::max)(0, connectedPeers - connectedSeeds),
+						-1,
+						-1));
+					item.Peers(winrt::to_hstring(
+						(std::max)(0, connectedPeers - connectedSeeds)));
+				}
+				else
+				{
+					item.Seeds(L"-");
+					item.Peers(L"-");
+				}
 				if (nextState == winrt::OpenNet::ViewModels::DownloadTaskState::Completed &&
 					(item.CompletedDate().empty() || item.CompletedDate() == L"-"))
 				{

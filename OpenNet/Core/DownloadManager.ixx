@@ -45,6 +45,8 @@ export namespace OpenNet::Core
 		std::uint64_t completedLength;
 		std::uint64_t downloadSpeed;
 		std::uint64_t uploadSpeed;
+		int connectedPeers{};
+		int connectedSeeds{};
 		int progressPercent; // 0-100
 		HttpTransferEngine engine{ HttpTransferEngine::Aria2 };
 	};
@@ -214,7 +216,10 @@ export namespace OpenNet::Core
 			bool workerQueued{};
 			int progressPercent{};
 			std::int64_t downloadRate{};
+			std::int64_t uploadRate{};
 			std::int64_t completedBytes{};
+			int connectedPeers{};
+			int connectedSeeds{};
 			std::string error;
 		};
 
