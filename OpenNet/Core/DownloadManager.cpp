@@ -378,6 +378,8 @@ namespace OpenNet::Core
 		{
 			std::lock_guard lock(m_peerFallbackMutex);
 			m_peerFallbackSuppressedGids.clear();
+			m_hybridProbeGids.clear();
+			m_userPausedHttpGids.clear();
 			m_peerFallbacks.clear();
 		}
 
@@ -736,8 +738,31 @@ namespace OpenNet::Core
 			{
 				if (state->second.phase == PeerFallbackPhase::Failed)
 				{
-					m_peerFallbacks.erase(state);
-					m_hybridProbeGids.erase(gid);
+					bool fallbackSafe = true;
+					if (state->second.job.hybridPrimary)
+					{
+						std::error_code error;
+						std::filesystem::remove(
+							state->second.job.targetFilePath,
+							error);
+						std::error_code existsError;
+						fallbackSafe =
+							!std::filesystem::exists(
+								state->second.job.targetFilePath,
+								existsError)
+							&& !existsError;
+					}
+					if (!fallbackSafe)
+					{
+						// The previous libtorrent writer may still have the
+						// destination open. Never resume aria2 onto that path.
+						hybridOwned = true;
+					}
+					else
+					{
+						m_peerFallbacks.erase(state);
+						m_hybridProbeGids.erase(gid);
+					}
 				}
 				else
 				{
@@ -1461,19 +1486,38 @@ namespace OpenNet::Core
 				.CloseLongSeedSession(job.sessionId);
 
 			std::error_code error;
+			bool payloadCleanupSucceeded = true;
 			if (!job.hybridPrimary)
 			{
 				std::filesystem::remove(job.temporaryFilePath, error);
 			}
 			else
 			{
-				// libtorrent was the only payload writer. Remove its incomplete
-				// output before aria2 is ever allowed to own the path.
-				std::filesystem::remove(job.targetFilePath, error);
-				auto const aria2ControlPath = std::filesystem::path{
-					job.targetFilePath.wstring() + L".aria2" };
-				error.clear();
-				std::filesystem::remove(aria2ControlPath, error);
+				// libtorrent was the only payload writer. Close the hidden
+				// torrent first, then wait until its incomplete payload can be
+				// removed before aria2 is allowed to own the same path.
+				payloadCleanupSucceeded = false;
+				for (int attempt = 0; attempt < 40; ++attempt)
+				{
+					error.clear();
+					std::filesystem::remove(job.targetFilePath, error);
+					std::error_code existsError;
+					if (!std::filesystem::exists(job.targetFilePath, existsError)
+						&& !existsError)
+					{
+						payloadCleanupSucceeded = true;
+						break;
+					}
+					std::this_thread::sleep_for(
+						std::chrono::milliseconds(50));
+				}
+				if (!payloadCleanupSucceeded)
+				{
+					message +=
+						" Incomplete libtorrent output could not be removed; aria2 remains paused to preserve single-writer ownership.";
+				}
+				// Do not delete the aria2 .aria2 control file here. aria2 is
+				// the fallback engine and still owns that control state.
 			}
 
 			bool shouldLog = false;
@@ -1498,6 +1542,7 @@ namespace OpenNet::Core
 							|| m_userPausedHttpGids.contains(job.gid);
 						resumeAria2 =
 							job.hybridPrimary
+							&& payloadCleanupSucceeded
 							&& !userPaused
 							&& !m_peerFallbackSuppressedGids.contains(job.gid);
 						shouldLog = true;
@@ -1600,7 +1645,7 @@ namespace OpenNet::Core
 				continue;
 			}
 
-			auto const deadline =
+			auto deadline =
 				std::chrono::steady_clock::now()
 				+ std::chrono::minutes(30);
 			bool completed = false;
