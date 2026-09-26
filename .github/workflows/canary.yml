@@ -252,6 +252,22 @@ jobs:
             /p:CGTHREADS=1 `
             /m:1
 
+      - name: Build native unit tests
+        if: matrix.platform == 'x64'
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,read"
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          msbuild OpenNetUnitTest\OpenNetUnitTest.vcxproj `
+            /p:Configuration=${{ matrix.configuration }} `
+            /p:Platform=x64 `
+            /p:PreferredToolArchitecture=x64 `
+            /p:GenerateAppxPackageOnBuild=false `
+            /p:AppxPackageSigningEnabled=false `
+            /p:CGTHREADS=1 `
+            /m:1
+
       - name: Cleanup certificate
         if: always()
         shell: pwsh
