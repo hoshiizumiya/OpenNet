@@ -148,6 +148,9 @@ export namespace OpenNet::Core
 		void QueuePeerFallback(
 			ResourceDiscoveryJob const& discovery,
 			HttpResourceDiscovery const& summary);
+		bool TryQueueResumeResourceDiscovery(
+			std::string const& gid,
+			HttpDownloadRecord const& record);
 		void PeerFallbackThreadEntry();
 		bool HasPeerFallbackPending(std::string const& gid) const;
 		bool TryPromotePeerFallback(

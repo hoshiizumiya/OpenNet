@@ -31,6 +31,8 @@ namespace OpenNet::Core
 			"http_resource_validator_key";
 		constexpr auto ExpectedSha256Category =
 			"http_expected_sha256";
+		constexpr auto CanonicalWebSeedUrlCategory =
+			"http_canonical_webseed_url";
 
 		bool IsResourceHintSafe(
 			Aria2::HttpDownloadOptions const& options)
@@ -826,6 +828,14 @@ namespace OpenNet::Core
 						hybridProbe
 							? HttpTransferEngine::CanonicalProbe
 							: HttpTransferEngine::Aria2));
+				if (options.ResourceContentLength != 0)
+				{
+					stateManager.UpdateRecordProgress(
+						recordId,
+						0,
+						static_cast<std::int64_t>(
+							options.ResourceContentLength));
+				}
 				if (expectedSha256)
 				{
 					database.SetString(
@@ -858,6 +868,22 @@ namespace OpenNet::Core
 				{
 					database.Delete(
 						ResourceValidatorKeyCategory,
+						recordId);
+				}
+				if (!hybridWebSeeds.empty())
+				{
+					// This URL is kept locally only. It is persisted solely
+					// after the active Range probe proved BEP 19-compatible
+					// byte-range behavior for a public, credential-free URL.
+					database.SetString(
+						CanonicalWebSeedUrlCategory,
+						recordId,
+						hybridWebSeeds.front());
+				}
+				else
+				{
+					database.Delete(
+						CanonicalWebSeedUrlCategory,
 						recordId);
 				}
 				{
@@ -1131,6 +1157,14 @@ namespace OpenNet::Core
 				.ResumeLongSeedSession(sessionId);
 		if (hybridOwned)
 			return;
+
+		if (auto record =
+			HttpStateManager::Instance().FindByGid(gid);
+			record
+			&& TryQueueResumeResourceDiscovery(gid, *record))
+		{
+			return;
+		}
 
 		try
 		{
@@ -1694,6 +1728,198 @@ namespace OpenNet::Core
 		}
 
 		winrt::uninit_apartment();
+	}
+
+	bool DownloadManager::TryQueueResumeResourceDiscovery(
+		std::string const& gid,
+		HttpDownloadRecord const& record)
+	{
+		if (record.status >= 3
+			|| record.transferMode
+				!= static_cast<int>(
+					Aria2::HttpTransferMode::P2PPreferred)
+			|| record.savePath.empty()
+			|| record.fileName.empty()
+			|| m_stopResourceDiscovery.load())
+		{
+			return false;
+		}
+
+		auto& settings = AppSettingsDatabase::Instance();
+		settings.Initialize();
+		if (settings.GetInt(
+				ResourceHintEligibilityCategory,
+				record.recordId,
+				0) == 0)
+		{
+			return false;
+		}
+
+		auto const expectedHex =
+			settings.GetString(
+				ExpectedSha256Category,
+				record.recordId);
+		if (!expectedHex || expectedHex->empty())
+			return false;
+		auto expectedSha256 =
+			ParseExpectedSha256(
+				"sha-256=" + *expectedHex);
+		if (!expectedSha256)
+			return false;
+
+		auto const persistedWebSeed =
+			settings.GetString(
+				CanonicalWebSeedUrlCategory,
+				record.recordId);
+		if (!persistedWebSeed
+			|| persistedWebSeed->empty()
+			|| !IsDirectFileWebSeedUrl(*persistedWebSeed)
+			|| !::OpenNet::Core::Content::ResourceKeyFactory::FromHttpUrl(
+				*persistedWebSeed))
+		{
+			return false;
+		}
+
+		Aria2::DownloadInformation task;
+		std::vector<std::string> uris;
+		if (!record.url.empty())
+			uris.push_back(record.url);
+		uris.push_back(*persistedWebSeed);
+
+		try
+		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
+			task = m_aria2->GetTaskInformation(gid);
+			if (task.Status != Aria2::DownloadStatus::Paused
+				|| task.CompletedLength != 0)
+			{
+				return false;
+			}
+
+			for (auto const& file : task.Files)
+			{
+				for (auto const& uri : file.Uris)
+				{
+					if (!uri.Uri.empty())
+						uris.push_back(uri.Uri);
+				}
+			}
+			for (auto const& group : m_aria2->GetTaskServers(gid))
+			{
+				for (auto const& server : group.Servers)
+				{
+					if (!server.Uri.empty())
+						uris.push_back(server.Uri);
+					if (!server.CurrentUri.empty())
+						uris.push_back(server.CurrentUri);
+				}
+			}
+		}
+		catch (...)
+		{
+			return false;
+		}
+
+		auto const expectedSize =
+			task.TotalLength != 0
+				? static_cast<std::uint64_t>(task.TotalLength)
+				: static_cast<std::uint64_t>(
+					(std::max)(std::int64_t{}, record.totalSize));
+		if (expectedSize == 0)
+			return false;
+
+		auto targetFilePath =
+			std::filesystem::path{
+				winrt::to_hstring(record.savePath).c_str() }
+			/ std::filesystem::path{
+				winrt::to_hstring(record.fileName).c_str() };
+
+		// Resume is the only safe time to reconsider ownership after an
+		// aria2 fallback. Require zero completed payload bytes and prove that
+		// the paused aria2 payload can actually be removed before libtorrent
+		// is allowed to become the writer. The .aria2 control file is kept.
+		std::error_code error;
+		if (std::filesystem::exists(targetFilePath, error))
+		{
+			if (error)
+				return false;
+			std::filesystem::remove(targetFilePath, error);
+			if (error)
+				return false;
+		}
+		error.clear();
+		if (std::filesystem::exists(targetFilePath, error)
+			|| error)
+		{
+			return false;
+		}
+
+		auto resourceKeys = BuildResourceKeys(uris);
+		if (auto persisted =
+			settings.GetString(
+				ResourceValidatorKeyCategory,
+				record.recordId))
+		{
+			if (auto validatorKey =
+				ParsePersistedResourceKey(*persisted);
+				validatorKey
+				&& std::ranges::find(
+					resourceKeys, *validatorKey)
+					== resourceKeys.end())
+			{
+				resourceKeys.push_back(*validatorKey);
+			}
+		}
+		if (resourceKeys.empty())
+			return false;
+
+		{
+			std::lock_guard fallbackLock(m_peerFallbackMutex);
+			if (auto const existing =
+				m_peerFallbacks.find(gid);
+				existing != m_peerFallbacks.end()
+				&& !existing->second.cancelRequested
+				&& existing->second.phase
+					!= PeerFallbackPhase::Failed)
+			{
+				return true;
+			}
+			if (m_hybridProbeGids.contains(gid))
+				return true;
+
+			// Pause intentionally suppresses late fallback work. An explicit
+			// Resume starts a new ownership decision, so that suppression no
+			// longer applies to this new probe.
+			m_peerFallbackSuppressedGids.erase(gid);
+			m_userPausedHttpGids.erase(gid);
+			m_hybridProbeGids.insert(gid);
+		}
+
+		HttpStateManager::Instance().UpdateRecordActiveEngine(
+			record.recordId,
+			static_cast<int>(
+				HttpTransferEngine::CanonicalProbe));
+		{
+			std::lock_guard lock(m_mutex);
+			m_httpResourceDiscoveries.erase(gid);
+			m_httpTaskLogs[gid].push_back({
+				std::chrono::duration_cast<std::chrono::seconds>(
+					std::chrono::system_clock::now()
+						.time_since_epoch()).count(),
+				"Resume re-checking trusted canonical metadata before returning payload ownership to aria2."
+			});
+		}
+
+		QueueResourceDiscovery(
+			gid,
+			std::move(resourceKeys),
+			std::move(expectedSha256),
+			std::move(targetFilePath),
+			expectedSize,
+			true,
+			false,
+			{ *persistedWebSeed });
+		return true;
 	}
 
 	void DownloadManager::QueuePeerFallback(
