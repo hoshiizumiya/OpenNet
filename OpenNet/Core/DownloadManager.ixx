@@ -8,12 +8,13 @@
 
 export module OpenNet.Core.DownloadManager;
 
+export import std;
 export import OpenNet.Core.Aria2.Aria2Engine;
 export import OpenNet.Core.Aria2.Aria2Models;
 export import OpenNet.Core.Content.ContentDirectoryContracts;
-import OpenNet.Core.Content.ResourceKey;
-import OpenNet.Core.HttpStateManager;
-import winrt.Windows.Foundation;
+export import OpenNet.Core.Content.ResourceKey;
+export import OpenNet.Core.HttpStateManager;
+export import winrt.Windows.Foundation;
 
 export namespace OpenNet::Core
 {

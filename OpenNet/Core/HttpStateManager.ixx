@@ -13,7 +13,7 @@ struct sqlite3;
 
 export module OpenNet.Core.HttpStateManager;
 
-import std;
+export import std;
 
 export namespace OpenNet::Core
 {

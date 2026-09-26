@@ -1,6 +1,6 @@
 export module OpenNet.Core.Content.ContentDirectoryClient;
 
-import std;
+export import std;
 export import OpenNet.Core.Content.ContentDirectoryContracts;
 
 export namespace OpenNet::Core::Content

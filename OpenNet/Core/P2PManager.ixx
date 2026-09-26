@@ -1,10 +1,10 @@
 ﻿export module OpenNet.Core.P2PManager;
 
-import std;
+export import std;
 export import OpenNet.Core.Content.ContentIdentity;
 export import OpenNet.Core.torrentCore.LibtorrentHandle;
 export import OpenNet.Core.torrentCore.TorrentStateManager;
-import winrt.Windows.Foundation;
+export import winrt.Windows.Foundation;
 
 export namespace OpenNet::Core
 {

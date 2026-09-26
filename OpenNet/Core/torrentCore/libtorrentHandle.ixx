@@ -1,6 +1,6 @@
 ﻿export module OpenNet.Core.torrentCore.LibtorrentHandle;
 
-import std;
+export import std;
 export import OpenNet.Core.torrentCore.TorrentStateManager;
 
 export namespace OpenNet::Core::Torrent
