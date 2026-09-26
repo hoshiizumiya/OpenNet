@@ -9,6 +9,7 @@
 #include <libtorrent/create_torrent.hpp>
 #include <libtorrent/load_torrent.hpp>
 #include <libtorrent/session.hpp>
+#include <libtorrent/session_params.hpp>
 #include <libtorrent/settings_pack.hpp>
 #include <libtorrent/torrent_handle.hpp>
 
@@ -413,7 +414,9 @@ namespace OpenNetUnitTest
 				lt::settings_pack::listen_interfaces,
 				"127.0.0.1:0");
 
-			lt::session session{ settings };
+			lt::session_params sessionParameters;
+			sessionParameters.settings = std::move(settings);
+			lt::session session{ std::move(sessionParameters) };
 			lt::error_code error;
 			auto handle = session.add_torrent(params, error);
 			if (error || !handle.is_valid())
