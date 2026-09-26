@@ -197,7 +197,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `b979b0c97f09377f3e30e56dfd4b4052f1885b64`
+- `4d130bf779f703754bb692ae2fefd3d62479ee44`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 

@@ -839,7 +839,7 @@ Still required before public production:
 
 ### Remaining gaps
 
-- [ ] deterministic end-to-end HTTP Range + WebSeed + OpenNet peer hybrid test;
+- [~] deterministic hybrid integration coverage: protocol/data-plane fixture now exercises ResourceKey -> Directory-shaped candidate/lookup -> canonical manifest -> one libtorrent writer fed by both a bounded HTTP Range WebSeed and an explicit local peer -> BEP52 -> caller WholeFile SHA-256; real DownloadManager HTTP Complete -> ContentCatalog state integration remains;
 - [x] automated confirmation of the exact libtorrent request-path semantics for the current canonical single-file layout;
 - [x] cooperative cancellation plus bounded waits for Content Directory HTTP work during shutdown;
 - [x] conservative automatic re-discovery after Resume for paused zero-progress P2PPreferred tasks with persisted verified WebSeed/identity prerequisites;

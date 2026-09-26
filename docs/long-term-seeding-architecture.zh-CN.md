@@ -866,7 +866,7 @@ BitComet LT UDP == uTP
 
 ### 尚未实现 / 仍需加固
 
-- [ ] deterministic HTTP Range + WebSeed + OpenNet Peer 端到端测试；
+- [~] deterministic hybrid integration 已覆盖数据面：ResourceKey -> Directory-shape candidate/lookup -> canonical manifest -> 同一个 libtorrent writer 同时消费受限 HTTP Range WebSeed 与显式本地 Peer -> BEP52 -> caller WholeFile SHA-256；真实 DownloadManager 的 HTTP Complete -> ContentCatalog 状态链仍待接入；
 - [x] deterministic fixture 已确认 canonical single-file direct URL / base URL 的 libtorrent WebSeed 请求路径，并增加 libtorrent 2.1.2 v2 multi-file 边界 regression fixture；
 - [x] Content Directory HTTP 请求已有 deadline，并可在 shutdown 时通过 stop token 协作取消；取消不会被误判成 heartbeat/network failure；
 - [x] Resume 后可保守地重新 discovery：仅限 aria2 已 Paused、CompletedLength=0、目标 payload 已实际释放且已持久化可信 WebSeed/SHA/size/path 的 P2PPreferred task；

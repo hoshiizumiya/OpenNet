@@ -25,10 +25,10 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `b979b0c97f09377f3e30e56dfd4b4052f1885b64`
-- `chore: clean legacy HTTP peer fallback temps`
+- `4d130bf779f703754bb692ae2fefd3d62479ee44`
+- `ci: compile native hybrid regression tests`
 
-This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, and SQL regression coverage for active HTTP writer ownership.
+This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, the sentry-native 0.17 scope-capture API fix, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, a deterministic ResourceKey/Directory/manifest/WebSeed+peer data-plane fixture, and SQL regression coverage for active HTTP writer ownership. x64 Canary now also compiles OpenNetUnitTest so these native regression sources receive compiler feedback.
 
 The feature lineage has been updated from:
 
