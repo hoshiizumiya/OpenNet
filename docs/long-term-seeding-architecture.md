@@ -842,8 +842,8 @@ Still required before public production:
 - [ ] deterministic end-to-end HTTP Range + WebSeed + OpenNet peer hybrid test;
 - [x] automated confirmation of the exact libtorrent request-path semantics for the current canonical single-file layout;
 - [x] cooperative cancellation plus bounded waits for Content Directory HTTP work during shutdown;
-- [ ] automatic re-discovery after Resume;
-- [ ] activating hybrid when the output filename arrives late via redirect/Content-Disposition;
+- [x] conservative automatic re-discovery after Resume for paused zero-progress P2PPreferred tasks with persisted verified WebSeed/identity prerequisites;
+- [~] late redirect/Content-Disposition filenames can participate in a later zero-progress Resume re-discovery, but active partial aria2 payloads are intentionally not hot-switched;
 - [ ] stale hybrid/P2P partial cleanup after abnormal termination;
 - [x] same-target active HTTP-task exclusion through normalized SQLite output ownership and restored-GID reconciliation;
 - [ ] stronger crash/recovery semantics around HTTP task-shell cleanup/session persistence;
@@ -854,8 +854,8 @@ Still required before public production:
 
 1. Test URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog end to end.
 2. Add deterministic restart/crash tests for P2PPreferred state, output ownership and aria2 task-removal recovery.
-3. Harden stale partial cleanup and automatic re-discovery after Resume.
-4. Support output names discovered after task creation without transferring writer ownership after aria2 has started writing.
+3. Harden stale partial cleanup and add deterministic tests for the new zero-progress Resume re-discovery / payload-release handoff.
+4. Keep partial aria2 payloads aria2-owned; only design a richer mid-transfer handoff if a future requirement justifies preserving partial progress across engines.
 5. Integrate OpenNet.Traversal for verified IPv4/IPv6 candidates and hole punching.
 6. Add node keys, request signatures, peer tickets, rate limits and production migrations.
 7. Continue BitComet compatibility work independently.

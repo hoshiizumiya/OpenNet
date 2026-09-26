@@ -869,8 +869,8 @@ BitComet LT UDP == uTP
 - [ ] deterministic HTTP Range + WebSeed + OpenNet Peer 端到端测试；
 - [x] deterministic fixture 已确认 canonical single-file direct URL / base URL 的 libtorrent WebSeed 请求路径，并增加 libtorrent 2.1.2 v2 multi-file 边界 regression fixture；
 - [x] Content Directory HTTP 请求已有 deadline，并可在 shutdown 时通过 stop token 协作取消；取消不会被误判成 heartbeat/network failure；
-- [ ] Resume 后自动重新 discovery；
-- [ ] redirect / Content-Disposition 晚到 filename 后启用 hybrid；
+- [x] Resume 后可保守地重新 discovery：仅限 aria2 已 Paused、CompletedLength=0、目标 payload 已实际释放且已持久化可信 WebSeed/SHA/size/path 的 P2PPreferred task；
+- [~] redirect / Content-Disposition 晚到 filename 已可在“零进度 + paused + Resume”安全边界重新进入 hybrid discovery；已有 aria2 partial 的任务故意不做热切换；
 - [ ] 异常退出后的 stale hybrid/P2P partial 清理；
 - [x] same-target active HTTP task 排他（normalized SQLite output_key + serialized creation + restored-GID reconciliation）；
 - [ ] HTTP task-shell cleanup/session persistence 的 crash/recovery 语义；
@@ -881,8 +881,8 @@ BitComet LT UDP == uTP
 
 1. 端到端覆盖 URL -> ResourceKey -> candidate -> wakeup -> manifest -> URL Seed + Peer -> BEP52 -> WholeFile SHA-256 -> HTTP Complete -> ContentCatalog。
 2. 为 P2PPreferred 状态、output ownership、aria2 task removal / restart recovery 增加 deterministic crash tests；SQLite ownership 层已经有独立 regression script。
-3. 收紧 stale partial cleanup，并实现 Resume 后自动重新 discovery。
-4. 在 payload ownership 尚未提交时，让任务创建后才确定的 output filename 可以安全重新评估并进入 hybrid。
+3. 收紧 stale partial cleanup，并为零进度 Resume re-discovery / payload-release handoff 增加 deterministic tests。
+4. 对已有 aria2 partial 的任务继续保持 aria2 ownership；只有未来确实需要跨 engine 保留 partial progress 时再单独设计 handoff。
 5. 接 OpenNet.Traversal verified IPv4/IPv6 candidate 与 hole punching。
 6. 公网部署前加入 Node key、请求签名、Peer Ticket、rate limit 与 production migrations。
 7. BitComet compatibility 独立推进。

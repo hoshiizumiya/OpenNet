@@ -25,10 +25,10 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `05e23a0ca3d81735321ee3ed935d9fa2db939eb5`
-- `fix: distinguish shutdown cancellation from directory failure`
+- `7978355e1cc80830dc9c4344f1f266a1314c1cb7`
+- `fix: clean persisted canonical WebSeed state`
 
-This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory requests, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, and SQL regression coverage for active HTTP writer ownership.
+This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory requests, safe zero-progress Resume re-discovery, verified payload-release handoff before every primary hybrid, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, and SQL regression coverage for active HTTP writer ownership.
 
 The feature lineage has been updated from:
 
@@ -386,7 +386,7 @@ Recommended research remains:
 - hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
 - Content Directory HTTP work is now bounded and cooperatively cancellable during shutdown; cancellation is not treated as heartbeat/network failure;
 - transfer policy / engine / user-pause / canonical hash are now persisted, and process-local canonical sessions have restart recovery; crash-recovery behavior still needs deterministic tests;
-- late redirect/Content-Disposition output names are now atomically claimed against active output ownership, but they still cannot activate a hybrid that was ineligible when the task was created;
+- late redirect/Content-Disposition output names are atomically claimed against active output ownership; if the task is later explicitly resumed while aria2 is paused with zero completed bytes, the persisted verified WebSeed/identity prerequisites can safely trigger a fresh canonical probe; tasks with existing aria2 payload progress deliberately stay on aria2;
 - active HTTP output ownership is enforced by a normalized SQLite `output_key` unique index plus serialized task creation and restored-GID reconciliation;
 - aria2 shell removal and abnormal-exit cleanup now preserve the single-writer invariant but still need stress/crash testing;
 - Traversal/NAT/security/production hardening and BitComet wire compatibility remain future work.
@@ -412,7 +412,7 @@ Recommended order:
 1. Run and harden the committed prototype in the feature workflow; fix only concrete compiler/test failures.
 2. Add one deterministic end-to-end fixture for ResourceKey -> Directory candidate -> canonical manifest -> URL Seed + local OpenNet peer -> HTTP Complete.
 3. Add deterministic restart/crash tests for the persisted P2PPreferred routing state, output ownership and aria2 task-removal recovery; the SQL ownership layer now has an isolated regression script.
-4. Allow a safe late-resolved redirect/Content-Disposition filename to activate hybrid before payload ownership is committed.
+4. Extend late-filename/Resume coverage with deterministic tests; zero-progress paused tasks may now re-enter canonical discovery, while partial aria2 tasks intentionally remain aria2-owned.
 5. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
 6. Continue BitComet compatibility separately.
 

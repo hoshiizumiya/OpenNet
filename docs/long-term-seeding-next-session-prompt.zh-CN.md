@@ -197,7 +197,7 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `05e23a0ca3d81735321ee3ed935d9fa2db939eb5`
+- `7978355e1cc80830dc9c4344f1f266a1314c1cb7`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 
@@ -223,7 +223,8 @@ ResourceKey
 - restart 时 complete-vs-partial SHA recovery 测试；
 - aria2 shell removal failure测试；
 - normalized output_key / restored-GID ownership crash 测试；
-- redirect / Content-Disposition 晚到 filename 当前已做 collision claim，但还需要在 payload ownership 提交前安全重新评估 hybrid eligibility。
+- Resume re-discovery 已落地保守版本：只在 aria2 Paused + CompletedLength=0 + payload 可释放 + 已持久化可信 WebSeed/SHA/size/path 时重新进入 CanonicalProbe；
+- redirect / Content-Disposition 晚到 filename 因此也能在上述零进度 Resume 边界重新评估；已有 aria2 partial 不热切换，避免丢进度或双 writer。
 
 ### 4. Traversal / security / production
 
