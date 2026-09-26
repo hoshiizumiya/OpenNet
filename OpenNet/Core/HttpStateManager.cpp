@@ -172,7 +172,10 @@ namespace OpenNet::Core
                   AND preferred.status < 3
                   AND (preferred.completed_size > duplicate.completed_size
                     OR (preferred.completed_size = duplicate.completed_size
-                        AND preferred.added_timestamp < duplicate.added_timestamp))
+                        AND preferred.added_timestamp < duplicate.added_timestamp)
+                    OR (preferred.completed_size = duplicate.completed_size
+                        AND preferred.added_timestamp = duplicate.added_timestamp
+                        AND preferred.record_id < duplicate.record_id))
               );
             CREATE UNIQUE INDEX IF NOT EXISTS idx_http_active_url
             ON http_downloads(url) WHERE status < 3;
@@ -296,8 +299,8 @@ namespace OpenNet::Core
             // Insert each record into SQLite (skip duplicates)
             const char* insertSql = R"(
                 INSERT OR IGNORE INTO http_downloads
-                    (record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    (record_id, url, save_path, file_name, name, added_timestamp, total_size, completed_size, status, last_gid, output_key)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
             )";
 
             sqlite3_exec(m_db, "BEGIN TRANSACTION;", nullptr, nullptr, nullptr);
@@ -331,6 +334,10 @@ namespace OpenNet::Core
                 sqlite3_bind_int64(stmt, 8, completedSize);
                 sqlite3_bind_int(stmt, 9, status);
                 sqlite3_bind_text(stmt, 10, lastGid.c_str(), -1, SQLITE_TRANSIENT);
+                auto const outputKey =
+                    NormalizeHttpOutputKey(savePath, fileName);
+                sqlite3_bind_text(
+                    stmt, 11, outputKey.c_str(), -1, SQLITE_TRANSIENT);
 
                 sqlite3_step(stmt);
             }

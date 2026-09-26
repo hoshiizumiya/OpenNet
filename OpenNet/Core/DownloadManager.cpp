@@ -145,7 +145,7 @@ namespace OpenNet::Core
 			return keys;
 		}
 
-		bool RemoveAria2ControlShellUnlocked(
+		bool RemoveAria2TaskUnlocked(
 			Aria2::LocalAria2Instance& aria2,
 			std::string const& gid)
 		{
@@ -445,7 +445,7 @@ namespace OpenNet::Core
 					{
 						std::lock_guard rpcLock(m_aria2->InstanceLock());
 						shellRemoved =
-							RemoveAria2ControlShellUnlocked(
+							RemoveAria2TaskUnlocked(
 								*m_aria2, rec.lastGid);
 					}
 					if (!shellRemoved)
@@ -739,10 +739,10 @@ namespace OpenNet::Core
 				}
 				catch (...)
 				{
-					// aria2 no longer knows this control shell. Retire the
-					// stale ownership record before another writer is created.
-					stateManager.UpdateRecordStatus(existing->recordId, 4);
-					return std::nullopt;
+					// An RPC failure does not prove the previous writer is gone.
+					// Conservatively preserve its ownership rather than risk
+					// creating a second writer for the same physical path.
+					return existing->lastGid;
 				}
 			};
 
@@ -2310,7 +2310,7 @@ namespace OpenNet::Core
 			// ProcessAria2Tasks already owns InstanceLock here. Do not mark
 			// the HTTP task complete until the paused control shell is really
 			// gone; otherwise aria2 may be restored as a ghost task later.
-			if (!RemoveAria2ControlShellUnlocked(*m_aria2, gid))
+			if (!RemoveAria2TaskUnlocked(*m_aria2, gid))
 				return false;
 		}
 		else
@@ -2527,20 +2527,117 @@ namespace OpenNet::Core
 					if (!sourceUrl.empty())
 					{
 						auto& stateManager = HttpStateManager::Instance();
-						auto record = stateManager.FindActiveByUrl(sourceUrl);
+
+						auto currentMayOwnRecord =
+							[&](HttpDownloadRecord const& record)
+						{
+							if (record.lastGid.empty()
+								|| record.lastGid == gid)
+								return true;
+
+							try
+							{
+								auto const previous =
+									m_aria2->GetTaskInformation(
+										record.lastGid);
+								if (previous.Status
+										== Aria2::DownloadStatus::Removed
+									|| previous.Status
+										== Aria2::DownloadStatus::Error)
+								{
+									return true;
+								}
+								if (previous.Status
+									== Aria2::DownloadStatus::Complete)
+								{
+									stateManager.UpdateRecordProgress(
+										record.recordId,
+										static_cast<std::int64_t>(
+											previous.CompletedLength),
+										static_cast<std::int64_t>(
+											previous.TotalLength));
+									stateManager.UpdateRecordStatus(
+										record.recordId, 3);
+								}
+								return false;
+							}
+							catch (...)
+							{
+								// RefreshInformation and tellStatus for the
+								// current GID already succeeded. In this
+								// reconciliation path, an unresolvable old GID
+								// is stale session metadata and may be replaced.
+								return true;
+							}
+						};
+
+						auto record =
+							stateManager.FindActiveByUrl(sourceUrl);
 						if (record)
 						{
+							if (!currentMayOwnRecord(*record))
+							{
+								if (!RemoveAria2TaskUnlocked(
+									*m_aria2, gid))
+								{
+									OutputDebugStringA(
+										"DownloadManager: failed to remove duplicate restored aria2 task\n");
+								}
+								continue;
+							}
 							recordId = record->recordId;
-							if (record->lastGid.empty() || task.CompletedLength >= static_cast<std::size_t>((std::max)(std::int64_t{}, record->completedSize)))
-								stateManager.UpdateRecordGid(recordId, gid);
+							stateManager.UpdateRecordGid(
+								recordId, gid);
 						}
 						else
 						{
+							std::string outputDir = task.Dir;
 							std::string outputName;
-							if (!task.Files.empty() && !task.Files.front().Path.empty())
-								outputName = std::filesystem::path{ task.Files.front().Path }.filename().string();
-							recordId = stateManager.AddRecord(sourceUrl, task.Dir, outputName);
-							stateManager.UpdateRecordGid(recordId, gid);
+							if (!task.Files.empty()
+								&& !task.Files.front().Path.empty())
+							{
+								auto const outputPath =
+									std::filesystem::path{
+										winrt::to_hstring(
+											task.Files.front().Path).c_str() };
+								outputDir = winrt::to_string(
+									winrt::hstring{
+										outputPath.parent_path().wstring() });
+								outputName = winrt::to_string(
+									winrt::hstring{
+										outputPath.filename().wstring() });
+							}
+
+							recordId = stateManager.AddRecord(
+								sourceUrl,
+								outputDir,
+								outputName);
+							if (recordId.empty())
+							{
+								if (!RemoveAria2TaskUnlocked(
+									*m_aria2, gid))
+								{
+									OutputDebugStringA(
+										"DownloadManager: failed to remove unpersistable aria2 task\n");
+								}
+								continue;
+							}
+
+							auto persisted =
+								stateManager.FindByRecordId(recordId);
+							if (persisted
+								&& !currentMayOwnRecord(*persisted))
+							{
+								if (!RemoveAria2TaskUnlocked(
+									*m_aria2, gid))
+								{
+									OutputDebugStringA(
+										"DownloadManager: failed to remove output-conflicting restored aria2 task\n");
+								}
+								continue;
+							}
+							stateManager.UpdateRecordGid(
+								recordId, gid);
 						}
 						if (!recordId.empty())
 						{
@@ -2583,13 +2680,8 @@ namespace OpenNet::Core
 								resolvedName))
 					{
 						CancelPeerFallback(gid);
-						try
-						{
-							m_aria2->Cancel(gid, true);
-						}
-						catch (...)
-						{
-						}
+						auto const removed =
+							RemoveAria2TaskUnlocked(*m_aria2, gid);
 						HttpStateManager::Instance()
 							.UpdateRecordStatus(recordId, 4);
 						{
@@ -2599,7 +2691,9 @@ namespace OpenNet::Core
 									std::chrono::seconds>(
 										std::chrono::system_clock::now()
 											.time_since_epoch()).count(),
-								"Download stopped: the resolved output path is already owned by another active HTTP task."
+								removed
+									? "Download stopped: the resolved output path is already owned by another active HTTP task."
+									: "Output collision detected, but aria2 did not confirm task removal; ownership remains failed until cleanup succeeds."
 							});
 						}
 						if (errorCb)
