@@ -1804,6 +1804,15 @@ namespace OpenNet::Core
 						uris.push_back(uri.Uri);
 				}
 			}
+		}
+		catch (...)
+		{
+			return false;
+		}
+
+		try
+		{
+			std::lock_guard rpcLock(m_aria2->InstanceLock());
 			for (auto const& group : m_aria2->GetTaskServers(gid))
 			{
 				for (auto const& server : group.Servers)
@@ -1817,7 +1826,8 @@ namespace OpenNet::Core
 		}
 		catch (...)
 		{
-			return false;
+			// Server-list enrichment is opportunistic. The persisted verified
+			// direct WebSeed and original URL are already sufficient keys.
 		}
 
 		auto const expectedSize =
@@ -2206,6 +2216,24 @@ namespace OpenNet::Core
 				std::filesystem::remove(
 					job.temporaryFilePath,
 					error);
+
+				if (job.hybridPrimary)
+				{
+					std::error_code existsError;
+					auto const stillExists =
+						std::filesystem::exists(
+							job.temporaryFilePath,
+							existsError);
+					if (error
+						|| existsError
+						|| stillExists)
+					{
+						fail(
+							job,
+							"Paused aria2 payload could not be released before libtorrent ownership transfer.");
+						continue;
+					}
+				}
 			}
 
 			auto const recordId = GetRecordIdForGid(job.gid);
