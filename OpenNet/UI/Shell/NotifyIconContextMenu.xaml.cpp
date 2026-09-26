@@ -10,6 +10,7 @@
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.xaml.h"
 
+import Core.Utils.Misc;
 import OpenNet.App;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.P2PManager;
@@ -29,34 +30,6 @@ using namespace winrt::Microsoft::UI::Xaml::Controls;
 
 namespace winrt::OpenNet::UI::Shell::implementation
 {
-	namespace
-	{
-		bool IsValidHttpDownloadClipboardUrl(winrt::hstring const& text)
-		{
-			try
-			{
-				winrt::Windows::Foundation::Uri const uri{ text };
-				auto scheme = std::wstring{ uri.SchemeName() };
-				std::ranges::transform(
-					scheme,
-					scheme.begin(),
-					::towlower);
-
-				// Keep tray capture aligned with HttpDownloadDialog validation.
-				// A scheme prefix alone (for example "https://") is not a URL
-				// and must never wake the hidden main window.
-				return (scheme == L"http"
-						|| scheme == L"https"
-						|| scheme == L"ftp")
-					&& !uri.Host().empty();
-			}
-			catch (...)
-			{
-				return false;
-			}
-		}
-	}
-
 	NotifyIconContextMenu::~NotifyIconContextMenu()
 	{
 		try
@@ -504,7 +477,7 @@ namespace winrt::OpenNet::UI::Shell::implementation
 				::towlower);
 			bool const torrent = lower.starts_with(L"magnet:");
 			bool const httpDownload =
-				IsValidHttpDownloadClipboardUrl(text);
+				Core::Utils::Misc::isHttpDownloadUrl(text);
 			if ((!torrent && !httpDownload)
 				|| text == m_lastCapturedClipboardUrl)
 			{

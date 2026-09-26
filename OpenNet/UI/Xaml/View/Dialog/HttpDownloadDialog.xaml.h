@@ -64,7 +64,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		winrt::Windows::Foundation::IAsyncAction PasteUrlButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction BrowseDirButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 	private:
-		bool ValidateUrl(winrt::hstring const& url) const;
 		void CaptureValues(bool startPaused);
 		void UpdateDiskSpace();
 		winrt::Windows::Foundation::IAsyncAction FetchMetadataAsync();

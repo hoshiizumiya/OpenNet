@@ -74,7 +74,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		auto normalized = first == std::wstring_view::npos
 			? hstring{}
 		: hstring{ text.substr(first, last - first + 1) };
-		if (!normalized.empty() && !ValidateUrl(normalized))
+		if (!normalized.empty() && !Core::Utils::Misc::isHttpDownloadUrl(normalized))
 		{
 			auto const candidate = std::wstring_view{ normalized };
 			if (candidate.find(L' ') == std::wstring_view::npos
@@ -89,7 +89,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		m_resourceStrongETag.clear();
 		m_resourceContentLength = 0;
 		m_resourceSupportsByteRanges = false;
-		m_isUrlValid = ValidateUrl(m_url);
+		m_isUrlValid = Core::Utils::Misc::isHttpDownloadUrl(m_url);
 		RaisePropertyChanged(L"IsUrlValid");
 		RaisePropertyChanged(L"CanFetchMetadata");
 		m_isErrorOpen = !m_url.empty() && !m_isUrlValid;
@@ -260,22 +260,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	//  URL validation
 	// ------------------------------------------------------------------
 
-	bool HttpDownloadDialog::ValidateUrl(winrt::hstring const& url) const
-	{
-		if (url.empty()) return false;
-		try
-		{
-			winrt::Windows::Foundation::Uri const uri{ url };
-			auto scheme = std::wstring{ uri.SchemeName() };
-			std::ranges::transform(scheme, scheme.begin(), ::towlower);
-			return (scheme == L"http" || scheme == L"https" || scheme == L"ftp")
-				&& !uri.Host().empty();
-		}
-		catch (...)
-		{
-			return false;
-		}
-	}
 
 	// ------------------------------------------------------------------
 	//  XAML event handlers
@@ -324,7 +308,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 				// Tray clipboard capture supplies a validated snapshot before
 				// ShowAsync(). Do not overwrite it by sampling the clipboard a
 				// second time after the main window becomes visible.
-				if (m_url.empty() && ValidateUrl(text))
+				if (m_url.empty() && Core::Utils::Misc::isHttpDownloadUrl(text))
 				{
 					Url(text);
 					co_await FetchMetadataAsync();
@@ -397,7 +381,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	winrt::fire_and_forget HttpDownloadDialog::StartDownloadAsync(bool const startPaused)
 	{
 		auto lifetime = get_strong();
-		if (!ValidateUrl(m_url))
+		if (!Core::Utils::Misc::isHttpDownloadUrl(m_url))
 		{
 			SetError(ResourceGetString(L"HttpDownloadInvalidUrlTitle"), ResourceGetString(L"HttpDownloadInvalidUrlMessage"));
 			co_return;
@@ -467,7 +451,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	winrt::Windows::Foundation::IAsyncAction HttpDownloadDialog::FetchMetadataAsync()
 	{
 		auto lifetime = get_strong();
-		if (!ValidateUrl(m_url))
+		if (!Core::Utils::Misc::isHttpDownloadUrl(m_url))
 		{
 			SetError(ResourceGetString(L"HttpDownloadInvalidUrlTitle"), ResourceGetString(L"HttpDownloadInvalidUrlMessage"));
 			co_return;

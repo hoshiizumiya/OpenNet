@@ -15,6 +15,7 @@
 #include "MainWindow.g.cpp"
 #endif
 
+import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
@@ -188,12 +189,8 @@ namespace winrt::OpenNet::implementation
 				const auto last = line.find_last_not_of(L" \t\r");
 				line = line.substr(first, last - first + 1);
 
-				std::wstring lower = line;
-				std::transform(
-					lower.begin(), lower.end(), lower.begin(), ::towlower);
-				if (lower.starts_with(L"http://")
-					|| lower.starts_with(L"https://")
-					|| lower.starts_with(L"ftp://"))
+				if (Core::Utils::Misc::isHttpDownloadUrl(
+					winrt::hstring{ line }))
 				{
 					parsedUrls.push_back(winrt::to_string(line));
 				}

@@ -27,9 +27,9 @@
  */
 export module Core.Utils.Misc;
 
-import winrt_base;
-import winrt.Windows.Foundation;
-import std;
+export import winrt_base;
+export import winrt.Windows.Foundation;
+export import std;
 
  /*  Miscellaneous utility functions */
 export namespace Core::Utils::Misc
@@ -58,6 +58,7 @@ export namespace Core::Utils::Misc
 
 	winrt::hstring parseHtmlLinks(const winrt::hstring& rawText);
 	winrt::Windows::Foundation::IAsyncOperation<winrt::hstring> getCurrentClipboardText();
+	bool isHttpDownloadUrl(winrt::hstring const& value);
 
 	winrt::hstring osName();
 	winrt::hstring boostVersionString();
