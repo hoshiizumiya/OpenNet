@@ -50,17 +50,17 @@ namespace OpenNetUnitTest
 		namespace lt = libtorrent;
 		using namespace std::chrono_literals;
 
-		using LtCharSpan = lt::span<char const>;
-
-		LtCharSpan::difference_type LtSpanLength(std::size_t const size)
+		libtorrent::span<char const>::difference_type
+			LtSpanLength(std::size_t const size)
 		{
 			auto const maximum = static_cast<std::size_t>(
 				(std::numeric_limits<
-					LtCharSpan::difference_type>::max)());
+					libtorrent::span<char const>::difference_type>::max)());
 			if (size > maximum)
 				throw std::length_error(
 					"libtorrent span length is out of range");
-			return static_cast<LtCharSpan::difference_type>(size);
+			return static_cast<
+				libtorrent::span<char const>::difference_type>(size);
 		}
 
 		std::string Utf8Path(std::filesystem::path const& path)

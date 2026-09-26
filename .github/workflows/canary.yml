@@ -167,6 +167,7 @@ jobs:
           }
 
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install `
+            --debug `
             --triplet $triplet `
             --vcpkg-root "$env:VCPKG_INSTALLATION_ROOT" `
             --x-manifest-root "$env:GITHUB_WORKSPACE\OpenNet" `
