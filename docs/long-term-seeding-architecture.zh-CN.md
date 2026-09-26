@@ -7,9 +7,9 @@
 >
 > HTTP 源站即使返回普通 WholeFile SHA-256，也不能把它“直接变成 magnet”。WholeFile SHA-256 只负责确认整文件身份；BitTorrent v2 info-hash / BEP52 file root 必须来自已经构建并验证过的 canonical torrent metadata。核心 invariant 仍然是：`one physical output -> one active writer`。
 
-> 状态：架构基线与实现指南。
+> 状态：已经进入可运行的 client prototype 阶段。
 >
-> 本文所述的本地 ContentCatalog、Content Directory 控制面、按需 canonical BitTorrent v2 swarm、HTTP ResourceKey 提前发现，以及“独立临时文件 + SHA-256 二次校验”的整文件 P2P fallback 已经在对应 feature 分支中实现。aria2/libtorrent 真正混合 range 加速、节点密码学认证、Peer Ticket、经过验证的 NAT 穿透仍属于后续阶段。
+> feature 分支现在已经具备显式 Aria2Only/P2PPreferred 策略、真实 HTTP Range 预检、ResourceKey discovery、canonical manifest lookup、由 libtorrent 单独拥有写入权的 HTTP URL Seed + OpenNet Peer 混合数据面、HTTP task telemetry 投影、传输引擎状态持久化，以及安全的 aria2 fallback / restart recovery。节点密码学认证、Peer Ticket、经过验证的 NAT 穿透与生产级 hardening 仍属于后续阶段。
 
 ## 1. 目标
 
@@ -717,11 +717,11 @@ final public HTTP origin 通过 `add_torrent_params::url_seeds` 交给 libtorren
 
 当前 `OpenNet.Content.v1/content` canonical layout 不需要为了 direct-file URL Seed 改协议。libtorrent 对完整单文件 URL（例如 `/file.bin`）会直接请求该 path；如果 URL 以 `/` 结尾，则它把这个 URL 当 base URL，并追加 torrent file path，形成 `/origin/OpenNet.Content.v1/content`。因此 OpenNet 自动注入 WebSeed 时只接受不以 `/` 结尾的 direct-file final URL；本地 deterministic HTTP Range tests 已把这两种行为写成断言。
 
-当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 全程 paused。hybrid 失败时，OpenNet 先关闭隐藏 canonical session，删除 libtorrent 尚未完成的目标/控制残留，然后才 Resume aria2。这里是 writer ownership transfer，不是两个 writer 共存。
+当前 primary hybrid 由 libtorrent 直接写最终目标，因为 aria2 全程 paused。hybrid 失败时，OpenNet 先关闭隐藏 canonical session，只删除 libtorrent 尚未完成的 payload；aria2 自己的 `.aria2` control file 必须保留。确认 libtorrent 目标已经释放/清理之后，才允许 Resume aria2。这里是 writer ownership transfer，不是两个 writer 共存。
 
 libtorrent 完成后，OpenNet 仍会重算整文件并要求 caller WholeFile SHA-256/size 完全一致，随后才把 HTTP record 标记 Complete 并写入 ContentCatalog。旧的 `.opennet-p2p-<gid>.part` 独立整文件 fallback 继续作为兼容/恢复路径保留。
 
-Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂停 libtorrent session，同时 aria2 shell 继续保持 paused；Resume 恢复该 hidden session。Cancel/Remove/Delete 仍会关闭 hidden work 并 suppress late discovery，避免任务停止后被迟到 discovery 重新拉起。
+Pause/Resume 现在会保留 active hidden canonical session：Pause 真正暂停 libtorrent session，同时 aria2 shell 继续保持 paused；Resume 恢复该 hidden session。HTTP record 同时持久化 transfer policy、当前 engine、用户真实 Pause 意图和 canonical v2 info-hash。应用重启后，如果上次是 canonical libtorrent writer，OpenNet 会重新计算目标文件 SHA-256：完整且匹配 caller SHA-256 就直接恢复为 Complete；否则先删除 partial，再把 writer ownership 安全交还 aria2。Cancel/Remove/Delete 仍会关闭 hidden work 并 suppress late discovery。
 
 ### TransferCoordinator 不再是普通 HTTP P2SP 的默认方案
 

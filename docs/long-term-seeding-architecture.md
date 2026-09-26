@@ -10,9 +10,9 @@
 > Handoff/checkpoint: [long-term-seeding-development-checkpoint.md](long-term-seeding-development-checkpoint.md)  
 > Next-session prompt: [long-term-seeding-next-session-prompt.zh-CN.md](long-term-seeding-next-session-prompt.zh-CN.md)
 
-> Status: architecture baseline and implementation guide.
+> Status: functional client prototype plus architecture baseline.
 >
-> The local content catalog, Content Directory control plane, on-demand wakeup flow, deterministic canonical BitTorrent v2 swarm, hidden libtorrent seed/download sessions, privacy-preserving HTTP ResourceKey discovery, and a verified full-file peer fallback are implemented on the feature branches described in this document. Coordinated aria2/P2P range mixing, authenticated node identity, peer tickets, and verified NAT traversal remain subsequent phases.
+> The feature branch now contains explicit Aria2Only/P2PPreferred task policy, verified HTTP Range preflight, ResourceKey discovery, canonical manifest lookup, a libtorrent-owned HTTP URL Seed + OpenNet peer data plane, HTTP-task progress/telemetry projection, persisted transfer-engine state, and safe aria2 fallback/restart recovery. Authenticated node identity, peer tickets, verified NAT traversal, and broader production hardening remain subsequent phases.
 
 ## 1. Goals
 
@@ -685,11 +685,11 @@ The final public HTTP origin is passed through `add_torrent_params::url_seeds`. 
 
 The current `OpenNet.Content.v1/content` canonical layout does not require a protocol change for direct-file URL Seeds. libtorrent treats a complete single-file URL such as `/file.bin` as the request target verbatim. A URL ending in `/` is instead a base URL and libtorrent appends the torrent file path, producing e.g. `/origin/OpenNet.Content.v1/content`; OpenNet therefore only auto-injects a non-trailing-slash direct-file final URL. Deterministic local HTTP Range tests now encode both path behaviors.
 
-The current primary hybrid writes the destination directly because aria2 remains paused. On hybrid failure, OpenNet closes the hidden canonical session, removes the incomplete libtorrent-owned destination/control residue, and only then resumes aria2. Ownership is transferred, never shared.
+The current primary hybrid writes the destination directly because aria2 remains paused. On hybrid failure, OpenNet closes the hidden canonical session and removes the incomplete libtorrent-owned destination before aria2 is allowed to resume. The aria2 `.aria2` control file is deliberately preserved because it belongs to the fallback engine. Ownership is transferred, never shared.
 
 After libtorrent finishes, OpenNet also re-hashes the complete file and requires caller WholeFile SHA-256/size to match before marking the HTTP record Complete and cataloguing the final file. The older separate `.opennet-p2p-<gid>.part` path remains available as a compatibility/error-recovery fallback.
 
-Pause/Resume now preserve an active hidden canonical session: Pause calls libtorrent pause while the aria2 shell remains paused, and Resume resumes that hidden session. Cancel/Remove/Delete still close hidden work and suppress late discovery so stopped tasks cannot be resurrected.
+Pause/Resume now preserve an active hidden canonical session: Pause calls libtorrent pause while the aria2 shell remains paused, and Resume resumes that hidden session. The HTTP record also persists the requested transfer policy, current engine, user-pause intent and canonical v2 info-hash. On restart, an interrupted canonical transfer is re-hashed: a complete caller-SHA-256 match is recovered as Complete; otherwise the partial libtorrent target is removed before aria2 fallback is resumed. Cancel/Remove/Delete still close hidden work and suppress late discovery so stopped tasks cannot be resurrected.
 
 ### TransferCoordinator is not the default HTTP P2SP design
 
@@ -822,9 +822,12 @@ Still required before public production:
 - [x] hidden canonical download sessions carrying HTTP URL seeds;
 - [x] primary canonical HTTP hybrid using a paused aria2 control shell and one libtorrent writer;
 - [x] HTTP URL Seed + OpenNet peers scheduled by one libtorrent piece picker;
-- [x] hybrid progress bridged back to the existing HTTP task UI/persistence;
+- [x] hybrid progress, upload/download rates and peer/seed counts bridged back to the existing HTTP task UI;
+- [x] visible task transport state: P2P discovery / libtorrent HTTP-P2P / aria2 fallback;
+- [x] persisted HTTP transfer policy, active engine, user-pause intent and canonical v2 info-hash;
 - [x] caller SHA-256 post-verification and Complete/ContentCatalog integration;
 - [x] hybrid failure cleanup before aria2 ownership resumes;
+- [x] restart recovery for process-local hidden canonical sessions;
 - [x] older separate-file peer fallback retained for compatibility/recovery.
 
 ### Implemented in OpenNet.Server
