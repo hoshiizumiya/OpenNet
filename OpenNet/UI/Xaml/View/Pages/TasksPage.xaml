@@ -267,6 +267,8 @@
                     ContainerContentChanging="TasksList_ContainerContentChanging"
                     ItemsSource="{x:Bind ViewModel.FilteredTasks, Mode=OneWay}"
                     RightTapped="TasksList_RightTapped"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollMode="Enabled"
                     SelectionChanged="TasksList_SelectionChanged"
                     SelectionMode="Single">
                     <ListView.ItemContainerTransitions>
