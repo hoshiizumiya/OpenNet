@@ -29,6 +29,9 @@ namespace OpenNet::Core::Content
         m_stopping = false;
         m_initialized = true;
         ValidateLocations();
+        m_jobs.clear();
+        for (auto& job : m_catalog.LoadPendingJobs())
+            m_jobs.push_back(std::move(job));
         m_worker = std::thread([this] { WorkerLoop(); });
         return true;
     }
@@ -123,6 +126,23 @@ namespace OpenNet::Core::Content
         std::vector<ResourceKey> resourceKeys)
     {
         if (path.empty()) return;
+
+        PendingJob pending;
+        pending.path = std::move(path);
+        pending.source = std::move(source);
+        pending.knownIdentities = std::move(knownIdentities);
+        pending.resourceKeys = std::move(resourceKeys);
+        try
+        {
+            if (!std::filesystem::is_regular_file(pending.path))
+                return;
+            pending.fingerprint = GetFingerprint(pending.path);
+        }
+        catch (...)
+        {
+            return;
+        }
+
         {
             std::lock_guard lock(m_mutex);
             if (!m_initialized)
@@ -131,39 +151,46 @@ namespace OpenNet::Core::Content
                 m_stopping = false;
                 m_initialized = true;
                 ValidateLocations();
+                m_jobs.clear();
+                for (auto& job : m_catalog.LoadPendingJobs())
+                    m_jobs.push_back(std::move(job));
                 m_worker = std::thread([this] { WorkerLoop(); });
             }
 
-            // Coalesce repeated completion/status events for the same path.
-            auto const duplicate = std::ranges::find_if(
-                m_jobs,
-                [&](PendingJob const& job) { return job.path == path; });
-            if (duplicate != m_jobs.end())
+            try
             {
-                if (!source.sourceId.empty()) duplicate->source = std::move(source);
-                for (auto& identity : knownIdentities)
-                {
-                    if (std::ranges::find(duplicate->knownIdentities, identity)
-                        == duplicate->knownIdentities.end())
-                        duplicate->knownIdentities.push_back(std::move(identity));
-                }
-                for (auto& resourceKey : resourceKeys)
-                {
-                    if (std::ranges::find(
-                        duplicate->resourceKeys, resourceKey)
-                        == duplicate->resourceKeys.end())
-                        duplicate->resourceKeys.push_back(
-                            std::move(resourceKey));
-                }
+                // Persist before publishing to the worker. A crash after this
+                // point is recovered by Initialize()/LoadPendingJobs().
+                pending =
+                    m_catalog.PersistPendingJob(std::move(pending));
+            }
+            catch (std::exception const& exception)
+            {
+                OutputDebugStringA((
+                    "ContentCatalogService: unable to persist pending job: "
+                    + std::string(exception.what()) + "\n").c_str());
+                return;
+            }
+            catch (...)
+            {
+                OutputDebugStringA(
+                    "ContentCatalogService: unable to persist pending job\n");
                 return;
             }
 
-            m_jobs.push_back({
-                std::move(path),
-                std::move(source),
-                std::move(knownIdentities),
-                std::move(resourceKeys)
-            });
+            // Replace a queued older generation for the same path. If an old
+            // generation is already in-flight it may finish, but its ACK is
+            // generation-guarded and cannot erase this newer durable job.
+            auto const duplicate = std::ranges::find_if(
+                m_jobs,
+                [&](PendingJob const& job)
+                {
+                    return job.path == pending.path;
+                });
+            if (duplicate != m_jobs.end())
+                *duplicate = std::move(pending);
+            else
+                m_jobs.push_back(std::move(pending));
         }
         m_condition.notify_one();
     }
@@ -187,6 +214,9 @@ namespace OpenNet::Core::Content
             try
             {
                 CatalogFile(job);
+                m_catalog.CompletePendingJob(
+                    job.path,
+                    job.generation);
             }
             catch (std::exception const& exception)
             {
@@ -204,6 +234,18 @@ namespace OpenNet::Core::Content
     void ContentCatalogService::CatalogFile(PendingJob const& job)
     {
         if (!std::filesystem::is_regular_file(job.path)) return;
+
+        auto const submittedFingerprint = job.fingerprint;
+        auto fingerprint = GetFingerprint(job.path);
+        if (fingerprint.fileSize != submittedFingerprint.fileSize
+            || fingerprint.lastWriteTicks
+                != submittedFingerprint.lastWriteTicks)
+        {
+            // The path no longer represents the bytes that produced this
+            // source/ResourceKey observation. Do not bind stale aliases to a
+            // modified file.
+            return;
+        }
 
         auto identities = job.knownIdentities;
         std::erase_if(identities, [](ContentIdentity const& identity)
@@ -234,6 +276,16 @@ namespace OpenNet::Core::Content
         }
 
         if (identities.empty()) return;
+
+        // Hashing may take a long time. Re-check cheap file metadata before
+        // committing aliases derived from the completed download.
+        fingerprint = GetFingerprint(job.path);
+        if (fingerprint.fileSize != submittedFingerprint.fileSize
+            || fingerprint.lastWriteTicks
+                != submittedFingerprint.lastWriteTicks)
+        {
+            return;
+        }
 
         std::optional<ContentRecord> existing;
         for (auto const& identity : identities)
@@ -274,7 +326,7 @@ namespace OpenNet::Core::Content
         ContentLocation location;
         location.localPath = job.path;
         location.availability = ContentAvailability::Available;
-        location.fingerprint = GetFingerprint(job.path);
+        location.fingerprint = fingerprint;
         location.verifiedAt = UnixNow();
 
         auto locationIt = std::ranges::find_if(

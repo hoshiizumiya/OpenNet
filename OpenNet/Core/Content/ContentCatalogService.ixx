@@ -1,6 +1,6 @@
 export module OpenNet.Core.Content.ContentCatalogService;
 
-import std;
+export import std;
 export import OpenNet.Core.Content.ContentCatalog;
 import OpenNet.Core.Content.SqliteContentCatalog;
 
@@ -41,13 +41,7 @@ export namespace OpenNet::Core::Content
         void SetChangedCallback(std::function<void()> callback);
 
     private:
-        struct PendingJob
-        {
-            std::filesystem::path path;
-            ContentSourceReference source;
-            std::vector<ContentIdentity> knownIdentities;
-            std::vector<ResourceKey> resourceKeys;
-        };
+        using PendingJob = SqliteContentCatalog::PendingJob;
 
         ContentCatalogService() = default;
         ~ContentCatalogService();
