@@ -353,6 +353,49 @@ namespace OpenNet::Core
 			// GetRecordIdForGid() works correctly after an app restart.
 			auto records = HttpStateManager::Instance().LoadAllRecords();
 
+			// Older prototypes used a second whole-file peer fallback at
+			// <target>.opennet-p2p-<gid>.part. The current architecture has no
+			// producer or consumer for that format: canonical HTTP/P2P always
+			// uses one libtorrent writer at the final target. Remove only the
+			// exact legacy temp path derivable from a persisted record/GID.
+			for (auto const& rec : records)
+			{
+				if (rec.lastGid.empty()
+					|| rec.savePath.empty()
+					|| rec.fileName.empty())
+				{
+					continue;
+				}
+
+				auto legacyFallbackPath =
+					std::filesystem::path{
+						winrt::to_hstring(rec.savePath).c_str() }
+					/ std::filesystem::path{
+						winrt::to_hstring(rec.fileName).c_str() };
+				legacyFallbackPath +=
+					winrt::to_hstring(
+						".opennet-p2p-" + rec.lastGid + ".part").c_str();
+
+				std::error_code error;
+				auto const existed =
+					std::filesystem::exists(
+						legacyFallbackPath,
+						error);
+				if (!error && existed)
+				{
+					std::filesystem::remove(
+						legacyFallbackPath,
+						error);
+					if (error)
+					{
+						OutputDebugStringW((
+							L"DownloadManager: failed to remove legacy peer fallback temp: "
+							+ legacyFallbackPath.wstring()
+							+ L"\n").c_str());
+					}
+				}
+			}
+
 			{
 				std::lock_guard<std::mutex> lock(m_mutex);
 				m_aria2 = std::move(aria2);
