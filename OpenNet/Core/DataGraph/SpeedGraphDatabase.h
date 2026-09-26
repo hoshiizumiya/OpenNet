@@ -43,7 +43,7 @@ namespace OpenNet::Core
         void SavePoint(std::string const& taskId, int percent, uint64_t speedKB);
 
         /// Load all speed points for a task, sorted by percent ascending
-        std::vector<SpeedPoint> LoadPoints(std::string const& taskId) const;
+        std::vector<SpeedPoint> LoadPoints(std::string const& taskId);
 
         /// Delete all speed data for a task
         void DeleteTask(std::string const& taskId);
@@ -59,6 +59,7 @@ namespace OpenNet::Core
         mutable std::mutex m_mutex;
         sqlite3* m_db{ nullptr };
         bool m_initialized{ false };
+        std::unordered_map<std::string, int> m_lastSavedPercent;
     };
 
 } // namespace OpenNet::Core

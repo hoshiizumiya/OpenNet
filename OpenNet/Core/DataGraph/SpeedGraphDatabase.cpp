@@ -64,6 +64,7 @@ namespace OpenNet::Core
 			sqlite3_close(m_db);
 			m_db = nullptr;
 		}
+		m_lastSavedPercent.clear();
 		m_initialized = false;
 	}
 
@@ -90,12 +91,19 @@ namespace OpenNet::Core
 
 	void SpeedGraphDatabase::SavePoint(std::string const& taskId, int percent, uint64_t speedKB)
 	{
+		if (taskId.empty() || !Initialize()) return;
+		percent = std::clamp(percent, 0, 100);
+
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
+		if (auto const last = m_lastSavedPercent.find(taskId);
+			last != m_lastSavedPercent.end() && percent <= last->second)
+		{
+			return;
+		}
 
 		const char* sql =
 			"INSERT OR REPLACE INTO speed_graph (task_id, percent, speed_kb) VALUES (?, ?, ?);";
-
 		sqlite3_stmt* stmt = nullptr;
 		int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
 		if (rc != SQLITE_OK)
@@ -103,19 +111,21 @@ namespace OpenNet::Core
 			OutputDebugStringA("SpeedGraphDatabase: SavePoint prepare failed\n");
 			return;
 		}
-
 		sqlite3_bind_text(stmt, 1, taskId.c_str(), static_cast<int>(taskId.size()), SQLITE_TRANSIENT);
 		sqlite3_bind_int(stmt, 2, percent);
 		sqlite3_bind_int64(stmt, 3, static_cast<sqlite3_int64>(speedKB));
-
-		sqlite3_step(stmt);
+		rc = sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
+		if (rc == SQLITE_DONE)
+			m_lastSavedPercent.insert_or_assign(taskId, percent);
 	}
 
-	std::vector<SpeedPoint> SpeedGraphDatabase::LoadPoints(std::string const& taskId) const
+	std::vector<SpeedPoint> SpeedGraphDatabase::LoadPoints(std::string const& taskId)
 	{
-		std::lock_guard lk(m_mutex);
 		std::vector<SpeedPoint> result;
+		if (taskId.empty() || !Initialize()) return result;
+
+		std::lock_guard lk(m_mutex);
 		if (!m_db) return result;
 
 		const char* sql =
@@ -145,6 +155,8 @@ namespace OpenNet::Core
 
 	void SpeedGraphDatabase::DeleteTask(std::string const& taskId)
 	{
+		if (taskId.empty() || !Initialize()) return;
+
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 
@@ -161,6 +173,7 @@ namespace OpenNet::Core
 		sqlite3_bind_text(stmt, 1, taskId.c_str(), static_cast<int>(taskId.size()), SQLITE_TRANSIENT);
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
+		m_lastSavedPercent.erase(taskId);
 	}
 
 } // namespace OpenNet::Core

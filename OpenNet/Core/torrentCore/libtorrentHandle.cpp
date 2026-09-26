@@ -1,5 +1,6 @@
 ﻿module;
 #include "WindowsPlatform.h"
+#include "Core/DataGraph/SpeedGraphDatabase.h"
 #include <wincrypt.h>
 #pragma comment(lib, "crypt32.lib")
 #include "LibtorrentIncludeGuard.h"
@@ -316,6 +317,23 @@ namespace
 		return result;
 	}
 
+	int WantedProgressPpm(lt::torrent_status const& status)
+	{
+		if (status.is_finished || status.is_seeding) return 1'000'000;
+		if (status.total_wanted <= 0) return 0;
+		auto const done = std::clamp<std::int64_t>(
+			status.total_wanted_done, 0, status.total_wanted);
+		auto const fraction = static_cast<double>(done)
+			/ static_cast<double>(status.total_wanted);
+		return static_cast<int>(
+			std::clamp(fraction, 0.0, 1.0) * 1'000'000.0);
+	}
+
+	int WantedProgressPercent(lt::torrent_status const& status)
+	{
+		return WantedProgressPpm(status) / 10'000;
+	}
+
 	void FillTaskInfoHashes(OpenNet::Core::Torrent::TaskMetadata& metadata, lt::info_hash_t const& hashes)
 	{
 		if (hashes.has_v1())
@@ -430,6 +448,7 @@ namespace OpenNet::Core::Torrent
 		std::unordered_map<std::string, std::string> m_pendingDeleteByHash;
 		struct PersistedProgress
 		{
+			std::int64_t totalSize{};
 			std::int64_t downloadedSize{};
 			std::chrono::steady_clock::time_point timestamp{};
 		};
@@ -2162,27 +2181,95 @@ namespace OpenNet::Core::Torrent
 		}
 	}
 
+	template<typename THandle>
+	void LibtorrentHandle::EraseTorrentRuntimeState(
+		std::string const& taskId,
+		THandle const& handle)
+	{
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			m_handleToTaskId.erase(handle);
+			m_taskIdToHandle.erase(taskId);
+			m_recheckCompletionActions.erase(taskId);
+		}
+		{ std::lock_guard lock(m_progressPersistenceMutex); m_persistedProgress.erase(taskId); }
+		{ std::lock_guard lock(m_sessionStatsMutex); m_cachedTorrentRates.erase(handle); }
+		{ std::lock_guard lock(m_peerEventMutex); m_peerEvents.erase(taskId); }
+		{ std::lock_guard lock(m_trackerLogMutex); m_trackerLogs.erase(taskId); }
+		{ std::lock_guard lock(m_filePrioritiesMutex); m_filePrioritiesCache.erase(handle); }
+		{ std::lock_guard lock(m_peerSnapshotMutex); m_peerSnapshots.erase(handle); }
+		{ std::lock_guard lock(m_detailRequestMutex); m_detailRequests.erase(handle); }
+		{ std::lock_guard lock(m_fileProgressMutex); m_fileProgressCache.erase(handle); }
+		{ std::lock_guard lock(m_pieceAvailabilityMutex); m_pieceAvailabilityCache.erase(handle); }
+		{ std::lock_guard lock(m_trackerSnapshotMutex); m_trackerSnapshots.erase(handle); }
+		{ std::lock_guard lock(m_rateConstraintsMutex); m_rateConstraints.erase(handle); }
+		{ std::lock_guard lock(m_taskSettingsCacheMutex); m_taskSettingsCache.erase(taskId); }
+		{ std::lock_guard lock(m_torrentMetadataMutex); m_torrentMetadataCache.erase(handle); }
+		{ std::lock_guard lock(m_uploadActivityMutex); m_uploadActivity.erase(handle); }
+		{ std::lock_guard lock(m_sharePolicySnapshotMutex); m_sharePolicySnapshots.erase(handle); }
+	}
+
 	void LibtorrentHandle::PauseTorrent(std::string const& taskId)
 	{
 		lt::torrent_handle handle;
 		{
 			std::lock_guard lk(m_torrentMapMutex);
-			auto it = m_taskIdToHandle.find(taskId);
-			if (it == m_taskIdToHandle.end() || !it->second.is_valid())
-				return;
+			auto const it = m_taskIdToHandle.find(taskId);
+			if (it == m_taskIdToHandle.end() || !it->second.is_valid()) return;
 			handle = it->second;
 		}
-
-		// libtorrent auto-manages torrents by default and may resume an
-		// auto-managed torrent after pause(). Make this an explicit user-
-		// managed pause and persist the state immediately.
 		handle.unset_flags(lt::torrent_flags::auto_managed);
 		handle.pause();
+		if (m_stateManager) m_stateManager->UpdateTaskStatus(taskId, 2);
+		RequestResumeDataForTorrent(handle);
+	}
+
+	void LibtorrentHandle::StopTorrent(std::string const& taskId)
+	{
+		std::scoped_lock addRemoveLock(m_addRemoveMutex);
+		lt::torrent_handle handle;
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			auto const it = m_taskIdToHandle.find(taskId);
+			if (it == m_taskIdToHandle.end() || !it->second.is_valid())
+			{
+				if (m_stateManager) m_stateManager->UpdateTaskStatus(taskId, 2);
+				return;
+			}
+			handle = it->second;
+		}
+		handle.unset_flags(lt::torrent_flags::auto_managed);
+		handle.pause();
+
 		if (m_stateManager)
 		{
-			m_stateManager->UpdateTaskStatus(taskId, 2); // Paused
+			try
+			{
+				auto const status = handle.status();
+				m_stateManager->UpdateTaskProgress(
+					taskId, status.total_wanted, status.total_wanted_done,
+					status.all_time_upload,
+					static_cast<std::int64_t>(status.completed_time));
+				auto const params =
+					handle.get_resume_data(lt::torrent_handle::save_info_dict);
+				auto const data = lt::write_resume_data_buf(params);
+				m_stateManager->SaveTaskResumeData(
+					taskId,
+					std::vector<std::uint8_t>(data.begin(), data.end()));
+			}
+			catch (std::exception const& exception)
+			{
+				OutputDebugStringA((
+					"LibtorrentHandle: unable to persist stopped torrent "
+					+ taskId + ": " + exception.what() + "\n").c_str());
+				m_stateManager->UpdateTaskStatus(taskId, 2);
+				return;
+			}
+			m_stateManager->UpdateTaskStatus(taskId, 2);
 		}
-		RequestResumeDataForTorrent(handle);
+
+		EraseTorrentRuntimeState(taskId, handle);
+		if (m_session && handle.is_valid()) m_session->remove_torrent(handle);
 	}
 
 	void LibtorrentHandle::ResumeTorrent(std::string const& taskId)
@@ -2190,9 +2277,16 @@ namespace OpenNet::Core::Torrent
 		lt::torrent_handle handle;
 		{
 			std::lock_guard lk(m_torrentMapMutex);
-			auto it = m_taskIdToHandle.find(taskId);
-			if (it == m_taskIdToHandle.end() || !it->second.is_valid())
-				return;
+			auto const it = m_taskIdToHandle.find(taskId);
+			if (it != m_taskIdToHandle.end() && it->second.is_valid())
+				handle = it->second;
+		}
+		if (!handle.is_valid())
+		{
+			if (AddTorrentFromResumeData(taskId).empty()) return;
+			std::lock_guard lock(m_torrentMapMutex);
+			auto const it = m_taskIdToHandle.find(taskId);
+			if (it == m_taskIdToHandle.end() || !it->second.is_valid()) return;
 			handle = it->second;
 		}
 
@@ -2205,37 +2299,44 @@ namespace OpenNet::Core::Torrent
 				m_recheckCompletionActions.insert_or_assign(
 					taskId, RecheckCompletionAction::Resume);
 			}
-			// A paused torrent must run while libtorrent hashes its files. Keep it
-			// user-managed until torrent_checked_alert restores the requested state.
 			handle.unset_flags(lt::torrent_flags::auto_managed);
 			handle.force_recheck();
 			handle.resume();
 			return;
 		}
-
 		handle.set_flags(lt::torrent_flags::auto_managed);
 		handle.resume();
-		if (m_stateManager)
-		{
-			m_stateManager->UpdateTaskStatus(taskId, 1); // Downloading
-		}
+		if (m_stateManager) m_stateManager->UpdateTaskStatus(taskId, 1);
 		RequestResumeDataForTorrent(handle);
 	}
 
 	void LibtorrentHandle::RemoveTorrent(std::string const& taskId, bool deleteFiles)
 	{
+		bool hasRuntimeHandle{};
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			auto const it = m_taskIdToHandle.find(taskId);
+			hasRuntimeHandle = it != m_taskIdToHandle.end() && it->second.is_valid();
+		}
+		if (!hasRuntimeHandle && deleteFiles)
+		{
+			if (AddTorrentFromResumeData(taskId).empty()) return;
+		}
+
 		std::scoped_lock addRemoveLock(m_addRemoveMutex);
 		lt::torrent_handle handle;
 		{
 			std::lock_guard lk(m_torrentMapMutex);
-			auto it = m_taskIdToHandle.find(taskId);
-			if (it == m_taskIdToHandle.end())
+			auto const it = m_taskIdToHandle.find(taskId);
+			if (it == m_taskIdToHandle.end() || !it->second.is_valid())
+			{
+				if (m_stateManager && !deleteFiles) m_stateManager->DeleteTask(taskId);
+				::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(taskId);
 				return;
+			}
 			handle = it->second;
-			m_handleToTaskId.erase(handle);
-			m_taskIdToHandle.erase(it);
 		}
-		if (deleteFiles && m_stateManager && handle.is_valid())
+		if (deleteFiles && m_stateManager)
 		{
 			try
 			{
@@ -2243,95 +2344,22 @@ namespace OpenNet::Core::Torrent
 				FillTaskInfoHashes(identity, handle.info_hashes());
 				std::lock_guard pendingLock(m_pendingDeleteMutex);
 				if (!identity.infoHashV1.empty())
-					m_pendingDeleteByHash.insert_or_assign(
-						identity.infoHashV1, taskId);
+					m_pendingDeleteByHash.insert_or_assign(identity.infoHashV1, taskId);
 				if (!identity.infoHashV2.empty())
-					m_pendingDeleteByHash.insert_or_assign(
-						identity.infoHashV2, taskId);
+					m_pendingDeleteByHash.insert_or_assign(identity.infoHashV2, taskId);
 			}
-			catch (...)
-			{
-			}
-		}
-		{
-			std::lock_guard lock(m_progressPersistenceMutex);
-			m_persistedProgress.erase(taskId);
-		}
-		{
-			std::lock_guard lock(m_sessionStatsMutex);
-			m_cachedTorrentRates.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_peerEventMutex);
-			m_peerEvents.erase(taskId);
-		}
-		{
-			std::lock_guard lock(m_trackerLogMutex);
-			m_trackerLogs.erase(taskId);
-		}
-		{
-			std::lock_guard lock(m_filePrioritiesMutex);
-			m_filePrioritiesCache.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_peerSnapshotMutex);
-			m_peerSnapshots.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_detailRequestMutex);
-			m_detailRequests.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_fileProgressMutex);
-			m_fileProgressCache.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_pieceAvailabilityMutex);
-			m_pieceAvailabilityCache.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_trackerSnapshotMutex);
-			m_trackerSnapshots.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_rateConstraintsMutex);
-			m_rateConstraints.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_taskSettingsCacheMutex);
-			m_taskSettingsCache.erase(taskId);
-		}
-		{
-			std::lock_guard lock(m_torrentMetadataMutex);
-			m_torrentMetadataCache.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_uploadActivityMutex);
-			m_uploadActivity.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_sharePolicySnapshotMutex);
-			m_sharePolicySnapshots.erase(handle);
-		}
-		{
-			std::lock_guard lock(m_torrentMapMutex);
-			m_recheckCompletionActions.erase(taskId);
+			catch (...) {}
 		}
 
+		EraseTorrentRuntimeState(taskId, handle);
 		if (m_session && handle.is_valid())
 		{
-			lt::remove_flags_t flags = {};
-			if (deleteFiles)
-			{
-				flags = lt::session::delete_files;
-			}
+			lt::remove_flags_t flags{};
+			if (deleteFiles) flags = lt::session::delete_files;
 			m_session->remove_torrent(handle, flags);
 		}
-
-		if (m_stateManager && !deleteFiles)
-		{
-			m_stateManager->DeleteTask(taskId);
-		}
+		if (m_stateManager && !deleteFiles) m_stateManager->DeleteTask(taskId);
+		::OpenNet::Core::SpeedGraphDatabase::Instance().DeleteTask(taskId);
 	}
 
 	void LibtorrentHandle::SaveAllResumeData()
@@ -3154,15 +3182,10 @@ namespace OpenNet::Core::Torrent
 						m_cachedTorrentRates.insert_or_assign(
 							status.handle,
 							CachedTorrentRate{
-								status.download_rate,
-								status.upload_rate,
-								status.total_done,
-								status.total_upload,
-								status.num_peers,
-								status.num_seeds,
-								status.state,
-								(status.flags & lt::torrent_flags::paused)
-									!= lt::torrent_flags_t{},
+								status.download_rate, status.upload_rate,
+								status.total_wanted_done, status.total_upload,
+								status.num_peers, status.num_seeds, status.state,
+								(status.flags & lt::torrent_flags::paused) != lt::torrent_flags_t{},
 								static_cast<bool>(status.errc),
 								status.is_finished || status.is_seeding });
 					}
@@ -3174,11 +3197,9 @@ namespace OpenNet::Core::Torrent
 						(void)handle;
 						m_cachedDownloadRate += rate.downloadRate;
 						m_cachedUploadRate += rate.uploadRate;
-						if (rate.isFinished)
-							m_cachedLongTermSeedingUploadRate += rate.uploadRate;
+						if (rate.isFinished) m_cachedLongTermSeedingUploadRate += rate.uploadRate;
 					}
 				}
-
 				EvaluateSharePolicies(st->status);
 
 				ProgressCallback progressCbCopy;
@@ -3187,88 +3208,80 @@ namespace OpenNet::Core::Torrent
 					progressCbCopy = m_progressCb;
 				}
 
-				if (progressCbCopy)
+				for (auto const& s : st->status)
 				{
-					for (auto const& s : st->status)
+					std::string taskId;
 					{
-						std::string taskId;
-						{
-							std::lock_guard mapLk(m_torrentMapMutex);
-							auto const it = m_handleToTaskId.find(s.handle);
-							if (it != m_handleToTaskId.end())
-								taskId = it->second;
-						}
+						std::lock_guard mapLk(m_torrentMapMutex);
+						auto const it = m_handleToTaskId.find(s.handle);
+						if (it != m_handleToTaskId.end()) taskId = it->second;
+					}
+					if (taskId.empty()) continue;
 
-						// Ignore handles that do not belong to an OpenNet task.
-						// This prevents anonymous session activity from creating
-						// UI rows that cannot be controlled or persisted.
-						if (taskId.empty())
-							continue;
-
-						ProgressEvent evt;
-						evt.taskId = taskId;
-						evt.progressPercent = static_cast<int>(s.progress_ppm / 10000); // 1e6 -> %
-						evt.isPaused = (s.flags & lt::torrent_flags::paused) != lt::torrent_flags_t{};
-						evt.isChecking = s.state == lt::torrent_status::checking_files || s.state == lt::torrent_status::checking_resume_data;
-						evt.downloadRateKB = evt.isPaused
-							? 0 : static_cast<int>(s.download_rate / 1000);
-						evt.uploadRateKB = evt.isPaused
-							? 0 : static_cast<int>(s.upload_rate / 1000);
-						evt.totalSize = s.total_wanted;
-						evt.downloadedSize = s.total_wanted_done;
-						evt.sessionDownloaded = s.total_download;
-						evt.sessionUploaded = s.total_upload;
-						evt.allTimeDownloaded = s.all_time_download;
-						evt.allTimeUploaded = s.all_time_upload;
-						evt.completedTimestamp = static_cast<std::int64_t>(s.completed_time);
-						evt.connectedPeers = s.num_peers;
-						evt.connectedSeeds = s.num_seeds;
-						evt.knownPeers = (std::max)(
-							s.num_incomplete, (std::max)(0, s.list_peers - s.list_seeds));
-						evt.knownSeeds = (std::max)(s.num_complete, s.list_seeds);
-						evt.name = s.name;
-						evt.isFinished = s.is_finished;
-						evt.isSeeding = s.is_seeding;
+					ProgressEvent evt;
+					evt.taskId = taskId;
+					evt.progressPercent = WantedProgressPercent(s);
+					evt.isPaused = (s.flags & lt::torrent_flags::paused) != lt::torrent_flags_t{};
+					evt.isChecking = s.state == lt::torrent_status::checking_files
+						|| s.state == lt::torrent_status::checking_resume_data;
+					evt.downloadRateKB = evt.isPaused ? 0 : static_cast<int>(s.download_rate / 1000);
+					evt.uploadRateKB = evt.isPaused ? 0 : static_cast<int>(s.upload_rate / 1000);
+					evt.totalSize = s.total_wanted;
+					evt.downloadedSize = s.total_wanted_done;
+					evt.sessionDownloaded = s.total_download;
+					evt.sessionUploaded = s.total_upload;
+					evt.allTimeDownloaded = s.all_time_download;
+					evt.allTimeUploaded = s.all_time_upload;
+					evt.completedTimestamp = static_cast<std::int64_t>(s.completed_time);
+					evt.connectedPeers = s.num_peers;
+					evt.connectedSeeds = s.num_seeds;
+					evt.knownPeers = (std::max)(
+						s.num_incomplete, (std::max)(0, s.list_peers - s.list_seeds));
+					evt.knownSeeds = (std::max)(s.num_complete, s.list_seeds);
+					evt.name = s.name;
+					evt.isFinished = s.is_finished;
+					evt.isSeeding = s.is_seeding;
+					{
+						std::lock_guard lock(m_rateConstraintsMutex);
+						auto const constraints = m_rateConstraints.find(s.handle);
+						if (constraints != m_rateConstraints.end())
 						{
-							std::lock_guard lock(m_rateConstraintsMutex);
-							auto const constraints = m_rateConstraints.find(s.handle);
-							if (constraints != m_rateConstraints.end())
-							{
-								evt.downloadLimit = constraints->second.downloadLimit;
-								evt.uploadLimit = constraints->second.uploadLimit;
-								evt.minimumUploadRate = constraints->second.minimumUploadRate;
-							}
-						}
-						progressCbCopy(evt);
-
-						// Persist progress without turning every one-second status
-						// snapshot into one SQLite transaction per torrent. UI
-						// callbacks remain real-time; completion is always durable.
-						if (m_stateManager)
-						{
-							auto const now = std::chrono::steady_clock::now();
-							constexpr auto interval = std::chrono::seconds(15);
-							constexpr std::int64_t byteThreshold = 64ll * 1024 * 1024;
-							bool shouldPersist{};
-							{
-								std::lock_guard lock(m_progressPersistenceMutex);
-								auto const persisted = m_persistedProgress.find(taskId);
-								shouldPersist = (s.is_finished
-												 && (persisted == m_persistedProgress.end()
-													 || persisted->second.downloadedSize != s.total_done))
-									|| persisted == m_persistedProgress.end()
-									|| now - persisted->second.timestamp >= interval
-									|| std::abs(s.total_done
-												- persisted->second.downloadedSize) >= byteThreshold;
-							}
-							if (shouldPersist && m_stateManager->UpdateTaskProgress(taskId, s.total_done, s.all_time_upload, static_cast<std::int64_t>(s.completed_time)))
-							{
-								std::lock_guard lock(m_progressPersistenceMutex);
-								m_persistedProgress.insert_or_assign(
-									taskId, PersistedProgress{ s.total_done, now });
-							}
+							evt.downloadLimit = constraints->second.downloadLimit;
+							evt.uploadLimit = constraints->second.uploadLimit;
+							evt.minimumUploadRate = constraints->second.minimumUploadRate;
 						}
 					}
+
+					::OpenNet::Core::SpeedGraphDatabase::Instance().SavePoint(
+						taskId, evt.progressPercent,
+						static_cast<std::uint64_t>((std::max)(0, evt.downloadRateKB)));
+
+					if (m_stateManager)
+					{
+						auto const now = std::chrono::steady_clock::now();
+						constexpr auto interval = std::chrono::seconds(15);
+						constexpr std::int64_t byteThreshold = 64ll * 1024 * 1024;
+						bool shouldPersist{};
+						{
+							std::lock_guard lock(m_progressPersistenceMutex);
+							auto const persisted = m_persistedProgress.find(taskId);
+							shouldPersist = persisted == m_persistedProgress.end()
+								|| persisted->second.totalSize != s.total_wanted
+								|| (s.is_finished && persisted->second.downloadedSize != s.total_wanted_done)
+								|| now - persisted->second.timestamp >= interval
+								|| std::abs(s.total_wanted_done - persisted->second.downloadedSize) >= byteThreshold;
+						}
+						if (shouldPersist && m_stateManager->UpdateTaskProgress(
+							taskId, s.total_wanted, s.total_wanted_done,
+							s.all_time_upload, static_cast<std::int64_t>(s.completed_time)))
+						{
+							std::lock_guard lock(m_progressPersistenceMutex);
+							m_persistedProgress.insert_or_assign(
+								taskId,
+								PersistedProgress{ s.total_wanted, s.total_wanted_done, now });
+						}
+					}
+					if (progressCbCopy) progressCbCopy(evt);
 				}
 			}
 			else if (auto checked = lt::alert_cast<lt::torrent_checked_alert>(alert))
@@ -4286,7 +4299,7 @@ namespace OpenNet::Core::Torrent
 			info.name = st.name;
 			info.savePath = st.save_path;
 			info.totalSize = st.total_wanted;
-			info.totalDone = st.total_done;
+			info.totalDone = st.total_wanted_done;
 			info.totalUploaded = st.total_upload;
 			info.sessionDownloaded = st.total_download;
 			info.sessionUploaded = st.total_upload;
@@ -4294,7 +4307,7 @@ namespace OpenNet::Core::Torrent
 			info.allTimeUploaded = st.all_time_upload;
 			info.downloadRate = st.download_rate;
 			info.uploadRate = st.upload_rate;
-			info.progressPpm = static_cast<int>(st.progress_ppm);
+			info.progressPpm = WantedProgressPpm(st);
 			info.numPeers = st.num_peers;
 			info.numSeeds = st.num_seeds;
 			info.numConnections = st.num_connections;

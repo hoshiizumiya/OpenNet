@@ -136,8 +136,11 @@ export namespace OpenNet::Core::Torrent
 		// Resume torrent from saved state (returns task ID if successful)
 		std::string AddTorrentFromResumeData(std::string const& taskId);
 
-		// Pause a specific torrent by task ID
+		// Pause a specific torrent by task ID while keeping it resident.
 		void PauseTorrent(std::string const& taskId);
+
+		// Stop a torrent and unload its runtime state while preserving resume data.
+		void StopTorrent(std::string const& taskId);
 
 		// Resume a specific torrent by task ID
 		void ResumeTorrent(std::string const& taskId);
@@ -571,6 +574,7 @@ export namespace OpenNet::Core::Torrent
 			bool onlyIfModified = false);
 		std::string FindExistingTaskId(auto const& hashes) const;
 		std::string TakePendingDeleteTask(auto const& hashes);
+		void EraseTorrentRuntimeState(std::string const& taskId, auto const& handle);
 		void EnforceClientFilters();
 		void RecordPeerEvent(
 			auto const& handle,
