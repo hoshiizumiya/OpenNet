@@ -31,6 +31,10 @@ export namespace OpenNet::Core
         std::int64_t     completedSize{};    // Downloaded size in bytes
         int         status{};           // 0=pending, 1=downloading, 2=paused, 3=completed, 4=failed
         std::string lastGid;            // Last known Aria2 GID (for session re-association)
+        int transferMode{};             // 0=Aria2Only, 1=P2PPreferred
+        int activeEngine{};             // 0=aria2, 1=canonical probe, 2=canonical libtorrent
+        bool userRequestedPaused{};     // User intent, not the internal hybrid shell pause
+        std::string canonicalInfoHashV2;
     };
 
     // Manages HTTP download record persistence via SQLite
@@ -55,6 +59,14 @@ export namespace OpenNet::Core
             std::string const& fileName);
         void UpdateRecordProgress(std::string const& recordId, int64_t completedSize, int64_t totalSize);
         void UpdateRecordStatus(std::string const& recordId, int status);
+        void UpdateRecordTransferPolicy(
+            std::string const& recordId,
+            int transferMode,
+            bool userRequestedPaused);
+        void UpdateRecordActiveEngine(
+            std::string const& recordId,
+            int activeEngine,
+            std::string const& canonicalInfoHashV2 = {});
         void DeleteRecord(std::string const& recordId);
 
         // Lookup
