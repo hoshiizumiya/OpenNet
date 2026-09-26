@@ -67,6 +67,15 @@ jobs:
         with:
           submodules: recursive
       
+      - name: Run persistence SQL regression tests
+        if: matrix.platform == 'x64'
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        run: |
+          python scripts/test_torrent_persistence_sql.py
+          python scripts/test_http_persistence_sql.py
+          python scripts/test_content_catalog_pending_sql.py
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v3
         with:
