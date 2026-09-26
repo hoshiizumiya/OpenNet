@@ -197,30 +197,30 @@ WebSeed path fixture 已加入：
 
 当前 client code checkpoint：
 
-- `4d130bf779f703754bb692ae2fefd3d62479ee44`
+- `8e79958f621e363b95f515e5af2586c5e3194f89`
 
 不要等待 Canary。若出现具体 compiler/test error，只针对错误集中修一批.
 
 ### 2. 完整 deterministic hybrid integration test
 
-在现有 local HTTP Range fixture 之上继续覆盖：
+数据面 fixture 已经覆盖：
 
 ```text
 ResourceKey
- -> Directory candidate
+ -> fake Directory candidate
  -> canonical manifest
  -> URL Seed + local OpenNet peer
  -> BEP52
  -> caller WholeFile SHA-256
- -> HTTP Complete
- -> ContentCatalog
 ```
+
+下一步不要重写这部分；把现有 fixture 延伸到真正的 DownloadManager `HTTP Complete -> ContentCatalog` 状态机。
 
 ### 3. lifecycle / persistence hardening
 
 当前 restart recovery 已有原型实现，下一步是补 deterministic crash/restart tests，而不是重新设计：
 - Content Directory shutdown cooperative cancellation 已落地：请求有 deadline，DownloadManager / sync service 会通过 stop token 取消正在进行的 HTTP operation；
-- restart 时 complete-vs-partial SHA recovery 测试；完整 canonical payload 的 recovery 已补齐 ContentCatalog replay，避免 HTTP Complete 与长期做种 catalog 在 crash 后分叉；
+- restart 时 complete-vs-partial SHA recovery 测试；完整 canonical payload 的 recovery 现在会在每次启动检查 ContentCatalog location，未持久化就再次 Enqueue，直到真正落库，因此二次 crash 也不会永久分叉；
 - aria2 shell removal failure / locked partial cleanup 的 blocked recovery 测试；
 - normalized output_key / restored-GID ownership crash 测试；
 - Resume re-discovery 已落地保守版本：只在 aria2 Paused + CompletedLength=0 + payload 可释放 + 已持久化可信 WebSeed/SHA/size/path 时重新进入 CanonicalProbe；

@@ -25,10 +25,10 @@ Feature branch:
 
 Current client code checkpoint for this slice:
 
-- `cd4744a81abb14d9079902be7e2f17e4c3f21ca9`
-- `fix: recatalog recovered canonical HTTP completions`
+- `8e79958f621e363b95f515e5af2586c5e3194f89`
+- `fix: re-export HTTP P2P module API dependencies`
 
-This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, the sentry-native 0.17 scope-capture API fix, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, a deterministic ResourceKey/Directory/manifest/WebSeed+peer data-plane fixture, and SQL regression coverage for active HTTP writer ownership. x64 Canary now also compiles OpenNetUnitTest so these native regression sources receive compiler feedback.
+This lineage includes libtorrent 2.1.2 / sentry-native 0.17.1 minimum-version enforcement, the sentry-native 0.17 scope-capture API fix, removal of the accidental WinRT string-helper dependency from HttpStateManager, explicit `Aria2Only` / `P2PPreferred` policy, active 206 range verification, BEP19 URL-seed injection, paused aria2 control-shell routing, one-writer libtorrent hybrid transfer, hidden-session Pause/Resume, persisted transfer-engine state, restart recovery, replay-until-durable ContentCatalog recovery for completed canonical HTTP records, active output ownership, cancellable/bounded Content Directory and canonical-fetch workers, safe zero-progress Resume re-discovery, verified payload-release handoff before every hybrid, removal of the obsolete separate-file HTTP peer fallback, HTTP/P2P module API dependency re-exports, visible task backend state, caller SHA-256 verification, aria2 fallback, canonical v2 info-hash diagnostics, hybrid telemetry, deterministic direct-file/base-URL WebSeed fixtures, a public-API v2 multi-file WebSeed boundary regression fixture, a deterministic ResourceKey/Directory/manifest/WebSeed+peer data-plane fixture, and SQL regression coverage for active HTTP writer ownership. x64 Canary compiles OpenNetUnitTest so these native regression sources receive compiler feedback.
 
 The feature lineage has been updated from:
 
@@ -381,11 +381,11 @@ Recommended research remains:
 
 ## Known implementation limitations
 
-- deterministic local WebSeed tests cover direct-file versus trailing-slash request-path semantics and now include a libtorrent 2.1.2 v2 multi-file unaligned-boundary regression fixture; the complete Directory -> manifest -> URL Seed + OpenNet peer integration chain still needs an automated fixture;
+- deterministic local tests cover direct-file versus trailing-slash WebSeed semantics, the libtorrent 2.1.2 v2 multi-file unaligned-boundary regression, and a ResourceKey -> fake Directory -> canonical manifest -> HTTP WebSeed + explicit local peer -> BEP52/WholeFile SHA-256 data-plane chain; the remaining gap is wiring the final DownloadManager HTTP Complete/ContentCatalog state machine into a process-level deterministic fixture;
 - the new/updated tests are committed but should not be described as CI-passed until the feature workflow reports results;
 - hybrid requires caller WholeFile SHA-256, known size/path, privacy-safe public request semantics and an observed 206 + Content-Range response;
 - Content Directory HTTP work is now bounded and cooperatively cancellable during shutdown; cancellation is not treated as heartbeat/network failure;
-- transfer policy / engine / user-pause / canonical hash are persisted, and process-local canonical sessions have restart recovery; a crash after libtorrent finished but before normal HTTP promotion now replays the missing ContentCatalog transition after whole-file SHA-256 validation; blocked cleanup/shell-removal recovery and deterministic crash tests still need hardening;
+- transfer policy / engine / user-pause / canonical hash are persisted, and process-local canonical sessions have restart recovery; a completed canonical HTTP record now replays ContentCatalog recovery on every startup until the location is durably present, closing the second-crash window after an in-memory EnqueueFile; blocked cleanup/shell-removal recovery and deterministic crash tests still need hardening;
 - late redirect/Content-Disposition output names are atomically claimed against active output ownership; if the task is later explicitly resumed while aria2 is paused with zero completed bytes, the persisted verified WebSeed/identity prerequisites can safely trigger a fresh canonical probe; tasks with existing aria2 payload progress deliberately stay on aria2;
 - active HTTP output ownership is enforced by a normalized SQLite `output_key` unique index plus serialized task creation and restored-GID reconciliation;
 - aria2 shell removal and abnormal-exit cleanup now preserve the single-writer invariant but still need stress/crash testing;
@@ -410,8 +410,8 @@ local HTTP Range origin
 Recommended order:
 
 1. Run and harden the committed prototype in the feature workflow; fix only concrete compiler/test failures.
-2. Add one deterministic end-to-end fixture for ResourceKey -> Directory candidate -> canonical manifest -> URL Seed + local OpenNet peer -> HTTP Complete.
-3. Add deterministic restart/crash tests for the persisted P2PPreferred routing state, output ownership and aria2 task-removal recovery; the SQL ownership layer now has an isolated regression script.
+2. Extend the existing deterministic ResourceKey/Directory/manifest/WebSeed+peer fixture through DownloadManager HTTP Complete -> ContentCatalog, rather than rebuilding the already-covered data plane.
+3. Add deterministic restart/crash tests for persisted P2PPreferred routing, replay-until-durable catalog recovery, output ownership and aria2 task-removal recovery; the SQL ownership layer already has an isolated regression script.
 4. Extend late-filename/Resume coverage with deterministic tests; zero-progress paused tasks may now re-enter canonical discovery, while partial aria2 tasks intentionally remain aria2-owned.
 5. Integrate OpenNet.Traversal and then node keys/tickets/rate limits.
 6. Continue BitComet compatibility separately.
