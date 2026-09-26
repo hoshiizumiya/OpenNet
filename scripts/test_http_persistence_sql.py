@@ -184,14 +184,14 @@ class HttpPersistenceOwnershipTests(unittest.TestCase):
                 "c:/downloads/url-new.bin",
             ),
             (
-                "output-preferred",
+                "output-a",
                 "https://one.test/output",
                 5,
                 30,
                 "c:/downloads/shared.bin",
             ),
             (
-                "output-duplicate",
+                "output-b",
                 "https://two.test/output",
                 5,
                 30,
@@ -230,8 +230,8 @@ class HttpPersistenceOwnershipTests(unittest.TestCase):
         self.assertIn("url-preferred", remaining)
 
         # Equal progress/timestamp falls through to record_id lexical order.
-        self.assertIn("output-preferred", remaining)
-        self.assertNotIn("output-duplicate", remaining)
+        self.assertIn("output-a", remaining)
+        self.assertNotIn("output-b", remaining)
 
         self.assertEqual(
             legacy.execute(

@@ -227,6 +227,8 @@ namespace OpenNet::Core::Content
                                 records,
                                 endpoints,
                                 stopToken);
+                            if (stopToken.stop_requested())
+                                break;
                             if (result)
                             {
                                 generation = result->acceptedGeneration;
@@ -256,10 +258,14 @@ namespace OpenNet::Core::Content
                         else if (leaseId
                             && now - lastHeartbeat >= std::chrono::seconds(90))
                         {
-                            if (client.Heartbeat(
-                                nodeId,
-                                *leaseId,
-                                stopToken))
+                            auto const heartbeatSucceeded =
+                                client.Heartbeat(
+                                    nodeId,
+                                    *leaseId,
+                                    stopToken);
+                            if (stopToken.stop_requested())
+                                break;
+                            if (heartbeatSucceeded)
                             {
                                 lastHeartbeat = now;
                                 directoryReachable = true;
