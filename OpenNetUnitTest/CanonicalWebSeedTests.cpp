@@ -774,11 +774,13 @@ namespace OpenNetUnitTest
 				::closesocket(socket);
 				socket = INVALID_SOCKET;
 
+				constexpr std::string_view headerDelimiter =
+					"\r\n\r\n";
 				auto const headerEnd = std::search(
 					response.begin(),
 					response.end(),
-					std::begin("\r\n\r\n") - 1,
-					std::end("\r\n\r\n") - 1);
+					headerDelimiter.begin(),
+					headerDelimiter.end());
 				if (headerEnd == response.end())
 					throw std::runtime_error(
 						"HTTP response has no header terminator");
@@ -1308,9 +1310,8 @@ namespace OpenNetUnitTest
 			auto const directoryPeerPort =
 				static_cast<std::uint16_t>(
 					endpoint.GetNamedNumber(L"port"));
-			Assert::AreEqual(
-				peerSeeder.Port(),
-				directoryPeerPort,
+			Assert::IsTrue(
+				peerSeeder.Port() == directoryPeerPort,
 				L"download must use the peer endpoint returned by Directory");
 
 			auto const manifest =
@@ -1369,9 +1370,8 @@ namespace OpenNetUnitTest
 				Hex(Sha256(downloaded))
 					== wholeFileHex,
 				L"HTTP Complete gate must pass caller WholeFile SHA-256");
-			Assert::AreEqual(
-				std::size_t{1},
-				origin.SuccessfulRangeResponses(),
+			Assert::IsTrue(
+				origin.SuccessfulRangeResponses() == 1,
 				L"exactly one WebSeed range must contribute payload");
 			Assert::IsTrue(
 				peerSeeder.UploadedBytes() > 0,
