@@ -24,6 +24,7 @@
 #include <iterator>
 #include <limits>
 #include <mutex>
+#include <optional>
 #include <stdexcept>
 #include <string>
 #include <string_view>
@@ -123,6 +124,7 @@ namespace OpenNetUnitTest
 				});
 			}
 
+		public:
 			~RangeHttpServer()
 			{
 				if (m_thread.joinable())
@@ -151,7 +153,6 @@ namespace OpenNetUnitTest
 				return m_targets;
 			}
 
-		public:
 			std::vector<std::string> Ranges() const
 			{
 				std::lock_guard lock(m_mutex);
@@ -503,6 +504,19 @@ namespace OpenNetUnitTest
 			std::vector<std::uint8_t> first;
 			std::vector<std::uint8_t> second;
 			std::vector<char> metainfo;
+
+			MultiFileV2Fixture() = default;
+			MultiFileV2Fixture(MultiFileV2Fixture const&) = delete;
+			MultiFileV2Fixture& operator=(MultiFileV2Fixture const&) = delete;
+			MultiFileV2Fixture(MultiFileV2Fixture&& other) noexcept
+				: root(std::move(other.root)),
+				first(std::move(other.first)),
+				second(std::move(other.second)),
+				metainfo(std::move(other.metainfo))
+			{
+				other.root.clear();
+			}
+			MultiFileV2Fixture& operator=(MultiFileV2Fixture&&) = delete;
 
 			~MultiFileV2Fixture()
 			{
