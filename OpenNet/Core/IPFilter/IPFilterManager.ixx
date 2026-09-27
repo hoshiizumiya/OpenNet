@@ -1,6 +1,6 @@
-﻿/*
+/*
  * PROJECT:   OpenNet
- * FILE:      Core/IPFilter/IPFilterManager.h
+ * FILE:      Core/IPFilter/IPFilterManager.ixx
  * PURPOSE:   IP filter management using libtorrent's ip_filter.
  *            Stores rules in a dedicated SQLite database (ipfilter.db).
  *            Supports IPv4/IPv6 addresses, CIDR notation, and IP ranges.
@@ -8,18 +8,18 @@
  * LICENSE:   The MIT License
  */
 
-#pragma once
-
-import std;
-
+module;
 struct sqlite3;
-
 namespace libtorrent
 {
 	struct ip_filter;
 }
 
-namespace OpenNet::Core
+export module OpenNet.Core.IPFilter.IPFilterManager;
+
+export import std;
+
+export namespace OpenNet::Core
 {
 	/// A single IP filter rule persisted in the database.
 	struct IPRule

@@ -1,8 +1,9 @@
-﻿module;
+module;
 
-#include "Core/DataGraph/SpeedGraphDatabase.h"
 
 module OpenNet.Application.Tasks.TaskCommandService;
+
+import OpenNet.Core.DataGraph.SpeedGraphDatabase;
 
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;

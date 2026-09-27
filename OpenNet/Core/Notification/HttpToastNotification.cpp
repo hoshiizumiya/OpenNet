@@ -1,13 +1,16 @@
-﻿#include "pch.h"
+module;
+
+#include "pch.h"
 #include "WindowsPlatform.h"
 #include <unknwn.h>
-#include "HttpToastNotification.h"
 
 #ifdef WINRT_IMPORT_MODULE
 #undef WINRT_IMPORT_MODULE
 #endif
 #include <include/ToastBuilder.hpp>
 #include <shellapi.h>
+
+module OpenNet.Core.Notification.HttpToastNotification;
 
 namespace OpenNet::Core::Notification
 {

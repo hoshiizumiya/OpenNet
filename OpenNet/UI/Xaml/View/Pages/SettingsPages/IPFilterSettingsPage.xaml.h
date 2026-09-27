@@ -1,8 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.h"
-#include "Core/IPFilter/IPFilterManager.h"
 
+
+import OpenNet.Core.IPFilter.IPFilterManager;
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
 	struct IPFilterSettingsPage : IPFilterSettingsPageT<IPFilterSettingsPage>

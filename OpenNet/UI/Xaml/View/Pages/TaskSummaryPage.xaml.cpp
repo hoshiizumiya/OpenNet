@@ -1,12 +1,13 @@
-﻿#include <Windows.h>
+#include <Windows.h>
 
 #include "XamlWorkaround.h"
 #include "TaskSummaryPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskSummaryPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskSummaryPage.g.cpp"
 #endif
-#include "Core/DataGraph/SpeedGraphDatabase.h"
 
+
+import OpenNet.Core.DataGraph.SpeedGraphDatabase;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.DownloadManager;

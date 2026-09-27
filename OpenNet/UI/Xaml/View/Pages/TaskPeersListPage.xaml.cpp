@@ -1,12 +1,13 @@
-﻿#include "XamlWorkaround.h"
+#include "XamlWorkaround.h"
 #include "TaskPeersListPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"
 #endif
-#include "Core/ClientFilter/ClientFilterManager.h"
-#include "Core/IPFilter/IPFilterManager.h"
 #include "ViewModels/DisplayItems.h"
 
+
+import OpenNet.Core.ClientFilter.ClientFilterManager;
+import OpenNet.Core.IPFilter.IPFilterManager;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.AppSettingsDatabase;

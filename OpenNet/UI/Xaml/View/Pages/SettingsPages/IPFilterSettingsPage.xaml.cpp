@@ -1,4 +1,4 @@
-﻿#include <time.h>
+#include <time.h>
 
 #include "XamlWorkaround.h"
 #include "IPFilterSettingsPage.xaml.h"
@@ -6,10 +6,11 @@
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp"
 #endif
 
-#include "Core/IPFilter/IPFilterManager.h"
 #include "SettingsPageTagRegister.h"
 #include <include/ScopedButtonDisabler.hpp>
 
+
+import OpenNet.Core.IPFilter.IPFilterManager;
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Utils.Message;
 import winrt.OpenNet.UI.Xaml.View.Dialog;

@@ -1,4 +1,6 @@
-﻿/*
+module;
+
+/*
  * PROJECT:   OpenNet
  * FILE:      Core/DataGraph/SpeedGraphDatabase.cpp
  * PURPOSE:   SQLite persistence for speed graph data points.
@@ -7,8 +9,9 @@
  */
 
 #include <Windows.h>
-#include "Core/DataGraph/SpeedGraphDatabase.h"
 #include <sqlite3.h>
+
+module OpenNet.Core.DataGraph.SpeedGraphDatabase;
 
 import OpenNet.Core.IO.FileSystem;
 

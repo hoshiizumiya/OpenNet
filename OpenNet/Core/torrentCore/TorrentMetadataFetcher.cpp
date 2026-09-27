@@ -1,4 +1,4 @@
-﻿module;
+module;
 
 #include "LibtorrentIncludeGuard.h"
 #include <libtorrent/sha1_hash.hpp>
@@ -14,10 +14,11 @@
 #include <libtorrent/load_torrent.hpp>
 #include <libtorrent/write_resume_data.hpp>
 #include "TorrentSettingsAdapter.h"
-#include "Core/IPFilter/IPFilterManager.h"
 #include "LibtorrentIncludeRestore.h"
 
 module OpenNet.Core.torrentCore.TorrentMetadataFetcher;
+
+import OpenNet.Core.IPFilter.IPFilterManager;
 
 import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Torrent.TrackerManager;

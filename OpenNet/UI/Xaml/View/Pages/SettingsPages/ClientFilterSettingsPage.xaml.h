@@ -1,8 +1,9 @@
-﻿#pragma once
+#pragma once
 
 #include "UI/Xaml/View/Pages/SettingsPages/ClientFilterSettingsPage.g.h"
-#include "Core/ClientFilter/ClientFilterManager.h"
 
+
+import OpenNet.Core.ClientFilter.ClientFilterManager;
 import winrt.Microsoft.UI.Dispatching;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation

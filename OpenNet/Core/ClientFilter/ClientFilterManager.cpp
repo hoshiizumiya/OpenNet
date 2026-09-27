@@ -1,4 +1,6 @@
-﻿#include <Windows.h>
+module;
+
+#include <Windows.h>
 #include <algorithm>
 #include <chrono>
 #include <cctype>
@@ -10,9 +12,10 @@
 #include <sqlite3.h>
 #include <nlohmann/json.hpp>
 
-#include "Core/ClientFilter/ClientFilterManager.h"
-#include "Core/IPFilter/IPFilterManager.h"
 
+module OpenNet.Core.ClientFilter.ClientFilterManager;
+
+import OpenNet.Core.IPFilter.IPFilterManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.IO.FileSystem;
 

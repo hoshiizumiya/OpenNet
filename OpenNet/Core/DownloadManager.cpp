@@ -1,4 +1,4 @@
-﻿/*
+/*
  * PROJECT:   OpenNet
  * FILE:      Core/DownloadManager.cpp
  * PURPOSE:   Unified download manager – aria2 HTTP engine integration
@@ -7,11 +7,12 @@
  */
 module;
 
-#include "Core/Notification/HttpToastNotification.h"
-#include "Core/DataGraph/SpeedGraphDatabase.h"
 #include <Windows.h>
 
 module OpenNet.Core.DownloadManager;
+
+import OpenNet.Core.DataGraph.SpeedGraphDatabase;
+import OpenNet.Core.Notification.HttpToastNotification;
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.ContentCatalogService;

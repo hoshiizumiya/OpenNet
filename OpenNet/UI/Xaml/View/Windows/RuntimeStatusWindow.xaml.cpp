@@ -1,4 +1,4 @@
-﻿#include <WinSock2.h>
+#include <WinSock2.h>
 #include <Windows.h>
 #include <Psapi.h>
 #include <netfw.h>
@@ -15,8 +15,9 @@
 #endif
 
 #include "Core/WebUI/WebUIControl.h"
-#include "Core/IPFilter/IPFilterManager.h"
 
+
+import OpenNet.Core.IPFilter.IPFilterManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.HttpStateManager;
