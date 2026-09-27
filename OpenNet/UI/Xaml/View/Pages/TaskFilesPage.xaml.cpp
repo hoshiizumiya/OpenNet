@@ -1,6 +1,9 @@
 ﻿#include "XamlWorkaround.h"
 #include "TaskFilesPage.xaml.h"
+#include <algorithm>
+#include <map>
 #include <shellapi.h>
+#include <vector>
 #if __has_include("UI/Xaml/View/Pages/TaskFilesPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskFilesPage.g.cpp"
 #endif
@@ -50,14 +53,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskFilesPage::TaskFilesPage()
 	{
-		m_fileItems = winrt::single_threaded_observable_vector<
-			winrt::Windows::Foundation::IInspectable>();
+		m_fileItems = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::FileDisplayItem>();
 	}
 
 	void TaskFilesPage::InitializeComponent()
 	{
 		TaskFilesPageT::InitializeComponent();
-		FilesListView().ItemsSource(m_fileItems);
 		UpdateSortHeaders();
 		Unloaded([this](auto, auto)
 		{
@@ -298,173 +299,194 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskFilesPage::RefreshFileList()
 	{
 		if (!m_isActive.load(std::memory_order_acquire)) return;
-		auto listView = FilesListView();
-		auto emptyText = EmptyStateText();
-		if (!listView) return;
-
-		if (!m_viewModel || !m_viewModel.SelectedTask())
+		auto const emptyText = EmptyStateText();
+		auto clear = [&]
 		{
 			m_fileItems.Clear();
+			m_selectedFile = nullptr;
+			m_displayedTaskKey = {};
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
-		}
+		};
+		if (!m_viewModel || !m_viewModel.SelectedTask()) { clear(); return; }
 
-		auto selectedTask = m_viewModel.SelectedTask();
-		auto taskType = selectedTask.TaskType();
+		auto const task = m_viewModel.SelectedTask();
+		bool const isTorrent = task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent;
+		bool const isHttp = task.TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http;
+		if (!isTorrent && !isHttp) { clear(); return; }
+		auto const taskId = winrt::to_string(isHttp ? task.Gid() : task.TaskId());
+		if (taskId.empty()) { clear(); return; }
 
-		if (taskType == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
+		struct FileSnapshot
 		{
-			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(winrt::to_string(selectedTask.Gid()));
-			if (!information || information->Files.empty())
+			std::wstring path;
+			std::uint64_t size{};
+			std::uint64_t done{};
+			int priority{};
+			int index{};
+		};
+		std::vector<FileSnapshot> files;
+		if (isHttp)
+		{
+			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(taskId);
+			if (!information || information->Files.empty()) { clear(); return; }
+			for (auto const& file : information->Files)
+				files.push_back({ std::wstring{ winrt::to_hstring(file.Path).c_str() }, file.Length, file.CompletedLength, file.Selected ? 1 : 0, static_cast<int>(file.Index) });
+		}
+		else
+		{
+			auto& p2p = ::OpenNet::Core::P2PManager::Instance();
+			if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore()) { clear(); return; }
+			auto const detail = p2p.TorrentCore()->GetTorrentFilesSnapshot(taskId);
+			for (auto const& file : detail.files)
+				if (!file.isPadFile)
+					files.push_back({ std::wstring{ winrt::to_hstring(file.path).c_str() }, static_cast<std::uint64_t>(file.size), static_cast<std::uint64_t>(file.bytesCompleted), file.priority, file.fileIndex });
+		}
+		if (files.empty()) { clear(); return; }
+
+		// Reset the tree when the task changes; stable path keys retain expansion during refresh.
+		auto const displayKey = winrt::to_hstring(isHttp ? "http:" + taskId : "torrent:" + taskId);
+		if (m_displayedTaskKey != displayKey)
+		{
+			m_fileItems.Clear();
+			m_selectedFile = nullptr;
+			m_displayedTaskKey = displayKey;
+		}
+		m_isRefreshing = true;
+		using FileItem = winrt::OpenNet::ViewModels::FileDisplayItem;
+		struct Node
+		{
+			FileItem item{ nullptr };
+			std::vector<std::wstring> children;
+			std::uint64_t size{};
+			std::uint64_t done{};
+			int priority{};
+		};
+		std::map<std::wstring, FileItem> previous;
+		auto collect = [&](auto&& self, FileItem const& item) -> void
+		{
+			previous.emplace(std::wstring{ item.IsFolder() ? L"D:" : L"F:" } + std::wstring{ item.Path().c_str() }, item);
+			for (auto const& child : item.Children()) self(self, child);
+		};
+		for (auto const& item : m_fileItems) collect(collect, item);
+		std::map<std::wstring, Node> nodes;
+		std::vector<std::wstring> roots;
+		auto addNode = [&](std::wstring const& key, std::wstring const& path, std::wstring const& name, bool folder, std::wstring const& parent) -> Node&
+		{
+			auto [it, inserted] = nodes.try_emplace(key);
+			if (inserted)
 			{
-				m_fileItems.Clear();
-				if (emptyText) emptyText.Visibility(Visibility::Visible);
-				return;
+				auto old = previous.find(key);
+				it->second.item = old == previous.end() ? winrt::make<winrt::OpenNet::ViewModels::implementation::FileDisplayItem>() : old->second;
+				it->second.item.Path(winrt::hstring{ path });
+				it->second.item.Name(winrt::hstring{ name });
+				it->second.item.IsFolder(folder);
+				if (parent.empty()) roots.push_back(key);
+				else nodes.at(parent).children.push_back(key);
 			}
-			m_isRefreshing = true;
-			for (std::uint32_t index = 0; index < information->Files.size(); ++index)
+			return it->second;
+		};
+		for (auto const& file : files)
+		{
+			std::wstring path = file.path;
+			std::replace(path.begin(), path.end(), L'\\', L'/');
+			auto const nameAt = path.find_last_of(L'/');
+			auto const name = nameAt == std::wstring::npos ? path : path.substr(nameAt + 1);
+			std::wstring parent;
+			if (isTorrent)
 			{
-				auto const& file = information->Files[index];
-				winrt::OpenNet::ViewModels::FileDisplayItem item{ nullptr };
-				if (index < m_fileItems.Size()) item = m_fileItems.GetAt(index).try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
-				if (!item)
+				std::wstring folderPath;
+				std::size_t start = 0;
+				while (path.find(L'/', start) != std::wstring::npos)
 				{
-					item = winrt::make<winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
-					if (index < m_fileItems.Size()) m_fileItems.SetAt(index, item); else m_fileItems.Append(item);
+					auto const slash = path.find(L'/', start);
+					auto const part = path.substr(start, slash - start);
+					if (!part.empty())
+					{
+						folderPath += (folderPath.empty() ? L"" : L"/") + part;
+						auto const key = L"D:" + folderPath;
+						addNode(key, folderPath, part, true, parent);
+						parent = key;
+					}
+					start = slash + 1;
 				}
-				item.Path(winrt::to_hstring(file.Path));
-				item.Size(::Core::Utils::Misc::friendlyUnit(file.Length));
-				item.ProgressValue(file.Length > 0 ? static_cast<double>(file.CompletedLength) * 100.0 / file.Length : 0.0);
-				item.Done(::Core::Utils::Misc::friendlyUnit(file.CompletedLength));
-				item.PriorityIndex(file.Selected ? 1 : 0);
-				item.FileIndex(static_cast<int32_t>(file.Index));
 			}
-			while (m_fileItems.Size() > information->Files.size()) m_fileItems.RemoveAtEnd();
-			if (emptyText) emptyText.Visibility(Visibility::Collapsed);
-			m_isRefreshing = false;
-			return;
+			auto& leaf = addNode(L"F:" + path, isTorrent ? path : file.path, name, false, parent);
+			leaf.size = file.size;
+			leaf.done = file.done;
+			leaf.priority = file.priority;
+			leaf.item.FileIndex(file.index);
+			leaf.item.PriorityIndex(isHttp ? file.priority : PriorityToComboIndex(file.priority));
+			leaf.item.IsPriorityEditable(isTorrent);
 		}
-
-		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+		// Children are sorted within their own folder, keeping the tree hierarchy intact.
+		auto update = [&](auto&& self, std::wstring const& key) -> void
 		{
-			m_fileItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
-		}
-
-		auto taskId = winrt::to_string(selectedTask.TaskId());
-		if (taskId.empty())
-		{
-			m_fileItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
-		}
-
-		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
-		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
-		{
-			m_fileItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
-		}
-
-		auto detail = p2p.TorrentCore()->GetTorrentFilesSnapshot(taskId);
-		std::erase_if(detail.files, [](auto const& file)
-		{
-			return file.isPadFile;
-		});
-
-		if (detail.files.empty())
-		{
-			m_fileItems.Clear();
-			if (emptyText) emptyText.Visibility(Visibility::Visible);
-			return;
-		}
-
-		m_isRefreshing = true; // Suppress ComboBox events during list rebuild
-
-		if (m_sortDirection != 0)
-		{
-			auto const direction = m_sortDirection;
-			auto const column = m_sortColumn;
-			std::stable_sort(detail.files.begin(), detail.files.end(),
-							 [direction, column](auto const& left, auto const& right)
+			auto& node = nodes.at(key);
+			for (auto const& child : node.children)
 			{
-				bool less = false;
-				if (column == L"Path") less = left.path < right.path;
-				else if (column == L"Size") less = left.size < right.size;
-				else if (column == L"Progress")
+				self(self, child);
+				node.size += nodes.at(child).size;
+				node.done += nodes.at(child).done;
+			}
+			node.item.Size(::Core::Utils::Misc::friendlyUnit(node.size));
+			node.item.Done(::Core::Utils::Misc::friendlyUnit(node.done));
+			node.item.ProgressValue(node.size ? static_cast<double>(node.done) * 100.0 / node.size : 0.0);
+		};
+		for (auto const& key : roots) update(update, key);
+		auto sort = [&](std::vector<std::wstring>& keys)
+		{
+			if (!m_sortDirection) return;
+			std::stable_sort(keys.begin(), keys.end(), [&](auto const& a, auto const& b)
+			{
+				auto const& left = nodes.at(a);
+				auto const& right = nodes.at(b);
+				if (left.item.IsFolder() != right.item.IsFolder()) return left.item.IsFolder();
+				auto compare = [&]() -> int
 				{
-					auto const lp = left.size > 0
-						? static_cast<double>(left.bytesCompleted) / left.size : 0.0;
-					auto const rp = right.size > 0
-						? static_cast<double>(right.bytesCompleted) / right.size : 0.0;
-					less = lp < rp;
-				}
-				else if (column == L"Done") less = left.bytesCompleted < right.bytesCompleted;
-				else if (column == L"Priority") less = left.priority < right.priority;
-				return direction == 1 ? less :
-					(column == L"Path" ? right.path < left.path :
-					 column == L"Size" ? right.size < left.size :
-					 column == L"Progress"
-					 ? (right.size > 0 ? static_cast<double>(right.bytesCompleted) / right.size : 0.0) <
-					 (left.size > 0 ? static_cast<double>(left.bytesCompleted) / left.size : 0.0)
-					 : column == L"Done" ? right.bytesCompleted < left.bytesCompleted
-					 : right.priority < left.priority);
+					if (m_sortColumn == L"Size" && left.size != right.size) return left.size < right.size ? -1 : 1;
+					if (m_sortColumn == L"Done" && left.done != right.done) return left.done < right.done ? -1 : 1;
+					if (m_sortColumn == L"Progress" && left.item.ProgressValue() != right.item.ProgressValue()) return left.item.ProgressValue() < right.item.ProgressValue() ? -1 : 1;
+					if (m_sortColumn == L"Priority" && left.priority != right.priority) return left.priority < right.priority ? -1 : 1;
+					return left.item.Name() < right.item.Name() ? -1 : left.item.Name() == right.item.Name() ? 0 : 1;
+				};
+				return m_sortDirection == 1 ? compare() < 0 : compare() > 0;
 			});
-		}
-
-		for (std::uint32_t index = 0; index < static_cast<std::uint32_t>(detail.files.size()); ++index)
+		};
+		auto reconcile = [&](auto const& desired, auto const& vector)
 		{
-			auto const& file = detail.files[index];
-			winrt::OpenNet::ViewModels::FileDisplayItem item{ nullptr };
-			std::uint32_t existingIndex = index;
-			while (existingIndex < m_fileItems.Size())
+			for (std::uint32_t index = 0; index < desired.size(); ++index)
 			{
-				auto candidate = m_fileItems.GetAt(existingIndex).try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
-				if (candidate && candidate.FileIndex() == file.fileIndex)
-				{
-					item = candidate;
-					break;
-				}
-				++existingIndex;
+				auto const item = nodes.at(desired[index]).item;
+				if (index < vector.Size() && vector.GetAt(index) == item) continue;
+				std::uint32_t found = index;
+				while (found < vector.Size() && vector.GetAt(found) != item) ++found;
+				if (found < vector.Size()) vector.RemoveAt(found);
+				vector.InsertAt(index, item);
 			}
-
-			if (item && existingIndex != index)
+			while (vector.Size() > desired.size()) vector.RemoveAtEnd();
+		};
+		auto populate = [&](auto&& self, std::vector<std::wstring>& keys, auto const& vector) -> void
+		{
+			sort(keys);
+			reconcile(keys, vector);
+			for (auto const& key : keys)
 			{
-				m_fileItems.RemoveAt(existingIndex);
-				m_fileItems.InsertAt(index, item);
+				auto& node = nodes.at(key);
+				if (node.item.IsFolder()) self(self, node.children, node.item.Children());
 			}
-			else if (!item)
-			{
-				item = winrt::make<winrt::OpenNet::ViewModels::implementation::FileDisplayItem>();
-				m_fileItems.InsertAt(index, item);
-			}
-			item.Path(winrt::to_hstring(file.path));
-			item.Size(::Core::Utils::Misc::friendlyUnit(file.size));
-
-			double progressPct = (file.size > 0)
-				? (static_cast<double>(file.bytesCompleted) / file.size * 100.0)
-				: 0.0;
-			item.ProgressValue(progressPct);
-			item.Done(::Core::Utils::Misc::friendlyUnit(file.bytesCompleted));
-			item.PriorityIndex(PriorityToComboIndex(file.priority));
-			item.FileIndex(file.fileIndex);
-		}
-		while (m_fileItems.Size() > detail.files.size())
-			m_fileItems.RemoveAtEnd();
-
+		};
+		populate(populate, roots, m_fileItems);
+		if (m_selectedFile && !nodes.contains(std::wstring{ m_selectedFile.IsFolder() ? L"D:" : L"F:" } + std::wstring{ m_selectedFile.Path().c_str() }))
+			m_selectedFile = nullptr;
 		if (emptyText) emptyText.Visibility(Visibility::Collapsed);
-
 		m_isRefreshing = false;
 	}
 
 	std::optional<TaskFilesPage::SelectedFileContext> TaskFilesPage::GetSelectedFileContext()
 	{
 		if (!m_viewModel || !m_viewModel.SelectedTask()) return std::nullopt;
-		auto const item = FilesListView().SelectedItem().try_as<
-			winrt::OpenNet::ViewModels::FileDisplayItem>();
-		if (!item) return std::nullopt;
+		auto const item = m_selectedFile;
+		if (!item || item.IsFolder()) return std::nullopt;
 		if (m_viewModel.SelectedTask().TaskType() == winrt::OpenNet::ViewModels::DownloadTaskType::Http)
 		{
 			auto const fullPath = std::filesystem::path{ item.Path().c_str() };
@@ -501,37 +523,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			nullptr, verb, context->fullPath.c_str(), nullptr, nullptr, SW_SHOW)) > 32;
 	}
 
-	void TaskFilesPage::FilesListView_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
+	void TaskFilesPage::SelectFileFromSource(winrt::Windows::Foundation::IInspectable const& originalSource)
 	{
-		auto const list = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ListView>();
-		auto source = args.OriginalSource().try_as<DependencyObject>();
-		while (list && source)
+		m_selectedFile = nullptr;
+		auto source = originalSource.try_as<DependencyObject>();
+		while (source && source != FilesListView())
 		{
-			if (auto const container = source.try_as<
-				winrt::Microsoft::UI::Xaml::Controls::ListViewItem>())
+			if (auto const item = source.try_as<winrt::Microsoft::UI::Xaml::Controls::TreeViewItem>())
 			{
-				list.SelectedItem(container.Content());
+				m_selectedFile = item.DataContext().try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
+				if (!m_selectedFile) m_selectedFile = item.Content().try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
+				if (!m_selectedFile)
+					if (auto const content = item.Content().try_as<winrt::Microsoft::UI::Xaml::FrameworkElement>())
+						m_selectedFile = content.DataContext().try_as<winrt::OpenNet::ViewModels::FileDisplayItem>();
 				break;
 			}
 			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
 		}
 	}
 
-	void TaskFilesPage::FilesListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& args)
+	void TaskFilesPage::FilesListView_RightTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args)
 	{
-		auto const list = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ListView>();
-		auto source = args.OriginalSource().try_as<DependencyObject>();
-		while (list && source)
-		{
-			if (auto const container = source.try_as<
-				winrt::Microsoft::UI::Xaml::Controls::ListViewItem>())
-			{
-				list.SelectedItem(container.Content());
-				break;
-			}
-			source = winrt::Microsoft::UI::Xaml::Media::VisualTreeHelper::GetParent(source);
-		}
-		LaunchSelectedFile(L"open");
+		SelectFileFromSource(args.OriginalSource());
+	}
+
+	void TaskFilesPage::FilesListView_DoubleTapped(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Input::DoubleTappedRoutedEventArgs const& args)
+	{
+		SelectFileFromSource(args.OriginalSource());
+		if (m_selectedFile && !m_selectedFile.IsFolder()) LaunchSelectedFile(L"open");
 	}
 
 	void TaskFilesPage::FileContextMenu_Opening(winrt::Windows::Foundation::IInspectable const&, winrt::Windows::Foundation::IInspectable const&)
@@ -636,10 +655,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		// Update the changed file's priority
-		if (fileIndex >= 0 && fileIndex < static_cast<int>(priorities.size()))
+		for (std::size_t index = 0; index < detail.files.size(); ++index)
 		{
-			priorities[fileIndex] = ComboIndexToPriority(selectedIndex);
+			if (detail.files[index].fileIndex != fileIndex) continue;
+			auto const priority = ComboIndexToPriority(selectedIndex);
+			if (PriorityToComboIndex(priorities[index]) == selectedIndex) return;
+			priorities[index] = priority;
 			p2p.TorrentCore()->SetFilePriorities(taskId, priorities);
+			break;
 		}
 	}
 

@@ -88,6 +88,13 @@
 	{
 		FileDisplayItem();
 		String Path;
+		String Name;
+		Boolean IsFolder;
+		Boolean IsExpanded;
+		Boolean IsPriorityEditable;
+		String NodeGlyph{ get; };
+		String NodeFontFamily{ get; };
+		Windows.Foundation.Collections.IObservableVector<FileDisplayItem> Children{ get; };
 		String Size;
 		Double ProgressValue;
 		String Done;

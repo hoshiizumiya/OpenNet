@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include <algorithm>
+#include <cwctype>
+#include <filesystem>
 #include "ViewModels/PeerDisplayItem.g.h"
 #include "ViewModels/TrackerDisplayItem.g.h"
 #include "ViewModels/HttpConnectionDisplayItem.g.h"
@@ -627,6 +630,41 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_path, v, L"Path");
 		}
 
+		winrt::hstring Name() const { return m_name; }
+		void Name(winrt::hstring const& value)
+		{
+			if (SetProperty(m_name, value, L"Name")) RaisePropertyChanged(L"NodeGlyph");
+		}
+		bool IsFolder() const { return m_isFolder; }
+		void IsFolder(bool value)
+		{
+			if (SetProperty(m_isFolder, value, L"IsFolder"))
+			{
+				RaisePropertyChanged(L"NodeGlyph");
+				RaisePropertyChanged(L"NodeFontFamily");
+			}
+		}
+		bool IsExpanded() const { return m_isExpanded; }
+		void IsExpanded(bool value) { SetProperty(m_isExpanded, value, L"IsExpanded"); }
+		bool IsPriorityEditable() const { return m_isPriorityEditable; }
+		void IsPriorityEditable(bool value) { SetProperty(m_isPriorityEditable, value, L"IsPriorityEditable"); }
+		winrt::hstring NodeGlyph() const
+		{
+			if (m_isFolder) return L"\U0001F4C1";
+			std::wstring const name{ m_name.c_str() };
+			auto extension = std::filesystem::path{ name }.extension().wstring();
+			std::transform(extension.begin(), extension.end(), extension.begin(), ::towlower);
+			if (extension == L".mp4" || extension == L".mkv" || extension == L".avi") return L"\uE714";
+			if (extension == L".mp3" || extension == L".flac" || extension == L".wav") return L"\uE189";
+			if (extension == L".png" || extension == L".jpg" || extension == L".jpeg") return L"\uEB9F";
+			return L"\uE8A5";
+		}
+		winrt::hstring NodeFontFamily() const { return m_isFolder ? L"Segoe UI Emoji" : L"Segoe Fluent Icons"; }
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::FileDisplayItem> Children() const
+		{
+			return m_children;
+		}
+
 		winrt::hstring Size() const
 		{
 			return m_size;
@@ -674,6 +712,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	private:
 		winrt::hstring m_path;
+		winrt::hstring m_name;
+		bool m_isFolder{};
+		bool m_isExpanded{ true };
+		bool m_isPriorityEditable{};
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::FileDisplayItem> m_children{
+			winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::FileDisplayItem>()
+		};
 		winrt::hstring m_size;
 		double m_progressValue{};
 		winrt::hstring m_done;
