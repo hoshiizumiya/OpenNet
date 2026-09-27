@@ -1,4 +1,6 @@
-﻿/*
+module;
+
+/*
  * PROJECT:   OpenNet
  * FILE:      Core/IPFilter/IPFilterManager.cpp
  * PURPOSE:   IP filter management implementation.
@@ -22,7 +24,8 @@
 #include <sstream>
 #include <string_view>
 #include <utility>
-#include "Core/IPFilter/IPFilterManager.h"
+
+module OpenNet.Core.IPFilter.IPFilterManager;
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.IO.FileSystem;

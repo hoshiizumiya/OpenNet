@@ -1,6 +1,6 @@
-﻿/*
+/*
  * PROJECT:   OpenNet
- * FILE:      Core/DataGraph/SpeedGraphDatabase.h
+ * FILE:      Core/DataGraph/SpeedGraphDatabase.ixx
  * PURPOSE:   SQLite persistence for speed graph data points.
  *            Stores (taskId, percent, speedKB) rows so the graph
  *            can be reconstructed when a task is re-selected.
@@ -11,20 +11,20 @@
  * LICENSE:   The MIT License
  */
 
-#pragma once
-
-import std;
-using namespace std;
-
+module;
 struct sqlite3;
 
-namespace OpenNet::Core
+export module OpenNet.Core.DataGraph.SpeedGraphDatabase;
+
+export import std;
+
+export namespace OpenNet::Core
 {
     /// A single speed data point
     struct SpeedPoint
     {
         int percent;        // 0-100
-        uint64_t speedKB;   // download speed in KB/s
+        std::uint64_t speedKB;   // download speed in KB/s
     };
 
     /// Thread-safe singleton that stores speed graph data in SQLite.
@@ -40,7 +40,7 @@ namespace OpenNet::Core
         void Close();
 
         /// Save a speed data point for a task (UPSERT by taskId+percent)
-        void SavePoint(std::string const& taskId, int percent, uint64_t speedKB);
+        void SavePoint(std::string const& taskId, int percent, std::uint64_t speedKB);
 
         /// Load all speed points for a task, sorted by percent ascending
         std::vector<SpeedPoint> LoadPoints(std::string const& taskId);

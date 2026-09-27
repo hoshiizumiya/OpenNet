@@ -1,18 +1,19 @@
-﻿/*
+/*
  * PROJECT:   OpenNet
- * FILE:      Core/ClientFilter/ClientFilterManager.h
+ * FILE:      Core/ClientFilter/ClientFilterManager.ixx
  * PURPOSE:   Persistent BitTorrent peer-client filtering and hit history.
  *
  * LICENSE:   The MIT License
  */
 
-#pragma once
-
-import std;
-
+module;
 struct sqlite3;
 
-namespace OpenNet::Core
+export module OpenNet.Core.ClientFilter.ClientFilterManager;
+
+export import std;
+
+export namespace OpenNet::Core
 {
 	enum class ClientMatchType : std::int32_t
 	{

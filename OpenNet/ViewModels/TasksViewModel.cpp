@@ -1,11 +1,12 @@
-﻿#include "XamlWorkaround.h"
+#include "XamlWorkaround.h"
 #include "ViewModels/TasksViewModel.h"
-#include "Core/DataGraph/SpeedGraphDatabase.h"
-#include "Core/IPFilter/IPFilterManager.h"
-#include "Core/ClientFilter/ClientFilterManager.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 #include "mvvm_framework/notify_property_changed.h"
 
+
+import OpenNet.Core.DataGraph.SpeedGraphDatabase;
+import OpenNet.Core.ClientFilter.ClientFilterManager;
+import OpenNet.Core.IPFilter.IPFilterManager;
 import Core.Utils.Misc;
 import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.AppSettingsDatabase;

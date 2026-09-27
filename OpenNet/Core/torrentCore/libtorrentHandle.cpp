@@ -1,6 +1,5 @@
-﻿module;
+module;
 #include "WindowsPlatform.h"
-#include "Core/DataGraph/SpeedGraphDatabase.h"
 #include <wincrypt.h>
 #pragma comment(lib, "crypt32.lib")
 #include "LibtorrentIncludeGuard.h"
@@ -25,8 +24,6 @@
 #include <libtorrent/peer_info.hpp>
 #include <libtorrent/close_reason.hpp>
 #include <libtorrent/error_code.hpp>
-#include "Core/ClientFilter/ClientFilterManager.h"
-#include "Core/IPFilter/IPFilterManager.h"
 #include <libtorrent/session_stats.hpp>
 #include <libtorrent/ip_filter.hpp>
 #include <libtorrent/pread_disk_io.hpp>
@@ -38,6 +35,10 @@
 #include "LibtorrentIncludeRestore.h"
 
 module OpenNet.Core.torrentCore.LibtorrentHandle;
+
+import OpenNet.Core.DataGraph.SpeedGraphDatabase;
+import OpenNet.Core.ClientFilter.ClientFilterManager;
+import OpenNet.Core.IPFilter.IPFilterManager;
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.ContentCatalogService;

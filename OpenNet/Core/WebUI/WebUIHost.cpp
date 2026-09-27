@@ -1,4 +1,4 @@
-﻿#ifndef WIN32_LEAN_AND_MEAN
+#ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
 #endif
 #ifndef NOMINMAX
@@ -21,8 +21,9 @@
 #include "LibtorrentIncludeRestore.h"
 #include <nlohmann/json.hpp>
 
-#include "Core/IPFilter/IPFilterManager.h"
 
+
+import OpenNet.Core.IPFilter.IPFilterManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.GeoIP.GeoIPManager;
 import OpenNet.Core.IO.FileSystem;
