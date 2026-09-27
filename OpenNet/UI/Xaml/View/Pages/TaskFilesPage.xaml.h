@@ -13,6 +13,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TaskFilesPage();
 		~TaskFilesPage();
 		void InitializeComponent();
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::FileDisplayItem> FileTree() const { return m_fileItems; }
 
 		void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 		void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
@@ -43,7 +44,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerTickToken{};
 		std::atomic_bool m_isActive{};
-		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_fileItems{ nullptr };
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::FileDisplayItem> m_fileItems{ nullptr };
+		winrt::OpenNet::ViewModels::FileDisplayItem m_selectedFile{ nullptr };
+		winrt::hstring m_displayedTaskKey;
 
 		// Suppress priority change events during list refresh
 		bool m_isRefreshing{ false };
@@ -60,6 +63,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void AutoSizeColumn(winrt::XamlToolkit::Labs::WinUI::DataColumn const& column);
 		winrt::XamlToolkit::Labs::WinUI::DataColumn ColumnForTag(winrt::hstring const& tag);
 		void SynchronizeFileRows();
+		void SelectFileFromSource(winrt::Windows::Foundation::IInspectable const& source);
 
 		struct SelectedFileContext
 		{

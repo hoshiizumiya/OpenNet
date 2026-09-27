@@ -1,8 +1,11 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages
+﻿import "ViewModels/DisplayItems.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages
 {
     [default_interface]
     runtimeclass TaskFilesPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         TaskFilesPage();
+		Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.FileDisplayItem> FileTree{ get; };
     }
 }
