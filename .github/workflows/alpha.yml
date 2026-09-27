@@ -1,4 +1,4 @@
-﻿name: Alpha
+name: Alpha
 
 on:
   workflow_dispatch:
@@ -58,7 +58,7 @@ jobs:
 
       - name: Find successful Canary run by SHA
         id: pick
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
             const owner = context.repo.owner;
