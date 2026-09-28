@@ -31,6 +31,7 @@ import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Windows.Storage;
 import winrt.Microsoft.Windows.Storage;
+import winrt.Microsoft.Windows.AppNotifications;
 import winrt.Microsoft.UI.Xaml.Controls;
 
 using namespace winrt;
@@ -48,6 +49,16 @@ namespace winrt::OpenNet::implementation
 	{
 		// Initialize theme system early
 		::OpenNet::Helpers::ThemeHelper::Initialize();
+		try
+		{
+			winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Register();
+			s_notificationRegistered = true;
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			OutputDebugStringW((L"App: notification registration failed: "
+								+ std::wstring{ error.message().c_str() } + L"\n").c_str());
+		}
 
 		// Xaml objects should not call InitializeComponent during construction.
 		// See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent
@@ -430,6 +441,11 @@ namespace winrt::OpenNet::implementation
 			{
 				OutputDebugStringA("App: Warning - engines not yet shut down, doing emergency shutdown\n");
 				ShutdownEngines();
+			}
+			if (s_notificationRegistered)
+			{
+				winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Unregister();
+				s_notificationRegistered = false;
 			}
 
 			OutputDebugStringA("App: Destructor completed\n");

@@ -11,6 +11,8 @@
 import OpenNet.Factory.OperationProgressDialog;
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.Core.Utils.Message;
+import OpenNet.Core.Notification.HttpToastNotification;
+import OpenNet.Service.Notification.InfoBarService;
 import winrt.Windows.Foundation;
 
 using namespace winrt;
@@ -47,6 +49,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void DevWindow::SendAppNotify_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
 	{
+		const bool submitted = ::OpenNet::Core::Notification::ShowTestNotification();
+		NotificationTestInfoBar().Title(submitted
+										? L"Notification submitted" : L"Notification failed");
+		NotificationTestInfoBar().Message(submitted
+										  ? L"Check Windows notifications for the OpenNet test message."
+										  : L"Windows rejected the notification request. Check the debug output.");
+		NotificationTestInfoBar().Severity(submitted
+										   ? winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Success
+										   : winrt::Microsoft::UI::Xaml::Controls::InfoBarSeverity::Error);
+		NotificationTestInfoBar().IsOpen(true);
+		::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+			submitted
+			? ::OpenNet::Service::Notification::InfoBarMessage::Success(L"DevWindow notification test")
+			: ::OpenNet::Service::Notification::InfoBarMessage::Error(L"DevWindow notification request failed"));
 	}
 
 	fire_and_forget DevWindow::OpenOperationProgressDialog_Click(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)

@@ -41,6 +41,10 @@
 
         <ScrollView Grid.Row="1">
             <StackPanel Margin="16" Spacing="10">
+                <InfoBar
+                    x:Name="NotificationTestInfoBar"
+                    IsClosable="True"
+                    IsOpen="False" />
                 <essential:SettingsCard
                     x:Uid="ViewDevWindowSettingsCardOpenSpeedGraphWindow"
                     Description="Open the isolated static/dynamic Win2D graph test studio."

@@ -61,6 +61,7 @@ export namespace winrt::OpenNet::implementation
 		static inline bool s_isHandlingClose{ false };
 		static inline std::atomic_bool s_enginesShutdown{ false };
 		static inline std::atomic_bool s_mainExperienceStarted{ false };
+		static inline bool s_notificationRegistered{ false };
 		static inline winrt::Microsoft::Windows::AppLifecycle::AppInstance s_appInstance{ nullptr };
 		static inline winrt::event_token s_activatedToken{};
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue s_uiDispatcher{ nullptr };

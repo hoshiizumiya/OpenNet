@@ -1,4 +1,4 @@
-module;
+﻿module;
 
 /*
  * PROJECT:   OpenNet
@@ -73,33 +73,57 @@ namespace OpenNet::Core
 
 	bool SpeedGraphDatabase::CreateTables()
 	{
-		const char* sql = R"(
-			CREATE TABLE IF NOT EXISTS speed_graph (
-				task_id  TEXT    NOT NULL,
-				percent  INTEGER NOT NULL,
-				speed_kb INTEGER NOT NULL,
-				PRIMARY KEY (task_id, percent)
-			);
-			CREATE TABLE IF NOT EXISTS speed_graph_v2 (
-				task_id      TEXT    NOT NULL,
-				progress_ppm INTEGER NOT NULL,
-				speed_kb     INTEGER NOT NULL,
-				PRIMARY KEY (task_id, progress_ppm)
-			);
-			INSERT OR IGNORE INTO speed_graph_v2 (task_id, progress_ppm, speed_kb)
-				SELECT task_id, percent * 10000, speed_kb FROM speed_graph;
-		)";
-
-		char* errMsg = nullptr;
-		int rc = sqlite3_exec(m_db, sql, nullptr, nullptr, &errMsg);
-		if (rc != SQLITE_OK)
+		auto const execute = [this](char const* sql)
 		{
-			OutputDebugStringA(("SpeedGraphDatabase: CreateTables error: " +
-								std::string(errMsg ? errMsg : "unknown") + "\n").c_str());
-			sqlite3_free(errMsg);
+			char* message{};
+			auto const result = sqlite3_exec(m_db, sql, nullptr, nullptr, &message);
+			if (result == SQLITE_OK) return true;
+			OutputDebugStringA(("SpeedGraphDatabase: schema error: "
+								+ std::string(message ? message : "unknown") + "\n").c_str());
+			sqlite3_free(message);
 			return false;
+		};
+		auto const tableExists = [this](char const* name)
+		{
+			sqlite3_stmt* statement{};
+			if (sqlite3_prepare_v2(m_db,
+								   "SELECT 1 FROM sqlite_master WHERE type = 'table' AND name = ?;",
+								   -1, &statement, nullptr) != SQLITE_OK) return false;
+			sqlite3_bind_text(statement, 1, name, -1, SQLITE_STATIC);
+			bool const found = sqlite3_step(statement) == SQLITE_ROW;
+			sqlite3_finalize(statement);
+			return found;
+		};
+		bool legacy{};
+		sqlite3_stmt* columns{};
+		if (sqlite3_prepare_v2(m_db, "PRAGMA table_info(speed_graph);",
+							   -1, &columns, nullptr) != SQLITE_OK) return false;
+		while (sqlite3_step(columns) == SQLITE_ROW)
+		{
+			auto const* name = reinterpret_cast<char const*>(sqlite3_column_text(columns, 1));
+			legacy |= name && std::string_view{ name } == "percent";
 		}
-		return true;
+		sqlite3_finalize(columns);
+		if (!execute("BEGIN IMMEDIATE TRANSACTION;")) return false;
+		bool success = true;
+		if (legacy)
+			success = execute("ALTER TABLE speed_graph RENAME TO speed_graph_legacy;");
+		if (success)
+			success = execute(R"(
+			CREATE TABLE IF NOT EXISTS speed_graph (
+				task_id TEXT NOT NULL,
+				progress_ppm INTEGER NOT NULL,
+				speed_kb INTEGER NOT NULL,
+				PRIMARY KEY (task_id, progress_ppm)
+			);)");
+		if (success && legacy)
+			success = execute("INSERT OR IGNORE INTO speed_graph "
+							  "SELECT task_id, percent * 10000, speed_kb FROM speed_graph_legacy;");
+		if (success && legacy)
+			success = execute("DROP TABLE speed_graph_legacy;");
+		if (success) success = execute("COMMIT;");
+		if (!success) sqlite3_exec(m_db, "ROLLBACK;", nullptr, nullptr, nullptr);
+		return success;
 	}
 
 	void SpeedGraphDatabase::SavePoint(std::string const& taskId, double percent, uint64_t speedKB)
@@ -117,7 +141,7 @@ namespace OpenNet::Core
 		}
 
 		const char* sql =
-			"INSERT OR REPLACE INTO speed_graph_v2 (task_id, progress_ppm, speed_kb) VALUES (?, ?, ?);";
+			"INSERT OR REPLACE INTO speed_graph (task_id, progress_ppm, speed_kb) VALUES (?, ?, ?);";
 		sqlite3_stmt* stmt = nullptr;
 		int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
 		if (rc != SQLITE_OK)
@@ -143,7 +167,7 @@ namespace OpenNet::Core
 		if (!m_db) return result;
 
 		const char* sql =
-			"SELECT progress_ppm, speed_kb FROM speed_graph_v2 WHERE task_id = ? ORDER BY progress_ppm ASC;";
+			"SELECT progress_ppm, speed_kb FROM speed_graph WHERE task_id = ? ORDER BY progress_ppm ASC;";
 
 		sqlite3_stmt* stmt = nullptr;
 		int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
@@ -172,7 +196,7 @@ namespace OpenNet::Core
 			sampled.reserve(MaxGraphPoints);
 			for (std::size_t index = 0; index < MaxGraphPoints; ++index)
 				sampled.push_back(result[index * (result.size() - 1)
-					/ (MaxGraphPoints - 1)]);
+								  / (MaxGraphPoints - 1)]);
 			return sampled;
 		}
 		return result;
@@ -185,7 +209,7 @@ namespace OpenNet::Core
 		std::lock_guard lk(m_mutex);
 		if (!m_db) return;
 
-		const char* sql = "DELETE FROM speed_graph_v2 WHERE task_id = ?;";
+		const char* sql = "DELETE FROM speed_graph WHERE task_id = ?;";
 
 		sqlite3_stmt* stmt = nullptr;
 		int rc = sqlite3_prepare_v2(m_db, sql, -1, &stmt, nullptr);
@@ -199,16 +223,6 @@ namespace OpenNet::Core
 		sqlite3_step(stmt);
 		sqlite3_finalize(stmt);
 		m_lastSavedProgressPpm.erase(taskId);
-		// Old rows must also be removed or the startup migration restores them.
-		if (sqlite3_prepare_v2(m_db,
-			"DELETE FROM speed_graph WHERE task_id = ?;", -1, &stmt,
-			nullptr) == SQLITE_OK)
-		{
-			sqlite3_bind_text(stmt, 1, taskId.c_str(),
-				static_cast<int>(taskId.size()), SQLITE_TRANSIENT);
-			sqlite3_step(stmt);
-			sqlite3_finalize(stmt);
-		}
 	}
 
 } // namespace OpenNet::Core

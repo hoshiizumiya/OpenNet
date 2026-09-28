@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 
 #include "XamlWorkaround.h"
 #include "TaskSummaryPage.xaml.h"
@@ -133,17 +133,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			TaskSpeedGraph().Reset();
 			m_graphTaskId = task.TaskId();
+			m_storedDetail.reset();
+			m_storedPieces.reset();
 
 			auto const taskId = to_string(task.TaskId());
 			if (!taskId.empty())
 			{
 				auto const points = ::OpenNet::Core::SpeedGraphDatabase::Instance().LoadPoints(taskId);
+				std::vector<std::pair<double, std::uint64_t>> history;
+				history.reserve(points.size());
 				for (auto const& point : points)
-				{
-					TaskSpeedGraph().SetSpeed(
-						static_cast<double>(point.percent),
-						point.speedKB * 1024);
-				}
+					history.emplace_back(point.percent, point.speedKB * 1024);
+				winrt::get_self<winrt::OpenNet::Controls::SpeedGraph::implementation::SpeedGraph>(
+					TaskSpeedGraph())->RestoreHistory(history);
 			}
 		}
 
@@ -217,8 +219,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto const taskId = to_string(task.TaskId());
-		auto const detail = core->GetTorrentSummary(taskId);
-		auto const pieces = core->GetTorrentPieceSummary(taskId);
+		auto detail = m_storedDetail && (
+			task.State() == winrt::OpenNet::ViewModels::DownloadTaskState::Paused
+			|| task.State() == winrt::OpenNet::ViewModels::DownloadTaskState::Completed
+			|| task.State() == winrt::OpenNet::ViewModels::DownloadTaskState::Failed)
+			? *m_storedDetail : core->GetTorrentSummary(taskId);
+		if (!detail.isResident)
+		{
+			if (!m_storedDetail)
+				m_storedDetail = core->GetTorrentFilesSnapshot(taskId);
+			detail = *m_storedDetail;
+		}
+		else
+		{
+			m_storedDetail.reset();
+			m_storedPieces.reset();
+		}
+		auto pieces = m_storedPieces && !detail.isResident
+			? *m_storedPieces : core->GetTorrentPieceSummary(taskId);
+		if (!detail.isResident && !m_storedPieces)
+			m_storedPieces = pieces;
 		auto const progress = detail.progressPpm / 10000.0;
 		TaskSpeedGraph().SetSpeed(
 			progress,
@@ -253,14 +273,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			detail.numComplete >= 0
 			? FormatLocalized(L"TaskSummaryConnectedOfTotal", {
 				to_hstring(detail.numSeeds),
-				to_hstring(std::max(detail.numSeeds, detail.numComplete))})
-			: FormatLocalized(L"TaskSummaryConnectedCount", { to_hstring(detail.numSeeds) }));
+				to_hstring(std::max(detail.numSeeds, detail.numComplete)) })
+				: FormatLocalized(L"TaskSummaryConnectedCount", { to_hstring(detail.numSeeds) }));
 		PeersText().Text(
 			detail.numIncomplete >= 0
 			? FormatLocalized(L"TaskSummaryConnectedOfTotal", {
 				to_hstring(detail.numPeers),
-				to_hstring(std::max(detail.numPeers, detail.numIncomplete))})
-			: FormatLocalized(L"TaskSummaryConnectedCount", { to_hstring(detail.numPeers) }));
+				to_hstring(std::max(detail.numPeers, detail.numIncomplete)) })
+				: FormatLocalized(L"TaskSummaryConnectedCount", { to_hstring(detail.numPeers) }));
 		ConnectionsText().Text(std::format(L"{}", detail.numConnections));
 		ShareRatioText().Text(std::format(L"{:.2f}", detail.shareRatio));
 
@@ -276,7 +296,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		LongTermShareRatioText().Text(
 			longTermSeeding
 			? hstring{ std::format(L"{:.2f}", detail.shareRatio) }
-			: ResourceGetString(L"CommonNotAvailable"));
+		: ResourceGetString(L"CommonNotAvailable"));
 
 		TaskSizeText().Text(
 			std::format(
@@ -288,11 +308,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		InfoHashV1Text().Text(
 			detail.infoHashV1.empty()
 			? ResourceGetString(L"CommonNotAvailable")
-		: to_hstring(detail.infoHashV1));
+			: to_hstring(detail.infoHashV1));
 		InfoHashV2Text().Text(
 			detail.infoHashV2.empty()
 			? ResourceGetString(L"CommonNotAvailable")
-		: to_hstring(detail.infoHashV2));
+			: to_hstring(detail.infoHashV2));
 		hstring pieceHashLabel = ResourceGetString(L"CommonNotAvailable");
 		if (!detail.infoHashV2.empty()) pieceHashLabel = ResourceGetString(L"TaskSummarySha256");
 		else if (!detail.infoHashV1.empty()) pieceHashLabel = ResourceGetString(L"TaskSummarySha1");
@@ -312,11 +332,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		QueuePositionText().Text(
 			detail.queuePosition >= 0
 			? hstring{ std::format(L"{}", detail.queuePosition + 1) }
-			: ResourceGetString(L"CommonNotAvailable"));
+		: ResourceGetString(L"CommonNotAvailable"));
 		CreatedByText().Text(
 			detail.creator.empty()
 			? ResourceGetString(L"CommonNotAvailable")
-		: to_hstring(detail.creator));
+			: to_hstring(detail.creator));
 		CreatedOnText().Text(FormatTimestamp(detail.creationTimestamp));
 		PrivateTorrentText().Text(detail.isPrivate ? ResourceGetString(L"CommonYes") : ResourceGetString(L"CommonNo"));
 		DescriptionText().Text(

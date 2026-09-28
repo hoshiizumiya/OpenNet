@@ -23,15 +23,23 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 
 	void SpeedGraph::SetSpeed(double percent, uint64_t speed)
 	{
-		m_pendingPercent = percent;
-		m_pendingSpeed = speed;
-		m_hasPendingSample = true;
 		auto const actualSize = ActualSize();
 		if (actualSize.x <= 0.0f || actualSize.y <= 0.0f)
 		{
+			m_pendingPercent = percent;
+			m_pendingSpeed = speed;
+			m_hasPendingSample = true;
 			return;
 		}
+		if (!m_pendingHistory.empty())
+		{
+			auto samples = std::move(m_pendingHistory);
+			m_pendingHistory.clear();
+			RestoreHistory(samples);
+		}
+		m_hasPendingSample = false;
 		m_graphData.NewSize(winrt::Windows::Foundation::Size{ actualSize.x, actualSize.y });
+		m_graphData.Points();
 
 		auto const [newScaleRatio, needAnimation] = m_graphData.SetSpeed(percent, speed);
 
@@ -50,6 +58,36 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 			GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
 			SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 			//m_graphData.NewSize(ActualSize());
+			m_hasData = true;
+		}
+	}
+
+	void SpeedGraph::RestoreHistory(
+		std::vector<std::pair<double, std::uint64_t>> const& samples)
+	{
+		if (samples.empty()) return;
+		auto const actualSize = ActualSize();
+		if (actualSize.x <= 0.0f || actualSize.y <= 0.0f)
+		{
+			m_pendingHistory = samples;
+			return;
+		}
+		m_pendingHistory.clear();
+		m_graphData.NewSize(winrt::Windows::Foundation::Size{ actualSize.x, actualSize.y });
+		m_graphData.Points();
+		for (auto const& [percent, speed] : samples)
+		{
+			auto const [ratio, animation] = m_graphData.SetSpeed(percent, speed);
+			(void)animation;
+			if (ratio != 1.0f) m_graphData.SetRatio(ratio);
+		}
+		GraphScale().ScaleY(m_graphData.GetRatio());
+		AverageSpeedText().Text(
+			ReadableUnitConverter::Speed::ToString<wchar_t>(samples.back().second).data());
+		if (m_graphData.Points().Size() >= 2)
+		{
+			GraphGrid().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Visible);
+			SpeedGraphNoDataAvailableText().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 			m_hasData = true;
 		}
 	}
@@ -133,8 +171,10 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 	{
 		// Reset the graph data to initial state
 		m_graphData.Reset();
+		GraphScale().ScaleY(1.0);
 		m_hasData = false;
 		m_hasPendingSample = false;
+		m_pendingHistory.clear();
 
 		// Reset the size for the new data
 		auto const actualSize = ActualSize();
@@ -153,7 +193,13 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 		winrt::Microsoft::UI::Xaml::SizeChangedEventArgs const& e)
 	{
 		m_graphData.Resize(e.NewSize());
-		if (!m_hasData && m_hasPendingSample)
+		if (!m_pendingHistory.empty())
+		{
+			auto samples = std::move(m_pendingHistory);
+			m_pendingHistory.clear();
+			RestoreHistory(samples);
+		}
+		if (m_hasPendingSample)
 		{
 			auto const percent = m_pendingPercent;
 			auto const speed = m_pendingSpeed;

@@ -769,9 +769,10 @@
                                 Icon="{essential:FontIcon Glyph=&#xE74D;}"
                                 Text="Delete" />
                             <MenuFlyoutItem
+                                x:Name="CleanUpTaskMenuItem"
                                 x:Uid="TasksContextCleanUp"
                                 AutomationProperties.AutomationId="TasksContextCleanUp"
-                                IsEnabled="False"
+                                Click="CleanUpTaskMenuItem_ClickAsync"
                                 Text="Clean Up" />
                             <MenuFlyoutSeparator />
                             <MenuFlyoutSubItem

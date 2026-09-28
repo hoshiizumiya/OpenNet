@@ -23,6 +23,7 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 		SpeedGraph() = default;
 
 		void SetSpeed(double percent, uint64_t speed);
+		void RestoreHistory(std::vector<std::pair<double, std::uint64_t>> const& samples);
 
 		void Pause();
 		void Error();
@@ -39,6 +40,7 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 		double m_pendingPercent{};
 		std::uint64_t m_pendingSpeed{};
 		bool m_hasPendingSample{};
+		std::vector<std::pair<double, std::uint64_t>> m_pendingHistory;
 
 		/**
 		 * @brief Recalculate graph point because of the speed scale changed
@@ -57,7 +59,7 @@ namespace winrt::OpenNet::Controls::SpeedGraph::implementation
 
 		constexpr static winrt::Microsoft::UI::Xaml::Duration speedLineAndTextAnimationDuration
 		{
-			.TimeSpan = std::chrono::milliseconds{300},
+			.TimeSpan = std::chrono::milliseconds{ 300 },
 			.Type = winrt::Microsoft::UI::Xaml::DurationType::TimeSpan
 		};
 	public:

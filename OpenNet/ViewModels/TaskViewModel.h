@@ -185,7 +185,16 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		std::int32_t StateValue() const noexcept
 		{
-			return static_cast<std::int32_t>(m_state);
+			return m_targetPathMissing ? 7 : static_cast<std::int32_t>(m_state);
+		}
+		bool TargetPathMissing() const noexcept
+		{
+			return m_targetPathMissing;
+		}
+		void TargetPathMissing(bool value)
+		{
+			if (SetProperty(m_targetPathMissing, value, L"TargetPathMissing"))
+				RaisePropertyChanged(L"StateValue");
 		}
 
 		// Task identifier — libtorrent taskId or HTTP recordId
@@ -255,6 +264,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_taskId;
 		winrt::OpenNet::ViewModels::DownloadTaskType m_taskType{ winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent };
 		winrt::OpenNet::ViewModels::DownloadTaskState m_state{ winrt::OpenNet::ViewModels::DownloadTaskState::Pending };
+		bool m_targetPathMissing{};
 		std::uint64_t m_downloadSpeedKB{ 0 };
 		double m_progressPercent{ 0.0 };
 		SpeedGraphData m_speedGraphData;

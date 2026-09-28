@@ -92,8 +92,9 @@ export namespace OpenNet::Core
 			bool startImmediately = true);
 		winrt::Windows::Foundation::IAsyncOperation<bool> AddTorrentFileAsync(std::string torrentFilePath, std::string savePath, std::vector<int> const& filePriorities = {}, std::vector<std::string> const& extraTrackers = {}, bool startImmediately = true, bool seedMode = false);
 
-		// Load all saved tasks and resume them
-		winrt::Windows::Foundation::IAsyncAction LoadAndResumeSavedTasksAsync();
+		// Validate saved paths without loading torrents or changing persisted state.
+		winrt::Windows::Foundation::IAsyncAction ValidateSavedTaskPathsAsync();
+		std::unordered_set<std::string> MissingTaskPaths();
 
 		// Get all saved task metadata
 		std::vector<::OpenNet::Core::Torrent::TaskMetadata> GetAllTasks();
@@ -129,6 +130,7 @@ export namespace OpenNet::Core
 		std::unique_ptr<::OpenNet::Core::Torrent::LibtorrentHandle> m_torrentCore;
 		std::unique_ptr<::OpenNet::Core::Torrent::TorrentStateManager> m_stateManager;
 		std::mutex m_torrentMutex;
+		std::unordered_set<std::string> m_missingTaskPaths;
 		// Concurrent callers share one attempt and receive its success or
 		// failure. This avoids polling forever when initialization fails.
 		std::mutex m_lifecycleMutex;

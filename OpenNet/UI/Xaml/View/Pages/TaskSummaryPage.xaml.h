@@ -39,6 +39,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::event_token m_timerTickToken{};
 		std::atomic_bool m_isActive{};
 		winrt::hstring m_graphTaskId;
+		std::optional<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo> m_storedDetail;
+		std::optional<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPieceInfo> m_storedPieces;
 	};
 }
 
