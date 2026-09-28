@@ -3134,11 +3134,17 @@ namespace OpenNet::Core
 							hsm.UpdateRecordStatus(recordId, persistedStatus);
 						}
 
-						auto const graphPercent = hybridState
-							? hybridState->progressPercent
-							: task.TotalLength > 0
-							? static_cast<int>((task.CompletedLength * 100) / task.TotalLength)
-							: 0;
+						auto const graphTotal = hybridState
+							? hybridState->job.expectedSize : task.TotalLength;
+						auto const graphCompleted = hybridState
+							? static_cast<std::uint64_t>((std::max)(
+								std::int64_t{}, hybridState->completedBytes))
+							: task.CompletedLength;
+						auto const graphPercent = graphTotal > 0
+							? std::clamp(static_cast<double>(
+								static_cast<long double>(graphCompleted) * 100.0L
+								/ graphTotal), 0.0, 100.0)
+							: 0.0;
 						auto const graphSpeedBytes = hybridState
 							? static_cast<std::uint64_t>((std::max)(
 								std::int64_t{}, hybridState->downloadRate))

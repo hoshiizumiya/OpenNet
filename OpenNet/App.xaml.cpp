@@ -701,8 +701,6 @@ namespace winrt::OpenNet::implementation
 			if (!settingsDatabase.GetBool("webui_host", "enabled").value_or(true)) co_return;
 			auto dispatcher =
 				Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
-			co_await ::OpenNet::Core::P2PManager::Instance()
-				.EnsureTorrentCoreInitializedAsync();
 			co_await winrt::resume_background();
 			::OpenNet::Core::WebUI::WebUIOptions options;
 			options.shutdownCallback = [dispatcher]

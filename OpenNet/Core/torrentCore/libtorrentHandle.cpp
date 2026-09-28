@@ -3254,7 +3254,7 @@ namespace OpenNet::Core::Torrent
 					}
 
 					::OpenNet::Core::SpeedGraphDatabase::Instance().SavePoint(
-						taskId, evt.progressPercent,
+						taskId, WantedProgressPpm(s) / 10000.0,
 						static_cast<std::uint64_t>((std::max)(0, evt.downloadRateKB)));
 
 					if (m_stateManager)

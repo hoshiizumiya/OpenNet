@@ -18,7 +18,7 @@ namespace OpenNet::Core::WebUI
 		// "qbittorrent" or "vuetorrent". Both use the same OpenNet Web API.
 		std::string frontend{ "qbittorrent" };
 		std::filesystem::path assetRoot;
-		std::size_t workerThreads{ 2 };
+		std::size_t workerThreads{ 4 };
 		int sessionTimeoutSeconds{ 3600 };
 		int maximumAuthenticationFailures{ 5 };
 		int banDurationSeconds{ 3600 };

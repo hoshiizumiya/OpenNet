@@ -576,6 +576,15 @@ namespace OpenNet::Core::WebUI
 				candidates.push_back(requested);
 			const auto executable = ExecutableDirectory();
 			const bool vueTorrent = frontend == "vuetorrent";
+			// Visual Studio builds WebUI beside AppX, while the executable used
+			// for debugging lives inside AppX. Prefer assets from the same build
+			// over an older AppX deployment left by a previous run.
+			if (!executable.empty() && executable.filename() == L"AppX")
+			{
+				const auto buildRoot = executable.parent_path() / L"WebUI";
+				candidates.push_back(vueTorrent
+					? buildRoot / L"VueTorrent" : buildRoot);
+			}
 			if (!executable.empty() && vueTorrent)
 			{
 				candidates.push_back(executable / L"WebUI" / L"VueTorrent");
@@ -1099,9 +1108,11 @@ namespace OpenNet::Core::WebUI
 			using Handler = std::function<Response(
 				const Request&, const tcp::endpoint&)>;
 
-			HttpSession(tcp::socket socket, Handler handler)
+			HttpSession(tcp::socket socket, Handler handler,
+				asio::thread_pool& apiWorkers)
 				: m_socket(std::move(socket))
 				, m_handler(std::move(handler))
+				, m_apiWorkers(apiWorkers)
 			{
 				g_activeConnections.fetch_add(1, std::memory_order_relaxed);
 			}
@@ -1143,11 +1154,27 @@ namespace OpenNet::Core::WebUI
 				g_requestCount.fetch_add(1, std::memory_order_relaxed);
 				g_requestBytes.fetch_add(transferred, std::memory_order_relaxed);
 				m_request = m_parser->release();
+				beast::error_code endpointError;
+				const auto endpoint = m_socket.remote_endpoint(endpointError);
+				if (endpointError) return;
+				const auto target = std::string_view(
+					m_request.target().data(), m_request.target().size());
+				if (target.starts_with("/api/v2/"))
+				{
+				asio::post(m_apiWorkers,
+					[self = shared_from_this(), endpoint]
+					{ self->Handle(endpoint); });
+					return;
+				}
+				Handle(endpoint);
+			}
+
+			void Handle(const tcp::endpoint& endpoint)
+			{
 				Response response;
 				try
 				{
-					response = m_handler(
-						m_request, m_socket.remote_endpoint());
+					response = m_handler(m_request, endpoint);
 				}
 				catch (const std::exception& exception)
 				{
@@ -1164,19 +1191,20 @@ namespace OpenNet::Core::WebUI
 
 				const bool close = response.need_eof();
 				auto message = std::make_shared<Response>(std::move(response));
-				http::async_write(
-					m_socket, *message,
-					[self = shared_from_this(), message, close](
-						const beast::error_code& writeError,
-						const std::size_t transferred)
-				{
-					if (!writeError)
+				asio::post(m_socket.get_executor(),
+					[self = shared_from_this(), message, close]
 					{
-						g_responseBytes.fetch_add(
-							transferred, std::memory_order_relaxed);
-					}
-					self->OnWrite(writeError, close);
-				});
+						http::async_write(self->m_socket, *message,
+							[self, message, close](
+								const beast::error_code& writeError,
+								const std::size_t transferred)
+							{
+								if (!writeError)
+									g_responseBytes.fetch_add(
+										transferred, std::memory_order_relaxed);
+								self->OnWrite(writeError, close);
+							});
+					});
 			}
 
 			void OnWrite(const beast::error_code& error, const bool close)
@@ -1199,6 +1227,7 @@ namespace OpenNet::Core::WebUI
 			std::optional<http::request_parser<http::string_body>> m_parser;
 			Request m_request;
 			Handler m_handler;
+			asio::thread_pool& m_apiWorkers;
 		};
 
 		class Listener final
@@ -1207,10 +1236,12 @@ namespace OpenNet::Core::WebUI
 		public:
 			Listener(
 				asio::io_context& context, const tcp::endpoint& endpoint,
-				HttpSession::Handler handler)
+				HttpSession::Handler handler,
+				asio::thread_pool& apiWorkers)
 				: m_context(context)
 				, m_acceptor(asio::make_strand(context))
 				, m_handler(std::move(handler))
+				, m_apiWorkers(apiWorkers)
 			{
 				beast::error_code error;
 				m_acceptor.open(endpoint.protocol(), error);
@@ -1255,7 +1286,7 @@ namespace OpenNet::Core::WebUI
 			{
 				if (!error)
 					std::make_shared<HttpSession>(
-						std::move(socket), m_handler)->Run();
+						std::move(socket), m_handler, m_apiWorkers)->Run();
 				if (m_acceptor.is_open())
 					Accept();
 			}
@@ -1263,6 +1294,7 @@ namespace OpenNet::Core::WebUI
 			asio::io_context& m_context;
 			tcp::acceptor m_acceptor;
 			HttpSession::Handler m_handler;
+			asio::thread_pool& m_apiWorkers;
 		};
 	}
 
@@ -1336,8 +1368,10 @@ namespace OpenNet::Core::WebUI
 				options.banDurationSeconds = std::clamp(options.banDurationSeconds, 1, 86400);
 
 				const auto address = asio::ip::make_address(options.address);
-				m_context = std::make_unique<asio::io_context>(
-					static_cast<int>(options.workerThreads));
+			m_context = std::make_unique<asio::io_context>(
+				static_cast<int>(options.workerThreads));
+			m_apiWorkers = std::make_unique<asio::thread_pool>(
+				static_cast<int>(options.workerThreads));
 				m_options = std::move(options);
 				m_assetRoot = assetRoot;
 				m_vueTorrentFrontend = m_options.frontend == "vuetorrent";
@@ -1369,13 +1403,13 @@ namespace OpenNet::Core::WebUI
 				LoadTorrentMetadata();
 				LoadRssRules();
 
-				m_listener = std::make_shared<Listener>(
-					*m_context,
-					tcp::endpoint(address, m_options.port),
-					[this](const Request& request, const tcp::endpoint& endpoint)
+			m_listener = std::make_shared<Listener>(
+				*m_context,
+				tcp::endpoint(address, m_options.port),
+				[this](const Request& request, const tcp::endpoint& endpoint)
 				{
 					return HandleRequest(request, endpoint);
-				});
+				}, *m_apiWorkers);
 				m_listener->Run();
 
 				m_threads.reserve(m_options.workerThreads);
@@ -1527,6 +1561,12 @@ namespace OpenNet::Core::WebUI
 					thread.join();
 			}
 			m_threads.clear();
+			if (m_apiWorkers)
+			{
+				m_apiWorkers->stop();
+				m_apiWorkers->join();
+				m_apiWorkers.reset();
+			}
 			m_listener.reset();
 			m_context.reset();
 			if (clearAuthenticationState)
@@ -6381,6 +6421,7 @@ namespace OpenNet::Core::WebUI
 		std::string m_vueTorrentBootstrap;
 		bool m_vueTorrentFrontend{};
 		std::unique_ptr<asio::io_context> m_context;
+		std::unique_ptr<asio::thread_pool> m_apiWorkers;
 		std::shared_ptr<Listener> m_listener;
 		std::vector<std::thread> m_threads;
 

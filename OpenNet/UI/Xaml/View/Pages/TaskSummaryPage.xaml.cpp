@@ -162,13 +162,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
+			auto const information = ::OpenNet::Core::DownloadManager::Instance()
+				.GetHttpTaskInformation(to_string(task.Gid()));
+			const auto progress = information && information->TotalLength > 0
+				? std::clamp(static_cast<double>(
+					static_cast<long double>(information->CompletedLength)
+					* 100.0L / information->TotalLength), 0.0, 100.0)
+				: task.ProgressPercent();
 			TaskSpeedGraph().SetSpeed(
-				task.ProgressPercent(),
+				progress,
 				task.DownloadSpeedKB() * 1024);
 			TaskPathText().Text(ResourceGetString(L"ViewTaskSummaryPageRuntimeHttpDownload"));
 			SavePathText().Text(L"—");
 			TaskStatusText().Text(task.ProgressPercent() >= 100.0 ? ResourceGetString(L"TaskStatusCompleted") : ResourceGetString(L"TaskStatusDownloading"));
-			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(to_string(task.Gid()));
 			if (information)
 			{
 				auto const pieceMap = ::OpenNet::Core::Aria2::BuildPieceMapInformation(*information);

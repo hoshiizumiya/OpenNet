@@ -47,13 +47,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		std::string NormalizeAddressForUrl(std::string address)
 		{
+			if (address == "0.0.0.0" || address == "::")
+				return "127.0.0.1";
 			if (address.find(':') != std::string::npos
 				&& !(address.starts_with('[') && address.ends_with(']')))
 			{
 				return "[" + address + "]";
 			}
-			if (address == "0.0.0.0" || address == "::")
-				return "127.0.0.1";
 			return address;
 		}
 
@@ -501,6 +501,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			m_applyTimer.Stop();
 			ApplySettings();
 		}
+		if (ViewModel().Enabled()
+			&& !::OpenNet::Core::WebUI::IsWebUIRunning())
+			::OpenNet::Core::WebUI::StartWebUI();
 		ViewModel().RefreshRuntimeState();
 		if (!ViewModel().IsRunning())
 		{
