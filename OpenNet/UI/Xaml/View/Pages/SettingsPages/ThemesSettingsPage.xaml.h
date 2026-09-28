@@ -2,12 +2,19 @@
 
 #include "UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.h"
 #include "ViewModels/MainViewModel.h"
+#include "ViewModels/SettingsViewModel.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
 	struct ThemesSettingsPage : ThemesSettingsPageT<ThemesSettingsPage>
 	{
 		ThemesSettingsPage();
+		winrt::OpenNet::ViewModels::SettingsViewModel ViewModel()
+		{
+			if (!m_viewModel) m_viewModel = winrt::OpenNet::ViewModels::SettingsViewModel();
+			return m_viewModel;
+		}
+		std::int32_t MaterialStyleIndex() const;
 
 		void BackgroundComboBox_SelectionChanged(IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void MicaTypeComboBox_SelectionChanged(IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
@@ -51,6 +58,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// every named element has been connected. Keep handlers disabled until the
 		// first Loaded pass has populated all settings controls.
 		bool m_isInitializing{ true };
+		winrt::OpenNet::ViewModels::SettingsViewModel m_viewModel{ nullptr };
 	};
 }
 

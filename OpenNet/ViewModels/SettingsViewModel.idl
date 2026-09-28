@@ -6,5 +6,10 @@ namespace OpenNet.ViewModels
     {
         // Summary: Construct with defaults. Implementation can remain empty if unused by XAML.
         SettingsViewModel();
+        Boolean ShowNotifications;
+        Boolean ProgressEffectsEnabled;
+        Windows.UI.Color DownloadProgressColor;
+        Windows.UI.Color SeedingProgressColor;
+        Windows.UI.Color CheckingProgressColor;
     };
 }

@@ -6745,4 +6745,61 @@ Availability: {}</value>
   <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
     <value>Listeners and network integration</value>
   </data>
+  <data name="SettingsBreadcrumbRoot" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="TaskProgressAppearanceHeader.Text" xml:space="preserve">
+    <value>Task progress</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Header" xml:space="preserve">
+    <value>Animated task progress</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Description" xml:space="preserve">
+    <value>Show a colored highlight behind each task’s progress.</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Header" xml:space="preserve">
+    <value>Download highlight</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Description" xml:space="preserve">
+    <value>Color for HTTP and BitTorrent downloads.</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Header" xml:space="preserve">
+    <value>Seeding highlight</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Description" xml:space="preserve">
+    <value>Color for BitTorrent upload after download completion.</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Header" xml:space="preserve">
+    <value>Verification highlight</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Description" xml:space="preserve">
+    <value>Color while a BitTorrent task checks its files.</value>
+  </data>
+  <data name="TaskProgressChooseDownloadColor.Content" xml:space="preserve">
+    <value>Choose color</value>
+  </data>
+  <data name="TaskProgressChooseSeedingColor.Content" xml:space="preserve">
+    <value>Choose color</value>
+  </data>
+  <data name="TaskProgressChooseCheckingColor.Content" xml:space="preserve">
+    <value>Choose color</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Header" xml:space="preserve">
+    <value>Download completion notifications</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Description" xml:space="preserve">
+    <value>Show a Windows notification when a download finishes.</value>
+  </data>
+  <data name="DownloadNotificationTitle" xml:space="preserve">
+    <value>Download complete</value>
+  </data>
+  <data name="DownloadNotificationOpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="DownloadNotificationElapsed" xml:space="preserve">
+    <value>Elapsed: </value>
+  </data>
+  <data name="DownloadNotificationAverage" xml:space="preserve">
+    <value>Average: </value>
+  </data>
 </root>

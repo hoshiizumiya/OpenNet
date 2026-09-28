@@ -5,6 +5,7 @@
 import OpenNet.ViewModels.ObservableMixin;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Media;
+import winrt.Windows.UI;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -12,6 +13,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 	struct TaskViewModel : TaskViewModelT<TaskViewModel>, ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>
 	{
 		TaskViewModel();
+		~TaskViewModel();
+		static void ReloadProgressAppearance();
+		winrt::Windows::UI::Color ProgressHighColor() const;
+		winrt::Microsoft::UI::Xaml::Visibility ProgressEffectVisibility() const;
 
 		// Make mixin helpers visible
 		using ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>::SetProperty;
@@ -169,7 +174,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void TaskType(winrt::OpenNet::ViewModels::DownloadTaskType v)
 		{
-			SetProperty(m_taskType, v, L"TaskType");
+			if (SetProperty(m_taskType, v, L"TaskType")) RaisePropertyChanged(L"ProgressHighColor");
 		}
 
 		winrt::OpenNet::ViewModels::DownloadTaskState State() const
@@ -181,6 +186,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (SetProperty(m_state, value, L"State"))
 			{
 				RaisePropertyChanged(L"StateValue");
+				RaisePropertyChanged(L"ProgressHighColor");
 			}
 		}
 		std::int32_t StateValue() const noexcept

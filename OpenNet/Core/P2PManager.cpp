@@ -6,7 +6,6 @@ module OpenNet.Core.P2PManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.CanonicalV2Swarm;
 import OpenNet.Core.Content.ContentDirectoryClient;
-import OpenNet.Core.Notification.HttpToastNotification;
 import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Core.TorrentSettings;
 
@@ -587,7 +586,6 @@ namespace OpenNet::Core
 				std::scoped_lock lk(m_cbMutex);
 				callback = m_finishedCb;
 			}
-			::OpenNet::Core::Notification::ShowTorrentDownloadCompleted(name);
 			if (callback) callback(taskId, name);
 		});
 		m_torrentCore->SetErrorCallback([this](const std::string& err)

@@ -12,6 +12,7 @@ import winrt.Windows.Storage;
 import winrt.Windows.System;
 import winrt.Windows.Data.Json;
 import winrt.Microsoft.UI.Xaml;
+import winrt.Windows.UI;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
@@ -77,10 +78,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_showNotifications;
 		}
-		void ShowNotifications(bool value)
-		{
-			SetProperty(m_showNotifications, value, L"ShowNotifications");
-		}
+		void ShowNotifications(bool value);
+		bool ProgressEffectsEnabled() const { return m_progressEffectsEnabled; }
+		void ProgressEffectsEnabled(bool value);
+		winrt::Windows::UI::Color DownloadProgressColor() const { return m_downloadProgressColor; }
+		void DownloadProgressColor(winrt::Windows::UI::Color value);
+		winrt::Windows::UI::Color SeedingProgressColor() const { return m_seedingProgressColor; }
+		void SeedingProgressColor(winrt::Windows::UI::Color value);
+		winrt::Windows::UI::Color CheckingProgressColor() const { return m_checkingProgressColor; }
+		void CheckingProgressColor(winrt::Windows::UI::Color value);
 
 		// 语言设置 / Language Settings
 		enum class Language
@@ -506,6 +512,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		bool m_startWithWindows;
 		bool m_minimizeToTray;
 		bool m_showNotifications;
+		bool m_progressEffectsEnabled{ true };
+		winrt::Windows::UI::Color m_downloadProgressColor{ 255, 76, 203, 137 };
+		winrt::Windows::UI::Color m_seedingProgressColor{ 255, 240, 82, 96 };
+		winrt::Windows::UI::Color m_checkingProgressColor{ 255, 69, 201, 232 };
 
 		// 语言设置 / Language Settings
 		Language m_currentLanguage;

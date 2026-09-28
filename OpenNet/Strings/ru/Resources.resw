@@ -5331,4 +5331,61 @@
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
     <value>Включить DHT</value>
   </data>
+  <data name="SettingsBreadcrumbRoot" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="TaskProgressAppearanceHeader.Text" xml:space="preserve">
+    <value>Ход выполнения задач</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Header" xml:space="preserve">
+    <value>Анимированный прогресс</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Description" xml:space="preserve">
+    <value>Показывать цветную подсветку за индикатором выполнения задачи.</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Header" xml:space="preserve">
+    <value>Цвет загрузки</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Description" xml:space="preserve">
+    <value>Цвет загрузок HTTP и BitTorrent.</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Header" xml:space="preserve">
+    <value>Цвет раздачи</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Description" xml:space="preserve">
+    <value>Цвет отдачи BitTorrent после завершения загрузки.</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Header" xml:space="preserve">
+    <value>Цвет проверки</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Description" xml:space="preserve">
+    <value>Цвет во время проверки файлов BitTorrent.</value>
+  </data>
+  <data name="TaskProgressChooseDownloadColor.Content" xml:space="preserve">
+    <value>Выбрать цвет</value>
+  </data>
+  <data name="TaskProgressChooseSeedingColor.Content" xml:space="preserve">
+    <value>Выбрать цвет</value>
+  </data>
+  <data name="TaskProgressChooseCheckingColor.Content" xml:space="preserve">
+    <value>Выбрать цвет</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Header" xml:space="preserve">
+    <value>Уведомления о завершении загрузки</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Description" xml:space="preserve">
+    <value>Показывать уведомление Windows после завершения загрузки.</value>
+  </data>
+  <data name="DownloadNotificationTitle" xml:space="preserve">
+    <value>Загрузка завершена</value>
+  </data>
+  <data name="DownloadNotificationOpenFolder" xml:space="preserve">
+    <value>Открыть папку</value>
+  </data>
+  <data name="DownloadNotificationElapsed" xml:space="preserve">
+    <value>Время: </value>
+  </data>
+  <data name="DownloadNotificationAverage" xml:space="preserve">
+    <value>Средняя скорость: </value>
+  </data>
 </root>

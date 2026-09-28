@@ -1,6 +1,8 @@
 ﻿#include "XamlWorkaround.h"
 #include "SettingsViewModel.h"
+#include "ViewModels/TaskViewModel.h"
 
+import OpenNet.Core.AppSettingsDatabase;
 import winrt.Windows.Data.Json;
 import winrt.Microsoft.Windows.ApplicationModel.Resources;
 
@@ -11,6 +13,19 @@ using namespace Microsoft::Windows::ApplicationModel::Resources;
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
+	namespace
+	{
+		std::uint32_t PackColor(winrt::Windows::UI::Color color)
+		{
+			return 0xff000000u | (std::uint32_t(color.R) << 16) | (std::uint32_t(color.G) << 8) | color.B;
+		}
+
+		winrt::Windows::UI::Color UnpackColor(std::int64_t packed)
+		{
+			auto const value = static_cast<std::uint32_t>(packed);
+			return { 255, static_cast<std::uint8_t>(value >> 16), static_cast<std::uint8_t>(value >> 8), static_cast<std::uint8_t>(value) };
+		}
+	}
 	// Helper: get resource string safely
 	static winrt::hstring GetStringFromResources(winrt::hstring const& key)
 	{
@@ -115,6 +130,50 @@ namespace winrt::OpenNet::ViewModels::implementation
 		// no local m_stunServers; use NetworkDetector via STUNServers()
 		m_turnServers = single_threaded_observable_vector<hstring>();
 		m_dhtBootstrapNodes = single_threaded_observable_vector<hstring>();
+		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		db.Initialize();
+		m_showNotifications = db.GetBool("ui", "download_notifications_enabled").value_or(true);
+		m_progressEffectsEnabled = db.GetBool("ui", "task_progress_effects_enabled").value_or(true);
+		if (auto color = db.GetInt("ui", "task_progress_download_color")) m_downloadProgressColor = UnpackColor(*color);
+		if (auto color = db.GetInt("ui", "task_progress_seeding_color")) m_seedingProgressColor = UnpackColor(*color);
+		if (auto color = db.GetInt("ui", "task_progress_checking_color")) m_checkingProgressColor = UnpackColor(*color);
+	}
+
+	void SettingsViewModel::ShowNotifications(bool value)
+	{
+		if (!SetProperty(m_showNotifications, value, L"ShowNotifications")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool("ui", "download_notifications_enabled", value);
+	}
+
+	void SettingsViewModel::ProgressEffectsEnabled(bool value)
+	{
+		if (!SetProperty(m_progressEffectsEnabled, value, L"ProgressEffectsEnabled")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool("ui", "task_progress_effects_enabled", value);
+		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	void SettingsViewModel::DownloadProgressColor(winrt::Windows::UI::Color value)
+	{
+		value.A = 255;
+		if (!SetProperty(m_downloadProgressColor, value, L"DownloadProgressColor")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("ui", "task_progress_download_color", PackColor(value));
+		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	void SettingsViewModel::SeedingProgressColor(winrt::Windows::UI::Color value)
+	{
+		value.A = 255;
+		if (!SetProperty(m_seedingProgressColor, value, L"SeedingProgressColor")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("ui", "task_progress_seeding_color", PackColor(value));
+		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	void SettingsViewModel::CheckingProgressColor(winrt::Windows::UI::Color value)
+	{
+		value.A = 255;
+		if (!SetProperty(m_checkingProgressColor, value, L"CheckingProgressColor")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("ui", "task_progress_checking_color", PackColor(value));
+		TaskViewModel::ReloadProgressAppearance();
 	}
 
 	// Summary: 析构函数

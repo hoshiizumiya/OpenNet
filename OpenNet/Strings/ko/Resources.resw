@@ -5331,4 +5331,61 @@
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
     <value>DHT 사용</value>
   </data>
+  <data name="SettingsBreadcrumbRoot" xml:space="preserve">
+    <value>설정</value>
+  </data>
+  <data name="TaskProgressAppearanceHeader.Text" xml:space="preserve">
+    <value>작업 진행률</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Header" xml:space="preserve">
+    <value>애니메이션 진행률</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Description" xml:space="preserve">
+    <value>각 작업의 진행률 뒤에 색상 강조 표시를 보여 줍니다.</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Header" xml:space="preserve">
+    <value>다운로드 강조 색상</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Description" xml:space="preserve">
+    <value>HTTP 및 BitTorrent 다운로드에 사용할 색상입니다.</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Header" xml:space="preserve">
+    <value>배포 강조 색상</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Description" xml:space="preserve">
+    <value>BitTorrent 다운로드 후 업로드에 사용할 색상입니다.</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Header" xml:space="preserve">
+    <value>검증 강조 색상</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Description" xml:space="preserve">
+    <value>BitTorrent 파일 검사 중 사용할 색상입니다.</value>
+  </data>
+  <data name="TaskProgressChooseDownloadColor.Content" xml:space="preserve">
+    <value>색상 선택</value>
+  </data>
+  <data name="TaskProgressChooseSeedingColor.Content" xml:space="preserve">
+    <value>색상 선택</value>
+  </data>
+  <data name="TaskProgressChooseCheckingColor.Content" xml:space="preserve">
+    <value>색상 선택</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Header" xml:space="preserve">
+    <value>다운로드 완료 알림</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Description" xml:space="preserve">
+    <value>다운로드가 완료되면 Windows 알림을 표시합니다.</value>
+  </data>
+  <data name="DownloadNotificationTitle" xml:space="preserve">
+    <value>다운로드 완료</value>
+  </data>
+  <data name="DownloadNotificationOpenFolder" xml:space="preserve">
+    <value>폴더 열기</value>
+  </data>
+  <data name="DownloadNotificationElapsed" xml:space="preserve">
+    <value>경과 시간: </value>
+  </data>
+  <data name="DownloadNotificationAverage" xml:space="preserve">
+    <value>평균 속도: </value>
+  </data>
 </root>

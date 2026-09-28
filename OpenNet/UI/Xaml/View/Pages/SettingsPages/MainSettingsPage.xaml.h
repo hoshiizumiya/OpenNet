@@ -3,6 +3,7 @@
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.h"
 
 import winrt.Microsoft.UI.Xaml.Media.Animation;
+import winrt.Microsoft.UI.Xaml.Navigation;
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
@@ -17,6 +18,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void MainSettingsPage_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e);
 		// Breadcrumb handler
 		void SettingsBar_ItemClicked(winrt::Microsoft::UI::Xaml::Controls::BreadcrumbBar const&, winrt::Microsoft::UI::Xaml::Controls::BreadcrumbBarItemClickedEventArgs const& args);
+		void SettingsFrame_Navigated(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&);
 
 		// Navigation handler
 		void SettingsNavView_SelectionChanged(winrt::Microsoft::UI::Xaml::Controls::NavigationView const& sender, winrt::Microsoft::UI::Xaml::Controls::NavigationViewSelectionChangedEventArgs const& args);
@@ -32,8 +34,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		static std::wstring NormalizeSearchText(winrt::hstring const& value);
 		static bool MatchesSearch(winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem const& item, std::wstring const& query);
 		static winrt::hstring TagsForPageType(winrt::Windows::UI::Xaml::Interop::TypeName const& pageType);
+		void SyncBreadcrumb();
 
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_settingsBarItems = winrt::single_threaded_observable_vector(std::vector<winrt::hstring>{ L"Settings" });
+		winrt::Microsoft::UI::Xaml::Controls::NavigationViewItem m_selectedItem{ nullptr };
+		bool m_syncingNavigation{};
 	};
 }
 

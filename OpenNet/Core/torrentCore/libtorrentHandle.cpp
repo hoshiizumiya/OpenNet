@@ -1,4 +1,4 @@
-module;
+﻿module;
 #include "WindowsPlatform.h"
 #include <wincrypt.h>
 #pragma comment(lib, "crypt32.lib")
@@ -39,6 +39,7 @@ module OpenNet.Core.torrentCore.LibtorrentHandle;
 import OpenNet.Core.DataGraph.SpeedGraphDatabase;
 import OpenNet.Core.ClientFilter.ClientFilterManager;
 import OpenNet.Core.IPFilter.IPFilterManager;
+import OpenNet.Core.Notification.HttpToastNotification;
 
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.ContentCatalogService;
@@ -644,6 +645,7 @@ namespace OpenNet::Core::Torrent
 		std::unordered_map<std::string, RecheckCompletionAction> m_recheckCompletionActions;
 		std::mutex m_completionMoveMutex;
 		std::unordered_map<std::string, bool> m_completionMoves;
+		std::unordered_set<std::string> m_completionNotificationsPending;
 		std::mutex m_pendingDeleteMutex;
 		std::unordered_map<std::string, std::string> m_pendingDeleteByHash;
 		struct PersistedProgress
@@ -820,6 +822,7 @@ namespace OpenNet::Core::Torrent
 #define m_recheckCompletionActions m_impl->m_recheckCompletionActions
 #define m_completionMoveMutex m_impl->m_completionMoveMutex
 #define m_completionMoves m_impl->m_completionMoves
+#define m_completionNotificationsPending m_impl->m_completionNotificationsPending
 #define m_pendingDeleteMutex m_impl->m_pendingDeleteMutex
 #define m_pendingDeleteByHash m_impl->m_pendingDeleteByHash
 #define m_persistedProgress m_impl->m_persistedProgress
@@ -3576,12 +3579,14 @@ namespace OpenNet::Core::Torrent
 					if (task != m_handleToTaskId.end()) taskId = task->second;
 				}
 				bool completedMove{};
+				bool notifyCompletion{};
 				{
 					std::lock_guard moveLock(m_completionMoveMutex);
 					auto const pending = m_completionMoves.find(taskId);
 					if (pending != m_completionMoves.end())
 					{
 						completedMove = true;
+						notifyCompletion = m_completionNotificationsPending.erase(taskId) != 0;
 						if (pending->second)
 						{
 							moved->handle.set_flags(lt::torrent_flags::auto_managed);
@@ -3597,6 +3602,8 @@ namespace OpenNet::Core::Torrent
 				if (completedMove)
 				{
 					CatalogCompletedTorrent(moved->handle, taskId);
+					if (notifyCompletion)
+						::OpenNet::Core::Notification::ShowTorrentDownloadCompleted(moved->handle.status().name, std::filesystem::path{ winrt::to_hstring(moved->storage_path()).c_str() });
 					FinishedCallback callback;
 					{
 						std::lock_guard callbackLock(m_cbMutex);
@@ -3623,12 +3630,14 @@ namespace OpenNet::Core::Torrent
 					if (task != m_handleToTaskId.end()) taskId = task->second;
 				}
 				bool completedMove{};
+				bool notifyCompletion{};
 				{
 					std::lock_guard moveLock(m_completionMoveMutex);
 					auto const pending = m_completionMoves.find(taskId);
 					if (pending != m_completionMoves.end())
 					{
 						completedMove = true;
+						notifyCompletion = m_completionNotificationsPending.erase(taskId) != 0;
 						if (pending->second)
 						{
 							moveFailed->handle.set_flags(lt::torrent_flags::auto_managed);
@@ -3648,6 +3657,8 @@ namespace OpenNet::Core::Torrent
 					errorCallback("Storage move failed: " + moveFailed->message());
 				if (completedMove)
 					CatalogCompletedTorrent(moveFailed->handle, taskId);
+				if (completedMove && notifyCompletion)
+					::OpenNet::Core::Notification::ShowTorrentDownloadCompleted(moveFailed->handle.status().name, std::filesystem::path{ winrt::to_hstring(moveFailed->handle.status().save_path).c_str() });
 				if (completedMove && finishedCallback)
 				{
 					try
@@ -3692,10 +3703,10 @@ namespace OpenNet::Core::Torrent
 				settingsManager.Load();
 				auto const settings = settingsManager.Get();
 				auto taskSettings = GetTorrentTaskSettings(taskId);
+				auto const previous = m_stateManager ? m_stateManager->LoadTaskMetadata(taskId) : std::nullopt;
+				bool const notifyCompletion = !previous || previous->status != 3;
 				if (taskSettings.completionAction < 0)
 				{
-					auto const previous = m_stateManager
-						? m_stateManager->LoadTaskMetadata(taskId) : std::nullopt;
 					// Old completed records keep their historical stopped behavior,
 					// including when a restore emits another finished alert.
 					taskSettings.completionAction = previous && previous->status == 3
@@ -3729,6 +3740,7 @@ namespace OpenNet::Core::Torrent
 						std::lock_guard moveLock(m_completionMoveMutex);
 						m_completionMoves.insert_or_assign(
 							taskId, continueSeeding);
+					if (notifyCompletion) m_completionNotificationsPending.insert(taskId);
 					}
 					tf->handle.move_storage(winrt::to_string(
 						winrt::hstring{ settings.moveCompletedPath }));
@@ -3739,6 +3751,8 @@ namespace OpenNet::Core::Torrent
 					// what is restored on the next launch.
 					RequestResumeDataForTorrent(tf->handle);
 					CatalogCompletedTorrent(tf->handle, taskId);
+					if (notifyCompletion)
+						::OpenNet::Core::Notification::ShowTorrentDownloadCompleted(tf->handle.status().name, std::filesystem::path{ winrt::to_hstring(tf->handle.status().save_path).c_str() });
 				}
 
 				FinishedCallback finishedCbCopy;

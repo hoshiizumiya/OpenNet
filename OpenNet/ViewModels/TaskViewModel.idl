@@ -59,8 +59,10 @@ namespace OpenNet.ViewModels
 		// Download speed in KB/s (numeric value for SpeedGraph)
 		UInt64 DownloadSpeedKB;
 
-		// Progress percent as numeric value (0-100) for SpeedGraph
-		Double ProgressPercent;
+        // Progress percent as numeric value (0-100) for SpeedGraph
+        Double ProgressPercent;
+        Windows.UI.Color ProgressHighColor { get; };
+        Microsoft.UI.Xaml.Visibility ProgressEffectVisibility { get; };
 
 		// PointCollection for the speed graph visualization
 		Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };

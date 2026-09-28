@@ -19,6 +19,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Setting.LocalSetting;
 import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Helpers.ThemeHelper;
+import OpenNet.Helpers.MaterialTheme;
 import OpenNet.Helpers.WindowHelper;
 import winrt.Windows.UI;
 import winrt.Windows.System;
@@ -96,6 +97,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			s_current = nullptr;
 		}
+	}
+	std::int32_t SettingsPage::MaterialStyleIndex() const
+	{
+		return static_cast<std::int32_t>(::OpenNet::Helpers::MaterialTheme::Current());
 	}
 
 	void SettingsPage::SoftLanguageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& /*args*/)
