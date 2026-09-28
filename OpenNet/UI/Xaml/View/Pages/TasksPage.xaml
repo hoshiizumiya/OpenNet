@@ -882,142 +882,162 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="vm:TaskViewModel">
                             <!--  We set HorizontalAlignment to Left here as we're not stretching our content with a star column  -->
-                            <xtlw:DataRow HorizontalAlignment="Left" Loaded="TaskDataRow_Loaded">
-                                <xtlw:DataRow.Resources>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="VerticalAlignment" Value="Center" />
-                                    </Style>
-                                </xtlw:DataRow.Resources>
-                                <Grid ColumnSpacing="4">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="*" />
-                                    </Grid.ColumnDefinitions>
-                                    <ouxc:TaskStatusIndicator Grid.Column="0" State="{x:Bind StateValue, Mode=OneWay}" />
-                                    <StackPanel
-                                        Grid.Column="1"
-                                        Margin="0,0,8,0"
-                                        HorizontalAlignment="Left"
-                                        Spacing="0">
+                            <Grid HorizontalAlignment="Left">
+                                <essential:ProgressBarEx
+                                    Margin="0,2,0,2"
+                                    HorizontalAlignment="Stretch"
+                                    VerticalAlignment="Stretch"
+                                    Background="Transparent"
+                                    BaseColor="{x:Bind ProgressBaseColor, Mode=OneWay}"
+                                    CornerRadius="8"
+                                    HighColor="{x:Bind ProgressHighColor, Mode=OneWay}"
+                                    IsHitTestVisible="False"
+                                    Opacity="0.65"
+                                    Percent="{x:Bind ProgressPercent, Mode=OneWay}"
+                                    Visibility="{x:Bind ProgressRowEffectVisibility, Mode=OneWay}" />
+                                <xtlw:DataRow HorizontalAlignment="Left" Loaded="TaskDataRow_Loaded">
+                                    <xtlw:DataRow.Resources>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="VerticalAlignment" Value="Center" />
+                                        </Style>
+                                    </xtlw:DataRow.Resources>
+                                    <Grid ColumnSpacing="4">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                        </Grid.ColumnDefinitions>
+                                        <ouxc:TaskStatusIndicator Grid.Column="0" State="{x:Bind StateValue, Mode=OneWay}" />
+                                        <StackPanel
+                                            Grid.Column="1"
+                                            Margin="0,0,8,0"
+                                            HorizontalAlignment="Left"
+                                            Spacing="0">
+                                            <TextBlock
+                                                x:Name="NameTextBlock"
+                                                IsTextSelectionEnabled="True"
+                                                Text="{x:Bind Name, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap" />
+                                            <TextBlock
+                                                FontSize="11"
+                                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                                Text="{x:Bind Transport, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap" />
+                                        </StackPanel>
+                                    </Grid>
+                                    <TextBlock
+                                        x:Name="SizeTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind Size, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColSize.Visibility, Mode=OneWay}" />
+                                    <Grid MinWidth="110" Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}">
+                                        <essential:ProgressBarEx
+                                            Height="20"
+                                            HorizontalAlignment="Stretch"
+                                            Background="Transparent"
+                                            BaseColor="{x:Bind ProgressBaseColor, Mode=OneWay}"
+                                            CornerRadius="6"
+                                            HighColor="{x:Bind ProgressHighColor, Mode=OneWay}"
+                                            IsHitTestVisible="False"
+                                            Percent="{x:Bind ProgressPercent, Mode=OneWay}"
+                                            Visibility="{x:Bind ProgressColumnEffectVisibility, Mode=OneWay}" />
                                         <TextBlock
-                                            x:Name="NameTextBlock"
-                                            IsTextSelectionEnabled="True"
-                                            Text="{x:Bind Name, Mode=OneWay}"
+                                            Margin="4,0,4,0"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                            IsHitTestVisible="False"
+                                            Canvas.ZIndex="1"
+                                            Text="{x:Bind Progress, Mode=OneWay}"
                                             TextTrimming="CharacterEllipsis"
                                             TextWrapping="NoWrap" />
-                                        <TextBlock
-                                            FontSize="11"
-                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                            Text="{x:Bind Transport, Mode=OneWay}"
-                                            TextTrimming="CharacterEllipsis"
-                                            TextWrapping="NoWrap" />
-                                    </StackPanel>
-                                </Grid>
-                                <TextBlock
-                                    x:Name="SizeTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind Size, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColSize.Visibility, Mode=OneWay}" />
-                                <Grid MinWidth="110" Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}">
-                                    <essential:ProgressBarEx
-                                        Height="20"
-                                        HorizontalAlignment="Stretch"
-                                        Background="Transparent"
-                                        BaseColor="Transparent"
-                                        HighColor="{x:Bind ProgressHighColor, Mode=OneWay}"
-                                        Percent="{x:Bind ProgressPercent, Mode=OneWay}"
-                                        Visibility="{x:Bind ProgressEffectVisibility, Mode=OneWay}" />
+                                    </Grid>
+                                    <TextBlock
+                                        x:Name="DownloadSizeTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind DownloadSize, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColDownloadSize.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="UploadSizeTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind UploadSize, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColUploadSize.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="TotalDownloadSizeTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind TotalDownloadSize, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColumnTotalDownloadSize.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="TotalUploadSizeTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind TotalUploadSize, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColumnTotalUploadSize.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="DLRateTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind DownloadRate, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColDLRate.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="ULRateTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind UploadRate, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColULRate.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="RemainingTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind Remaining, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColRemaining.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        x:Name="AddDateTextBlock"
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind AddDate, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColAddDate.Visibility, Mode=OneWay}" />
                                     <TextBlock
                                         HorizontalAlignment="Right"
-                                        IsHitTestVisible="False"
-                                        Text="{x:Bind Progress, Mode=OneWay}"
+                                        Text="{x:Bind CompletedDate, Mode=OneWay}"
                                         TextTrimming="CharacterEllipsis"
-                                        TextWrapping="NoWrap" />
-                                </Grid>
-                                <TextBlock
-                                    x:Name="DownloadSizeTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind DownloadSize, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColDownloadSize.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="UploadSizeTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind UploadSize, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColUploadSize.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="TotalDownloadSizeTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind TotalDownloadSize, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColumnTotalDownloadSize.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="TotalUploadSizeTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind TotalUploadSize, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColumnTotalUploadSize.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="DLRateTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind DownloadRate, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColDLRate.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="ULRateTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind UploadRate, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColULRate.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="RemainingTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind Remaining, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColRemaining.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="AddDateTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind AddDate, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColAddDate.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind CompletedDate, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColCompletedDate.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind ShareRatio, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColShareRatio.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind Seeds, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}">
-                                    <ToolTipService.ToolTip>
-                                        <ToolTip
-                                            x:Uid="ViewTasksPagePeersToolTip"
-                                            essential:ToolTipHelper.AcrylicWorkaround="True"
-                                            Content="Connected seeds / connected peers [all known seeds / all known peers]" />
-                                    </ToolTipService.ToolTip>
-                                </TextBlock>
-                            </xtlw:DataRow>
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColCompletedDate.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind ShareRatio, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColShareRatio.Visibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        Text="{x:Bind Seeds, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap"
+                                        Visibility="{x:Bind ColSeeds.Visibility, Mode=OneWay}">
+                                        <ToolTipService.ToolTip>
+                                            <ToolTip
+                                                x:Uid="ViewTasksPagePeersToolTip"
+                                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                                Content="Connected seeds / connected peers [all known seeds / all known peers]" />
+                                        </ToolTipService.ToolTip>
+                                    </TextBlock>
+                                </xtlw:DataRow>
+                            </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

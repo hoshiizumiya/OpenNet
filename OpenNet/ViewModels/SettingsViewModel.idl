@@ -8,8 +8,13 @@ namespace OpenNet.ViewModels
         SettingsViewModel();
         Boolean ShowNotifications;
         Boolean ProgressEffectsEnabled;
+        Int32 ProgressEffectScope;
         Windows.UI.Color DownloadProgressColor;
         Windows.UI.Color SeedingProgressColor;
         Windows.UI.Color CheckingProgressColor;
+        Windows.UI.Color ProgressBaseColor;
+        Microsoft.UI.Xaml.Visibility ProgressRowPreviewVisibility { get; };
+        Microsoft.UI.Xaml.Visibility ProgressColumnPreviewVisibility { get; };
+        Microsoft.UI.Xaml.Input.ICommand ResetProgressAppearanceCommand { get; };
     };
 }

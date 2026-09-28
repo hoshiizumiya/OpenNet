@@ -5388,4 +5388,52 @@
   <data name="DownloadNotificationAverage" xml:space="preserve">
     <value>平均速度: </value>
   </data>
+  <data name="TaskProgressExpander.Header" xml:space="preserve">
+    <value>タスクの進行状況の効果</value>
+  </data>
+  <data name="TaskProgressExpander.Description" xml:space="preserve">
+    <value>ハイライトの表示範囲と色を設定します。</value>
+  </data>
+  <data name="TaskProgressScopeCard.Header" xml:space="preserve">
+    <value>ハイライトの範囲</value>
+  </data>
+  <data name="TaskProgressScopeCard.Description" xml:space="preserve">
+    <value>進行状況のセルまたはタスク行全体を選択します。</value>
+  </data>
+  <data name="TaskProgressScopeColumn.Content" xml:space="preserve">
+    <value>進行状況のセル</value>
+  </data>
+  <data name="TaskProgressScopeRow.Content" xml:space="preserve">
+    <value>タスク行全体</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Header" xml:space="preserve">
+    <value>プレビュー</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Description" xml:space="preserve">
+    <value>選択した色と範囲でダウンロードを表示します。</value>
+  </data>
+  <data name="TaskProgressPreviewName.Text" xml:space="preserve">
+    <value>ダウンロード例</value>
+  </data>
+  <data name="TaskProgressPreviewSize.Text" xml:space="preserve">
+    <value>42 MiB</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Header" xml:space="preserve">
+    <value>ベースカラー</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Description" xml:space="preserve">
+    <value>ハイライトの背後の色。既定では透明です。</value>
+  </data>
+  <data name="TaskProgressChooseBaseColor.Content" xml:space="preserve">
+    <value>色を選択</value>
+  </data>
+  <data name="TaskProgressResetCard.Header" xml:space="preserve">
+    <value>既定の外観</value>
+  </data>
+  <data name="TaskProgressResetCard.Description" xml:space="preserve">
+    <value>範囲と色を既定値に戻します。</value>
+  </data>
+  <data name="TaskProgressResetButton.Content" xml:space="preserve">
+    <value>既定値に戻す</value>
+  </data>
 </root>

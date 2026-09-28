@@ -5388,4 +5388,52 @@
   <data name="DownloadNotificationAverage" xml:space="preserve">
     <value>Media: </value>
   </data>
+  <data name="TaskProgressExpander.Header" xml:space="preserve">
+    <value>Effetti di avanzamento delle attività</value>
+  </data>
+  <data name="TaskProgressExpander.Description" xml:space="preserve">
+    <value>Scegli dove mostrare l’evidenziazione e personalizza i colori.</value>
+  </data>
+  <data name="TaskProgressScopeCard.Header" xml:space="preserve">
+    <value>Area evidenziata</value>
+  </data>
+  <data name="TaskProgressScopeCard.Description" xml:space="preserve">
+    <value>Scegli la cella di avanzamento o l’intera riga.</value>
+  </data>
+  <data name="TaskProgressScopeColumn.Content" xml:space="preserve">
+    <value>Cella di avanzamento</value>
+  </data>
+  <data name="TaskProgressScopeRow.Content" xml:space="preserve">
+    <value>Intera riga attività</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Header" xml:space="preserve">
+    <value>Anteprima</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Description" xml:space="preserve">
+    <value>Download di esempio con colori e area selezionati.</value>
+  </data>
+  <data name="TaskProgressPreviewName.Text" xml:space="preserve">
+    <value>Download di esempio</value>
+  </data>
+  <data name="TaskProgressPreviewSize.Text" xml:space="preserve">
+    <value>42 MiB</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Header" xml:space="preserve">
+    <value>Colore di base</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Description" xml:space="preserve">
+    <value>Colore sotto l’evidenziazione; trasparente per impostazione predefinita.</value>
+  </data>
+  <data name="TaskProgressChooseBaseColor.Content" xml:space="preserve">
+    <value>Scegli colore</value>
+  </data>
+  <data name="TaskProgressResetCard.Header" xml:space="preserve">
+    <value>Aspetto predefinito</value>
+  </data>
+  <data name="TaskProgressResetCard.Description" xml:space="preserve">
+    <value>Ripristina area e colori predefiniti.</value>
+  </data>
+  <data name="TaskProgressResetButton.Content" xml:space="preserve">
+    <value>Ripristina predefiniti</value>
+  </data>
 </root>

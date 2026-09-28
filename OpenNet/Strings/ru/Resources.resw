@@ -5388,4 +5388,52 @@
   <data name="DownloadNotificationAverage" xml:space="preserve">
     <value>Средняя скорость: </value>
   </data>
+  <data name="TaskProgressExpander.Header" xml:space="preserve">
+    <value>Эффекты прогресса задач</value>
+  </data>
+  <data name="TaskProgressExpander.Description" xml:space="preserve">
+    <value>Выберите область подсветки и настройте её цвета.</value>
+  </data>
+  <data name="TaskProgressScopeCard.Header" xml:space="preserve">
+    <value>Область подсветки</value>
+  </data>
+  <data name="TaskProgressScopeCard.Description" xml:space="preserve">
+    <value>Выберите ячейку прогресса или всю строку задачи.</value>
+  </data>
+  <data name="TaskProgressScopeColumn.Content" xml:space="preserve">
+    <value>Ячейка прогресса</value>
+  </data>
+  <data name="TaskProgressScopeRow.Content" xml:space="preserve">
+    <value>Вся строка задачи</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Header" xml:space="preserve">
+    <value>Предпросмотр</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Description" xml:space="preserve">
+    <value>Пример загрузки с выбранными цветами и областью.</value>
+  </data>
+  <data name="TaskProgressPreviewName.Text" xml:space="preserve">
+    <value>Пример загрузки</value>
+  </data>
+  <data name="TaskProgressPreviewSize.Text" xml:space="preserve">
+    <value>42 МиБ</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Header" xml:space="preserve">
+    <value>Основной цвет</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Description" xml:space="preserve">
+    <value>Цвет под подсветкой; по умолчанию прозрачный.</value>
+  </data>
+  <data name="TaskProgressChooseBaseColor.Content" xml:space="preserve">
+    <value>Выбрать цвет</value>
+  </data>
+  <data name="TaskProgressResetCard.Header" xml:space="preserve">
+    <value>Оформление по умолчанию</value>
+  </data>
+  <data name="TaskProgressResetCard.Description" xml:space="preserve">
+    <value>Восстановить область и цвета по умолчанию.</value>
+  </data>
+  <data name="TaskProgressResetButton.Content" xml:space="preserve">
+    <value>Восстановить значения по умолчанию</value>
+  </data>
 </root>

@@ -1044,9 +1044,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 				switch (status)
 				{
 					case ::OpenNet::Core::Aria2::DownloadStatus::Active:
-					case ::OpenNet::Core::Aria2::DownloadStatus::Waiting:
 						nextState =
 							winrt::OpenNet::ViewModels::DownloadTaskState::Downloading;
+						break;
+					case ::OpenNet::Core::Aria2::DownloadStatus::Waiting:
+						nextState =
+							winrt::OpenNet::ViewModels::DownloadTaskState::Pending;
 						break;
 					case ::OpenNet::Core::Aria2::DownloadStatus::Paused:
 						nextState =

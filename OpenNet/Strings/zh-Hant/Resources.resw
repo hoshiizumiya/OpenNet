@@ -5388,4 +5388,52 @@
   <data name="DownloadNotificationAverage" xml:space="preserve">
     <value>平均速度：</value>
   </data>
+  <data name="TaskProgressExpander.Header" xml:space="preserve">
+    <value>工作進度效果</value>
+  </data>
+  <data name="TaskProgressExpander.Description" xml:space="preserve">
+    <value>選擇醒目顯示位置並自訂色彩。</value>
+  </data>
+  <data name="TaskProgressScopeCard.Header" xml:space="preserve">
+    <value>醒目顯示範圍</value>
+  </data>
+  <data name="TaskProgressScopeCard.Description" xml:space="preserve">
+    <value>選擇進度儲存格或整個工作列。</value>
+  </data>
+  <data name="TaskProgressScopeColumn.Content" xml:space="preserve">
+    <value>進度儲存格</value>
+  </data>
+  <data name="TaskProgressScopeRow.Content" xml:space="preserve">
+    <value>整個工作列</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Header" xml:space="preserve">
+    <value>預覽</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Description" xml:space="preserve">
+    <value>使用所選色彩與範圍顯示的下載範例。</value>
+  </data>
+  <data name="TaskProgressPreviewName.Text" xml:space="preserve">
+    <value>範例下載</value>
+  </data>
+  <data name="TaskProgressPreviewSize.Text" xml:space="preserve">
+    <value>42 MiB</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Header" xml:space="preserve">
+    <value>底色</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Description" xml:space="preserve">
+    <value>醒目顯示後方的色彩；預設為透明。</value>
+  </data>
+  <data name="TaskProgressChooseBaseColor.Content" xml:space="preserve">
+    <value>選擇色彩</value>
+  </data>
+  <data name="TaskProgressResetCard.Header" xml:space="preserve">
+    <value>預設外觀</value>
+  </data>
+  <data name="TaskProgressResetCard.Description" xml:space="preserve">
+    <value>還原預設範圍與色彩。</value>
+  </data>
+  <data name="TaskProgressResetButton.Content" xml:space="preserve">
+    <value>還原預設值</value>
+  </data>
 </root>

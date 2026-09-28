@@ -5388,4 +5388,52 @@
   <data name="DownloadNotificationAverage" xml:space="preserve">
     <value>Moyenne : </value>
   </data>
+  <data name="TaskProgressExpander.Header" xml:space="preserve">
+    <value>Effets de progression des tâches</value>
+  </data>
+  <data name="TaskProgressExpander.Description" xml:space="preserve">
+    <value>Choisissez la zone de surbrillance et personnalisez ses couleurs.</value>
+  </data>
+  <data name="TaskProgressScopeCard.Header" xml:space="preserve">
+    <value>Zone de surbrillance</value>
+  </data>
+  <data name="TaskProgressScopeCard.Description" xml:space="preserve">
+    <value>Choisissez la cellule de progression ou toute la ligne.</value>
+  </data>
+  <data name="TaskProgressScopeColumn.Content" xml:space="preserve">
+    <value>Cellule de progression</value>
+  </data>
+  <data name="TaskProgressScopeRow.Content" xml:space="preserve">
+    <value>Ligne entière</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Header" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="TaskProgressPreviewCard.Description" xml:space="preserve">
+    <value>Exemple de téléchargement avec la zone et les couleurs choisies.</value>
+  </data>
+  <data name="TaskProgressPreviewName.Text" xml:space="preserve">
+    <value>Téléchargement exemple</value>
+  </data>
+  <data name="TaskProgressPreviewSize.Text" xml:space="preserve">
+    <value>42 Mio</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Header" xml:space="preserve">
+    <value>Couleur de base</value>
+  </data>
+  <data name="TaskProgressBaseColorCard.Description" xml:space="preserve">
+    <value>Couleur sous la surbrillance ; transparente par défaut.</value>
+  </data>
+  <data name="TaskProgressChooseBaseColor.Content" xml:space="preserve">
+    <value>Choisir une couleur</value>
+  </data>
+  <data name="TaskProgressResetCard.Header" xml:space="preserve">
+    <value>Apparence par défaut</value>
+  </data>
+  <data name="TaskProgressResetCard.Description" xml:space="preserve">
+    <value>Rétablir la zone et les couleurs par défaut.</value>
+  </data>
+  <data name="TaskProgressResetButton.Content" xml:space="preserve">
+    <value>Rétablir les valeurs par défaut</value>
+  </data>
 </root>

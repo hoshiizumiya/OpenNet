@@ -81,12 +81,20 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void ShowNotifications(bool value);
 		bool ProgressEffectsEnabled() const { return m_progressEffectsEnabled; }
 		void ProgressEffectsEnabled(bool value);
+		std::int32_t ProgressEffectScope() const { return m_progressEffectScope; }
+		void ProgressEffectScope(std::int32_t value);
+		winrt::Microsoft::UI::Xaml::Visibility ProgressRowPreviewVisibility() const;
+		winrt::Microsoft::UI::Xaml::Visibility ProgressColumnPreviewVisibility() const;
 		winrt::Windows::UI::Color DownloadProgressColor() const { return m_downloadProgressColor; }
 		void DownloadProgressColor(winrt::Windows::UI::Color value);
 		winrt::Windows::UI::Color SeedingProgressColor() const { return m_seedingProgressColor; }
 		void SeedingProgressColor(winrt::Windows::UI::Color value);
 		winrt::Windows::UI::Color CheckingProgressColor() const { return m_checkingProgressColor; }
 		void CheckingProgressColor(winrt::Windows::UI::Color value);
+		winrt::Windows::UI::Color ProgressBaseColor() const { return m_progressBaseColor; }
+		void ProgressBaseColor(winrt::Windows::UI::Color value);
+		winrt::Microsoft::UI::Xaml::Input::ICommand ResetProgressAppearanceCommand();
+		void ResetProgressAppearance();
 
 		// 语言设置 / Language Settings
 		enum class Language
@@ -513,9 +521,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		bool m_minimizeToTray;
 		bool m_showNotifications;
 		bool m_progressEffectsEnabled{ true };
+		std::int32_t m_progressEffectScope{};
 		winrt::Windows::UI::Color m_downloadProgressColor{ 255, 76, 203, 137 };
 		winrt::Windows::UI::Color m_seedingProgressColor{ 255, 240, 82, 96 };
 		winrt::Windows::UI::Color m_checkingProgressColor{ 255, 69, 201, 232 };
+		winrt::Windows::UI::Color m_progressBaseColor{};
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_resetProgressAppearanceCommand{ nullptr };
 
 		// 语言设置 / Language Settings
 		Language m_currentLanguage;

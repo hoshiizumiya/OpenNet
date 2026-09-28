@@ -16,7 +16,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		~TaskViewModel();
 		static void ReloadProgressAppearance();
 		winrt::Windows::UI::Color ProgressHighColor() const;
+		winrt::Windows::UI::Color ProgressBaseColor() const;
 		winrt::Microsoft::UI::Xaml::Visibility ProgressEffectVisibility() const;
+		winrt::Microsoft::UI::Xaml::Visibility ProgressColumnEffectVisibility() const;
+		winrt::Microsoft::UI::Xaml::Visibility ProgressRowEffectVisibility() const;
 
 		// Make mixin helpers visible
 		using ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>::SetProperty;
@@ -174,7 +177,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void TaskType(winrt::OpenNet::ViewModels::DownloadTaskType v)
 		{
-			if (SetProperty(m_taskType, v, L"TaskType")) RaisePropertyChanged(L"ProgressHighColor");
+			if (SetProperty(m_taskType, v, L"TaskType"))
+			{
+				RaisePropertyChanged(L"ProgressHighColor");
+				RaisePropertyChanged(L"ProgressColumnEffectVisibility");
+				RaisePropertyChanged(L"ProgressRowEffectVisibility");
+			}
 		}
 
 		winrt::OpenNet::ViewModels::DownloadTaskState State() const
@@ -187,6 +195,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				RaisePropertyChanged(L"StateValue");
 				RaisePropertyChanged(L"ProgressHighColor");
+				RaisePropertyChanged(L"ProgressEffectVisibility");
+				RaisePropertyChanged(L"ProgressColumnEffectVisibility");
+				RaisePropertyChanged(L"ProgressRowEffectVisibility");
 			}
 		}
 		std::int32_t StateValue() const noexcept
@@ -200,7 +211,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void TargetPathMissing(bool value)
 		{
 			if (SetProperty(m_targetPathMissing, value, L"TargetPathMissing"))
+			{
 				RaisePropertyChanged(L"StateValue");
+				RaisePropertyChanged(L"ProgressEffectVisibility");
+				RaisePropertyChanged(L"ProgressColumnEffectVisibility");
+				RaisePropertyChanged(L"ProgressRowEffectVisibility");
+			}
 		}
 
 		// Task identifier — libtorrent taskId or HTTP recordId

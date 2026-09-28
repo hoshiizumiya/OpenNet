@@ -62,7 +62,10 @@ namespace OpenNet.ViewModels
         // Progress percent as numeric value (0-100) for SpeedGraph
         Double ProgressPercent;
         Windows.UI.Color ProgressHighColor { get; };
+        Windows.UI.Color ProgressBaseColor { get; };
         Microsoft.UI.Xaml.Visibility ProgressEffectVisibility { get; };
+        Microsoft.UI.Xaml.Visibility ProgressColumnEffectVisibility { get; };
+        Microsoft.UI.Xaml.Visibility ProgressRowEffectVisibility { get; };
 
 		// PointCollection for the speed graph visualization
 		Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };

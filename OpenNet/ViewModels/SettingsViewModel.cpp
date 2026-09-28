@@ -16,15 +16,35 @@ namespace winrt::OpenNet::ViewModels::implementation
 {
 	namespace
 	{
+		struct ResetProgressCommand : winrt::implements<ResetProgressCommand, winrt::Microsoft::UI::Xaml::Input::ICommand>
+		{
+			explicit ResetProgressCommand(winrt::weak_ref<SettingsViewModel> owner) : m_owner(std::move(owner)) {}
+			bool CanExecute(winrt::Windows::Foundation::IInspectable const&) const { return static_cast<bool>(m_owner.get()); }
+			void Execute(winrt::Windows::Foundation::IInspectable const&)
+			{
+				if (auto owner = m_owner.get()) owner->ResetProgressAppearance();
+			}
+			winrt::event_token CanExecuteChanged(winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable> const& handler)
+			{
+				return m_changed.add(handler);
+			}
+			void CanExecuteChanged(winrt::event_token token) noexcept { m_changed.remove(token); }
+		private:
+			winrt::weak_ref<SettingsViewModel> m_owner;
+			winrt::event<winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable>> m_changed;
+		};
+
 		std::uint32_t PackColor(winrt::Windows::UI::Color color)
 		{
-			return 0xff000000u | (std::uint32_t(color.R) << 16) | (std::uint32_t(color.G) << 8) | color.B;
+			return (std::uint32_t(color.A) << 24) | (std::uint32_t(color.R) << 16)
+				| (std::uint32_t(color.G) << 8) | color.B;
 		}
 
 		winrt::Windows::UI::Color UnpackColor(std::int64_t packed)
 		{
 			auto const value = static_cast<std::uint32_t>(packed);
-			return { 255, static_cast<std::uint8_t>(value >> 16), static_cast<std::uint8_t>(value >> 8), static_cast<std::uint8_t>(value) };
+			return { static_cast<std::uint8_t>(value >> 24), static_cast<std::uint8_t>(value >> 16),
+				static_cast<std::uint8_t>(value >> 8), static_cast<std::uint8_t>(value) };
 		}
 	}
 	// Helper: get resource string safely
@@ -135,9 +155,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 		db.Initialize();
 		m_showNotifications = db.GetBool("ui", "download_notifications_enabled").value_or(true);
 		m_progressEffectsEnabled = db.GetBool("ui", "task_progress_effects_enabled").value_or(true);
+		m_progressEffectScope = std::clamp(static_cast<std::int32_t>(db.GetInt("ui", "task_progress_effect_scope").value_or(0)), 0, 1);
 		if (auto color = db.GetInt("ui", "task_progress_download_color")) m_downloadProgressColor = UnpackColor(*color);
 		if (auto color = db.GetInt("ui", "task_progress_seeding_color")) m_seedingProgressColor = UnpackColor(*color);
 		if (auto color = db.GetInt("ui", "task_progress_checking_color")) m_checkingProgressColor = UnpackColor(*color);
+		if (auto color = db.GetInt("ui", "task_progress_base_color")) m_progressBaseColor = UnpackColor(*color);
 	}
 
 	void SettingsViewModel::ShowNotifications(bool value)
@@ -151,6 +173,28 @@ namespace winrt::OpenNet::ViewModels::implementation
 		if (!SetProperty(m_progressEffectsEnabled, value, L"ProgressEffectsEnabled")) return;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool("ui", "task_progress_effects_enabled", value);
 		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	void SettingsViewModel::ProgressEffectScope(std::int32_t value)
+	{
+		value = std::clamp(value, 0, 1);
+		if (!SetProperty(m_progressEffectScope, value, L"ProgressEffectScope")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("ui", "task_progress_effect_scope", value);
+		RaisePropertyChanged(L"ProgressRowPreviewVisibility");
+		RaisePropertyChanged(L"ProgressColumnPreviewVisibility");
+		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	winrt::Microsoft::UI::Xaml::Visibility SettingsViewModel::ProgressRowPreviewVisibility() const
+	{
+		return m_progressEffectScope == 1 ? winrt::Microsoft::UI::Xaml::Visibility::Visible
+			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
+	}
+
+	winrt::Microsoft::UI::Xaml::Visibility SettingsViewModel::ProgressColumnPreviewVisibility() const
+	{
+		return m_progressEffectScope == 0 ? winrt::Microsoft::UI::Xaml::Visibility::Visible
+			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
 	}
 
 	void SettingsViewModel::DownloadProgressColor(winrt::Windows::UI::Color value)
@@ -175,6 +219,30 @@ namespace winrt::OpenNet::ViewModels::implementation
 		if (!SetProperty(m_checkingProgressColor, value, L"CheckingProgressColor")) return;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("ui", "task_progress_checking_color", PackColor(value));
 		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	void SettingsViewModel::ProgressBaseColor(winrt::Windows::UI::Color value)
+	{
+		if (!SetProperty(m_progressBaseColor, value, L"ProgressBaseColor")) return;
+		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt("ui", "task_progress_base_color", PackColor(value));
+		TaskViewModel::ReloadProgressAppearance();
+	}
+
+	winrt::Microsoft::UI::Xaml::Input::ICommand SettingsViewModel::ResetProgressAppearanceCommand()
+	{
+		if (!m_resetProgressAppearanceCommand)
+			m_resetProgressAppearanceCommand = winrt::make<ResetProgressCommand>(get_weak());
+		return m_resetProgressAppearanceCommand;
+	}
+
+	void SettingsViewModel::ResetProgressAppearance()
+	{
+		ProgressEffectsEnabled(true);
+		ProgressEffectScope(0);
+		DownloadProgressColor({ 255, 76, 203, 137 });
+		SeedingProgressColor({ 255, 240, 82, 96 });
+		CheckingProgressColor({ 255, 69, 201, 232 });
+		ProgressBaseColor({});
 	}
 
 	// Summary: 析构函数
