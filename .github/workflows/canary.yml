@@ -21,19 +21,6 @@ on:
       - '**.md'
       - 'LICENSE'
       - '**.yml'
-  pull_request:
-      branches-ignore:
-      - l10n_develop
-      - release
-      - dependabot/**
-      paths-ignore:
-      - '.gitattributes'
-      - '.github/**'
-      - '.gitignore'
-      - '.gitmodules'
-      - '**.md'
-      - 'LICENSE'
-      - '**.yml'
 
 permissions:
   contents: write
