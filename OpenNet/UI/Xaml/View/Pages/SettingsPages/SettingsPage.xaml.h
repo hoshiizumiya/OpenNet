@@ -3,6 +3,7 @@
 import winrt.OpenNet.UI.Xaml.Control;
 #include "UI/Xaml/View/Pages/SettingsPages/SettingsPage.g.h"
 #include "Service/Update/UpdateService.h"
+#include "ViewModels/SettingsViewModel.h"
 
 import winrt.Microsoft.UI.Dispatching;
 
@@ -13,6 +14,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	public:
 		SettingsPage();
 		~SettingsPage();
+		winrt::OpenNet::ViewModels::SettingsViewModel ViewModel()
+		{
+			if (!m_viewModel) m_viewModel = winrt::OpenNet::ViewModels::SettingsViewModel();
+			return m_viewModel;
+		}
+		std::int32_t MaterialStyleIndex() const;
 		static SettingsPage* Current();
 
 		// Event handlers referenced from XAML
@@ -59,6 +66,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		bool m_isRefreshIntervalLoading{ false };
 		bool m_isInitializingUpdateSettings{ false };
 		bool m_isCheckingForUpdate{ false };
+		winrt::OpenNet::ViewModels::SettingsViewModel m_viewModel{ nullptr };
 	};
 }
 

@@ -49,7 +49,7 @@
                         <TextBlock
                             Height="60"
                             Margin="0,0,10,0"
-                            FontSize="40"
+                            FontSize="24"
                             Text="{x:Bind}" />
                     </DataTemplate>
                 </BreadcrumbBar.ItemTemplate>
@@ -172,7 +172,7 @@
             </NavigationViewItem>
         </NavigationView.MenuItems>
 
-        <Frame x:Name="SettingsFrame">
+        <Frame x:Name="SettingsFrame" Navigated="SettingsFrame_Navigated">
             <Frame.ContentTransitions>
                 <TransitionCollection>
                     <NavigationThemeTransition />

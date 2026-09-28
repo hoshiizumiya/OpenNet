@@ -65,6 +65,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			LoadBackdropSettings();
 		});
 	}
+	std::int32_t ThemesSettingsPage::MaterialStyleIndex() const
+	{
+		return static_cast<std::int32_t>(::OpenNet::Helpers::MaterialTheme::Current());
+	}
 
 	void ThemesSettingsPage::MaterialStyleSelector_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
 	{
@@ -73,6 +77,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (index >= 0 && index <= 1)
 		{
 			::OpenNet::Helpers::MaterialTheme::Set(static_cast<::OpenNet::Helpers::MaterialStyle>(index));
+			Bindings->Update();
 		}
 	}
 
@@ -523,14 +528,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::NavigateToThemeSettingBackdropCustomizePageButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		if (auto host = MainSettingsPage::Current())
-		{
-			auto items = host->SettingsBarItems();
-			while (items.Size() > 2) items.RemoveAtEnd();
-			if (items.Size() == 1) items.Append(L"Appearance");
-			if (items.Size() == 2) items.Append(L"Colors Style");
-		}
-
 		auto transitionInfo = SlideNavigationTransitionInfo{};
 		transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
 		Frame().Navigate(
@@ -541,14 +538,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::NavigateToThemeSettingFontSettingPageButton_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		if (auto host = MainSettingsPage::Current())
-		{
-			auto items = host->SettingsBarItems();
-			while (items.Size() > 2) items.RemoveAtEnd();
-			if (items.Size() == 1) items.Append(L"Appearance");
-			if (items.Size() == 2) items.Append(L"Font Setting");
-		}
-
 		auto transitionInfo = SlideNavigationTransitionInfo{};
 		transitionInfo.Effect(SlideNavigationTransitionEffect::FromRight);
 		Frame().Navigate(

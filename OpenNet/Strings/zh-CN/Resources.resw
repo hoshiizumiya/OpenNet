@@ -6745,4 +6745,61 @@
   <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
     <value>监听和网络集成</value>
   </data>
+  <data name="SettingsBreadcrumbRoot" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="TaskProgressAppearanceHeader.Text" xml:space="preserve">
+    <value>任务进度</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Header" xml:space="preserve">
+    <value>动态任务进度</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Description" xml:space="preserve">
+    <value>在每项任务的进度文字后显示彩色高光。</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Header" xml:space="preserve">
+    <value>下载高光</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Description" xml:space="preserve">
+    <value>HTTP 与 BitTorrent 下载时的颜色。</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Header" xml:space="preserve">
+    <value>做种高光</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Description" xml:space="preserve">
+    <value>BitTorrent 下载完成后上传时的颜色。</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Header" xml:space="preserve">
+    <value>校验高光</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Description" xml:space="preserve">
+    <value>BitTorrent 校验文件时的颜色。</value>
+  </data>
+  <data name="TaskProgressChooseDownloadColor.Content" xml:space="preserve">
+    <value>选择颜色</value>
+  </data>
+  <data name="TaskProgressChooseSeedingColor.Content" xml:space="preserve">
+    <value>选择颜色</value>
+  </data>
+  <data name="TaskProgressChooseCheckingColor.Content" xml:space="preserve">
+    <value>选择颜色</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Header" xml:space="preserve">
+    <value>下载完成通知</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Description" xml:space="preserve">
+    <value>下载完成时显示 Windows 通知。</value>
+  </data>
+  <data name="DownloadNotificationTitle" xml:space="preserve">
+    <value>下载完成</value>
+  </data>
+  <data name="DownloadNotificationOpenFolder" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="DownloadNotificationElapsed" xml:space="preserve">
+    <value>用时：</value>
+  </data>
+  <data name="DownloadNotificationAverage" xml:space="preserve">
+    <value>平均速度：</value>
+  </data>
 </root>

@@ -48,7 +48,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void MainSettingsPage::MainSettingsPage_Loaded(IInspectable const&, RoutedEventArgs const&)
 	{
-		SettingsNavView().SelectedItem(GeneralNavItem());
+		if (!SettingsFrame().SourcePageType().Name.empty()) SyncBreadcrumb();
+		else SettingsNavView().SelectedItem(GeneralNavItem());
 	}
 
 	void MainSettingsPage::MainSettingsPage_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& e)
@@ -75,57 +76,37 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void MainSettingsPage::SettingsBar_ItemClicked(BreadcrumbBar const& /*sender*/, BreadcrumbBarItemClickedEventArgs const& args)
 	{
-		// Trim items after clicked index
-		auto itemsObj = MainSettingsPageBar().ItemsSource();
-		auto vec = itemsObj.try_as<IObservableVector<IInspectable>>();
-		if (!vec)
-			return;
-
-		int32_t count = static_cast<int32_t>(vec.Size());
-		for (int32_t i = count - 1; i >= args.Index() + 1; --i)
+		if (args.Index() >= static_cast<std::int32_t>(m_settingsBarItems.Size()) - 1) return;
+		auto target = GeneralNavItem();
+		if (args.Index() == 1)
 		{
-			vec.RemoveAtEnd();
+			auto const source = SettingsFrame().SourcePageType();
+			auto const detail = source.Name == xaml_typename<ThemeSettingBackdropCustomizePage>().Name
+				|| source.Name == xaml_typename<FontCustomizePage>().Name;
+			target = detail ? AppearanceNavItem() :
+			(m_settingsBarItems.Size() == 3 ? BitTorrentNavItem() : m_selectedItem);
 		}
-
-		// Navigate back to appropriate page based on breadcrumb depth
-		if (args.Index() == 0)
+		else if (args.Index() == 2 && m_settingsBarItems.Size() == 3)
 		{
-			SettingsNavView().SelectedItem(GeneralNavItem());
+			target = m_selectedItem;
 		}
-		else if (args.Index() == 1)
+		if (!target) return;
+		SettingsNavView().SelectedItem(target);
+		auto const pageType = target.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>();
+		if (SettingsFrame().SourcePageType().Name != pageType.Name)
 		{
-			SettingsNavView().SelectedItem(AppearanceNavItem());
-		}
-		else if (args.Index() == 2 && m_settingsBarItems.Size() > 2)
-		{
-			auto const pageTitle = m_settingsBarItems.GetAt(2);
-			auto transitionInfo = SlideNavigationTransitionInfo{};
-			transitionInfo.Effect(SlideNavigationTransitionEffect::FromLeft);
-			SettingsNavView().SelectedItem(AppearanceNavItem());
-
-			if (pageTitle == L"Colors Style")
-			{
-				SettingsFrame().Navigate(
-					xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ThemeSettingBackdropCustomizePage>(),
-					nullptr,
-					transitionInfo);
-				return;
-			}
-
-			if (pageTitle == L"Font Setting")
-			{
-				SettingsFrame().Navigate(
-					xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::FontCustomizePage>(),
-					nullptr,
-					transitionInfo);
-			}
+			auto transition = SlideNavigationTransitionInfo{};
+			transition.Effect(SlideNavigationTransitionEffect::FromLeft);
+			SettingsFrame().Navigate(pageType, nullptr, transition);
 		}
 	}
 
 	void MainSettingsPage::SettingsNavView_SelectionChanged(NavigationView const& /*sender*/, NavigationViewSelectionChangedEventArgs const& args)
 	{
+		if (m_syncingNavigation) return;
 		if (auto selectedItem = args.SelectedItem().try_as<NavigationViewItem>())
 		{
+			m_selectedItem = selectedItem;
 			auto const pageType = selectedItem.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>();
 
 			// Create slide transition
@@ -133,23 +114,54 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			auto transitionInfo = SlideNavigationTransitionInfo{};
 			transitionInfo.Effect(SlideNavigationTransitionEffect::FromBottom);
 
-			// Keep only root "Settings" item
-			while (m_settingsBarItems.Size() > 1)
-			{
-				m_settingsBarItems.RemoveAtEnd();
-			}
-
-			// Add new category if not general
-			if (selectedItem != GeneralNavItem())
-			{
-				m_settingsBarItems.Append(winrt::unbox_value_or(selectedItem.Content(), L""));
-			}
-
-			if (SettingsFrame().SourcePageType() != pageType)
+			if (SettingsFrame().SourcePageType().Name != pageType.Name)
 			{
 				SettingsFrame().Navigate(pageType, nullptr, transitionInfo);
 			}
+			else SyncBreadcrumb();
 		}
+	}
+
+	void MainSettingsPage::SettingsFrame_Navigated(IInspectable const&, winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
+	{
+		SyncBreadcrumb();
+	}
+
+	void MainSettingsPage::SyncBreadcrumb()
+	{
+		auto const source = SettingsFrame().SourcePageType();
+		if (source.Name.empty()) return;
+		auto const backdrop = source.Name == xaml_typename<ThemeSettingBackdropCustomizePage>().Name;
+		auto const font = source.Name == xaml_typename<FontCustomizePage>().Name;
+		auto item = m_selectedItem;
+		if (backdrop || font) item = AppearanceNavItem();
+		else if (!item || !item.Tag() || item.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>().Name != source.Name)
+		{
+			for (auto const& candidate : SearchableItems())
+			{
+				if (candidate.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>().Name == source.Name)
+				{
+					item = candidate;
+					break;
+				}
+			}
+		}
+		if (!item) return;
+		m_selectedItem = item;
+		m_syncingNavigation = true;
+		SettingsNavView().SelectedItem(item);
+		m_syncingNavigation = false;
+		auto const root = ResourceGetString(L"SettingsBreadcrumbRoot");
+		m_settingsBarItems.Clear();
+		m_settingsBarItems.Append(root.empty() ? L"Settings" : root);
+		if (item != GeneralNavItem())
+		{
+			if (item == NetworkNavItem() || item == TrackerNavItem() || item == IPFilterNavItem() || item == ClientFilterNavItem())
+				m_settingsBarItems.Append(winrt::unbox_value_or<hstring>(BitTorrentNavItem().Content(), L"BitTorrent"));
+			m_settingsBarItems.Append(winrt::unbox_value_or<hstring>(item.Content(), L""));
+		}
+		if (backdrop) m_settingsBarItems.Append(ResourceGetString(L"SoftBackgroundColors/Header"));
+		else if (font) m_settingsBarItems.Append(ResourceGetString(L"ViewThemesSettingsPageFontSetting/Header"));
 	}
 
 	std::vector<NavigationViewItem> MainSettingsPage::SearchableItems()

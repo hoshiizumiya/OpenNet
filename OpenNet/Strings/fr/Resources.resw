@@ -5331,4 +5331,61 @@
   <data name="ViewNetworkSettingsPageSettingsCardDHT.Header" xml:space="preserve">
     <value>Activer DHT</value>
   </data>
+  <data name="SettingsBreadcrumbRoot" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="TaskProgressAppearanceHeader.Text" xml:space="preserve">
+    <value>Progression des tâches</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Header" xml:space="preserve">
+    <value>Progression animée</value>
+  </data>
+  <data name="TaskProgressEffectsCard.Description" xml:space="preserve">
+    <value>Afficher une surbrillance colorée derrière la progression de chaque tâche.</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Header" xml:space="preserve">
+    <value>Couleur du téléchargement</value>
+  </data>
+  <data name="TaskProgressDownloadColorCard.Description" xml:space="preserve">
+    <value>Couleur des téléchargements HTTP et BitTorrent.</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Header" xml:space="preserve">
+    <value>Couleur du partage</value>
+  </data>
+  <data name="TaskProgressSeedingColorCard.Description" xml:space="preserve">
+    <value>Couleur de l’envoi BitTorrent après le téléchargement.</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Header" xml:space="preserve">
+    <value>Couleur de vérification</value>
+  </data>
+  <data name="TaskProgressCheckingColorCard.Description" xml:space="preserve">
+    <value>Couleur utilisée pendant la vérification des fichiers BitTorrent.</value>
+  </data>
+  <data name="TaskProgressChooseDownloadColor.Content" xml:space="preserve">
+    <value>Choisir une couleur</value>
+  </data>
+  <data name="TaskProgressChooseSeedingColor.Content" xml:space="preserve">
+    <value>Choisir une couleur</value>
+  </data>
+  <data name="TaskProgressChooseCheckingColor.Content" xml:space="preserve">
+    <value>Choisir une couleur</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Header" xml:space="preserve">
+    <value>Notifications de fin de téléchargement</value>
+  </data>
+  <data name="DownloadCompletionNotificationsCard.Description" xml:space="preserve">
+    <value>Afficher une notification Windows à la fin d’un téléchargement.</value>
+  </data>
+  <data name="DownloadNotificationTitle" xml:space="preserve">
+    <value>Téléchargement terminé</value>
+  </data>
+  <data name="DownloadNotificationOpenFolder" xml:space="preserve">
+    <value>Ouvrir le dossier</value>
+  </data>
+  <data name="DownloadNotificationElapsed" xml:space="preserve">
+    <value>Durée : </value>
+  </data>
+  <data name="DownloadNotificationAverage" xml:space="preserve">
+    <value>Moyenne : </value>
+  </data>
 </root>

@@ -40,6 +40,88 @@
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                 Text="Appearance" />
 
+            <TextBlock
+                x:Uid="TaskProgressAppearanceHeader"
+                Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                Text="Task progress" />
+            <essential:SettingsCard
+                x:Uid="TaskProgressEffectsCard"
+                Description="Show a colored highlight behind each task's progress."
+                Header="Animated task progress">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE9CE;" />
+                </essential:SettingsCard.HeaderIcon>
+                <essential:SwitchPresenter Value="{x:Bind MaterialStyleIndex, Mode=OneWay}">
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch
+                            x:Uid="TaskProgressEffectsSwitch"
+                            IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
+                    </essential:Case>
+                    <essential:Case>
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch
+                            x:Uid="TaskProgressEffectsGlassSwitch"
+                            IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
+                    </essential:Case>
+                </essential:SwitchPresenter>
+            </essential:SettingsCard>
+            <essential:SettingsCard
+                x:Uid="TaskProgressDownloadColorCard"
+                Description="Color for HTTP and BitTorrent downloads."
+                Header="Download highlight">
+                <Button x:Uid="TaskProgressChooseDownloadColor" Content="Choose color">
+                    <Button.Flyout>
+                        <Flyout>
+                            <ColorPicker
+                                x:Uid="TaskProgressDownloadColorPicker"
+                                Color="{x:Bind ViewModel.DownloadProgressColor, Mode=TwoWay}"
+                                IsAlphaEnabled="False"
+                                IsAlphaSliderVisible="False"
+                                IsAlphaTextInputVisible="False" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </essential:SettingsCard>
+            <essential:SettingsCard
+                x:Uid="TaskProgressSeedingColorCard"
+                Description="Color for BitTorrent upload after download completion."
+                Header="Seeding highlight">
+                <Button x:Uid="TaskProgressChooseSeedingColor" Content="Choose color">
+                    <Button.Flyout>
+                        <Flyout>
+                            <ColorPicker
+                                x:Uid="TaskProgressSeedingColorPicker"
+                                Color="{x:Bind ViewModel.SeedingProgressColor, Mode=TwoWay}"
+                                IsAlphaEnabled="False"
+                                IsAlphaSliderVisible="False"
+                                IsAlphaTextInputVisible="False" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </essential:SettingsCard>
+            <essential:SettingsCard
+                x:Uid="TaskProgressCheckingColorCard"
+                Description="Color while a BitTorrent task checks its files."
+                Header="Verification highlight">
+                <Button x:Uid="TaskProgressChooseCheckingColor" Content="Choose color">
+                    <Button.Flyout>
+                        <Flyout>
+                            <ColorPicker
+                                x:Uid="TaskProgressCheckingColorPicker"
+                                Color="{x:Bind ViewModel.CheckingProgressColor, Mode=TwoWay}"
+                                IsAlphaEnabled="False"
+                                IsAlphaSliderVisible="False"
+                                IsAlphaTextInputVisible="False" />
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+            </essential:SettingsCard>
+
             <essential:SettingsCard
                 x:Uid="ViewThemesSettingsPageControlMaterialCard"
                 Description="Changes the material used by cards and card surfaces"

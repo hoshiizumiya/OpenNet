@@ -587,6 +587,8 @@ namespace winrt::OpenNet::implementation
 					App::window = nullptr;
 				}
 				App::guideWindow = nullptr;
+				try { winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Unregister(); }
+				catch (...) { }
 				Microsoft::UI::Xaml::Application::Current().Exit();
 			});
 		}

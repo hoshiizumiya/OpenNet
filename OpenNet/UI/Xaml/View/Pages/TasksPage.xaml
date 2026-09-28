@@ -920,13 +920,22 @@
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap"
                                     Visibility="{x:Bind ColSize.Visibility, Mode=OneWay}" />
-                                <TextBlock
-                                    x:Name="ProgressTextBlock"
-                                    HorizontalAlignment="Right"
-                                    Text="{x:Bind Progress, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis"
-                                    TextWrapping="NoWrap"
-                                    Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}" />
+                                <Grid MinWidth="110" Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}">
+                                    <essential:ProgressBarEx
+                                        Height="20"
+                                        HorizontalAlignment="Stretch"
+                                        Background="Transparent"
+                                        BaseColor="Transparent"
+                                        HighColor="{x:Bind ProgressHighColor, Mode=OneWay}"
+                                        Percent="{x:Bind ProgressPercent, Mode=OneWay}"
+                                        Visibility="{x:Bind ProgressEffectVisibility, Mode=OneWay}" />
+                                    <TextBlock
+                                        HorizontalAlignment="Right"
+                                        IsHitTestVisible="False"
+                                        Text="{x:Bind Progress, Mode=OneWay}"
+                                        TextTrimming="CharacterEllipsis"
+                                        TextWrapping="NoWrap" />
+                                </Grid>
                                 <TextBlock
                                     x:Name="DownloadSizeTextBlock"
                                     HorizontalAlignment="Right"

@@ -1,8 +1,12 @@
+import "ViewModels/SettingsViewModel.idl";
+
 namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
 {
     [default_interface]
     runtimeclass SettingsPage : Microsoft.UI.Xaml.Controls.Page
     {
         SettingsPage();
+        OpenNet.ViewModels.SettingsViewModel ViewModel { get; };
+        Int32 MaterialStyleIndex { get; };
     }
 }
