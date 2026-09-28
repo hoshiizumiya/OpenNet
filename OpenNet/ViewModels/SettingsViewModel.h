@@ -629,3 +629,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		static constexpr uint32_t DEFAULT_LOG_RETENTION_DAYS = 30;
 	};
 }
+
+namespace winrt::OpenNet::ViewModels::factory_implementation
+{
+	struct SettingsViewModel : SettingsViewModelT<SettingsViewModel, implementation::SettingsViewModel>
+	{
+	};
+}

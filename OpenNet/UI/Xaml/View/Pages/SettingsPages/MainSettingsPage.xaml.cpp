@@ -81,8 +81,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (args.Index() == 1)
 		{
 			auto const source = SettingsFrame().SourcePageType();
-			auto const detail = source.Name == xaml_typename<ThemeSettingBackdropCustomizePage>().Name
-				|| source.Name == xaml_typename<FontCustomizePage>().Name;
+			auto const detail = source.Name == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ThemeSettingBackdropCustomizePage>().Name
+				|| source.Name == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::FontCustomizePage>().Name;
 			target = detail ? AppearanceNavItem() :
 			(m_settingsBarItems.Size() == 3 ? BitTorrentNavItem() : m_selectedItem);
 		}
@@ -131,8 +131,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 		auto const source = SettingsFrame().SourcePageType();
 		if (source.Name.empty()) return;
-		auto const backdrop = source.Name == xaml_typename<ThemeSettingBackdropCustomizePage>().Name;
-		auto const font = source.Name == xaml_typename<FontCustomizePage>().Name;
+		auto const backdrop = source.Name == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::ThemeSettingBackdropCustomizePage>().Name;
+		auto const font = source.Name == xaml_typename<winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::FontCustomizePage>().Name;
 		auto item = m_selectedItem;
 		if (backdrop || font) item = AppearanceNavItem();
 		else if (!item || !item.Tag() || item.Tag().as<winrt::Windows::UI::Xaml::Interop::TypeName>().Name != source.Name)

@@ -9,6 +9,7 @@
 module OpenNet.Core.Notification.HttpToastNotification;
 
 import OpenNet.Core.AppSettingsDatabase;
+import winrt.Microsoft.Windows.AppNotifications;
 import winrt.Microsoft.Windows.AppNotifications.Builder;
 import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Windows.Foundation;

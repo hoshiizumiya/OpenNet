@@ -33,6 +33,7 @@ import winrt.Windows.Storage;
 import winrt.Microsoft.Windows.Storage;
 import winrt.Microsoft.Windows.AppNotifications;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.WinUI3Package;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -110,6 +111,10 @@ namespace winrt::OpenNet::implementation
 	/// <param name="e">Details about the launch request and process.</param>
 	void App::OnLaunched([[maybe_unused]] Microsoft::UI::Xaml::LaunchActivatedEventArgs const& e)
 	{
+		// ProgressBarEx merges its implicit style into application resources on first
+		// construction. Do that before any task row is realized during layout.
+		[[maybe_unused]] winrt::WinUI3Package::ProgressBarEx progressBarStyleLoader;
+
 		using ::OpenNet::Core::Setting::LocalSetting;
 		using namespace ::OpenNet::Core::Setting;
 		auto const guideState = LocalSetting::Get(

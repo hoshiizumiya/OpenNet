@@ -1,5 +1,6 @@
 ﻿#include "XamlWorkaround.h"
 #include "SettingsViewModel.h"
+#include "ViewModels/SettingsViewModel.g.cpp"
 #include "ViewModels/TaskViewModel.h"
 
 import OpenNet.Core.AppSettingsDatabase;
