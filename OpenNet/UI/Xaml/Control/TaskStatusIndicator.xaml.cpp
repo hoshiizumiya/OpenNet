@@ -88,12 +88,18 @@ namespace winrt::OpenNet::UI::Xaml::Control::implementation
 				stateName = L"Checking";
 				resourceKey = L"TaskStatusChecking";
 				break;
+			case 7: // Transient missing target path warning
+				stateName = L"MissingTarget";
+				resourceKey = L"TaskStatusTargetPathMissing";
+				break;
 			default:
 				break;
 		}
 
 		VisualStateManager::GoToState(*this, stateName, true);
-		winrt::hstring label{ stateName };
+		winrt::hstring label = State() == 7
+			? winrt::hstring{ L"Target path missing" }
+		: winrt::hstring{ stateName };
 		try
 		{
 			if (auto localized = ResourceLoader{}.GetString(resourceKey);

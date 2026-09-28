@@ -92,6 +92,14 @@
                         <Setter Target="StatusGlyph.Glyph" Value="&#xE9D9;" />
                     </VisualState.Setters>
                 </VisualState>
+                <VisualState x:Name="MissingTarget">
+                    <VisualState.Setters>
+                        <Setter Target="ActivityRing.Visibility" Value="Collapsed" />
+                        <Setter Target="ActivityRing.IsActive" Value="False" />
+                        <Setter Target="StatusGlyph.Foreground" Value="{ThemeResource SystemFillColorCautionBrush}" />
+                        <Setter Target="StatusGlyph.Glyph" Value="&#xE7BA;" />
+                    </VisualState.Setters>
+                </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
     </Grid>

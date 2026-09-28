@@ -168,14 +168,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		LocaleTextBox().IsEnabled(!m_followApplicationLanguage);
 		UsernameTextBox().Text(to_hstring(database.GetString(Category.data(), "username").value_or("admin")));
 		PasswordInput().Password(to_hstring(database.GetString(Category.data(), "password").value_or("adminadmin")));
-		m_bypassLocalAuth = database.GetBool(Category.data(), "bypass_authentication_for_localhost").value_or(false);
+		m_bypassLocalAuth = database.GetBool(Category.data(), "bypass_authentication_for_localhost").value_or(true);
 		SessionTimeoutNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "session_timeout_seconds").value_or(3600)));
 		SessionCountLimitNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "session_count_limit").value_or(10)));
 		MaxAuthFailuresNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "maximum_authentication_failures").value_or(5)));
 		BanDurationNumberBox().Value(static_cast<double>(database.GetInt(Category.data(), "ban_duration_seconds").value_or(3600)));
 		m_csrfProtection = database.GetBool(Category.data(), "csrf_protection").value_or(true);
 		m_hostValidation = database.GetBool(Category.data(), "host_header_validation").value_or(true);
-		m_secureCookie = database.GetBool(Category.data(), "secure_cookie").value_or(false);
+		m_secureCookie = database.GetBool(Category.data(), "secure_cookie").value_or(true);
 		SyncMaterialToggles();
 		DomainListTextBox().Text(to_hstring(database.GetString(Category.data(), "domain_list").value_or("*")));
 		UpdateStatus();
@@ -298,6 +298,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			const auto oldSessionLimit = database.GetInt(Category.data(), "session_count_limit");
 			const auto oldMaximumFailures = database.GetInt(Category.data(), "maximum_authentication_failures");
 			const auto oldBanDuration = database.GetInt(Category.data(), "ban_duration_seconds");
+			const bool unchanged =
+				oldAddress.value_or("127.0.0.1") == address
+				&& oldFrontend.value_or("qbittorrent") == frontend
+				&& oldPort.value_or(8080) == static_cast<std::int64_t>(portValue)
+				&& oldFollowApplicationLanguage.value_or(!oldLocale.has_value()) == followApplicationLanguage
+				&& (followApplicationLanguage || oldLocale.value_or("en") == locale)
+				&& oldUsername.value_or("admin") == username
+				&& oldPassword.value_or("adminadmin") == password
+				&& oldApiKey.value_or("") == apiKey
+				&& oldEnabled.value_or(true) == enabled
+				&& oldBypassLocalAuth.value_or(true) == bypassLocalAuth
+				&& oldCsrfProtection.value_or(true) == csrfProtection
+				&& oldHostValidation.value_or(true) == hostValidation
+				&& oldSecureCookie.value_or(true) == secureCookie
+				&& oldDomainList.value_or("*") == domainList
+				&& oldSessionTimeout.value_or(3600) == static_cast<std::int64_t>(sessionTimeout)
+				&& oldSessionLimit.value_or(10) == static_cast<std::int64_t>(sessionLimit)
+				&& oldMaximumFailures.value_or(5) == static_cast<std::int64_t>(maximumFailures)
+				&& oldBanDuration.value_or(3600) == static_cast<std::int64_t>(banDuration);
+			if (unchanged)
+			{
+				ViewModel().RefreshRuntimeState();
+				UpdateStatus();
+				return;
+			}
 
 			database.SetString(Category.data(), "address", address);
 			database.SetString(Category.data(), "frontend", frontend);
@@ -399,9 +424,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 
 			UpdateStatus(enabled
-				? ResourceGetString(L"WebUISettingsChangesAppliedRunning") + WebUIUrl()
-				: ResourceGetString(L"WebUISettingsChangesAppliedDisabled"),
-				InfoBarSeverity::Success);
+						 ? ResourceGetString(L"WebUISettingsChangesAppliedRunning") + WebUIUrl()
+						 : ResourceGetString(L"WebUISettingsChangesAppliedDisabled"),
+						 InfoBarSeverity::Success);
 		}
 		catch (std::exception const& exception)
 		{

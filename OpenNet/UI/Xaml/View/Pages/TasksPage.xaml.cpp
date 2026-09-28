@@ -44,6 +44,7 @@ import winrt.OpenNet.UI.Xaml.View.Windows;
 import winrt.Windows.ApplicationModel.DataTransfer;
 import winrt.Windows.Foundation;
 import winrt.Windows.System;
+import winrt.Windows.UI;
 import winrt.Windows.UI.Xaml.Navigation;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml;
@@ -193,9 +194,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			for (auto const& file : detail.files)
 			{
-				if (file.priority <= 0 ||
-					(preview ? file.bytesCompleted <= 0
-					 : file.bytesCompleted < file.size))
+				if (file.isPadFile || (preview
+									   && (file.priority <= 0 || file.bytesCompleted <= 0)))
 				{
 					continue;
 				}
@@ -214,6 +214,38 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				}
 			}
 			return {};
+		}
+
+		bool IsSingleFileTorrent(TorrentDetailInfo const& detail)
+		{
+			return std::ranges::count_if(detail.files,
+										 [](auto const& file)
+			{
+				return !file.isPadFile;
+			}) == 1;
+		}
+
+		std::filesystem::path GetTaskContentDirectory(
+			TorrentDetailInfo const& detail)
+		{
+			auto const root = std::filesystem::path{
+				winrt::to_hstring(detail.savePath).c_str() };
+			if (root.empty() || IsSingleFileTorrent(detail)) return root;
+			std::filesystem::path commonTop;
+			for (auto const& file : detail.files)
+			{
+				if (file.isPadFile) continue;
+				auto const relative = std::filesystem::path{
+					winrt::to_hstring(file.path).c_str() };
+				if (relative.empty()) return root;
+				auto const top = *relative.begin();
+				if (commonTop.empty()) commonTop = top;
+				else if (commonTop != top) return root;
+			}
+			std::error_code error;
+			auto const candidate = root / commonTop;
+			return !commonTop.empty() && std::filesystem::is_directory(candidate, error)
+				? candidate : root;
 		}
 
 		std::filesystem::path GetTaskFilePath(
@@ -669,7 +701,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 			auto dialog = make<
 				winrt::OpenNet::UI::Xaml::View::Dialog::implementation::
-					HttpDownloadDialog>();
+				HttpDownloadDialog>();
 			if (!initialUrl.empty())
 				dialog.Url(initialUrl);
 			dialog.XamlRoot(xamlRoot);
@@ -1317,6 +1349,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			winrt::OpenNet::ViewModels::DownloadTaskState::Downloading ||
 			state == winrt::OpenNet::ViewModels::DownloadTaskState::Seeding;
 		auto const hasFile = detail && !GetTaskFilePath(*detail, false).empty();
+		auto const singleFile = detail && IsSingleFileTorrent(*detail);
 		auto const hasPreview = detail && !GetTaskFilePath(*detail, true).empty();
 		auto const magnetUri = GetMagnetUri(task, detail);
 		auto const savePath = GetTaskSavePath(task, detail);
@@ -1334,16 +1367,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			isBitTorrent && detail.has_value() && task.ProgressPercent() < 100.0);
 		SequentialDownloadMenuItem().IsChecked(
 			detail.has_value() && detail->isSequential);
-		OpenTaskFileMenuItem().IsEnabled(isBitTorrent && hasFile);
-		ManualHashCheckMenuItem().IsEnabled(isBitTorrent && detail.has_value());
+		OpenTaskFileMenuItem().Visibility(isBitTorrent && singleFile
+										  ? Visibility::Visible : Visibility::Collapsed);
+		OpenTaskLocationMenuItem().Visibility(isBitTorrent && singleFile
+											  ? Visibility::Collapsed : Visibility::Visible);
+		OpenTaskFileMenuItem().IsEnabled(isBitTorrent && singleFile && hasFile);
+		ManualHashCheckMenuItem().IsEnabled(isBitTorrent && detail
+											&& detail->piecesNum > 0);
 		SaveTorrentAsMenuItem().IsEnabled(
 			isBitTorrent && detail.has_value() && !detail->files.empty());
+		CleanUpTaskMenuItem().IsEnabled(isBitTorrent && detail
+										&& !detail->files.empty() && !isActive);
 		DeleteTaskMenuItem().IsEnabled(hasSelection);
 		RenameTaskMenuItem().IsEnabled(hasSelection);
-		MoveTaskMenuItem().IsEnabled(isBitTorrent && detail.has_value());
+		MoveTaskMenuItem().IsEnabled(isBitTorrent && detail
+									 && !detail->files.empty());
 		TagsMenuItem().IsEnabled(hasSelection);
-		OpenTaskLocationMenuItem().IsEnabled(
-			hasSelection && !savePath.empty());
+		OpenTaskLocationMenuItem().IsEnabled(hasSelection && !savePath.empty());
 		SearchOnlineMenuItem().IsEnabled(hasSelection);
 		CopyMagnetUriMenuItem().IsEnabled(
 			isBitTorrent && !magnetUri.empty());
@@ -1489,27 +1529,39 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		if (m_viewModel)
 		{
-			OpenShellPath(GetTaskFilePath(m_viewModel.SelectedTask(), false));
+			if (!OpenShellPath(GetTaskFilePath(m_viewModel.SelectedTask(), false)))
+				::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+					::OpenNet::Service::Notification::InfoBarMessage::Warning(
+						L"The task file is unavailable at its saved location."));
 		}
 	}
 
-	void TasksPage::ManualHashCheckMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	winrt::Windows::Foundation::IAsyncAction TasksPage::ManualHashCheckMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		auto lifetime = get_strong();
 		auto const task = m_viewModel
 			? m_viewModel.SelectedTask()
 			: winrt::OpenNet::ViewModels::TaskViewModel{ nullptr };
-		if (IsBitTorrentTask(task))
+		if (!IsBitTorrentTask(task)) co_return;
+		auto const taskId = winrt::to_string(task.TaskId());
+		auto const dispatcher = DispatcherQueue();
+		co_await winrt::resume_background();
+		auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
+		const bool started = core && core->ForceRecheck(taskId);
+		if (!started)
 		{
-			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
-			{
-				if (core->ForceRecheck(winrt::to_string(task.TaskId())))
-				{
-					task.State(winrt::OpenNet::ViewModels::DownloadTaskState::Checking);
-					task.DownloadRate(L"0 B/s");
-					task.UploadRate(L"0 B/s");
-				}
-			}
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+				::OpenNet::Service::Notification::InfoBarMessage::Error(
+					L"Hash check could not start for the selected task."));
+			co_return;
 		}
+		if (dispatcher)
+			dispatcher.TryEnqueue([task]
+		{
+			task.State(winrt::OpenNet::ViewModels::DownloadTaskState::Checking);
+			task.DownloadRate(L"0 B/s");
+			task.UploadRate(L"0 B/s");
+		});
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::SaveTorrentAsMenuItem_ClickAsync(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
@@ -1548,8 +1600,124 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				output.write(
 					reinterpret_cast<char const*>(content.data()),
 					static_cast<std::streamsize>(content.size()));
+				if (output) co_return;
 			}
 		}
+		::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+			::OpenNet::Service::Notification::InfoBarMessage::Error(
+				L"Unable to save the selected torrent file."));
+	}
+
+	winrt::Windows::Foundation::IAsyncAction TasksPage::CleanUpTaskMenuItem_ClickAsync(
+		winrt::Windows::Foundation::IInspectable const&,
+		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
+	{
+		auto lifetime = get_strong();
+		auto const task = m_viewModel ? m_viewModel.SelectedTask() : nullptr;
+		auto const detail = GetTorrentDetail(task);
+		if (!IsBitTorrentTask(task) || !detail || detail->files.empty()) co_return;
+
+		StackPanel choices;
+		choices.Spacing(12);
+		TextBlock prompt;
+		prompt.Text(L"What do you want to do with the selected tasks?");
+		choices.Children().Append(prompt);
+		auto const red = SolidColorBrush{ winrt::Windows::UI::Colors::Red() };
+		RadioButton unfinished;
+		unfinished.GroupName(L"TaskCleanup");
+		unfinished.Content(box_value(L"Delete unfinished files only"));
+		unfinished.Foreground(red);
+		unfinished.IsChecked(true);
+		choices.Children().Append(unfinished);
+		RadioButton allFiles;
+		allFiles.GroupName(L"TaskCleanup");
+		allFiles.Content(box_value(L"Delete all downloaded files"));
+		allFiles.Foreground(red);
+		choices.Children().Append(allFiles);
+
+		ContentDialog dialog;
+		dialog.XamlRoot(XamlRoot());
+		dialog.Title(box_value(L"Task Cleanup"));
+		dialog.Content(choices);
+		dialog.PrimaryButtonText(L"OK");
+		dialog.CloseButtonText(L"Cancel");
+		if (co_await dialog.ShowAsync() != ContentDialogResult::Primary) co_return;
+
+		bool const deleteAll = allFiles.IsChecked().GetBoolean();
+		auto const dispatcher = DispatcherQueue();
+		auto const taskId = winrt::to_string(task.TaskId());
+		auto const root = std::filesystem::path{
+			winrt::to_hstring(detail->savePath).c_str() };
+		auto const files = detail->files;
+		co_await winrt::resume_background();
+		if (detail->isResident)
+		{
+			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
+				core->StopTorrent(taskId);
+		}
+		std::error_code error;
+		auto const canonicalRoot = std::filesystem::weakly_canonical(root, error);
+		if (error || canonicalRoot.empty())
+		{
+			::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+				::OpenNet::Service::Notification::InfoBarMessage::Error(
+					L"Task Cleanup", L"The saved directory is unavailable."));
+			co_return;
+		}
+		auto rootPrefix = canonicalRoot.wstring();
+		std::ranges::transform(rootPrefix, rootPrefix.begin(),
+							   [](wchar_t value)
+		{
+			return static_cast<wchar_t>(std::towlower(value));
+		});
+		if (!rootPrefix.ends_with(L'\\')) rootPrefix.push_back(L'\\');
+		std::size_t removed{};
+		std::size_t failed{};
+		for (auto const& file : files)
+		{
+			if (file.isPadFile || file.path.empty()
+				|| (!deleteAll && file.bytesCompleted >= file.size)) continue;
+			auto const relative = std::filesystem::path{
+				winrt::to_hstring(file.path).c_str() };
+			if (relative.is_absolute())
+			{
+				++failed; continue;
+			}
+			error.clear();
+			auto const target = std::filesystem::weakly_canonical(root / relative, error);
+			if (error)
+			{
+				++failed; continue;
+			}
+			auto targetText = target.wstring();
+			std::ranges::transform(targetText, targetText.begin(),
+								   [](wchar_t value)
+			{
+				return static_cast<wchar_t>(std::towlower(value));
+			});
+			if (!targetText.starts_with(rootPrefix))
+			{
+				++failed; continue;
+			}
+			error.clear();
+			if (!std::filesystem::is_regular_file(target, error) || error) continue;
+			error.clear();
+			if (std::filesystem::remove(target, error) && !error) ++removed;
+			else ++failed;
+		}
+		if (removed > 0 && dispatcher)
+			dispatcher.TryEnqueue([task]
+		{
+			task.TargetPathMissing(true);
+		});
+		::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+			failed
+			? ::OpenNet::Service::Notification::InfoBarMessage::Warning(
+				L"Task Cleanup", winrt::hstring{ std::format(
+					L"Removed {} files; {} could not be removed.", removed, failed) })
+			: ::OpenNet::Service::Notification::InfoBarMessage::Success(
+				L"Task Cleanup", winrt::hstring{ std::format(
+					L"Removed {} files.", removed) }));
 	}
 
 	winrt::Windows::Foundation::IAsyncAction TasksPage::DeleteTaskMenuItem_Click(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
@@ -1698,12 +1866,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			co_await winrt::resume_background();
 			if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
 			{
-				core->MoveStorage(taskId, newPath);
-				if (auto* state =
-					::OpenNet::Core::P2PManager::Instance().StateManager())
-				{
-					state->UpdateTaskSavePath(taskId, newPath);
-				}
+				// The storage_moved alert persists the new path after the move succeeds.
+				if (!core->MoveStorage(taskId, newPath))
+					::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+						::OpenNet::Service::Notification::InfoBarMessage::Error(
+							L"Unable to start moving the selected task files."));
 			}
 		}
 		catch (const std::exception& ex)
@@ -1730,7 +1897,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		try
 		{
-			OpenShellPath(GetTaskSavePath(task));
+			auto const detail = GetTorrentDetail(task);
+			auto const path = IsBitTorrentTask(task) && detail
+				? GetTaskContentDirectory(*detail)
+				: GetTaskSavePath(task, detail);
+			if (!OpenShellPath(path))
+				::OpenNet::Service::Notification::InfoBarService::Instance().Show(
+					::OpenNet::Service::Notification::InfoBarMessage::Warning(
+						L"The task directory is unavailable at its saved location."));
 		}
 		catch (const std::exception& ex)
 		{

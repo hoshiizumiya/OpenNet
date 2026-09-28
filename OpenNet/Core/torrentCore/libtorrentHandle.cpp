@@ -64,6 +64,205 @@ namespace
 	constexpr auto TorrentTaskSettingsCategory = "torrent_task_settings";
 	constexpr auto TorrentTlsCategory = "torrent_tls_protected";
 
+	std::optional<lt::add_torrent_params> LoadStoredTorrentParams(
+		OpenNet::Core::Torrent::TaskMetadata const& metadata)
+	{
+		lt::add_torrent_params params;
+		bool loaded{};
+		if (!metadata.resumeData.empty())
+		{
+			lt::error_code error;
+			params = lt::read_resume_data(
+				lt::span<char const>(
+					reinterpret_cast<char const*>(metadata.resumeData.data()),
+					metadata.resumeData.size()), error);
+			loaded = !error;
+		}
+		if (!params.ti && !metadata.taskId.empty()
+			&& std::ranges::all_of(metadata.taskId, [](unsigned char value)
+			{
+				return std::isalnum(value) || value == '-' || value == '_';
+			}))
+		{
+			try
+			{
+				auto const cache = std::filesystem::path(
+					winrt::OpenNet::Core::IO::FileSystem::GetAppDataPathW())
+					/ L"Torrents" /
+					winrt::to_hstring(metadata.taskId + ".torrent").c_str();
+				auto cached = lt::load_torrent_file(
+					winrt::to_string(cache.wstring()));
+				if (cached.ti)
+				{
+					params.ti = std::move(cached.ti);
+					if (params.trackers.empty())
+					{
+						params.trackers = std::move(cached.trackers);
+						params.tracker_tiers = std::move(cached.tracker_tiers);
+					}
+					if (params.url_seeds.empty())
+						params.url_seeds = std::move(cached.url_seeds);
+					if (params.comment.empty()) params.comment = std::move(cached.comment);
+					if (params.created_by.empty()) params.created_by = std::move(cached.created_by);
+					if (params.creation_date == 0) params.creation_date = cached.creation_date;
+					loaded = true;
+				}
+			}
+			catch (...) {}
+		}
+		return loaded ? std::optional<lt::add_torrent_params>{ std::move(params) }
+			: std::nullopt;
+	}
+
+	OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo LoadStoredDetail(
+		OpenNet::Core::Torrent::TorrentStateManager* manager,
+		std::string const& taskId, bool includeTrackers, bool includeFiles)
+	{
+		using Detail = OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo;
+		using File = OpenNet::Core::Torrent::LibtorrentHandle::TorrentFileEntry;
+		Detail detail{};
+		detail.taskId = taskId;
+		if (!manager) return detail;
+		auto const task = manager->LoadTaskMetadata(taskId);
+		if (!task) return detail;
+		detail.name = task->name;
+		detail.savePath = task->savePath;
+		detail.infoHashV1 = task->infoHashV1;
+		detail.infoHashV2 = task->infoHashV2;
+		detail.infoHash = !task->infoHashV1.empty()
+			? task->infoHashV1 : task->infoHashV2;
+		detail.apiHash = detail.infoHash;
+		detail.addedTimestamp = task->addedTimestamp;
+		detail.completedTimestamp = task->completedTimestamp;
+		detail.totalSize = task->totalSize;
+		detail.totalDone = task->downloadedSize;
+		detail.totalUploaded = task->uploadedSize;
+		detail.allTimeDownloaded = task->downloadedSize;
+		detail.allTimeUploaded = task->uploadedSize;
+		detail.queuePosition = task->queuePosition;
+		detail.state = task->status == 3 ? 4 : 3;
+		detail.isPaused = task->status != 3;
+		if (task->totalSize > 0)
+			detail.progressPpm = static_cast<int>(std::clamp(
+			static_cast<long double>(task->downloadedSize) * 1'000'000.0L
+			/ task->totalSize, 0.0L, 1'000'000.0L));
+		if (task->downloadedSize > 0)
+			detail.shareRatio = static_cast<double>(task->uploadedSize)
+				/ task->downloadedSize;
+		try
+		{
+			auto const stored = LoadStoredTorrentParams(*task);
+			if (!stored) return detail;
+			detail.comment = stored->comment;
+			detail.creator = stored->created_by;
+			detail.creationTimestamp = stored->creation_date;
+			auto const info = stored->ti;
+			if (!info) return detail;
+			detail.isPrivate = info->priv();
+			detail.pieceSize = info->piece_length();
+			detail.piecesNum = info->num_pieces();
+			if (includeTrackers)
+			{
+				for (std::size_t index = 0; index < stored->trackers.size(); ++index)
+				{
+					OpenNet::Core::Torrent::LibtorrentHandle::TorrentTrackerInfo tracker;
+					tracker.url = stored->trackers[index];
+					tracker.tier = index < stored->tracker_tiers.size()
+						? stored->tracker_tiers[index] : 0;
+					tracker.status = "not contacted";
+					detail.trackers.push_back(std::move(tracker));
+				}
+			}
+			if (!includeFiles) return detail;
+			auto const& files = info->layout();
+			detail.isPieceAligned = detail.pieceSize > 0;
+			for (int ordinal = 0; ordinal < files.num_files(); ++ordinal)
+			{
+				File file;
+				auto const index = lt::file_index_t{ ordinal };
+				file.originalPath = files.file_path(index);
+				file.path = file.originalPath;
+				file.size = files.file_size(index);
+				file.fileIndex = ordinal;
+				file.isPadFile = files.pad_file_at(index);
+				if (ordinal < static_cast<int>(stored->file_priorities.size()))
+					file.priority = static_cast<int>(
+						static_cast<std::uint8_t>(stored->file_priorities[ordinal]));
+				if (file.size > 0 && detail.pieceSize > 0)
+				{
+					file.firstPiece = static_cast<int>(
+						files.map_file(index, 0, 0).piece);
+					file.lastPiece = static_cast<int>(
+						files.map_file(index, file.size - 1, 0).piece);
+					for (int piece = file.firstPiece; piece <= file.lastPiece
+						&& piece < static_cast<int>(stored->have_pieces.size()); ++piece)
+					{
+						if (!stored->have_pieces[lt::piece_index_t{ piece }]) continue;
+						auto const pieceStart = static_cast<std::int64_t>(piece)
+							* detail.pieceSize;
+						auto const fileStart = files.file_offset(index);
+						file.bytesCompleted += (std::min)(fileStart + file.size,
+							pieceStart + detail.pieceSize)
+							- (std::max)(fileStart, pieceStart);
+					}
+				}
+				if (task->status == 3) file.bytesCompleted = file.size;
+				if (detail.pieceSize > 0 && !file.isPadFile
+					&& files.file_offset(index) % detail.pieceSize != 0)
+					detail.isPieceAligned = false;
+				detail.files.push_back(std::move(file));
+			}
+		}
+		catch (std::exception const& error)
+		{
+			OutputDebugStringA(("Unable to read saved torrent metadata: "
+				+ std::string(error.what()) + "\n").c_str());
+		}
+		return detail;
+	}
+
+	OpenNet::Core::Torrent::LibtorrentHandle::TorrentPieceInfo LoadStoredPieces(
+		OpenNet::Core::Torrent::TorrentStateManager* manager,
+		std::string const& taskId, bool includeHashes)
+	{
+		OpenNet::Core::Torrent::LibtorrentHandle::TorrentPieceInfo result;
+		if (!manager) return result;
+		auto const task = manager->LoadTaskMetadata(taskId);
+		if (!task) return result;
+		try
+		{
+			auto const stored = LoadStoredTorrentParams(*task);
+			if (!stored || !stored->ti) return result;
+			auto const& info = *stored->ti;
+			result.pieceSize = info.piece_length();
+			auto const count = info.num_pieces();
+			result.states.assign(static_cast<std::size_t>(count), 0);
+			for (int index = 0; index < count; ++index)
+			{
+				if (task->status == 3
+					|| (index < static_cast<int>(stored->have_pieces.size())
+						&& stored->have_pieces[lt::piece_index_t{ index }]))
+					result.states[static_cast<std::size_t>(index)] = 2;
+				else if (index < static_cast<int>(stored->piece_priorities.size())
+					&& static_cast<std::uint8_t>(stored->piece_priorities[index]) == 0)
+					result.states[static_cast<std::size_t>(index)] = 3;
+			}
+			result.webSeeds = stored->url_seeds;
+			if (includeHashes && info.info_hashes().has_v1())
+			{
+				result.hashes.reserve(static_cast<std::size_t>(count));
+				for (int index = 0; index < count; ++index)
+				{
+					std::ostringstream stream;
+					stream << info.hash_for_piece(lt::piece_index_t{ index });
+					result.hashes.push_back(stream.str());
+				}
+			}
+		}
+		catch (...) {}
+		return result;
+	}
+
 	void CatalogCompletedTorrent(
 		lt::torrent_handle const& handle,
 		std::string const& taskId)
@@ -4286,13 +4485,13 @@ namespace OpenNet::Core::Torrent
 		{
 			std::lock_guard lk(m_torrentMapMutex);
 			auto it = m_taskIdToHandle.find(taskId);
-			if (it == m_taskIdToHandle.end())
-				return info;
-			handle = it->second;
+			if (it != m_taskIdToHandle.end()) handle = it->second;
 		}
 
 		if (!handle.is_valid())
-			return info;
+			return LoadStoredDetail(m_stateManager, taskId,
+				includeTrackers, includeFiles);
+		info.isResident = true;
 
 		try
 		{
@@ -4561,7 +4760,7 @@ namespace OpenNet::Core::Torrent
 	}
 
 	LibtorrentHandle::TorrentPieceInfo
-		LibtorrentHandle::GetTorrentPieceInfo(
+	LibtorrentHandle::GetTorrentPieceInfo(
 			std::string const& taskId) const
 	{
 		TorrentPieceInfo result;
@@ -4569,13 +4768,10 @@ namespace OpenNet::Core::Torrent
 		{
 			std::lock_guard lock(m_torrentMapMutex);
 			auto const item = m_taskIdToHandle.find(taskId);
-			if (item == m_taskIdToHandle.end() || !item->second.is_valid()) return result;
-			handle = item->second;
+			if (item != m_taskIdToHandle.end()) handle = item->second;
 		}
 		if (!handle.is_valid())
-		{
-			return result;
-		}
+			return LoadStoredPieces(m_stateManager, taskId, true);
 
 		try
 		{
@@ -4668,9 +4864,10 @@ namespace OpenNet::Core::Torrent
 		{
 			std::lock_guard lock(m_torrentMapMutex);
 			auto const item = m_taskIdToHandle.find(taskId);
-			if (item == m_taskIdToHandle.end() || !item->second.is_valid()) return result;
-			handle = item->second;
+			if (item != m_taskIdToHandle.end()) handle = item->second;
 		}
+		if (!handle.is_valid())
+			return LoadStoredPieces(m_stateManager, taskId, false);
 		try
 		{
 			auto const torrentInfo = handle.torrent_file();
@@ -4700,17 +4897,31 @@ namespace OpenNet::Core::Torrent
 	std::vector<std::uint8_t> LibtorrentHandle::ExportTorrentFile(
 		std::string const& taskId) const
 	{
-		std::lock_guard lock(m_torrentMapMutex);
-		const auto item = m_taskIdToHandle.find(taskId);
-		if (item == m_taskIdToHandle.end()
-			|| !item->second.is_valid())
+		lt::torrent_handle handle;
 		{
-			return {};
+			std::lock_guard lock(m_torrentMapMutex);
+			const auto item = m_taskIdToHandle.find(taskId);
+			if (item != m_taskIdToHandle.end()) handle = item->second;
+		}
+		if (!handle.is_valid())
+		{
+			if (!m_stateManager) return {};
+			auto const metadata = m_stateManager->LoadTaskMetadata(taskId);
+			if (!metadata) return {};
+			try
+			{
+				auto const stored = LoadStoredTorrentParams(*metadata);
+				if (!stored || !stored->ti) return {};
+				auto encoded = lt::write_torrent_file_buf(
+					*stored, lt::write_torrent_flags_t{});
+				return { encoded.begin(), encoded.end() };
+			}
+			catch (...) { return {}; }
 		}
 
 		try
 		{
-			auto params = item->second.get_resume_data(
+			auto params = handle.get_resume_data(
 				lt::torrent_handle::save_info_dict);
 			auto encoded = lt::write_torrent_file_buf(
 				params, lt::write_torrent_flags_t{});
@@ -4727,6 +4938,15 @@ namespace OpenNet::Core::Torrent
 	// ---------------------------------------------------------------
 	bool LibtorrentHandle::ForceRecheck(std::string const& taskId)
 	{
+		bool needsRestore{};
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			const auto item = m_taskIdToHandle.find(taskId);
+			needsRestore = item == m_taskIdToHandle.end()
+				|| !item->second.is_valid();
+		}
+		// Restore only after an explicit user request to verify hashes.
+		if (needsRestore && AddTorrentFromResumeData(taskId).empty()) return false;
 		lt::torrent_handle handle;
 		bool restorePause{};
 		{
@@ -5340,17 +5560,27 @@ namespace OpenNet::Core::Torrent
 		RequestResumeDataForTorrent(item->second);
 	}
 
-	void LibtorrentHandle::MoveStorage(
+	bool LibtorrentHandle::MoveStorage(
 		std::string const& taskId,
 		std::string const& path)
 	{
+		bool needsRestore{};
+		{
+			std::lock_guard lock(m_torrentMapMutex);
+			const auto item = m_taskIdToHandle.find(taskId);
+			needsRestore = item == m_taskIdToHandle.end()
+				|| !item->second.is_valid();
+		}
+		if (needsRestore && AddTorrentFromResumeData(taskId).empty()) return false;
 		std::lock_guard lock(m_torrentMapMutex);
 		const auto item = m_taskIdToHandle.find(taskId);
 		if (item != m_taskIdToHandle.end()
 			&& item->second.is_valid())
 		{
 			item->second.move_storage(path);
+			return true;
 		}
+		return false;
 	}
 
 	void LibtorrentHandle::RenameFile(

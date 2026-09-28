@@ -6,6 +6,7 @@ module OpenNet.Core.P2PManager;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Content.CanonicalV2Swarm;
 import OpenNet.Core.Content.ContentDirectoryClient;
+import OpenNet.Core.Notification.HttpToastNotification;
 import OpenNet.Core.Torrent.TrackerManager;
 import OpenNet.Core.TorrentSettings;
 
@@ -57,7 +58,7 @@ namespace OpenNet::Core
 			? m_torrentCore->OpenLongSeedSession(
 				sessionId, metainfo, localFilePath)
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult{
-				false, {}, "Torrent core is unavailable" };
+				false,{}, "Torrent core is unavailable" };
 	}
 
 	::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult
@@ -72,7 +73,7 @@ namespace OpenNet::Core
 			? m_torrentCore->OpenLongSeedDownloadSession(
 				sessionId, metainfo, targetFilePath, urlSeeds)
 			: ::OpenNet::Core::Torrent::LibtorrentHandle::LongSeedSessionResult{
-				false, {}, "Torrent core is unavailable" };
+				false,{}, "Torrent core is unavailable" };
 	}
 
 	bool P2PManager::ConnectLongSeedPeer(
@@ -130,7 +131,7 @@ namespace OpenNet::Core
 		if (stopToken.stop_requested()
 			|| !identity.IsWellFormed()
 			|| identity.algorithm
-				!= ::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256
+			!= ::OpenNet::Core::Content::ContentIdentityAlgorithm::Bep52FileRootSha256
 			|| targetFilePath.empty())
 			co_return false;
 
@@ -164,7 +165,10 @@ namespace OpenNet::Core
 
 			bool const hasReadyPeer = std::ranges::any_of(
 				lookup->peers,
-				[](auto const& peer) { return peer.ready; });
+				[](auto const& peer)
+			{
+				return peer.ready;
+			});
 			if (lookup->manifestAvailable
 				&& lookup->canonicalProtocolVersion == 1
 				&& !lookup->canonicalInfoHashV2.empty()
@@ -185,7 +189,7 @@ namespace OpenNet::Core
 			}
 		}
 		while (!stopToken.stop_requested()
-			&& std::chrono::steady_clock::now() < deadline);
+			   && std::chrono::steady_clock::now() < deadline);
 
 		if (stopToken.stop_requested()
 			|| !lookup
@@ -398,7 +402,7 @@ namespace OpenNet::Core
 		// Core readiness is independent from restoring persisted tasks.
 		try
 		{
-			co_await LoadAndResumeSavedTasksAsync();
+			co_await ValidateSavedTaskPathsAsync();
 		}
 		catch (std::exception const& ex)
 		{
@@ -483,30 +487,34 @@ namespace OpenNet::Core
 			startImmediately, seedMode).Succeeded();
 	}
 
-	IAsyncAction P2PManager::LoadAndResumeSavedTasksAsync()
+	IAsyncAction P2PManager::ValidateSavedTaskPathsAsync()
 	{
 		co_await winrt::resume_background();
-
-		std::scoped_lock lk(m_torrentMutex);
-		if (!m_stateManager || !m_torrentCore) co_return;
-
-		auto tasks = m_stateManager->LoadAllTasks();
+		auto const tasks = GetAllTasks();
+		std::unordered_set<std::string> missing;
 		for (auto const& task : tasks)
 		{
-			auto const policy = m_stateManager->LoadTaskSettings(task.taskId);
-			bool const shouldBeResident = task.status == 1
-				|| (task.status == 3 && policy && policy->completionAction == 1);
-			if (!shouldBeResident) continue;
-
-			std::string const resumedId =
-				m_torrentCore->AddTorrentFromResumeData(task.taskId);
-			if (resumedId.empty()) continue;
-			OutputDebugStringA(("Resumed task: " + task.taskId
-				+ " (status=" + std::to_string(task.status) + ")\n").c_str());
-			if (task.status == 3)
-				m_stateManager->UpdateTaskStatus(task.taskId, 3);
+			try
+			{
+				auto const path = std::filesystem::path{
+					winrt::to_hstring(task.savePath).c_str() };
+				std::error_code error;
+				if (path.empty() || !std::filesystem::is_directory(path, error)
+					|| error) missing.insert(task.taskId);
+			}
+			catch (...)
+			{
+				missing.insert(task.taskId);
+			}
 		}
-		m_torrentCore->RestoreQueuePositions();
+		std::scoped_lock lock(m_torrentMutex);
+		m_missingTaskPaths = std::move(missing);
+	}
+
+	std::unordered_set<std::string> P2PManager::MissingTaskPaths()
+	{
+		std::scoped_lock lock(m_torrentMutex);
+		return m_missingTaskPaths;
 	}
 
 	std::vector<::OpenNet::Core::Torrent::TaskMetadata> P2PManager::GetAllTasks()
@@ -574,8 +582,13 @@ namespace OpenNet::Core
 		});
 		m_torrentCore->SetFinishedCallback([this](const std::string& taskId, const std::string& name)
 		{
-			std::scoped_lock lk(m_cbMutex);
-			if (m_finishedCb) m_finishedCb(taskId, name);
+			FinishedCb callback;
+			{
+				std::scoped_lock lk(m_cbMutex);
+				callback = m_finishedCb;
+			}
+			::OpenNet::Core::Notification::ShowTorrentDownloadCompleted(name);
+			if (callback) callback(taskId, name);
 		});
 		m_torrentCore->SetErrorCallback([this](const std::string& err)
 		{

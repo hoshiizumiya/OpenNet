@@ -926,6 +926,49 @@ namespace OpenNet::Core::WebUI
 			return result;
 		}
 
+		struct FrontendAssets
+		{
+			std::filesystem::path root;
+			std::string frontend;
+			std::string locale;
+			std::string cacheId;
+			std::string languageOptions;
+			TranslationCatalog translations;
+			std::string themeCss;
+			std::string adapterScript;
+			std::string vueBootstrap;
+			bool vueTorrent{};
+		};
+
+		std::shared_ptr<FrontendAssets const> BuildFrontendAssets(
+			std::filesystem::path root, std::string frontend,
+			std::string locale)
+		{
+			auto assets = std::make_shared<FrontendAssets>();
+			assets->root = std::move(root);
+			assets->frontend = std::move(frontend);
+			assets->locale = std::move(locale);
+			assets->cacheId = RandomHex(8);
+			assets->vueTorrent = assets->frontend == "vuetorrent";
+			if (assets->vueTorrent)
+			{
+				assets->themeCss = ReadTextFile(
+					ResolveVueOverrideRoot(assets->root) /
+					L"winuionweb-vuetify.css");
+				assets->vueBootstrap = VueTorrentBootstrap(assets->locale);
+			}
+			else
+			{
+				assets->languageOptions = LanguageOptions(assets->root);
+				assets->translations = LoadTranslationCatalog(
+					assets->root, assets->locale);
+				assets->adapterScript = ReadTextFile(
+					ResolveOverrideRoot(assets->root) / L"opennet" /
+					L"scripts" / L"adapter.js");
+			}
+			return assets;
+		}
+
 		std::string DefaultSavePath()
 		{
 			const auto configured =
@@ -979,8 +1022,10 @@ namespace OpenNet::Core::WebUI
 			const ::OpenNet::Core::Torrent::TaskMetadata& task,
 			const ::OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo& detail)
 		{
+			const bool live = detail.isResident;
 			const std::int64_t totalSize = std::max(detail.totalSize, task.totalSize);
 			const std::int64_t completed = std::max(detail.totalDone, task.downloadedSize);
+			const std::int64_t uploaded = std::max(detail.totalUploaded, task.uploadedSize);
 			const double progress = detail.progressPpm > 0
 				? (static_cast<double>(detail.progressPpm) / 1'000'000.0)
 				: ((totalSize > 0)
@@ -992,14 +1037,19 @@ namespace OpenNet::Core::WebUI
 			const std::string hash = !detail.apiHash.empty()
 				? detail.apiHash : task.taskId;
 			const bool complete = totalSize > 0 && completed >= totalSize;
+			const auto state = live ? QbtState(detail)
+				: task.status == 4 ? "error"
+				: task.status == 3 ? "stoppedUP"
+				: task.status == 2 ? (complete ? "stoppedUP" : "stoppedDL")
+				: task.status == 1 ? "queuedDL" : "stoppedDL";
 			const std::int64_t eta = (detail.downloadRate > 0 && totalSize > completed)
 				? ((totalSize - completed) / detail.downloadRate)
-				: 86'400 * 100;
+				: complete ? 0 : 86'400 * 100;
 
 			return Json{
 				{"hash", hash},
-				{"infohash_v1", detail.infoHashV1},
-				{"infohash_v2", detail.infoHashV2},
+				{"infohash_v1", !detail.infoHashV1.empty() ? detail.infoHashV1 : task.infoHashV1},
+				{"infohash_v2", !detail.infoHashV2.empty() ? detail.infoHashV2 : task.infoHashV2},
 				{"name", name},
 				{"magnet_uri", task.magnetUri},
 				{"has_metadata", !name.empty() || totalSize > 0},
@@ -1018,12 +1068,12 @@ namespace OpenNet::Core::WebUI
 					: 0},
 				{"dlspeed", detail.downloadRate},
 				{"upspeed", detail.uploadRate},
-				{"priority", detail.queuePosition},
+				{"priority", live ? detail.queuePosition : task.queuePosition},
 				{"num_seeds", detail.numSeeds},
-				{"num_complete", detail.numSeeds},
+				{"num_complete", detail.numComplete},
 				{"num_leechs", std::max(0, detail.numPeers - detail.numSeeds)},
-				{"num_incomplete", std::max(0, detail.numPeers - detail.numSeeds)},
-				{"state", QbtState(detail)},
+				{"num_incomplete", detail.numIncomplete},
+				{"state", state},
 				{"eta", eta},
 				{"seq_dl", detail.isSequential},
 				{"f_l_piece_prio",
@@ -1038,15 +1088,15 @@ namespace OpenNet::Core::WebUI
 				{"content_path", savePath},
 				{"root_path", savePath},
 				{"added_on", task.addedTimestamp},
-				{"completion_on", complete ? task.addedTimestamp : -1},
+				{"completion_on", task.completedTimestamp > 0 ? task.completedTimestamp : -1},
 				{"tracker", detail.trackers.empty() ? "" : detail.trackers.front().url},
 				{"trackers_count", detail.trackers.size()},
 				{"dl_limit", 0},
 				{"up_limit", 0},
 				{"downloaded", completed},
-				{"uploaded", detail.totalUploaded},
+				{"uploaded", uploaded},
 				{"downloaded_session", completed},
-				{"uploaded_session", detail.totalUploaded},
+				{"uploaded_session", live ? detail.sessionUploaded : 0},
 				{"amount_left", std::max<std::int64_t>(0, totalSize - completed)},
 				{"completed", completed},
 				{"connections", detail.numConnections},
@@ -1054,7 +1104,8 @@ namespace OpenNet::Core::WebUI
 				{"max_ratio", -1},
 				{"max_seeding_time", -1},
 				{"max_inactive_seeding_time", -1},
-				{"ratio", detail.shareRatio},
+				{"ratio", live ? detail.shareRatio : (completed > 0
+					? static_cast<double>(uploaded) / completed : 0.0)},
 				{"ratio_limit", -2},
 				{"popularity", 0.0},
 				{"seeding_time_limit", -2},
@@ -1065,7 +1116,7 @@ namespace OpenNet::Core::WebUI
 				{"auto_tmm", detail.isAutoManaged},
 				{"time_active", 0},
 				{"seeding_time", 0},
-				{"last_activity", task.addedTimestamp},
+				{"last_activity", task.updatedTimestamp > 0 ? task.updatedTimestamp : task.addedTimestamp},
 				{"availability", complete ? 1.0 : 0.0},
 				{"reannounce", 0},
 				{"comment", detail.comment}
@@ -1372,33 +1423,9 @@ namespace OpenNet::Core::WebUI
 				static_cast<int>(options.workerThreads));
 			m_apiWorkers = std::make_unique<asio::thread_pool>(
 				static_cast<int>(options.workerThreads));
-				m_options = std::move(options);
-				m_assetRoot = assetRoot;
-				m_vueTorrentFrontend = m_options.frontend == "vuetorrent";
-				m_cacheId = RandomHex(8);
-				if (m_vueTorrentFrontend)
-				{
-					m_languageOptions.clear();
-					m_translationCatalog.clear();
-					m_webUiThemeCss = ReadTextFile(
-						ResolveVueOverrideRoot(m_assetRoot) /
-						L"winuionweb-vuetify.css");
-					m_webUiAdapterScript.clear();
-					m_vueTorrentBootstrap = VueTorrentBootstrap(m_options.locale);
-				}
-				else
-				{
-					m_languageOptions = LanguageOptions(m_assetRoot);
-					m_translationCatalog = LoadTranslationCatalog(
-						m_assetRoot, m_options.locale);
-					auto const overrideRoot = ResolveOverrideRoot(m_assetRoot);
-					// Keep qBittorrent's upstream appearance intact. The override layer
-					// only provides behavioral/API compatibility for its Options dialog.
-					m_webUiThemeCss.clear();
-					m_webUiAdapterScript = ReadTextFile(
-						overrideRoot / L"opennet" / L"scripts" / L"adapter.js");
-					m_vueTorrentBootstrap.clear();
-				}
+			m_options = std::move(options);
+			m_frontendAssets.store(BuildFrontendAssets(
+				assetRoot, m_options.frontend, m_options.locale));
 				LoadClientData();
 				LoadTorrentMetadata();
 				LoadRssRules();
@@ -1452,6 +1479,7 @@ namespace OpenNet::Core::WebUI
 			}
 
 			bool preserveSessions{};
+			std::shared_ptr<FrontendAssets const> replacementAssets;
 			try
 			{
 				auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
@@ -1487,6 +1515,42 @@ namespace OpenNet::Core::WebUI
 					&& port == options.port
 					&& username == options.username
 					&& password == options.password;
+				const bool otherSettingsUnchanged =
+					database.GetInt("webui_host", "session_timeout_seconds")
+						.value_or(options.sessionTimeoutSeconds) == options.sessionTimeoutSeconds
+					&& database.GetInt("webui_host", "maximum_authentication_failures")
+						.value_or(options.maximumAuthenticationFailures) == options.maximumAuthenticationFailures
+					&& database.GetInt("webui_host", "ban_duration_seconds")
+						.value_or(options.banDurationSeconds) == options.banDurationSeconds
+					&& database.GetInt("webui_host", "session_count_limit")
+						.value_or(static_cast<std::int64_t>(options.sessionCountLimit))
+						== static_cast<std::int64_t>(options.sessionCountLimit)
+					&& database.GetBool("webui_host", "bypass_authentication_for_localhost")
+						.value_or(options.bypassAuthenticationForLocalhost)
+						== options.bypassAuthenticationForLocalhost
+					&& database.GetBool("webui_host", "csrf_protection")
+						.value_or(options.csrfProtection) == options.csrfProtection
+					&& database.GetBool("webui_host", "host_header_validation")
+						.value_or(options.hostHeaderValidation) == options.hostHeaderValidation
+					&& database.GetBool("webui_host", "secure_cookie")
+						.value_or(options.secureCookie) == options.secureCookie
+					&& database.GetString("webui_host", "domain_list")
+						.value_or(options.domainList) == options.domainList;
+				if (m_running.load() && preserveSessions && otherSettingsUnchanged)
+				{
+				const auto storedLocale = database.GetString("webui_host", "locale");
+				const bool followApplicationLanguage = database.GetBool(
+					"webui_host", "follow_application_language")
+					.value_or(!storedLocale.has_value());
+				auto locale = followApplicationLanguage
+					? CurrentApplicationLocale()
+					: storedLocale.value_or(options.locale);
+				locale = frontend == "vuetorrent"
+					? NormalizeVueTorrentLocale(std::move(locale))
+					: NormalizeWebUiLocale(std::move(locale), assetRoot);
+				replacementAssets = BuildFrontendAssets(
+					assetRoot, frontend, std::move(locale));
+			}
 			}
 			catch (const std::exception& exception)
 			{
@@ -1494,6 +1558,14 @@ namespace OpenNet::Core::WebUI
 					"WebUIHost: restart preflight failed: "
 					+ std::string(exception.what()) + "\n").c_str());
 				return false;
+			}
+			if (replacementAssets)
+			{
+				std::scoped_lock stateLock(m_stateMutex);
+				m_frontendAssets.store(replacementAssets);
+				m_options.frontend = replacementAssets->frontend;
+				m_options.locale = replacementAssets->locale;
+				return true;
 			}
 
 			{
@@ -1516,8 +1588,8 @@ namespace OpenNet::Core::WebUI
 
 		[[nodiscard]] std::filesystem::path AssetRoot() const
 		{
-			std::scoped_lock stateLock(m_stateMutex);
-			return m_assetRoot;
+			auto const assets = m_frontendAssets.load();
+			return assets ? assets->root : std::filesystem::path{};
 		}
 
 	private:
@@ -2391,6 +2463,10 @@ namespace OpenNet::Core::WebUI
 			const Request& request, const std::string& decodedPath,
 			const bool authenticated)
 		{
+			const auto assets = m_frontendAssets.load();
+			if (!assets)
+				return TextResponse(request, http::status::service_unavailable,
+					"WebUI assets are unavailable");
 			if (decodedPath.empty() || decodedPath.front() != '/'
 				|| decodedPath.find('\\') != std::string::npos
 				|| decodedPath.find(':') != std::string::npos)
@@ -2417,26 +2493,26 @@ namespace OpenNet::Core::WebUI
 				cursor = separator + 1;
 			}
 
-			const bool overrideRequest = !m_vueTorrentFrontend && authenticated
+			const bool overrideRequest = !assets->vueTorrent && authenticated
 				&& normalizedPath.starts_with("/opennet/");
-			auto const overrideRoot = m_vueTorrentFrontend
+			auto const overrideRoot = assets->vueTorrent
 				? std::filesystem::path{}
-			: ResolveOverrideRoot(m_assetRoot);
-			auto selectedRoot = m_vueTorrentFrontend
-				? m_assetRoot
+				: ResolveOverrideRoot(assets->root);
+			auto selectedRoot = assets->vueTorrent
+				? assets->root
 				: (overrideRequest
 				   ? overrideRoot
-				   : m_assetRoot / (authenticated ? L"private" : L"public"));
+				   : assets->root / (authenticated ? L"private" : L"public"));
 			auto file = selectedRoot / relative;
 			std::error_code error;
-			if (!m_vueTorrentFrontend && !overrideRequest
+			if (!assets->vueTorrent && !overrideRequest
 				&& !std::filesystem::is_regular_file(file, error)
 				&& authenticated)
 			{
-				selectedRoot = m_assetRoot / L"public";
+				selectedRoot = assets->root / L"public";
 				file = selectedRoot / relative;
 			}
-			if (m_vueTorrentFrontend
+			if (assets->vueTorrent
 				&& !std::filesystem::is_regular_file(file, error)
 				&& std::filesystem::path(relative).extension().empty())
 			{
@@ -2466,14 +2542,14 @@ namespace OpenNet::Core::WebUI
 			if (IsTextAsset(file))
 			{
 				body = ReplaceAll(
-					std::move(body), "${LANG}", m_options.locale);
+					std::move(body), "${LANG}", assets->locale);
 				body = ReplaceAll(
-					std::move(body), "${CACHEID}", m_cacheId);
+					std::move(body), "${CACHEID}", assets->cacheId);
 				body = ReplaceAll(
-					std::move(body), "${LANGUAGE_OPTIONS}", m_languageOptions);
-				if (!m_vueTorrentFrontend)
+					std::move(body), "${LANGUAGE_OPTIONS}", assets->languageOptions);
+				if (!assets->vueTorrent)
 					body = TranslateMarkers(
-						std::move(body), m_translationCatalog);
+						std::move(body), assets->translations);
 				// qBittorrent renders preferences, dialogs and property views in
 				// separate HTML documents/iframes. CSS and DOM adapters injected only
 				// into index.html cannot cross those document boundaries, so inject
@@ -2484,7 +2560,7 @@ namespace OpenNet::Core::WebUI
 					// worker owns scope / and can keep serving its cached app after
 					// switching back to qBittorrent. Remove the registration from
 					// served HTML and retire an already installed worker.
-					if (m_vueTorrentFrontend)
+					if (assets->vueTorrent)
 					{
 						body = ReplaceAll(std::move(body),
 							"<script id=\"vite-plugin-pwa:register-sw\" src=\"./registerSW.js\"></script>", "");
@@ -2504,10 +2580,10 @@ namespace OpenNet::Core::WebUI
 					// with a fragment fallback so both the desktop and modal content get
 					// the same design tokens and capability enforcement.
 					InjectOpenNetWebUiLayer(
-						body, m_webUiThemeCss,
-						m_vueTorrentFrontend
-						? m_vueTorrentBootstrap
-						: (authenticated ? m_webUiAdapterScript : std::string{}));
+						body, assets->themeCss,
+						assets->vueTorrent
+						? assets->vueBootstrap
+						: (authenticated ? assets->adapterScript : std::string{}));
 				}
 			}
 
@@ -2536,6 +2612,7 @@ namespace OpenNet::Core::WebUI
 
 		Json Preferences()
 		{
+			const auto assets = m_frontendAssets.load();
 			const auto settings =
 				::OpenNet::Core::TorrentSettingsManager::Instance().Get();
 			auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
@@ -2581,7 +2658,7 @@ namespace OpenNet::Core::WebUI
 			}
 			Json value{
 				{"app_instance_name", "OpenNet"},
-				{"locale", m_options.locale},
+				{"locale", assets ? assets->locale : m_options.locale},
 				{"web_ui_session_timeout", m_options.sessionTimeoutSeconds},
 				{"web_ui_max_auth_fail_count", m_options.maximumAuthenticationFailures},
 				{"web_ui_ban_duration", m_options.banDurationSeconds},
@@ -3186,11 +3263,15 @@ namespace OpenNet::Core::WebUI
 							"webui_host", "locale").has_value()))
 					{
 						auto locale = parsed.at("locale").get<std::string>();
-						locale = m_vueTorrentFrontend
+						auto const assets = m_frontendAssets.load();
+						if (!assets)
+							throw std::runtime_error("WebUI assets are unavailable");
+						locale = assets->vueTorrent
 							? NormalizeVueTorrentLocale(std::move(locale))
-							: NormalizeWebUiLocale(std::move(locale), m_assetRoot);
+							: NormalizeWebUiLocale(std::move(locale), assets->root);
 						database.SetString("webui_host", "locale", locale);
-						m_options.locale = std::move(locale);
+						m_frontendAssets.store(BuildFrontendAssets(
+							assets->root, assets->frontend, std::move(locale)));
 					}
 				}
 				if (parsed.contains("web_ui_address"))
@@ -4415,19 +4496,17 @@ namespace OpenNet::Core::WebUI
 			Json result = Json::array();
 			auto& manager = ::OpenNet::Core::P2PManager::Instance();
 			auto* core = manager.TorrentCore();
-			if (!core)
-				return result;
 
 			for (const auto& task : manager.GetAllTasks())
 			{
-				const auto detail = core->GetTorrentSummary(task.taskId);
-				if (detail.taskId.empty())
-					continue;
+				const auto detail = core
+					? core->GetTorrentSummary(task.taskId)
+					: ::OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo{};
 				auto torrent = SerializeTorrent(task, detail);
 				const int downloadLimit =
-					core->GetTorrentDownloadLimit(task.taskId);
+					core ? core->GetTorrentDownloadLimit(task.taskId) : 0;
 				const int uploadLimit =
-					core->GetTorrentUploadLimit(task.taskId);
+					core ? core->GetTorrentUploadLimit(task.taskId) : 0;
 				torrent["dl_limit"] =
 					(downloadLimit == 0) ? -1 : downloadLimit;
 				torrent["up_limit"] =
@@ -6412,14 +6491,7 @@ namespace OpenNet::Core::WebUI
 		mutable std::mutex m_stateMutex;
 		std::atomic<bool> m_running{ false };
 		WebUIOptions m_options;
-		std::filesystem::path m_assetRoot;
-		std::string m_cacheId;
-		std::string m_languageOptions;
-		TranslationCatalog m_translationCatalog;
-		std::string m_webUiThemeCss;
-		std::string m_webUiAdapterScript;
-		std::string m_vueTorrentBootstrap;
-		bool m_vueTorrentFrontend{};
+		std::atomic<std::shared_ptr<FrontendAssets const>> m_frontendAssets{ nullptr };
 		std::unique_ptr<asio::io_context> m_context;
 		std::unique_ptr<asio::thread_pool> m_apiWorkers;
 		std::shared_ptr<Listener> m_listener;

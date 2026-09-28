@@ -1,4 +1,4 @@
-#include "XamlWorkaround.h"
+﻿#include "XamlWorkaround.h"
 #include "ViewModels/TasksViewModel.h"
 #include "mvvm_framework/mvvm_hresult_helper.h"
 #include "mvvm_framework/notify_property_changed.h"
@@ -427,6 +427,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return;
 
 		auto tasks = ::OpenNet::Core::P2PManager::Instance().GetAllTasks();
+		auto missingPaths = ::OpenNet::Core::P2PManager::Instance().MissingTaskPaths();
 		std::unordered_map<std::string,
 			::OpenNet::Core::Torrent::LibtorrentHandle::TorrentDetailInfo> details;
 		if (auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore())
@@ -438,6 +439,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 
 		dispatcher.TryEnqueue([weak = get_weak(), tasks = std::move(tasks),
+							  missingPaths = std::move(missingPaths),
 							  details = std::move(details)]()
 		{
 			if (auto self = weak.get())
@@ -449,6 +451,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 						: winrt::to_hstring(task.name);
 
 					auto vm = self->FindOrCreateItemByTaskId(task.taskId, name);
+					vm.TargetPathMissing(missingPaths.contains(task.taskId));
 					vm.Transport(L"libtorrent · BitTorrent");
 
 					// Set add date from timestamp
@@ -478,7 +481,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 					switch (task.status)
 					{
 						case 1:
-							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Downloading);
+							// Startup restores the record, not a running torrent session.
+							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Paused);
 							break;
 						case 2:
 							vm.State(winrt::OpenNet::ViewModels::DownloadTaskState::Paused);
@@ -583,8 +587,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 						default:
 							vm.Transport(
 								rec.transferMode == 1
-									? L"aria2 · P2P fallback"
-									: L"aria2");
+								? L"aria2 · P2P fallback"
+								: L"aria2");
 							break;
 					}
 
@@ -831,6 +835,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateItemByTaskId(e.taskId, name);
+				item.TargetPathMissing(false);
 				item.Transport(L"libtorrent · BitTorrent");
 				bool isNewItem = (self->m_tasks.Size() > sizeBefore);
 				if (!name.empty() && item.Name() != name)

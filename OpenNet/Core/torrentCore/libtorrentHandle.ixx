@@ -334,6 +334,7 @@ export namespace OpenNet::Core::Torrent
 		struct TorrentDetailInfo
 		{
 			std::string taskId;
+			bool isResident{};
 			std::string name;
 			std::string infoHash;
 			std::string infoHashV1;
@@ -536,7 +537,7 @@ export namespace OpenNet::Core::Torrent
 			std::string const& taskId);
 		void ToggleFirstLastPiecePriority(
 			std::string const& taskId);
-		void MoveStorage(
+		bool MoveStorage(
 			std::string const& taskId,
 			std::string const& path);
 		void RenameFile(

@@ -3906,6 +3906,9 @@
   <data name="TaskStatusChecking" xml:space="preserve">
     <value>正在校验文件</value>
   </data>
+  <data name="TaskStatusTargetPathMissing" xml:space="preserve">
+    <value>本次运行中目标路径不可用</value>
+  </data>
   <data name="ViewTasksPageMultipleFilesSelectedTitle" xml:space="preserve">
     <value>选择了多个文件</value>
   </data>
