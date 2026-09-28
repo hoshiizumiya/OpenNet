@@ -5,7 +5,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:behaviors="using:XamlToolkit.WinUI.Behaviors"
     xmlns:controls="using:XamlToolkit.WinUI.Controls"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
@@ -31,9 +30,9 @@
         <!--  File list  -->
         <controls:HeaderedTreeView
             x:Name="FilesListView"
-            ItemsSource="{x:Bind FileTree}"
             Grid.Row="1"
             DoubleTapped="FilesListView_DoubleTapped"
+            ItemsSource="{x:Bind FileTree}"
             RightTapped="FilesListView_RightTapped"
             ScrollViewer.HorizontalScrollBarVisibility="Auto"
             ScrollViewer.HorizontalScrollMode="Enabled"
@@ -122,7 +121,10 @@
                         <behaviors:StickyHeaderBehavior />
                     </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16" Loaded="DataTable_Loaded">
-                        <labs:DataColumn x:Name="ColFileName" CanResize="True" DesiredWidth="*">
+                        <labs:DataColumn
+                            x:Name="ColFileName"
+                            CanResize="True"
+                            DesiredWidth="*">
                             <Button
                                 x:Name="SortFileNameButton"
                                 Click="ColumnHeader_Click"
@@ -192,7 +194,7 @@
             </controls:HeaderedTreeView.Header>
             <controls:HeaderedTreeView.ItemTemplate>
                 <DataTemplate x:DataType="vm:FileDisplayItem">
-                    <muxc:TreeViewItem
+                    <TreeViewItem
                         HorizontalContentAlignment="Stretch"
                         AllowDrop="False"
                         CanDrag="False"
@@ -209,8 +211,15 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
-                                <FontIcon VerticalAlignment="Center" FontFamily="{x:Bind NodeFontFamily}" FontSize="16" Glyph="{x:Bind NodeGlyph}" />
-                                <TextBlock Grid.Column="1" Text="{x:Bind Name, Mode=OneWay}" TextTrimming="CharacterEllipsis">
+                                <FontIcon
+                                    VerticalAlignment="Center"
+                                    FontFamily="{x:Bind NodeFontFamily}"
+                                    FontSize="16"
+                                    Glyph="{x:Bind NodeGlyph}" />
+                                <TextBlock
+                                    Grid.Column="1"
+                                    Text="{x:Bind Name, Mode=OneWay}"
+                                    TextTrimming="CharacterEllipsis">
                                     <ToolTipService.ToolTip>
                                         <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="{x:Bind Path, Mode=OneWay}" />
                                     </ToolTipService.ToolTip>
@@ -224,23 +233,22 @@
                                 Maximum="100"
                                 Value="{x:Bind ProgressValue, Mode=OneWay}" />
                             <TextBlock Text="{x:Bind Done, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                            <Grid>
-                                <ComboBox
-                                    x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}"
-                                    MinWidth="80"
-                                    HorizontalAlignment="Stretch"
-                                    essential:ComboBoxHelper.AcrylicWorkaround="True"
-                                    SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
-                                    SelectionChanged="FilePriority_SelectionChanged"
-                                    Tag="{x:Bind FileIndex}">
-                                    <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
-                                    <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
-                                    <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
-                                    <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
-                                </ComboBox>
-                            </Grid>
+                            <ComboBox
+                                x:Name="FilePriorityComboBox"
+                                MinWidth="80"
+                                HorizontalAlignment="Stretch"
+                                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}"
+                                SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
+                                SelectionChanged="FilePriority_SelectionChanged"
+                                Tag="{Binding FileIndex}">
+                                <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
+                                <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
+                                <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
+                                <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
+                            </ComboBox>
                         </labs:DataRow>
-                    </muxc:TreeViewItem>
+                    </TreeViewItem>
                 </DataTemplate>
             </controls:HeaderedTreeView.ItemTemplate>
         </controls:HeaderedTreeView>
