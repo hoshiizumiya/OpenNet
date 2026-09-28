@@ -5,8 +5,9 @@
  *            Stores (taskId, percent, speedKB) rows so the graph
  *            can be reconstructed when a task is re-selected.
  *
- * SCHEMA:    speed_graph(task_id TEXT, percent INTEGER, speed_kb INTEGER,
- *                        PRIMARY KEY(task_id, percent))
+ * SCHEMA:    speed_graph_v2(task_id TEXT, progress_ppm INTEGER,
+ *                           speed_kb INTEGER,
+ *                           PRIMARY KEY(task_id, progress_ppm))
  *
  * LICENSE:   The MIT License
  */
@@ -23,7 +24,7 @@ export namespace OpenNet::Core
     /// A single speed data point
     struct SpeedPoint
     {
-        int percent;        // 0-100
+        double percent;     // 0-100, retained at 0.01% precision
         std::uint64_t speedKB;   // download speed in KB/s
     };
 
@@ -39,8 +40,8 @@ export namespace OpenNet::Core
         /// Close the database connection
         void Close();
 
-        /// Save a speed data point for a task (UPSERT by taskId+percent)
-        void SavePoint(std::string const& taskId, int percent, std::uint64_t speedKB);
+        /// Save a speed data point for a task at 0.01% progress resolution.
+        void SavePoint(std::string const& taskId, double percent, std::uint64_t speedKB);
 
         /// Load all speed points for a task, sorted by percent ascending
         std::vector<SpeedPoint> LoadPoints(std::string const& taskId);
@@ -54,12 +55,12 @@ export namespace OpenNet::Core
         SpeedGraphDatabase(SpeedGraphDatabase const&) = delete;
         SpeedGraphDatabase& operator=(SpeedGraphDatabase const&) = delete;
 
-        void CreateTables();
+        bool CreateTables();
 
         mutable std::mutex m_mutex;
         sqlite3* m_db{ nullptr };
         bool m_initialized{ false };
-        std::unordered_map<std::string, int> m_lastSavedPercent;
+        std::unordered_map<std::string, int> m_lastSavedProgressPpm;
     };
 
 } // namespace OpenNet::Core

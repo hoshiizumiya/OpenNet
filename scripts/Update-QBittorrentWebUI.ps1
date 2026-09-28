@@ -6,7 +6,7 @@ param(
 
     [Parameter()]
     [ValidatePattern('^[0-9a-fA-F]{40}$')]
-    [string] $Commit = '78bf5f0c715b447c4ca1127e3aae7cd3c2f0e90b'
+    [string] $Commit = '784a6e188ecdb2e6896f2cd4a2d12e9cece08cbe'
 )
 
 $ErrorActionPreference = 'Stop'

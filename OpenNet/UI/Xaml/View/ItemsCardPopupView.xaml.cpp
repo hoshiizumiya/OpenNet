@@ -68,6 +68,20 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 	fire_and_forget ItemsCardPopupView::OnOpenWebUIClick(IInspectable const&, RoutedEventArgs const&)
 	{
 		auto strong = get_strong();
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		if (!database.GetBool("webui_host", "enabled").value_or(true))
+		{
+			RefreshStatus();
+			co_return;
+		}
+		if (!::OpenNet::Core::WebUI::IsWebUIRunning()
+			&& !::OpenNet::Core::WebUI::StartWebUI())
+		{
+			RefreshStatus();
+			co_return;
+		}
+		RefreshStatus();
 		co_await winrt::Windows::System::Launcher::LaunchUriAsync(
 			winrt::Windows::Foundation::Uri{ WebUIUrl() });
 	}
