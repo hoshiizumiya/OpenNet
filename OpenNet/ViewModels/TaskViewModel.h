@@ -17,9 +17,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		static void ReloadProgressAppearance();
 		winrt::Windows::UI::Color ProgressHighColor() const;
 		winrt::Windows::UI::Color ProgressBaseColor() const;
-		winrt::Microsoft::UI::Xaml::Visibility ProgressEffectVisibility() const;
-		winrt::Microsoft::UI::Xaml::Visibility ProgressColumnEffectVisibility() const;
-		winrt::Microsoft::UI::Xaml::Visibility ProgressRowEffectVisibility() const;
+		bool ShowProgressEffect() const;
+		bool ShowProgressColumnEffect() const;
+		bool ShowProgressColumnText() const;
+		bool ShowProgressRowEffect() const;
 
 		// Make mixin helpers visible
 		using ::OpenNet::ViewModels::ObservableMixin<TaskViewModel>::SetProperty;
@@ -180,8 +181,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (SetProperty(m_taskType, v, L"TaskType"))
 			{
 				RaisePropertyChanged(L"ProgressHighColor");
-				RaisePropertyChanged(L"ProgressColumnEffectVisibility");
-				RaisePropertyChanged(L"ProgressRowEffectVisibility");
+				RaisePropertyChanged(L"ShowProgressEffect");
+				RaisePropertyChanged(L"ShowProgressColumnEffect");
+				RaisePropertyChanged(L"ShowProgressColumnText");
+				RaisePropertyChanged(L"ShowProgressRowEffect");
 			}
 		}
 
@@ -195,9 +198,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				RaisePropertyChanged(L"StateValue");
 				RaisePropertyChanged(L"ProgressHighColor");
-				RaisePropertyChanged(L"ProgressEffectVisibility");
-				RaisePropertyChanged(L"ProgressColumnEffectVisibility");
-				RaisePropertyChanged(L"ProgressRowEffectVisibility");
+				RaisePropertyChanged(L"ShowProgressEffect");
+				RaisePropertyChanged(L"ShowProgressColumnEffect");
+				RaisePropertyChanged(L"ShowProgressColumnText");
+				RaisePropertyChanged(L"ShowProgressRowEffect");
 			}
 		}
 		std::int32_t StateValue() const noexcept
@@ -213,9 +217,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 			if (SetProperty(m_targetPathMissing, value, L"TargetPathMissing"))
 			{
 				RaisePropertyChanged(L"StateValue");
-				RaisePropertyChanged(L"ProgressEffectVisibility");
-				RaisePropertyChanged(L"ProgressColumnEffectVisibility");
-				RaisePropertyChanged(L"ProgressRowEffectVisibility");
+				RaisePropertyChanged(L"ShowProgressEffect");
+				RaisePropertyChanged(L"ShowProgressColumnEffect");
+				RaisePropertyChanged(L"ShowProgressColumnText");
+				RaisePropertyChanged(L"ShowProgressRowEffect");
 			}
 		}
 

@@ -6,6 +6,8 @@
 #include "Models/NameCultureInfoValue.h"
 #include "UI/Xaml/View/GuideView.g.h"
 
+import winrt.Microsoft.UI.Composition;
+
 namespace winrt::OpenNet::UI::Xaml::View::implementation
 {
 	struct GuideView;
@@ -40,6 +42,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		bool IsAgreementCopyAgreed();
 		void IsAgreementCopyAgreed(bool value);
 		void GuideMaterialStyleSelector_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+		void MaterialPreview_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
+		void MaterialPreview_Unloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void NextOrComplete(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		winrt::event_token Completed(
 			winrt::Windows::Foundation::EventHandler<
@@ -54,6 +58,8 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		winrt::event<winrt::Windows::Foundation::EventHandler<
 			winrt::Windows::Foundation::IInspectable>> m_completed;
 		bool m_isMaterialInitializing{ true };
+		winrt::Microsoft::UI::Composition::SpriteVisual m_materialBackdropVisual{ nullptr };
+		winrt::Microsoft::UI::Composition::CompositionColorGradientStop m_materialGradientStop{ nullptr };
 	};
 }
 

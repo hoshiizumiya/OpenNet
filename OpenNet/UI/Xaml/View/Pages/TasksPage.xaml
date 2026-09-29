@@ -884,17 +884,18 @@
                             <!--  We set HorizontalAlignment to Left here as we're not stretching our content with a star column  -->
                             <Grid HorizontalAlignment="Left">
                                 <essential:ProgressBarEx
+                                    x:Name="ProgressRowEffectBar"
                                     Margin="0,2,0,2"
                                     HorizontalAlignment="Stretch"
                                     VerticalAlignment="Stretch"
+                                    x:Load="{x:Bind ShowProgressRowEffect, Mode=OneWay}"
                                     Background="Transparent"
                                     BaseColor="{x:Bind ProgressBaseColor, Mode=OneWay}"
                                     CornerRadius="8"
                                     HighColor="{x:Bind ProgressHighColor, Mode=OneWay}"
                                     IsHitTestVisible="False"
                                     Opacity="0.65"
-                                    Percent="{x:Bind ProgressPercent, Mode=OneWay}"
-                                    Visibility="{x:Bind ProgressRowEffectVisibility, Mode=OneWay}" />
+                                    Percent="{x:Bind ProgressPercent, Mode=OneWay}" />
                                 <xtlw:DataRow HorizontalAlignment="Left" Loaded="TaskDataRow_Loaded">
                                     <xtlw:DataRow.Resources>
                                         <Style TargetType="TextBlock">
@@ -933,24 +934,38 @@
                                         TextTrimming="CharacterEllipsis"
                                         TextWrapping="NoWrap"
                                         Visibility="{x:Bind ColSize.Visibility, Mode=OneWay}" />
-                                    <Grid MinWidth="110" Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}">
+                                    <Grid MinWidth="10" Visibility="{x:Bind ColProgress.Visibility, Mode=OneWay}">
                                         <essential:ProgressBarEx
+                                            x:Name="ProgressColumnEffectBar"
                                             Height="20"
                                             HorizontalAlignment="Stretch"
+                                            x:Load="{x:Bind ShowProgressColumnEffect, Mode=OneWay}"
                                             Background="Transparent"
                                             BaseColor="{x:Bind ProgressBaseColor, Mode=OneWay}"
                                             CornerRadius="6"
                                             HighColor="{x:Bind ProgressHighColor, Mode=OneWay}"
                                             IsHitTestVisible="False"
-                                            Percent="{x:Bind ProgressPercent, Mode=OneWay}"
-                                            Visibility="{x:Bind ProgressColumnEffectVisibility, Mode=OneWay}" />
+                                            Percent="{x:Bind ProgressPercent, Mode=OneWay}">
+                                            <TextBlock
+                                                Margin="4,0,4,0"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Center"
+                                                Canvas.ZIndex="1"
+                                                Foreground="{ThemeResource TextFillColorPrimaryBrush}"
+                                                IsHitTestVisible="False"
+                                                Text="{x:Bind Progress, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                TextWrapping="NoWrap" />
+                                        </essential:ProgressBarEx>
                                         <TextBlock
+                                            x:Name="ProgressColumnPlainText"
                                             Margin="4,0,4,0"
                                             HorizontalAlignment="Right"
                                             VerticalAlignment="Center"
+                                            x:Load="{x:Bind ShowProgressColumnText, Mode=OneWay}"
+                                            Canvas.ZIndex="1"
                                             Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                             IsHitTestVisible="False"
-                                            Canvas.ZIndex="1"
                                             Text="{x:Bind Progress, Mode=OneWay}"
                                             TextTrimming="CharacterEllipsis"
                                             TextWrapping="NoWrap" />

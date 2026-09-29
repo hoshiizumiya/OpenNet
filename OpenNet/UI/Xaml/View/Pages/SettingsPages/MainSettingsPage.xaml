@@ -41,6 +41,7 @@
             <BreadcrumbBar
                 x:Name="MainSettingsPageBar"
                 Margin="-36,-12,0,0"
+                VerticalContentAlignment="Center"
                 x:FieldModifier="Public"
                 ItemClicked="SettingsBar_ItemClicked"
                 ItemsSource="{x:Bind SettingsBarItems}">
@@ -49,6 +50,7 @@
                         <TextBlock
                             Height="60"
                             Margin="0,0,10,0"
+                            VerticalAlignment="Center"
                             FontSize="24"
                             Text="{x:Bind}" />
                     </DataTemplate>

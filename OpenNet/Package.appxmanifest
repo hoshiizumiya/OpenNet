@@ -13,7 +13,7 @@
   <Identity
     Name="MillenniumScienceTechnolo.OpenNet"
     Publisher="CN=9C947BF5-422C-4285-B301-9F787230839B"
-    Version="0.0.4.0" />
+    Version="0.0.5.0" />
 
   <mp:PhoneIdentity PhoneProductId="a0d66003-b533-4463-9a82-2d4b39fa3828" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 

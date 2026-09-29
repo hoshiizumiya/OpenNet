@@ -21,8 +21,8 @@ namespace
 	winrt::Windows::UI::Color ReadColor(::OpenNet::Core::AppSettingsDatabase& db, char const* key, winrt::Windows::UI::Color fallback)
 	{
 		auto const argb = static_cast<std::uint32_t>(db.GetInt("ui", key)
-			.value_or((std::uint32_t(fallback.A) << 24) | (std::uint32_t(fallback.R) << 16)
-				| (std::uint32_t(fallback.G) << 8) | fallback.B));
+													 .value_or((std::uint32_t(fallback.A) << 24) | (std::uint32_t(fallback.R) << 16)
+															   | (std::uint32_t(fallback.G) << 8) | fallback.B));
 		return { static_cast<std::uint8_t>(argb >> 24), static_cast<std::uint8_t>(argb >> 16),
 			static_cast<std::uint8_t>(argb >> 8), static_cast<std::uint8_t>(argb) };
 	}
@@ -70,9 +70,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			item->RaisePropertyChanged(L"ProgressHighColor");
 			item->RaisePropertyChanged(L"ProgressBaseColor");
-			item->RaisePropertyChanged(L"ProgressEffectVisibility");
-			item->RaisePropertyChanged(L"ProgressColumnEffectVisibility");
-			item->RaisePropertyChanged(L"ProgressRowEffectVisibility");
+			item->RaisePropertyChanged(L"ShowProgressEffect");
+			item->RaisePropertyChanged(L"ShowProgressColumnEffect");
+			item->RaisePropertyChanged(L"ShowProgressColumnText");
+			item->RaisePropertyChanged(L"ShowProgressRowEffect");
 		}
 	}
 
@@ -83,14 +84,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 		return s_downloadColor;
 	}
 
-	winrt::Microsoft::UI::Xaml::Visibility TaskViewModel::ProgressEffectVisibility() const
+	bool TaskViewModel::ShowProgressEffect() const
 	{
 		bool const active = m_state == DownloadTaskState::Downloading
 			|| m_state == DownloadTaskState::Checking
 			|| (m_taskType == DownloadTaskType::BitTorrent && m_state == DownloadTaskState::Seeding);
-		return s_progressEffectsEnabled && active && !m_targetPathMissing
-			? winrt::Microsoft::UI::Xaml::Visibility::Visible
-			: winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
+		return s_progressEffectsEnabled && active && !m_targetPathMissing;
 	}
 
 	winrt::Windows::UI::Color TaskViewModel::ProgressBaseColor() const
@@ -98,14 +97,19 @@ namespace winrt::OpenNet::ViewModels::implementation
 		return s_baseColor;
 	}
 
-	winrt::Microsoft::UI::Xaml::Visibility TaskViewModel::ProgressColumnEffectVisibility() const
+	bool TaskViewModel::ShowProgressColumnEffect() const
 	{
-		return s_progressEffectScope == 0 ? ProgressEffectVisibility() : winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
+		return s_progressEffectScope == 0 && ShowProgressEffect();
 	}
 
-	winrt::Microsoft::UI::Xaml::Visibility TaskViewModel::ProgressRowEffectVisibility() const
+	bool TaskViewModel::ShowProgressColumnText() const
 	{
-		return s_progressEffectScope == 1 ? ProgressEffectVisibility() : winrt::Microsoft::UI::Xaml::Visibility::Collapsed;
+		return !ShowProgressColumnEffect();
+	}
+
+	bool TaskViewModel::ShowProgressRowEffect() const
+	{
+		return s_progressEffectScope == 1 && ShowProgressEffect();
 	}
 
 	winrt::Microsoft::UI::Xaml::Media::PointCollection TaskViewModel::SpeedGraphPoints()

@@ -48,7 +48,7 @@ namespace OpenNet.ViewModels
 		DownloadTaskType TaskType;
 		DownloadTaskState State;
 		Boolean TargetPathMissing;
-		Int32 StateValue { get; };
+		Int32 StateValue{ get; };
 
 		// Task identifier — libtorrent taskId or HTTP recordId
 		String TaskId;
@@ -59,13 +59,14 @@ namespace OpenNet.ViewModels
 		// Download speed in KB/s (numeric value for SpeedGraph)
 		UInt64 DownloadSpeedKB;
 
-        // Progress percent as numeric value (0-100) for SpeedGraph
-        Double ProgressPercent;
-        Windows.UI.Color ProgressHighColor { get; };
-        Windows.UI.Color ProgressBaseColor { get; };
-        Microsoft.UI.Xaml.Visibility ProgressEffectVisibility { get; };
-        Microsoft.UI.Xaml.Visibility ProgressColumnEffectVisibility { get; };
-        Microsoft.UI.Xaml.Visibility ProgressRowEffectVisibility { get; };
+		// Progress percent as numeric value (0-100) for SpeedGraph
+		Double ProgressPercent;
+		Windows.UI.Color ProgressHighColor{ get; };
+		Windows.UI.Color ProgressBaseColor{ get; };
+		Boolean ShowProgressEffect{ get; };
+		Boolean ShowProgressColumnEffect{ get; };
+		Boolean ShowProgressColumnText{ get; };
+		Boolean ShowProgressRowEffect{ get; };
 
 		// PointCollection for the speed graph visualization
 		Microsoft.UI.Xaml.Media.PointCollection SpeedGraphPoints{ get; };

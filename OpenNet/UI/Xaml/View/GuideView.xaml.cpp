@@ -14,6 +14,8 @@ import OpenNet.Core.IO.FileSystem;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.MaterialTheme;
 import OpenNet.ViewModels.Guide.GuideState;
+import winrt.Microsoft.UI.Xaml.Hosting;
+import winrt.Windows.UI;
 
 using namespace winrt;
 using namespace winrt::Microsoft::UI::Xaml;
@@ -213,6 +215,51 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 		{
 			::OpenNet::Helpers::MaterialTheme::Set(static_cast<::OpenNet::Helpers::MaterialStyle>(index));
 		}
+	}
+
+	void GuideView::MaterialPreview_Loaded(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_materialBackdropVisual) return;
+
+		using namespace winrt::Microsoft::UI::Composition;
+		using winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview;
+		using winrt::Windows::UI::Color;
+
+		auto const host = MaterialGradientHost();
+		auto const compositor = ElementCompositionPreview::GetElementVisual(host).Compositor();
+		// AnimationWindow's diagonal/8-second sweep, with a dark palette so
+		// the white preview labels remain readable through the glass surface.
+		auto const brush = compositor.CreateLinearGradientBrush();
+		brush.StartPoint({ 0.0f, 0.0f });
+		brush.EndPoint({ 1.0f, 1.0f });
+		brush.ColorStops().Append(compositor.CreateColorGradientStop(
+			0.0f, Color{ 255, 23, 35, 61 }));
+		m_materialGradientStop = compositor.CreateColorGradientStop(
+			1.0f, Color{ 255, 36, 53, 82 });
+		brush.ColorStops().Append(m_materialGradientStop);
+
+		m_materialBackdropVisual = compositor.CreateSpriteVisual();
+		m_materialBackdropVisual.RelativeSizeAdjustment({ 1.0f, 1.0f });
+		m_materialBackdropVisual.Brush(brush);
+		ElementCompositionPreview::SetElementChildVisual(host, m_materialBackdropVisual);
+
+		auto const sweep = compositor.CreateColorKeyFrameAnimation();
+		sweep.InsertKeyFrame(0.0f, Color{ 255, 36, 53, 82 });
+		sweep.InsertKeyFrame(0.5f, Color{ 255, 20, 68, 86 });
+		sweep.InsertKeyFrame(1.0f, Color{ 255, 36, 53, 82 });
+		sweep.Duration(std::chrono::seconds(8));
+		sweep.IterationBehavior(AnimationIterationBehavior::Forever);
+		m_materialGradientStop.StartAnimation(L"Color", sweep);
+	}
+
+	void GuideView::MaterialPreview_Unloaded(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (m_materialGradientStop)
+			m_materialGradientStop.StopAnimation(L"Color");
+		if (auto const host = MaterialGradientHost())
+			winrt::Microsoft::UI::Xaml::Hosting::ElementCompositionPreview::SetElementChildVisual(host, nullptr);
+		m_materialBackdropVisual = nullptr;
+		m_materialGradientStop = nullptr;
 	}
 
 	void GuideView::NextOrComplete(Windows::Foundation::IInspectable const&, RoutedEventArgs const&)

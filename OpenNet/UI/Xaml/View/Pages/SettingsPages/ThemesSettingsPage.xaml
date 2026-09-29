@@ -34,11 +34,11 @@
 
             </essential:SettingsCard>-->
 
-            <TextBlock
+            <!--<TextBlock
                 x:Uid="ThemesAppearanceSectionHeader"
                 Padding="10"
                 Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
-                Text="Appearance" />
+                Text="Appearance" />-->
 
             <TextBlock
                 x:Uid="TaskProgressAppearanceHeader"
@@ -46,43 +46,45 @@
                 Text="Task progress" />
             <essential:SettingsExpander
                 x:Uid="TaskProgressExpander"
-                Header="Task progress effects"
                 Description="Choose where the highlight appears and customize its colors."
+                Header="Task progress effects"
                 IsExpanded="False">
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE9CE;" />
                 </essential:SettingsExpander.HeaderIcon>
                 <essential:SwitchPresenter Value="{x:Bind MaterialStyleIndex, Mode=OneWay}">
                     <essential:Case>
-                        <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                        <ToggleSwitch
-                            x:Uid="TaskProgressEffectsSwitch"
-                            IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
+                        <essential:Case.Value>
+                            <x:Int32>0</x:Int32>
+                        </essential:Case.Value>
+                        <ToggleSwitch x:Uid="TaskProgressEffectsSwitch" IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
                     </essential:Case>
                     <essential:Case>
-                        <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                        <liquid:LiquidGlassToggleSwitch
-                            x:Uid="TaskProgressEffectsGlassSwitch"
-                            IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
+                        <essential:Case.Value>
+                            <x:Int32>1</x:Int32>
+                        </essential:Case.Value>
+                        <liquid:LiquidGlassToggleSwitch x:Uid="TaskProgressEffectsGlassSwitch" IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
                     </essential:Case>
                 </essential:SwitchPresenter>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard
                         x:Uid="TaskProgressScopeCard"
-                        Header="Highlight area"
-                        Description="Choose the progress cell or the full task row.">
-                        <ComboBox
-                            MinWidth="175"
-                            SelectedIndex="{x:Bind ViewModel.ProgressEffectScope, Mode=TwoWay}">
+                        Description="Choose the progress cell or the full task row."
+                        Header="Highlight area">
+                        <ComboBox MinWidth="175" SelectedIndex="{x:Bind ViewModel.ProgressEffectScope, Mode=TwoWay}">
                             <ComboBoxItem x:Uid="TaskProgressScopeColumn" Content="Progress cell" />
                             <ComboBoxItem x:Uid="TaskProgressScopeRow" Content="Entire task row" />
                         </ComboBox>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressPreviewCard"
-                        Header="Preview"
-                        Description="A sample download using the selected colors and area.">
-                        <Grid MinWidth="280" MaxWidth="370" Height="42" ColumnSpacing="8">
+                        Description="A sample download using the selected colors and area."
+                        Header="Preview">
+                        <Grid
+                            Height="42"
+                            MinWidth="280"
+                            MaxWidth="370"
+                            ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
@@ -125,9 +127,9 @@
                                     Margin="4,0,4,0"
                                     HorizontalAlignment="Right"
                                     VerticalAlignment="Center"
+                                    Canvas.ZIndex="1"
                                     Foreground="{ThemeResource TextFillColorPrimaryBrush}"
                                     IsHitTestVisible="False"
-                                    Canvas.ZIndex="1"
                                     Text="58%" />
                             </Grid>
                         </Grid>
@@ -141,10 +143,10 @@
                                 <Flyout>
                                     <ColorPicker
                                         x:Uid="TaskProgressDownloadColorPicker"
-                                        Color="{x:Bind ViewModel.DownloadProgressColor, Mode=TwoWay}"
                                         IsAlphaEnabled="False"
                                         IsAlphaSliderVisible="False"
-                                        IsAlphaTextInputVisible="False" />
+                                        IsAlphaTextInputVisible="False"
+                                        Color="{x:Bind ViewModel.DownloadProgressColor, Mode=TwoWay}" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
@@ -158,10 +160,10 @@
                                 <Flyout>
                                     <ColorPicker
                                         x:Uid="TaskProgressSeedingColorPicker"
-                                        Color="{x:Bind ViewModel.SeedingProgressColor, Mode=TwoWay}"
                                         IsAlphaEnabled="False"
                                         IsAlphaSliderVisible="False"
-                                        IsAlphaTextInputVisible="False" />
+                                        IsAlphaTextInputVisible="False"
+                                        Color="{x:Bind ViewModel.SeedingProgressColor, Mode=TwoWay}" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
@@ -175,35 +177,35 @@
                                 <Flyout>
                                     <ColorPicker
                                         x:Uid="TaskProgressCheckingColorPicker"
-                                        Color="{x:Bind ViewModel.CheckingProgressColor, Mode=TwoWay}"
                                         IsAlphaEnabled="False"
                                         IsAlphaSliderVisible="False"
-                                        IsAlphaTextInputVisible="False" />
+                                        IsAlphaTextInputVisible="False"
+                                        Color="{x:Bind ViewModel.CheckingProgressColor, Mode=TwoWay}" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressBaseColorCard"
-                        Header="Base color"
-                        Description="Color behind the highlight; transparent by default.">
+                        Description="Color behind the highlight; transparent by default."
+                        Header="Base color">
                         <Button x:Uid="TaskProgressChooseBaseColor" Content="Choose color">
                             <Button.Flyout>
                                 <Flyout>
                                     <ColorPicker
                                         x:Uid="TaskProgressBaseColorPicker"
-                                        Color="{x:Bind ViewModel.ProgressBaseColor, Mode=TwoWay}"
                                         IsAlphaEnabled="True"
                                         IsAlphaSliderVisible="True"
-                                        IsAlphaTextInputVisible="True" />
+                                        IsAlphaTextInputVisible="True"
+                                        Color="{x:Bind ViewModel.ProgressBaseColor, Mode=TwoWay}" />
                                 </Flyout>
                             </Button.Flyout>
                         </Button>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressResetCard"
-                        Header="Default appearance"
-                        Description="Restore the default area and colors.">
+                        Description="Restore the default area and colors."
+                        Header="Default appearance">
                         <Button
                             x:Uid="TaskProgressResetButton"
                             Command="{x:Bind ViewModel.ResetProgressAppearanceCommand}"
