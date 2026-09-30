@@ -141,9 +141,17 @@ int main()
         service.RequestNetworkRecovery();
         WaitFor([&] { return service.Snapshot().publicPort == 0 && service.Snapshot().error.empty(); }, "network recovery clears stale observation");
         sockaddr_in recoveredMapping{};
-        auto const recoveryResponse = Reply(stun.Receive(recoveredMapping));
-        Require(recoveredMapping.sin_port == mapping.sin_port, "network recovery preserves mapping port");
-        stun.Send(recoveryResponse, recoveredMapping);
+        // Keepalive requests queued before recovery carry an obsolete
+        // transaction ID. Reply to the bounded backlog as a real STUN server
+        // would; the production parser must ignore those replies and accept
+        // only the request generated after recovery.
+        for (unsigned attempt = 0; attempt < 8 && service.Snapshot().publicPort == 0; ++attempt)
+        {
+            std::string const recoveryResponse = Reply(stun.Receive(recoveredMapping));
+            Require(recoveredMapping.sin_port == mapping.sin_port, "network recovery preserves mapping port");
+            stun.Send(recoveryResponse, recoveredMapping);
+            std::this_thread::sleep_for(20ms);
+        }
         WaitFor([&] { return service.Snapshot().publicPort == 45678; }, "network recovery refreshes STUN observation");
         recoveredMapping.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         clientA.Send("after-network-change", recoveredMapping);

@@ -76,4 +76,6 @@ The following lifecycle revision adds application-wide network recovery. `App` s
 
 The Windows socket regression test now simulates recovery after an expired STUN observation and verifies that the mapping port is preserved, a new observation is published, and both relay directions resume. The next exact-HEAD NATMap and full Canary runs must pass before this checkpoint is considered verified.
 
+The first network-recovery test run at `a0f498f1de6d6174b73f053de0b876d7a2d68b15` exposed a fixture ordering error in x64 Release: several pre-recovery keepalive requests were still queued at the fake STUN server, while the test replied to only one request and assumed it carried the new transaction ID. Production correctly rejected that old transaction, so the assertion timed out. The corrected fixture replies to a bounded backlog, proving that obsolete responses remain rejected and the post-recovery transaction is eventually accepted.
+
 Next gate: verify the network-recovery revision on Windows. Then add automatic-target lifecycle handling for torrent listener changes and investigate real libtorrent uTP/DHT source-endpoint semantics before advertising mapped endpoints or adding TCP/WebUI mapping.
