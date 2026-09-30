@@ -56,4 +56,15 @@ ctest --test-dir out/natmap --output-on-failure
 
 An enabled task runs approximately every 80 minutes. It checks the exact branch HEAD and latest job/step status, repairs concrete failures, and advances the remaining implementation once required checks pass. It does not repeatedly retrigger pending runs or merge to master. For large failed logs, download the artifact and use `tail -n 300` or `rg -n -i -C 4 'error|fatal|failed|exception'` on the file. If only decoded connector logs are available, filter within the tool call before returning output. Update this checkpoint after meaningful progress.
 
-Next gate: verify the new native tests and the full application build on Windows. Then investigate real libtorrent UDP identity semantics and torrent-core lifecycle before adding TCP/WebUI mapping or advertising mapped endpoints.
+## Checkpoint — 2026-10-01
+
+Reviewed exact remote HEAD `cf8933f9fd92396409d3960f21d89051e2389c04`:
+
+- [NATMap tests run 36762287283](https://github.com/hoshiizumiya/OpenNet/actions/runs/36762287283): all five jobs succeeded. The downloaded x64 Debug JUnit report records `tests=2`, `failures=0`, `skipped=0` for `stun_protocol` and `udp_mapping`; these were executed, not merely compiled.
+- [Canary run 36762287138](https://github.com/hoshiizumiya/OpenNet/actions/runs/36762287138): both Release x64 and ARM64 failed in `Build MSIX`. Downloaded both log artifacts and inspected only error contexts. The first application error is `WMC1110: Property 'ViewModel' not found on type 'NatToolsPage'`; all 13 binding errors share this cause.
+
+`NatToolsPage.xaml.h` already implemented `ViewModel()`, but `NatToolsPage.idl` omitted the property. The XAML compiler resolves these `x:Bind` paths using the WinRT metadata produced from IDL, so a C++ getter alone is insufficient. This revision imports `ViewModels/NatMappingViewModel.idl` and declares the read-only `OpenNet.ViewModels.NatMappingViewModel ViewModel` property, matching the other MVVM pages. The ViewModel, commands and binding paths remain unchanged.
+
+Local review confirms that both IDL files are included in the project's MIDL inputs and that the property type matches the existing getter. The Linux workspace cannot run the Windows XAML compiler. The corrective revision still needs its own full Canary run; the previous native test success does not establish application build success.
+
+Next gate: check the corrective revision's exact HEAD and Release x64/ARM64 Canary results, repairing any newly exposed compiler/linker errors. Once the full app passes, investigate real libtorrent UDP identity semantics and torrent-core lifecycle before adding TCP/WebUI mapping or advertising mapped endpoints.
