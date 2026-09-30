@@ -129,3 +129,14 @@ the reduced panel has no Toolkit data rows or Star sizing, and only the runner's
 native DPI is covered. Production sorting/arrow restoration and other DPI scales
 still require Windows application regression. Do not submit the issue draft
 without inspecting concrete runtime evidence.
+
+Runtime capture startup initially failed in `HeaderColumn.InitializeComponent`.
+The `ee84a55d1e47e4f197205e639aaac17eca04470d` evidence artifact from run
+`36783086455` isolated a missing `SubtleButtonStyle` resource in the standalone
+application; ContentPresenter-content and Thumb-template construction succeeded.
+The candidate now uses the default WinUI Button and records this production
+style difference. Its presenter also matches the Toolkit template's
+HorizontalAlignment rather than overriding HorizontalContentAlignment. Both
+properties are now explicitly observed in OpenNet and the sample; none of the
+production properties are written by diagnostics. These sample fixes are not a
+finding about the original production trimming defect.

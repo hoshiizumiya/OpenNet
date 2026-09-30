@@ -7,6 +7,14 @@ Toolkit branch and this reduction must both be tested on Windows before calling
 this a WinUI defect. The simplified panel supports Auto and Pixel, not Star,
 and the sample has no data rows.
 
+The candidate uses the standard WinUI Button with zero Padding/MinWidth, while
+OpenNet uses a style based on SubtleButtonStyle. The standalone runtime could
+not resolve that explicit style key and originally failed to load HeaderColumn;
+this was a sample startup defect, not evidence of production trimming. Button
+border/padding and both element/content alignment values are logged. The outer
+ContentPresenter uses the same **element** Stretch alignment as DataColumn's
+template; its content-alignment default is retained.
+
 ## Build and run
 
 Windows, Visual Studio WinUI workload, .NET 10 SDK:

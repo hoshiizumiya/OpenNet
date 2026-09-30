@@ -4,7 +4,7 @@
   <Grid x:Name="HeaderTemplate">
     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
     <ContentPresenter x:Name="HeaderPresenter" Margin="4,0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
-      <Button x:Name="HeaderButton" Style="{StaticResource SubtleButtonStyle}" Padding="0"
+      <Button x:Name="HeaderButton" Padding="0"
               MinWidth="0" HorizontalContentAlignment="Left">
         <Grid x:Name="SortHeader">
           <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
