@@ -917,7 +917,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.RemoteDownloadRate(peer.remoteDownloadRate);
 			item.RemoteDLSpeed(peer.remoteDownloadRate < 0 ? L"-" : peer.remoteDownloadRate == 0 ? L"0 B/s" : FormatBytes(peer.remoteDownloadRate) + L"/s");
 			item.ConnectionSeconds(peer.connectionSeconds);
-			item.ConnectionTime(peer.connectionSeconds < 0 ? L"-" : winrt::to_hstring(std::format(L"{}:{:02}:{:02}", peer.connectionSeconds / 3600, peer.connectionSeconds / 60 % 60, peer.connectionSeconds % 60)));
+			item.ConnectionTime(peer.connectionSeconds < 0 ? winrt::hstring{ L"-" } : winrt::hstring{ std::format(L"{}:{:02}:{:02}", peer.connectionSeconds / 3600, peer.connectionSeconds / 60 % 60, peer.connectionSeconds % 60) });
 			item.Protocol(FormatConnectionType(peer));
 			item.Initiator(PeerResource(peer.isIncoming ? L"PeerInitiatorRemote" : L"PeerInitiatorLocal"));
 			item.Source(peer.sourceDescription.empty()
