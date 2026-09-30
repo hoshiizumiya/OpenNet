@@ -657,6 +657,13 @@ namespace OpenNet::Core::Torrent
 		std::unordered_map<std::string, PersistedProgress> m_persistedProgress;
 		std::mutex m_progressPersistenceMutex;
 		TorrentStateManager* m_stateManager{ nullptr };
+		struct PeerTiming
+		{
+			std::chrono::steady_clock::time_point connectedAt{};
+			std::chrono::steady_clock::time_point sampledAt{};
+			int pieces{};
+		};
+		std::unordered_map<lt::torrent_handle, std::unordered_map<std::string, PeerTiming>, std::hash<lt::torrent_handle>> peerTiming;
 		mutable std::mutex m_peerEventMutex;
 		std::unordered_map<std::string, std::deque<PeerConnectionEvent>> m_peerEvents;
 		mutable std::mutex m_trackerLogMutex;
@@ -2400,7 +2407,7 @@ namespace OpenNet::Core::Torrent
 		{ std::lock_guard lock(m_peerEventMutex); m_peerEvents.erase(taskId); }
 		{ std::lock_guard lock(m_trackerLogMutex); m_trackerLogs.erase(taskId); }
 		{ std::lock_guard lock(m_filePrioritiesMutex); m_filePrioritiesCache.erase(handle); }
-		{ std::lock_guard lock(m_peerSnapshotMutex); m_peerSnapshots.erase(handle); }
+		{ std::lock_guard lock(m_peerSnapshotMutex); m_peerSnapshots.erase(handle); m_impl->peerTiming.erase(handle); }
 		{ std::lock_guard lock(m_detailRequestMutex); m_detailRequests.erase(handle); }
 		{ std::lock_guard lock(m_fileProgressMutex); m_fileProgressCache.erase(handle); }
 		{ std::lock_guard lock(m_pieceAvailabilityMutex); m_pieceAvailabilityCache.erase(handle); }
@@ -3171,7 +3178,13 @@ namespace OpenNet::Core::Torrent
 			if (auto connected = lt::alert_cast<lt::peer_connect_alert>(alert))
 			{
 				if (auto const endpoint = TcpEndpoint(connected->ep))
+				{
 					ClearPeerEvent(connected->handle, *endpoint);
+					std::lock_guard mapLock(m_torrentMapMutex);
+					if (!m_handleToTaskId.contains(connected->handle)) continue;
+					std::lock_guard lock(m_peerSnapshotMutex);
+					m_impl->peerTiming[connected->handle][endpoint->address().to_string() + ":" + std::to_string(endpoint->port())] = { std::chrono::steady_clock::now() };
+				}
 			}
 			else if (auto ban = lt::alert_cast<lt::peer_ban_alert>(alert))
 			{
@@ -3232,7 +3245,32 @@ namespace OpenNet::Core::Torrent
 					peerSnapshot->peer_info,
 					std::back_inserter(peers),
 					ConvertPeerInfo);
+				auto const metadata = peerSnapshot->handle.torrent_file();
+				auto const now = std::chrono::steady_clock::now();
 				std::lock_guard lock(m_peerSnapshotMutex);
+				auto& timings = m_impl->peerTiming[peerSnapshot->handle];
+				std::unordered_set<std::string> active;
+				for (std::size_t index = 0; index < peers.size(); ++index)
+				{
+					auto& peer = peers[index];
+					auto const key = peer.ip + ":" + std::to_string(peer.port);
+					active.insert(key);
+					auto& timing = timings[key];
+					peer.connectedAt = timing.connectedAt;
+					auto const pieces = peerSnapshot->peer_info[index].num_pieces;
+					// Modern libtorrent no longer exposes remote_dl_rate. HAVE messages
+					// reveal piece growth, giving a coarse swarm-wide rate estimate.
+					auto const elapsed = std::chrono::duration<double>(now - timing.sampledAt).count();
+					if (!peer.isConnecting && metadata && timing.sampledAt != std::chrono::steady_clock::time_point{} && elapsed > 0 && pieces >= timing.pieces)
+						peer.remoteDownloadRate = static_cast<std::int64_t>((pieces - timing.pieces) * static_cast<double>(metadata->piece_length()) / elapsed);
+					if (peer.isSeed) peer.remoteDownloadRate = 0;
+					if (!peer.isConnecting && metadata)
+					{
+						timing.sampledAt = now;
+						timing.pieces = pieces;
+					}
+				}
+				std::erase_if(timings, [&active](auto const& entry) { return !active.contains(entry.first); });
 				m_peerSnapshots.insert_or_assign(
 					peerSnapshot->handle, std::move(peers));
 			}
@@ -3269,6 +3307,12 @@ namespace OpenNet::Core::Torrent
 			{
 				auto reason = PeerDisconnectReason(*disconnected);
 				auto const isBan = reason == "ip_filter" || reason == "anti_leech";
+				if (auto const endpoint = TcpEndpoint(disconnected->ep))
+				{
+					std::lock_guard lock(m_peerSnapshotMutex);
+					if (auto timing = m_impl->peerTiming.find(disconnected->handle); timing != m_impl->peerTiming.end())
+						timing->second.erase(endpoint->address().to_string() + ":" + std::to_string(endpoint->port()));
+				}
 				if (auto const endpoint = TcpEndpoint(disconnected->ep))
 					RecordPeerEvent(
 						disconnected->handle,
@@ -4763,7 +4807,14 @@ namespace OpenNet::Core::Torrent
 			std::lock_guard lock(m_peerSnapshotMutex);
 			if (auto const snapshot = m_peerSnapshots.find(handle);
 				snapshot != m_peerSnapshots.end())
-				return snapshot->second;
+			{
+				auto peers = snapshot->second;
+				auto const now = std::chrono::steady_clock::now();
+				for (auto& peer : peers)
+					if (!peer.isConnecting && peer.connectedAt != std::chrono::steady_clock::time_point{})
+						peer.connectionSeconds = (std::max)(std::int64_t{}, std::chrono::duration_cast<std::chrono::seconds>(now - peer.connectedAt).count());
+				return peers;
+			}
 			return {};
 		}
 		catch (...)

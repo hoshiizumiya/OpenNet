@@ -267,6 +267,9 @@ export namespace OpenNet::Core::Torrent
 			std::string client;
 			int downloadRateKB{};
 			int uploadRateKB{};
+			std::int64_t remoteDownloadRate{ -1 }; // Estimated bytes/s from newly announced pieces.
+			std::int64_t connectionSeconds{ -1 };
+			std::chrono::steady_clock::time_point connectedAt{};
 			std::int64_t totalDownloaded{};
 			std::int64_t totalUploaded{};
 			double progress{};

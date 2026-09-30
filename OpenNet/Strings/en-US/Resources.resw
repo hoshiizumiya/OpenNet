@@ -6889,4 +6889,16 @@ Availability: {}</value>
   <data name="ServerEndpointRefreshButton.Content" xml:space="preserve">
     <value>Refresh endpoints</value>
   </data>
+  <data name="PeerHeader_RemoteDLSpeed.Text" xml:space="preserve">
+    <value>Peer DL Speed (estimated)</value>
+  </data>
+  <data name="PeerHeader_ConnectionTime.Text" xml:space="preserve">
+    <value>Connection Time</value>
+  </data>
+  <data name="PeerMenu_RemoteDLSpeed.Text" xml:space="preserve">
+    <value>Peer DL Speed (estimated)</value>
+  </data>
+  <data name="PeerMenu_ConnectionTime.Text" xml:space="preserve">
+    <value>Connection Time</value>
+  </data>
 </root>

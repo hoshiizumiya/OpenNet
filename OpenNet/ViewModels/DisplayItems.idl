@@ -29,6 +29,9 @@
 		String Location;
 		String CountryCode;
 		String FlagSvg;
+		String RemoteDLSpeed;
+		Int64 RemoteDownloadRate;
+		Int64 ConnectionSeconds;
 		String ConnectionTime;
 		String Protocol;
 		String Initiator;

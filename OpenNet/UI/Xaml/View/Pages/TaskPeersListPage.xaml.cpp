@@ -43,6 +43,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			RestoreColumn(ColPeerDownloaded(), "Peers.Downloaded");
 			RestoreColumn(ColPeerUploaded(), "Peers.Uploaded");
 			RestoreColumn(ColPeerClient(), "Peers.Client");
+			RestoreColumn(ColPeerRemoteDLSpeed(), "Peers.RemoteDLSpeed");
+			RestoreColumn(ColPeerConnectionTime(), "Peers.ConnectionTime");
 			RestoreColumn(ColPeerStatus(), "Peers.Status");
 			RestoreColumn(ColPeerReason(), "Peers.Reason");
 			RestoreColumn(ColPeerProtocol(), "Peers.Protocol");
@@ -64,6 +66,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			SaveColumnWidth("Peers.Downloaded", ColPeerDownloaded());
 			SaveColumnWidth("Peers.Uploaded", ColPeerUploaded());
 			SaveColumnWidth("Peers.Client", ColPeerClient());
+			SaveColumnWidth("Peers.RemoteDLSpeed", ColPeerRemoteDLSpeed());
+			SaveColumnWidth("Peers.ConnectionTime", ColPeerConnectionTime());
 			SaveColumnWidth("Peers.Status", ColPeerStatus());
 			SaveColumnWidth("Peers.Reason", ColPeerReason());
 			SaveColumnWidth("Peers.Protocol", ColPeerProtocol());
@@ -77,7 +81,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto weak = get_weak();
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(),
 			ColPeerStatus(), ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(),
 			ColPeerSource() })
 		{
@@ -230,6 +234,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		update(SortPeerDownloadedButton());
 		update(SortPeerUploadedButton());
 		update(SortPeerClientButton());
+		update(SortPeerRemoteDLSpeedButton());
+		update(SortPeerConnectionTimeButton());
 		update(SortPeerStatusButton());
 		update(SortPeerReasonButton());
 		update(SortPeerProtocolButton());
@@ -263,6 +269,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				return compareNumber(left.DownloadedBytes(), right.DownloadedBytes());
 			if (column == L"Uploaded")
 				return compareNumber(left.UploadedBytes(), right.UploadedBytes());
+			if (column == L"RemoteDLSpeed") return compareNumber(left.RemoteDownloadRate(), right.RemoteDownloadRate());
+			if (column == L"ConnectionTime") return compareNumber(left.ConnectionSeconds(), right.ConnectionSeconds());
 			if (column == L"IP") return compareText(left.IP(), right.IP());
 			if (column == L"Location") return compareText(left.Location(), right.Location());
 			if (column == L"Client") return compareText(left.Client(), right.Client());
@@ -346,6 +354,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (tag == L"Downloaded") return ColPeerDownloaded();
 		if (tag == L"Uploaded") return ColPeerUploaded();
 		if (tag == L"Client") return ColPeerClient();
+		if (tag == L"RemoteDLSpeed") return ColPeerRemoteDLSpeed();
+		if (tag == L"ConnectionTime") return ColPeerConnectionTime();
 		if (tag == L"Status") return ColPeerStatus();
 		if (tag == L"Reason") return ColPeerReason();
 		if (tag == L"Protocol") return ColPeerProtocol();
@@ -389,7 +399,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			AutoSizeColumn(column);
 	}
@@ -403,7 +413,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		UpdateSortHeaders();
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() })
 			column.Visibility(Visibility::Visible);
 		SynchronizePeerRows();
@@ -417,7 +427,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		std::array const columns{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
 			sender.try_as<winrt::XamlToolkit::Labs::WinUI::DataRow>(),
@@ -428,7 +438,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		std::array const columns{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
-			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerStatus(),
+			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(), ColPeerStatus(),
 			ColPeerReason(), ColPeerProtocol(), ColPeerInitiator(), ColPeerSource() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRealizedRows(
 			PeersTreeView(), columns.data(), static_cast<unsigned int>(columns.size()));
@@ -822,6 +832,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			combineHash(peer.client);
 			combineHash(peer.downloadRateKB);
 			combineHash(peer.uploadRateKB);
+			combineHash(peer.remoteDownloadRate);
+			combineHash(peer.connectionSeconds);
 			combineHash(peer.totalDownloaded);
 			combineHash(peer.totalUploaded);
 			combineHash(peer.progress);
@@ -902,7 +914,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.UploadedBytes(peer.totalUploaded);
 			item.PeerStatus(FormatPeerStatus(peer));
 			item.Reason(L"");
-			item.ConnectionTime(L"-");
+			item.RemoteDownloadRate(peer.remoteDownloadRate);
+			item.RemoteDLSpeed(peer.remoteDownloadRate < 0 ? L"-" : peer.remoteDownloadRate == 0 ? L"0 B/s" : FormatBytes(peer.remoteDownloadRate) + L"/s");
+			item.ConnectionSeconds(peer.connectionSeconds);
+			item.ConnectionTime(peer.connectionSeconds < 0 ? L"-" : winrt::to_hstring(std::format(L"{}:{:02}:{:02}", peer.connectionSeconds / 3600, peer.connectionSeconds / 60 % 60, peer.connectionSeconds % 60)));
 			item.Protocol(FormatConnectionType(peer));
 			item.Initiator(PeerResource(peer.isIncoming ? L"PeerInitiatorRemote" : L"PeerInitiatorLocal"));
 			item.Source(peer.sourceDescription.empty()
@@ -922,6 +937,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			item.ULSpeed(L"-");
 			item.Downloaded(L"-");
 			item.Uploaded(L"-");
+			item.RemoteDLSpeed(L"-");
 			item.ConnectionTime(L"-");
 			item.Protocol(L"-");
 			item.Initiator(L"-");

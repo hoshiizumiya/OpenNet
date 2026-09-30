@@ -232,6 +232,33 @@ namespace winrt::OpenNet::ViewModels::implementation
 			SetProperty(m_flagSvg, v, L"FlagSvg");
 		}
 
+		winrt::hstring RemoteDLSpeed() const
+		{
+			return m_remoteDlSpeed;
+		}
+		void RemoteDLSpeed(winrt::hstring const& value)
+		{
+			SetProperty(m_remoteDlSpeed, value, L"RemoteDLSpeed");
+		}
+
+		std::int64_t RemoteDownloadRate() const
+		{
+			return m_remoteDownloadRate;
+		}
+		void RemoteDownloadRate(std::int64_t value)
+		{
+			SetProperty(m_remoteDownloadRate, value, L"RemoteDownloadRate");
+		}
+
+		std::int64_t ConnectionSeconds() const
+		{
+			return m_connectionSeconds;
+		}
+		void ConnectionSeconds(std::int64_t value)
+		{
+			SetProperty(m_connectionSeconds, value, L"ConnectionSeconds");
+		}
+
 		winrt::hstring ConnectionTime() const
 		{
 			return m_connectionTime;
@@ -318,6 +345,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::hstring m_location;
 		winrt::hstring m_countryCode;
 		winrt::hstring m_flagSvg;
+		winrt::hstring m_remoteDlSpeed;
+		std::int64_t m_remoteDownloadRate{ -1 };
+		std::int64_t m_connectionSeconds{ -1 };
 		winrt::hstring m_connectionTime;
 		winrt::hstring m_protocol;
 		winrt::hstring m_initiator;

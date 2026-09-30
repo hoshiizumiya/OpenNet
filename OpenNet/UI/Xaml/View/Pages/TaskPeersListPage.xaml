@@ -132,6 +132,18 @@
                                 Tag="Client"
                                 Text="Client" />
                             <ToggleMenuFlyoutItem
+                                x:Uid="PeerMenu_RemoteDLSpeed"
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="RemoteDLSpeed"
+                                Text="Peer DL Speed" />
+                            <ToggleMenuFlyoutItem
+                                x:Uid="PeerMenu_ConnectionTime"
+                                Click="ColumnVisibility_Click"
+                                IsChecked="True"
+                                Tag="ConnectionTime"
+                                Text="Connection Time" />
+                            <ToggleMenuFlyoutItem
                                 x:Uid="PeerMenu_Status"
                                 Click="ColumnVisibility_Click"
                                 IsChecked="True"
@@ -276,6 +288,32 @@
                                     TextTrimming="CharacterEllipsis" />
                             </Button>
                         </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColPeerRemoteDLSpeed" CanResize="True">
+                            <Button
+                                x:Name="SortPeerRemoteDLSpeedButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="RemoteDLSpeed">
+                                <TextBlock
+                                    x:Uid="PeerHeader_RemoteDLSpeed"
+                                    Text="Peer DL Speed"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
+                        <labs:DataColumn x:Name="ColPeerConnectionTime" CanResize="True">
+                            <Button
+                                x:Name="SortPeerConnectionTimeButton"
+                                Click="ColumnHeader_Click"
+                                FontWeight="SemiBold"
+                                Style="{StaticResource DataTableColumnHeaderButtonStyle}"
+                                Tag="ConnectionTime">
+                                <TextBlock
+                                    x:Uid="PeerHeader_ConnectionTime"
+                                    Text="Connection Time"
+                                    TextTrimming="CharacterEllipsis" />
+                            </Button>
+                        </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerStatus" CanResize="True">
                             <Button
                                 x:Name="SortPeerStatusButton"
@@ -416,6 +454,8 @@
                             <TextBlock Text="{x:Bind Downloaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Uploaded, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Client, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind RemoteDLSpeed, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                            <TextBlock Text="{x:Bind ConnectionTime, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind PeerStatus, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Reason, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock Text="{x:Bind Protocol, Mode=OneWay}" TextTrimming="CharacterEllipsis" />

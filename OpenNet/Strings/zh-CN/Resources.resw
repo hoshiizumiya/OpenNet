@@ -6889,4 +6889,16 @@
   <data name="ServerEndpointRefreshButton.Content" xml:space="preserve">
     <value>刷新端点</value>
   </data>
+  <data name="PeerHeader_RemoteDLSpeed.Text" xml:space="preserve">
+    <value>对方下载速度（估算）</value>
+  </data>
+  <data name="PeerHeader_ConnectionTime.Text" xml:space="preserve">
+    <value>连接时间</value>
+  </data>
+  <data name="PeerMenu_RemoteDLSpeed.Text" xml:space="preserve">
+    <value>对方下载速度（估算）</value>
+  </data>
+  <data name="PeerMenu_ConnectionTime.Text" xml:space="preserve">
+    <value>连接时间</value>
+  </data>
 </root>
