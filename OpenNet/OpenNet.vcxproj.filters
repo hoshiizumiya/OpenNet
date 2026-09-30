@@ -251,6 +251,9 @@
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
+    <Midl Include="ViewModels\NatMappingViewModel.idl">
+      <Filter>ViewModels</Filter>
+    </Midl>
     <Midl Include="ViewModels\WebUISettingsViewModel.idl">
       <Filter>ViewModels</Filter>
     </Midl>
@@ -394,6 +397,9 @@
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\NetworkSettingsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewModels\NatMappingViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ViewModels\WebUISettingsViewModel.cpp">
@@ -569,6 +575,12 @@
     </ClCompile>
     <ClCompile Include="Web\ServerDomainMode.ixx">
       <Filter>Web</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\NatMap\UdpMappingService.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="Core\NatMap\MappingFirewall.cpp">
+      <Filter>Core</Filter>
     </ClCompile>
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp">
       <Filter>Core\IO\Http</Filter>
@@ -896,6 +908,18 @@
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\NetworkSettingsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NatMap\UdpMappingService.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NatMap\StunProtocol.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NatMap\MappingFirewall.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewModels\NatMappingViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="ViewModels\WebUISettingsViewModel.h">

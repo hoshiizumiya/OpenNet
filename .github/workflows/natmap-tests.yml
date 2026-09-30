@@ -1,0 +1,95 @@
+name: NATMap tests
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'OpenNet/Core/NatMap/**'
+      - 'OpenNet/ViewModels/NatMappingViewModel.*'
+      - 'OpenNet/UI/Xaml/View/Pages/NatToolsPage.*'
+      - 'tests/natmap/**'
+      - '.github/workflows/natmap-tests.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: natmap-tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  protocol:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build and test packet parser with sanitizers
+        shell: bash
+        run: |
+          mkdir -p test-logs
+          set +e
+          (
+            set -e
+            cmake -S tests/natmap -B out/natmap -G Ninja -DCMAKE_BUILD_TYPE=Debug -DNATMAP_SANITIZERS=ON
+            cmake --build out/natmap
+            ctest --test-dir out/natmap --output-on-failure --output-junit test-results.xml
+          ) > test-logs/protocol.log 2>&1
+          result=$?
+          tail -n 200 test-logs/protocol.log
+          exit "$result"
+      - name: Save logs and results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: natmap-protocol-logs
+          path: |
+            test-logs/*.log
+            out/natmap/test-results.xml
+          retention-days: 14
+
+  windows:
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, arm64]
+        configuration: [Debug, Release]
+    steps:
+      - uses: actions/checkout@v7
+      - name: Compile production sockets and firewall; run native tests on x64
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force test-logs | Out-Null
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsPath = (& $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath)
+          if (-not $vsPath) { throw 'MSVC installation not found' }
+          $testCommand = if ('${{ matrix.arch }}' -eq 'x64') {
+            'ctest --test-dir out/natmap --output-on-failure --output-junit test-results.xml'
+          } else {
+            'echo ARM64 binaries compiled; execution is covered by the x64 jobs.'
+          }
+          @"
+          @echo off
+          call "$vsPath\Common7\Tools\VsDevCmd.bat" -arch=${{ matrix.arch }} -host_arch=x64
+          if errorlevel 1 exit /b 1
+          cmake -S tests/natmap -B out/natmap -G Ninja -DCMAKE_BUILD_TYPE=${{ matrix.configuration }}
+          if errorlevel 1 exit /b 1
+          cmake --build out/natmap
+          if errorlevel 1 exit /b 1
+          $testCommand
+          exit /b %ERRORLEVEL%
+          "@ | Set-Content test-logs/run-tests.cmd -Encoding ascii
+          & cmd.exe /d /c test-logs\run-tests.cmd *> test-logs/windows.log
+          $result = $LASTEXITCODE
+          Get-Content test-logs/windows.log -Tail 200
+          exit $result
+      - name: Save logs and results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: natmap-${{ matrix.arch }}-${{ matrix.configuration }}-logs
+          path: |
+            test-logs/*.log
+            out/natmap/test-results.xml
+          retention-days: 14

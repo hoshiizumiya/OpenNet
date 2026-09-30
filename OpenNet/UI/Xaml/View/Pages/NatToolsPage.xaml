@@ -274,6 +274,81 @@
                         Text="-" />
                 </Grid>
 
+                <!--  The mapping service owns a dedicated UDP port.  -->
+                <TextBlock
+                    x:Uid="NatTools_MappingHeader"
+                    Margin="0,24,0,6"
+                    Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
+                    Text="UDP NAT Mapping" />
+                <TextBlock
+                    x:Uid="NatTools_MappingDescription"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Keep a separate public UDP mapping open and forward incoming packets to the local torrent listener. A mapped address alone does not prove reachability."
+                    TextWrapping="Wrap" />
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">
+                    <NumberBox
+                        x:Uid="NatTools_MappingPort"
+                        Width="175"
+                        Header="Mapping port (0 = automatic)"
+                        Maximum="65535"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{x:Bind ViewModel.MappingPort, Mode=TwoWay}" />
+                    <NumberBox
+                        x:Uid="NatTools_TargetPort"
+                        Width="175"
+                        Header="Target port (0 = torrent)"
+                        Maximum="65535"
+                        Minimum="0"
+                        SpinButtonPlacementMode="Inline"
+                        Value="{x:Bind ViewModel.TargetPort, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">
+                    <TextBox
+                        x:Uid="NatTools_StunHost"
+                        Width="220"
+                        Header="STUN server"
+                        Text="{x:Bind ViewModel.StunHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <NumberBox
+                        x:Uid="NatTools_StunPort"
+                        Width="110"
+                        Header="STUN port"
+                        Maximum="65535"
+                        Minimum="1"
+                        Value="{x:Bind ViewModel.StunPort, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">
+                    <Button
+                        x:Uid="NatTools_StartMapping"
+                        Command="{x:Bind ViewModel.StartCommand}"
+                        Content="Start mapping" />
+                    <Button
+                        x:Uid="NatTools_StopMapping"
+                        Command="{x:Bind ViewModel.StopCommand}"
+                        Content="Stop mapping" />
+                    <ProgressRing Width="20" Height="20" IsActive="{x:Bind ViewModel.IsBusy, Mode=OneWay}" />
+                </StackPanel>
+                <TextBlock Margin="0,8,0,0" Text="{x:Bind ViewModel.Status, Mode=OneWay}" TextWrapping="Wrap" />
+                <TextBlock
+                    x:Uid="NatTools_ObservedEndpoint"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Observed mapping toward STUN:" />
+                <TextBlock Text="{x:Bind ViewModel.PublicEndpoint, Mode=OneWay}" TextWrapping="Wrap" />
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">
+                    <Button
+                        x:Uid="NatTools_AllowFirewall"
+                        Command="{x:Bind ViewModel.AllowFirewallCommand}"
+                        Content="Allow this UDP port in Windows Firewall" />
+                    <Button
+                        x:Uid="NatTools_RemoveFirewall"
+                        Command="{x:Bind ViewModel.RemoveFirewallCommand}"
+                        Content="Remove OpenNet firewall rule" />
+                </StackPanel>
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.FirewallStatus, Mode=OneWay}"
+                    TextWrapping="Wrap" />
+
                 <!--  Port Accessibility Test Section  -->
                 <TextBlock
                     x:Uid="NatTools_PortTest"
@@ -291,7 +366,7 @@
                         Minimum="1"
                         PlaceholderText="Port"
                         SpinButtonPlacementMode="Inline"
-                        Value="6881" />
+                        Value="{x:Bind ViewModel.ProbePort, Mode=TwoWay}" />
                     <Button
                         x:Name="TestPortButton"
                         x:Uid="NatTools_TestPortButton"

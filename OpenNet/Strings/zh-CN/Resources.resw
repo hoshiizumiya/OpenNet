@@ -6745,6 +6745,70 @@
   <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
     <value>监听和网络集成</value>
   </data>
+  <data name="NatTools_MappingHeader.Text" xml:space="preserve">
+    <value>UDP NAT 映射</value>
+  </data>
+  <data name="NatTools_MappingDescription.Text" xml:space="preserve">
+    <value>保持独立的公网 UDP 映射，并将收到的数据包转发到本机 BT 监听端口。查到映射地址不等于外部可连接。</value>
+  </data>
+  <data name="NatTools_MappingPort.Header" xml:space="preserve">
+    <value>映射端口（0 为自动分配）</value>
+  </data>
+  <data name="NatTools_TargetPort.Header" xml:space="preserve">
+    <value>目标端口（0 为 BT 端口）</value>
+  </data>
+  <data name="NatTools_StartMapping.Content" xml:space="preserve">
+    <value>启动映射</value>
+  </data>
+  <data name="NatTools_StopMapping.Content" xml:space="preserve">
+    <value>停止映射</value>
+  </data>
+  <data name="NatTools_AllowFirewall.Content" xml:space="preserve">
+    <value>允许 Windows 防火墙放行此 UDP 端口</value>
+  </data>
+  <data name="NatTools_RemoveFirewall.Content" xml:space="preserve">
+    <value>删除 OpenNet 防火墙规则</value>
+  </data>
+  <data name="NatTools_StunHost.Header" xml:space="preserve">
+    <value>STUN 服务器</value>
+  </data>
+  <data name="NatTools_StunPort.Header" xml:space="preserve">
+    <value>STUN 端口</value>
+  </data>
+  <data name="NatMappingStopped" xml:space="preserve">
+    <value>已停止</value>
+  </data>
+  <data name="NatMappingFirewallUnchanged" xml:space="preserve">
+    <value>防火墙规则未更改</value>
+  </data>
+  <data name="NatMappingStartEngine" xml:space="preserve">
+    <value>请先启动 BT 引擎。</value>
+  </data>
+  <data name="NatMappingInvalidConfig" xml:space="preserve">
+    <value>请检查映射端口、目标端口及 STUN 服务器设置。</value>
+  </data>
+  <data name="NatMappingStarting" xml:space="preserve">
+    <value>正在启动 UDP 映射…</value>
+  </data>
+  <data name="NatMappingFirewallAllowed" xml:space="preserve">
+    <value>OpenNet 的 UDP 防火墙规则已启用。</value>
+  </data>
+  <data name="NatMappingFirewallRemoved" xml:space="preserve">
+    <value>已删除 OpenNet 防火墙规则。</value>
+  </data>
+  <data name="NatMappingWaitingStun" xml:space="preserve">
+    <value>正在等待 STUN 响应…</value>
+  </data>
+  <data name="NatMappingForwardingPrefix" xml:space="preserve">
+    <value>正在将 UDP 转发到 127.0.0.1:</value>
+  </data>
+  <data name="NatTools_ObservedEndpoint.Text" xml:space="preserve">
+    <value>向 STUN 服务器观测到的公网映射：</value>
+  </data>
+  <data name="NatMappingFirewallRequiresFixedPort" xml:space="preserve">
+    <value>请先用固定端口启动映射，再添加长期有效的防火墙规则。</value>
+  </data>
+
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">
     <value>设置</value>
   </data>

@@ -6745,6 +6745,70 @@ Availability: {}</value>
   <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
     <value>Listeners and network integration</value>
   </data>
+  <data name="NatTools_MappingHeader.Text" xml:space="preserve">
+    <value>UDP NAT Mapping</value>
+  </data>
+  <data name="NatTools_MappingDescription.Text" xml:space="preserve">
+    <value>Keep a separate public UDP mapping open and forward incoming packets to the local torrent listener. A mapped address alone does not prove reachability.</value>
+  </data>
+  <data name="NatTools_MappingPort.Header" xml:space="preserve">
+    <value>Mapping port (0 = automatic)</value>
+  </data>
+  <data name="NatTools_TargetPort.Header" xml:space="preserve">
+    <value>Target port (0 = torrent)</value>
+  </data>
+  <data name="NatTools_StartMapping.Content" xml:space="preserve">
+    <value>Start mapping</value>
+  </data>
+  <data name="NatTools_StopMapping.Content" xml:space="preserve">
+    <value>Stop mapping</value>
+  </data>
+  <data name="NatTools_AllowFirewall.Content" xml:space="preserve">
+    <value>Allow this UDP port in Windows Firewall</value>
+  </data>
+  <data name="NatTools_RemoveFirewall.Content" xml:space="preserve">
+    <value>Remove OpenNet firewall rule</value>
+  </data>
+  <data name="NatTools_StunHost.Header" xml:space="preserve">
+    <value>STUN server</value>
+  </data>
+  <data name="NatTools_StunPort.Header" xml:space="preserve">
+    <value>STUN port</value>
+  </data>
+  <data name="NatMappingStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="NatMappingFirewallUnchanged" xml:space="preserve">
+    <value>Firewall rule: unchanged</value>
+  </data>
+  <data name="NatMappingStartEngine" xml:space="preserve">
+    <value>Start the torrent engine first.</value>
+  </data>
+  <data name="NatMappingInvalidConfig" xml:space="preserve">
+    <value>Check the mapping port, target port, and STUN server settings.</value>
+  </data>
+  <data name="NatMappingStarting" xml:space="preserve">
+    <value>Starting UDP mapping…</value>
+  </data>
+  <data name="NatMappingFirewallAllowed" xml:space="preserve">
+    <value>OpenNet UDP firewall rule is enabled.</value>
+  </data>
+  <data name="NatMappingFirewallRemoved" xml:space="preserve">
+    <value>OpenNet firewall rule removed.</value>
+  </data>
+  <data name="NatMappingWaitingStun" xml:space="preserve">
+    <value>Waiting for STUN…</value>
+  </data>
+  <data name="NatMappingForwardingPrefix" xml:space="preserve">
+    <value>Forwarding UDP to 127.0.0.1:</value>
+  </data>
+  <data name="NatTools_ObservedEndpoint.Text" xml:space="preserve">
+    <value>Observed mapping toward STUN:</value>
+  </data>
+  <data name="NatMappingFirewallRequiresFixedPort" xml:space="preserve">
+    <value>Start a mapping on a fixed port before adding a persistent firewall rule.</value>
+  </data>
+
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">
     <value>Settings</value>
   </data>

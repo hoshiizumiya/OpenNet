@@ -1,0 +1,23 @@
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass NatMappingViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        NatMappingViewModel();
+        Double MappingPort;
+        Double TargetPort;
+        String StunHost;
+        Double StunPort;
+        Double ProbePort;
+        String Status { get; };
+        String PublicEndpoint { get; };
+        String FirewallStatus { get; };
+        Boolean IsBusy { get; };
+        Boolean IsRunning { get; };
+        Microsoft.UI.Xaml.Input.ICommand StartCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand StopCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand AllowFirewallCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand RemoveFirewallCommand { get; };
+        void Refresh();
+    };
+}
