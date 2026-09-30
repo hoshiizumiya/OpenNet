@@ -65,6 +65,15 @@ Reviewed exact remote HEAD `cf8933f9fd92396409d3960f21d89051e2389c04`:
 
 `NatToolsPage.xaml.h` already implemented `ViewModel()`, but `NatToolsPage.idl` omitted the property. The XAML compiler resolves these `x:Bind` paths using the WinRT metadata produced from IDL, so a C++ getter alone is insufficient. This revision imports `ViewModels/NatMappingViewModel.idl` and declares the read-only `OpenNet.ViewModels.NatMappingViewModel ViewModel` property, matching the other MVVM pages. The ViewModel, commands and binding paths remain unchanged.
 
-Local review confirms that both IDL files are included in the project's MIDL inputs and that the property type matches the existing getter. The Linux workspace cannot run the Windows XAML compiler. The corrective revision still needs its own full Canary run; the previous native test success does not establish application build success.
+Local review confirms that both IDL files are included in the project's MIDL inputs and that the property type matches the existing getter. The Linux workspace cannot run the Windows XAML compiler.
 
-Next gate: check the corrective revision's exact HEAD and Release x64/ARM64 Canary results, repairing any newly exposed compiler/linker errors. Once the full app passes, investigate real libtorrent UDP identity semantics and torrent-core lifecycle before adding TCP/WebUI mapping or advertising mapped endpoints.
+Corrective remote HEAD `36bd36d254d345217a3b94e709fc6023f95fa5db` is fully green:
+
+- [NATMap tests run 36777785478](https://github.com/hoshiizumiya/OpenNet/actions/runs/36777785478): Linux ASan/UBSan, Windows x64 Debug/Release execution, and ARM64 Debug/Release compilation all succeeded.
+- [Canary run 36777785584](https://github.com/hoshiizumiya/OpenNet/actions/runs/36777785584): complete application/MSIX Release builds succeeded for both x64 and ARM64. This verifies the IDL metadata correction through the real MIDL, C++/WinRT, XAML compiler, native linker, and packaging pipeline.
+
+The following lifecycle revision adds application-wide network recovery. `App` subscribes once to `NetworkInformation.NetworkStatusChanged`; its callback only posts a non-blocking atomic recovery request. The mapping worker then clears peer relay sockets selected on the old route, clears the stale STUN observation, re-resolves the configured STUN endpoint, immediately sends a new binding request, and retries resolution after a transient offline period. It retains the exclusive mapping socket and its local port, so an explicit fixed-port firewall rule does not silently become stale. Incoming packets are dropped while the new STUN route is unresolved, preventing delayed STUN responses from being forwarded into the torrent target as peer traffic. Application shutdown unregisters the network callback and explicitly stops/joins the mapping worker before shutting down the torrent core.
+
+The Windows socket regression test now simulates recovery after an expired STUN observation and verifies that the mapping port is preserved, a new observation is published, and both relay directions resume. The next exact-HEAD NATMap and full Canary runs must pass before this checkpoint is considered verified.
+
+Next gate: verify the network-recovery revision on Windows. Then add automatic-target lifecycle handling for torrent listener changes and investigate real libtorrent uTP/DHT source-endpoint semantics before advertising mapped endpoints or adding TCP/WebUI mapping.

@@ -138,6 +138,19 @@ int main()
         WaitFor([&] { return service.Snapshot().publicPort == 0 && !service.Snapshot().error.empty(); }, "stale mapping expires during STUN traffic");
         flood.request_stop();
         flood.join();
+        service.RequestNetworkRecovery();
+        WaitFor([&] { return service.Snapshot().publicPort == 0 && service.Snapshot().error.empty(); }, "network recovery clears stale observation");
+        sockaddr_in recoveredMapping{};
+        auto const recoveryResponse = Reply(stun.Receive(recoveredMapping));
+        Require(recoveredMapping.sin_port == mapping.sin_port, "network recovery preserves mapping port");
+        stun.Send(recoveryResponse, recoveredMapping);
+        WaitFor([&] { return service.Snapshot().publicPort == 45678; }, "network recovery refreshes STUN observation");
+        recoveredMapping.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+        clientA.Send("after-network-change", recoveredMapping);
+        sockaddr_in recoveredInside{};
+        Require(target.Receive(recoveredInside) == "after-network-change", "relay resumes after network recovery");
+        target.Send("recovered-reply", recoveredInside);
+        Require(clientA.Receive(origin) == "recovered-reply", "return relay resumes after network recovery");
         auto const boundPort = service.Snapshot().localPort;
         service.Stop();
         Require(!service.Snapshot().running && !service.Snapshot().starting && service.Snapshot().publicPort == 0, "stop clears state");
@@ -162,7 +175,7 @@ int main()
         std::this_thread::sleep_for(20ms);
         service.Stop();
         Require(std::chrono::steady_clock::now() - cancelStart < 3s, "DNS cancellation does not wait for timeout");
-        std::cout << "UDP mapping, two-peer relay, empty datagrams, STUN starvation/expiry, bind conflict, restart and cancellation passed\n";
+        std::cout << "UDP mapping, two-peer relay, empty datagrams, STUN starvation/expiry, network recovery, bind conflict, restart and cancellation passed\n";
         return 0;
     }
     catch (std::exception const& error) { std::cerr << error.what() << '\n'; return 1; }

@@ -1,5 +1,6 @@
 ﻿module;
 #include "Core/WebUI/WebUIHost.h"
+#include "Core/NatMap/UdpMappingService.h"
 #include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
 #include "UI/Shell/NotifyIconXamlHostWindow.xaml.h"
@@ -29,6 +30,7 @@ import OpenNet.Helpers.WindowHelper;
 import OpenNet.Service.Notification.InfoBarService;
 import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Windows.ApplicationModel.Activation;
+import winrt.Windows.Networking.Connectivity;
 import winrt.Windows.Storage;
 import winrt.Microsoft.Windows.Storage;
 import winrt.Microsoft.Windows.AppNotifications;
@@ -103,6 +105,17 @@ namespace winrt::OpenNet::implementation
 				// that failure unwind through the AppInstance event callback.
 			}
 		});
+		try
+		{
+			s_networkStatusChangedToken = winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged([](auto&&)
+			{
+				::OpenNet::Core::NatMap::SharedUdpMappingService().RequestNetworkRecovery();
+			});
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: NAT mapping network monitoring unavailable\n");
+		}
 	}
 
 	/// <summary>
@@ -426,6 +439,11 @@ namespace winrt::OpenNet::implementation
 	{
 		try
 		{
+			if (s_networkStatusChangedToken.value)
+			{
+				winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged(s_networkStatusChangedToken);
+				s_networkStatusChangedToken = {};
+			}
 			if (s_appInstance && s_activatedToken.value)
 			{
 				s_appInstance.Activated(s_activatedToken);
@@ -605,6 +623,20 @@ namespace winrt::OpenNet::implementation
 			return;
 
 		OutputDebugStringA("App: Shutting down engines...\n");
+
+		try
+		{
+			if (s_networkStatusChangedToken.value)
+			{
+				winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged(s_networkStatusChangedToken);
+				s_networkStatusChangedToken = {};
+			}
+			::OpenNet::Core::NatMap::SharedUdpMappingService().Stop();
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: NAT mapping shutdown error\n");
+		}
 
 		// Stop RSS background updates (lightweight, just signals thread + joins)
 		try

@@ -64,6 +64,7 @@ export namespace winrt::OpenNet::implementation
 		static inline bool s_notificationRegistered{ false };
 		static inline winrt::Microsoft::Windows::AppLifecycle::AppInstance s_appInstance{ nullptr };
 		static inline winrt::event_token s_activatedToken{};
+		static inline winrt::event_token s_networkStatusChangedToken{};
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue s_uiDispatcher{ nullptr };
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer s_ipFilterSubscriptionTimer{ nullptr };
 	};

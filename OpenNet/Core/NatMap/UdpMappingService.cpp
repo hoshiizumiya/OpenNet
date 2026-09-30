@@ -121,6 +121,7 @@ namespace OpenNet::Core::NatMap
         if (!targetPort || !stunPort || stunHost.empty() || (localPort != 0 && localPort == targetPort)) return false;
         std::lock_guard lifecycle(m_lifecycleMutex);
         StopWorker();
+        m_networkRecoveryRequested.store(false);
         {
             std::lock_guard lock(m_mutex);
             m_snapshot = {};
@@ -146,6 +147,11 @@ namespace OpenNet::Core::NatMap
         return true;
     }
 
+    void UdpMappingService::RequestNetworkRecovery() noexcept
+    {
+        m_networkRecoveryRequested.store(true);
+    }
+
     void UdpMappingService::Stop()
     {
         std::lock_guard lifecycle(m_lifecycleMutex);
@@ -159,6 +165,7 @@ namespace OpenNet::Core::NatMap
             m_worker.request_stop();
             m_worker.join();
         }
+        m_networkRecoveryRequested.store(false);
         std::lock_guard lock(m_mutex);
         m_snapshot.running = false;
         m_snapshot.starting = false;
@@ -240,15 +247,51 @@ namespace OpenNet::Core::NatMap
         target.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         target.sin_port = htons(targetPort);
         std::map<PeerKey, Peer> peers;
+        bool stunResolved = true;
         Stun::TransactionId transaction{};
         auto nextStun = std::chrono::steady_clock::time_point::min();
+        auto nextResolve = std::chrono::steady_clock::time_point::max();
         auto lastResponse = std::chrono::steady_clock::now();
         std::array<char, 65536> buffer{};
 
         while (!stop.stop_requested())
         {
             auto const now = std::chrono::steady_clock::now();
-            if (now >= nextStun)
+            if (m_networkRecoveryRequested.exchange(false))
+            {
+                // A route or adapter change invalidates both the resolved STUN
+                // route and per-peer local sockets. Keep the exclusive mapping
+                // port bound, but rebuild everything whose route was selected
+                // under the old network configuration.
+                peers.clear();
+                stunResolved = false;
+                nextResolve = now;
+                std::lock_guard lock(m_mutex);
+                m_snapshot.publicAddress.clear();
+                m_snapshot.publicPort = 0;
+                m_snapshot.error.clear();
+            }
+            if (!stunResolved && now >= nextResolve)
+            {
+                sockaddr_in resolved{};
+                if (ResolveStun(stunHost, stunPort, stop, resolved))
+                {
+                    stun = resolved;
+                    stunResolved = true;
+                    nextStun = std::chrono::steady_clock::time_point::min();
+                    lastResponse = std::chrono::steady_clock::now();
+                    std::lock_guard lock(m_mutex);
+                    m_snapshot.error.clear();
+                }
+                else if (!stop.stop_requested())
+                {
+                    nextResolve = std::chrono::steady_clock::now() +
+                        std::min(m_timings.keepalive, std::chrono::milliseconds(5000));
+                    std::lock_guard lock(m_mutex);
+                    m_snapshot.error = L"Cannot resolve the STUN server after the network changed.";
+                }
+            }
+            if (stunResolved && now >= nextStun)
             {
                 if (BCryptGenRandom(nullptr, transaction.data(), static_cast<ULONG>(transaction.size()), BCRYPT_USE_SYSTEM_PREFERRED_RNG) < 0)
                 {
@@ -285,6 +328,11 @@ namespace OpenNet::Core::NatMap
                     auto const count = recvfrom(outside.value, buffer.data(), static_cast<int>(buffer.size()), 0,
                                                 reinterpret_cast<sockaddr*>(&remote), &size);
                     if (count < 0) return;
+                    // Until the new route is resolved, neither a delayed STUN
+                    // response nor an external packet has trustworthy routing
+                    // state. In particular, never relay a delayed STUN packet
+                    // into the local torrent target as ordinary peer traffic.
+                    if (!stunResolved) return;
                     if (remote.sin_addr.s_addr == stun.sin_addr.s_addr && remote.sin_port == stun.sin_port)
                     {
                         auto const packet = std::span<std::uint8_t const>(reinterpret_cast<std::uint8_t const*>(buffer.data()), static_cast<std::size_t>(count));
@@ -326,7 +374,7 @@ namespace OpenNet::Core::NatMap
                     peer.lastSeen = std::chrono::steady_clock::now();
                 }
             }
-            if (std::chrono::steady_clock::now() - lastResponse > m_timings.responseExpiry)
+            if (stunResolved && std::chrono::steady_clock::now() - lastResponse > m_timings.responseExpiry)
             {
                 std::lock_guard lock(m_mutex);
                 m_snapshot.publicAddress.clear();

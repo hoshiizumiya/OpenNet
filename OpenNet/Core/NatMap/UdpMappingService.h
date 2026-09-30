@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <atomic>
 #include <chrono>
 #include <mutex>
 #include <string>
@@ -37,6 +38,10 @@ namespace OpenNet::Core::NatMap
         UdpMappingService& operator=(UdpMappingService const&) = delete;
 
         bool Start(std::uint16_t localPort, std::uint16_t targetPort, std::wstring stunHost, std::uint16_t stunPort);
+        // Re-resolve the STUN route and discard relay peers after an adapter,
+        // address, or connectivity change. This is non-blocking and safe to
+        // call from Windows.Networking.Connectivity event callbacks.
+        void RequestNetworkRecovery() noexcept;
         void Stop();
         MappingSnapshot Snapshot() const;
 
@@ -49,6 +54,7 @@ namespace OpenNet::Core::NatMap
         std::mutex m_lifecycleMutex;
         UdpMappingTimings m_timings;
         std::jthread m_worker;
+        std::atomic_bool m_networkRecoveryRequested{};
         MappingSnapshot m_snapshot;
     };
 
