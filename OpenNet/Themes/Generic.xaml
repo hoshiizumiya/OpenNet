@@ -21,7 +21,6 @@
              stays left aligned inside the sort Grid; shrinking that Grid to
              its fractional DesiredSize can trim text at the width boundary. -->
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="UseLayoutRounding" Value="True" />
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="VerticalAlignment" Value="Stretch" />

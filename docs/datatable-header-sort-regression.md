@@ -14,13 +14,18 @@ page is recreated.
 Consequently, the shared trigger is Auto/Star-to-Pixel layout, independently of
 SQLite serialization precision.
 
-The application's main-window roots disable `UseLayoutRounding`. In WinUI's
-`CTextBlock::MeasureOverride`, the desired text width is rounded **up** to a
-physical pixel only when layout rounding is enabled. With rounding disabled,
-the fractional text width travels through DataColumn's template, Button's
-ContentPresenter and the sort Grid. On the later finite pass, subtraction and
-float conversion can make the text constraint smaller than its natural width.
-This is a source-supported mechanism, not a visually confirmed upstream bug.
+Do not infer the headers' rounding state from the application's background
+Image/MediaPlayerElement or its UIElement style. Read each element's effective
+`UseLayoutRounding` value at runtime. The user requires preserving the existing
+rounding policy and logical widths: do not enable rounding, round column widths,
+or add extra padding as a workaround.
+
+WinUI's TextBlock recalculates its DirectWrite maximum text width during Arrange
+when trimming is enabled. ContentPresenter also chooses either its child's
+DesiredSize or its complete content slot depending on content alignment. These
+are candidate points where an Auto-to-Pixel transition can change the text
+constraint. Neither the rounding hypothesis nor an upstream defect is confirmed
+without runtime measurements.
 
 Source locations:
 
@@ -28,9 +33,9 @@ Source locations:
 - `dxaml/xcp/core/core/elements/framework.cpp`: `MeasureCore` and `LayoutRoundFloor`.
 - `dxaml/xcp/core/core/elements/ContentPresenter.cpp`: `MeasureOverride`.
 
-The Toolkit fix opts DataColumn into layout rounding, measures Auto headers with
-unbounded horizontal space, then reserves Auto widths before allocating Star
-space. OpenNet's sortable header buttons stretch their content into that slot;
+The Toolkit change measures Auto headers with unbounded horizontal space, then
+reserves Auto widths before allocating Star space. OpenNet's sortable header
+buttons stretch their content into that slot;
 right-aligned numeric labels retain their TextAlignment. CharacterEllipsis stays
 enabled for genuinely narrow columns.
 
@@ -70,7 +75,30 @@ remaining DataTable headers:
    Peers' groups. Confirm reset and hidden columns still work.
 
 If trimming remains, capture the failing label's `DesiredSize`, `ActualWidth`,
-`IsTextTrimmed`, `UseLayoutRounding`, XamlRoot.RasterizationScale, containing
+`ActualSize.X`, layout slot, `IsTextTrimmed`, `UseLayoutRounding`, XamlRoot.RasterizationScale, containing
 Button and DataColumn dimensions immediately before and after the width freeze.
 Do not change persistence precision without evidence that those saved values
 differ from the resolved column widths.
+
+## Diagnostic output
+
+Peer headers IP, download speed and reason use the reusable
+`DataTableHeaderDiagnostics` observer. Filter Visual Studio's Debug output for
+`[ON-DTH]`. It records Width-property changes separately from SizeChanged and
+IsTextTrimmedChanged, then schedules one read-only snapshot at dispatcher low
+priority. It never calls Measure, Arrange, UpdateLayout, InvalidateMeasure or
+changes widths or rounding. Weak element references avoid retaining the page.
+
+`ActualWidth` alone is insufficient for TextBlock: see WinUI issues
+[#1669](https://github.com/microsoft/microsoft-ui-xaml/issues/1669) and
+[#8804](https://github.com/microsoft/microsoft-ui-xaml/issues/8804). Those concern
+inconsistent text/element size reporting, not a confirmed duplicate of this
+DataTable trimming defect. Both ActualSize.X and LayoutInformation.GetLayoutSlot
+are logged so a change of text metrics is not mistaken for a change of layout.
+
+The independent pure WinUI candidate in `repros/DataTableHeaderTrimming` removes
+Toolkit and persistence. Canary builds it in a separate job and uploads an x64
+executable. Its Freeze/Recreate actions preserve the exact width doubles, and
+its options compare intrinsic Auto measurement and Stretch alignment. It is
+not a confirmed reproduction until run on Windows. An upstream issue draft is
+included with the runtime evidence still required before submission.

@@ -36,6 +36,24 @@ env:
   VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,readwrite"
 
 jobs:
+  datatable-repro:
+    runs-on: windows-2025-vs2026
+    steps:
+      - uses: actions/checkout@v7
+      - name: Build standalone WinUI header diagnostic sample
+        shell: pwsh
+        run: |
+          dotnet --info
+          dotnet publish repros/DataTableHeaderTrimming/DataTableHeaderTrimming.csproj -c Release -p:Platform=x64 -r win-x64 -o out/datatable-repro
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Upload standalone header diagnostic sample
+        uses: actions/upload-artifact@v7
+        with:
+          name: DataTableHeaderTrimming-x64-${{ github.sha }}
+          path: out/datatable-repro/
+          if-no-files-found: error
+          retention-days: 14
+
   build:
     runs-on: windows-2025-vs2026
     outputs:
