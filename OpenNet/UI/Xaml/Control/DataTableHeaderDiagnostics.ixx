@@ -68,6 +68,10 @@ export namespace OpenNet::UI::Xaml::Control
                         {
                             Write(std::format(L"    contentAlignment={} padding=({:.17g},{:.17g}) border=({:.17g},{:.17g})", static_cast<int>(control.HorizontalContentAlignment()), control.Padding().Left, control.Padding().Right, control.BorderThickness().Left, control.BorderThickness().Right));
                         }
+                        if (const auto presenter = element.try_as<ContentPresenter>())
+                        {
+                            Write(std::format(L"    presenter elementAlignment={} contentAlignment={} padding=({:.17g},{:.17g}) border=({:.17g},{:.17g})", static_cast<int>(presenter.HorizontalAlignment()), static_cast<int>(presenter.HorizontalContentAlignment()), presenter.Padding().Left, presenter.Padding().Right, presenter.BorderThickness().Left, presenter.BorderThickness().Right));
+                        }
                         if (const auto grid = element.try_as<Grid>())
                         {
                             for (uint32_t index = 0; index < grid.ColumnDefinitions().Size(); ++index)

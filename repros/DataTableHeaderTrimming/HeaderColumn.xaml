@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
   <Grid x:Name="HeaderTemplate">
     <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-    <ContentPresenter x:Name="HeaderPresenter" Margin="4,0" HorizontalContentAlignment="Stretch">
+    <ContentPresenter x:Name="HeaderPresenter" Margin="4,0" HorizontalAlignment="Stretch" VerticalAlignment="Center">
       <Button x:Name="HeaderButton" Style="{StaticResource SubtleButtonStyle}" Padding="0"
               MinWidth="0" HorizontalContentAlignment="Left">
         <Grid x:Name="SortHeader">

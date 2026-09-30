@@ -69,6 +69,8 @@ internal static class Trace
                 Write($"  text={text.Text} trimmed={text.IsTextTrimmed} padding={text.Padding.Left:G17},{text.Padding.Right:G17}");
             if (element is Control control)
                 Write($"  alignment={control.HorizontalContentAlignment} padding={control.Padding.Left:G17},{control.Padding.Right:G17} border={control.BorderThickness.Left:G17},{control.BorderThickness.Right:G17}");
+            if (element is ContentPresenter presenter)
+                Write($"  presenter elementAlignment={presenter.HorizontalAlignment} contentAlignment={presenter.HorizontalContentAlignment} padding={presenter.Padding.Left:G17},{presenter.Padding.Right:G17} border={presenter.BorderThickness.Left:G17},{presenter.BorderThickness.Right:G17}");
             if (element is Grid grid)
                 foreach (ColumnDefinition column in grid.ColumnDefinitions)
                     Write($"  grid ActualWidth={column.ActualWidth:G17} configured={column.Width.Value:G17}/{column.Width.GridUnitType}");
