@@ -3,13 +3,12 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Markup;
 using Windows.Foundation;
-using Windows.UI.Text;
 
 namespace DataTableHeaderTrimming;
 
 public sealed class HeaderColumn : UserControl
 {
-    private readonly TextBlock HeaderText = new() { Name = "HeaderText", FontWeight = FontWeights.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis };
+    private readonly TextBlock HeaderText = new() { Name = "HeaderText", FontWeight = Microsoft.UI.Text.FontWeights.SemiBold, TextTrimming = TextTrimming.CharacterEllipsis };
     private readonly Button HeaderButton = new() { Name = "HeaderButton", Padding = new Thickness(0), MinWidth = 0, HorizontalContentAlignment = HorizontalAlignment.Left };
     private readonly FontIcon SortIcon = new() { Name = "SortIcon", Width = 16, Margin = new Thickness(4, 0, 0, 0), FontSize = 10, Glyph = "\uE70E", Visibility = Visibility.Collapsed };
     private readonly Thumb ResizeThumb = new() { Name = "ResizeThumb", Width = 8, HorizontalAlignment = HorizontalAlignment.Right };
