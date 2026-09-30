@@ -7,10 +7,14 @@ Toolkit branch and this reduction must both be tested on Windows before calling
 this a WinUI defect. The simplified panel supports Auto and Pixel, not Star,
 and the sample has no data rows.
 
+The header tree is constructed directly from native WinUI controls in C# to
+remove an independent generated-XAML startup failure from this layout experiment.
 The candidate uses the standard WinUI Button with zero Padding/MinWidth, while
 OpenNet uses a style based on SubtleButtonStyle. The standalone runtime could
-not resolve that explicit style key and originally failed to load HeaderColumn;
-this was a sample startup defect, not evidence of production trimming. Button
+not resolve that explicit style key. Removing it alone did not resolve the
+HeaderColumn LoadComponent failure, so missing style resolution is not treated
+as the complete startup root cause. These are sample startup defects, not
+evidence of production trimming. Button
 border/padding and both element/content alignment values are logged. The outer
 ContentPresenter uses the same **element** Stretch alignment as DataColumn's
 template; its content-alignment default is retained.

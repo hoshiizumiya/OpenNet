@@ -75,6 +75,7 @@ public sealed partial class MainWindow
                 XamlAssembly = typeof(Window).Assembly.FullName,
                 NativeXamlVersion = NativeXamlVersion(),
                 HeaderButtonStyle = "Default WinUI Button; Padding=0, MinWidth=0. Production uses SubtleButtonStyle.",
+                HeaderConstruction = "Native WinUI control tree constructed in C#; no generated HeaderColumn XBF.",
                 NewlyTrimmedTransitions = transitions,
                 Boundary = "Pure WinUI candidate only; native runner DPI, no rounding override, no Toolkit, data rows or OpenNet sort-navigation regression. Zero transitions does not prove the production defect is fixed.",
                 Cases = cases

@@ -138,5 +138,10 @@ The candidate now uses the default WinUI Button and records this production
 style difference. Its presenter also matches the Toolkit template's
 HorizontalAlignment rather than overriding HorizontalContentAlignment. Both
 properties are now explicitly observed in OpenNet and the sample; none of the
-production properties are written by diagnostics. These sample fixes are not a
-finding about the original production trimming defect.
+production properties are written by diagnostics. Removing that explicit style
+alone did not fix HeaderColumn LoadComponent, so missing resource resolution is
+not a proven complete startup root cause. The candidate now constructs the same
+native presenter/button/grid hierarchy directly in C#, removing its generated
+HeaderColumn XBF dependency from the measurement experiment. Construction and
+style differences are explicitly recorded in the capture summary. These sample
+changes are not a finding about the original production trimming defect.
