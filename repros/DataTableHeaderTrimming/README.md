@@ -49,3 +49,37 @@ Neither is a confirmed duplicate of the OpenNet problem.
 If the sample does not reproduce, retain that result and compare its slots and
 constraints against OpenNet's `[ON-DTH]` Peers header logs. Do not report an
 upstream defect solely from static source inspection or a successful build.
+
+## Automated Windows capture
+
+Canary also launches the real WinUI executable, rather than treating its build
+as a runtime test. To run the same capture locally:
+
+```powershell
+$env:ON_DTH_CAPTURE_DIRECTORY = Join-Path $PWD 'out/datatable-evidence'
+Start-Process .\out\datatable-repro\DataTableHeaderTrimming.exe -Wait
+Remove-Item Env:ON_DTH_CAPTURE_DIRECTORY
+```
+
+The capture drives all eight measurement/alignment/sort-glyph combinations with
+1200-DIP and 360-DIP viewports. It waits for a loaded visual tree and unchanged
+layout readings across two dispatcher timer intervals before recording each
+stage. It checks unchanged columns' exact logical widths after Freeze, widening
+the first column and Recreate; it also records a deliberately narrow column as
+a control. No column-width rounding, extra padding or UseLayoutRounding override
+is applied.
+
+The `DataTableHeaderEvidence-x64-<SHA>` artifact contains `summary.json`, the
+read-only layout log and PNGs rendered by WinUI for Auto, Freeze and Recreate.
+The summary counts only newly trimmed labels whose baseline was complete;
+baseline clipping in the finite-viewport case is retained separately. A capture
+error, missing visual tree or timeout fails the capture step. A completed capture
+with zero transitions means this candidate did not reproduce on that runner,
+not that OpenNet is fixed. Newly trimmed transitions are evidence for further
+investigation, not an automatic finding of an upstream defect.
+
+The runner's actual XamlRoot scale, effective rounding values, OS and loaded
+native Microsoft.UI.Xaml.dll version are recorded. This does not simulate other
+DPI settings or replace the production Toolkit/OpenNet navigation, data-row and
+sorting regressions. The original manual toolbar remains available when the
+capture environment variable is absent.

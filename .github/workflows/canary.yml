@@ -46,6 +46,31 @@ jobs:
           dotnet --info
           dotnet publish repros/DataTableHeaderTrimming/DataTableHeaderTrimming.csproj -c Release -p:Platform=x64 -r win-x64 -o out/datatable-repro
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Capture real WinUI Auto-to-Pixel layout on Windows
+        shell: pwsh
+        run: |
+          $evidence = Join-Path $env:GITHUB_WORKSPACE 'out/datatable-evidence'
+          New-Item -ItemType Directory -Path $evidence -Force | Out-Null
+          $env:ON_DTH_CAPTURE_DIRECTORY = $evidence
+          $process = Start-Process out/datatable-repro/DataTableHeaderTrimming.exe -PassThru
+          if (-not $process.WaitForExit(180000)) {
+            Stop-Process -Id $process.Id -Force
+            throw 'WinUI capture timed out; no runtime result can be inferred.'
+          }
+          if ($process.ExitCode -ne 0) { throw "WinUI capture exited with $($process.ExitCode)." }
+          $summary = Get-Content (Join-Path $evidence 'summary.json') -Raw | ConvertFrom-Json
+          if ($summary.Status -ne 'capture-complete') { throw 'WinUI runtime evidence is incomplete.' }
+          Write-Host "Captured $($summary.Cases.Count) cases; newly trimmed transitions: $($summary.NewlyTrimmedTransitions)."
+          Write-Host "Native XAML: $($summary.NativeXamlVersion); OS: $($summary.OS)"
+          Write-Host $summary.Boundary
+      - name: Upload Windows layout measurements and rendered headers
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: DataTableHeaderEvidence-x64-${{ github.sha }}
+          path: out/datatable-evidence/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Upload standalone header diagnostic sample
         uses: actions/upload-artifact@v7
         with:

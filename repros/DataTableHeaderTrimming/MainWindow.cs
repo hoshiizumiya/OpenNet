@@ -4,7 +4,7 @@ using Microsoft.UI.Xaml.Controls;
 
 namespace DataTableHeaderTrimming;
 
-public sealed class MainWindow : Window
+public sealed partial class MainWindow : Window
 {
     private readonly Grid _host = new();
     private readonly CheckBox _intrinsic = new() { Content = "Intrinsic Auto measurement", IsChecked = false };

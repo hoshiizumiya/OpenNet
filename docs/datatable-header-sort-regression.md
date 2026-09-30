@@ -102,3 +102,30 @@ executable. Its Freeze/Recreate actions preserve the exact width doubles, and
 its options compare intrinsic Auto measurement and Stretch alignment. It is
 not a confirmed reproduction until run on Windows. An upstream issue draft is
 included with the runtime evidence still required before submission.
+
+## Automated runtime evidence
+
+The latest checked production commit `3773c315f62cb1fab4a81535aebcbca224ac46a4`
+completed Canary run `36767387666` successfully: both x64/ARM64 application
+builds, x64 native sort-state tests and the independent sample build passed.
+Toolkit HEAD `20f248b129f5db9f2fe92bb404a5c25dacafd857` has no separate Actions
+run; it was compiled as OpenNet's pinned submodule by those application builds.
+These are build/persistence checks, not a visual result.
+
+The sample now has an opt-in automated capture driven by
+`ON_DTH_CAPTURE_DIRECTORY`, and the independent Canary job launches it on the
+Windows runner. Sixteen cases compare the two Auto measurement modes, the two
+button-content alignments, sort glyph presence and wide/narrow viewports.
+Snapshots are taken after loaded layout readings settle, preserving all original
+logical widths across Freeze and Recreate. Widening the first column checks
+only its neighbours for unexpected changes. Each result records full baseline
+and post-transition measurements; only complete-to-trimmed transitions count.
+WinUI-rendered header PNGs and actual scale/version information accompany the
+read-only layout log. No production layout/persistence policy is changed.
+
+A runtime capture can fail independently of the application build if the runner
+cannot launch/render WinUI. Zero transitions cannot clear the production bug:
+the reduced panel has no Toolkit data rows or Star sizing, and only the runner's
+native DPI is covered. Production sorting/arrow restoration and other DPI scales
+still require Windows application regression. Do not submit the issue draft
+without inspecting concrete runtime evidence.

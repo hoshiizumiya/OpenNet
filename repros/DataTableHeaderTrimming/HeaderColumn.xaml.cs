@@ -44,7 +44,11 @@ public sealed partial class HeaderColumn : UserControl
         Trace.Write($"{Label} {reason} DesiredWidth={DesiredWidth.Value:G17}/{DesiredWidth.GridUnitType} resolved={ResolvedWidth:G17}");
         Trace.SnapshotTree(this, Label);
     }
+
+    internal HeaderState ReadState() => new(Label, ResolvedWidth, DesiredWidth.Value, DesiredWidth.GridUnitType.ToString(), HeaderText.IsTextTrimmed, HeaderText.ActualWidth, HeaderText.ActualSize.X, HeaderText.DesiredSize.Width, Microsoft.UI.Xaml.Controls.Primitives.LayoutInformation.GetLayoutSlot(HeaderText).Width, HeaderText.UseLayoutRounding, HeaderText.XamlRoot?.RasterizationScale ?? 0);
 }
+
+internal sealed record HeaderState(string Label, double ResolvedWidth, double DesiredWidth, string Unit, bool Trimmed, double TextActualWidth, double TextActualSize, double TextDesiredWidth, double TextSlotWidth, bool UseLayoutRounding, double Scale);
 
 // Reduction of Toolkit DataTable's header measurement/freeze/arrange sequence.
 // This project deliberately has no Toolkit or OpenNet dependency.
