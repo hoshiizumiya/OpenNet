@@ -4,6 +4,7 @@
 #include "ViewModels/TaskViewModel.h"
 
 import OpenNet.Core.AppSettingsDatabase;
+import OpenNet.Web.ServerDomain;
 import winrt.Windows.Data.Json;
 import winrt.Microsoft.Windows.ApplicationModel.Resources;
 
@@ -18,8 +19,13 @@ namespace winrt::OpenNet::ViewModels::implementation
 	{
 		struct ResetProgressCommand : winrt::implements<ResetProgressCommand, winrt::Microsoft::UI::Xaml::Input::ICommand>
 		{
-			explicit ResetProgressCommand(winrt::weak_ref<SettingsViewModel> owner) : m_owner(std::move(owner)) {}
-			bool CanExecute(winrt::Windows::Foundation::IInspectable const&) const { return static_cast<bool>(m_owner.get()); }
+			explicit ResetProgressCommand(winrt::weak_ref<SettingsViewModel> owner) : m_owner(std::move(owner))
+			{
+			}
+			bool CanExecute(winrt::Windows::Foundation::IInspectable const&) const
+			{
+				return static_cast<bool>(m_owner.get());
+			}
 			void Execute(winrt::Windows::Foundation::IInspectable const&)
 			{
 				if (auto owner = m_owner.get()) owner->ResetProgressAppearance();
@@ -28,7 +34,36 @@ namespace winrt::OpenNet::ViewModels::implementation
 			{
 				return m_changed.add(handler);
 			}
-			void CanExecuteChanged(winrt::event_token token) noexcept { m_changed.remove(token); }
+			void CanExecuteChanged(winrt::event_token token) noexcept
+			{
+				m_changed.remove(token);
+			}
+		private:
+			winrt::weak_ref<SettingsViewModel> m_owner;
+			winrt::event<winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable>> m_changed;
+		};
+
+		struct RefreshServerEndpointsCommandImpl : winrt::implements<RefreshServerEndpointsCommandImpl, winrt::Microsoft::UI::Xaml::Input::ICommand>
+		{
+			explicit RefreshServerEndpointsCommandImpl(winrt::weak_ref<SettingsViewModel> owner) : m_owner(std::move(owner))
+			{
+			}
+			bool CanExecute(winrt::Windows::Foundation::IInspectable const&) const
+			{
+				return static_cast<bool>(m_owner.get());
+			}
+			void Execute(winrt::Windows::Foundation::IInspectable const&)
+			{
+				if (auto owner = m_owner.get()) owner->RefreshServerEndpoints();
+			}
+			winrt::event_token CanExecuteChanged(winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable> const& handler)
+			{
+				return m_changed.add(handler);
+			}
+			void CanExecuteChanged(winrt::event_token token) noexcept
+			{
+				m_changed.remove(token);
+			}
 		private:
 			winrt::weak_ref<SettingsViewModel> m_owner;
 			winrt::event<winrt::Windows::Foundation::EventHandler<winrt::Windows::Foundation::IInspectable>> m_changed;
@@ -117,6 +152,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_userName = GetStringFromResources(L"SettingsDefaultUserName");
 		m_deviceName = GetStringFromResources(L"SettingsThisPc");
 		m_availableLanguages = single_threaded_vector<hstring>();
+		m_serverEndpoints = single_threaded_observable_vector<hstring>();
+		m_serverEndpointStatusText = GetStringFromResources(L"ServerEndpointLoading");
 
 		// Use resource strings if available, fall back to defaults
 		try
@@ -233,6 +270,84 @@ namespace winrt::OpenNet::ViewModels::implementation
 		if (!m_resetProgressAppearanceCommand)
 			m_resetProgressAppearanceCommand = winrt::make<ResetProgressCommand>(get_weak());
 		return m_resetProgressAppearanceCommand;
+	}
+
+	void SettingsViewModel::ServerEndpointModeIndex(std::int32_t value)
+	{
+		if (value < 0 || value > 3 || value == m_serverEndpointModeIndex) return;
+		try
+		{
+			::OpenNet::Web::ServerDomain::SetMode(
+				static_cast<::OpenNet::Web::ServerDomainMode>(value));
+			SetProperty(m_serverEndpointModeIndex, value, L"ServerEndpointModeIndex");
+			UpdateServerEndpointStatus();
+		}
+		catch (...)
+		{
+			UpdateServerEndpointStatus();
+		}
+	}
+
+	void SettingsViewModel::UpdateServerEndpointStatus()
+	{
+		auto const status = ::OpenNet::Web::ServerDomain::GetStatus();
+		SetProperty(m_serverEndpointModeIndex,
+					static_cast<std::int32_t>(status.PreferredMode), L"ServerEndpointModeIndex");
+		SetProperty(m_currentServerEndpoint,
+					status.CurrentRoot.empty() ? GetStringFromResources(L"ServerEndpointNone")
+					: winrt::hstring{ status.CurrentRoot }, L"CurrentServerEndpoint");
+		m_serverEndpoints.Clear();
+		for (auto const& endpoint : status.Endpoints)
+		{
+			std::wstring line = endpoint.Mode == ::OpenNet::Web::ServerDomainMode::Ip ? L"IP"
+				: endpoint.Mode == ::OpenNet::Web::ServerDomainMode::Https ? L"HTTPS" : L"HTTP";
+			line += L"  " + endpoint.Root + L"  (";
+			line += GetStringFromResources(endpoint.Available
+										   ? L"ServerEndpointReachable" : L"ServerEndpointUnreachable").c_str();
+			line += L")";
+			m_serverEndpoints.Append(winrt::hstring{ line });
+		}
+		if (!m_loadingServerEndpoints)
+			SetProperty(m_serverEndpointStatusText,
+						!status.ConfigurationLoaded ? GetStringFromResources(L"ServerEndpointDirectoryUnavailable")
+						: status.Endpoints.empty() ? GetStringFromResources(L"ServerEndpointDirectoryEmpty")
+						: winrt::hstring{}, L"ServerEndpointStatusText");
+	}
+
+	winrt::Microsoft::UI::Xaml::Input::ICommand SettingsViewModel::RefreshServerEndpointsCommand()
+	{
+		if (!m_refreshServerEndpointsCommand)
+			m_refreshServerEndpointsCommand = winrt::make<RefreshServerEndpointsCommandImpl>(get_weak());
+		return m_refreshServerEndpointsCommand;
+	}
+
+	void SettingsViewModel::RefreshServerEndpoints()
+	{
+		if (m_loadingServerEndpoints) return;
+		m_refreshServerEndpoints = true;
+		m_serverEndpointAction = LoadServerEndpointsAsync();
+	}
+
+	IAsyncAction SettingsViewModel::LoadServerEndpointsAsync()
+	{
+		auto lifetime = get_strong();
+		if (m_loadingServerEndpoints) co_return;
+		auto const refresh = std::exchange(m_refreshServerEndpoints, false);
+		m_loadingServerEndpoints = true;
+		RaisePropertyChanged(L"CanRefreshServerEndpoints");
+		SetProperty(m_serverEndpointStatusText,
+					GetStringFromResources(L"ServerEndpointLoading"), L"ServerEndpointStatusText");
+		try
+		{
+			if (refresh) co_await ::OpenNet::Web::ServerDomain::RefreshAsync();
+			else co_await ::OpenNet::Web::ServerDomain::InitializeAsync();
+		}
+		catch (...)
+		{
+		}
+		m_loadingServerEndpoints = false;
+		UpdateServerEndpointStatus();
+		RaisePropertyChanged(L"CanRefreshServerEndpoints");
 	}
 
 	void SettingsViewModel::ResetProgressAppearance()
@@ -368,20 +483,20 @@ namespace winrt::OpenNet::ViewModels::implementation
 			ResourceLoader rl;
 			switch (m_currentLanguage)
 			{
-			case Language::Auto: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
-			case Language::Chinese: return std::wstring(rl.GetString(L"Lang_Chinese").c_str());
-			case Language::English: return std::wstring(rl.GetString(L"Lang_English").c_str());
-			default: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
+				case Language::Auto: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
+				case Language::Chinese: return std::wstring(rl.GetString(L"Lang_Chinese").c_str());
+				case Language::English: return std::wstring(rl.GetString(L"Lang_English").c_str());
+				default: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
 			}
 		}
 		catch (...)
 		{
 			switch (m_currentLanguage)
 			{
-			case Language::Auto: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
-			case Language::Chinese: return std::wstring(GetStringFromResources(L"Lang_Chinese").c_str());
-			case Language::English: return std::wstring(GetStringFromResources(L"Lang_English").c_str());
-			default: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
+				case Language::Auto: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
+				case Language::Chinese: return std::wstring(GetStringFromResources(L"Lang_Chinese").c_str());
+				case Language::English: return std::wstring(GetStringFromResources(L"Lang_English").c_str());
+				default: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
 			}
 		}
 	}
@@ -393,12 +508,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 			ResourceLoader rl;
 			switch (m_protocolPriority)
 			{
-			case Models::IPProtocolPriority::IPv4First: return std::wstring(rl.GetString(L"Protocol_IPv4First").c_str());
-			case Models::IPProtocolPriority::IPv6First: return std::wstring(rl.GetString(L"Protocol_IPv6First").c_str());
-			case Models::IPProtocolPriority::IPv4Only: return std::wstring(rl.GetString(L"Protocol_IPv4Only").c_str());
-			case Models::IPProtocolPriority::IPv6Only: return std::wstring(rl.GetString(L"Protocol_IPv6Only").c_str());
-			case Models::IPProtocolPriority::Auto: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
-			default: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
+				case Models::IPProtocolPriority::IPv4First: return std::wstring(rl.GetString(L"Protocol_IPv4First").c_str());
+				case Models::IPProtocolPriority::IPv6First: return std::wstring(rl.GetString(L"Protocol_IPv6First").c_str());
+				case Models::IPProtocolPriority::IPv4Only: return std::wstring(rl.GetString(L"Protocol_IPv4Only").c_str());
+				case Models::IPProtocolPriority::IPv6Only: return std::wstring(rl.GetString(L"Protocol_IPv6Only").c_str());
+				case Models::IPProtocolPriority::Auto: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
+				default: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
 			}
 		}
 		catch (...)
@@ -414,15 +529,15 @@ namespace winrt::OpenNet::ViewModels::implementation
 			ResourceLoader rl;
 			switch (m_preferredProtocol)
 			{
-			case Models::ConnectionProtocol::Auto: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
-			case Models::ConnectionProtocol::TCP: return std::wstring(rl.GetString(L"ConnProtocol_TCP").c_str());
-			case Models::ConnectionProtocol::UDP: return std::wstring(rl.GetString(L"ConnProtocol_UDP").c_str());
-			case Models::ConnectionProtocol::UTP: return std::wstring(rl.GetString(L"ConnProtocol_UTP").c_str());
-			case Models::ConnectionProtocol::BitTorrent: return std::wstring(rl.GetString(L"ConnProtocol_BitTorrent").c_str());
-			case Models::ConnectionProtocol::DHT: return std::wstring(rl.GetString(L"ConnProtocol_DHT").c_str());
-			case Models::ConnectionProtocol::WebRTC: return std::wstring(rl.GetString(L"ConnProtocol_WebRTC").c_str());
-			case Models::ConnectionProtocol::HTTP: return std::wstring(rl.GetString(L"ConnProtocol_HTTP").c_str());
-			default: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
+				case Models::ConnectionProtocol::Auto: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
+				case Models::ConnectionProtocol::TCP: return std::wstring(rl.GetString(L"ConnProtocol_TCP").c_str());
+				case Models::ConnectionProtocol::UDP: return std::wstring(rl.GetString(L"ConnProtocol_UDP").c_str());
+				case Models::ConnectionProtocol::UTP: return std::wstring(rl.GetString(L"ConnProtocol_UTP").c_str());
+				case Models::ConnectionProtocol::BitTorrent: return std::wstring(rl.GetString(L"ConnProtocol_BitTorrent").c_str());
+				case Models::ConnectionProtocol::DHT: return std::wstring(rl.GetString(L"ConnProtocol_DHT").c_str());
+				case Models::ConnectionProtocol::WebRTC: return std::wstring(rl.GetString(L"ConnProtocol_WebRTC").c_str());
+				case Models::ConnectionProtocol::HTTP: return std::wstring(rl.GetString(L"ConnProtocol_HTTP").c_str());
+				default: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
 			}
 		}
 		catch (...)
@@ -438,10 +553,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 			ResourceLoader rl;
 			switch (m_encryptionLevel)
 			{
-			case EncryptionLevel::None: return std::wstring(rl.GetString(L"Enc_None").c_str());
-			case EncryptionLevel::Basic: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
-			case EncryptionLevel::Strong: return std::wstring(rl.GetString(L"Enc_Strong").c_str());
-			default: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
+				case EncryptionLevel::None: return std::wstring(rl.GetString(L"Enc_None").c_str());
+				case EncryptionLevel::Basic: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
+				case EncryptionLevel::Strong: return std::wstring(rl.GetString(L"Enc_Strong").c_str());
+				default: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
 			}
 		}
 		catch (...)

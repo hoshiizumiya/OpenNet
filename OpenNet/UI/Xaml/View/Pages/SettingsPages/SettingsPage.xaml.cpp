@@ -394,6 +394,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		try
 		{
+			(void)ViewModel().LoadServerEndpointsAsync();
 			// Initialize SoftLanguageCombobox with supported languages
 			if (auto comboLang = SoftLanguageCombobox())
 			{

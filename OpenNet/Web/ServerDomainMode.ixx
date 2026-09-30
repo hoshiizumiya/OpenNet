@@ -4,8 +4,9 @@ export namespace OpenNet::Web
 {
 	enum class ServerDomainMode
 	{
-		Primary,
-		Backup,
-		AutoDetect
+		AutoDetect,
+		Ip,
+		Http,
+		Https
 	};
 }

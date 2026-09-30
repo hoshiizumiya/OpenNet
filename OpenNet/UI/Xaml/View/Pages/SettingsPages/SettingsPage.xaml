@@ -6,10 +6,10 @@
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
+    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ouxc="using:OpenNet.UI.Xaml.Control"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:ouxvp="using:OpenNet.UI.Xaml.View.Pages"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
@@ -334,9 +334,53 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    x:Uid="ServerEndpointCard"
+                    Description="Choose how OpenNet connects to services listed by the remote directory."
+                    Header="Server endpoint">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE774;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <StackPanel MinWidth="260" Spacing="8">
+                        <ComboBox
+                            x:Uid="ServerEndpointModeBox"
+                            MinWidth="240"
+                            essential:ComboBoxHelper.AcrylicWorkaround="True"
+                            AutomationProperties.AutomationId="ServerEndpointModeBox"
+                            SelectedIndex="{x:Bind ViewModel.ServerEndpointModeIndex, Mode=TwoWay}">
+                            <ComboBoxItem x:Uid="ServerEndpointAuto" Content="Automatic" />
+                            <ComboBoxItem Content="IP" />
+                            <ComboBoxItem Content="HTTP" />
+                            <ComboBoxItem Content="HTTPS" />
+                        </ComboBox>
+                        <TextBlock
+                            x:Uid="ServerEndpointCurrentLabel"
+                            FontWeight="SemiBold"
+                            Text="Currently in use" />
+                        <TextBlock Text="{x:Bind ViewModel.CurrentServerEndpoint, Mode=OneWay}" TextWrapping="Wrap" />
+                        <TextBlock
+                            x:Uid="ServerEndpointAvailableLabel"
+                            FontWeight="SemiBold"
+                            Text="Endpoints from directory" />
+                        <TextBlock Text="{x:Bind ViewModel.ServerEndpointStatusText, Mode=OneWay}" TextWrapping="Wrap" />
+                        <ListView ItemsSource="{x:Bind ViewModel.ServerEndpoints, Mode=OneWay}" SelectionMode="None">
+                            <ListView.ItemTemplate>
+                                <DataTemplate x:DataType="x:String">
+                                    <TextBlock Text="{x:Bind}" TextWrapping="Wrap" />
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                        <Button
+                            x:Uid="ServerEndpointRefreshButton"
+                            Command="{x:Bind ViewModel.RefreshServerEndpointsCommand}"
+                            Content="Refresh endpoints"
+                            IsEnabled="{x:Bind ViewModel.CanRefreshServerEndpoints, Mode=OneWay}" />
+                    </StackPanel>
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
                     x:Uid="DownloadCompletionNotificationsCard"
-                    Header="Download completion notifications"
-                    Description="Show a Windows notification when a download finishes.">
+                    Description="Show a Windows notification when a download finishes."
+                    Header="Download completion notifications">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE7F4;" />
                     </essential:SettingsCard.HeaderIcon>
@@ -345,17 +389,13 @@
                             <essential:Case.Value>
                                 <x:Int32>0</x:Int32>
                             </essential:Case.Value>
-                            <ToggleSwitch
-                                x:Uid="DownloadCompletionNotificationsSwitch"
-                                IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
+                            <ToggleSwitch x:Uid="DownloadCompletionNotificationsSwitch" IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
                         </essential:Case>
                         <essential:Case>
                             <essential:Case.Value>
                                 <x:Int32>1</x:Int32>
                             </essential:Case.Value>
-                            <liquid:LiquidGlassToggleSwitch
-                                x:Uid="DownloadCompletionNotificationsGlassSwitch"
-                                IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
+                            <liquid:LiquidGlassToggleSwitch x:Uid="DownloadCompletionNotificationsGlassSwitch" IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
                         </essential:Case>
                     </essential:SwitchPresenter>
                 </essential:SettingsCard>

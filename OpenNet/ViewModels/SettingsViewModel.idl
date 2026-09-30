@@ -16,5 +16,12 @@ namespace OpenNet.ViewModels
         Microsoft.UI.Xaml.Visibility ProgressRowPreviewVisibility { get; };
         Microsoft.UI.Xaml.Visibility ProgressColumnPreviewVisibility { get; };
         Microsoft.UI.Xaml.Input.ICommand ResetProgressAppearanceCommand { get; };
+        Int32 ServerEndpointModeIndex;
+        String CurrentServerEndpoint { get; };
+        String ServerEndpointStatusText { get; };
+        Windows.Foundation.Collections.IObservableVector<String> ServerEndpoints { get; };
+        Boolean CanRefreshServerEndpoints { get; };
+        Microsoft.UI.Xaml.Input.ICommand RefreshServerEndpointsCommand { get; };
+        Windows.Foundation.IAsyncAction LoadServerEndpointsAsync();
     };
 }

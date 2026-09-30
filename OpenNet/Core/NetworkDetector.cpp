@@ -59,6 +59,8 @@ namespace
 	winrt::hstring BuildAutomaticTraversalDirectoryUri()
 	{
 		std::wstring uri{ ::OpenNet::Web::ServerDomain::GetApiRoot() };
+		if (uri.empty())
+			return {};
 		if (!uri.ends_with(L'/'))
 			uri.push_back(L'/');
 		uri.append(L"api/v1/traversal/servers");
@@ -322,9 +324,9 @@ namespace OpenNet::Core
 		// keeps future domain/IP failover visible without reconstructing the detector.
 		m_traversalDirectoryUri =
 			value.empty() || value == BuildAutomaticTraversalDirectoryUri()
-				|| IsLegacyAutomaticTraversalDirectoryUri(value)
+			|| IsLegacyAutomaticTraversalDirectoryUri(value)
 			? winrt::hstring{}
-			: value;
+		: value;
 		::OpenNet::Core::Setting::LocalSetting::Set(
 			::OpenNet::Core::Setting::SettingKeys::TraversalDirectoryUri,
 			m_traversalDirectoryUri);

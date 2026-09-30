@@ -6850,4 +6850,43 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>恢复默认设置</value>
   </data>
+  <data name="ServerEndpointCard.Header" xml:space="preserve">
+    <value>服务器端点</value>
+  </data>
+  <data name="ServerEndpointCard.Description" xml:space="preserve">
+    <value>选择 OpenNet 连接远端目录所列服务的方式。</value>
+  </data>
+  <data name="ServerEndpointModeBox.AutomationProperties.Name" xml:space="preserve">
+    <value>首选服务器端点类型</value>
+  </data>
+  <data name="ServerEndpointAuto.Content" xml:space="preserve">
+    <value>自动选择</value>
+  </data>
+  <data name="ServerEndpointCurrentLabel.Text" xml:space="preserve">
+    <value>正在使用</value>
+  </data>
+  <data name="ServerEndpointAvailableLabel.Text" xml:space="preserve">
+    <value>目录中的端点</value>
+  </data>
+  <data name="ServerEndpointNone" xml:space="preserve">
+    <value>没有可用端点</value>
+  </data>
+  <data name="ServerEndpointLoading" xml:space="preserve">
+    <value>正在读取端点目录…</value>
+  </data>
+  <data name="ServerEndpointDirectoryUnavailable" xml:space="preserve">
+    <value>无法获取端点目录。</value>
+  </data>
+  <data name="ServerEndpointDirectoryEmpty" xml:space="preserve">
+    <value>目录中没有有效端点。</value>
+  </data>
+  <data name="ServerEndpointReachable" xml:space="preserve">
+    <value>可用</value>
+  </data>
+  <data name="ServerEndpointUnreachable" xml:space="preserve">
+    <value>不可用</value>
+  </data>
+  <data name="ServerEndpointRefreshButton.Content" xml:space="preserve">
+    <value>刷新端点</value>
+  </data>
 </root>

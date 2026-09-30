@@ -6850,4 +6850,43 @@ Availability: {}</value>
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>Restore defaults</value>
   </data>
+  <data name="ServerEndpointCard.Header" xml:space="preserve">
+    <value>Server endpoint</value>
+  </data>
+  <data name="ServerEndpointCard.Description" xml:space="preserve">
+    <value>Choose how OpenNet connects to services listed by the remote directory.</value>
+  </data>
+  <data name="ServerEndpointModeBox.AutomationProperties.Name" xml:space="preserve">
+    <value>Preferred server endpoint type</value>
+  </data>
+  <data name="ServerEndpointAuto.Content" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="ServerEndpointCurrentLabel.Text" xml:space="preserve">
+    <value>Currently in use</value>
+  </data>
+  <data name="ServerEndpointAvailableLabel.Text" xml:space="preserve">
+    <value>Endpoints from directory</value>
+  </data>
+  <data name="ServerEndpointNone" xml:space="preserve">
+    <value>No reachable endpoint</value>
+  </data>
+  <data name="ServerEndpointLoading" xml:space="preserve">
+    <value>Loading endpoint directory…</value>
+  </data>
+  <data name="ServerEndpointDirectoryUnavailable" xml:space="preserve">
+    <value>Endpoint directory is unavailable.</value>
+  </data>
+  <data name="ServerEndpointDirectoryEmpty" xml:space="preserve">
+    <value>No valid endpoints in the directory.</value>
+  </data>
+  <data name="ServerEndpointReachable" xml:space="preserve">
+    <value>reachable</value>
+  </data>
+  <data name="ServerEndpointUnreachable" xml:space="preserve">
+    <value>unreachable</value>
+  </data>
+  <data name="ServerEndpointRefreshButton.Content" xml:space="preserve">
+    <value>Refresh endpoints</value>
+  </data>
 </root>

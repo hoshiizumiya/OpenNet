@@ -79,22 +79,65 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return m_showNotifications;
 		}
 		void ShowNotifications(bool value);
-		bool ProgressEffectsEnabled() const { return m_progressEffectsEnabled; }
+		bool ProgressEffectsEnabled() const
+		{
+			return m_progressEffectsEnabled;
+		}
 		void ProgressEffectsEnabled(bool value);
-		std::int32_t ProgressEffectScope() const { return m_progressEffectScope; }
+		std::int32_t ProgressEffectScope() const
+		{
+			return m_progressEffectScope;
+		}
 		void ProgressEffectScope(std::int32_t value);
 		winrt::Microsoft::UI::Xaml::Visibility ProgressRowPreviewVisibility() const;
 		winrt::Microsoft::UI::Xaml::Visibility ProgressColumnPreviewVisibility() const;
-		winrt::Windows::UI::Color DownloadProgressColor() const { return m_downloadProgressColor; }
+		winrt::Windows::UI::Color DownloadProgressColor() const
+		{
+			return m_downloadProgressColor;
+		}
 		void DownloadProgressColor(winrt::Windows::UI::Color value);
-		winrt::Windows::UI::Color SeedingProgressColor() const { return m_seedingProgressColor; }
+		winrt::Windows::UI::Color SeedingProgressColor() const
+		{
+			return m_seedingProgressColor;
+		}
 		void SeedingProgressColor(winrt::Windows::UI::Color value);
-		winrt::Windows::UI::Color CheckingProgressColor() const { return m_checkingProgressColor; }
+		winrt::Windows::UI::Color CheckingProgressColor() const
+		{
+			return m_checkingProgressColor;
+		}
 		void CheckingProgressColor(winrt::Windows::UI::Color value);
-		winrt::Windows::UI::Color ProgressBaseColor() const { return m_progressBaseColor; }
+		winrt::Windows::UI::Color ProgressBaseColor() const
+		{
+			return m_progressBaseColor;
+		}
 		void ProgressBaseColor(winrt::Windows::UI::Color value);
 		winrt::Microsoft::UI::Xaml::Input::ICommand ResetProgressAppearanceCommand();
 		void ResetProgressAppearance();
+		std::int32_t ServerEndpointModeIndex() const
+		{
+			return m_serverEndpointModeIndex;
+		}
+		void ServerEndpointModeIndex(std::int32_t value);
+		winrt::hstring CurrentServerEndpoint() const
+		{
+			return m_currentServerEndpoint;
+		}
+		winrt::hstring ServerEndpointStatusText() const
+		{
+			return m_serverEndpointStatusText;
+		}
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> ServerEndpoints() const
+		{
+			return m_serverEndpoints;
+		}
+		bool CanRefreshServerEndpoints() const
+		{
+			return !m_loadingServerEndpoints;
+		}
+		winrt::Microsoft::UI::Xaml::Input::ICommand RefreshServerEndpointsCommand();
+		winrt::Windows::Foundation::IAsyncAction LoadServerEndpointsAsync();
+		void RefreshServerEndpoints();
+		void UpdateServerEndpointStatus();
 
 		// 语言设置 / Language Settings
 		enum class Language
@@ -527,6 +570,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::Windows::UI::Color m_checkingProgressColor{ 255, 69, 201, 232 };
 		winrt::Windows::UI::Color m_progressBaseColor{};
 		winrt::Microsoft::UI::Xaml::Input::ICommand m_resetProgressAppearanceCommand{ nullptr };
+		std::int32_t m_serverEndpointModeIndex{ 0 };
+		winrt::hstring m_currentServerEndpoint;
+		winrt::hstring m_serverEndpointStatusText;
+		winrt::Windows::Foundation::Collections::IObservableVector<winrt::hstring> m_serverEndpoints{ nullptr };
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_refreshServerEndpointsCommand{ nullptr };
+		winrt::Windows::Foundation::IAsyncAction m_serverEndpointAction{ nullptr };
+		bool m_loadingServerEndpoints{ false };
+		bool m_refreshServerEndpoints{ false };
 
 		// 语言设置 / Language Settings
 		Language m_currentLanguage;
