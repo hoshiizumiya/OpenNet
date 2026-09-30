@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt.OpenNet.ViewModels;
+
 import OpenNet.ViewModels.ObservableMixin;
 import OpenNet.Core.torrentCore.LibtorrentHandle;
 import winrt.OpenNet.UI.Xaml.Control.Progress.HttpSegment;
@@ -28,6 +30,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TaskPeersListPage();
 		~TaskPeersListPage();
+		winrt::OpenNet::ViewModels::DataTableSortViewModel SortState() const { return m_sortState; }
 
 		void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 		void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
@@ -37,7 +40,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void BanPeer24h_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void BanPeerPermanent_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void UnbanPeer_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
-		void ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_PointerPressed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::PointerRoutedEventArgs const& args);
 		void ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
@@ -67,8 +69,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::unordered_set<std::string> m_cachedBannedPeerAddresses;
 		std::string m_flagSprite;
 		std::unordered_map<std::string, winrt::hstring> m_flagSvgCache;
-		winrt::hstring m_sortColumn;
-		int m_sortDirection{};
+		winrt::OpenNet::ViewModels::DataTableSortViewModel m_sortState{ L"Peers" };
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 		bool m_rowLayoutSynchronizationQueued{};
 		std::atomic_bool m_refreshInFlight{};

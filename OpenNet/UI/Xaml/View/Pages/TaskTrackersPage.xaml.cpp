@@ -82,6 +82,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		TaskTrackersPageT::InitializeComponent();
 		TrackersListView().ItemsSource(m_trackerItems);
 		UpdateSortHeaders();
+		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
+		{
+			if (args.PropertyName() != L"Direction") return;
+			if (auto self = weak.get())
+			{
+				self->UpdateSortHeaders();
+				self->RefreshTrackerList();
+			}
+		});
 		Loaded([this](auto, auto)
 		{
 			m_isActive.store(true, std::memory_order_release);
@@ -200,28 +209,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RefreshTrackerList();
 	}
 
-	void TaskTrackersPage::ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-	{
-		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
-		if (!button || !button.Tag()) return;
-		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
-		if (m_sortColumn == column)
-			m_sortDirection = (m_sortDirection + 1) % 3;
-		else
-		{
-			m_sortColumn = column;
-			m_sortDirection = 1;
-		}
-		UpdateSortHeaders();
-		RefreshTrackerList();
-	}
-
 	void TaskTrackersPage::UpdateSortHeaders()
 	{
 		auto update = [this](auto const& button)
 		{
 			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
-				button, m_sortColumn, m_sortDirection);
+				button, m_sortState.Column(), m_sortState.Direction());
 		};
 		update(SortTrackerUrlButton());
 		update(SortTrackerRetriesButton());
@@ -312,9 +305,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskTrackersPage::ResetColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
 	{
-		m_sortColumn = {};
-		m_sortDirection = 0;
-		UpdateSortHeaders();
+		m_sortState.Reset();
 		for (auto const& column : std::array{
 			ColTrackerURL(), ColTrackerLog(), ColTrackerRetries(),
 			ColTrackerTimeRemaining(), ColTrackerSeeders(),
@@ -694,10 +685,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
-		if (m_sortDirection != 0)
+		if (m_sortState.Direction() != 0)
 		{
-			auto const direction = m_sortDirection;
-			auto const column = m_sortColumn;
+			auto const direction = m_sortState.Direction();
+			auto const column = m_sortState.Column();
 			std::stable_sort(trackers.begin(), trackers.end(),
 							 [direction, column](auto const& left, auto const& right)
 			{

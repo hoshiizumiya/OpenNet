@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt.OpenNet.ViewModels;
+
 import winrt.XamlToolkit.Labs.WinUI;
 import winrt.OpenNet.UI.Xaml.Control.Effect;
 #include "UI/Xaml/View/Pages/TaskTrackersPage.g.h"
@@ -11,11 +13,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TaskTrackersPage();
 		~TaskTrackersPage();
+		winrt::OpenNet::ViewModels::DataTableSortViewModel SortState() const { return m_sortState; }
 		void InitializeComponent();
 
 		void OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
 		void OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e);
-		void ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void AutoSizeSelectedColumn_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
@@ -42,8 +44,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
 		winrt::event_token m_timerTickToken{};
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_trackerItems{ nullptr };
-		winrt::hstring m_sortColumn;
-		int m_sortDirection{};
+		winrt::OpenNet::ViewModels::DataTableSortViewModel m_sortState{ L"Trackers" };
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 		std::string m_lastTaskId;
 		std::size_t m_lastTrackerSnapshotHash{};

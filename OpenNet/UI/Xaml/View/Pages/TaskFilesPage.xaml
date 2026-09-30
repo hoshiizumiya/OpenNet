@@ -127,7 +127,8 @@
                             DesiredWidth="*">
                             <Button
                                 x:Name="SortFileNameButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Path">
@@ -140,7 +141,8 @@
                         <labs:DataColumn x:Name="ColFileSize" CanResize="True">
                             <Button
                                 x:Name="SortFileSizeButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Size">
@@ -153,7 +155,8 @@
                         <labs:DataColumn x:Name="ColFileProgress" CanResize="True">
                             <Button
                                 x:Name="SortFileProgressButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Progress">
@@ -166,7 +169,8 @@
                         <labs:DataColumn x:Name="ColFileDone" CanResize="True">
                             <Button
                                 x:Name="SortFileDoneButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Done">
@@ -179,7 +183,8 @@
                         <labs:DataColumn x:Name="ColFilePriority" CanResize="True">
                             <Button
                                 x:Name="SortFilePriorityButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Priority">

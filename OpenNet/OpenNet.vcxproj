@@ -184,6 +184,10 @@
     <ClCompile Include="UI\Xaml\Behavior\BehaviorBase.ixx" />
     <ClCompile Include="UI\Xaml\Control\DataTableColumnVisibilityHelper.ixx" />
     <ClCompile Include="UI\Xaml\Control\DataTableSortHelper.ixx" />
+    <ClCompile Include="ViewModels\DataTableSortViewModel.cpp" />
+    <ClInclude Include="ViewModels\DataTableSortViewModel.h" />
+    <ClInclude Include="ViewModels\DataTableSortState.h" />
+    <Midl Include="ViewModels\DataTableSortViewModel.idl" />
     <ClCompile Include="UI\Xaml\Control\CheckUpdateControl.cpp">
       <DependentUpon>UI\Xaml\Control\CheckUpdateControl.idl</DependentUpon>
       <SubType>Code</SubType>

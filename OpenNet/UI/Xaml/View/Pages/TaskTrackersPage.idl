@@ -1,8 +1,10 @@
+import "ViewModels/DataTableSortViewModel.idl";
 namespace OpenNet.UI.Xaml.View.Pages
 {
     [default_interface]
     runtimeclass TaskTrackersPage : Microsoft.UI.Xaml.Controls.Page
     {
         TaskTrackersPage();
+        OpenNet.ViewModels.DataTableSortViewModel SortState { get; };
     }
 }

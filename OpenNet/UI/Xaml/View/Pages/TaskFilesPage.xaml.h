@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt.OpenNet.ViewModels;
+
 import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.ViewModels.ObservableMixin;
 import winrt.OpenNet.UI.Xaml.Control.Progress.Storage;
@@ -12,6 +14,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TaskFilesPage();
 		~TaskFilesPage();
+		winrt::OpenNet::ViewModels::DataTableSortViewModel SortState() const { return m_sortState; }
 		void InitializeComponent();
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::ViewModels::FileDisplayItem> FileTree() const { return m_fileItems; }
 
@@ -21,7 +24,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// ComboBox selection changed for file priority
 		void FilePriority_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& args);
 		void DataTable_Loaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
-		void ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void ColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
 		void ColumnMenu_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void AutoSizeSelectedColumn_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
@@ -50,8 +52,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Suppress priority change events during list refresh
 		bool m_isRefreshing{ false };
-		winrt::hstring m_sortColumn;
-		int m_sortDirection{}; // 0=none, 1=ascending, 2=descending
+		winrt::OpenNet::ViewModels::DataTableSortViewModel m_sortState{ L"Files" };
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 
 		void Unsubscribe();

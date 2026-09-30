@@ -1,8 +1,10 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages
+﻿import "ViewModels/DataTableSortViewModel.idl";
+namespace OpenNet.UI.Xaml.View.Pages
 {
     [default_interface]
     runtimeclass TaskPeersListPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         TaskPeersListPage();
+        OpenNet.ViewModels.DataTableSortViewModel SortState { get; };
     }
 }

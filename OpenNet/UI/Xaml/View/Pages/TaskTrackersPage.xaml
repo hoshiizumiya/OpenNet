@@ -162,7 +162,8 @@
                         <labs:DataColumn x:Name="ColTrackerURL" CanResize="True">
                             <Button
                                 x:Name="SortTrackerUrlButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="URL">
@@ -189,7 +190,8 @@
                         <labs:DataColumn x:Name="ColTrackerRetries" CanResize="True">
                             <Button
                                 x:Name="SortTrackerRetriesButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Retries">
@@ -203,7 +205,8 @@
                         <labs:DataColumn x:Name="ColTrackerTimeRemaining" CanResize="True">
                             <Button
                                 x:Name="SortTrackerTimeRemainingButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="TimeRemaining">
@@ -217,7 +220,8 @@
                         <labs:DataColumn x:Name="ColTrackerSeeders" CanResize="True">
                             <Button
                                 x:Name="SortTrackerSeedersButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Seeders">
@@ -231,7 +235,8 @@
                         <labs:DataColumn x:Name="ColTrackerLeechers" CanResize="True">
                             <Button
                                 x:Name="SortTrackerLeechersButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Leechers">
@@ -245,7 +250,8 @@
                         <labs:DataColumn x:Name="ColTrackerDownloaded" CanResize="True">
                             <Button
                                 x:Name="SortTrackerDownloadedButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
@@ -259,7 +265,8 @@
                         <labs:DataColumn x:Name="ColTrackerStatus" CanResize="True">
                             <Button
                                 x:Name="SortTrackerStatusButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">

@@ -1,4 +1,5 @@
-﻿import "ViewModels/DisplayItems.idl";
+﻿import "ViewModels/DataTableSortViewModel.idl";
+import "ViewModels/DisplayItems.idl";
 
 namespace OpenNet.UI.Xaml.View.Pages
 {
@@ -6,6 +7,7 @@ namespace OpenNet.UI.Xaml.View.Pages
     runtimeclass TaskFilesPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         TaskFilesPage();
+        OpenNet.ViewModels.DataTableSortViewModel SortState { get; };
 		Windows.Foundation.Collections.IObservableVector<OpenNet.ViewModels.FileDisplayItem> FileTree{ get; };
     }
 }

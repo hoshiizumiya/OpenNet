@@ -187,7 +187,8 @@
                         <labs:DataColumn x:Name="ColPeerIP" CanResize="True">
                             <Button
                                 x:Name="SortPeerIpButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="IP">
@@ -200,7 +201,8 @@
                         <labs:DataColumn x:Name="ColPeerLocation" CanResize="True">
                             <Button
                                 x:Name="SortPeerLocationButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Location">
@@ -213,7 +215,8 @@
                         <labs:DataColumn x:Name="ColPeerProgress" CanResize="True">
                             <Button
                                 x:Name="SortPeerProgressButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Progress">
@@ -226,7 +229,8 @@
                         <labs:DataColumn x:Name="ColPeerDLSpeed" CanResize="True">
                             <Button
                                 x:Name="SortPeerDlSpeedButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="DLSpeed">
@@ -239,7 +243,8 @@
                         <labs:DataColumn x:Name="ColPeerULSpeed" CanResize="True">
                             <Button
                                 x:Name="SortPeerUlSpeedButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="ULSpeed">
@@ -252,7 +257,8 @@
                         <labs:DataColumn x:Name="ColPeerDownloaded" CanResize="True">
                             <Button
                                 x:Name="SortPeerDownloadedButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
@@ -265,7 +271,8 @@
                         <labs:DataColumn x:Name="ColPeerUploaded" CanResize="True">
                             <Button
                                 x:Name="SortPeerUploadedButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Uploaded">
@@ -278,7 +285,8 @@
                         <labs:DataColumn x:Name="ColPeerClient" CanResize="True">
                             <Button
                                 x:Name="SortPeerClientButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Client">
@@ -291,7 +299,8 @@
                         <labs:DataColumn x:Name="ColPeerRemoteDLSpeed" CanResize="True">
                             <Button
                                 x:Name="SortPeerRemoteDLSpeedButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="RemoteDLSpeed">
@@ -304,7 +313,8 @@
                         <labs:DataColumn x:Name="ColPeerConnectionTime" CanResize="True">
                             <Button
                                 x:Name="SortPeerConnectionTimeButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="ConnectionTime">
@@ -317,7 +327,8 @@
                         <labs:DataColumn x:Name="ColPeerStatus" CanResize="True">
                             <Button
                                 x:Name="SortPeerStatusButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
@@ -330,7 +341,8 @@
                         <labs:DataColumn x:Name="ColPeerReason" CanResize="True">
                             <Button
                                 x:Name="SortPeerReasonButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Reason">
@@ -343,7 +355,8 @@
                         <labs:DataColumn x:Name="ColPeerProtocol" CanResize="True">
                             <Button
                                 x:Name="SortPeerProtocolButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Protocol">
@@ -356,7 +369,8 @@
                         <labs:DataColumn x:Name="ColPeerInitiator" CanResize="True">
                             <Button
                                 x:Name="SortPeerInitiatorButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Initiator">
@@ -369,7 +383,8 @@
                         <labs:DataColumn x:Name="ColPeerSource" CanResize="True">
                             <Button
                                 x:Name="SortPeerSourceButton"
-                                Click="ColumnHeader_Click"
+                                Command="{x:Bind SortState.ToggleCommand}"
+                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Source">
