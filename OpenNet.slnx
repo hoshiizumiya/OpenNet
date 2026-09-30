@@ -14,9 +14,7 @@
   </Folder>
   <Folder Name="/Solution Items/.github/">
     <File Path=".github/copilot-instructions.md" />
-    <File Path=".github/DEV_GUIDE_WINUI3_ATTACHED_PROPERTIES.md" />
     <File Path=".github/PULL_REQUEST_TEMPLATE.md" />
-    <File Path=".github/STYLE_GUIDE_XAML_CONTROLS.md" />
   </Folder>
   <Folder Name="/Solution Items/.github/ISSUE_TEMPLATE/">
     <File Path=".github/ISSUE_TEMPLATE/config.yml" />
@@ -27,6 +25,10 @@
   </Folder>
   <Folder Name="/Solution Items/docs/">
     <File Path="docs/cppwinrt-xamltypeinfo-build-guide.md" />
+    <File Path="docs/winui3-attached-properties-guide.md" />
+    <File Path="docs/winui3-attached-properties-guide.zh-CN.md" />
+    <File Path="docs/xaml-custom-controls-guide.md" />
+    <File Path="docs/xaml-custom-controls-guide.zh-CN.md" />
   </Folder>
   <Folder Name="/ThirdParty/CommunityToolkit.WinUI/">
     <Project Path="ThirdParty\CommunityToolkit.WinUI\XamlToolkit.WinUI\XamlToolkit.WinUI.vcxproj" Id="17c20e50-8d62-4fc3-8feb-b64b03a893be" />
