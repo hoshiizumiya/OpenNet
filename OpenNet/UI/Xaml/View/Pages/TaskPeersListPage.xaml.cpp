@@ -471,7 +471,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
-		auto makeGroup = [&database](winrt::hstring const& title, char const* settingKey)
+		auto const weak = get_weak();
+		auto makeGroup = [&database, weak](winrt::hstring const& title, char const* settingKey)
 		{
 			auto group = winrt::make<
 				winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
@@ -480,6 +481,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				L"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"/>");
 			group.IsGroup(true);
 			group.IsExpanded(database.GetBool("task_peers", settingKey).value_or(true));
+			group.PropertyChanged(
+				[weak](auto const&, auto const& args)
+			{
+				if (args.PropertyName() != L"IsExpanded") return;
+				if (auto self = weak.get()) self->SavePeerGroupExpansionState();
+			});
 			return group;
 		};
 
