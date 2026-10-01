@@ -1,5 +1,7 @@
 ﻿#pragma once
 
+import winrt.OpenNet.ViewModels;
+
 import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.ViewModels.ObservableMixin;
 import OpenNet.Presentation.ScopedPage;
@@ -29,6 +31,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	public:
 		TasksPage();
 		~TasksPage();
+		winrt::OpenNet::ViewModels::DataTableSortViewModel SortState() const { return m_sortState; }
 		using ::OpenNet::ViewModels::ObservableMixin<TasksPage>::SetProperty;
 		using ::OpenNet::ViewModels::ObservableMixin<TasksPage>::RaisePropertyChanged;
 
@@ -88,7 +91,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// Context menu item handlers
 		void TasksColumnHeader_RightTapped(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Input::RightTappedRoutedEventArgs const& args);
-		void TasksColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 		void TasksColumnMenuFlyout_Opening(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksColumnMenuFlyout_Closed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Windows::Foundation::IInspectable const& args);
 		void TasksColumnVisibility_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
@@ -215,8 +217,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool m_isRestoringScrollPosition{ false };
 
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
-		winrt::hstring m_sortColumn;
-		int m_sortDirection{};
+		winrt::OpenNet::ViewModels::DataTableSortViewModel m_sortState{ L"Tasks" };
 		bool m_isApplyingSort{};
 		bool m_sortPending{};
 		winrt::event_token m_filteredTasksChangedToken{};

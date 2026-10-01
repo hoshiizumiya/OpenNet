@@ -1,0 +1,12 @@
+namespace OpenNet.ViewModels
+{
+    [default_interface]
+    runtimeclass DataTableSortViewModel : Microsoft.UI.Xaml.Data.INotifyPropertyChanged
+    {
+        DataTableSortViewModel(String tableKey);
+        String Column { get; };
+        Int32 Direction { get; };
+        Microsoft.UI.Xaml.Input.ICommand ToggleCommand { get; };
+        void Reset();
+    }
+}

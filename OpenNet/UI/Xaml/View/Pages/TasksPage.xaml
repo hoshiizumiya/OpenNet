@@ -302,9 +302,10 @@
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Left"
+                                        HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Center"
-                                        Click="TasksColumnHeader_Click"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Name">
@@ -325,12 +326,14 @@
                                         Padding="0"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Size">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_Size"
                                             Text="Size"
                                             TextTrimming="CharacterEllipsis" />
@@ -345,12 +348,14 @@
                                         x:Name="SortTaskProgressButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Progress">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_Progress"
                                             Text="Progress"
                                             TextTrimming="CharacterEllipsis" />
@@ -365,12 +370,14 @@
                                         x:Name="SortTaskDownloadSizeButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="DownloadSize">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_DownloadSize"
                                             Text="Download Size"
                                             TextTrimming="CharacterEllipsis" />
@@ -385,12 +392,14 @@
                                         x:Name="SortTaskUploadSizeButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="UploadSize">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_UploadSize"
                                             Text="Upload Size"
                                             TextTrimming="CharacterEllipsis" />
@@ -405,12 +414,14 @@
                                         x:Name="SortTaskTotalDownloadButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="TotalDownloadSize">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_TotalDownloadSize"
                                             Text="Total Download Size"
                                             TextTrimming="CharacterEllipsis" />
@@ -425,12 +436,14 @@
                                         x:Name="SortTaskTotalUploadButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="TotalUploadSize">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_TotalUploadSize"
                                             Text="Total Upload Size"
                                             TextTrimming="CharacterEllipsis" />
@@ -445,12 +458,14 @@
                                         x:Name="SortTaskDlRateButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="DLRate">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_DLRate"
                                             Text="DL Rate"
                                             TextTrimming="CharacterEllipsis" />
@@ -465,12 +480,14 @@
                                         x:Name="SortTaskUlRateButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="ULRate">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_ULRate"
                                             Text="UL Rate"
                                             TextTrimming="CharacterEllipsis" />
@@ -485,12 +502,14 @@
                                         x:Name="SortTaskRemainingButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Remaining">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_Remaining"
                                             Text="Remaining"
                                             TextTrimming="CharacterEllipsis" />
@@ -505,12 +524,14 @@
                                         x:Name="SortTaskAddDateButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="AddDate">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="Header_AddDate"
                                             Text="Add Date"
                                             TextTrimming="CharacterEllipsis" />
@@ -525,12 +546,14 @@
                                         x:Name="SortTaskCompletedDateButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="CompletedDate">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="ViewTasksPageCompletedDateTextBlock"
                                             Text="Completed Date"
                                             TextTrimming="CharacterEllipsis" />
@@ -545,12 +568,14 @@
                                         x:Name="SortTaskShareRatioButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="ShareRatio">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="ViewTasksPageShareRatioTextBlock"
                                             Text="Share Ratio"
                                             TextTrimming="CharacterEllipsis" />
@@ -565,12 +590,14 @@
                                         x:Name="SortTaskSeedsButton"
                                         HorizontalAlignment="Stretch"
                                         VerticalAlignment="Stretch"
-                                        HorizontalContentAlignment="Right"
-                                        Click="TasksColumnHeader_Click"
+                                        HorizontalContentAlignment="Stretch"
+                                        Command="{x:Bind SortState.ToggleCommand}"
+                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Seeds">
                                         <TextBlock
+                                            TextAlignment="Right"
                                             x:Uid="ViewTasksPageSeedsPeersTextBlock"
                                             Text="Seeds/Peers[all]"
                                             TextTrimming="CharacterEllipsis" />

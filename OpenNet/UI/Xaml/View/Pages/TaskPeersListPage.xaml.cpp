@@ -1,4 +1,4 @@
-#include "XamlWorkaround.h"
+﻿#include "XamlWorkaround.h"
 #include "TaskPeersListPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"
@@ -30,6 +30,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		InitializeComponent();
 		UpdateSortHeaders();
+		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
+		{
+			if (args.PropertyName() != L"Direction") return;
+			if (auto self = weak.get())
+			{
+				self->UpdateSortHeaders();
+				self->m_forcePeerRefresh.store(true, std::memory_order_relaxed);
+				self->RefreshPeerList();
+			}
+		});
 		this->NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Disabled);
 
 		Loaded([this](auto, auto)
@@ -200,31 +210,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RefreshPeerList();
 	}
 
-	void TaskPeersListPage::ColumnHeader_Click(
-		winrt::Windows::Foundation::IInspectable const& sender,
-		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-	{
-		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
-		if (!button || !button.Tag()) return;
-		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
-		if (m_sortColumn == column)
-			m_sortDirection = (m_sortDirection + 1) % 3;
-		else
-		{
-			m_sortColumn = column;
-			m_sortDirection = 1;
-		}
-		UpdateSortHeaders();
-		m_forcePeerRefresh.store(true, std::memory_order_relaxed);
-		RefreshPeerList();
-	}
-
 	void TaskPeersListPage::UpdateSortHeaders()
 	{
 		auto update = [this](auto const& button)
 		{
 			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
-				button, m_sortColumn, m_sortDirection);
+				button, m_sortState.Column(), m_sortState.Direction());
 		};
 		update(SortPeerIpButton());
 		update(SortPeerLocationButton());
@@ -246,9 +237,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskPeersListPage::SortPeerItems(
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem>& items)
 	{
-		if (m_sortDirection == 0) return;
-		auto const column = m_sortColumn;
-		auto const direction = m_sortDirection;
+		if (m_sortState.Direction() == 0) return;
+		auto const column = m_sortState.Column();
+		auto const direction = m_sortState.Direction();
 		auto compareText = [](winrt::hstring const& left, winrt::hstring const& right)
 		{
 			return _wcsicmp(left.c_str(), right.c_str());
@@ -408,9 +399,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const& sender,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
 	{
-		m_sortColumn = {};
-		m_sortDirection = 0;
-		UpdateSortHeaders();
+		m_sortState.Reset();
 		for (auto const& column : std::array{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
 			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(), ColPeerStatus(),

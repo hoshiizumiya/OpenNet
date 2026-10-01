@@ -345,7 +345,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 		m_filteredTasksChangedToken = m_viewModel.FilteredTasks().VectorChanged([this](auto const&, auto const&)
 		{
-			if (m_isApplyingSort || m_sortDirection == 0 || m_sortPending)
+			if (m_isApplyingSort || m_sortState.Direction() == 0 || m_sortPending)
 				return;
 			m_sortPending = true;
 			DispatcherQueue().TryEnqueue([weak = get_weak()]()
@@ -396,6 +396,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TasksPageT::InitializeComponent();
 		UpdateTaskSortHeaders();
+		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
+		{
+			if (args.PropertyName() != L"Direction") return;
+			if (auto self = weak.get())
+			{
+				self->UpdateTaskSortHeaders();
+				self->SortFilteredTasks();
+			}
+		});
 		// While restoring order / selection, SelectionChanged may fire.
 		m_restoringTabViewState = true;
 		::OpenNet::Helpers::TabViewStateHelper::RestoreTabViewState(Task_TabView(), std::string{ TaskTabStateKey });
@@ -407,6 +416,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto strong = get_strong();
 		m_isActive.store(true, std::memory_order_release);
 		ActivateScopedViewModel();
+		SortFilteredTasks();
 		auto const tasksListHeight = ::OpenNet::Helpers::GetControlHeight("TasksPage_ContentFrame_Height");
 		if (tasksListHeight > 0.0)
 		{
@@ -1068,28 +1078,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TasksPage::TasksColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-	{
-		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
-		if (!button || !button.Tag()) return;
-		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
-		if (m_sortColumn == column)
-			m_sortDirection = (m_sortDirection + 1) % 3;
-		else
-		{
-			m_sortColumn = column;
-			m_sortDirection = 1;
-		}
-		UpdateTaskSortHeaders();
-		SortFilteredTasks();
-	}
-
 	void TasksPage::UpdateTaskSortHeaders()
 	{
 		auto update = [this](auto const& button)
 		{
 			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(
-				button, m_sortColumn, m_sortDirection);
+				button, m_sortState.Column(), m_sortState.Direction());
 		};
 		update(SortTaskNameButton());
 		update(SortTaskSizeButton());
@@ -1119,7 +1113,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& item : filtered)
 			items.push_back(item);
 
-		if (m_sortDirection == 0)
+		if (m_sortState.Direction() == 0)
 		{
 			auto all = m_viewModel.Tasks();
 			auto originalIndex = [all](auto const& item)
@@ -1136,8 +1130,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		else
 		{
-			auto const column = m_sortColumn;
-			auto const direction = m_sortDirection;
+			auto const column = m_sortState.Column();
+			auto const direction = m_sortState.Direction();
 			auto textValue = [column](auto const& item)
 			{
 				if (column == L"Name") return std::wstring(item.Name());
@@ -1442,10 +1436,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			column.Visibility(Visibility::Visible);
 		}
 		SynchronizeTaskRows();
-		m_sortColumn = {};
-		m_sortDirection = 0;
-		UpdateTaskSortHeaders();
-		SortFilteredTasks();
+		m_sortState.Reset();
 		AutoSizeAllTaskColumns();
 	}
 

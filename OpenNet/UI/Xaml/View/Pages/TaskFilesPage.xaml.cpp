@@ -60,6 +60,15 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		TaskFilesPageT::InitializeComponent();
 		UpdateSortHeaders();
+		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
+		{
+			if (args.PropertyName() != L"Direction") return;
+			if (auto self = weak.get())
+			{
+				self->UpdateSortHeaders();
+				self->RefreshFileList();
+			}
+		});
 		Unloaded([this](auto, auto)
 		{
 			m_isActive.store(false, std::memory_order_release);
@@ -162,28 +171,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		RefreshFileList();
 	}
 
-	void TaskFilesPage::ColumnHeader_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
-	{
-		auto button = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::Button>();
-		if (!button || !button.Tag())
-			return;
-		auto const column = winrt::unbox_value<winrt::hstring>(button.Tag());
-		if (m_sortColumn == column)
-			m_sortDirection = (m_sortDirection + 1) % 3;
-		else
-		{
-			m_sortColumn = column;
-			m_sortDirection = 1;
-		}
-		UpdateSortHeaders();
-		RefreshFileList();
-	}
-
 	void TaskFilesPage::UpdateSortHeaders()
 	{
 		auto update = [this](auto const& button)
 		{
-			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(button, m_sortColumn, m_sortDirection);
+			::OpenNet::UI::Xaml::Control::DataTableSortHelper::UpdateHeader(button, m_sortState.Column(), m_sortState.Direction());
 		};
 		update(SortFileNameButton());
 		update(SortFileSizeButton());
@@ -267,9 +259,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskFilesPage::ResetColumns_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
 	{
-		m_sortColumn = {};
-		m_sortDirection = 0;
-		UpdateSortHeaders();
+		m_sortState.Reset();
 		for (auto const& column : std::array{
 			ColFileName(), ColFileSize(), ColFileProgress(), ColFileDone(), ColFilePriority() })
 			column.Visibility(Visibility::Visible);
@@ -418,6 +408,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			leaf.item.PriorityIndex(isHttp ? file.priority : PriorityToComboIndex(file.priority));
 			leaf.item.IsPriorityEditable(isTorrent);
 		}
+		const auto sortColumn = m_sortState.Column();
+		const auto sortDirection = m_sortState.Direction();
 		// Children are sorted within their own folder, keeping the tree hierarchy intact.
 		auto update = [&](auto&& self, std::wstring const& key) -> void
 		{
@@ -435,7 +427,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		for (auto const& key : roots) update(update, key);
 		auto sort = [&](std::vector<std::wstring>& keys)
 		{
-			if (!m_sortDirection) return;
+			if (!sortDirection) return;
 			std::stable_sort(keys.begin(), keys.end(), [&](auto const& a, auto const& b)
 			{
 				auto const& left = nodes.at(a);
@@ -443,13 +435,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				if (left.item.IsFolder() != right.item.IsFolder()) return left.item.IsFolder();
 				auto compare = [&]() -> int
 				{
-					if (m_sortColumn == L"Size" && left.size != right.size) return left.size < right.size ? -1 : 1;
-					if (m_sortColumn == L"Done" && left.done != right.done) return left.done < right.done ? -1 : 1;
-					if (m_sortColumn == L"Progress" && left.item.ProgressValue() != right.item.ProgressValue()) return left.item.ProgressValue() < right.item.ProgressValue() ? -1 : 1;
-					if (m_sortColumn == L"Priority" && left.priority != right.priority) return left.priority < right.priority ? -1 : 1;
+					if (sortColumn == L"Size" && left.size != right.size) return left.size < right.size ? -1 : 1;
+					if (sortColumn == L"Done" && left.done != right.done) return left.done < right.done ? -1 : 1;
+					if (sortColumn == L"Progress" && left.item.ProgressValue() != right.item.ProgressValue()) return left.item.ProgressValue() < right.item.ProgressValue() ? -1 : 1;
+					if (sortColumn == L"Priority" && left.priority != right.priority) return left.priority < right.priority ? -1 : 1;
 					return left.item.Name() < right.item.Name() ? -1 : left.item.Name() == right.item.Name() ? 0 : 1;
 				};
-				return m_sortDirection == 1 ? compare() < 0 : compare() > 0;
+				return sortDirection == 1 ? compare() < 0 : compare() > 0;
 			});
 		};
 		auto reconcile = [&](auto const& desired, auto const& vector)

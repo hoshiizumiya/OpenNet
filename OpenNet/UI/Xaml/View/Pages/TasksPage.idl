@@ -1,4 +1,5 @@
-﻿import "ViewModels/TasksViewModel.idl";
+﻿import "ViewModels/DataTableSortViewModel.idl";
+import "ViewModels/TasksViewModel.idl";
 
 namespace OpenNet.UI.Xaml.View.Pages
 {
@@ -6,6 +7,7 @@ namespace OpenNet.UI.Xaml.View.Pages
     runtimeclass TasksPage : Microsoft.UI.Xaml.Controls.Page, Microsoft.UI.Xaml.Data.INotifyPropertyChanged
     {
         TasksPage();
+        OpenNet.ViewModels.DataTableSortViewModel SortState { get; };
 
     // Strongly-typed view model for x:Bind
         OpenNet.ViewModels.TasksViewModel ViewModel { get; };
