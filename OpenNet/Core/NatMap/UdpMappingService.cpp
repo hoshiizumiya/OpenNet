@@ -9,6 +9,7 @@
 #include <chrono>
 #include <compare>
 #include <map>
+#include <span>
 #include <stdexcept>
 #include <utility>
 
@@ -99,6 +100,17 @@ namespace OpenNet::Core::NatMap
             u_long enabled = 1;
             return ioctlsocket(socket, FIONBIO, &enabled) == 0;
         }
+
+        bool IsUtpV1(std::span<char const> packet)
+        {
+            // libtorrent's uTP dispatcher requires the 20-byte base header and
+            // protocol version 1. Reject reserved packet types here as well so
+            // automatic mode cannot feed DHT or tracker datagrams to a
+            // loopback endpoint whose address would be mistaken for the peer.
+            if (packet.size() < 20) return false;
+            unsigned char const typeVersion = static_cast<unsigned char>(packet.front());
+            return (typeVersion & 0x0f) == 1 && (typeVersion >> 4) <= 4;
+        }
     }
 
     UdpMappingService::UdpMappingService(UdpMappingTimings timings) : m_timings(timings)
@@ -134,11 +146,12 @@ namespace OpenNet::Core::NatMap
             m_snapshot.targetPort = targetPort;
             m_snapshot.starting = true;
         }
-        m_worker = std::jthread([this, localPort, targetPort, stunHost = std::move(stunHost), stunPort](std::stop_token stop)
+        m_worker = std::jthread([this, localPort, targetPort, stunHost = std::move(stunHost), stunPort,
+                                 followTorrentTarget](std::stop_token stop)
         {
             try
             {
-                Run(stop, localPort, targetPort, stunHost, stunPort);
+                Run(stop, localPort, targetPort, stunHost, stunPort, followTorrentTarget);
             }
             catch (...)
             {
@@ -199,7 +212,7 @@ namespace OpenNet::Core::NatMap
     }
 
     void UdpMappingService::Run(std::stop_token stop, std::uint16_t localPort, std::uint16_t targetPort,
-                                std::wstring stunHost, std::uint16_t stunPort)
+                                std::wstring stunHost, std::uint16_t stunPort, bool utpOnly)
     {
         WSADATA wsa{};
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -398,6 +411,7 @@ namespace OpenNet::Core::NatMap
                         return;
                     }
                     if (currentTargetPort == 0) return;
+                    if (utpOnly && !IsUtpV1(std::span<char const>(buffer.data(), static_cast<std::size_t>(count)))) return;
                     if (peers.size() >= 32 && !peers.contains({ remote.sin_addr.s_addr, remote.sin_port })) return;
                     PeerKey key{ remote.sin_addr.s_addr, remote.sin_port };
                     auto it = peers.find(key);

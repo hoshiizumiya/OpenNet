@@ -175,6 +175,9 @@ namespace winrt::OpenNet::ViewModels::implementation
             else if (!snapshot.targetError.empty()) status = winrt::hstring(snapshot.targetError);
             else if (snapshot.followsTorrentTarget && !snapshot.targetAvailable)
                 status = ResourceGetString(L"NatMappingWaitingTarget");
+            else if (snapshot.followsTorrentTarget)
+                status = ResourceGetString(L"ConnProtocol_UTP") + L" → 127.0.0.1:" +
+                    winrt::to_hstring(snapshot.targetPort);
             else status = ResourceGetString(L"NatMappingForwardingPrefix") + winrt::to_hstring(snapshot.targetPort);
             SetProperty(m_status, status, L"Status");
         }

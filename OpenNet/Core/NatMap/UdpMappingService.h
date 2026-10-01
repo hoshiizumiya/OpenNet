@@ -56,7 +56,7 @@ namespace OpenNet::Core::NatMap
     private:
         void StopWorker();
         void Run(std::stop_token stop, std::uint16_t localPort, std::uint16_t targetPort,
-                 std::wstring stunHost, std::uint16_t stunPort);
+                 std::wstring stunHost, std::uint16_t stunPort, bool utpOnly);
 
         mutable std::mutex m_mutex;
         std::mutex m_lifecycleMutex;

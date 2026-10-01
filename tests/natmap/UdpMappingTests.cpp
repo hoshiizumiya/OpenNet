@@ -54,6 +54,19 @@ struct DatagramSocket
         Require(count >= 0, "receive fixture datagram");
         return std::string(buffer.data(), static_cast<std::size_t>(count));
     }
+    bool HasDatagram(std::chrono::milliseconds wait) const
+    {
+        fd_set readers;
+        FD_ZERO(&readers);
+        FD_SET(value, &readers);
+        timeval timeout{
+            static_cast<long>(wait.count() / 1000),
+            static_cast<long>((wait.count() % 1000) * 1000)
+        };
+        int const ready = select(0, &readers, nullptr, nullptr, &timeout);
+        Require(ready != SOCKET_ERROR, "poll fixture socket");
+        return ready == 1;
+    }
 };
 
 template<typename Predicate>
@@ -76,6 +89,15 @@ std::string Reply(std::string request)
     std::array<unsigned char, 12> const attribute{ 0, 0x20, 0, 8, 0, 1, 0x93, 0x7c, 0xea, 0x12, 0xd5, 0x4b };
     request.append(reinterpret_cast<char const*>(attribute.data()), attribute.size());
     return request;
+}
+
+std::string UtpSyn(std::uint16_t connectionId)
+{
+    std::string packet(20, '\0');
+    packet[0] = 0x41; // ST_SYN (4), uTP version 1.
+    packet[2] = static_cast<char>(connectionId >> 8);
+    packet[3] = static_cast<char>(connectionId & 0xff);
+    return packet;
 }
 
 int main()
@@ -109,20 +131,24 @@ int main()
         Require(service.Snapshot().publicAddress == L"203.0.113.9", "mapped address parsed");
         Require(service.Snapshot().localPort == ntohs(mapping.sin_port), "one socket owns mapping and relay port");
         mapping.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-        clientA.Send("peer-A", mapping);
+        clientA.Send("d1:ad2:id20:abcdefghijklmnopqrstee", mapping);
+        Require(!target.HasDatagram(150ms), "automatic target rejects DHT traffic with loopback source identity");
+        clientA.Send("", mapping);
+        Require(!target.HasDatagram(150ms), "automatic target rejects non-uTP empty datagram");
+        std::string const peerA = UtpSyn(0x1001);
+        std::string const peerB = UtpSyn(0x1002);
+        clientA.Send(peerA, mapping);
         sockaddr_in insideA{};
-        Require(target.Receive(insideA) == "peer-A", "external-to-target relay A");
-        clientB.Send("peer-B", mapping);
+        Require(target.Receive(insideA) == peerA, "external-to-target uTP relay A");
+        clientB.Send(peerB, mapping);
         sockaddr_in insideB{};
-        Require(target.Receive(insideB) == "peer-B", "external-to-target relay B");
+        Require(target.Receive(insideB) == peerB, "external-to-target uTP relay B");
         Require(insideA.sin_port != insideB.sin_port, "per-peer local sockets isolate reply routing");
         target.Send("reply-B", insideB);
         target.Send("reply-A", insideA);
         sockaddr_in origin{};
         Require(clientA.Receive(origin) == "reply-A" && origin.sin_port == mapping.sin_port, "reply A uses mapping socket");
         Require(clientB.Receive(origin) == "reply-B" && origin.sin_port == mapping.sin_port, "reply B uses mapping socket");
-        clientA.Send("", mapping);
-        Require(target.Receive(insideA).empty(), "zero-length inbound datagram");
         target.Send("", insideA);
         Require(clientA.Receive(origin).empty(), "zero-length outbound datagram");
         // Continuous invalid packets from the STUN endpoint must not starve peer
@@ -157,9 +183,10 @@ int main()
         }
         WaitFor([&] { return service.Snapshot().publicPort == 45678; }, "network recovery refreshes STUN observation");
         recoveredMapping.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
-        clientA.Send("after-network-change", recoveredMapping);
+        std::string const recoveredPeer = UtpSyn(0x2001);
+        clientA.Send(recoveredPeer, recoveredMapping);
         sockaddr_in recoveredInside{};
-        Require(target.Receive(recoveredInside) == "after-network-change", "relay resumes after network recovery");
+        Require(target.Receive(recoveredInside) == recoveredPeer, "uTP relay resumes after network recovery");
         target.Send("recovered-reply", recoveredInside);
         Require(clientA.Receive(origin) == "recovered-reply", "return relay resumes after network recovery");
 
@@ -172,9 +199,10 @@ int main()
             auto const snapshot = service.Snapshot();
             return snapshot.targetAvailable && snapshot.targetPort == replacementTarget.Port();
         }, "restarted torrent listener updates relay target");
-        clientA.Send("after-listener-restart", recoveredMapping);
+        std::string const replacementPeer = UtpSyn(0x3001);
+        clientA.Send(replacementPeer, recoveredMapping);
         sockaddr_in replacementInside{};
-        Require(replacementTarget.Receive(replacementInside) == "after-listener-restart",
+        Require(replacementTarget.Receive(replacementInside) == replacementPeer,
             "listener restart relays to the new target");
         replacementTarget.Send("replacement-reply", replacementInside);
         Require(clientA.Receive(origin) == "replacement-reply",
@@ -192,6 +220,12 @@ int main()
         }
         Require(service.Start(boundPort, target.Port(), L"127.0.0.1", stun.Port()), "restart on released port");
         WaitFor([&] { return service.Snapshot().running; }, "released port can restart");
+        mapping.sin_port = htons(boundPort);
+        std::string const manualPacket = "d1:ad2:id20:abcdefghijklmnopqrstee";
+        clientA.Send(manualPacket, mapping);
+        Require(target.Receive(insideA) == manualPacket, "manual target retains generic UDP relay");
+        clientA.Send("", mapping);
+        Require(target.Receive(insideA).empty(), "manual target relays zero-length datagram");
         service.Stop();
         for (unsigned i = 0; i < 10; ++i)
         {
@@ -204,7 +238,7 @@ int main()
         std::this_thread::sleep_for(20ms);
         service.Stop();
         Require(std::chrono::steady_clock::now() - cancelStart < 3s, "DNS cancellation does not wait for timeout");
-        std::cout << "UDP mapping, two-peer relay, empty datagrams, STUN starvation/expiry, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
+        std::cout << "UDP mapping, uTP-only automatic relay, generic manual relay, two-peer routing, STUN starvation/expiry, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
         return 0;
     }
     catch (std::exception const& error) { std::cerr << error.what() << '\n'; return 1; }
