@@ -18,6 +18,19 @@ namespace OpenNet.ViewModels
         Microsoft.UI.Xaml.Input.ICommand StopCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand AllowFirewallCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand RemoveFirewallCommand { get; };
+        String TcpLocalAddress;
+        Double TcpMappingPort;
+        Double TcpTargetPort;
+        String TcpKeepaliveHost;
+        Double TcpKeepalivePort;
+        String TcpStunHost;
+        Double TcpStunPort;
+        String TcpStatus { get; };
+        String TcpPublicEndpoint { get; };
+        Boolean IsTcpBusy { get; };
+        Boolean IsTcpRunning { get; };
+        Microsoft.UI.Xaml.Input.ICommand StartTcpCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand StopTcpCommand { get; };
         void Refresh();
     };
 }

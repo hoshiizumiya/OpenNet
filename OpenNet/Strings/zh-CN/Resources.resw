@@ -6811,6 +6811,63 @@
   <data name="NatMappingFirewallRequiresFixedPort" xml:space="preserve">
     <value>请先用固定端口启动映射，再添加长期有效的防火墙规则。</value>
   </data>
+  <data name="NatTools_TcpMappingHeader.Text" xml:space="preserve">
+    <value>TCP / WebUI NAT 映射</value>
+  </data>
+  <data name="NatTools_TcpMappingDescription.Text" xml:space="preserve">
+    <value>在同一源端口上保持 HTTP 与 TCP STUN 连接，监听该共享端口，并将入站 TCP 连接转发到回环目标。</value>
+  </data>
+  <data name="NatTools_TcpMappingWarning.Title" xml:space="preserve">
+    <value>公网 TCP 暴露必须手动启用</value>
+  </data>
+  <data name="NatTools_TcpMappingWarning.Message" xml:space="preserve">
+    <value>此模式无法独占共享端口。请绑定具体网卡地址，且仅暴露已启用身份验证的目标。它不会添加防火墙规则，STUN 观测也不代表外网可达。</value>
+  </data>
+  <data name="NatTools_TcpLocalAddress.Header" xml:space="preserve">
+    <value>本机 IPv4 地址</value>
+  </data>
+  <data name="NatTools_TcpMappingPort.Header" xml:space="preserve">
+    <value>映射端口（0 为自动分配）</value>
+  </data>
+  <data name="NatTools_TcpTargetPort.Header" xml:space="preserve">
+    <value>回环目标端口</value>
+  </data>
+  <data name="NatTools_TcpKeepaliveHost.Header" xml:space="preserve">
+    <value>HTTP 保活主机</value>
+  </data>
+  <data name="NatTools_TcpKeepalivePort.Header" xml:space="preserve">
+    <value>HTTP 端口</value>
+  </data>
+  <data name="NatTools_TcpStunHost.Header" xml:space="preserve">
+    <value>TCP STUN 服务器</value>
+  </data>
+  <data name="NatTools_TcpStunPort.Header" xml:space="preserve">
+    <value>TCP STUN 端口</value>
+  </data>
+  <data name="NatTools_StartTcpMapping.Content" xml:space="preserve">
+    <value>启动 TCP 映射</value>
+  </data>
+  <data name="NatTools_StopTcpMapping.Content" xml:space="preserve">
+    <value>停止 TCP 映射</value>
+  </data>
+  <data name="NatTools_TcpObservedEndpoint.Text" xml:space="preserve">
+    <value>向 STUN 服务器观测到的 TCP 映射：</value>
+  </data>
+  <data name="NatTcpMappingStopped" xml:space="preserve">
+    <value>TCP 映射已停止</value>
+  </data>
+  <data name="NatTcpMappingInvalidConfig" xml:space="preserve">
+    <value>请输入具体的本机 IPv4 地址，并检查所有 TCP 端口和主机。</value>
+  </data>
+  <data name="NatTcpMappingStarting" xml:space="preserve">
+    <value>正在启动 TCP 映射…</value>
+  </data>
+  <data name="NatTcpMappingForwardingPrefix" xml:space="preserve">
+    <value>正在将 TCP 转发到 127.0.0.1:</value>
+  </data>
+  <data name="NatTcpMappingActiveRelaysPrefix" xml:space="preserve">
+    <value>；活动转发：</value>
+  </data>
 
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">
     <value>设置</value>

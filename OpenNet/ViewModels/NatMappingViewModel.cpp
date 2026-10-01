@@ -1,12 +1,14 @@
 #include "XamlWorkaround.h"
 #include "ViewModels/NatMappingViewModel.h"
 #include "ViewModels/NatMappingViewModel.g.cpp"
+#include "Core/NatMap/TcpMappingService.h"
 #include "Core/NatMap/UdpMappingService.h"
 #include "Core/NatMap/MappingFirewall.h"
 #include "mvvm_framework/delegate_command_builder.h"
 #include <chrono>
 #include <cmath>
 #include <string>
+#include <utility>
 
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.Utils.Message;
@@ -20,6 +22,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         m_status = ResourceGetString(L"NatMappingStopped");
         m_publicEndpoint = L"—";
         m_firewallStatus = ResourceGetString(L"NatMappingFirewallUnchanged");
+        m_tcpStatus = ResourceGetString(L"NatTcpMappingStopped");
+        m_tcpPublicEndpoint = L"—";
         m_startCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
             .Execute([weak = get_weak()](auto const&)
         {
@@ -110,6 +114,43 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
         }).Build();
 
+        m_startTcpCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .Execute([weak = get_weak()](auto const&)
+        {
+            if (auto self = weak.get())
+            {
+                auto validPort = [](double value, bool allowZero)
+                {
+                    return std::isfinite(value) && value >= (allowZero ? 0 : 1) && value <= 65535 &&
+                        std::floor(value) == value;
+                };
+                if (self->m_tcpLocalAddress.empty() || self->m_tcpLocalAddress.size() > 45 ||
+                    !validPort(self->m_tcpMappingPort, true) || !validPort(self->m_tcpTargetPort, false) ||
+                    self->m_tcpKeepaliveHost.empty() || self->m_tcpKeepaliveHost.size() > 253 ||
+                    !validPort(self->m_tcpKeepalivePort, false) ||
+                    self->m_tcpStunHost.empty() || self->m_tcpStunHost.size() > 253 ||
+                    !validPort(self->m_tcpStunPort, false))
+                {
+                    self->SetProperty(self->m_tcpStatus, ResourceGetString(L"NatTcpMappingInvalidConfig"), L"TcpStatus");
+                    return;
+                }
+                self->ChangeTcpMappingAsync(true);
+            }
+        }).CanExecute([weak = get_weak()](auto const&)
+        {
+            auto self = weak.get();
+            return self && !self->m_isTcpBusy && !self->m_isTcpRunning;
+        }).DependsOn(L"IsTcpBusy").DependsOn(L"IsTcpRunning").Build();
+        m_stopTcpCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .Execute([weak = get_weak()](auto const&)
+        {
+            if (auto self = weak.get()) self->ChangeTcpMappingAsync(false);
+        }).CanExecute([weak = get_weak()](auto const&)
+        {
+            auto self = weak.get();
+            return self && !self->m_isTcpBusy && self->m_isTcpRunning;
+        }).DependsOn(L"IsTcpBusy").DependsOn(L"IsTcpRunning").Build();
+
         m_timer = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread().CreateTimer();
         m_timer.Interval(std::chrono::seconds(1));
         m_tickToken = m_timer.Tick([weak = get_weak()](auto&&, auto&&)
@@ -156,6 +197,40 @@ namespace winrt::OpenNet::ViewModels::implementation
         Refresh();
     }
 
+    winrt::fire_and_forget NatMappingViewModel::ChangeTcpMappingAsync(bool start)
+    {
+        if (m_isTcpBusy) co_return;
+        auto lifetime = get_strong();
+        auto const dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
+        ::OpenNet::Core::NatMap::TcpMappingOptions options;
+        if (start)
+        {
+            options.localAddress = std::wstring(m_tcpLocalAddress.c_str());
+            options.localPort = static_cast<std::uint16_t>(m_tcpMappingPort);
+            options.targetPort = static_cast<std::uint16_t>(m_tcpTargetPort);
+            options.keepaliveHost = std::wstring(m_tcpKeepaliveHost.c_str());
+            options.keepalivePort = static_cast<std::uint16_t>(m_tcpKeepalivePort);
+            options.stunHost = std::wstring(m_tcpStunHost.c_str());
+            options.stunPort = static_cast<std::uint16_t>(m_tcpStunPort);
+        }
+        SetProperty(m_isTcpBusy, true, L"IsTcpBusy");
+        if (start) SetProperty(m_tcpStatus, ResourceGetString(L"NatTcpMappingStarting"), L"TcpStatus");
+        co_await winrt::resume_background();
+        bool failed{};
+        try
+        {
+            auto& service = ::OpenNet::Core::NatMap::SharedTcpMappingService();
+            if (start) failed = !service.Start(std::move(options));
+            else service.Stop();
+        }
+        catch (...) { failed = true; }
+        co_await winrtplus::resume_foreground(dispatcher);
+        SetProperty(m_isTcpBusy, false, L"IsTcpBusy");
+        SetProperty(m_tcpStatus, ResourceGetString(failed ? L"NatTcpMappingInvalidConfig" :
+            start ? L"NatTcpMappingStarting" : L"NatTcpMappingStopped"), L"TcpStatus");
+        Refresh();
+    }
+
     void NatMappingViewModel::Refresh()
     {
         auto const snapshot = ::OpenNet::Core::NatMap::SharedUdpMappingService().Snapshot();
@@ -187,6 +262,24 @@ namespace winrt::OpenNet::ViewModels::implementation
             SetProperty(m_publicEndpoint, winrt::hstring(L"—"), L"PublicEndpoint");
             if (snapshot.starting) SetProperty(m_status, ResourceGetString(L"NatMappingStarting"), L"Status");
             else if (!snapshot.error.empty()) SetProperty(m_status, winrt::hstring(snapshot.error), L"Status");
+        }
+
+        auto const tcp = ::OpenNet::Core::NatMap::SharedTcpMappingService().Snapshot();
+        SetProperty(m_isTcpRunning, tcp.running || tcp.starting, L"IsTcpRunning");
+        if (tcp.running)
+        {
+            SetProperty(m_tcpPublicEndpoint, tcp.publicAddress.empty() ? ResourceGetString(L"NatMappingWaitingStun") :
+                winrt::hstring(tcp.publicAddress + L":" + std::to_wstring(tcp.publicPort)), L"TcpPublicEndpoint");
+            SetProperty(m_tcpStatus, !tcp.error.empty() ? winrt::hstring(tcp.error) :
+                ResourceGetString(L"NatTcpMappingForwardingPrefix") + winrt::to_hstring(tcp.targetPort) +
+                ResourceGetString(L"NatTcpMappingActiveRelaysPrefix") +
+                winrt::hstring(std::to_wstring(tcp.activeRelays)), L"TcpStatus");
+        }
+        else
+        {
+            SetProperty(m_tcpPublicEndpoint, winrt::hstring(L"—"), L"TcpPublicEndpoint");
+            if (tcp.starting) SetProperty(m_tcpStatus, ResourceGetString(L"NatTcpMappingStarting"), L"TcpStatus");
+            else if (!tcp.error.empty()) SetProperty(m_tcpStatus, winrt::hstring(tcp.error), L"TcpStatus");
         }
     }
 }
