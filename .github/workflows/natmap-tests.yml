@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - 'OpenNet/App.xaml.*'
       - 'OpenNet/Core/NatMap/**'
       - 'OpenNet/ViewModels/NatMappingViewModel.*'
       - 'OpenNet/UI/Xaml/View/Pages/NatToolsPage.*'
