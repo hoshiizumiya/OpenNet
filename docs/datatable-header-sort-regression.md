@@ -1,147 +1,64 @@
 # DataTable header layout and sort restoration
 
-## Observed behavior
+## Result and scope
 
-After fitting all columns to content, dragging any one column causes otherwise
-unchanged headers to replace their final character with an ellipsis. Navigating
-away and back also reproduces it. Clicking a sort header loses its state when the
-page is recreated.
+The user confirmed on 2026-10-01 that the original header truncation is fixed
+in OpenNet. The repair combines Toolkit column measurement changes with
+OpenNet's shared sortable-header Button content alignment. No layout-rounding
+override, column rounding, extra padding or persistence precision change is used.
+Individual changes were not visually isolated, so do not claim that one change
+alone explains every previously truncated header or that WinUI has a proven bug.
 
-## Layout investigation
+## Toolkit measurement
 
-`DataTable::BeginColumnResize` freezes **all** visible resolved widths into pixel
-`DesiredWidth` values. Restoring saved widths enters the same finite-measure path.
-Consequently, the shared trigger is Auto/Star-to-Pixel layout, independently of
-SQLite serialization precision.
+`DataTable::BeginColumnResize` freezes all visible Auto/Star column widths to
+fixed logical widths. Auto means content-sized; Star means proportional sizing.
+Dragging one column therefore changes the measurement mode of its neighbours.
+Restoring saved fixed widths after navigation enters the same finite-width path.
 
-Do not infer the headers' rounding state from the application's background
-Image/MediaPlayerElement or its UIElement style. Read each element's effective
-`UseLayoutRounding` value at runtime. The user requires preserving the existing
-rounding policy and logical widths: do not enable rounding, round column widths,
-or add extra padding as a workaround.
+The old `MeasureOverride` measured Auto headers against the remaining viewport
+width. Later headers could be constrained before their complete content was
+measured, although horizontal scrolling permits the table to exceed the viewport.
+It also measured Star columns without first reserving the Auto columns' widths.
+The corrected two-pass measurement first measures Auto headers with unbounded
+horizontal space, reserves their complete requirements and fixed column widths,
+then allocates the remaining width to Star columns. Fixed columns continue to
+use their requested widths, so deliberately narrow text still uses ellipsis.
 
-WinUI's TextBlock recalculates its DirectWrite maximum text width during Arrange
-when trimming is enabled. ContentPresenter also chooses either its child's
-DesiredSize or its complete content slot depending on content alignment. These
-are candidate points where an Auto-to-Pixel transition can change the text
-constraint. Neither the rounding hypothesis nor an upstream defect is confirmed
-without runtime measurements.
+`DataRow` previously retained `MaxChildDesiredWidth` by reference as its old
+value. Updating the property also changed that referenced value, so the change
+comparison could never notify the table. Capturing the old width by value
+restores that notification. These two common fixes also belong on the fork's
+`fix/DataTable` branch; unrelated branch differences must be preserved.
 
-Source locations:
+## OpenNet header alignment
 
-- `dxaml/xcp/core/text/TextBlock/TextBlock.cpp`: `MeasureOverride`, `ArrangeOverride`.
-- `dxaml/xcp/core/core/elements/framework.cpp`: `MeasureCore` and `LayoutRoundFloor`.
-- `dxaml/xcp/core/core/elements/ContentPresenter.cpp`: `MeasureOverride`.
-
-The Toolkit change measures Auto headers with unbounded horizontal space, then
-reserves Auto widths before allocating Star space. OpenNet's sortable header
-buttons stretch their content into that slot;
-right-aligned numeric labels retain their TextAlignment. CharacterEllipsis stays
-enabled for genuinely narrow columns.
-
-The DataRow change captures `MaxChildDesiredWidth` **by value** before updating
-it. The previous reference aliased the new value, so its change comparison could
-never notify the header.
+`DataTableColumnHeaderButtonStyle.HorizontalContentAlignment` is now `Stretch`.
+The Button's content uses the full assigned content slot during finite-width
+layout rather than being limited to its requested content width. Text alignment
+is still controlled by each label; using the full slot does not round or enlarge
+the saved column width. This change applies to the shared sortable-header style.
 
 ## Shared sort state
 
-`DataTableSortViewModel` owns the active column, three-state direction cycle and
-ToggleCommand. Tasks, Files, Peers and Trackers use separate stable table keys.
-One SQLite setting in category `table_sort` stores both fields immediately.
-Headers and collection-specific sorting read that same ViewModel. The pages
-only adapt PropertyChanged notifications to their existing collection routines.
-Reset persists source order; returning to a page or restarting restores it.
+`DataTableSortViewModel` owns the column, direction and ToggleCommand. Tasks,
+Files, Peers and Trackers have separate stable table keys. One SQLite setting in
+category `table_sort` stores both fields immediately; headers and collection
+sorting read the same restored state. Page adapters connect PropertyChanged to
+their existing collection sorting routines. Reset persists source order.
 
-`scripts/test_datatable_sort_state.cpp` exercises page recreation between every
-click, changing columns, reset, Unicode identifiers and malformed saved records.
-Canary runs these native tests before the application build on x64.
+## Completion
 
-## Validation boundaries
+The user confirmed the application header behavior is fixed. The prior full
+x64/ARM64 Canary build for `7121de4f6f0afae18e9dcae37fec5aa71e2e29d3`
+passed (run `36785048186`). Individual changes and every display scale were not
+visually isolated, so this does not identify one exclusive cause.
 
-The portable sort tests and XML checks can run on Linux. The x64/ARM64 Canary
-builds verify generated IDL/XAML and C++/WinRT code on Windows. A successful build
-alone does **not** verify TextBlock's actual visual trimming behavior.
+The independent pure WinUI candidate did not reproduce the original transition.
+The supplied manual log has `trimmed=False` throughout loaded layout and no
+Auto-to-fixed or reconstruction transition. Zero sizes on Unloaded are teardown
+readings. These logs do not establish a WinUI defect.
 
-Windows visual regression procedure, for all four sortable tables and the
-remaining DataTable headers:
-
-1. Use 100%, 125%, 150%, 175% and 200% display scaling; test English and Chinese.
-2. Fit all columns, including when their sum exceeds the horizontal viewport.
-3. Drag one column wider. Other columns' complete headers must remain unchanged.
-4. Drag that column narrower. Only genuinely constrained content should trim.
-5. Navigate away/back, switch detail tabs, then restart with saved pixel widths.
-6. Sort ascending/descending/source order and confirm both rows and indicators
-   remain consistent after each navigation. Repeat for Files' sibling nodes and
-   Peers' groups. Confirm reset and hidden columns still work.
-
-If trimming remains, capture the failing label's `DesiredSize`, `ActualWidth`,
-`ActualSize.X`, layout slot, `IsTextTrimmed`, `UseLayoutRounding`, XamlRoot.RasterizationScale, containing
-Button and DataColumn dimensions immediately before and after the width freeze.
-Do not change persistence precision without evidence that those saved values
-differ from the resolved column widths.
-
-## Diagnostic output
-
-Peer headers IP, download speed and reason use the reusable
-`DataTableHeaderDiagnostics` observer. Filter Visual Studio's Debug output for
-`[ON-DTH]`. It records Width-property changes separately from SizeChanged and
-IsTextTrimmedChanged, then schedules one read-only snapshot at dispatcher low
-priority. It never calls Measure, Arrange, UpdateLayout, InvalidateMeasure or
-changes widths or rounding. Weak element references avoid retaining the page.
-
-`ActualWidth` alone is insufficient for TextBlock: see WinUI issues
-[#1669](https://github.com/microsoft/microsoft-ui-xaml/issues/1669) and
-[#8804](https://github.com/microsoft/microsoft-ui-xaml/issues/8804). Those concern
-inconsistent text/element size reporting, not a confirmed duplicate of this
-DataTable trimming defect. Both ActualSize.X and LayoutInformation.GetLayoutSlot
-are logged so a change of text metrics is not mistaken for a change of layout.
-
-The independent pure WinUI candidate in `repros/DataTableHeaderTrimming` removes
-Toolkit and persistence. Canary builds it in a separate job and uploads an x64
-executable. Its Freeze/Recreate actions preserve the exact width doubles, and
-its options compare intrinsic Auto measurement and Stretch alignment. It is
-not a confirmed reproduction until run on Windows. An upstream issue draft is
-included with the runtime evidence still required before submission.
-
-## Automated runtime evidence
-
-The latest checked production commit `3773c315f62cb1fab4a81535aebcbca224ac46a4`
-completed Canary run `36767387666` successfully: both x64/ARM64 application
-builds, x64 native sort-state tests and the independent sample build passed.
-Toolkit HEAD `20f248b129f5db9f2fe92bb404a5c25dacafd857` has no separate Actions
-run; it was compiled as OpenNet's pinned submodule by those application builds.
-These are build/persistence checks, not a visual result.
-
-The sample now has an opt-in automated capture driven by
-`ON_DTH_CAPTURE_DIRECTORY`, and the independent Canary job launches it on the
-Windows runner. Sixteen cases compare the two Auto measurement modes, the two
-button-content alignments, sort glyph presence and wide/narrow viewports.
-Snapshots are taken after loaded layout readings settle, preserving all original
-logical widths across Freeze and Recreate. Widening the first column checks
-only its neighbours for unexpected changes. Each result records full baseline
-and post-transition measurements; only complete-to-trimmed transitions count.
-WinUI-rendered header PNGs and actual scale/version information accompany the
-read-only layout log. No production layout/persistence policy is changed.
-
-A runtime capture can fail independently of the application build if the runner
-cannot launch/render WinUI. Zero transitions cannot clear the production bug:
-the reduced panel has no Toolkit data rows or Star sizing, and only the runner's
-native DPI is covered. Production sorting/arrow restoration and other DPI scales
-still require Windows application regression. Do not submit the issue draft
-without inspecting concrete runtime evidence.
-
-Runtime capture startup initially failed in `HeaderColumn.InitializeComponent`.
-The `ee84a55d1e47e4f197205e639aaac17eca04470d` evidence artifact from run
-`36783086455` isolated a missing `SubtleButtonStyle` resource in the standalone
-application; ContentPresenter-content and Thumb-template construction succeeded.
-The candidate now uses the default WinUI Button and records this production
-style difference. Its presenter also matches the Toolkit template's
-HorizontalAlignment rather than overriding HorizontalContentAlignment. Both
-properties are now explicitly observed in OpenNet and the sample; none of the
-production properties are written by diagnostics. Removing that explicit style
-alone did not fix HeaderColumn LoadComponent, so missing resource resolution is
-not a proven complete startup root cause. The candidate now constructs the same
-native presenter/button/grid hierarchy directly in C#, removing its generated
-HeaderColumn XBF dependency from the measurement experiment. Construction and
-style differences are explicitly recorded in the capture summary. These sample
-changes are not a finding about the original production trimming defect.
+The temporary candidate, added CI checks, sort-state test file, issue draft and
+production debug observer were removed at the user's request. They remain in
+Git history. No upstream WinUI issue was submitted from this non-reproduction.

@@ -14,7 +14,6 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Helpers.ColumnWidthHelper;
 import OpenNet.UI.Xaml.Control.DataTableColumnVisibilityHelper;
 import OpenNet.UI.Xaml.Control.DataTableSortHelper;
-import OpenNet.UI.Xaml.Control.DataTableHeaderDiagnostics;
 import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
@@ -31,11 +30,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		InitializeComponent();
 		UpdateSortHeaders();
-		// Three representative headers are enough to observe whether dragging
-		// any column changes its neighbours, without logging the entire peer UI.
-		::OpenNet::UI::Xaml::Control::DataTableHeaderDiagnostics::Attach(ColPeerIP(), L"Peers.IP");
-		::OpenNet::UI::Xaml::Control::DataTableHeaderDiagnostics::Attach(ColPeerDLSpeed(), L"Peers.DLSpeed");
-		::OpenNet::UI::Xaml::Control::DataTableHeaderDiagnostics::Attach(ColPeerReason(), L"Peers.Reason");
 		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
 		{
 			if (args.PropertyName() != L"Direction") return;

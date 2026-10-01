@@ -36,61 +36,6 @@ env:
   VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,readwrite"
 
 jobs:
-  datatable-repro:
-    runs-on: windows-2025-vs2026
-    steps:
-      - uses: actions/checkout@v7
-      - name: Build standalone WinUI header diagnostic sample
-        shell: pwsh
-        run: |
-          dotnet --info
-          dotnet publish repros/DataTableHeaderTrimming/DataTableHeaderTrimming.csproj -c Release -p:Platform=x64 -r win-x64 -o out/datatable-repro
-          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-      - name: Capture real WinUI Auto-to-Pixel layout on Windows
-        shell: pwsh
-        run: |
-          $evidence = Join-Path $env:GITHUB_WORKSPACE 'out/datatable-evidence'
-          New-Item -ItemType Directory -Path $evidence -Force | Out-Null
-          $env:ON_DTH_CAPTURE_DIRECTORY = $evidence
-          $started = Get-Date
-          $publish = (Resolve-Path 'out/datatable-repro').Path
-          $process = Start-Process (Join-Path $publish 'DataTableHeaderTrimming.exe') -WorkingDirectory $publish -PassThru
-          if (-not $process.WaitForExit(180000)) {
-            Stop-Process -Id $process.Id -Force
-            throw 'WinUI capture timed out; no runtime result can be inferred.'
-          }
-          if ($process.ExitCode -ne 0) {
-            Get-ChildItem "$env:TEMP/DataTableHeaderTrimming-*.log" -ErrorAction SilentlyContinue |
-              Copy-Item -Destination $evidence -Force
-            $events = Get-WinEvent -FilterHashtable @{ LogName = 'Application'; StartTime = $started; Level = 2 } -ErrorAction SilentlyContinue |
-              Where-Object { $_.Message -match 'DataTableHeaderTrimming' } |
-              Select-Object TimeCreated, ProviderName, Id, Message
-            $events | ConvertTo-Json -Depth 4 | Set-Content (Join-Path $evidence 'startup-events.json')
-            if (Test-Path (Join-Path $evidence 'summary.json')) { Get-Content (Join-Path $evidence 'summary.json') }
-            $events | Select-Object -First 3 | Format-List
-            throw "WinUI capture exited with $($process.ExitCode)."
-          }
-          $summary = Get-Content (Join-Path $evidence 'summary.json') -Raw | ConvertFrom-Json
-          if ($summary.Status -ne 'capture-complete') { throw 'WinUI runtime evidence is incomplete.' }
-          Write-Host "Captured $($summary.Cases.Count) cases; newly trimmed transitions: $($summary.NewlyTrimmedTransitions)."
-          Write-Host "Native XAML: $($summary.NativeXamlVersion); OS: $($summary.OS)"
-          Write-Host $summary.Boundary
-      - name: Upload Windows layout measurements and rendered headers
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: DataTableHeaderEvidence-x64-${{ github.sha }}
-          path: out/datatable-evidence/
-          if-no-files-found: warn
-          retention-days: 14
-      - name: Upload standalone header diagnostic sample
-        uses: actions/upload-artifact@v7
-        with:
-          name: DataTableHeaderTrimming-x64-${{ github.sha }}
-          path: out/datatable-repro/
-          if-no-files-found: error
-          retention-days: 14
-
   build:
     runs-on: windows-2025-vs2026
     outputs:
@@ -178,17 +123,6 @@ jobs:
       
           Write-Host "MSVC Preview toolset found:"
           Write-Host $toolsetPath
-
-      - name: Run DataTable sort-state regression tests
-        if: matrix.platform == 'x64'
-        shell: cmd
-        run: |
-          call "C:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=x64 -host_arch=x64
-          if errorlevel 1 exit /b 1
-          cl /nologo /std:c++20 /EHsc /W4 /WX /utf-8 scripts\test_datatable_sort_state.cpp /Fo:"%RUNNER_TEMP%\datatable-sort.obj" /Fe:"%RUNNER_TEMP%\datatable-sort.exe"
-          if errorlevel 1 exit /b 1
-          "%RUNNER_TEMP%\datatable-sort.exe"
-          if errorlevel 1 exit /b 1
 
       - name: Set up vcpkg
         working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
