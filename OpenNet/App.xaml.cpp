@@ -1,5 +1,6 @@
 ﻿module;
 #include "Core/WebUI/WebUIHost.h"
+#include "Core/NatMap/TcpMappingService.h"
 #include "Core/NatMap/UdpMappingService.h"
 #include "XamlWorkaround.h"
 #include "MainWindow.xaml.h"
@@ -110,6 +111,7 @@ namespace winrt::OpenNet::implementation
 			s_networkStatusChangedToken = winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged([](auto&&)
 			{
 				::OpenNet::Core::NatMap::SharedUdpMappingService().RequestNetworkRecovery();
+				::OpenNet::Core::NatMap::SharedTcpMappingService().RequestNetworkRecovery();
 			});
 		}
 		catch (...)
@@ -681,6 +683,7 @@ namespace winrt::OpenNet::implementation
 				winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged(s_networkStatusChangedToken);
 				s_networkStatusChangedToken = {};
 			}
+			::OpenNet::Core::NatMap::SharedTcpMappingService().Stop();
 			::OpenNet::Core::NatMap::SharedUdpMappingService().Stop();
 		}
 		catch (...)

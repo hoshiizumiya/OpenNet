@@ -638,6 +638,7 @@
       <DependentUpon>UI\Xaml\View\Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Core\NatMap\TcpMappingService.h" />
     <ClInclude Include="Core\NatMap\UdpMappingService.h" />
     <ClInclude Include="Core\NatMap\StunProtocol.h" />
     <ClInclude Include="Core\NatMap\MappingFirewall.h" />
@@ -930,6 +931,7 @@
     <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp" />
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp" />
+    <ClCompile Include="Core\NatMap\TcpMappingService.cpp" />
     <ClCompile Include="Core\NatMap\UdpMappingService.cpp" />
     <ClCompile Include="Core\NatMap\MappingFirewall.cpp" />
     <ClCompile Include="Core\ClientFilter\ClientFilterManager.cpp" />

@@ -35,4 +35,13 @@ if(WIN32)
   target_link_libraries(tcp_port_reuse_tests PRIVATE ws2_32)
   add_test(NAME tcp_port_reuse COMMAND tcp_port_reuse_tests)
   set_tests_properties(tcp_port_reuse PROPERTIES TIMEOUT 20)
+
+  add_executable(tcp_mapping_tests TcpMappingTests.cpp
+    ../../OpenNet/Core/NatMap/TcpMappingService.cpp)
+  target_include_directories(tcp_mapping_tests PRIVATE ../../OpenNet)
+  target_compile_definitions(tcp_mapping_tests PRIVATE UNICODE _UNICODE NOMINMAX WIN32_LEAN_AND_MEAN _WIN32_WINNT=0x0A00)
+  target_compile_options(tcp_mapping_tests PRIVATE /W4 /WX /permissive-)
+  target_link_libraries(tcp_mapping_tests PRIVATE ws2_32 bcrypt)
+  add_test(NAME tcp_mapping COMMAND tcp_mapping_tests)
+  set_tests_properties(tcp_mapping PROPERTIES TIMEOUT 30)
 endif()

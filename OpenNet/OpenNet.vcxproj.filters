@@ -576,6 +576,9 @@
     <ClCompile Include="Web\ServerDomainMode.ixx">
       <Filter>Web</Filter>
     </ClCompile>
+    <ClCompile Include="Core\NatMap\TcpMappingService.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
     <ClCompile Include="Core\NatMap\UdpMappingService.cpp">
       <Filter>Core</Filter>
     </ClCompile>
@@ -909,6 +912,9 @@
     </ClInclude>
     <ClInclude Include="ViewModels\NetworkSettingsViewModel.h">
       <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Core\NatMap\TcpMappingService.h">
+      <Filter>Core</Filter>
     </ClInclude>
     <ClInclude Include="Core\NatMap\UdpMappingService.h">
       <Filter>Core</Filter>
