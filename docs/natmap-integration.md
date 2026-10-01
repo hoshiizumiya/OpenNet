@@ -4,7 +4,7 @@ Reference: `hoshiizumiya/natmap` at `31d46801a4d868c84d6bee5660ee34ba83ddc889` (
 
 ## Current UDP data path
 
-1. OpenNet binds an **exclusive, dedicated UDP port** on `0.0.0.0`. A value of zero asks Windows to allocate an available port. The target is a **different** local port, defaulting to libtorrent's current listening port.
+1. OpenNet binds an **exclusive, dedicated UDP port** on `0.0.0.0`. A value of zero asks Windows to allocate an available port. The target is a **different** local port. A target value of zero follows libtorrent's current IPv4 uTP listener for the lifetime of the mapping; it pauses forwarding when that listener is unavailable.
 2. From the mapping socket, a STUN binding request is sent every 25 seconds to the configured UDP server (default: `turn.cloudflare.com:3478`). The reply must come from the selected STUN endpoint, match the 96-bit transaction ID, and contain a valid mapped IPv4 endpoint. This is an observation of the mapping toward that STUN server, **not** a guarantee that another peer can reach it; endpoint dependent NATs may map other destinations differently.
 3. Other UDP packets arriving at the mapping port are relayed to `127.0.0.1:<target>` through a separate local socket for each external endpoint. Replies on that local socket are sent back from the same mapping port to the original external endpoint. Up to 32 peers are retained, with a two-minute inactivity timeout.
 4. The existing NAT tools port check can probe the actual mapped UDP port through OpenNet's traversal servers. A positive external probe confirms reachability separately from the STUN observation; a negative probe can be inconclusive if the local service does not answer the probe payload.
@@ -20,7 +20,7 @@ The upstream command-line program uses POSIX networking, the `hev-task-system` s
 
 - **TCP**: implement a separate mapping/forward service for the HTTP/WebUI or BT TCP listener. Upstream TCP mode relies on binding a keepalive connection, TCP STUN connection, and inbound listener to the same local port. Windows port reuse, the target service's bind address, and firewall behavior must be tested with actual simultaneous sockets before enabling it.
 - **UDP source identity**: the forwarded local datagram appears to libtorrent as originating from `127.0.0.1` and an ephemeral port. Verify its effect on uTP, DHT, peer accounting, and peer exchange with real peers. If identity preservation is required, integrate at libtorrent's socket layer instead of extending the relay.
-- **Session lifecycle**: tie the mapping to torrent core stop/restart, adapter changes, sleep/resume, and saved user opt-in. Avoid automatically restoring a public firewall rule or a stale target port.
+- **Session lifecycle**: adapter changes and torrent listener stop/restart are handled without rebinding the mapping port. Sleep/resume needs Windows-device validation, and saved user opt-in is not implemented. Never restore a public firewall rule automatically.
 - **Discoverability**: decide how to advertise a working mapped address and port to trackers/DHT. A successful STUN exchange alone must never overwrite the BitTorrent listen endpoint.
 - **Other natmap options**: IPv6, multiple STUN endpoints with fallback, TCP forwarding, external target forwarding, DNS/script notification, and configurable keepalive interval are not implemented here. An in-process notification API should replace scripts if these are added.
 
@@ -40,7 +40,7 @@ The feature branch was updated from `master` at `0f6d402` on 2026-10-01 (Hong Ko
 `tests/natmap` is a standalone CMake harness without WinUI, vcpkg or public STUN dependencies:
 
 - `stun_protocol_tests`: real packet parser, IPv4/IPv6 XOR masks, legacy MAPPED address, transaction/cookie checks, truncation, padding, malformed trailing attributes, zero ports and 20,000 generated malformed messages. Linux CI runs ASan and UBSan.
-- `udp_mapping_tests`: compiles the production Winsock service and firewall implementation. A local fake STUN server and target verify two separate peers, return traffic through the mapping port, empty datagrams, expiry under sustained invalid STUN traffic, occupied ports, stop/rebind/restart and DNS cancellation. It never modifies Windows Firewall.
+- `udp_mapping_tests`: compiles the production Winsock service and firewall implementation. A local fake STUN server and targets verify two separate peers, return traffic through the mapping port, automatic target loss/replacement, empty datagrams, expiry under sustained invalid STUN traffic, occupied ports, stop/rebind/restart and DNS cancellation. It never modifies Windows Firewall.
 - `.github/workflows/natmap-tests.yml`: Linux parser tests; Windows Debug/Release x64 execution and ARM64 compilation. ARM64 binaries cannot run on the x64 hosted runner.
 - Existing Canary remains the full XAML/WinRT/application package build for Release x64 and ARM64. Dependency, application and unit-test build logs are saved as separate artifacts, with at most 200 trailing lines printed per step. Lightweight test logs and JUnit reports are also downloadable artifacts.
 
@@ -74,8 +74,17 @@ Corrective remote HEAD `36bd36d254d345217a3b94e709fc6023f95fa5db` is fully green
 
 The following lifecycle revision adds application-wide network recovery. `App` subscribes once to `NetworkInformation.NetworkStatusChanged`; its callback only posts a non-blocking atomic recovery request. The mapping worker then clears peer relay sockets selected on the old route, clears the stale STUN observation, re-resolves the configured STUN endpoint, immediately sends a new binding request, and retries resolution after a transient offline period. It retains the exclusive mapping socket and its local port, so an explicit fixed-port firewall rule does not silently become stale. Incoming packets are dropped while the new STUN route is unresolved, preventing delayed STUN responses from being forwarded into the torrent target as peer traffic. Application shutdown unregisters the network callback and explicitly stops/joins the mapping worker before shutting down the torrent core.
 
-The Windows socket regression test now simulates recovery after an expired STUN observation and verifies that the mapping port is preserved, a new observation is published, and both relay directions resume. The next exact-HEAD NATMap and full Canary runs must pass before this checkpoint is considered verified.
+The Windows socket regression test now simulates recovery after an expired STUN observation and verifies that the mapping port is preserved, a new observation is published, and both relay directions resume.
 
 The first network-recovery test run at `a0f498f1de6d6174b73f053de0b876d7a2d68b15` exposed a fixture ordering error in x64 Release: several pre-recovery keepalive requests were still queued at the fake STUN server, while the test replied to only one request and assumed it carried the new transaction ID. Production correctly rejected that old transaction, so the assertion timed out. The corrected fixture replies to a bounded backlog, proving that obsolete responses remain rejected and the post-recovery transaction is eventually accepted.
 
-Next gate: verify the network-recovery revision on Windows. Then add automatic-target lifecycle handling for torrent listener changes and investigate real libtorrent uTP/DHT source-endpoint semantics before advertising mapped endpoints or adding TCP/WebUI mapping.
+Corrective HEAD `ca3b6bcec40c1fb083353f9913eba569eddcbe60` is fully green:
+
+- [NATMap tests run 36785715924](https://github.com/hoshiizumiya/OpenNet/actions/runs/36785715924): Linux ASan/UBSan, Windows x64 Debug/Release execution, and ARM64 Debug/Release compilation all succeeded.
+- [Canary run 36785715883](https://github.com/hoshiizumiya/OpenNet/actions/runs/36785715883): complete application/MSIX Release x64 and ARM64 builds both succeeded.
+
+The next lifecycle revision makes a target value of zero a persistent automatic mode rather than a one-time lookup. An application-lifetime background monitor reads the synchronized IPv4 uTP listen status (not the generic TCP-preferred port). When the core stops or has no listener, it sends target port zero and the mapping worker pauses peer forwarding while retaining its bound mapping socket and STUN observation. When the core restarts or chooses a different port, the worker atomically switches the loopback destination and clears every per-peer socket created for the old listener. Manual target mappings ignore these updates. The monitor is stopped and joined before the mapping service and P2P core during application shutdown.
+
+The Windows socket test exercises target loss and replacement: it pauses the automatic target, resumes on a second UDP listener, confirms the previous peer route is rebuilt, and verifies the reply still leaves through the preserved mapping port. This does not change libtorrent `announce_port`; an observed STUN endpoint is still not treated as proof of public reachability.
+
+Next gate: verify this automatic-target revision on exact-HEAD NATMap and full Canary runs. Then investigate real libtorrent uTP/DHT source-endpoint identity before advertising mapped endpoints, followed by TCP/WebUI and IPv6 design.

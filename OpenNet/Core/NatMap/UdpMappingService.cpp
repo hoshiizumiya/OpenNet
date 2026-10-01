@@ -116,15 +116,21 @@ namespace OpenNet::Core::NatMap
     }
 
     bool UdpMappingService::Start(std::uint16_t localPort, std::uint16_t targetPort,
-                                  std::wstring stunHost, std::uint16_t stunPort)
+                                  std::wstring stunHost, std::uint16_t stunPort, bool followTorrentTarget)
     {
-        if (!targetPort || !stunPort || stunHost.empty() || (localPort != 0 && localPort == targetPort)) return false;
+        if ((!followTorrentTarget && !targetPort) || !stunPort || stunHost.empty() ||
+            (localPort != 0 && targetPort != 0 && localPort == targetPort)) return false;
         std::lock_guard lifecycle(m_lifecycleMutex);
         StopWorker();
         m_networkRecoveryRequested.store(false);
+        m_targetPortUpdateRequested.store(false);
+        m_followTorrentTarget.store(followTorrentTarget);
+        m_requestedTargetPort.store(targetPort);
         {
             std::lock_guard lock(m_mutex);
             m_snapshot = {};
+            m_snapshot.followsTorrentTarget = followTorrentTarget;
+            m_snapshot.targetAvailable = targetPort != 0;
             m_snapshot.targetPort = targetPort;
             m_snapshot.starting = true;
         }
@@ -136,15 +142,28 @@ namespace OpenNet::Core::NatMap
             }
             catch (...)
             {
+                m_targetPortUpdateRequested.store(false);
+                m_followTorrentTarget.store(false);
                 std::lock_guard lock(m_mutex);
                 m_snapshot.running = false;
                 m_snapshot.starting = false;
+                m_snapshot.followsTorrentTarget = false;
+                m_snapshot.targetAvailable = false;
                 m_snapshot.publicAddress.clear();
                 m_snapshot.publicPort = 0;
                 m_snapshot.error = L"UDP mapping worker failed.";
             }
         });
         return true;
+    }
+
+    void UdpMappingService::RequestAutomaticTargetPort(std::uint16_t targetPort) noexcept
+    {
+        if (!m_followTorrentTarget.load()) return;
+        if (m_requestedTargetPort.exchange(targetPort) != targetPort)
+        {
+            m_targetPortUpdateRequested.store(true);
+        }
     }
 
     void UdpMappingService::RequestNetworkRecovery() noexcept
@@ -166,12 +185,11 @@ namespace OpenNet::Core::NatMap
             m_worker.join();
         }
         m_networkRecoveryRequested.store(false);
+        m_targetPortUpdateRequested.store(false);
+        m_followTorrentTarget.store(false);
+        m_requestedTargetPort.store(0);
         std::lock_guard lock(m_mutex);
-        m_snapshot.running = false;
-        m_snapshot.starting = false;
-        m_snapshot.publicAddress.clear();
-        m_snapshot.publicPort = 0;
-        m_snapshot.error.clear();
+        m_snapshot = {};
     }
 
     MappingSnapshot UdpMappingService::Snapshot() const
@@ -186,7 +204,10 @@ namespace OpenNet::Core::NatMap
         WSADATA wsa{};
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
         {
+            m_followTorrentTarget.store(false);
             std::lock_guard lock(m_mutex);
+            m_snapshot.followsTorrentTarget = false;
+            m_snapshot.targetAvailable = false;
             m_snapshot.error = L"Winsock initialization failed";
             m_snapshot.starting = false;
             return;
@@ -194,9 +215,13 @@ namespace OpenNet::Core::NatMap
         struct CleanupWinsock { ~CleanupWinsock() { WSACleanup(); } } cleanup;
         auto finish = [this](std::wstring message)
         {
+            m_targetPortUpdateRequested.store(false);
+            m_followTorrentTarget.store(false);
             std::lock_guard lock(m_mutex);
             m_snapshot.running = false;
             m_snapshot.starting = false;
+            m_snapshot.followsTorrentTarget = false;
+            m_snapshot.targetAvailable = false;
             m_snapshot.publicAddress.clear();
             m_snapshot.publicPort = 0;
             if (!message.empty()) m_snapshot.error = std::move(message);
@@ -223,7 +248,7 @@ namespace OpenNet::Core::NatMap
             finish(L"Cannot query the bound UDP port.");
             return;
         }
-        if (ntohs(bound.sin_port) == targetPort)
+        if (targetPort != 0 && ntohs(bound.sin_port) == targetPort)
         {
             finish(L"The allocated mapping port equals the target port. Choose a fixed, separate port.");
             return;
@@ -246,6 +271,7 @@ namespace OpenNet::Core::NatMap
         target.sin_family = AF_INET;
         target.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         target.sin_port = htons(targetPort);
+        std::uint16_t currentTargetPort = targetPort;
         std::map<PeerKey, Peer> peers;
         bool stunResolved = true;
         Stun::TransactionId transaction{};
@@ -257,6 +283,29 @@ namespace OpenNet::Core::NatMap
         while (!stop.stop_requested())
         {
             auto const now = std::chrono::steady_clock::now();
+            if (m_targetPortUpdateRequested.exchange(false))
+            {
+                std::uint16_t const requestedTargetPort = m_requestedTargetPort.load();
+                peers.clear();
+                currentTargetPort = 0;
+                target.sin_port = 0;
+
+                std::lock_guard lock(m_mutex);
+                m_snapshot.targetPort = requestedTargetPort;
+                m_snapshot.targetAvailable = false;
+                m_snapshot.targetError.clear();
+                if (requestedTargetPort == ntohs(bound.sin_port))
+                {
+                    m_snapshot.targetError =
+                        L"The torrent listener equals the mapping port. Choose a separate fixed mapping port.";
+                }
+                else if (requestedTargetPort != 0)
+                {
+                    currentTargetPort = requestedTargetPort;
+                    target.sin_port = htons(requestedTargetPort);
+                    m_snapshot.targetAvailable = true;
+                }
+            }
             if (m_networkRecoveryRequested.exchange(false))
             {
                 // A route or adapter change invalidates both the resolved STUN
@@ -348,6 +397,7 @@ namespace OpenNet::Core::NatMap
                         }
                         return;
                     }
+                    if (currentTargetPort == 0) return;
                     if (peers.size() >= 32 && !peers.contains({ remote.sin_addr.s_addr, remote.sin_port })) return;
                     PeerKey key{ remote.sin_addr.s_addr, remote.sin_port };
                     auto it = peers.find(key);

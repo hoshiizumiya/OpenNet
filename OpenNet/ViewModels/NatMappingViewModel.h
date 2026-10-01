@@ -37,7 +37,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         void Refresh();
 
     private:
-        winrt::fire_and_forget ChangeMappingAsync(bool start, std::uint16_t target);
+        winrt::fire_and_forget ChangeMappingAsync(bool start, std::uint16_t target, bool followTorrentTarget = false);
         bool m_isBusy{};
         double m_mappingPort{ 0 };
         double m_targetPort{ 0 };

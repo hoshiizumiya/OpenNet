@@ -6802,6 +6802,9 @@ Availability: {}</value>
   <data name="NatMappingForwardingPrefix" xml:space="preserve">
     <value>Forwarding UDP to 127.0.0.1:</value>
   </data>
+  <data name="NatMappingWaitingTarget" xml:space="preserve">
+    <value>Waiting for the torrent listener.</value>
+  </data>
   <data name="NatTools_ObservedEndpoint.Text" xml:space="preserve">
     <value>Observed mapping toward STUN:</value>
   </data>

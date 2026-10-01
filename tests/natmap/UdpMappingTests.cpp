@@ -87,13 +87,16 @@ int main()
     {
         DatagramSocket stun;
         DatagramSocket target;
+        DatagramSocket replacementTarget;
         DatagramSocket clientA;
         DatagramSocket clientB;
         OpenNet::Core::NatMap::UdpMappingService service({ 500ms, 1500ms, 5000ms });
         Require(!service.Start(target.Port(), target.Port(), L"127.0.0.1", stun.Port()), "reject relay to same port");
         Require(!service.Start(0, 0, L"127.0.0.1", stun.Port()), "reject missing target");
-        Require(service.Start(0, target.Port(), L"127.0.0.1", stun.Port()), "start mapping");
+        Require(service.Start(0, target.Port(), L"127.0.0.1", stun.Port(), true), "start automatic-target mapping");
         WaitFor([&] { return service.Snapshot().running; }, "mapping starts");
+        Require(service.Snapshot().followsTorrentTarget && service.Snapshot().targetAvailable,
+            "automatic target starts available");
         sockaddr_in mapping{};
         auto response = Reply(stun.Receive(mapping));
         auto malformed = response;
@@ -159,6 +162,24 @@ int main()
         Require(target.Receive(recoveredInside) == "after-network-change", "relay resumes after network recovery");
         target.Send("recovered-reply", recoveredInside);
         Require(clientA.Receive(origin) == "recovered-reply", "return relay resumes after network recovery");
+
+        service.RequestAutomaticTargetPort(0);
+        WaitFor([&] { return !service.Snapshot().targetAvailable && service.Snapshot().targetPort == 0; },
+            "stopped torrent listener pauses relay target");
+        service.RequestAutomaticTargetPort(replacementTarget.Port());
+        WaitFor([&]
+        {
+            auto const snapshot = service.Snapshot();
+            return snapshot.targetAvailable && snapshot.targetPort == replacementTarget.Port();
+        }, "restarted torrent listener updates relay target");
+        clientA.Send("after-listener-restart", recoveredMapping);
+        sockaddr_in replacementInside{};
+        Require(replacementTarget.Receive(replacementInside) == "after-listener-restart",
+            "listener restart relays to the new target");
+        replacementTarget.Send("replacement-reply", replacementInside);
+        Require(clientA.Receive(origin) == "replacement-reply",
+            "new target replies through the preserved mapping port");
+
         auto const boundPort = service.Snapshot().localPort;
         service.Stop();
         Require(!service.Snapshot().running && !service.Snapshot().starting && service.Snapshot().publicPort == 0, "stop clears state");
@@ -183,7 +204,7 @@ int main()
         std::this_thread::sleep_for(20ms);
         service.Stop();
         Require(std::chrono::steady_clock::now() - cancelStart < 3s, "DNS cancellation does not wait for timeout");
-        std::cout << "UDP mapping, two-peer relay, empty datagrams, STUN starvation/expiry, network recovery, bind conflict, restart and cancellation passed\n";
+        std::cout << "UDP mapping, two-peer relay, empty datagrams, STUN starvation/expiry, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
         return 0;
     }
     catch (std::exception const& error) { std::cerr << error.what() << '\n'; return 1; }

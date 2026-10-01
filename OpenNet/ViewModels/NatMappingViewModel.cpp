@@ -24,26 +24,41 @@ namespace winrt::OpenNet::ViewModels::implementation
         {
             if (auto self = weak.get())
             {
-                auto* core = ::OpenNet::Core::P2PManager::Instance().TorrentCore();
-                if (self->m_targetPort == 0 && (!core || !core->IsRunning()))
+                bool const followTorrentTarget = self->m_targetPort == 0;
+                std::uint16_t target{};
+                if (followTorrentTarget)
                 {
-                    self->SetProperty(self->m_status, ResourceGetString(L"NatMappingStartEngine"), L"Status");
-                    return;
+                    auto& manager = ::OpenNet::Core::P2PManager::Instance();
+                    if (manager.IsTorrentCoreInitialized())
+                    {
+                        auto const status = manager.GetListenStatus();
+                        if (status.ipv4UtpPort > 0 && status.ipv4UtpPort <= 65535)
+                        {
+                            target = static_cast<std::uint16_t>(status.ipv4UtpPort);
+                        }
+                    }
                 }
-                auto const listenPort = self->m_targetPort == 0 ? core->GetSessionStats().listenPort : 0;
-                auto const target = self->m_targetPort == 0 ? static_cast<double>(listenPort) : self->m_targetPort;
                 if (!std::isfinite(self->m_mappingPort) || self->m_mappingPort < 0 || self->m_mappingPort > 65535 ||
-                    std::floor(self->m_mappingPort) != self->m_mappingPort || !std::isfinite(target) ||
-                    target < 1 || target > 65535 || std::floor(target) != target ||
+                    std::floor(self->m_mappingPort) != self->m_mappingPort ||
+                    (!followTorrentTarget && (!std::isfinite(self->m_targetPort) || self->m_targetPort < 1 ||
+                        self->m_targetPort > 65535 || std::floor(self->m_targetPort) != self->m_targetPort)) ||
                     self->m_stunHost.empty() || self->m_stunHost.size() > 253 ||
                     !std::isfinite(self->m_stunPort) || self->m_stunPort < 1 || self->m_stunPort > 65535 ||
-                    std::floor(self->m_stunPort) != self->m_stunPort ||
-                    (self->m_mappingPort != 0 && self->m_mappingPort == target))
+                    std::floor(self->m_stunPort) != self->m_stunPort)
                 {
                     self->SetProperty(self->m_status, ResourceGetString(L"NatMappingInvalidConfig"), L"Status");
                     return;
                 }
-                self->ChangeMappingAsync(true, static_cast<std::uint16_t>(target));
+                if (!followTorrentTarget)
+                {
+                    target = static_cast<std::uint16_t>(self->m_targetPort);
+                }
+                if (self->m_mappingPort != 0 && target != 0 && self->m_mappingPort == target)
+                {
+                    self->SetProperty(self->m_status, ResourceGetString(L"NatMappingInvalidConfig"), L"Status");
+                    return;
+                }
+                self->ChangeMappingAsync(true, target, followTorrentTarget);
             }
         }).CanExecute([weak = get_weak()](auto const&)
         {
@@ -113,11 +128,12 @@ namespace winrt::OpenNet::ViewModels::implementation
         }
     }
 
-    winrt::fire_and_forget NatMappingViewModel::ChangeMappingAsync(bool start, std::uint16_t target)
+    winrt::fire_and_forget NatMappingViewModel::ChangeMappingAsync(
+        bool start, std::uint16_t target, bool followTorrentTarget)
     {
         if (m_isBusy) co_return;
         auto lifetime = get_strong();
-        winrt::apartment_context ui;
+        auto const dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
         auto const port = start ? static_cast<std::uint16_t>(m_mappingPort) : std::uint16_t{};
         auto const stunPort = start ? static_cast<std::uint16_t>(m_stunPort) : std::uint16_t{};
         auto const host = std::wstring(m_stunHost.c_str());
@@ -128,11 +144,11 @@ namespace winrt::OpenNet::ViewModels::implementation
         try
         {
             auto& service = ::OpenNet::Core::NatMap::SharedUdpMappingService();
-            if (start) failed = !service.Start(port, target, host, stunPort);
+            if (start) failed = !service.Start(port, target, host, stunPort, followTorrentTarget);
             else service.Stop();
         }
         catch (...) { failed = true; }
-        co_await ui;
+        co_await winrt::resume_foreground(dispatcher);
         SetProperty(m_isBusy, false, L"IsBusy");
         SetProperty(m_status, ResourceGetString(failed ? L"NatMappingInvalidConfig" :
             start ? L"NatMappingStarting" : L"NatMappingStopped"), L"Status");
@@ -153,8 +169,13 @@ namespace winrt::OpenNet::ViewModels::implementation
             }
             SetProperty(m_publicEndpoint, snapshot.publicAddress.empty() ? ResourceGetString(L"NatMappingWaitingStun") :
                 winrt::hstring(snapshot.publicAddress + L":" + std::to_wstring(snapshot.publicPort)), L"PublicEndpoint");
-            SetProperty(m_status, snapshot.error.empty() ? ResourceGetString(L"NatMappingForwardingPrefix") +
-                winrt::to_hstring(snapshot.targetPort) : winrt::hstring(snapshot.error), L"Status");
+            winrt::hstring status;
+            if (!snapshot.error.empty()) status = winrt::hstring(snapshot.error);
+            else if (!snapshot.targetError.empty()) status = winrt::hstring(snapshot.targetError);
+            else if (snapshot.followsTorrentTarget && !snapshot.targetAvailable)
+                status = ResourceGetString(L"NatMappingWaitingTarget");
+            else status = ResourceGetString(L"NatMappingForwardingPrefix") + winrt::to_hstring(snapshot.targetPort);
+            SetProperty(m_status, status, L"Status");
         }
         else
         {

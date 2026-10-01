@@ -6802,6 +6802,9 @@
   <data name="NatMappingForwardingPrefix" xml:space="preserve">
     <value>正在将 UDP 转发到 127.0.0.1:</value>
   </data>
+  <data name="NatMappingWaitingTarget" xml:space="preserve">
+    <value>正在等待 BT 监听端口。</value>
+  </data>
   <data name="NatTools_ObservedEndpoint.Text" xml:space="preserve">
     <value>向 STUN 服务器观测到的公网映射：</value>
   </data>

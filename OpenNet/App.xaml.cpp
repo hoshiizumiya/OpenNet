@@ -252,6 +252,7 @@ namespace winrt::OpenNet::implementation
 		InitializeRSSManagerAsync();
 		InitializeWebUIAsync();
 		StartIPFilterSubscriptionUpdates();
+		StartNatMappingTargetUpdates();
 
 #if _DEBUG
 		auto devWindow = winrt::make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::DevWindow>();
@@ -295,6 +296,54 @@ namespace winrt::OpenNet::implementation
 			return;
 		s_ipFilterSubscriptionTimer.Stop();
 		s_ipFilterSubscriptionTimer = nullptr;
+	}
+
+	void App::StartNatMappingTargetUpdates()
+	{
+		if (s_natMappingTargetThread.joinable())
+			return;
+
+		s_natMappingTargetThread = std::jthread([](std::stop_token stop)
+		{
+			while (!stop.stop_requested())
+			{
+				auto& service = ::OpenNet::Core::NatMap::SharedUdpMappingService();
+				auto const mapping = service.Snapshot();
+				if (mapping.followsTorrentTarget)
+				{
+					std::uint16_t targetPort{};
+					try
+					{
+						auto& manager = ::OpenNet::Core::P2PManager::Instance();
+						if (manager.IsTorrentCoreInitialized())
+						{
+							auto const status = manager.GetListenStatus();
+							if (status.ipv4UtpPort > 0 && status.ipv4UtpPort <= 65535)
+							{
+								targetPort = static_cast<std::uint16_t>(status.ipv4UtpPort);
+							}
+						}
+					}
+					catch (...)
+					{
+					}
+					service.RequestAutomaticTargetPort(targetPort);
+				}
+
+				for (unsigned interval = 0; interval < 10 && !stop.stop_requested(); ++interval)
+				{
+					std::this_thread::sleep_for(std::chrono::milliseconds(100));
+				}
+			}
+		});
+	}
+
+	void App::StopNatMappingTargetUpdates()
+	{
+		if (!s_natMappingTargetThread.joinable())
+			return;
+		s_natMappingTargetThread.request_stop();
+		s_natMappingTargetThread.join();
 	}
 
 	bool App::CreateSetMainWindow()
@@ -623,6 +672,7 @@ namespace winrt::OpenNet::implementation
 			return;
 
 		OutputDebugStringA("App: Shutting down engines...\n");
+		StopNatMappingTargetUpdates();
 
 		try
 		{

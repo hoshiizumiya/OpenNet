@@ -15,10 +15,13 @@ namespace OpenNet::Core::NatMap
     {
         bool running{};
         bool starting{};
+        bool followsTorrentTarget{};
+        bool targetAvailable{};
         std::uint16_t localPort{};
         std::uint16_t targetPort{};
         std::uint16_t publicPort{};
         std::wstring publicAddress;
+        std::wstring targetError;
         std::wstring error;
     };
 
@@ -37,7 +40,12 @@ namespace OpenNet::Core::NatMap
         UdpMappingService(UdpMappingService const&) = delete;
         UdpMappingService& operator=(UdpMappingService const&) = delete;
 
-        bool Start(std::uint16_t localPort, std::uint16_t targetPort, std::wstring stunHost, std::uint16_t stunPort);
+        bool Start(std::uint16_t localPort, std::uint16_t targetPort, std::wstring stunHost,
+                   std::uint16_t stunPort, bool followTorrentTarget = false);
+        // Update the relay destination without rebinding the public mapping
+        // socket. A zero port pauses forwarding while the torrent listener is
+        // stopped; a later nonzero port resumes it and discards stale peers.
+        void RequestAutomaticTargetPort(std::uint16_t targetPort) noexcept;
         // Re-resolve the STUN route and discard relay peers after an adapter,
         // address, or connectivity change. This is non-blocking and safe to
         // call from Windows.Networking.Connectivity event callbacks.
@@ -55,6 +63,9 @@ namespace OpenNet::Core::NatMap
         UdpMappingTimings m_timings;
         std::jthread m_worker;
         std::atomic_bool m_networkRecoveryRequested{};
+        std::atomic_bool m_targetPortUpdateRequested{};
+        std::atomic_bool m_followTorrentTarget{};
+        std::atomic_uint16_t m_requestedTargetPort{};
         MappingSnapshot m_snapshot;
     };
 

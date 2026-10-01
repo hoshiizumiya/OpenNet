@@ -55,6 +55,8 @@ export namespace winrt::OpenNet::implementation
 		static winrt::fire_and_forget InitializeWebUIAsync();
 		static void StartIPFilterSubscriptionUpdates();
 		static void StopIPFilterSubscriptionUpdates();
+		static void StartNatMappingTargetUpdates();
+		static void StopNatMappingTargetUpdates();
 		static void EnsureMainWindow();
 		static void StartMainExperience();
 
@@ -67,5 +69,6 @@ export namespace winrt::OpenNet::implementation
 		static inline winrt::event_token s_networkStatusChangedToken{};
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue s_uiDispatcher{ nullptr };
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer s_ipFilterSubscriptionTimer{ nullptr };
+		static inline std::jthread s_natMappingTargetThread;
 	};
 }
