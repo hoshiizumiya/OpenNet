@@ -818,21 +818,28 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::OnProgress(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
 	{
+		bool payloadChanged = true;
 		{
 			std::lock_guard lock(m_progressSnapshotMutex);
 			auto const previous = m_progressSnapshots.find(e.taskId);
-			if (previous != m_progressSnapshots.end() && previous->second == e) return;
-			m_progressSnapshots.insert_or_assign(e.taskId, e);
+			payloadChanged = previous == m_progressSnapshots.end() || !(previous->second == e);
+			if (payloadChanged)
+				m_progressSnapshots.insert_or_assign(e.taskId, e);
 		}
 
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
 			return;
 		auto name = winrt::to_hstring(e.name);
-		dispatcher.TryEnqueue([weak = get_weak(), name, e]()
+		auto taskId = winrt::to_hstring(e.taskId);
+		dispatcher.TryEnqueue([weak = get_weak(), name, taskId, e, payloadChanged]()
 		{
 			if (auto self = weak.get())
 			{
+				// Peer detail data is not part of ProgressEvent equality. Always notify
+				// from the libtorrent update cadence, even if the task-row payload is unchanged.
+				self->m_torrentUpdated(*self, taskId);
+				if (!payloadChanged) return;
 				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateItemByTaskId(e.taskId, name);
 				item.TargetPathMissing(false);
