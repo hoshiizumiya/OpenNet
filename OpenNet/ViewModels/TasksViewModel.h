@@ -120,6 +120,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			m_taskDeletionFailed.remove(token);
 		}
+		winrt::event_token TorrentUpdated(winrt::Windows::Foundation::EventHandler<winrt::hstring> const& handler)
+		{
+			return m_torrentUpdated.add(handler);
+		}
+		void TorrentUpdated(winrt::event_token const& token) noexcept
+		{
+			m_torrentUpdated.remove(token);
+		}
 
 		bool IsColNameLoad();
 		void IsColNameLoad(bool value);
@@ -193,6 +201,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_addTaskRequested;
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_taskDeletionFailed;
+		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_torrentUpdated;
 
 		// GIDs that were explicitly deleted ─ prevents OnHttpProgress/Finished
 		// from re-creating the task after deletion.
