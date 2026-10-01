@@ -25,7 +25,7 @@ The upstream command-line program uses POSIX networking, the `hev-task-system` s
 ## Remaining integration work
 
 - **UDP source identity**: the forwarded uTP datagram still appears to libtorrent as originating from `127.0.0.1` and an ephemeral port. The stable per-peer relay endpoint satisfies uTP's connection lookup, but peer accounting and any address-based policy see loopback rather than the real peer. DHT is not relayed. If true identity preservation is required, integrate at libtorrent's socket layer instead of extending the relay.
-- **Session lifecycle**: adapter changes and torrent listener stop/restart are handled without rebinding the mapping port. Sleep/resume still needs Windows-device validation. TCP input parameters are remembered only after an explicit start; mapping state and firewall authorization are intentionally never restored.
+- **Session lifecycle**: adapter changes, torrent listener stop/restart and Windows resume notifications are handled without rebinding the requested mapping port. Real sleep/resume still needs Windows-device validation. TCP input parameters are remembered only after an explicit start; mapping state and firewall authorization are intentionally never restored.
 - **Discoverability**: decide how to advertise a working mapped address and port to trackers/DHT. A successful STUN exchange alone must never overwrite the BitTorrent listen endpoint.
 - **Other natmap options**: IPv6, multiple STUN endpoints with fallback, external target forwarding, DNS/script notification, and configurable keepalive interval are not implemented here. An in-process notification API should replace scripts if these are added.
 
@@ -36,7 +36,7 @@ The upstream command-line program uses POSIX networking, the `hev-task-system` s
 3. Run the external port probe, then test a real UDP peer through a reachable network. Compare results on endpoint independent and symmetric NATs; do not treat STUN success as reachability.
 4. Start with a deliberately occupied mapping port. Confirm a visible bind error and no interference with the existing listener.
 5. Create/remove the UDP and TCP firewall rules as an administrator; repeat without permission and confirm the failure is shown. Check their distinct names, exact executable, protocol, local port, and profile in Windows Defender Firewall. Confirm an automatic-port TCP mapping cannot create a durable rule.
-6. Navigate away and back, stop the torrent core, restart OpenNet, then shut it down; inspect the mapping socket and any user-created firewall rule.
+6. Navigate away and back, stop the torrent core, restart OpenNet, then sleep and resume Windows before shutting it down. Confirm a running UDP/TCP worker clears its stale observation and rebuilds, while a stopped worker remains stopped. Inspect the mapping socket and any user-created firewall rule.
 
 ## Automated verification and continuation
 
@@ -136,3 +136,10 @@ Explicit TCP firewall HEAD `a4028f666b38d9bdf702d61bb40fb3040aa16475` is fully g
 - [Canary run 36882538841](https://github.com/hoshiizumiya/OpenNet/actions/runs/36882538841): complete application/MSIX Release x64 and ARM64 builds both succeeded.
 
 This revision implements the TCP persistence policy without turning remembered input into remembered exposure. A new non-mutating `LocalSetting::TryGet` avoids writing defaults when the page is merely opened. A validated manual start writes the local address, mapping/target ports, keepalive endpoint and STUN endpoint behind a version marker committed last; malformed, partial or mistyped storage is ignored. No running-state or firewall-authorization key exists, so every new process requires a fresh explicit Start and any firewall change remains a separate user action. Real external uTP validation, sleep/resume device validation and IPv6 remain separate. Never advertise or overwrite libtorrent endpoints from a STUN observation alone.
+
+Manual TCP-parameter persistence HEAD `979c07f7f7320ffe99276d2abaf2221bcb914ee0` is fully green:
+
+- [NATMap tests run 36896733368](https://github.com/hoshiizumiya/OpenNet/actions/runs/36896733368): all five jobs succeeded. The downloaded x64 Debug JUnit report records `tests=4`, `failures=0`, `skipped=0`; parser, UDP mapping, TCP port reuse and production TCP mapping all executed.
+- [Canary run 36896733730](https://github.com/hoshiizumiya/OpenNet/actions/runs/36896733730): complete application/MSIX Release x64 and ARM64 builds both succeeded. The x64 native-unit build also succeeded.
+
+This revision closes the missing process-lifetime resume signal. `App` subscribes to Windows App SDK `PowerManager.SystemSuspendStatusChanged` and requests recovery only for `AutoResume` or `ManualResume`; `Entering` and `Uninitialized` do nothing. The request is the same atomic generation rebuild used for adapter changes. It cannot start a stopped service because each later explicit `Start` clears pending recovery, and it does not touch saved parameters or firewall rules. Shutdown and destruction unregister both network and power callbacks before stopping the workers. Real device sleep/resume validation, external uTP reachability and IPv6 remain separate.

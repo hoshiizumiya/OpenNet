@@ -57,6 +57,7 @@ export namespace winrt::OpenNet::implementation
 		static void StopIPFilterSubscriptionUpdates();
 		static void StartNatMappingTargetUpdates();
 		static void StopNatMappingTargetUpdates();
+		static void StopNatMappingLifecycleMonitoring() noexcept;
 		static void EnsureMainWindow();
 		static void StartMainExperience();
 
@@ -67,6 +68,7 @@ export namespace winrt::OpenNet::implementation
 		static inline winrt::Microsoft::Windows::AppLifecycle::AppInstance s_appInstance{ nullptr };
 		static inline winrt::event_token s_activatedToken{};
 		static inline winrt::event_token s_networkStatusChangedToken{};
+		static inline winrt::event_token s_systemSuspendStatusChangedToken{};
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueue s_uiDispatcher{ nullptr };
 		static inline winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer s_ipFilterSubscriptionTimer{ nullptr };
 		static inline std::jthread s_natMappingTargetThread;

@@ -33,6 +33,7 @@ import OpenNet.ViewModels.Guide.GuideState;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Windows.Networking.Connectivity;
 import winrt.Windows.Storage;
+import winrt.Microsoft.Windows.System.Power;
 import winrt.Microsoft.Windows.Storage;
 import winrt.Microsoft.Windows.AppNotifications;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -117,6 +118,35 @@ namespace winrt::OpenNet::implementation
 		catch (...)
 		{
 			OutputDebugStringA("App: NAT mapping network monitoring unavailable\n");
+		}
+		try
+		{
+			s_systemSuspendStatusChangedToken =
+				winrt::Microsoft::Windows::System::Power::PowerManager::SystemSuspendStatusChanged([](auto&&, auto&&)
+			{
+				try
+				{
+					using winrt::Microsoft::Windows::System::Power::PowerManager;
+					using winrt::Microsoft::Windows::System::Power::SystemSuspendStatus;
+					auto const status = PowerManager::SystemSuspendStatus();
+					if (status != SystemSuspendStatus::AutoResume && status != SystemSuspendStatus::ManualResume)
+					{
+						return;
+					}
+					// Recover only mappings that are still running in this process. Start()
+					// clears this request, so a stopped mapping is never restored implicitly.
+					::OpenNet::Core::NatMap::SharedUdpMappingService().RequestNetworkRecovery();
+					::OpenNet::Core::NatMap::SharedTcpMappingService().RequestNetworkRecovery();
+				}
+				catch (...)
+				{
+					// Power notifications must never unwind through the system callback.
+				}
+			});
+		}
+		catch (...)
+		{
+			OutputDebugStringA("App: NAT mapping suspend/resume monitoring unavailable\n");
 		}
 	}
 
@@ -490,11 +520,7 @@ namespace winrt::OpenNet::implementation
 	{
 		try
 		{
-			if (s_networkStatusChangedToken.value)
-			{
-				winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged(s_networkStatusChangedToken);
-				s_networkStatusChangedToken = {};
-			}
+			StopNatMappingLifecycleMonitoring();
 			if (s_appInstance && s_activatedToken.value)
 			{
 				s_appInstance.Activated(s_activatedToken);
@@ -678,11 +704,7 @@ namespace winrt::OpenNet::implementation
 
 		try
 		{
-			if (s_networkStatusChangedToken.value)
-			{
-				winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged(s_networkStatusChangedToken);
-				s_networkStatusChangedToken = {};
-			}
+			StopNatMappingLifecycleMonitoring();
 			::OpenNet::Core::NatMap::SharedTcpMappingService().Stop();
 			::OpenNet::Core::NatMap::SharedUdpMappingService().Stop();
 		}
@@ -749,6 +771,36 @@ namespace winrt::OpenNet::implementation
 		}
 
 		OutputDebugStringA("App: Engine shutdown completed\n");
+	}
+
+	void App::StopNatMappingLifecycleMonitoring() noexcept
+	{
+		try
+		{
+			if (s_networkStatusChangedToken.value)
+			{
+				winrt::Windows::Networking::Connectivity::NetworkInformation::NetworkStatusChanged(s_networkStatusChangedToken);
+				s_networkStatusChangedToken = {};
+			}
+		}
+		catch (...)
+		{
+			s_networkStatusChangedToken = {};
+		}
+
+		try
+		{
+			if (s_systemSuspendStatusChangedToken.value)
+			{
+				winrt::Microsoft::Windows::System::Power::PowerManager::SystemSuspendStatusChanged(
+					s_systemSuspendStatusChangedToken);
+				s_systemSuspendStatusChangedToken = {};
+			}
+		}
+		catch (...)
+		{
+			s_systemSuspendStatusChangedToken = {};
+		}
 	}
 
 	winrt::fire_and_forget App::InitializeTorrentCoreAsync()
