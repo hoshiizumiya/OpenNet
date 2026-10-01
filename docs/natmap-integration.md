@@ -87,4 +87,9 @@ The next lifecycle revision makes a target value of zero a persistent automatic 
 
 The Windows socket test exercises target loss and replacement: it pauses the automatic target, resumes on a second UDP listener, confirms the previous peer route is rebuilt, and verifies the reply still leaves through the preserved mapping port. This does not change libtorrent `announce_port`; an observed STUN endpoint is still not treated as proof of public reachability.
 
-Next gate: verify this automatic-target revision on exact-HEAD NATMap and full Canary runs. Then investigate real libtorrent uTP/DHT source-endpoint identity before advertising mapped endpoints, followed by TCP/WebUI and IPv6 design.
+Automatic-target HEAD `cfa3a9d603779b037f4408128b080e02c721c156` produced these exact checks:
+
+- [NATMap tests run 36806504145](https://github.com/hoshiizumiya/OpenNet/actions/runs/36806504145): all five jobs succeeded. Linux ASan/UBSan passed; Windows x64 Debug/Release executed the native socket tests; ARM64 Debug/Release compiled them.
+- [Canary run 36806504169](https://github.com/hoshiizumiya/OpenNet/actions/runs/36806504169): both full application Release builds failed at the same compile line. `NatMappingViewModel.cpp:151` used `winrt::resume_foreground(DispatcherQueue)`, but this project does not provide that C++/WinRT overload (`C2039`/`C3861`). The repository's established DispatcherQueue coroutine adapter is `winrtplus::resume_foreground` from `winrtplus_coroutine`; this correction uses that adapter and does not return to `apartment_context`.
+
+Next gate: verify the coroutine-adapter correction on exact-HEAD NATMap and full Canary runs. Then investigate real libtorrent uTP/DHT source-endpoint identity before advertising mapped endpoints, followed by TCP/WebUI and IPv6 design.

@@ -10,6 +10,7 @@
 
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.Utils.Message;
+import winrtplus_coroutine;
 import winrt.Microsoft.UI.Dispatching;
 
 namespace winrt::OpenNet::ViewModels::implementation
@@ -148,7 +149,7 @@ namespace winrt::OpenNet::ViewModels::implementation
             else service.Stop();
         }
         catch (...) { failed = true; }
-        co_await winrt::resume_foreground(dispatcher);
+        co_await winrtplus::resume_foreground(dispatcher);
         SetProperty(m_isBusy, false, L"IsBusy");
         SetProperty(m_status, ResourceGetString(failed ? L"NatMappingInvalidConfig" :
             start ? L"NatMappingStarting" : L"NatMappingStopped"), L"Status");
