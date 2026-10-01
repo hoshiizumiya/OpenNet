@@ -52,10 +52,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::event_token m_vmPropertyChangedToken{};
-
-		// Timer for periodic peer refresh
-		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
-		winrt::event_token m_timerTickToken{};
+		winrt::event_token m_torrentUpdatedToken{};
 
 		// Cached observable vector for incremental updates
 		winrt::Windows::Foundation::Collections::IObservableVector<winrt::Windows::Foundation::IInspectable> m_peerItems{ nullptr };
@@ -79,25 +76,23 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::size_t m_lastPeerSnapshotHash{};
 		bool m_hasPeerSnapshot{};
 		std::chrono::steady_clock::time_point m_lastAuxiliaryRefresh{};
-		std::chrono::milliseconds m_configuredRefreshInterval{ 1000 };
 
 		// Track last known task id to detect task change
 		std::string m_lastTaskId;
 
 		void Unsubscribe();
-		void StopRefreshTimer() noexcept;
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
 										winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
+		void OnTorrentUpdated(winrt::Windows::Foundation::IInspectable const& sender, winrt::hstring const& taskId);
 		winrt::fire_and_forget RefreshPeerList();
 		void ApplyPeerSnapshot(
 			std::string const& taskId,
 			std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo> peers,
 			bool forceRefresh);
-		void OnRefreshTimerTick(winrt::Windows::Foundation::IInspectable const& sender,
-								winrt::Windows::Foundation::IInspectable const& args);
 		void BanSelectedPeer(std::int64_t durationSeconds);
 		void ResetPeerGroups();
 		void EnsurePeerGroups();
+		void SavePeerGroupExpansionState();
 		winrt::hstring BuildFlagSvg(std::string countryCode);
 		void UpdateSortHeaders();
 		void SortPeerItems(std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem>& items);
