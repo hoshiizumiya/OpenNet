@@ -50,10 +50,13 @@ namespace winrt::OpenNet::ViewModels::implementation
         void TcpStunPort(double value) { SetProperty(m_tcpStunPort, value, L"TcpStunPort"); }
         winrt::hstring TcpStatus() const { return m_tcpStatus; }
         winrt::hstring TcpPublicEndpoint() const { return m_tcpPublicEndpoint; }
+        winrt::hstring TcpFirewallStatus() const { return m_tcpFirewallStatus; }
         bool IsTcpBusy() const noexcept { return m_isTcpBusy; }
         bool IsTcpRunning() const noexcept { return m_isTcpRunning; }
         winrt::Microsoft::UI::Xaml::Input::ICommand StartTcpCommand() const { return m_startTcpCommand; }
         winrt::Microsoft::UI::Xaml::Input::ICommand StopTcpCommand() const { return m_stopTcpCommand; }
+        winrt::Microsoft::UI::Xaml::Input::ICommand AllowTcpFirewallCommand() const { return m_allowTcpFirewallCommand; }
+        winrt::Microsoft::UI::Xaml::Input::ICommand RemoveTcpFirewallCommand() const { return m_removeTcpFirewallCommand; }
         void Refresh();
 
     private:
@@ -85,8 +88,11 @@ namespace winrt::OpenNet::ViewModels::implementation
         double m_tcpStunPort{ 3478 };
         winrt::hstring m_tcpStatus;
         winrt::hstring m_tcpPublicEndpoint;
+        winrt::hstring m_tcpFirewallStatus;
         winrt::Microsoft::UI::Xaml::Input::ICommand m_startTcpCommand{ nullptr };
         winrt::Microsoft::UI::Xaml::Input::ICommand m_stopTcpCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_allowTcpFirewallCommand{ nullptr };
+        winrt::Microsoft::UI::Xaml::Input::ICommand m_removeTcpFirewallCommand{ nullptr };
         winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_timer{ nullptr };
         winrt::event_token m_tickToken{};
     };

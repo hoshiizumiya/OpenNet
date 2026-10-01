@@ -6821,7 +6821,7 @@ Availability: {}</value>
     <value>Public TCP exposure is opt-in</value>
   </data>
   <data name="NatTools_TcpMappingWarning.Message" xml:space="preserve">
-    <value>This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added, and a STUN observation does not prove reachability.</value>
+    <value>This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added automatically, and a STUN observation does not prove reachability.</value>
   </data>
   <data name="NatTools_TcpLocalAddress.Header" xml:space="preserve">
     <value>Local IPv4 address</value>
@@ -6867,6 +6867,21 @@ Availability: {}</value>
   </data>
   <data name="NatTcpMappingActiveRelaysPrefix" xml:space="preserve">
     <value>; active relays: </value>
+  </data>
+  <data name="NatTools_AllowTcpFirewall.Content" xml:space="preserve">
+    <value>Allow this TCP port in Windows Firewall</value>
+  </data>
+  <data name="NatTools_RemoveTcpFirewall.Content" xml:space="preserve">
+    <value>Remove OpenNet TCP firewall rule</value>
+  </data>
+  <data name="NatTcpMappingFirewallRequiresFixedPort" xml:space="preserve">
+    <value>Start TCP mapping on a fixed port before adding a persistent firewall rule.</value>
+  </data>
+  <data name="NatTcpMappingFirewallAllowed" xml:space="preserve">
+    <value>OpenNet TCP firewall rule is enabled.</value>
+  </data>
+  <data name="NatTcpMappingFirewallRemoved" xml:space="preserve">
+    <value>OpenNet TCP firewall rule removed.</value>
   </data>
 
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">

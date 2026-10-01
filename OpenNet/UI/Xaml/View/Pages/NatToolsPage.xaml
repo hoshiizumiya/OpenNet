@@ -365,7 +365,7 @@
                     Margin="0,8,0,0"
                     IsClosable="False"
                     IsOpen="True"
-                    Message="This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added, and a STUN observation does not prove reachability."
+                    Message="This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added automatically, and a STUN observation does not prove reachability."
                     Severity="Warning"
                     Title="Public TCP exposure is opt-in" />
                 <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">
@@ -435,6 +435,20 @@
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="Observed TCP mapping toward STUN:" />
                 <TextBlock Text="{x:Bind ViewModel.TcpPublicEndpoint, Mode=OneWay}" TextWrapping="Wrap" />
+                <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">
+                    <Button
+                        x:Uid="NatTools_AllowTcpFirewall"
+                        Command="{x:Bind ViewModel.AllowTcpFirewallCommand}"
+                        Content="Allow this TCP port in Windows Firewall" />
+                    <Button
+                        x:Uid="NatTools_RemoveTcpFirewall"
+                        Command="{x:Bind ViewModel.RemoveTcpFirewallCommand}"
+                        Content="Remove OpenNet TCP firewall rule" />
+                </StackPanel>
+                <TextBlock
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="{x:Bind ViewModel.TcpFirewallStatus, Mode=OneWay}"
+                    TextWrapping="Wrap" />
 
                 <!--  Port Accessibility Test Section  -->
                 <TextBlock

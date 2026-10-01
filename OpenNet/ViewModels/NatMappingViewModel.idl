@@ -27,10 +27,13 @@ namespace OpenNet.ViewModels
         Double TcpStunPort;
         String TcpStatus { get; };
         String TcpPublicEndpoint { get; };
+        String TcpFirewallStatus { get; };
         Boolean IsTcpBusy { get; };
         Boolean IsTcpRunning { get; };
         Microsoft.UI.Xaml.Input.ICommand StartTcpCommand { get; };
         Microsoft.UI.Xaml.Input.ICommand StopTcpCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand AllowTcpFirewallCommand { get; };
+        Microsoft.UI.Xaml.Input.ICommand RemoveTcpFirewallCommand { get; };
         void Refresh();
     };
 }

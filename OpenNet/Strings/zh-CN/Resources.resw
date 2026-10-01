@@ -6821,7 +6821,7 @@
     <value>公网 TCP 暴露必须手动启用</value>
   </data>
   <data name="NatTools_TcpMappingWarning.Message" xml:space="preserve">
-    <value>此模式无法独占共享端口。请绑定具体网卡地址，且仅暴露已启用身份验证的目标。它不会添加防火墙规则，STUN 观测也不代表外网可达。</value>
+    <value>此模式无法独占共享端口。请绑定具体网卡地址，且仅暴露已启用身份验证的目标。它不会自动添加防火墙规则，STUN 观测也不代表外网可达。</value>
   </data>
   <data name="NatTools_TcpLocalAddress.Header" xml:space="preserve">
     <value>本机 IPv4 地址</value>
@@ -6867,6 +6867,21 @@
   </data>
   <data name="NatTcpMappingActiveRelaysPrefix" xml:space="preserve">
     <value>；活动转发：</value>
+  </data>
+  <data name="NatTools_AllowTcpFirewall.Content" xml:space="preserve">
+    <value>允许 Windows 防火墙放行此 TCP 端口</value>
+  </data>
+  <data name="NatTools_RemoveTcpFirewall.Content" xml:space="preserve">
+    <value>删除 OpenNet TCP 防火墙规则</value>
+  </data>
+  <data name="NatTcpMappingFirewallRequiresFixedPort" xml:space="preserve">
+    <value>请先用固定端口启动 TCP 映射，再添加长期有效的防火墙规则。</value>
+  </data>
+  <data name="NatTcpMappingFirewallAllowed" xml:space="preserve">
+    <value>OpenNet 的 TCP 防火墙规则已启用。</value>
+  </data>
+  <data name="NatTcpMappingFirewallRemoved" xml:space="preserve">
+    <value>已删除 OpenNet TCP 防火墙规则。</value>
   </data>
 
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">

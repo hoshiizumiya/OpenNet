@@ -17,9 +17,9 @@ namespace OpenNet::Core::NatMap
         struct ReleaseBstr { void operator()(wchar_t* value) const { SysFreeString(value); } };
         using Bstr = std::unique_ptr<wchar_t, ReleaseBstr>;
 
-        std::wstring RuleName(std::uint16_t port)
+        long ProtocolNumber(MappingTransport transport)
         {
-            return L"OpenNet NAT mapping UDP " + std::to_wstring(port);
+            return transport == MappingTransport::Udp ? NET_FW_IP_PROTOCOL_UDP : NET_FW_IP_PROTOCOL_TCP;
         }
 
         bool OpenPolicy(INetFwPolicy2** policy, INetFwRules** rules, std::wstring& error)
@@ -43,7 +43,17 @@ namespace OpenNet::Core::NatMap
         }
     }
 
-    bool AllowInboundUdp(std::uint16_t port, std::wstring& error)
+    MappingFirewallRuleDescriptor BuildMappingFirewallRule(MappingTransport transport, std::uint16_t port)
+    {
+        auto const portText = std::to_wstring(port);
+        return {
+            L"OpenNet NAT mapping " + std::wstring(transport == MappingTransport::Udp ? L"UDP " : L"TCP ") + portText,
+            portText,
+            static_cast<std::int32_t>(ProtocolNumber(transport)),
+        };
+    }
+
+    static bool AllowInbound(MappingTransport transport, std::uint16_t port, std::wstring& error)
     {
         if (!port) { error = L"Start a mapping before configuring the firewall."; return false; }
         auto const path = ExecutablePath();
@@ -52,11 +62,10 @@ namespace OpenNet::Core::NatMap
         INetFwRules* rules{};
         if (!OpenPolicy(&policy, &rules, error)) return false;
 
-        auto const name = RuleName(port);
-        Bstr ruleName(SysAllocString(name.c_str()));
+        auto const descriptor = BuildMappingFirewallRule(transport, port);
+        Bstr ruleName(SysAllocString(descriptor.name.c_str()));
         Bstr application(SysAllocString(path.c_str()));
-        auto const portText = std::to_wstring(port);
-        Bstr localPort(SysAllocString(portText.c_str()));
+        Bstr localPort(SysAllocString(descriptor.localPort.c_str()));
         INetFwRule* rule{};
         HRESULT hr = rules->Item(ruleName.get(), &rule);
         if (SUCCEEDED(hr))
@@ -73,8 +82,9 @@ namespace OpenNet::Core::NatMap
             if (SUCCEEDED(hr) && matches) hr = rule->get_LocalPorts(&existingPort);
             if (SUCCEEDED(hr) && matches) hr = rule->get_Direction(&direction);
             if (SUCCEEDED(hr) && matches) hr = rule->get_Action(&action);
-            bool const exact = matches && SUCCEEDED(hr) && protocol == NET_FW_IP_PROTOCOL_UDP &&
-                existingPort && portText == existingPort && direction == NET_FW_RULE_DIR_IN && action == NET_FW_ACTION_ALLOW;
+            bool const exact = matches && SUCCEEDED(hr) && protocol == descriptor.protocol &&
+                existingPort && descriptor.localPort == existingPort &&
+                direction == NET_FW_RULE_DIR_IN && action == NET_FW_ACTION_ALLOW;
             SysFreeString(existingPort);
             if (exact)
             {
@@ -85,7 +95,7 @@ namespace OpenNet::Core::NatMap
                 if (SUCCEEDED(hr)) hr = rule->put_Profiles(profiles | existingProfiles);
                 if (SUCCEEDED(hr)) hr = rule->put_Enabled(VARIANT_TRUE);
             }
-            else { hr = E_ACCESSDENIED; error = L"A firewall rule with this name belongs to another application."; }
+            else { hr = E_ACCESSDENIED; error = L"The firewall rule does not match this OpenNet mapping."; }
         }
         else
         {
@@ -95,7 +105,7 @@ namespace OpenNet::Core::NatMap
                                                        __uuidof(INetFwRule), reinterpret_cast<void**>(&rule));
             if (SUCCEEDED(hr)) hr = rule->put_Name(ruleName.get());
             if (SUCCEEDED(hr)) hr = rule->put_ApplicationName(application.get());
-            if (SUCCEEDED(hr)) hr = rule->put_Protocol(NET_FW_IP_PROTOCOL_UDP);
+            if (SUCCEEDED(hr)) hr = rule->put_Protocol(descriptor.protocol);
             if (SUCCEEDED(hr)) hr = rule->put_LocalPorts(localPort.get());
             if (SUCCEEDED(hr)) hr = rule->put_Direction(NET_FW_RULE_DIR_IN);
             if (SUCCEEDED(hr)) hr = rule->put_Action(NET_FW_ACTION_ALLOW);
@@ -111,29 +121,63 @@ namespace OpenNet::Core::NatMap
         return SUCCEEDED(hr);
     }
 
-    bool RemoveInboundUdp(std::uint16_t port, std::wstring& error)
+    static bool RemoveInbound(MappingTransport transport, std::uint16_t port, std::wstring& error)
     {
         if (!port) { error = L"No mapped port is selected."; return false; }
+        auto const path = ExecutablePath();
+        if (path.empty()) { error = L"Cannot locate the OpenNet executable."; return false; }
         INetFwPolicy2* policy{};
         INetFwRules* rules{};
         if (!OpenPolicy(&policy, &rules, error)) return false;
-        auto const name = RuleName(port);
-        Bstr ruleName(SysAllocString(name.c_str()));
+        auto const descriptor = BuildMappingFirewallRule(transport, port);
+        Bstr ruleName(SysAllocString(descriptor.name.c_str()));
         INetFwRule* rule{};
         HRESULT hr = rules->Item(ruleName.get(), &rule);
         if (SUCCEEDED(hr))
         {
             BSTR existingPath{};
             hr = rule->get_ApplicationName(&existingPath);
-            bool const matches = SUCCEEDED(hr) && existingPath && _wcsicmp(existingPath, ExecutablePath().c_str()) == 0;
+            bool const matches = SUCCEEDED(hr) && existingPath && _wcsicmp(existingPath, path.c_str()) == 0;
             SysFreeString(existingPath);
-            if (matches) hr = rules->Remove(ruleName.get());
-            else { hr = E_ACCESSDENIED; error = L"The rule belongs to another application."; }
+            long protocol{};
+            NET_FW_RULE_DIRECTION direction{};
+            NET_FW_ACTION action{};
+            BSTR existingPort{};
+            if (matches) hr = rule->get_Protocol(&protocol);
+            if (SUCCEEDED(hr) && matches) hr = rule->get_LocalPorts(&existingPort);
+            if (SUCCEEDED(hr) && matches) hr = rule->get_Direction(&direction);
+            if (SUCCEEDED(hr) && matches) hr = rule->get_Action(&action);
+            bool const exact = matches && SUCCEEDED(hr) && protocol == descriptor.protocol &&
+                existingPort && descriptor.localPort == existingPort &&
+                direction == NET_FW_RULE_DIR_IN && action == NET_FW_ACTION_ALLOW;
+            SysFreeString(existingPort);
+            if (exact) hr = rules->Remove(ruleName.get());
+            else { hr = E_ACCESSDENIED; error = L"The firewall rule does not match this OpenNet mapping."; }
             rule->Release();
         }
         rules->Release();
         policy->Release();
         if (FAILED(hr) && error.empty()) error = L"Could not remove the OpenNet firewall rule.";
         return SUCCEEDED(hr);
+    }
+
+    bool AllowInboundUdp(std::uint16_t port, std::wstring& error)
+    {
+        return AllowInbound(MappingTransport::Udp, port, error);
+    }
+
+    bool RemoveInboundUdp(std::uint16_t port, std::wstring& error)
+    {
+        return RemoveInbound(MappingTransport::Udp, port, error);
+    }
+
+    bool AllowInboundTcp(std::uint16_t port, std::wstring& error)
+    {
+        return AllowInbound(MappingTransport::Tcp, port, error);
+    }
+
+    bool RemoveInboundTcp(std::uint16_t port, std::wstring& error)
+    {
+        return RemoveInbound(MappingTransport::Tcp, port, error);
     }
 }

@@ -24,6 +24,7 @@ namespace winrt::OpenNet::ViewModels::implementation
         m_firewallStatus = ResourceGetString(L"NatMappingFirewallUnchanged");
         m_tcpStatus = ResourceGetString(L"NatTcpMappingStopped");
         m_tcpPublicEndpoint = L"—";
+        m_tcpFirewallStatus = ResourceGetString(L"NatMappingFirewallUnchanged");
         m_startCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
             .Execute([weak = get_weak()](auto const&)
         {
@@ -150,6 +151,43 @@ namespace winrt::OpenNet::ViewModels::implementation
             auto self = weak.get();
             return self && !self->m_isTcpBusy && self->m_isTcpRunning;
         }).DependsOn(L"IsTcpBusy").DependsOn(L"IsTcpRunning").Build();
+
+        m_allowTcpFirewallCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .Execute([weak = get_weak()](auto const&)
+        {
+            if (auto self = weak.get())
+            {
+                std::wstring error;
+                auto const mapping = ::OpenNet::Core::NatMap::SharedTcpMappingService().Snapshot();
+                auto const port = mapping.localPort;
+                if (!mapping.running || self->m_tcpMappingPort == 0 || self->m_tcpMappingPort != port)
+                {
+                    self->SetProperty(self->m_tcpFirewallStatus,
+                        ResourceGetString(L"NatTcpMappingFirewallRequiresFixedPort"), L"TcpFirewallStatus");
+                    return;
+                }
+                bool const applied = ::OpenNet::Core::NatMap::AllowInboundTcp(port, error);
+                self->SetProperty(self->m_tcpFirewallStatus,
+                    applied ? ResourceGetString(L"NatTcpMappingFirewallAllowed") : winrt::hstring(error),
+                    L"TcpFirewallStatus");
+            }
+        }).Build();
+        m_removeTcpFirewallCommand = mvvm::DelegateCommandBuilder<winrt::Windows::Foundation::IInspectable>(*this)
+            .Execute([weak = get_weak()](auto const&)
+        {
+            if (auto self = weak.get())
+            {
+                std::wstring error;
+                auto const configured = self->m_tcpMappingPort;
+                auto const port = std::isfinite(configured) && configured >= 1 && configured <= 65535 &&
+                    std::floor(configured) == configured ? static_cast<std::uint16_t>(configured) :
+                    ::OpenNet::Core::NatMap::SharedTcpMappingService().Snapshot().localPort;
+                bool const removed = ::OpenNet::Core::NatMap::RemoveInboundTcp(port, error);
+                self->SetProperty(self->m_tcpFirewallStatus,
+                    removed ? ResourceGetString(L"NatTcpMappingFirewallRemoved") : winrt::hstring(error),
+                    L"TcpFirewallStatus");
+            }
+        }).Build();
 
         m_timer = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread().CreateTimer();
         m_timer.Interval(std::chrono::seconds(1));

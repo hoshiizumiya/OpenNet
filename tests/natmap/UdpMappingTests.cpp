@@ -1,4 +1,5 @@
 #include "Core/NatMap/UdpMappingService.h"
+#include "Core/NatMap/MappingFirewall.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 #include <array>
@@ -107,6 +108,17 @@ int main()
     struct Cleanup { ~Cleanup() { WSACleanup(); } } cleanup;
     try
     {
+        using OpenNet::Core::NatMap::BuildMappingFirewallRule;
+        using OpenNet::Core::NatMap::MappingTransport;
+        auto const udpRule = BuildMappingFirewallRule(MappingTransport::Udp, 45678);
+        auto const tcpRule = BuildMappingFirewallRule(MappingTransport::Tcp, 45678);
+        Require(udpRule.name == L"OpenNet NAT mapping UDP 45678" && udpRule.localPort == L"45678" &&
+            udpRule.protocol == IPPROTO_UDP, "UDP firewall rule descriptor");
+        Require(tcpRule.name == L"OpenNet NAT mapping TCP 45678" && tcpRule.localPort == L"45678" &&
+            tcpRule.protocol == IPPROTO_TCP, "TCP firewall rule descriptor");
+        Require(udpRule.name != tcpRule.name && udpRule.protocol != tcpRule.protocol,
+            "firewall protocols use separate rule identities");
+
         DatagramSocket stun;
         DatagramSocket target;
         DatagramSocket replacementTarget;
@@ -238,7 +250,7 @@ int main()
         std::this_thread::sleep_for(20ms);
         service.Stop();
         Require(std::chrono::steady_clock::now() - cancelStart < 3s, "DNS cancellation does not wait for timeout");
-        std::cout << "UDP mapping, uTP-only automatic relay, generic manual relay, two-peer routing, STUN starvation/expiry, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
+        std::cout << "UDP mapping, separate UDP/TCP firewall identities, uTP-only automatic relay, generic manual relay, two-peer routing, STUN starvation/expiry, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
         return 0;
     }
     catch (std::exception const& error) { std::cerr << error.what() << '\n'; return 1; }
