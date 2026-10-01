@@ -138,8 +138,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		m_mode.store(static_cast<MetricMode>(selector.SelectedIndex()), std::memory_order_relaxed);
 		ApplyGraphSettings();
-		m_pendingSamples.clear();
-		m_latestDisplayValues.clear();
+		{
+			std::scoped_lock pendingLock(m_pendingSampleMutex);
+			m_pendingSamples.clear();
+			m_latestDisplayValues.clear();
+		}
 		m_lastSampleTime = std::chrono::steady_clock::now();
 		{
 			std::scoped_lock lock(m_sampleStateMutex);
@@ -199,20 +202,32 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto [samples, displayValues] = SampleMetric();
 		if (samples.empty()) return;
 
-		m_pendingSamples.push_back({ std::move(samples), elapsedSeconds });
-		m_latestDisplayValues = std::move(displayValues);
-		constexpr std::size_t MaxPendingSamples = 6000;
-		while (m_pendingSamples.size() > MaxPendingSamples)
 		{
-			m_pendingSamples.pop_front();
+			std::scoped_lock pendingLock(m_pendingSampleMutex);
+			m_pendingSamples.push_back({ std::move(samples), elapsedSeconds });
+			m_latestDisplayValues = std::move(displayValues);
+			constexpr std::size_t MaxPendingSamples = 6000;
+			while (m_pendingSamples.size() > MaxPendingSamples)
+			{
+				m_pendingSamples.pop_front();
+			}
 		}
 	}
 
 	void TaskSpeedGraphPage::FlushPendingSamples()
 	{
-		if (!m_graphActive.load(std::memory_order_acquire) || m_pendingSamples.empty())
+		if (!m_graphActive.load(std::memory_order_acquire))
 		{
 			return;
+		}
+
+		std::deque<PendingMetricSample> pendingSamples;
+		std::vector<hstring> displayValues;
+		{
+			std::scoped_lock pendingLock(m_pendingSampleMutex);
+			if (m_pendingSamples.empty()) return;
+			pendingSamples.swap(m_pendingSamples);
+			displayValues = m_latestDisplayValues;
 		}
 
 		auto const mode = m_mode.load(std::memory_order_relaxed);
@@ -228,7 +243,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto graph = PerformanceGraph();
 			if (!graph) return;
 			auto const scrollPixelsPerSecond = m_graphScrollPixelsPerSecond.load(std::memory_order_relaxed);
-			for (auto const& sample : m_pendingSamples)
+			for (auto const& sample : pendingSamples)
 			{
 				auto const count = std::min(sample.Values.size(), m_graphKeys.size());
 				auto const pointSpace = static_cast<float>(std::max(
@@ -244,7 +259,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				}
 				lastValues = sample.Values;
 			}
-			m_pendingSamples.clear();
 			maximum = graph.CurrentValueMaximum();
 		}
 		m_highlightScale.store(maximum, std::memory_order_relaxed);
@@ -263,7 +277,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			scaleText = FormatRate(maximum);
 		}
 		QueueMetricText(
-			m_latestDisplayValues,
+			displayValues,
 			scaleText,
 			percentageMode ? hstring{ L"100%" } : scaleText);
 		if (mode == MetricMode::TransferSpeed && lastValues.size() > 1)
