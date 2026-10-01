@@ -3,6 +3,7 @@
 #include "ViewModels/NatMappingViewModel.g.cpp"
 #include "Core/NatMap/TcpMappingService.h"
 #include "Core/NatMap/UdpMappingService.h"
+#include "Core/NatMap/StunHostList.h"
 #include "Core/NatMap/MappingFirewall.h"
 #include "mvvm_framework/delegate_command_builder.h"
 #include <chrono>
@@ -60,7 +61,8 @@ namespace winrt::OpenNet::ViewModels::implementation
                     std::floor(self->m_mappingPort) != self->m_mappingPort ||
                     (!followTorrentTarget && (!std::isfinite(self->m_targetPort) || self->m_targetPort < 1 ||
                         self->m_targetPort > 65535 || std::floor(self->m_targetPort) != self->m_targetPort)) ||
-                    self->m_stunHost.empty() || self->m_stunHost.size() > 253 ||
+                    ::OpenNet::Core::NatMap::ParseStunHostList(
+                        std::wstring_view(self->m_stunHost.c_str(), self->m_stunHost.size())).empty() ||
                     !std::isfinite(self->m_stunPort) || self->m_stunPort < 1 || self->m_stunPort > 65535 ||
                     std::floor(self->m_stunPort) != self->m_stunPort)
                 {

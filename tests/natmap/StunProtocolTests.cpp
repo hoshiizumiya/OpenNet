@@ -1,4 +1,5 @@
 #include "Core/NatMap/StunProtocol.h"
+#include "Core/NatMap/StunHostList.h"
 #include <iostream>
 #include <stdexcept>
 #include <vector>
@@ -14,6 +15,12 @@ int main()
     try
     {
         Stun::TransactionId const transaction{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+        auto const hosts = OpenNet::Core::NatMap::ParseStunHostList(L" first.example ;192.0.2.1; third.example\t");
+        Require(hosts.size() == 3 && hosts[0] == L"first.example" && hosts[1] == L"192.0.2.1" &&
+            hosts[2] == L"third.example", "STUN fallback hosts parsed and trimmed");
+        Require(OpenNet::Core::NatMap::ParseStunHostList(L"first;;third").empty(), "empty STUN fallback rejected");
+        Require(OpenNet::Core::NatMap::ParseStunHostList(L"first;").empty(), "trailing STUN fallback rejected");
+        Require(OpenNet::Core::NatMap::ParseStunHostList(std::wstring(254, L'a')).empty(), "long STUN host rejected");
         auto request = Stun::BindingRequest(transaction);
         Require(request[1] == 1 && request[2] == 0 && request[4] == 0x21 && request[19] == 11, "binding request wire format");
         std::vector<std::uint8_t> response(request.begin(), request.end());

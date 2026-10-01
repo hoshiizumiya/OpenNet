@@ -245,12 +245,31 @@ int main()
             service.Stop();
             Require(!service.Snapshot().running && !service.Snapshot().starting, "immediate stop joins worker");
         }
+        {
+            // The first numeric endpoint resolves but deliberately has no
+            // listener. Expiry must retain the mapping socket and advance to
+            // the second endpoint, where the local fake STUN server replies.
+            DatagramSocket fallbackStun;
+            OpenNet::Core::NatMap::UdpMappingService fallbackService({ 100ms, 350ms, 5000ms });
+            std::wstring const hosts = L"127.0.0.2; 127.0.0.1";
+            Require(fallbackService.Start(0, target.Port(), hosts, fallbackStun.Port()),
+                "start STUN fallback mapping");
+            sockaddr_in fallbackMapping{};
+            auto const fallbackResponse = Reply(fallbackStun.Receive(fallbackMapping));
+            fallbackStun.Send(fallbackResponse, fallbackMapping);
+            WaitFor([&] { return fallbackService.Snapshot().publicPort == 45678; },
+                "unresponsive STUN endpoint falls back to next server");
+            Require(fallbackService.Snapshot().localPort == ntohs(fallbackMapping.sin_port),
+                "STUN fallback preserves mapping port");
+            Require(fallbackService.Snapshot().error.empty(), "successful STUN fallback clears timeout error");
+            fallbackService.Stop();
+        }
         auto const cancelStart = std::chrono::steady_clock::now();
         Require(service.Start(0, target.Port(), L"opennet-cancel-test.invalid", stun.Port()), "launch DNS startup");
         std::this_thread::sleep_for(20ms);
         service.Stop();
         Require(std::chrono::steady_clock::now() - cancelStart < 3s, "DNS cancellation does not wait for timeout");
-        std::cout << "UDP mapping, separate UDP/TCP firewall identities, uTP-only automatic relay, generic manual relay, two-peer routing, STUN starvation/expiry, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
+        std::cout << "UDP mapping, separate UDP/TCP firewall identities, uTP-only automatic relay, generic manual relay, two-peer routing, STUN starvation/expiry/fallback, network recovery, automatic target lifecycle, bind conflict, restart and cancellation passed\n";
         return 0;
     }
     catch (std::exception const& error) { std::cerr << error.what() << '\n'; return 1; }

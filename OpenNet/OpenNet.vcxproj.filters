@@ -919,6 +919,9 @@
     <ClInclude Include="Core\NatMap\UdpMappingService.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\NatMap\StunHostList.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="Core\NatMap\StunProtocol.h">
       <Filter>Core</Filter>
     </ClInclude>

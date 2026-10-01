@@ -6,6 +6,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <vector>
 
 namespace OpenNet::Core::NatMap
 {
@@ -56,7 +57,7 @@ namespace OpenNet::Core::NatMap
     private:
         void StopWorker();
         void Run(std::stop_token stop, std::uint16_t localPort, std::uint16_t targetPort,
-                 std::wstring stunHost, std::uint16_t stunPort, bool utpOnly);
+                 std::vector<std::wstring> stunHosts, std::uint16_t stunPort, bool utpOnly);
 
         mutable std::mutex m_mutex;
         std::mutex m_lifecycleMutex;

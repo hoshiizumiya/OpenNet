@@ -640,6 +640,7 @@
     </ClInclude>
     <ClInclude Include="Core\NatMap\TcpMappingService.h" />
     <ClInclude Include="Core\NatMap\UdpMappingService.h" />
+    <ClInclude Include="Core\NatMap\StunHostList.h" />
     <ClInclude Include="Core\NatMap\StunProtocol.h" />
     <ClInclude Include="Core\NatMap\MappingFirewall.h" />
     <ClInclude Include="ViewModels\NatMappingViewModel.h" />

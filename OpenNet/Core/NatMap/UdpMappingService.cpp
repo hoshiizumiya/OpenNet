@@ -1,5 +1,6 @@
 #include "Core/NatMap/UdpMappingService.h"
 #include "Core/NatMap/StunProtocol.h"
+#include "Core/NatMap/StunHostList.h"
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -95,6 +96,21 @@ namespace OpenNet::Core::NatMap
             return found;
         }
 
+        bool ResolveStunFallback(std::vector<std::wstring> const& hosts, std::size_t& index,
+                                 std::uint16_t port, std::stop_token stop, sockaddr_in& address)
+        {
+            for (std::size_t offset{}; offset < hosts.size() && !stop.stop_requested(); ++offset)
+            {
+                std::size_t const candidate = (index + offset) % hosts.size();
+                if (ResolveStun(hosts[candidate], port, stop, address))
+                {
+                    index = candidate;
+                    return true;
+                }
+            }
+            return false;
+        }
+
         bool MakeNonblocking(SOCKET socket)
         {
             u_long enabled = 1;
@@ -130,7 +146,8 @@ namespace OpenNet::Core::NatMap
     bool UdpMappingService::Start(std::uint16_t localPort, std::uint16_t targetPort,
                                   std::wstring stunHost, std::uint16_t stunPort, bool followTorrentTarget)
     {
-        if ((!followTorrentTarget && !targetPort) || !stunPort || stunHost.empty() ||
+        auto stunHosts = ParseStunHostList(stunHost);
+        if ((!followTorrentTarget && !targetPort) || !stunPort || stunHosts.empty() ||
             (localPort != 0 && targetPort != 0 && localPort == targetPort)) return false;
         std::lock_guard lifecycle(m_lifecycleMutex);
         StopWorker();
@@ -146,12 +163,12 @@ namespace OpenNet::Core::NatMap
             m_snapshot.targetPort = targetPort;
             m_snapshot.starting = true;
         }
-        m_worker = std::jthread([this, localPort, targetPort, stunHost = std::move(stunHost), stunPort,
+        m_worker = std::jthread([this, localPort, targetPort, stunHosts = std::move(stunHosts), stunPort,
                                  followTorrentTarget](std::stop_token stop)
         {
             try
             {
-                Run(stop, localPort, targetPort, stunHost, stunPort, followTorrentTarget);
+                Run(stop, localPort, targetPort, stunHosts, stunPort, followTorrentTarget);
             }
             catch (...)
             {
@@ -212,7 +229,7 @@ namespace OpenNet::Core::NatMap
     }
 
     void UdpMappingService::Run(std::stop_token stop, std::uint16_t localPort, std::uint16_t targetPort,
-                                std::wstring stunHost, std::uint16_t stunPort, bool utpOnly)
+                                std::vector<std::wstring> stunHosts, std::uint16_t stunPort, bool utpOnly)
     {
         WSADATA wsa{};
         if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
@@ -267,9 +284,10 @@ namespace OpenNet::Core::NatMap
             return;
         }
         sockaddr_in stun{};
-        if (!ResolveStun(stunHost, stunPort, stop, stun))
+        std::size_t stunHostIndex{};
+        if (!ResolveStunFallback(stunHosts, stunHostIndex, stunPort, stop, stun))
         {
-            finish(stop.stop_requested() ? std::wstring{} : L"Cannot resolve the STUN server.");
+            finish(stop.stop_requested() ? std::wstring{} : L"Cannot resolve any STUN server.");
             return;
         }
         {
@@ -336,7 +354,7 @@ namespace OpenNet::Core::NatMap
             if (!stunResolved && now >= nextResolve)
             {
                 sockaddr_in resolved{};
-                if (ResolveStun(stunHost, stunPort, stop, resolved))
+                if (ResolveStunFallback(stunHosts, stunHostIndex, stunPort, stop, resolved))
                 {
                     stun = resolved;
                     stunResolved = true;
@@ -350,7 +368,7 @@ namespace OpenNet::Core::NatMap
                     nextResolve = std::chrono::steady_clock::now() +
                         std::min(m_timings.keepalive, std::chrono::milliseconds(5000));
                     std::lock_guard lock(m_mutex);
-                    m_snapshot.error = L"Cannot resolve the STUN server after the network changed.";
+                    m_snapshot.error = L"Cannot resolve any STUN server after the network changed.";
                 }
             }
             if (stunResolved && now >= nextStun)
@@ -440,10 +458,24 @@ namespace OpenNet::Core::NatMap
             }
             if (stunResolved && std::chrono::steady_clock::now() - lastResponse > m_timings.responseExpiry)
             {
+                // A hostname may resolve successfully even though its route or
+                // server is unreachable. With explicit fallbacks, advance only
+                // after the full response-expiry window. Keep the exclusive
+                // mapping socket, but discard peer sockets tied to the old NAT
+                // path before selecting the next destination.
+                bool const hasFallback = stunHosts.size() > 1;
+                if (hasFallback)
+                {
+                    peers.clear();
+                    stunHostIndex = (stunHostIndex + 1) % stunHosts.size();
+                    stunResolved = false;
+                    nextResolve = std::chrono::steady_clock::now();
+                }
                 std::lock_guard lock(m_mutex);
                 m_snapshot.publicAddress.clear();
                 m_snapshot.publicPort = 0;
-                m_snapshot.error = L"STUN keepalive timed out.";
+                m_snapshot.error = hasFallback ? L"STUN keepalive timed out; trying the next server."
+                                               : L"STUN keepalive timed out.";
             }
         }
         finish({});
