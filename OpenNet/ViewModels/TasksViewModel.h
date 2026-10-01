@@ -122,11 +122,14 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		winrt::event_token TorrentUpdated(winrt::Windows::Foundation::EventHandler<winrt::hstring> const& handler)
 		{
-			return m_torrentUpdated.add(handler);
+			auto const token = m_torrentUpdated.add(handler);
+			m_torrentUpdatedSubscriberCount.fetch_add(1, std::memory_order_relaxed);
+			return token;
 		}
 		void TorrentUpdated(winrt::event_token const& token) noexcept
 		{
 			m_torrentUpdated.remove(token);
+			m_torrentUpdatedSubscriberCount.fetch_sub(1, std::memory_order_relaxed);
 		}
 
 		bool IsColNameLoad();
@@ -202,6 +205,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_addTaskRequested;
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_taskDeletionFailed;
 		winrt::event<winrt::Windows::Foundation::EventHandler<winrt::hstring>> m_torrentUpdated;
+		std::atomic_uint32_t m_torrentUpdatedSubscriberCount{};
 
 		// GIDs that were explicitly deleted ─ prevents OnHttpProgress/Finished
 		// from re-creating the task after deletion.
