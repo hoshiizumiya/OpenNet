@@ -66,7 +66,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			m_isActive.store(false, std::memory_order_release);
 			m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
-			StopRefreshTimer();
+			SavePeerGroupExpansionState();
 			Unsubscribe();
 			SaveColumnWidth("Peers.IP", ColPeerIP());
 			SaveColumnWidth("Peers.Location", ColPeerLocation());
@@ -128,28 +128,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			this->DataContext(m_viewModel);
 			m_vmPropertyChangedToken = m_viewModel.PropertyChanged(
 				{ this, &TaskPeersListPage::OnViewModelPropertyChanged });
+			m_torrentUpdatedToken = m_viewModel.TorrentUpdated(
+				{ this, &TaskPeersListPage::OnTorrentUpdated });
 		}
 
-		// Set up periodic refresh timer (every 2 seconds)
-		if (!m_refreshTimer)
-		{
-			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
-			auto weak = get_weak();
-			m_timerTickToken = m_refreshTimer.Tick([weak](auto const& sender, auto const& args)
-			{
-				if (auto self = weak.get()) self->OnRefreshTimerTick(sender, args);
-			});
-		}
-		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
-		database.Initialize();
-		m_configuredRefreshInterval = std::chrono::milliseconds(
-			std::clamp<std::int64_t>(
-				database.GetInt("ui", "refresh_interval_ms").value_or(1000),
-				100,
-				60000));
-		m_refreshTimer.Interval(m_configuredRefreshInterval);
-		m_refreshTimer.Start();
-
+		// Prime the view immediately. Subsequent peer snapshots are driven by
+		// TasksViewModel::TorrentUpdated, which follows the libtorrent update cadence.
 		RefreshPeerList();
 	}
 
@@ -157,23 +141,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		m_isActive.store(false, std::memory_order_release);
 		m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
-		StopRefreshTimer();
+		SavePeerGroupExpansionState();
 		Unsubscribe();
-	}
-
-	void TaskPeersListPage::StopRefreshTimer() noexcept
-	{
-		if (!m_refreshTimer) return;
-		try
-		{
-			m_refreshTimer.Stop();
-			if (m_timerTickToken.value) m_refreshTimer.Tick(m_timerTickToken);
-		}
-		catch (...)
-		{
-		}
-		m_timerTickToken = {};
-		m_refreshTimer = nullptr;
 	}
 
 	void TaskPeersListPage::Unsubscribe()
@@ -182,6 +151,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			m_viewModel.PropertyChanged(m_vmPropertyChangedToken);
 			m_vmPropertyChangedToken = {};
+		}
+		if (m_viewModel && m_torrentUpdatedToken.value)
+		{
+			m_viewModel.TorrentUpdated(m_torrentUpdatedToken);
+			m_torrentUpdatedToken = {};
 		}
 		m_viewModel = nullptr;
 	}
@@ -202,11 +176,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
-	void TaskPeersListPage::OnRefreshTimerTick(
+	void TaskPeersListPage::OnTorrentUpdated(
 		winrt::Windows::Foundation::IInspectable const&,
-		winrt::Windows::Foundation::IInspectable const&)
+		winrt::hstring const& taskId)
 	{
-		if (!m_isActive.load(std::memory_order_acquire)) return;
+		if (!m_isActive.load(std::memory_order_acquire) || !m_viewModel)
+			return;
+		auto const selected = m_viewModel.SelectedTask();
+		if (!selected || selected.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
+			return;
+		if (selected.TaskId() != taskId)
+			return;
 		RefreshPeerList();
 	}
 
@@ -456,6 +436,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskPeersListPage::ResetPeerGroups()
 	{
+		SavePeerGroupExpansionState();
 		m_hasPeerSnapshot = false;
 		m_peerItems = nullptr;
 		m_connectedGroup = nullptr;
@@ -470,6 +451,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			tree.ItemsSource(nullptr);
 	}
 
+	void TaskPeersListPage::SavePeerGroupExpansionState()
+	{
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		if (m_connectedGroup) database.SetBool("task_peers", "connected_expanded", m_connectedGroup.IsExpanded());
+		if (m_connectingGroup) database.SetBool("task_peers", "connecting_expanded", m_connectingGroup.IsExpanded());
+		if (m_disconnectingGroup) database.SetBool("task_peers", "disconnecting_expanded", m_disconnectingGroup.IsExpanded());
+		if (m_banIpGroup) database.SetBool("task_peers", "banned_expanded", m_banIpGroup.IsExpanded());
+	}
+
 	void TaskPeersListPage::EnsurePeerGroups()
 	{
 		if (m_peerItems)
@@ -478,7 +469,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_peerItems = winrt::single_threaded_observable_vector<
 			winrt::Windows::Foundation::IInspectable>();
 
-		auto makeGroup = [](winrt::hstring const& title)
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		auto makeGroup = [&database](winrt::hstring const& title, char const* settingKey)
 		{
 			auto group = winrt::make<
 				winrt::OpenNet::ViewModels::implementation::PeerDisplayItem>();
@@ -486,14 +479,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			group.FlagSvg(
 				L"<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1 1\"/>");
 			group.IsGroup(true);
-			group.IsExpanded(true);
+			group.IsExpanded(database.GetBool("task_peers", settingKey).value_or(true));
 			return group;
 		};
 
-		m_connectedGroup = makeGroup(L"bt_connected");
-		m_connectingGroup = makeGroup(L"bt_connecting");
-		m_disconnectingGroup = makeGroup(L"disconnecting");
-		m_banIpGroup = makeGroup(L"BanIP");
+		m_connectedGroup = makeGroup(L"bt_connected", "connected_expanded");
+		m_connectingGroup = makeGroup(L"bt_connecting", "connecting_expanded");
+		m_disconnectingGroup = makeGroup(L"disconnecting", "disconnecting_expanded");
+		m_banIpGroup = makeGroup(L"BanIP", "banned_expanded");
 		m_peerItems.Append(m_connectedGroup);
 		m_peerItems.Append(m_connectingGroup);
 		m_peerItems.Append(m_disconnectingGroup);
@@ -753,17 +746,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			co_return;
 		}
 
-		// An empty peer snapshot does not need a one-second background query plus
-		// a UI-queue hop. Recheck auxiliary state every five seconds; explicit
-		// task/sort/ban changes set m_forcePeerRefresh and bypass this throttle.
-		if (!m_forcePeerRefresh.load(std::memory_order_relaxed)
-			&& m_hasPeerSnapshot && m_lastPeerSnapshotHash == 0
-			&& std::chrono::steady_clock::now() - m_lastAuxiliaryRefresh
-			< std::chrono::seconds(5))
-		{
-			co_return;
-		}
-
+		// Refresh the peer snapshot on the same cadence as libtorrent task updates.
+		// Expensive auxiliary ban/filter/event queries remain independently throttled below.
 		if (m_refreshInFlight.exchange(true, std::memory_order_acq_rel))
 			co_return;
 
@@ -806,8 +790,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		auto const emptyText = EmptyStateText();
 
-		// Keep zero reserved for the truly empty snapshot; this lets the timer
-		// avoid scheduling a background/UI round trip while the table is empty.
+		// Zero remains the stable hash for an empty peer snapshot.
 		std::size_t snapshotHash = peers.empty() ? 0 : peers.size();
 		auto combineHash = [&snapshotHash](auto const& value)
 		{
@@ -842,15 +825,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 		m_hasPeerSnapshot = true;
 		m_lastPeerSnapshotHash = snapshotHash;
-		if (m_refreshTimer)
-		{
-			auto const desiredInterval = peers.empty()
-				? (std::max)(m_configuredRefreshInterval,
-							 std::chrono::milliseconds{ 5000 })
-				: m_configuredRefreshInterval;
-			if (m_refreshTimer.Interval() != desiredInterval)
-				m_refreshTimer.Interval(desiredInterval);
-		}
 		auto const refreshAuxiliaryData = forceRefresh
 			|| nowSteady - m_lastAuxiliaryRefresh >= std::chrono::seconds(5);
 		if (refreshAuxiliaryData)
