@@ -11,14 +11,26 @@
 #include <utility>
 
 import OpenNet.Core.P2PManager;
+import OpenNet.Core.Setting.LocalSetting;
+import OpenNet.Core.Setting.SettingKeys;
 import OpenNet.Core.Utils.Message;
 import winrtplus_coroutine;
 import winrt.Microsoft.UI.Dispatching;
+
+namespace
+{
+    bool ValidPort(double value, bool allowZero) noexcept
+    {
+        return std::isfinite(value) && value >= (allowZero ? 0 : 1) && value <= 65535 &&
+            std::floor(value) == value;
+    }
+}
 
 namespace winrt::OpenNet::ViewModels::implementation
 {
     NatMappingViewModel::NatMappingViewModel()
     {
+        LoadTcpConfiguration();
         m_status = ResourceGetString(L"NatMappingStopped");
         m_publicEndpoint = L"—";
         m_firewallStatus = ResourceGetString(L"NatMappingFirewallUnchanged");
@@ -120,21 +132,17 @@ namespace winrt::OpenNet::ViewModels::implementation
         {
             if (auto self = weak.get())
             {
-                auto validPort = [](double value, bool allowZero)
-                {
-                    return std::isfinite(value) && value >= (allowZero ? 0 : 1) && value <= 65535 &&
-                        std::floor(value) == value;
-                };
                 if (self->m_tcpLocalAddress.empty() || self->m_tcpLocalAddress.size() > 45 ||
-                    !validPort(self->m_tcpMappingPort, true) || !validPort(self->m_tcpTargetPort, false) ||
+                    !ValidPort(self->m_tcpMappingPort, true) || !ValidPort(self->m_tcpTargetPort, false) ||
                     self->m_tcpKeepaliveHost.empty() || self->m_tcpKeepaliveHost.size() > 253 ||
-                    !validPort(self->m_tcpKeepalivePort, false) ||
+                    !ValidPort(self->m_tcpKeepalivePort, false) ||
                     self->m_tcpStunHost.empty() || self->m_tcpStunHost.size() > 253 ||
-                    !validPort(self->m_tcpStunPort, false))
+                    !ValidPort(self->m_tcpStunPort, false))
                 {
                     self->SetProperty(self->m_tcpStatus, ResourceGetString(L"NatTcpMappingInvalidConfig"), L"TcpStatus");
                     return;
                 }
+                self->SaveTcpConfiguration();
                 self->ChangeTcpMappingAsync(true);
             }
         }).CanExecute([weak = get_weak()](auto const&)
@@ -205,6 +213,74 @@ namespace winrt::OpenNet::ViewModels::implementation
         {
             m_timer.Stop();
             m_timer.Tick(m_tickToken);
+        }
+    }
+
+    void NatMappingViewModel::LoadTcpConfiguration() noexcept
+    {
+        using ::OpenNet::Core::Setting::LocalSetting;
+        namespace SettingKeys = ::OpenNet::Core::Setting::SettingKeys;
+        try
+        {
+            std::uint32_t version{};
+            winrt::hstring localAddress;
+            double mappingPort{};
+            double targetPort{};
+            winrt::hstring keepaliveHost;
+            double keepalivePort{};
+            winrt::hstring stunHost;
+            double stunPort{};
+
+            if (!LocalSetting::TryGet(SettingKeys::NatMapTcpConfigurationVersion, version) || version != 1 ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpLocalAddress, localAddress) ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpMappingPort, mappingPort) ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpTargetPort, targetPort) ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpKeepaliveHost, keepaliveHost) ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpKeepalivePort, keepalivePort) ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpStunHost, stunHost) ||
+                !LocalSetting::TryGet(SettingKeys::NatMapTcpStunPort, stunPort) ||
+                localAddress.empty() || localAddress.size() > 45 ||
+                !ValidPort(mappingPort, true) || !ValidPort(targetPort, false) ||
+                keepaliveHost.empty() || keepaliveHost.size() > 253 || !ValidPort(keepalivePort, false) ||
+                stunHost.empty() || stunHost.size() > 253 || !ValidPort(stunPort, false))
+            {
+                return;
+            }
+
+            m_tcpLocalAddress = std::move(localAddress);
+            m_tcpMappingPort = mappingPort;
+            m_tcpTargetPort = targetPort;
+            m_tcpKeepaliveHost = std::move(keepaliveHost);
+            m_tcpKeepalivePort = keepalivePort;
+            m_tcpStunHost = std::move(stunHost);
+            m_tcpStunPort = stunPort;
+        }
+        catch (...)
+        {
+            // Missing, stale or mistyped values must never start a mapping or replace safe defaults.
+        }
+    }
+
+    void NatMappingViewModel::SaveTcpConfiguration() noexcept
+    {
+        using ::OpenNet::Core::Setting::LocalSetting;
+        namespace SettingKeys = ::OpenNet::Core::Setting::SettingKeys;
+        try
+        {
+            // Invalidate first so a partial write cannot be loaded on the next launch.
+            LocalSetting::Set(SettingKeys::NatMapTcpConfigurationVersion, std::uint32_t{});
+            LocalSetting::Set(SettingKeys::NatMapTcpLocalAddress, m_tcpLocalAddress);
+            LocalSetting::Set(SettingKeys::NatMapTcpMappingPort, m_tcpMappingPort);
+            LocalSetting::Set(SettingKeys::NatMapTcpTargetPort, m_tcpTargetPort);
+            LocalSetting::Set(SettingKeys::NatMapTcpKeepaliveHost, m_tcpKeepaliveHost);
+            LocalSetting::Set(SettingKeys::NatMapTcpKeepalivePort, m_tcpKeepalivePort);
+            LocalSetting::Set(SettingKeys::NatMapTcpStunHost, m_tcpStunHost);
+            LocalSetting::Set(SettingKeys::NatMapTcpStunPort, m_tcpStunPort);
+            LocalSetting::Set(SettingKeys::NatMapTcpConfigurationVersion, std::uint32_t{ 1 });
+        }
+        catch (...)
+        {
+            // Settings persistence is best effort and must not prevent an explicit manual start.
         }
     }
 

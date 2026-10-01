@@ -365,7 +365,7 @@
                     Margin="0,8,0,0"
                     IsClosable="False"
                     IsOpen="True"
-                    Message="This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added automatically, and a STUN observation does not prove reachability."
+                    Message="This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added automatically, and a STUN observation does not prove reachability. Valid parameters are remembered after a manual start, but mapping and firewall authorization are never restored automatically."
                     Severity="Warning"
                     Title="Public TCP exposure is opt-in" />
                 <StackPanel Margin="0,8,0,0" Orientation="Horizontal" Spacing="8">

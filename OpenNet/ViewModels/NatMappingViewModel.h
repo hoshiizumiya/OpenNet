@@ -60,6 +60,8 @@ namespace winrt::OpenNet::ViewModels::implementation
         void Refresh();
 
     private:
+        void LoadTcpConfiguration() noexcept;
+        void SaveTcpConfiguration() noexcept;
         winrt::fire_and_forget ChangeMappingAsync(bool start, std::uint16_t target, bool followTorrentTarget = false);
         winrt::fire_and_forget ChangeTcpMappingAsync(bool start);
         bool m_isBusy{};

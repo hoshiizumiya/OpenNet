@@ -6821,7 +6821,7 @@
     <value>公网 TCP 暴露必须手动启用</value>
   </data>
   <data name="NatTools_TcpMappingWarning.Message" xml:space="preserve">
-    <value>此模式无法独占共享端口。请绑定具体网卡地址，且仅暴露已启用身份验证的目标。它不会自动添加防火墙规则，STUN 观测也不代表外网可达。</value>
+    <value>此模式无法独占共享端口。请绑定具体网卡地址，且仅暴露已启用身份验证的目标。它不会自动添加防火墙规则，STUN 观测也不代表外网可达。手动启动后会记住所填参数，但映射运行状态和防火墙授权绝不会自动恢复。</value>
   </data>
   <data name="NatTools_TcpLocalAddress.Header" xml:space="preserve">
     <value>本机 IPv4 地址</value>
