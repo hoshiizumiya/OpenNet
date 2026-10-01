@@ -37,6 +37,8 @@ namespace OpenNet.ViewModels
 		// Event raised to request adding a task (string parameter can carry task name or data)
 		event Windows.Foundation.EventHandler<String> AddTaskRequested;
 		event Windows.Foundation.EventHandler<String> TaskDeletionFailed;
+		// Raised on each libtorrent task update so detail views can refresh from the same source cadence.
+		event Windows.Foundation.EventHandler<String> TorrentUpdated;
 
 		// Tasks column display flags
 		Boolean IsColNameLoad;
