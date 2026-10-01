@@ -94,6 +94,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_sampleTimer{ nullptr };
 		winrt::event_token m_sampleTimerToken{};
 		std::chrono::steady_clock::time_point m_lastSampleTime{};
+		std::mutex m_pendingSampleMutex;
 		std::deque<PendingMetricSample> m_pendingSamples;
 		std::vector<winrt::hstring> m_latestDisplayValues;
 		std::atomic<double> m_graphSampleIntervalSeconds{ 0.1 };
