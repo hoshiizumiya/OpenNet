@@ -138,7 +138,8 @@ namespace winrt::OpenNet::ViewModels::implementation
                     !ValidPort(self->m_tcpMappingPort, true) || !ValidPort(self->m_tcpTargetPort, false) ||
                     self->m_tcpKeepaliveHost.empty() || self->m_tcpKeepaliveHost.size() > 253 ||
                     !ValidPort(self->m_tcpKeepalivePort, false) ||
-                    self->m_tcpStunHost.empty() || self->m_tcpStunHost.size() > 253 ||
+                    ::OpenNet::Core::NatMap::ParseStunHostList(
+                        std::wstring_view(self->m_tcpStunHost.c_str(), self->m_tcpStunHost.size())).empty() ||
                     !ValidPort(self->m_tcpStunPort, false))
                 {
                     self->SetProperty(self->m_tcpStatus, ResourceGetString(L"NatTcpMappingInvalidConfig"), L"TcpStatus");
@@ -244,7 +245,9 @@ namespace winrt::OpenNet::ViewModels::implementation
                 localAddress.empty() || localAddress.size() > 45 ||
                 !ValidPort(mappingPort, true) || !ValidPort(targetPort, false) ||
                 keepaliveHost.empty() || keepaliveHost.size() > 253 || !ValidPort(keepalivePort, false) ||
-                stunHost.empty() || stunHost.size() > 253 || !ValidPort(stunPort, false))
+                ::OpenNet::Core::NatMap::ParseStunHostList(
+                    std::wstring_view(stunHost.c_str(), stunHost.size())).empty() ||
+                !ValidPort(stunPort, false))
             {
                 return;
             }

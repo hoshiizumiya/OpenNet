@@ -1,5 +1,6 @@
 #include "Core/NatMap/TcpMappingService.h"
 #include "Core/NatMap/StunProtocol.h"
+#include "Core/NatMap/StunHostList.h"
 
 #include <WinSock2.h>
 #include <WS2tcpip.h>
@@ -243,7 +244,7 @@ namespace OpenNet::Core::NatMap
     bool TcpMappingService::Start(TcpMappingOptions options)
     {
         if (options.localAddress.empty() || !options.targetPort || options.keepaliveHost.empty() ||
-            !options.keepalivePort || options.stunHost.empty() || !options.stunPort ||
+            !options.keepalivePort || ParseStunHostList(options.stunHost).empty() || !options.stunPort ||
             options.maximumRelays == 0 || options.maximumRelays > 30) return false;
         std::lock_guard lifecycle(m_lifecycleMutex);
         StopWorker();
@@ -361,14 +362,11 @@ namespace OpenNet::Core::NatMap
         }
 
         sockaddr_in keeperAddress{};
-        sockaddr_in stunAddress{};
         if (!Resolve(options.keepaliveHost, options.keepalivePort, stop,
-                m_networkRecoveryRequested, keeperAddress) ||
-            !Resolve(options.stunHost, options.stunPort, stop,
-                m_networkRecoveryRequested, stunAddress))
+                m_networkRecoveryRequested, keeperAddress))
         {
             error = m_networkRecoveryRequested.load() ? L"Network changed; rebuilding TCP mapping."
-                                                      : L"Cannot resolve TCP mapping endpoints.";
+                                                      : L"Cannot resolve the TCP keepalive endpoint.";
             return !stop.stop_requested();
         }
 
@@ -386,56 +384,57 @@ namespace OpenNet::Core::NatMap
         }
 
         Socket stun;
-        if (!ConnectBound(stun, local, stunAddress, stop, m_networkRecoveryRequested))
+        std::wstring publicAddress;
+        std::uint16_t publicPort{};
+        for (std::wstring const& stunHost : ParseStunHostList(options.stunHost))
         {
-            error = L"Cannot establish TCP STUN from the mapping port.";
+            if (stop.stop_requested() || m_networkRecoveryRequested.load()) break;
+            sockaddr_in stunAddress{};
+            if (!Resolve(stunHost, options.stunPort, stop, m_networkRecoveryRequested, stunAddress)) continue;
+
+            Socket candidate;
+            if (!ConnectBound(candidate, local, stunAddress, stop, m_networkRecoveryRequested)) continue;
+            Stun::TransactionId transaction{};
+            if (BCryptGenRandom(nullptr, transaction.data(), static_cast<ULONG>(transaction.size()),
+                    BCRYPT_USE_SYSTEM_PREFERRED_RNG) < 0)
+            {
+                error = L"Cannot generate a TCP STUN transaction ID.";
+                return false;
+            }
+            std::array<std::uint8_t, 20> const request = Stun::BindingRequest(transaction);
+            if (!SendAll(candidate.value,
+                    std::span<char const>(reinterpret_cast<char const*>(request.data()), request.size()),
+                    stop, m_networkRecoveryRequested)) continue;
+
+            std::array<char, 20> header{};
+            if (!ReceiveExact(candidate.value, std::span<char>(header), stop,
+                    m_networkRecoveryRequested)) continue;
+            std::size_t const bodySize = static_cast<std::uint16_t>(
+                (static_cast<std::uint16_t>(static_cast<unsigned char>(header[2])) << 8) |
+                static_cast<unsigned char>(header[3]));
+            if (bodySize == 0 || bodySize > 2048 || bodySize % 4 != 0) continue;
+
+            std::vector<char> response(20 + bodySize);
+            std::copy(header.begin(), header.end(), response.begin());
+            if (!ReceiveExact(candidate.value, std::span<char>(response.data() + 20, bodySize),
+                    stop, m_networkRecoveryRequested)) continue;
+            std::optional<Stun::MappedEndpoint> const mapped = Stun::ParseBindingResponse(
+                std::span<std::uint8_t const>(reinterpret_cast<std::uint8_t const*>(response.data()), response.size()),
+                transaction);
+            wchar_t publicIp[INET_ADDRSTRLEN]{};
+            if (!mapped || mapped->ipv6 ||
+                !InetNtopW(AF_INET, mapped->address.data(), publicIp, INET_ADDRSTRLEN)) continue;
+
+            publicAddress = publicIp;
+            publicPort = mapped->port;
+            stun = std::move(candidate);
+            break;
+        }
+        if (stun.value == INVALID_SOCKET)
+        {
+            error = m_networkRecoveryRequested.load() ? L"Network changed; rebuilding TCP mapping."
+                                                      : L"TCP STUN failed for every configured server.";
             return !stop.stop_requested();
-        }
-        Stun::TransactionId transaction{};
-        if (BCryptGenRandom(nullptr, transaction.data(), static_cast<ULONG>(transaction.size()),
-                BCRYPT_USE_SYSTEM_PREFERRED_RNG) < 0)
-        {
-            error = L"Cannot generate a TCP STUN transaction ID.";
-            return false;
-        }
-        std::array<std::uint8_t, 20> const request = Stun::BindingRequest(transaction);
-        if (!SendAll(stun.value, std::span<char const>(reinterpret_cast<char const*>(request.data()), request.size()),
-                stop, m_networkRecoveryRequested))
-        {
-            error = L"TCP STUN request failed.";
-            return !stop.stop_requested();
-        }
-        std::array<char, 20> header{};
-        if (!ReceiveExact(stun.value, std::span<char>(header), stop, m_networkRecoveryRequested))
-        {
-            error = L"TCP STUN response header failed.";
-            return !stop.stop_requested();
-        }
-        std::uint16_t const bodyLength = static_cast<std::uint16_t>(
-            (static_cast<std::uint16_t>(static_cast<unsigned char>(header[2])) << 8) |
-            static_cast<unsigned char>(header[3]));
-        std::size_t const bodySize = bodyLength;
-        if (bodySize == 0 || bodySize > 2048 || bodySize % 4 != 0)
-        {
-            error = L"TCP STUN response length is invalid.";
-            return false;
-        }
-        std::vector<char> response(20 + bodySize);
-        std::copy(header.begin(), header.end(), response.begin());
-        if (!ReceiveExact(stun.value, std::span<char>(response.data() + 20, bodySize),
-                stop, m_networkRecoveryRequested))
-        {
-            error = L"TCP STUN response body failed.";
-            return !stop.stop_requested();
-        }
-        std::optional<Stun::MappedEndpoint> const mapped = Stun::ParseBindingResponse(
-            std::span<std::uint8_t const>(reinterpret_cast<std::uint8_t const*>(response.data()), response.size()),
-            transaction);
-        wchar_t publicIp[INET_ADDRSTRLEN]{};
-        if (!mapped || mapped->ipv6 || !InetNtopW(AF_INET, mapped->address.data(), publicIp, INET_ADDRSTRLEN))
-        {
-            error = L"TCP STUN response has no mapped IPv4 endpoint.";
-            return false;
         }
 
         Socket listener;
@@ -450,8 +449,8 @@ namespace OpenNet::Core::NatMap
             m_snapshot.running = true;
             m_snapshot.starting = false;
             m_snapshot.localPort = ntohs(local.sin_port);
-            m_snapshot.publicAddress = publicIp;
-            m_snapshot.publicPort = mapped->port;
+            m_snapshot.publicAddress = std::move(publicAddress);
+            m_snapshot.publicPort = publicPort;
             ++m_snapshot.generation;
             m_snapshot.error.clear();
         }
