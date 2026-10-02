@@ -1,9 +1,12 @@
-﻿#include "XamlWorkaround.h"
+﻿#include "WindowsPlatform.h"
+#include <Psapi.h>
+#include "XamlWorkaround.h"
 #include "TaskPeersListPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/TaskPeersListPage.g.cpp")
 #include "UI/Xaml/View/Pages/TaskPeersListPage.g.cpp"
 #endif
 #include "ViewModels/DisplayItems.h"
+#include "Helpers/PageMemoryDiagnostics.h"
 
 
 import OpenNet.Core.ClientFilter.ClientFilterManager;
@@ -32,6 +35,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		OutputDebugStringA(std::format("TaskPeersListPage: constructed {}\n", static_cast<void*>(this)).c_str());
 #endif
 		InitializeComponent();
+		m_memoryVisit = ::OpenNet::Helpers::PageMemoryDiagnostics::Begin("Peers");
+		::OpenNet::Helpers::PageMemoryDiagnostics::Watch(m_memoryVisit, *this);
 		UpdateSortHeaders();
 		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
 		{
@@ -47,6 +52,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		Loaded([this](auto, auto)
 		{
+			if (!m_memoryVisit) m_memoryVisit = ::OpenNet::Helpers::PageMemoryDiagnostics::Begin("Peers");
+			::OpenNet::Helpers::PageMemoryDiagnostics::WatchTree(m_memoryVisit, *this);
 			m_isActive.store(true, std::memory_order_release);
 			RestoreColumn(ColPeerIP(), "Peers.IP");
 			RestoreColumn(ColPeerLocation(), "Peers.Location");
@@ -69,6 +76,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		});
 		Unloaded([this](auto, auto)
 		{
+			::OpenNet::Helpers::PageMemoryDiagnostics::WatchTree(m_memoryVisit, *this);
+			for (auto const& group : std::array{ m_connectedGroup, m_connectingGroup, m_disconnectingGroup, m_banIpGroup })
+			{
+				if (!group) continue;
+				::OpenNet::Helpers::PageMemoryDiagnostics::Watch(m_memoryVisit, group);
+				for (auto const& peer : group.Children()) ::OpenNet::Helpers::PageMemoryDiagnostics::Watch(m_memoryVisit, peer);
+			}
+			::OpenNet::Helpers::PageMemoryDiagnostics::Retire(std::exchange(m_memoryVisit, 0), DispatcherQueue());
 			m_isActive.store(false, std::memory_order_release);
 			m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
 			SavePeerGroupExpansionState();
@@ -113,6 +128,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskPeersListPage::~TaskPeersListPage()
 	{
+		::OpenNet::Helpers::PageMemoryDiagnostics::Retire(std::exchange(m_memoryVisit, 0), nullptr);
 		Unsubscribe();
 #ifdef _DEBUG
 		OutputDebugStringA(std::format("TaskPeersListPage: destroyed {}\n", static_cast<void*>(this)).c_str());
@@ -424,6 +440,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IInspectable const& sender,
 		winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		::OpenNet::Helpers::PageMemoryDiagnostics::WatchTree(m_memoryVisit, sender.try_as<DependencyObject>());
 		std::array const columns{
 			ColPeerIP(), ColPeerLocation(), ColPeerProgress(), ColPeerDLSpeed(),
 			ColPeerULSpeed(), ColPeerDownloaded(), ColPeerUploaded(), ColPeerClient(), ColPeerRemoteDLSpeed(), ColPeerConnectionTime(), ColPeerStatus(),

@@ -50,6 +50,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		void PeerDataRow_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
+		std::uint64_t m_memoryVisit{};
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
 		winrt::weak_ref<winrt::OpenNet::ViewModels::TasksViewModel> m_navigationViewModel;
 		winrt::event_token m_vmPropertyChangedToken{};

@@ -40,7 +40,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::Windows::Foundation::IAsyncAction RenameFile_ClickAsync(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args);
 
 	private:
+		std::uint64_t m_memoryVisit{};
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
+		winrt::weak_ref<winrt::OpenNet::ViewModels::TasksViewModel> m_navigationViewModel;
 		winrt::event_token m_vmPropertyChangedToken{};
 
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };
@@ -56,6 +58,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		winrt::XamlToolkit::Labs::WinUI::DataColumn m_contextColumn{ nullptr };
 
 		void Unsubscribe();
+		void Subscribe(winrt::OpenNet::ViewModels::TasksViewModel const& viewModel);
+		void StartRefreshTimer();
+		void ReleaseFileState();
 		void StopRefreshTimer() noexcept;
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void RefreshFileList();
