@@ -181,6 +181,8 @@ namespace OpenNet::Core::NatMap
                 m_snapshot.targetAvailable = false;
                 m_snapshot.publicAddress.clear();
                 m_snapshot.publicPort = 0;
+                m_snapshot.externalProbeCompleted = false;
+                m_snapshot.externallyReachable = false;
                 m_snapshot.error = L"UDP mapping worker failed.";
             }
         });
@@ -199,6 +201,23 @@ namespace OpenNet::Core::NatMap
     void UdpMappingService::RequestNetworkRecovery() noexcept
     {
         m_networkRecoveryRequested.store(true);
+    }
+
+    bool UdpMappingService::RecordExternalProbe(std::uint16_t localPort, std::wstring const& publicAddress,
+                                                std::uint16_t publicPort, std::uint64_t observationGeneration,
+                                                bool completed, bool reachable) noexcept
+    {
+        std::lock_guard lock(m_mutex);
+        if (!m_snapshot.running || !localPort || !publicPort || publicAddress.empty() ||
+            m_snapshot.localPort != localPort || m_snapshot.publicPort != publicPort ||
+            m_snapshot.publicAddress != publicAddress ||
+            m_snapshot.observationGeneration != observationGeneration)
+        {
+            return false;
+        }
+        m_snapshot.externalProbeCompleted = completed;
+        m_snapshot.externallyReachable = completed && reachable;
+        return true;
     }
 
     void UdpMappingService::Stop()
@@ -254,6 +273,8 @@ namespace OpenNet::Core::NatMap
             m_snapshot.targetAvailable = false;
             m_snapshot.publicAddress.clear();
             m_snapshot.publicPort = 0;
+            m_snapshot.externalProbeCompleted = false;
+            m_snapshot.externallyReachable = false;
             if (!message.empty()) m_snapshot.error = std::move(message);
         };
 
@@ -349,6 +370,9 @@ namespace OpenNet::Core::NatMap
                 std::lock_guard lock(m_mutex);
                 m_snapshot.publicAddress.clear();
                 m_snapshot.publicPort = 0;
+                ++m_snapshot.observationGeneration;
+                m_snapshot.externalProbeCompleted = false;
+                m_snapshot.externallyReachable = false;
                 m_snapshot.error.clear();
             }
             if (!stunResolved && now >= nextResolve)
@@ -422,6 +446,12 @@ namespace OpenNet::Core::NatMap
                         {
                             lastResponse = std::chrono::steady_clock::now();
                             std::lock_guard lock(m_mutex);
+                            if (m_snapshot.publicAddress != publicIp || m_snapshot.publicPort != mapped->port)
+                            {
+                                ++m_snapshot.observationGeneration;
+                                m_snapshot.externalProbeCompleted = false;
+                                m_snapshot.externallyReachable = false;
+                            }
                             m_snapshot.publicAddress = publicIp;
                             m_snapshot.publicPort = mapped->port;
                             m_snapshot.error.clear();
@@ -474,6 +504,9 @@ namespace OpenNet::Core::NatMap
                 std::lock_guard lock(m_mutex);
                 m_snapshot.publicAddress.clear();
                 m_snapshot.publicPort = 0;
+                ++m_snapshot.observationGeneration;
+                m_snapshot.externalProbeCompleted = false;
+                m_snapshot.externallyReachable = false;
                 m_snapshot.error = hasFallback ? L"STUN keepalive timed out; trying the next server."
                                                : L"STUN keepalive timed out.";
             }
