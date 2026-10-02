@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Psapi.h>
+
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Media;
