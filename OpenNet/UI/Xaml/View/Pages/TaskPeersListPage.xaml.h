@@ -51,6 +51,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	private:
 		winrt::OpenNet::ViewModels::TasksViewModel m_viewModel{ nullptr };
+		winrt::weak_ref<winrt::OpenNet::ViewModels::TasksViewModel> m_navigationViewModel;
 		winrt::event_token m_vmPropertyChangedToken{};
 		winrt::event_token m_torrentUpdatedToken{};
 
@@ -81,10 +82,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::string m_lastTaskId;
 
 		void Unsubscribe();
+		void Subscribe(winrt::OpenNet::ViewModels::TasksViewModel const& viewModel);
+		void ReleasePeerState();
 		void OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender,
 										winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void OnTorrentUpdated(winrt::Windows::Foundation::IInspectable const& sender, winrt::hstring const& taskId);
 		winrt::fire_and_forget RefreshPeerList();
+		static winrt::fire_and_forget FetchPeerSnapshot(winrt::weak_ref<TaskPeersListPage> weak, winrt::Microsoft::UI::Dispatching::DispatcherQueue dispatcher, std::string taskId, bool forceRefresh, std::uint64_t generation);
 		void ApplyPeerSnapshot(
 			std::string const& taskId,
 			std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo> peers,

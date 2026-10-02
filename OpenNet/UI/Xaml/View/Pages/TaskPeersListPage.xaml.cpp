@@ -28,6 +28,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	TaskPeersListPage::TaskPeersListPage()
 	{
+#ifdef _DEBUG
+		OutputDebugStringA(std::format("TaskPeersListPage: constructed {}\n", static_cast<void*>(this)).c_str());
+#endif
 		InitializeComponent();
 		UpdateSortHeaders();
 		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
@@ -61,6 +64,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			RestoreColumn(ColPeerInitiator(), "Peers.Initiator");
 			RestoreColumn(ColPeerSource(), "Peers.Source");
 			ScheduleRowLayoutSynchronization();
+			if (!m_viewModel) Subscribe(m_navigationViewModel.get());
+			RefreshPeerList();
 		});
 		Unloaded([this](auto, auto)
 		{
@@ -83,6 +88,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			SaveColumnWidth("Peers.Protocol", ColPeerProtocol());
 			SaveColumnWidth("Peers.Initiator", ColPeerInitiator());
 			SaveColumnWidth("Peers.Source", ColPeerSource());
+			// Wait until Unloaded: changing the outgoing visual tree inside
+			// OnNavigatedFrom can interfere with Frame's navigation transaction.
+			ReleasePeerState();
 		});
 
 		// DataColumn resizing does not change the DataTable's outer size, so a
@@ -105,6 +113,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskPeersListPage::~TaskPeersListPage()
 	{
+		Unsubscribe();
+#ifdef _DEBUG
+		OutputDebugStringA(std::format("TaskPeersListPage: destroyed {}\n", static_cast<void*>(this)).c_str());
+#endif
 	}
 
 	//TaskPeersListPage::InitializeComponent()
@@ -123,14 +135,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_viewModel = this->DataContext().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		}
 
-		if (m_viewModel)
-		{
-			this->DataContext(m_viewModel);
-			m_vmPropertyChangedToken = m_viewModel.PropertyChanged(
-				{ this, &TaskPeersListPage::OnViewModelPropertyChanged });
-			m_torrentUpdatedToken = m_viewModel.TorrentUpdated(
-				{ this, &TaskPeersListPage::OnTorrentUpdated });
-		}
+		m_navigationViewModel = m_viewModel;
+		Subscribe(m_viewModel);
 
 		// Prime the view immediately. Subsequent peer snapshots are driven by
 		// TasksViewModel::TorrentUpdated, which follows the libtorrent update cadence.
@@ -142,7 +148,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_isActive.store(false, std::memory_order_release);
 		m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
 		SavePeerGroupExpansionState();
+		m_navigationViewModel = {};
 		Unsubscribe();
+	}
+
+	void TaskPeersListPage::Subscribe(winrt::OpenNet::ViewModels::TasksViewModel const& viewModel)
+	{
+		// Copy first: OnNavigatedTo may pass m_viewModel itself.
+		auto current = viewModel;
+		Unsubscribe();
+		m_viewModel = std::move(current);
+		if (!m_viewModel) return;
+		DataContext(m_viewModel);
+		m_vmPropertyChangedToken = m_viewModel.PropertyChanged({ get_weak(), &TaskPeersListPage::OnViewModelPropertyChanged });
+		m_torrentUpdatedToken = m_viewModel.TorrentUpdated({ get_weak(), &TaskPeersListPage::OnTorrentUpdated });
 	}
 
 	void TaskPeersListPage::Unsubscribe()
@@ -160,6 +179,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_viewModel = nullptr;
 	}
 
+	void TaskPeersListPage::ReleasePeerState()
+	{
+		ResetPeerGroups();
+		m_lastTaskId.clear();
+		m_contextColumn = nullptr;
+		decltype(m_flagSvgCache){}.swap(m_flagSvgCache);
+		std::string{}.swap(m_flagSprite);
+		m_lastAuxiliaryRefresh = {};
+		m_forcePeerRefresh.store(true, std::memory_order_relaxed);
+		DataContext(nullptr);
+	}
+
 	void TaskPeersListPage::OnViewModelPropertyChanged(
 		winrt::Windows::Foundation::IInspectable const&,
 		winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
@@ -168,7 +199,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		{
 			// Task changed — force full rebuild
 			m_lastTaskId.clear();
-			m_peerItems = nullptr;
 			m_forcePeerRefresh.store(true, std::memory_order_relaxed);
 			m_hasPeerSnapshot = false;
 			m_refreshGeneration.fetch_add(1, std::memory_order_relaxed);
@@ -438,17 +468,27 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		SavePeerGroupExpansionState();
 		m_hasPeerSnapshot = false;
-		m_peerItems = nullptr;
+		auto peerItems = std::exchange(m_peerItems, nullptr);
+		// Detach the tree and empty the source collections before dropping our
+		// handles. A recycled container may still hold a group's Children vector.
+		if (auto tree = PeersTreeView())
+		{
+			tree.SelectedItem(nullptr);
+			tree.ItemsSource(nullptr);
+		}
+		for (auto const& group : std::array{ m_connectedGroup, m_connectingGroup, m_disconnectingGroup, m_banIpGroup })
+		{
+			if (group) group.Children().Clear();
+		}
+		if (peerItems) peerItems.Clear();
 		m_connectedGroup = nullptr;
 		m_connectingGroup = nullptr;
 		m_disconnectingGroup = nullptr;
 		m_banIpGroup = nullptr;
-		m_lastActivePeers = {};
-		m_disconnectingPeers = {};
-		m_banIpPeers = {};
-		m_cachedBannedPeerAddresses = {};
-		if (auto tree = PeersTreeView())
-			tree.ItemsSource(nullptr);
+		decltype(m_lastActivePeers){}.swap(m_lastActivePeers);
+		decltype(m_disconnectingPeers){}.swap(m_disconnectingPeers);
+		decltype(m_banIpPeers){}.swap(m_banIpPeers);
+		decltype(m_cachedBannedPeerAddresses){}.swap(m_cachedBannedPeerAddresses);
 	}
 
 	void TaskPeersListPage::SavePeerGroupExpansionState()
@@ -485,7 +525,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				[weak](auto const&, auto const& args)
 			{
 				if (args.PropertyName() != L"IsExpanded") return;
-				if (auto self = weak.get()) self->SavePeerGroupExpansionState();
+				if (auto self = weak.get(); self && self->m_peerItems) self->SavePeerGroupExpansionState();
 			});
 			return group;
 		};
@@ -701,7 +741,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	winrt::fire_and_forget TaskPeersListPage::RefreshPeerList()
 	{
 		if (!m_isActive.load(std::memory_order_acquire)) co_return;
-		auto lifetime = get_strong();
 		auto listView = PeersTreeView();
 		auto emptyText = EmptyStateText();
 		if (!listView) co_return;
@@ -762,19 +801,35 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_forcePeerRefresh.exchange(false, std::memory_order_relaxed);
 		auto const generation =
 			m_refreshGeneration.load(std::memory_order_relaxed);
-		auto dispatcher = DispatcherQueue();
-		auto weak = get_weak();
+		FetchPeerSnapshot(get_weak(), DispatcherQueue(), std::move(taskId), forceRefresh, generation);
+		co_return;
+	}
+
+	winrt::fire_and_forget TaskPeersListPage::FetchPeerSnapshot(winrt::weak_ref<TaskPeersListPage> weak, winrt::Microsoft::UI::Dispatching::DispatcherQueue dispatcher, std::string taskId, bool forceRefresh, std::uint64_t generation)
+	{
+		// The worker owns only query inputs and a weak page reference. Navigation
+		// does not have to wait for libtorrent before releasing the page/controls.
 		co_await winrt::resume_background();
-		auto peers = ::OpenNet::Core::P2PManager::Instance()
-			.GetTorrentPeers(taskId);
-		if (!dispatcher.TryEnqueue(
+		std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo> peers;
+		bool succeeded = false;
+		try
+		{
+			peers = ::OpenNet::Core::P2PManager::Instance().GetTorrentPeers(taskId);
+			succeeded = true;
+		}
+		catch (std::exception const& error)
+		{
+			OutputDebugStringA((std::string{ "TaskPeersListPage: peer query failed: " } + error.what() + "\n").c_str());
+		}
+		dispatcher.TryEnqueue(
 			[weak, taskId = std::move(taskId), peers = std::move(peers),
-			forceRefresh, generation]() mutable
+			forceRefresh, generation, succeeded]() mutable
 		{
 			if (auto self = weak.get())
 			{
 				self->m_refreshInFlight.store(false, std::memory_order_release);
-				if (self->m_refreshGeneration.load(std::memory_order_relaxed)
+				if (!succeeded || !self->m_isActive.load(std::memory_order_acquire)
+					|| self->m_refreshGeneration.load(std::memory_order_relaxed)
 					!= generation)
 				{
 					return;
@@ -782,10 +837,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				self->ApplyPeerSnapshot(
 					taskId, std::move(peers), forceRefresh);
 			}
-		}))
-		{
-			m_refreshInFlight.store(false, std::memory_order_release);
-		}
+		});
 	}
 
 	void TaskPeersListPage::ApplyPeerSnapshot(
@@ -1138,34 +1190,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		auto replaceChildren = [](auto const& target, auto const& values)
 		{
-			for (std::uint32_t index = 0;
-				 index < static_cast<std::uint32_t>(values.size());
-				 ++index)
+			// Reuse peer objects while reconciling by position in linear time.
+			// Searching and moving every displaced row was quadratic for rate sorts.
+			auto const size = static_cast<std::uint32_t>(values.size());
+			while (target.Size() > size) target.RemoveAtEnd();
+			auto const existingSize = target.Size();
+			for (std::uint32_t index = 0; index < existingSize; ++index)
 			{
-				if (index < target.Size() && target.GetAt(index) == values[index])
-				{
-					continue;
-				}
-
-				std::uint32_t sourceIndex = index;
-				while (sourceIndex < target.Size() &&
-					   target.GetAt(sourceIndex) != values[index])
-				{
-					++sourceIndex;
-				}
-				if (sourceIndex < target.Size())
-				{
-					auto item = target.GetAt(sourceIndex);
-					target.RemoveAt(sourceIndex);
-					target.InsertAt(index, item);
-				}
-				else
-				{
-					target.InsertAt(index, values[index]);
-				}
+				if (target.GetAt(index) != values[index]) target.SetAt(index, values[index]);
 			}
-			while (target.Size() > values.size())
-				target.RemoveAtEnd();
+			for (std::uint32_t index = existingSize; index < size; ++index)
+				target.Append(values[index]);
 		};
 
 		std::vector<winrt::OpenNet::ViewModels::PeerDisplayItem> disconnecting;
@@ -1185,10 +1220,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		SortPeerItems(connecting);
 		SortPeerItems(disconnecting);
 		SortPeerItems(banned);
+		auto const selectedItem = PeersTreeView().SelectedItem();
 		replaceChildren(m_connectedGroup.Children(), connected);
 		replaceChildren(m_connectingGroup.Children(), connecting);
 		replaceChildren(m_disconnectingGroup.Children(), disconnecting);
 		replaceChildren(m_banIpGroup.Children(), banned);
+
+		// TreeView replacement removes/recreates nodes internally. Restore the
+		// selected peer by object identity after all four groups are reconciled.
+		if (auto selectedPeer = selectedItem.try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>())
+		{
+			auto const containsSelected = [&selectedPeer](auto const& items)
+			{
+				return std::find(items.begin(), items.end(), selectedPeer) != items.end();
+			};
+			if (selectedPeer == m_connectedGroup || selectedPeer == m_connectingGroup
+				|| selectedPeer == m_disconnectingGroup || selectedPeer == m_banIpGroup
+				|| containsSelected(connected) || containsSelected(connecting)
+				|| containsSelected(disconnecting) || containsSelected(banned))
+			{
+				PeersTreeView().SelectedItem(selectedPeer);
+			}
+		}
 
 		m_connectedGroup.IP(
 			PeerResource(L"PeersGroupConnected") + L" (" + winrt::to_hstring(connected.size()) + L")");

@@ -39,6 +39,12 @@ namespace OpenNet::Core
 	{
 		std::vector<IPRule> rules;
 		lt::ip_filter lookup;
+#ifdef _DEBUG
+		~RuleLookupSnapshot()
+		{
+			OutputDebugStringA(std::format("IPFilterManager: released rule lookup snapshot {} ({} rules)\n", static_cast<void*>(this), rules.size()).c_str());
+		}
+#endif
 	};
 
 	// ---------------------------------------------------------------
@@ -397,6 +403,9 @@ namespace OpenNet::Core
 		}
 
 		m_ruleLookupSnapshot = snapshot;
+#ifdef _DEBUG
+		OutputDebugStringA(std::format("IPFilterManager: cached rule lookup snapshot {} ({} rules, {} bytes of rule capacity)\n", static_cast<void*>(snapshot.get()), snapshot->rules.size(), snapshot->rules.capacity() * sizeof(IPRule)).c_str());
+#endif
 		return snapshot;
 	}
 
