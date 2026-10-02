@@ -1,5 +1,6 @@
 #pragma once
 
+#include "WindowsPlatform.h"
 #include <Psapi.h>
 
 import winrt.Microsoft.UI.Dispatching;
