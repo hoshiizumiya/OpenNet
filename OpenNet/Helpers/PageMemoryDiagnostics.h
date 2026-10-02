@@ -1,7 +1,6 @@
 #pragma once
 
 #include "WindowsPlatform.h"
-#include <Psapi.h>
 
 import winrt.Microsoft.UI.Dispatching;
 import winrt.Microsoft.UI.Xaml.Controls;
@@ -10,6 +9,23 @@ import winrt.XamlToolkit.WinUI.Interactivity;
 
 namespace OpenNet::Helpers::PageMemoryDiagnostics
 {
+    // Keep the Win32 memory-counter layout local to avoid depending on the
+    // PSAPI_VERSION/SDK declarations in translation units that import modules.
+    struct ProcessMemoryCountersSnapshot
+    {
+        DWORD cb{};
+        DWORD pageFaultCount{};
+        SIZE_T peakWorkingSetSize{};
+        SIZE_T workingSetSize{};
+        SIZE_T quotaPeakPagedPoolUsage{};
+        SIZE_T quotaPagedPoolUsage{};
+        SIZE_T quotaPeakNonPagedPoolUsage{};
+        SIZE_T quotaNonPagedPoolUsage{};
+        SIZE_T pagefileUsage{};
+        SIZE_T peakPagefileUsage{};
+        SIZE_T privateUsage{};
+    };
+
     inline std::atomic_bool& EnabledState() noexcept
     {
         static std::atomic_bool enabled{ false };
@@ -135,11 +151,17 @@ namespace OpenNet::Helpers::PageMemoryDiagnostics
                 if (record.object.get()) ++alive;
             }
 
-            PROCESS_MEMORY_COUNTERS_EX memory{};
+            ProcessMemoryCountersSnapshot memory{};
             memory.cb = sizeof(memory);
-            bool measured = K32GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS*>(&memory), sizeof(memory)) != FALSE;
+            using GetProcessMemoryInfoFunction = BOOL(WINAPI*)(HANDLE, void*, DWORD);
+            auto kernel = GetModuleHandleW(L"kernel32.dll");
+            auto getProcessMemoryInfo = kernel
+                ? reinterpret_cast<GetProcessMemoryInfoFunction>(GetProcAddress(kernel, "K32GetProcessMemoryInfo"))
+                : nullptr;
+            bool measured = getProcessMemoryInfo
+                && getProcessMemoryInfo(GetCurrentProcess(), &memory, sizeof(memory)) != FALSE;
             auto elapsed = visit.retired ? std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock::now() - visit.retiredAt).count() : 0;
-            std::string line = std::format("OpenNet memory: page={} visit={} stage={} elapsed_ms={} memory_valid={} private_bytes={} working_set={} omitted={} failed={} alive/observed:", visit.page, id, stage, elapsed, measured, memory.PrivateUsage, memory.WorkingSetSize, visit.omitted, visit.failed);
+            std::string line = std::format("OpenNet memory: page={} visit={} stage={} elapsed_ms={} memory_valid={} private_bytes={} working_set={} omitted={} failed={} alive/observed:", visit.page, id, stage, elapsed, measured, memory.privateUsage, memory.workingSetSize, visit.omitted, visit.failed);
             for (auto const& [type, count] : counts) line += std::format(" {}={}/{}", type, count.first, count.second);
             line += '\n';
             OutputDebugStringA(line.c_str());
