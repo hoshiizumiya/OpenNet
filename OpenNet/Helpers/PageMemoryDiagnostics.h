@@ -70,7 +70,9 @@ namespace OpenNet::Helpers::PageMemoryDiagnostics
         void RotateLogIfNeeded()
         {
             constexpr std::uintmax_t maximumBytes = 1024 * 1024;
-            if (!log.is_open() || log.tellp() < 0 || static_cast<std::uintmax_t>(log.tellp()) < maximumBytes) return;
+            auto const position = log.tellp();
+            if (!log.is_open() || position == std::streampos{ -1 }
+                || static_cast<std::streamoff>(position) < static_cast<std::streamoff>(maximumBytes)) return;
             log.close();
             std::error_code error;
             auto first = logPath; first += L".1";
