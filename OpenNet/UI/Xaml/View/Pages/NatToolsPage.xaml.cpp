@@ -1,5 +1,6 @@
 ﻿#include "XamlWorkaround.h"
 #include "NatToolsPage.xaml.h"
+#include "Core/NatMap/UdpMappingService.h"
 #if __has_include("UI/Xaml/View/Pages/NatToolsPage.g.cpp")
 #include "UI/Xaml/View/Pages/NatToolsPage.g.cpp"
 #endif
@@ -22,6 +23,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
 	NatToolsPage::NatToolsPage()
 	{
+		m_viewModel = winrt::OpenNet::ViewModels::NatMappingViewModel();
 		InitializeComponent();
 
 		// Populate STUN servers list
@@ -403,6 +405,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		bool portError = false;
 		try
 		{
+			// A running mapper owns the UDP port: probe through the traversal server.
+			auto const mapped = ::OpenNet::Core::NatMap::SharedUdpMappingService().Snapshot();
+			if (mapped.running && mapped.localPort == port)
+			{
+				auto details = std::make_shared<::OpenNet::Core::PortProbeResult>();
+				co_await m_detector.TestPortAccessibilityDetailedAsync(port, details, ::OpenNet::Core::PortProbeAddressFamily::IPv4);
+				co_await winrtplus::resume_foreground(dispatcher);
+				PortResultText().Text(details->udpCompleted ?
+					(details->udpReachable ? L"UDP reachable from the probe server" : L"UDP reachability was not confirmed") :
+					L"UDP reachability could not be verified");
+				PortMappedText().Text(details->detail);
+				TestPortButton().IsEnabled(true);
+				PortTestProgress().IsActive(false);
+				PortTestProgress().Visibility(Visibility::Collapsed);
+				co_return;
+			}
 			auto result = co_await m_detector.TestPortAccessibilityAsync(port, true);
 			co_await winrtplus::resume_foreground(dispatcher);
 

@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "UI/Xaml/View/Pages/NatToolsPage.g.h"
 #include "Core/NetworkDetector.h"
+#include "ViewModels/NatMappingViewModel.h"
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 {
@@ -8,6 +9,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		NatToolsPage();
 		~NatToolsPage();
+		winrt::OpenNet::ViewModels::NatMappingViewModel ViewModel() const { return m_viewModel; }
 
 		winrt::Windows::Foundation::IAsyncAction DetectNat_Click(
 			winrt::Windows::Foundation::IInspectable const& sender,
@@ -19,6 +21,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	private:
 		::OpenNet::Core::NetworkDetector m_detector;
+		winrt::OpenNet::ViewModels::NatMappingViewModel m_viewModel{ nullptr };
 
 		// Auto-refresh timer for libtorrent session stats
 		winrt::Microsoft::UI::Xaml::DispatcherTimer m_refreshTimer{ nullptr };

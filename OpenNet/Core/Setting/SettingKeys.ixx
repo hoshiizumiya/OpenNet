@@ -92,6 +92,16 @@ export namespace OpenNet::Core::Setting::SettingKeys
 	inline constexpr wchar_t const* TraversalDirectoryUri                    = L"OpenNet::Network::TraversalDirectoryUri";
 	inline constexpr wchar_t const* WebView2VideoFastForwardOrRewindSeconds  = L"OpenNet::Web::WebView::Video::FastForwardOrRewind::Seconds";
 
+	// NAT mapping
+	inline constexpr wchar_t const* NatMapTcpConfigurationVersion = L"OpenNet::Network::NatMap::Tcp::ConfigurationVersion";
+	inline constexpr wchar_t const* NatMapTcpLocalAddress         = L"OpenNet::Network::NatMap::Tcp::LocalAddress";
+	inline constexpr wchar_t const* NatMapTcpMappingPort          = L"OpenNet::Network::NatMap::Tcp::MappingPort";
+	inline constexpr wchar_t const* NatMapTcpTargetPort           = L"OpenNet::Network::NatMap::Tcp::TargetPort";
+	inline constexpr wchar_t const* NatMapTcpKeepaliveHost        = L"OpenNet::Network::NatMap::Tcp::KeepaliveHost";
+	inline constexpr wchar_t const* NatMapTcpKeepalivePort        = L"OpenNet::Network::NatMap::Tcp::KeepalivePort";
+	inline constexpr wchar_t const* NatMapTcpStunHost             = L"OpenNet::Network::NatMap::Tcp::StunHost";
+	inline constexpr wchar_t const* NatMapTcpStunPort             = L"OpenNet::Network::NatMap::Tcp::StunPort";
+
 	// Tasks UI columns display settings
 	inline constexpr wchar_t const* IsColumnNameLoadKey              = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnNameLoad";
 	inline constexpr wchar_t const* IsColumnSizeLoadKey              = L"OpenNet::UI::Xaml::View::TasksPage::IsColumnSizeLoad";

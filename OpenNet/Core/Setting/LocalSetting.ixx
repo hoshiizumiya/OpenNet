@@ -57,6 +57,18 @@ export namespace OpenNet::Core::Setting
 	{
 	public:
 		template<LocalSettingType T>
+		static bool TryGet(winrt::hstring const& key, T& value)
+		{
+			if (auto object = Values().TryLookup(key))
+			{
+				value = winrt::unbox_value<T>(object);
+				return true;
+			}
+
+			return false;
+		}
+
+		template<LocalSettingType T>
 		static T Get(winrt::hstring const& key, T const& defaultValue = {})
 		{
 			auto values = Values();

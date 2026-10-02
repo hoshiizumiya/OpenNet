@@ -37,7 +37,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <GenerateTestArtifacts>False</GenerateTestArtifacts>
-    <AppxBundle>Always</AppxBundle>
+    <AppxBundle>Never</AppxBundle>
     <HoursBetweenUpdateChecks>0</HoursBetweenUpdateChecks>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -642,6 +642,12 @@
       <DependentUpon>UI\Xaml\View\Pages\TasksPage.xaml</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="Core\NatMap\TcpMappingService.h" />
+    <ClInclude Include="Core\NatMap\UdpMappingService.h" />
+    <ClInclude Include="Core\NatMap\StunHostList.h" />
+    <ClInclude Include="Core\NatMap\StunProtocol.h" />
+    <ClInclude Include="Core\NatMap\MappingFirewall.h" />
+    <ClInclude Include="ViewModels\NatMappingViewModel.h" />
     <ClInclude Include="UI\Xaml\View\Pages\NatToolsPage.xaml.h">
       <DependentUpon>UI\Xaml\View\Pages\NatToolsPage.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -930,6 +936,9 @@
     <ClCompile Include="Core\ExceptionService\ExceptionHandling.ixx" />
     <ClCompile Include="Core\GeoIP\GeoIPDatabase.cpp" />
     <ClCompile Include="Core\IO\Http\FirewallRuleManager.cpp" />
+    <ClCompile Include="Core\NatMap\TcpMappingService.cpp" />
+    <ClCompile Include="Core\NatMap\UdpMappingService.cpp" />
+    <ClCompile Include="Core\NatMap\MappingFirewall.cpp" />
     <ClCompile Include="Core\ClientFilter\ClientFilterManager.cpp" />
     <ClCompile Include="Core\IPFilter\IPFilterManager.cpp" />
     <ClCompile Include="Core\GeoIP\GeoIPManager.cpp" />
@@ -1264,6 +1273,7 @@
       <DependentUpon>ViewModels\NetworkSettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClCompile>
+    <ClCompile Include="ViewModels\NatMappingViewModel.cpp" />
     <ClCompile Include="ViewModels\WebUISettingsViewModel.cpp">
       <DependentUpon>ViewModels\WebUISettingsViewModel.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -1621,6 +1631,7 @@
     <Midl Include="ViewModels\NetworkSettingsViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
+    <Midl Include="ViewModels\NatMappingViewModel.idl" />
     <Midl Include="ViewModels\WebUISettingsViewModel.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -1870,7 +1881,6 @@
     <GenerateTemporaryStoreCertificate>True</GenerateTemporaryStoreCertificate>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-    <AppxBundlePlatforms>$(Platform)</AppxBundlePlatforms>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <!-- Inject module imports into XAML-generated source files -->

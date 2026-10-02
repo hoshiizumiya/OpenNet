@@ -153,12 +153,16 @@ jobs:
             'x64-windows-custom'
           }
 
+          New-Item -ItemType Directory -Force "$env:GITHUB_WORKSPACE\ci-logs" | Out-Null
           & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install `
             --debug `
             --triplet $triplet `
             --vcpkg-root "$env:VCPKG_INSTALLATION_ROOT" `
             --x-manifest-root "$env:GITHUB_WORKSPACE\OpenNet" `
-            --x-install-root "$env:GITHUB_WORKSPACE\OpenNet\vcpkg_installed\$triplet"
+            --x-install-root "$env:GITHUB_WORKSPACE\OpenNet\vcpkg_installed\$triplet" *> "$env:GITHUB_WORKSPACE\ci-logs\vcpkg.log"
+          $result = $LASTEXITCODE
+          Get-Content "$env:GITHUB_WORKSPACE\ci-logs\vcpkg.log" -Tail 200
+          exit $result
 
       - name: Restore NuGet
         shell: pwsh
@@ -247,7 +251,10 @@ jobs:
             /p:PackageCertificateKeyFile= `
             /p:PackageCertificatePassword= `
             /p:CGTHREADS=1 `
-            /m:1
+            /m:1 *> "$env:GITHUB_WORKSPACE\ci-logs\msix.log"
+          $result = $LASTEXITCODE
+          Get-Content "$env:GITHUB_WORKSPACE\ci-logs\msix.log" -Tail 200
+          exit $result
 
       - name: Build native unit tests
         if: matrix.platform == 'x64'
@@ -263,7 +270,19 @@ jobs:
             /p:GenerateAppxPackageOnBuild=false `
             /p:AppxPackageSigningEnabled=false `
             /p:CGTHREADS=1 `
-            /m:1
+            /m:1 *> "$env:GITHUB_WORKSPACE\ci-logs\native-unit-build.log"
+          $result = $LASTEXITCODE
+          Get-Content "$env:GITHUB_WORKSPACE\ci-logs\native-unit-build.log" -Tail 200
+          exit $result
+
+      - name: Upload compiler and dependency logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: canary-${{ matrix.platform }}-${{ matrix.configuration }}-logs
+          path: ci-logs/*.log
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Cleanup certificate
         if: always()

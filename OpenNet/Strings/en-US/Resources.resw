@@ -6745,6 +6745,145 @@ Availability: {}</value>
   <data name="ViewMainViewListenersAndNetworkIntegrationText" xml:space="preserve">
     <value>Listeners and network integration</value>
   </data>
+  <data name="NatTools_MappingHeader.Text" xml:space="preserve">
+    <value>UDP NAT Mapping</value>
+  </data>
+  <data name="NatTools_MappingDescription.Text" xml:space="preserve">
+    <value>Keep a separate public UDP mapping open and forward incoming packets to the local torrent listener. A mapped address alone does not prove reachability.</value>
+  </data>
+  <data name="NatTools_MappingPort.Header" xml:space="preserve">
+    <value>Mapping port (0 = automatic)</value>
+  </data>
+  <data name="NatTools_TargetPort.Header" xml:space="preserve">
+    <value>Target port (0 = torrent)</value>
+  </data>
+  <data name="NatTools_StartMapping.Content" xml:space="preserve">
+    <value>Start mapping</value>
+  </data>
+  <data name="NatTools_StopMapping.Content" xml:space="preserve">
+    <value>Stop mapping</value>
+  </data>
+  <data name="NatTools_AllowFirewall.Content" xml:space="preserve">
+    <value>Allow this UDP port in Windows Firewall</value>
+  </data>
+  <data name="NatTools_RemoveFirewall.Content" xml:space="preserve">
+    <value>Remove OpenNet firewall rule</value>
+  </data>
+  <data name="NatTools_StunHost.Header" xml:space="preserve">
+    <value>STUN server</value>
+  </data>
+  <data name="NatTools_StunPort.Header" xml:space="preserve">
+    <value>STUN port</value>
+  </data>
+  <data name="NatMappingStopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="NatMappingFirewallUnchanged" xml:space="preserve">
+    <value>Firewall rule: unchanged</value>
+  </data>
+  <data name="NatMappingStartEngine" xml:space="preserve">
+    <value>Start the torrent engine first.</value>
+  </data>
+  <data name="NatMappingInvalidConfig" xml:space="preserve">
+    <value>Check the mapping port, target port, and STUN server settings.</value>
+  </data>
+  <data name="NatMappingStarting" xml:space="preserve">
+    <value>Starting UDP mapping…</value>
+  </data>
+  <data name="NatMappingFirewallAllowed" xml:space="preserve">
+    <value>OpenNet UDP firewall rule is enabled.</value>
+  </data>
+  <data name="NatMappingFirewallRemoved" xml:space="preserve">
+    <value>OpenNet firewall rule removed.</value>
+  </data>
+  <data name="NatMappingWaitingStun" xml:space="preserve">
+    <value>Waiting for STUN…</value>
+  </data>
+  <data name="NatMappingForwardingPrefix" xml:space="preserve">
+    <value>Forwarding UDP to 127.0.0.1:</value>
+  </data>
+  <data name="NatMappingWaitingTarget" xml:space="preserve">
+    <value>Waiting for the torrent listener.</value>
+  </data>
+  <data name="NatTools_ObservedEndpoint.Text" xml:space="preserve">
+    <value>Observed mapping toward STUN:</value>
+  </data>
+  <data name="NatMappingFirewallRequiresFixedPort" xml:space="preserve">
+    <value>Start a mapping on a fixed port before adding a persistent firewall rule.</value>
+  </data>
+  <data name="NatTools_TcpMappingHeader.Text" xml:space="preserve">
+    <value>TCP / WebUI NAT Mapping</value>
+  </data>
+  <data name="NatTools_TcpMappingDescription.Text" xml:space="preserve">
+    <value>Keep HTTP and TCP STUN connections on one source port, listen on that shared port, and relay inbound TCP connections to a loopback target.</value>
+  </data>
+  <data name="NatTools_TcpMappingWarning.Title" xml:space="preserve">
+    <value>Public TCP exposure is opt-in</value>
+  </data>
+  <data name="NatTools_TcpMappingWarning.Message" xml:space="preserve">
+    <value>This mode cannot provide exclusive ownership of the shared port. Bind a specific interface and expose only an authenticated target. No firewall rule is added automatically, and a STUN observation does not prove reachability. Valid parameters are remembered after a manual start, but mapping and firewall authorization are never restored automatically.</value>
+  </data>
+  <data name="NatTools_TcpLocalAddress.Header" xml:space="preserve">
+    <value>Local IPv4 address</value>
+  </data>
+  <data name="NatTools_TcpMappingPort.Header" xml:space="preserve">
+    <value>Mapping port (0 = automatic)</value>
+  </data>
+  <data name="NatTools_TcpTargetPort.Header" xml:space="preserve">
+    <value>Loopback target port</value>
+  </data>
+  <data name="NatTools_TcpKeepaliveHost.Header" xml:space="preserve">
+    <value>HTTP keepalive host</value>
+  </data>
+  <data name="NatTools_TcpKeepalivePort.Header" xml:space="preserve">
+    <value>HTTP port</value>
+  </data>
+  <data name="NatTools_TcpStunHost.Header" xml:space="preserve">
+    <value>TCP STUN server</value>
+  </data>
+  <data name="NatTools_TcpStunPort.Header" xml:space="preserve">
+    <value>TCP STUN port</value>
+  </data>
+  <data name="NatTools_StartTcpMapping.Content" xml:space="preserve">
+    <value>Start TCP mapping</value>
+  </data>
+  <data name="NatTools_StopTcpMapping.Content" xml:space="preserve">
+    <value>Stop TCP mapping</value>
+  </data>
+  <data name="NatTools_TcpObservedEndpoint.Text" xml:space="preserve">
+    <value>Observed TCP mapping toward STUN:</value>
+  </data>
+  <data name="NatTcpMappingStopped" xml:space="preserve">
+    <value>TCP mapping stopped</value>
+  </data>
+  <data name="NatTcpMappingInvalidConfig" xml:space="preserve">
+    <value>Enter a specific local IPv4 address and check every TCP port and host.</value>
+  </data>
+  <data name="NatTcpMappingStarting" xml:space="preserve">
+    <value>Starting TCP mapping…</value>
+  </data>
+  <data name="NatTcpMappingForwardingPrefix" xml:space="preserve">
+    <value>Forwarding TCP to 127.0.0.1:</value>
+  </data>
+  <data name="NatTcpMappingActiveRelaysPrefix" xml:space="preserve">
+    <value>; active relays: </value>
+  </data>
+  <data name="NatTools_AllowTcpFirewall.Content" xml:space="preserve">
+    <value>Allow this TCP port in Windows Firewall</value>
+  </data>
+  <data name="NatTools_RemoveTcpFirewall.Content" xml:space="preserve">
+    <value>Remove OpenNet TCP firewall rule</value>
+  </data>
+  <data name="NatTcpMappingFirewallRequiresFixedPort" xml:space="preserve">
+    <value>Start TCP mapping on a fixed port before adding a persistent firewall rule.</value>
+  </data>
+  <data name="NatTcpMappingFirewallAllowed" xml:space="preserve">
+    <value>OpenNet TCP firewall rule is enabled.</value>
+  </data>
+  <data name="NatTcpMappingFirewallRemoved" xml:space="preserve">
+    <value>OpenNet TCP firewall rule removed.</value>
+  </data>
+
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">
     <value>Settings</value>
   </data>

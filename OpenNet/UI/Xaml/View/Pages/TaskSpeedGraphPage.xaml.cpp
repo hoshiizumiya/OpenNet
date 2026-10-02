@@ -221,6 +221,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			return;
 		}
 
+		auto graph = PerformanceGraph();
+		if (!graph)
+		{
+			// Do not consume buffered telemetry until there is a graph that can
+			// accept it. Hidden/minimized samples must survive template teardown.
+			return;
+		}
+
 		std::deque<PendingMetricSample> pendingSamples;
 		std::vector<hstring> displayValues;
 		{
@@ -240,8 +248,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		{
 			std::scoped_lock lock(m_graphStateMutex);
-			auto graph = PerformanceGraph();
-			if (!graph) return;
 			auto const scrollPixelsPerSecond = m_graphScrollPixelsPerSecond.load(std::memory_order_relaxed);
 			for (auto const& sample : pendingSamples)
 			{
