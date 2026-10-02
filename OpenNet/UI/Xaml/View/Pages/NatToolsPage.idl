@@ -1,8 +1,11 @@
-﻿namespace OpenNet.UI.Xaml.View.Pages
+﻿import "ViewModels/NatMappingViewModel.idl";
+
+namespace OpenNet.UI.Xaml.View.Pages
 {
 	[default_interface]
 	runtimeclass NatToolsPage : Microsoft.UI.Xaml.Controls.Page
 	{
 		NatToolsPage();
+		OpenNet.ViewModels.NatMappingViewModel ViewModel { get; };
 	}
 }
