@@ -7040,4 +7040,16 @@
   <data name="PeerMenu_ConnectionTime.Text" xml:space="preserve">
     <value>连接时间</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>重新检测端口</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>下次自动检测</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>自动端口检测间隔（分钟）</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>按此间隔自动检测端口可访问性。默认 5 分钟，最短 1 分钟。</value>
+  </data>
 </root>

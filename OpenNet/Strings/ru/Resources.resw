@@ -5436,4 +5436,16 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>Восстановить значения по умолчанию</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>Проверить порты снова</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>Следующая автоматическая проверка</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>Интервал проверки портов (минуты)</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>Автоматическая проверка доступности портов с этим интервалом. По умолчанию: 5 минут; минимум: 1 минута.</value>
+  </data>
 </root>

@@ -30,6 +30,10 @@
 		String LsdStatus { get; };
 		String WindowsFirewallStatus { get; };
 		String UpnpMappingStatus { get; };
+		Boolean IsPortCheckRunning { get; };
+		String PortCheckStatusText { get; };
+		String PortCheckCountdownText { get; };
+		Microsoft.UI.Xaml.Input.ICommand RecheckPortsCommand { get; };
 
 		// 快速统计 / Quick Stats
 		Int32 ConnectedPeersCount { get; };

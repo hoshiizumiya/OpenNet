@@ -111,6 +111,10 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			return m_upnpMappingStatus;
 		}
+		bool IsPortCheckRunning() const { return m_isPortCheckRunning; }
+		winrt::hstring PortCheckStatusText() const { return m_portCheckStatusText; }
+		winrt::hstring PortCheckCountdownText() const { return m_portCheckCountdownText; }
+		winrt::Microsoft::UI::Xaml::Input::ICommand RecheckPortsCommand() const { return m_recheckPortsCommand; }
 
 		// 快速统计 / Quick stats
 		std::int32_t ConnectedPeersCount() const
@@ -270,6 +274,17 @@ namespace winrt::OpenNet::ViewModels::implementation
 		::OpenNet::Core::NetworkDetector m_networkDetector;
 
 		// Port check state
+		void RequestPortCheck();
+		void UpdatePortCheckStatus(bool running, std::int32_t secondsRemaining);
+		void QueuePortCheckStatus(bool running, std::int32_t secondsRemaining);
+		winrt::Microsoft::UI::Xaml::Input::ICommand m_recheckPortsCommand{ nullptr };
+		bool m_isPortCheckRunning{};
+		winrt::hstring m_portCheckStatusText;
+		winrt::hstring m_portCheckCountdownText{ L"—" };
+		std::mutex m_portMutex;
+		std::condition_variable m_portCv;
+		bool m_portCheckRequested{};
+		bool m_portCheckInProgress{};
 		std::chrono::steady_clock::time_point m_lastPortCheckTime{};
 		std::int32_t m_lastCheckedIPv4Port{ 0 };
 		std::int32_t m_lastCheckedIPv6Port{ 0 };

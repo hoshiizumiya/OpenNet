@@ -1,6 +1,9 @@
 ﻿#include "XamlWorkaround.h"
 #include "NetworkSettingsViewModel.h"
+#include "Core/PortCheckSettings.h"
 #include "ViewModels/NetworkSettingsViewModel.g.cpp"
+
+import OpenNet.Core.AppSettingsDatabase;
 
 using namespace winrt;
 
@@ -18,6 +21,24 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_listenPort(0)
 		, m_firewallEnabled(false)
 	{
+		LoadSettings();
+	}
+
+	void NetworkSettingsViewModel::PortCheckIntervalMinutes(double value)
+	{
+		namespace settings = ::OpenNet::Core::PortCheckSettings;
+		if (!std::isfinite(value))
+		{
+			RaisePropertyChanged(L"PortCheckIntervalMinutes");
+			return;
+		}
+		auto const minutes = static_cast<std::int64_t>(std::clamp(std::floor(value),
+			static_cast<double>(settings::MinimumIntervalMinutes), static_cast<double>(settings::MaximumIntervalMinutes)));
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		database.SetInt(settings::Category, settings::IntervalMinutesKey, minutes);
+		SetProperty(m_portCheckIntervalMinutes, static_cast<double>(minutes), L"PortCheckIntervalMinutes");
+		if (value != static_cast<double>(minutes)) RaisePropertyChanged(L"PortCheckIntervalMinutes");
 	}
 
 	// Summary: 初始化，加载设置
@@ -35,6 +56,12 @@ namespace winrt::OpenNet::ViewModels::implementation
 	// Summary: 加载已保存的设置
 	void NetworkSettingsViewModel::LoadSettings()
 	{
+		namespace settings = ::OpenNet::Core::PortCheckSettings;
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		auto const minutes = settings::NormalizeIntervalMinutes(database.GetInt(
+			settings::Category, settings::IntervalMinutesKey).value_or(settings::DefaultIntervalMinutes));
+		SetProperty(m_portCheckIntervalMinutes, static_cast<double>(minutes), L"PortCheckIntervalMinutes");
 		// TODO: 从本地源加载设置到成员变量
 	}
 }

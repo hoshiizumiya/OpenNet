@@ -901,6 +901,9 @@
     <ClInclude Include="Core\NetworkDetector.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="Core\PortCheckSettings.h">
+      <Filter>Core</Filter>
+    </ClInclude>
     <ClInclude Include="Models\NetworkInfo.h">
       <Filter>Models</Filter>
     </ClInclude>

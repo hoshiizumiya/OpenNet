@@ -7040,4 +7040,16 @@ Availability: {}</value>
   <data name="PeerMenu_ConnectionTime.Text" xml:space="preserve">
     <value>Connection Time</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>Recheck ports</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>Next automatic check</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>Automatic port check interval (minutes)</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>Automatically check port accessibility at this interval. Default: 5 minutes; minimum: 1 minute.</value>
+  </data>
 </root>

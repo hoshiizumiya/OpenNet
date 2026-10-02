@@ -69,6 +69,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			SetProperty(m_listenPort, value, L"ListenPort");
 		}
+		double PortCheckIntervalMinutes() const { return m_portCheckIntervalMinutes; }
+		void PortCheckIntervalMinutes(double value);
 
 		// 防火墙状态 / Firewall Status
 		bool FirewallEnabled() const
@@ -88,6 +90,7 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::OpenNet::Models::ConnectionProtocol m_preferredProtocol{ winrt::OpenNet::Models::ConnectionProtocol::Auto };
 		bool m_encryptionEnabled{ true };
 		uint16_t m_listenPort{};
+		double m_portCheckIntervalMinutes{ 5 };
 		bool m_firewallEnabled{ false };
 	};
 }

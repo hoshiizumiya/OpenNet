@@ -33,6 +33,7 @@ namespace OpenNet.ViewModels
         // Ports
         // Summary: Primary listen port
         UInt16 ListenPort;
+        Double PortCheckIntervalMinutes;
         // Summary: Current firewall enabled state (read-only, detected by app)
         Boolean FirewallEnabled { get; };
 

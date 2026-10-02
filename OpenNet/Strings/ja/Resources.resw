@@ -5436,4 +5436,16 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>既定値に戻す</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>ポートを再確認</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>次の自動確認</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>ポートの自動確認間隔（分）</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>この間隔でポートへのアクセスを自動確認します。既定は5分、最小は1分です。</value>
+  </data>
 </root>
