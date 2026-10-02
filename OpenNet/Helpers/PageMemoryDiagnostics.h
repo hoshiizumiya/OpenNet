@@ -7,24 +7,13 @@ import winrt.XamlToolkit.WinUI.Interactivity;
 
 namespace OpenNet::Helpers::PageMemoryDiagnostics
 {
-    inline bool Enabled() noexcept
+    inline std::atomic_bool& EnabledState() noexcept
     {
-        static bool enabled = []
-        {
-            wchar_t value[2]{};
-            if (GetEnvironmentVariableW(L"OPENNET_MEMORY_DIAGNOSTICS", value, 2) == 1)
-            {
-                if (value[0] == L'0') return false;
-                if (value[0] == L'1') return true;
-            }
-#ifdef _DEBUG
-            return true;
-#else
-            return false;
-#endif
-        }();
+        static std::atomic_bool enabled{ false };
         return enabled;
     }
+
+    inline bool Enabled() noexcept { return EnabledState().load(std::memory_order_relaxed); }
 
     // UI-thread-only diagnostics. Neither the records nor the delayed probes own a page/control.
     struct ObjectRecord
@@ -50,15 +39,52 @@ namespace OpenNet::Helpers::PageMemoryDiagnostics
         std::uint64_t nextId{};
         std::map<std::uint64_t, Visit> visits;
         std::ofstream log;
+        std::filesystem::path logPath;
 
         State()
         {
             wchar_t temporaryPath[MAX_PATH]{};
             auto length = GetTempPathW(MAX_PATH, temporaryPath);
             if (!length || length >= MAX_PATH) return;
-            auto path = std::filesystem::path{ temporaryPath } / std::format(L"OpenNet-memory-{}.log", GetCurrentProcessId());
-            log.open(path, std::ios::out | std::ios::trunc);
-            if (log) OutputDebugStringW((L"OpenNet memory report: " + path.wstring() + L"\n").c_str());
+            logPath = std::filesystem::path{ temporaryPath } / std::format(L"OpenNet-memory-{}.log", GetCurrentProcessId());
+        }
+
+        void OpenLog()
+        {
+            if (log.is_open() || logPath.empty()) return;
+            std::error_code error;
+            auto const directory = logPath.parent_path();
+            auto const cutoff = std::filesystem::file_time_type::clock::now() - std::chrono::days{ 14 };
+            for (std::filesystem::directory_iterator it{ directory, error }, end; !error && it != end; it.increment(error))
+            {
+                auto const name = it->path().filename().wstring();
+                if (!name.starts_with(L"OpenNet-memory-") || (it->path() == logPath)) continue;
+                auto const modified = it->last_write_time(error);
+                if (!error && modified < cutoff) std::filesystem::remove(it->path(), error);
+                error.clear();
+            }
+            log.open(logPath, std::ios::out | std::ios::app);
+            if (log) OutputDebugStringW((L"OpenNet memory report: " + logPath.wstring() + L"\n").c_str());
+        }
+
+        void RotateLogIfNeeded()
+        {
+            constexpr std::uintmax_t maximumBytes = 1024 * 1024;
+            if (!log.is_open() || log.tellp() < 0 || static_cast<std::uintmax_t>(log.tellp()) < maximumBytes) return;
+            log.close();
+            std::error_code error;
+            auto first = logPath; first += L".1";
+            auto second = logPath; second += L".2";
+            std::filesystem::remove(second, error); error.clear();
+            if (std::filesystem::exists(first, error))
+            {
+                std::filesystem::rename(first, second, error); error.clear();
+            }
+            if (std::filesystem::exists(logPath, error))
+            {
+                std::filesystem::rename(logPath, first, error); error.clear();
+            }
+            log.open(logPath, std::ios::out | std::ios::trunc);
         }
     };
 
@@ -66,6 +92,26 @@ namespace OpenNet::Helpers::PageMemoryDiagnostics
     {
         static State state;
         return state;
+    }
+
+    // Called once at startup and whenever the user changes the persistent setting.
+    inline void SetEnabled(bool enabled) noexcept
+    {
+        try
+        {
+            auto& state = GetState();
+            if (!enabled)
+            {
+                EnabledState().store(false, std::memory_order_relaxed);
+                for (auto& [id, visit] : state.visits) if (visit.timer) visit.timer.Stop();
+                state.visits.clear();
+                if (state.log.is_open()) state.log.close();
+                return;
+            }
+            state.OpenLog();
+            EnabledState().store(true, std::memory_order_relaxed);
+        }
+        catch (...) { EnabledState().store(false, std::memory_order_relaxed); }
     }
 
     inline void Report(std::uint64_t id, std::string_view stage) noexcept
@@ -94,8 +140,9 @@ namespace OpenNet::Helpers::PageMemoryDiagnostics
             OutputDebugStringA(line.c_str());
             if (state.log)
             {
+                state.RotateLogIfNeeded();
                 state.log << line;
-                state.log.flush(); // The report remains readable even while VS is attached.
+                state.log.flush();
             }
         }
         catch (...) {}
@@ -116,6 +163,7 @@ namespace OpenNet::Helpers::PageMemoryDiagnostics
                 state.visits.erase(oldest);
                 --retired;
             }
+            state.OpenLog();
             auto id = ++state.nextId;
             state.visits[id].page = page;
             Report(id, "created");

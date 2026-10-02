@@ -13,6 +13,7 @@
 #include "UI/Xaml/View/Pages/RSSPage.xaml.h"
 #include "SettingsPageTagRegister.h"
 #include "MainWindow.xaml.h"
+#include "Helpers/PageMemoryDiagnostics.h"
 
 import OpenNet.Core.Utils.Message;
 import OpenNet.Core.AppSettingsDatabase;
@@ -238,6 +239,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		database.SetInt("ui", "refresh_interval_ms", value);
 	}
 
+	void SettingsPage::MemoryDiagnosticsSwitch_Toggled(IInspectable const& sender, RoutedEventArgs const&)
+	{
+		if (m_isMemoryDiagnosticsLoading) return;
+		auto toggle = sender.try_as<ToggleSwitch>();
+		if (!toggle) return;
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		database.Initialize();
+		database.SetBool("ui", "memory_diagnostics_enabled", toggle.IsOn());
+		::OpenNet::Helpers::PageMemoryDiagnostics::SetEnabled(toggle.IsOn());
+	}
+
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::SetDesktopBackground()
 	{
 		// 在 UI 线程获取控件引用（调用者已确保在 UI 线程）
@@ -445,6 +457,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				auto& database =
 					::OpenNet::Core::AppSettingsDatabase::Instance();
 				database.Initialize();
+				m_isMemoryDiagnosticsLoading = true;
+				MemoryDiagnosticsSwitch().IsOn(database.GetBool("ui", "memory_diagnostics_enabled").value_or(false));
+				m_isMemoryDiagnosticsLoading = false;
 				GuiRefreshIntervalBox().Value(static_cast<double>(
 					std::clamp<std::int64_t>(
 						database.GetInt("ui", "refresh_interval_ms")

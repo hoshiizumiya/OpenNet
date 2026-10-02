@@ -334,6 +334,19 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
+                    Description="Collect page lifetime and process memory diagnostics in a temporary log file."
+                    Header="Memory diagnostics">
+                    <essential:SettingsCard.HeaderIcon>
+                        <FontIcon Glyph="&#xE9D9;" />
+                    </essential:SettingsCard.HeaderIcon>
+                    <ToggleSwitch
+                        x:Name="MemoryDiagnosticsSwitch"
+                        AutomationProperties.AutomationId="MemoryDiagnosticsSwitch"
+                        IsOn="False"
+                        Toggled="MemoryDiagnosticsSwitch_Toggled" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
                     x:Uid="ServerEndpointCard"
                     Description="Choose how OpenNet connects to services listed by the remote directory."
                     Header="Server endpoint">

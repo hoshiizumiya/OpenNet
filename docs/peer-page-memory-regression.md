@@ -21,19 +21,19 @@ detaches ItemsSource, recursively clears its outgoing data tree and releases
 DataContext/selected-file/header handles on Unloaded. A weak navigation view-model
 reference allows a temporary unload/reload to restore subscriptions and data.
 
-## Automatic reports instead of individual heap inspection
+## Optional reports instead of individual heap inspection
 
-Build the updated branch and pinned toolkit. Debug builds enable the report by
-default, including when started without the debugger. For Release builds, set
-OPENNET_MEMORY_DIAGNOSTICS=1 in the process environment before starting the app.
-Set OPENNET_MEMORY_DIAGNOSTICS=0 to disable it in Debug as well.
-The report implementation is compiled in both configurations, so Release CI
-also checks the diagnostic code even though collection is opt-in there.
+Build the updated branch and pinned toolkit. In Settings > General, turn on
+Memory diagnostics to collect reports; the setting is persisted and defaults
+to off in every build configuration. Turning it off stops pending probes and
+closes the current log. The report implementation is compiled in both Debug
+and Release configurations.
 
-The first visit logs its exact report path as `OpenNet memory report: <path>`.
-The file is `%TEMP%\OpenNet-memory-<process-id>.log`; each line is flushed, and
-the file remains readable while the application runs. It contains no task paths,
-IP addresses or peer names.
+When enabled, the path is reported as `OpenNet memory report: <path>`. The file
+is `%TEMP%\OpenNet-memory-<process-id>.log`; it is flushed after each report,
+rotates at about 1 MiB through two backups, and logs older than 14 days are
+pruned when collection starts. It contains no task paths, IP addresses or peer
+names.
 
 Each visit records weak references to selected visual/control categories,
 attached behaviors, image sources and display items. Row Loaded handlers also
@@ -57,9 +57,9 @@ reference control blocks introduce bounded diagnostic overhead. Process private
 bytes and working set describe the whole process, including heap reservations,
 caches, background downloads and rendering allocations.
 
-Open and leave each page five times, waiting ten seconds after each departure.
-Send the log directly; no paused debugger or individual allocation clicks are
-needed. In normal navigation, outgoing header behaviors, scrolling controls,
+Turn the setting on, open and leave each page five times, waiting ten seconds
+after each departure, then turn it off. The log can be sent directly; no paused
+debugger or individual allocation clicks are needed. In normal navigation, outgoing header behaviors, scrolling controls,
 DataRows and display items should approach zero alive. Surviving categories show
 which ownership branch to investigate next. If these objects expire but private
 bytes keep rising, investigate other/native allocations rather than treating a
@@ -68,9 +68,11 @@ Page destructor as proof that the entire memory issue is fixed.
 Also verify sticky headers after scrolling and temporary unload/reload, column
 resize/visibility, file priority changes, context menus and peer group expansion.
 
-The ownership cycles are confirmed by source inspection. Windows navigation
-measurements remain pending; neither static checks nor CI compilation prove that
-all reported memory growth is resolved.
+The supplied repeated-navigation reports show the tracked page, DataTable,
+rows, behaviors, and display items at `0/N` alive two and ten seconds after
+unload. Process private bytes still fluctuate, so those measurements confirm
+that these tracked objects are released but do not identify every native or
+allocator reservation in the process.
 
 ## Evidence and ownership
 
@@ -106,7 +108,7 @@ unload/reload can reattach through a weak navigation view-model reference.
 
 ## Windows verification
 
-1. Build Debug, open a torrent with many peers, and select download/upload-rate
+1. Enable Memory diagnostics in Settings, open a torrent with many peers, and select download/upload-rate
    sorting. Scroll through the rows and change the sort repeatedly.
 2. Switch to a different detail tab, wait for the navigation animation and
    outstanding worker results, then take a heap snapshot. Repeat at least 20

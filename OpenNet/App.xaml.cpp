@@ -11,6 +11,7 @@
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
 #include "UI/Xaml/Control/Effect/TextMorphEffect.h"
+#include "Helpers/PageMemoryDiagnostics.h"
 
 module OpenNet.App;
 
@@ -264,6 +265,10 @@ namespace winrt::OpenNet::implementation
 
 	void App::StartMainExperience()
 	{
+		auto& settingsDatabase = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		settingsDatabase.Initialize();
+		::OpenNet::Helpers::PageMemoryDiagnostics::SetEnabled(
+			settingsDatabase.GetBool("ui", "memory_diagnostics_enabled").value_or(false));
 		EnsureMainWindow();
 		if (s_mainExperienceStarted.exchange(true))
 		{

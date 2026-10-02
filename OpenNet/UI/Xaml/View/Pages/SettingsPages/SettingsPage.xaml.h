@@ -33,6 +33,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void StartPageCombobox_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void themeMode_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
 		void GuiRefreshIntervalBox_ValueChanged(winrt::Microsoft::UI::Xaml::Controls::NumberBox const& sender, winrt::Microsoft::UI::Xaml::Controls::NumberBoxValueChangedEventArgs const& e);
+		void MemoryDiagnosticsSwitch_Toggled(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		winrt::Windows::Foundation::IAsyncAction SetDesktopBackground();
 
 		// void AnnotatedScrollBarPage_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -64,6 +65,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		bool m_hasPendingLangChange{ false };
 		bool m_isStartPageLoading{ false };
 		bool m_isRefreshIntervalLoading{ false };
+		bool m_isMemoryDiagnosticsLoading{ false };
 		bool m_isInitializingUpdateSettings{ false };
 		bool m_isCheckingForUpdate{ false };
 		winrt::OpenNet::ViewModels::SettingsViewModel m_viewModel{ nullptr };
