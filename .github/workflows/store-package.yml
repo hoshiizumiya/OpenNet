@@ -1,0 +1,251 @@
+name: Microsoft Store Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_version:
+        description: Optional Store package version (Major.Minor.Build.0). Leave blank for YYYY.MMDD.RUN.0.
+        required: false
+        type: string
+
+permissions:
+  contents: write
+  packages: write
+
+concurrency:
+  group: store-package-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  USERNAME: hoshiizumiya
+  FEED_URL: https://nuget.pkg.github.com/hoshiizumiya/index.json
+  VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,readwrite"
+
+jobs:
+  build:
+    runs-on: windows-2025-vs2026
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v3
+        with:
+          msbuild-architecture: x64
+
+      - name: Install MSVC Preview Build Tools
+        shell: cmd
+        run: |
+          echo Installing MSVC Preview Build Tools...
+          start "" /wait "C:\Program Files (x86)\Microsoft Visual Studio\Installer\setup.exe" modify ^
+            --installPath "C:\Program Files\Microsoft Visual Studio\18\Enterprise" ^
+            --add Microsoft.VisualStudio.Component.VC.Preview.Tools.x86.x64 ^
+            --add Microsoft.VisualStudio.Component.VC.Preview.ARM64 ^
+            --quiet ^
+            --norestart
+          set EXIT_CODE=%ERRORLEVEL%
+          echo Visual Studio Installer exit code: %EXIT_CODE%
+          if not "%EXIT_CODE%"=="0" (
+            echo Visual Studio Installer failed.
+            exit /b %EXIT_CODE%
+          )
+
+      - name: Verify MSVC Preview Build Tools
+        shell: pwsh
+        run: |
+          $vsPath = "C:\Program Files\Microsoft Visual Studio\18\Enterprise"
+          $previewVersionFile = Join-Path $vsPath "VC\Auxiliary\Build\Microsoft.VCToolsVersion.Preview.txt"
+          if (-not (Test-Path $previewVersionFile)) {
+            Get-ChildItem "$vsPath\VC\Auxiliary\Build" | Select-Object Name, LastWriteTime
+            throw "MSVC Preview toolset was not installed."
+          }
+          $previewVersion = (Get-Content $previewVersionFile).Trim()
+          $toolsetPath = Join-Path $vsPath "VC\Tools\MSVC\$previewVersion"
+          if (-not (Test-Path $toolsetPath)) {
+            throw "MSVC Preview directory does not exist: $toolsetPath"
+          }
+          Write-Host "MSVC Preview toolset found: $toolsetPath"
+
+      - name: Set up vcpkg
+        working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
+        shell: pwsh
+        run: vcpkg integrate install
+
+      - name: Add NuGet source for vcpkg cache
+        shell: pwsh
+        run: |
+          $nuget = & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" fetch nuget
+          & $nuget sources add `
+            -Source "${{ env.FEED_URL }}" `
+            -StorePasswordInClearText `
+            -Name GitHubPackages `
+            -UserName "${{ env.USERNAME }}" `
+            -Password "${{ secrets.GITHUB_TOKEN }}"
+          & $nuget setapikey "${{ secrets.GITHUB_TOKEN }}" -Source "${{ env.FEED_URL }}"
+
+      - name: Restore x64 and ARM64 vcpkg dependencies
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force "$env:GITHUB_WORKSPACE\ci-logs" | Out-Null
+          $installRoot = "$env:GITHUB_WORKSPACE\OpenNet\vcpkg_installed"
+          foreach ($triplet in @('x64-windows-custom', 'arm64-windows-custom')) {
+            $log = "$env:GITHUB_WORKSPACE\ci-logs\vcpkg-$triplet.log"
+            Write-Host "Restoring $triplet dependencies..."
+            & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install `
+              --debug `
+              --triplet $triplet `
+              --vcpkg-root "$env:VCPKG_INSTALLATION_ROOT" `
+              --x-manifest-root "$env:GITHUB_WORKSPACE\OpenNet" `
+              --x-install-root $installRoot *> $log
+            if ($LASTEXITCODE -ne 0) {
+              Get-Content $log -Tail 200
+              exit $LASTEXITCODE
+            }
+          }
+
+      - name: Restore NuGet
+        shell: pwsh
+        run: nuget restore OpenNet.slnx
+
+      - name: Generate Store package metadata
+        id: meta
+        shell: pwsh
+        run: |
+          $version = '${{ inputs.package_version }}'.Trim()
+          if ([string]::IsNullOrWhiteSpace($version)) {
+            $year = [int](Get-Date -Format 'yyyy')
+            $monthDay = [int](Get-Date -Format 'MMdd')
+            $runNumber = [int]'${{ github.run_number }}'
+            if ($runNumber -gt 65535) {
+              throw "github.run_number exceeds the MSIX version component limit: $runNumber"
+            }
+            $version = "$year.$monthDay.$runNumber.0"
+          }
+          $parts = $version.Split('.')
+          if ($parts.Count -ne 4) {
+            throw "Store package version must contain four numeric components: Major.Minor.Build.0"
+          }
+          $numbers = @()
+          foreach ($part in $parts) {
+            $value = 0
+            if (-not [int]::TryParse($part, [ref]$value)) {
+              throw "Store package version contains a non-numeric component: $version"
+            }
+            if ($value -lt 0 -or $value -gt 65535) {
+              throw "Each Store package version component must be in the range 0..65535: $version"
+            }
+            $numbers += $value
+          }
+          if ($numbers[0] -eq 0) {
+            throw "The first Store package version component cannot be 0: $version"
+          }
+          if ($numbers[3] -ne 0) {
+            throw "The fourth Store package version component is reserved by Microsoft Store and must be 0: $version"
+          }
+          $shortSha = '${{ github.sha }}'.Substring(0, 7)
+          $artifactName = "OpenNet.Store_${version}_${shortSha}"
+          $releaseTag = "store-$version"
+          $releaseName = "OpenNet Store $version"
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "artifact_name=$artifactName" >> $env:GITHUB_OUTPUT
+          "release_tag=$releaseTag" >> $env:GITHUB_OUTPUT
+          "release_name=$releaseName" >> $env:GITHUB_OUTPUT
+
+      - name: Build unsigned Microsoft Store upload package
+        env:
+          VCPKG_BINARY_SOURCES: "clear;nuget,https://nuget.pkg.github.com/hoshiizumiya/index.json,read"
+        shell: pwsh
+        run: |
+          $packageDir = "$env:GITHUB_WORKSPACE\OpenNet\AppPackages\"
+          New-Item -ItemType Directory -Force $packageDir | Out-Null
+          $arguments = @(
+            'OpenNet\OpenNet.vcxproj',
+            '/p:Configuration=Release',
+            '/p:Platform=x64',
+            '/p:PreferredToolArchitecture=x64',
+            '/p:GenerateAppxPackageOnBuild=true',
+            '/p:UapAppxPackageBuildMode=StoreUpload',
+            '/p:AppxBundle=Always',
+            '/p:AppxBundlePlatforms=x64|ARM64',
+            "/p:AppxPackageDir=$packageDir",
+            '/p:AppxPackageSigningEnabled=false',
+            '/p:GenerateTemporaryStoreCertificate=false',
+            "/p:AppxPackageVersion=${{ steps.meta.outputs.version }}",
+            '/p:CGTHREADS=1',
+            '/m:1'
+          )
+          & msbuild @arguments *> "$env:GITHUB_WORKSPACE\ci-logs\store-package.log"
+          $result = $LASTEXITCODE
+          if ($result -ne 0) {
+            Get-Content "$env:GITHUB_WORKSPACE\ci-logs\store-package.log" -Tail 200
+          }
+          exit $result
+
+      - name: Verify Store upload package
+        id: verify
+        shell: pwsh
+        run: |
+          $packageDir = "$env:GITHUB_WORKSPACE\OpenNet\AppPackages"
+          $uploads = @(Get-ChildItem $packageDir -Recurse -File -Filter '*.msixupload')
+          if ($uploads.Count -ne 1) {
+            Write-Host "AppPackages contents:"
+            Get-ChildItem $packageDir -Recurse -File | Select-Object FullName, Length
+            throw "Expected exactly one .msixupload file, found $($uploads.Count)."
+          }
+          $upload = $uploads[0]
+          $sizeMiB = [math]::Round($upload.Length / 1MB, 2)
+          Write-Host "Store upload package: $($upload.FullName)"
+          Write-Host "Size: $sizeMiB MiB"
+          "upload_path=$($upload.FullName)" >> $env:GITHUB_OUTPUT
+          "upload_name=$($upload.Name)" >> $env:GITHUB_OUTPUT
+          "upload_size_mib=$sizeMiB" >> $env:GITHUB_OUTPUT
+          @"
+          ## Microsoft Store package
+          - Version: `${{ steps.meta.outputs.version }}`
+          - Architectures: `x64 | ARM64`
+          - Signing: disabled; Microsoft Store signs the package after submission
+          - File: `$($upload.Name)`
+          - Size: `$sizeMiB MiB`
+          - Source commit: `${{ github.sha }}`
+          - Release tag: `${{ steps.meta.outputs.release_tag }}`
+          "@ >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Upload Microsoft Store package artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: OpenNet/AppPackages/**/*.msixupload
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ steps.meta.outputs.release_tag }}
+          name: ${{ steps.meta.outputs.release_name }}
+          commit: ${{ github.sha }}
+          artifacts: OpenNet/AppPackages/**/*.msixupload
+          artifactErrorsFailBuild: true
+          allowUpdates: false
+          prerelease: false
+          generateReleaseNotes: true
+          body: |
+            Microsoft Store upload package generated by GitHub Actions.
+
+            Version: ${{ steps.meta.outputs.version }}
+            Architectures: x64, ARM64
+            Source commit: ${{ github.sha }}
+
+            The attached `.msixupload` is unsigned and intended for submission to Microsoft Partner Center. Microsoft Store signs the package during publication.
+
+      - name: Upload build logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: store-package-logs-${{ github.run_id }}
+          path: ci-logs/*.log
+          if-no-files-found: ignore
+          retention-days: 14
