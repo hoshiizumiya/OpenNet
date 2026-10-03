@@ -5,6 +5,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:effects="using:OpenNet.UI.Xaml.Control.Effect"
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -16,7 +17,12 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <ResourceDictionary Source="ms-appx:///Styles/NavigationView.xaml" />
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="ms-appx:///Styles/NavigationView.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AnimatedNumber_ResourceDictionary.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
     </Page.Resources>
 
     <Grid>
@@ -532,11 +538,34 @@
                                     </Grid>
                                 </Border>
 
-                                <Button
-                                    HorizontalAlignment="Stretch"
-                                    HorizontalContentAlignment="Center"
-                                    Click="OpenPortTestWindow_Click"
-                                    Content="{essential:StringResource Name=NatTools_PortTest/Text}" />
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel VerticalAlignment="Center" Spacing="2">
+                                        <TextBlock
+                                            FontSize="12"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="{x:Bind ViewModel.PortCheckStatusText, Mode=OneWay}"
+                                            TextWrapping="Wrap" />
+                                        <effects:AnimatedNumber
+                                            FontFamily="Consolas"
+                                            Value="{x:Bind ViewModel.PortCheckCountdownText, Mode=OneWay}" />
+                                    </StackPanel>
+                                    <Button
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        Command="{x:Bind ViewModel.RecheckPortsCommand, Mode=OneWay}"
+                                        Content="{essential:StringResource Name=MainViewRecheckPorts}" />
+                                    <Button
+                                        Grid.Column="2"
+                                        VerticalAlignment="Center"
+                                        HorizontalContentAlignment="Center"
+                                        Click="OpenPortTestWindow_Click"
+                                        Content="{essential:StringResource Name=NatTools_PortTest/Text}" />
+                                </Grid>
                             </StackPanel>
                         </ScrollViewer>
                     </Flyout>

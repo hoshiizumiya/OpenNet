@@ -308,6 +308,21 @@
                 </essential:SettingsExpander>
 
                 <essential:SettingsCard
+                    x:Uid="NetworkSettingsPortCheckInterval"
+                    Description="Automatically check port accessibility at this interval. Default: 5 minutes; minimum: 1 minute."
+                    Header="Automatic port check interval (minutes)">
+                    <NumberBox
+                        Width="120"
+                        AutomationProperties.Name="{essential:StringResource Name=NetworkSettingsPortCheckInterval/Header}"
+                        LargeChange="5"
+                        Maximum="35791394"
+                        Minimum="1"
+                        SmallChange="1"
+                        SpinButtonPlacementMode="Compact"
+                        Value="{x:Bind ViewModel.PortCheckIntervalMinutes, Mode=TwoWay}" />
+                </essential:SettingsCard>
+
+                <essential:SettingsCard
                     x:Uid="ViewNetworkSettingsPageSettingsCardDHT"
                     Description="Distributed Hash Table for decentralized peer discovery"
                     Header="Enable DHT">

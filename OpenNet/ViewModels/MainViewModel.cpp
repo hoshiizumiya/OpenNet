@@ -1,6 +1,8 @@
 ﻿#include "XamlWorkaround.h"
 #include <netfw.h>
 #include "Core/WebUI/WebUIControl.h"
+#include "Core/PortCheckSettings.h"
+#include "mvvm_framework/delegate_command_builder.h"
 import winrt.OpenNet.ViewModels;
 
 #include "MainViewModel.h"
@@ -159,6 +161,18 @@ namespace winrt::OpenNet::ViewModels::implementation
 		m_lsdStatus = detecting;
 		m_windowsFirewallStatus = detecting;
 		m_upnpMappingStatus = detecting;
+		m_portCheckStatusText = ResourceGetString(L"MainViewNextAutomaticPortCheck");
+		m_recheckPortsCommand = mvvm::DelegateCommandBuilder<IInspectable>(*this)
+			.Execute([weak = get_weak()](auto const&)
+			{
+				if (auto self = weak.get()) self->RequestPortCheck();
+			})
+			.CanExecute([weak = get_weak()](auto const&)
+			{
+				auto self = weak.get();
+				return self && !self->m_isPortCheckRunning && !self->m_stopSpeedRefresh.load();
+			})
+			.DependsOn(L"IsPortCheckRunning").Build();
 		m_dispatcher = winrt::Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 		m_recentActivities = single_threaded_observable_vector<hstring>();
 		m_recentActivities.Append(ResourceGetString(L"MainViewAppStarted"));
@@ -177,10 +191,11 @@ namespace winrt::OpenNet::ViewModels::implementation
 	void MainViewModel::Shutdown()
 	{
 		{
-			std::lock_guard<std::mutex> lock(m_speedMutex);
+			std::scoped_lock lock(m_speedMutex, m_portMutex);
 			m_stopSpeedRefresh.store(true);
 		}
 		m_speedCv.notify_all();
+		m_portCv.notify_all();
 		if (m_speedRefreshThread.joinable())
 			m_speedRefreshThread.join();
 		if (m_portRefreshThread.joinable())
@@ -339,6 +354,43 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 	}
 
+	void MainViewModel::RequestPortCheck()
+	{
+		{
+			std::lock_guard lock(m_portMutex);
+			// The worker owns all probes; a click only wakes it and never starts a second probe.
+			if (m_stopSpeedRefresh.load() || m_portCheckInProgress || m_portCheckRequested) return;
+			m_portCheckRequested = true;
+		}
+		UpdatePortCheckStatus(true, 0);
+		m_portCv.notify_one();
+	}
+
+	void MainViewModel::UpdatePortCheckStatus(bool running, std::int32_t secondsRemaining)
+	{
+		SetProperty(m_portCheckStatusText, ResourceGetString(running ? L"CommonDetecting" : L"MainViewNextAutomaticPortCheck"), L"PortCheckStatusText");
+		auto const countdown = running ? winrt::hstring{ L"—" } : winrt::hstring{ std::format(L"{:02}:{:02}", secondsRemaining / 60, secondsRemaining % 60) };
+		SetProperty(m_portCheckCountdownText, countdown, L"PortCheckCountdownText");
+		SetProperty(m_isPortCheckRunning, running, L"IsPortCheckRunning");
+	}
+
+	void MainViewModel::QueuePortCheckStatus(bool running, std::int32_t secondsRemaining)
+	{
+		if (!m_dispatcher || m_stopSpeedRefresh.load()) return;
+		m_dispatcher.TryEnqueue([weak = get_weak(), running, secondsRemaining]()
+		{
+			if (auto self = weak.get(); self && !self->m_stopSpeedRefresh.load())
+			{
+				{
+					std::lock_guard lock(self->m_portMutex);
+					// An older idle notification must not undo a click's immediate busy state.
+					if (running != (self->m_portCheckRequested || self->m_portCheckInProgress)) return;
+				}
+				self->UpdatePortCheckStatus(running, secondsRemaining);
+			}
+		});
+	}
+
 	void MainViewModel::PortRefreshThreadEntry()
 	{
 		bool apartmentInitialized = false;
@@ -363,8 +415,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 					operation.Cancel();
 					return false;
 				}
-				std::unique_lock<std::mutex> lock(m_speedMutex);
-				m_speedCv.wait_for(lock, 100ms, [this]
+				std::unique_lock<std::mutex> lock(m_portMutex);
+				m_portCv.wait_for(lock, 100ms, [this]
 				{
 					return m_stopSpeedRefresh.load();
 				});
@@ -416,19 +468,40 @@ namespace winrt::OpenNet::ViewModels::implementation
 			return std::wstring{ L"Unavailable" };
 		};
 
+		auto portCheckInterval = std::chrono::minutes(::OpenNet::Core::PortCheckSettings::DefaultIntervalMinutes);
 		while (!m_stopSpeedRefresh.load())
 		{
+			bool checked = false;
 			try
 			{
+				// Reload the persisted interval so settings changes also update an active countdown.
+				namespace settings = ::OpenNet::Core::PortCheckSettings;
+				auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+				database.Initialize();
+				portCheckInterval = std::chrono::minutes(settings::NormalizeIntervalMinutes(
+					database.GetInt(settings::Category, settings::IntervalMinutesKey).value_or(settings::DefaultIntervalMinutes)));
 				auto const stats = ::OpenNet::Core::P2PManager::Instance().GetPerformanceStats();
 				auto const ipv4Port = stats.ipv4ListenPort;
 				auto const ipv6Port = stats.ipv6ListenPort;
 				auto const now = std::chrono::steady_clock::now();
-				bool const due = ipv4Port != m_lastCheckedIPv4Port
-					|| ipv6Port != m_lastCheckedIPv6Port
-					|| now - m_lastPortCheckTime >= std::chrono::seconds(60);
+				bool due;
+				{
+					std::lock_guard lock(m_portMutex);
+					due = m_portCheckRequested || ipv4Port != m_lastCheckedIPv4Port
+						|| ipv6Port != m_lastCheckedIPv6Port
+						|| now - m_lastPortCheckTime >= portCheckInterval;
+					if (due)
+					{
+						m_portCheckRequested = false;
+						m_portCheckInProgress = true;
+						checked = true;
+					}
+				}
 				if (due)
 				{
+					QueuePortCheckStatus(true, 0);
+					m_lastCheckedIPv4Port = ipv4Port;
+					m_lastCheckedIPv6Port = ipv6Port;
 					std::wstring ipv4TcpState = ipv4Port > 0 ? L"Unknown" : L"Unavailable";
 					std::wstring ipv4UdpState = ipv4TcpState;
 					std::wstring ipv6TcpState = ipv6Port > 0 ? L"Unknown" : L"Unavailable";
@@ -492,9 +565,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 					m_cachedIPv4PortState = ipv4State;
 					m_cachedIPv6PortState = ipv6State;
-					m_lastCheckedIPv4Port = ipv4Port;
-					m_lastCheckedIPv6Port = ipv6Port;
-					m_lastPortCheckTime = std::chrono::steady_clock::now();
 
 					std::wstring aggregateState = L"Unknown";
 					if (ipv4State == L"Open" || ipv6State == L"Open")
@@ -628,12 +698,32 @@ namespace winrt::OpenNet::ViewModels::implementation
 			}
 			catch (...)
 			{
+				// A failure before reading listener stats must also consume a manual request;
+				// otherwise its wait predicate would cause a tight retry loop.
+				std::lock_guard lock(m_portMutex);
+				if (m_portCheckRequested)
+				{
+					m_portCheckRequested = false;
+					checked = true;
+				}
 			}
 
-			std::unique_lock<std::mutex> lock(m_speedMutex);
-			m_speedCv.wait_for(lock, 1500ms, [this]
+			if (m_stopSpeedRefresh.load()) break;
+			if (checked)
 			{
-				return m_stopSpeedRefresh.load();
+				// Restart the same deadline after automatic/manual completion, including failures.
+				m_lastPortCheckTime = std::chrono::steady_clock::now();
+				std::lock_guard lock(m_portMutex);
+				m_portCheckInProgress = false;
+			}
+			auto const remaining = std::chrono::ceil<std::chrono::seconds>(
+				m_lastPortCheckTime + portCheckInterval - std::chrono::steady_clock::now()).count();
+			QueuePortCheckStatus(false, static_cast<std::int32_t>(std::max<std::int64_t>(0, remaining)));
+
+			std::unique_lock<std::mutex> lock(m_portMutex);
+			m_portCv.wait_for(lock, 1s, [this]
+			{
+				return m_stopSpeedRefresh.load() || m_portCheckRequested;
 			});
 		}
 

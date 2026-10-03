@@ -551,6 +551,7 @@
     <ClInclude Include="Core\DataGraph\SpeedGraphData.h" />
     <ClInclude Include="Core\FileTransferEngine.h" />
     <ClInclude Include="Core\NetworkDetector.h" />
+    <ClInclude Include="Core\PortCheckSettings.h" />
     <ClCompile Include="Core\P2PManager.ixx" />
     <ClCompile Include="Core\Aria2\Aria2Helpers.ixx" />
     <ClCompile Include="Core\Aria2\Aria2Models.ixx" />

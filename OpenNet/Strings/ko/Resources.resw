@@ -5436,4 +5436,16 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>기본값 복원</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>포트 다시 검사</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>다음 자동 검사</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>자동 포트 검사 간격(분)</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>이 간격으로 포트 접근 가능 여부를 자동 검사합니다. 기본값은 5분, 최솟값은 1분입니다.</value>
+  </data>
 </root>

@@ -5436,4 +5436,16 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>還原預設值</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>重新檢測連接埠</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>下次自動檢測</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>自動連接埠檢測間隔（分鐘）</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>依此間隔自動檢測連接埠可存取性。預設 5 分鐘，最短 1 分鐘。</value>
+  </data>
 </root>

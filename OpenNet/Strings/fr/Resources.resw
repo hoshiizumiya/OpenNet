@@ -5436,4 +5436,16 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>Rétablir les valeurs par défaut</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>Revérifier les ports</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>Prochaine vérification automatique</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>Intervalle de vérification des ports (minutes)</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>Vérifier automatiquement l’accessibilité des ports à cet intervalle. Par défaut : 5 minutes ; minimum : 1 minute.</value>
+  </data>
 </root>

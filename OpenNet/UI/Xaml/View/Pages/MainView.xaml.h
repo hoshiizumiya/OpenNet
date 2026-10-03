@@ -3,6 +3,7 @@
 // workaround for XAML-generated .xaml.g.h files not supporting C++20 modules
 import winrt.OpenNet.Helpers;
 import winrt.OpenNet.UI.Xaml.View;
+import winrt.OpenNet.UI.Xaml.Control.Effect;
 import winrt.XamlToolkit.Labs.WinUI;
 #include "UI/Xaml/View/Pages/MainView.g.h"
 #include "UI/Xaml/View/Pages/TasksPage.xaml.h"

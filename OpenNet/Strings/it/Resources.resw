@@ -5436,4 +5436,16 @@
   <data name="TaskProgressResetButton.Content" xml:space="preserve">
     <value>Ripristina predefiniti</value>
   </data>
+  <data name="MainViewRecheckPorts" xml:space="preserve">
+    <value>Ricontrolla le porte</value>
+  </data>
+  <data name="MainViewNextAutomaticPortCheck" xml:space="preserve">
+    <value>Prossimo controllo automatico</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Header" xml:space="preserve">
+    <value>Intervallo del controllo delle porte (minuti)</value>
+  </data>
+  <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
+    <value>Controlla automaticamente l’accessibilità delle porte a questo intervallo. Predefinito: 5 minuti; minimo: 1 minuto.</value>
+  </data>
 </root>
