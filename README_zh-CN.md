@@ -1,12 +1,15 @@
 ﻿# 🎉欢迎来到 OpenNet 项目
 
-![logo](https://github.com/hoshiizumiya/OpenNet/blob/dev_master/OpenNet/Assets/AppIcons/StoreLogo.scale-400.png)
+![logo](./OpenNet/Assets/AppIcons/StoreLogo.scale-400.png)
 
 ## 概览
 
 我们的当前使用框架为 WinUI3 C++/WinRT。使用 WinUI3 可以让我们创建现代化的 Windows 应用程序，它有更加现代的外观，使用 C++/WinRT 能够提供更好的用户体验和性能。  
 目前我们的计划仅在 Windows 上运行，未来可能会考虑跨平台支持。(使用 MAUI 构建系统原生框架的跨平台应用，采用 P/Invoke 跨平台调用)  
 目前主要使用的开源库为 libtorrent 。
+
+### 从应用商店获取
+[前往 Microsoft Store 网页!](https://apps.microsoft.com/detail/9nhbtsz6s5z2) | <a href="https://get.microsoft.com/installer/download/9nhbtsz6s5z2?referrer=appbadge" target="_self"><img src="https://get.microsoft.com/images/zh-cn%20light.svg" width="200"/></a>
 
 ## 如何构建调试项目
 

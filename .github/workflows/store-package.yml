@@ -90,8 +90,8 @@ jobs:
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force "$env:GITHUB_WORKSPACE\ci-logs" | Out-Null
-          $installRoot = "$env:GITHUB_WORKSPACE\OpenNet\vcpkg_installed"
           foreach ($triplet in @('x64-windows-custom', 'arm64-windows-custom')) {
+            $installRoot = "$env:GITHUB_WORKSPACE\OpenNet\vcpkg_installed\$triplet"
             $log = "$env:GITHUB_WORKSPACE\ci-logs\vcpkg-$triplet.log"
             Write-Host "Restoring $triplet dependencies..."
             & "$env:VCPKG_INSTALLATION_ROOT\vcpkg.exe" install `
@@ -138,9 +138,6 @@ jobs:
               throw "Each Store package version component must be in the range 0..65535: $version"
             }
             $numbers += $value
-          }
-          if ($numbers[0] -eq 0) {
-            throw "The first Store package version component cannot be 0: $version"
           }
           if ($numbers[3] -ne 0) {
             throw "The fourth Store package version component is reserved by Microsoft Store and must be 0: $version"
