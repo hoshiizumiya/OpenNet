@@ -818,21 +818,36 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	void TasksViewModel::OnProgress(const ::OpenNet::Core::Torrent::LibtorrentHandle::ProgressEvent& e)
 	{
+		bool payloadChanged = true;
 		{
 			std::lock_guard lock(m_progressSnapshotMutex);
 			auto const previous = m_progressSnapshots.find(e.taskId);
-			if (previous != m_progressSnapshots.end() && previous->second == e) return;
-			m_progressSnapshots.insert_or_assign(e.taskId, e);
+			payloadChanged = previous == m_progressSnapshots.end() || !(previous->second == e);
+			if (payloadChanged)
+				m_progressSnapshots.insert_or_assign(e.taskId, e);
 		}
+
+		auto const hasTorrentUpdatedSubscribers =
+			m_torrentUpdatedSubscriberCount.load(std::memory_order_relaxed) != 0;
+		if (!payloadChanged && !hasTorrentUpdatedSubscribers) return;
 
 		auto dispatcher = m_dispatcher;
 		if (!dispatcher)
 			return;
 		auto name = winrt::to_hstring(e.name);
-		dispatcher.TryEnqueue([weak = get_weak(), name, e]()
+		auto taskId = winrt::to_hstring(e.taskId);
+		dispatcher.TryEnqueue(
+			[weak = get_weak(), name, taskId, e, payloadChanged,
+			 hasTorrentUpdatedSubscribers]()
 		{
 			if (auto self = weak.get())
 			{
+				// Peer detail data is not part of ProgressEvent equality. When a
+				// detail view is subscribed, use every libtorrent update as its
+				// invalidation source without penalizing the normal task-list path.
+				if (hasTorrentUpdatedSubscribers)
+					self->m_torrentUpdated(*self, taskId);
+				if (!payloadChanged) return;
 				auto sizeBefore = self->m_tasks.Size();
 				auto item = self->FindOrCreateItemByTaskId(e.taskId, name);
 				item.TargetPathMissing(false);

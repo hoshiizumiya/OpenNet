@@ -84,15 +84,30 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				self->OnSettingsPropertyChanged(sender, args);
 			}
 		});
+		m_sampleTimer = DispatcherQueue().CreateTimer();
+		m_sampleTimer.IsRepeating(true);
+		m_sampleTimerToken = m_sampleTimer.Tick(
+			[weak = get_weak()](auto const&, auto const&)
+		{
+			if (auto self = weak.get()) self->SampleGraphMetric();
+		});
 		ApplyGraphSettings();
-		if (auto const selector = MetricSelector();	selector && selector.SelectedIndex() >= 0)
+		if (auto const selector = MetricSelector(); selector && selector.SelectedIndex() >= 0)
 		{
 			m_mode.store(static_cast<MetricMode>(selector.SelectedIndex()), std::memory_order_relaxed);
 		}
+		m_lastSampleTime = std::chrono::steady_clock::now();
+		m_sampleTimer.Start();
 	}
 
 	TaskSpeedGraphPage::~TaskSpeedGraphPage()
 	{
+		if (m_sampleTimer)
+		{
+			m_sampleTimer.Stop();
+			if (m_sampleTimerToken.value) m_sampleTimer.Tick(m_sampleTimerToken);
+			m_sampleTimerToken = {};
+		}
 		if (m_settings && m_settingsPropertyChangedToken.value)
 		{
 			m_settings.PropertyChanged(m_settingsPropertyChangedToken);
@@ -123,7 +138,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		m_mode.store(static_cast<MetricMode>(selector.SelectedIndex()), std::memory_order_relaxed);
 		ApplyGraphSettings();
-		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
+		{
+			std::scoped_lock pendingLock(m_pendingSampleMutex);
+			m_pendingSamples.clear();
+			m_latestDisplayValues.clear();
+		}
+		m_lastSampleTime = std::chrono::steady_clock::now();
 		{
 			std::scoped_lock lock(m_sampleStateMutex);
 			m_previousDhtReceived = 0;
@@ -152,57 +172,70 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TaskSpeedGraphPage::Page_Loaded(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
 		ApplyGraphSettings();
-		if (!m_rebuildOnLoaded.exchange(false, std::memory_order_acq_rel))
-		{
-			return;
-		}
-		auto const graph = PerformanceGraph();
-		auto const canvas = graph ? graph.GetCanvasAnimatedControl() : nullptr;
-		if (canvas)
-		{
-			// Rebind the data streams when this cached page returns. LiveGraph itself
-			// only pauses while unloaded and never closes shared Win2D resources.
-			RecreateGraphStreams(canvas);
-		}
-		else
-		{
-			m_rebuildOnLoaded.store(true, std::memory_order_release);
-		}
 	}
 
 	void TaskSpeedGraphPage::Page_Unloaded(IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
-		m_graphActive.store(false, std::memory_order_release);
-		m_rebuildOnLoaded.store(true, std::memory_order_release);
+		// LiveGraph already pauses its CanvasAnimatedControl while unloaded.
+		// Keep graph streams and the telemetry timer alive so a hidden/minimized
+		// window can accumulate samples without requiring Win2D draw callbacks.
 		UploadHighlightOverlay().Visibility(winrt::Microsoft::UI::Xaml::Visibility::Collapsed);
 	}
 
-	void TaskSpeedGraphPage::PerformanceGraph_Draw(IInspectable const&, LiveGraphEventArgs const& args)
+	void TaskSpeedGraphPage::PerformanceGraph_Draw(IInspectable const&, LiveGraphEventArgs const&)
+	{
+		FlushPendingSamples();
+	}
+
+	void TaskSpeedGraphPage::SampleGraphMetric()
+	{
+		auto const now = std::chrono::steady_clock::now();
+		auto elapsedSeconds = m_lastSampleTime.time_since_epoch().count() == 0
+			? m_graphSampleIntervalSeconds.load(std::memory_order_relaxed)
+			: std::chrono::duration<double>(now - m_lastSampleTime).count();
+		m_lastSampleTime = now;
+		if (!std::isfinite(elapsedSeconds) || elapsedSeconds <= 0.0)
+		{
+			elapsedSeconds = m_graphSampleIntervalSeconds.load(std::memory_order_relaxed);
+		}
+
+		auto [samples, displayValues] = SampleMetric();
+		if (samples.empty()) return;
+
+		{
+			std::scoped_lock pendingLock(m_pendingSampleMutex);
+			m_pendingSamples.push_back({ std::move(samples), elapsedSeconds });
+			m_latestDisplayValues = std::move(displayValues);
+			constexpr std::size_t MaxPendingSamples = 6000;
+			while (m_pendingSamples.size() > MaxPendingSamples)
+			{
+				m_pendingSamples.pop_front();
+			}
+		}
+	}
+
+	void TaskSpeedGraphPage::FlushPendingSamples()
 	{
 		if (!m_graphActive.load(std::memory_order_acquire))
 		{
 			return;
 		}
 
-		auto frameSeconds = std::chrono::duration<double>(args.DrawEventArgs().Timing().ElapsedTime).count();
-		if (!std::isfinite(frameSeconds) || frameSeconds < 0.0)
+		auto graph = PerformanceGraph();
+		if (!graph)
 		{
-			frameSeconds = 0.0;
-		}
-		frameSeconds = std::min(frameSeconds, 0.25);
-		auto const sampleElapsed = m_sampleElapsedSeconds.load(std::memory_order_relaxed) + frameSeconds;
-		auto const sampleIntervalSeconds = m_graphSampleIntervalSeconds.load(std::memory_order_relaxed);
-		if (sampleElapsed < sampleIntervalSeconds)
-		{
-			m_sampleElapsedSeconds.store(sampleElapsed, std::memory_order_relaxed);
+			// Do not consume buffered telemetry until there is a graph that can
+			// accept it. Hidden/minimized samples must survive template teardown.
 			return;
 		}
-		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
 
-		auto [samples, displayValues] = SampleMetric();
-		if (samples.empty())
+		std::deque<PendingMetricSample> pendingSamples;
+		std::vector<hstring> displayValues;
 		{
-			return;
+			std::scoped_lock pendingLock(m_pendingSampleMutex);
+			if (m_pendingSamples.empty()) return;
+			pendingSamples.swap(m_pendingSamples);
+			displayValues = m_latestDisplayValues;
 		}
 
 		auto const mode = m_mode.load(std::memory_order_relaxed);
@@ -211,23 +244,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			|| mode == MetricMode::CpuLogicalProcessors
 			|| mode == MetricMode::MemoryUsage;
 		double maximum = 100.0;
+		std::vector<double> lastValues;
 
 		{
 			std::scoped_lock lock(m_graphStateMutex);
-			auto graph = PerformanceGraph();
-			auto const count = std::min(samples.size(), m_graphKeys.size());
 			auto const scrollPixelsPerSecond = m_graphScrollPixelsPerSecond.load(std::memory_order_relaxed);
-			auto const pointSpace = static_cast<float>(std::max(
-				0.001,
-				scrollPixelsPerSecond * sampleElapsed));
-			for (std::size_t index = 0; index < count; ++index)
+			for (auto const& sample : pendingSamples)
 			{
-				graph.AddDynamicPoint(
-					m_graphKeys[index],
-					GraphPoint{
-						static_cast<float>(std::max(0.0, samples[index])),
-						pointSpace },
+				auto const count = std::min(sample.Values.size(), m_graphKeys.size());
+				auto const pointSpace = static_cast<float>(std::max(
+					0.001, scrollPixelsPerSecond * sample.ElapsedSeconds));
+				for (std::size_t index = 0; index < count; ++index)
+				{
+					graph.AddDynamicPoint(
+						m_graphKeys[index],
+						GraphPoint{
+							static_cast<float>(std::max(0.0, sample.Values[index])),
+							pointSpace },
 						m_smoothCurves.load(std::memory_order_relaxed));
+				}
+				lastValues = sample.Values;
 			}
 			maximum = graph.CurrentValueMaximum();
 		}
@@ -250,9 +286,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			displayValues,
 			scaleText,
 			percentageMode ? hstring{ L"100%" } : scaleText);
-		if (mode == MetricMode::TransferSpeed && samples.size() > 1)
+		if (mode == MetricMode::TransferSpeed && lastValues.size() > 1)
 		{
-			QueueUploadHighlight(samples[1], maximum);
+			QueueUploadHighlight(lastValues[1], maximum);
 		}
 	}
 
@@ -306,7 +342,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 
 		auto const scrollDurationSeconds = m_settings.HorizontalScrollDurationMilliseconds() / 1000.0;
-		m_graphSampleIntervalSeconds.store(m_settings.SampleIntervalMilliseconds() / 1000.0, std::memory_order_relaxed);
+		auto const sampleIntervalMilliseconds = std::max(16.0, m_settings.SampleIntervalMilliseconds());
+		m_graphSampleIntervalSeconds.store(sampleIntervalMilliseconds / 1000.0, std::memory_order_relaxed);
+		if (m_sampleTimer)
+		{
+			m_sampleTimer.Interval(std::chrono::milliseconds{
+				static_cast<std::int64_t>(std::llround(sampleIntervalMilliseconds)) });
+		}
 		m_graphScrollPixelsPerSecond.store(scrollDurationSeconds > 0.0 ? m_settings.HorizontalScrollDistance() / scrollDurationSeconds : 0.0, std::memory_order_relaxed);
 		m_graphStrokeWidth.store(static_cast<float>(m_settings.StrokeWidth()), std::memory_order_relaxed);
 		m_smoothCurves.store(m_settings.SmoothCurves(), std::memory_order_relaxed);
@@ -464,8 +506,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_graphKeys.push_back(graph.RegisterGraphBrush(brush));
 			m_brushes.push_back(brush);
 		}
-		m_sampleElapsedSeconds.store(0.0, std::memory_order_relaxed);
-		m_rebuildOnLoaded.store(false, std::memory_order_release);
 		m_graphActive.store(true, std::memory_order_release);
 	}
 

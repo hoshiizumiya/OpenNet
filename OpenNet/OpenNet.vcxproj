@@ -565,6 +565,7 @@
       <SubType>Code</SubType>
     </ClInclude>
     <ClInclude Include="Helpers\ObjectConverter.hpp" />
+    <ClInclude Include="Helpers\PageMemoryDiagnostics.h" />
     <ClCompile Include="Helpers\ThemeHelper.ixx" />
     <ClCompile Include="Helpers\WindowHelper.ixx" />
     <ClInclude Include="Models\NetModel.h">

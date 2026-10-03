@@ -9,6 +9,7 @@ import winrt.Microsoft.Graphics.Canvas.UI.Xaml;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
 import winrt.Microsoft.UI.Xaml.Data;
+import winrt.Microsoft.UI.Dispatching;
 import winrt.Windows.Foundation;
 import std;
 
@@ -48,9 +49,17 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::uint64_t User{};
 		};
 
+		struct PendingMetricSample
+		{
+			std::vector<double> Values;
+			double ElapsedSeconds{};
+		};
+
 		void RecreateGraphStreams(winrt::Microsoft::Graphics::Canvas::UI::Xaml::CanvasAnimatedControl const& canvas);
 		void ApplyGraphSettings();
 		void ApplyBrushStrokeWidth();
+		void SampleGraphMetric();
+		void FlushPendingSamples();
 		void OnSettingsPropertyChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args);
 		void DisposeBrushes() noexcept;
 		std::size_t RequiredSeriesCount() const;
@@ -82,7 +91,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::atomic<double> m_highlightScale{ 100.0 };
 		double m_downloadHighlightY{};
 		double m_uploadHighlightY{};
-		std::atomic<double> m_sampleElapsedSeconds{};
+		winrt::Microsoft::UI::Dispatching::DispatcherQueueTimer m_sampleTimer{ nullptr };
+		winrt::event_token m_sampleTimerToken{};
+		std::chrono::steady_clock::time_point m_lastSampleTime{};
+		std::mutex m_pendingSampleMutex;
+		std::deque<PendingMetricSample> m_pendingSamples;
+		std::vector<winrt::hstring> m_latestDisplayValues;
 		std::atomic<double> m_graphSampleIntervalSeconds{ 0.1 };
 		std::atomic<double> m_graphScrollPixelsPerSecond{ 60.0 };
 		std::atomic<float> m_graphStrokeWidth{ 2.0f };
@@ -90,7 +104,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::atomic_bool m_fillEnabled{ true };
 		std::atomic_bool m_borderEnabled{ true };
 		std::atomic_bool m_graphActive{};
-		std::atomic_bool m_rebuildOnLoaded{};
 	};
 }
 

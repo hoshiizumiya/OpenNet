@@ -1,4 +1,6 @@
-﻿#include "XamlWorkaround.h"
+﻿#include "WindowsPlatform.h"
+#include <Psapi.h>
+#include "XamlWorkaround.h"
 #include "TaskFilesPage.xaml.h"
 #include <algorithm>
 #include <map>
@@ -9,6 +11,7 @@
 #endif
 
 #include "ViewModels/DisplayItems.h"
+#include "Helpers/PageMemoryDiagnostics.h"
 
 import Core.Utils.Misc;
 import OpenNet.Core.AppSettingsDatabase;
@@ -53,12 +56,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	TaskFilesPage::TaskFilesPage()
 	{
+#ifdef _DEBUG
+		OutputDebugStringA(std::format("TaskFilesPage: constructed {}\n", static_cast<void*>(this)).c_str());
+#endif
 		m_fileItems = winrt::single_threaded_observable_vector<winrt::OpenNet::ViewModels::FileDisplayItem>();
 	}
 
 	void TaskFilesPage::InitializeComponent()
 	{
 		TaskFilesPageT::InitializeComponent();
+		NavigationCacheMode(winrt::Microsoft::UI::Xaml::Navigation::NavigationCacheMode::Disabled);
+		m_memoryVisit = ::OpenNet::Helpers::PageMemoryDiagnostics::Begin("Files");
+		::OpenNet::Helpers::PageMemoryDiagnostics::Watch(m_memoryVisit, *this);
 		UpdateSortHeaders();
 		m_sortState.PropertyChanged([weak = get_weak()](auto const&, auto const& args)
 		{
@@ -69,8 +78,21 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				self->RefreshFileList();
 			}
 		});
+		Loaded([this](auto, auto)
+		{
+			if (!m_memoryVisit) m_memoryVisit = ::OpenNet::Helpers::PageMemoryDiagnostics::Begin("Files");
+			::OpenNet::Helpers::PageMemoryDiagnostics::WatchTree(m_memoryVisit, *this);
+			FilesListView().ItemsSource(m_fileItems);
+			if (!m_viewModel) Subscribe(m_navigationViewModel.get());
+			m_isActive.store(true, std::memory_order_release);
+			StartRefreshTimer();
+			RefreshFileList();
+		});
 		Unloaded([this](auto, auto)
 		{
+			::OpenNet::Helpers::PageMemoryDiagnostics::WatchTree(m_memoryVisit, *this);
+			::OpenNet::Helpers::PageMemoryDiagnostics::WatchItems(m_memoryVisit, m_fileItems);
+			::OpenNet::Helpers::PageMemoryDiagnostics::Retire(std::exchange(m_memoryVisit, 0), DispatcherQueue());
 			m_isActive.store(false, std::memory_order_release);
 			StopRefreshTimer();
 			Unsubscribe();
@@ -79,11 +101,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			SaveColumnWidth("Files.Progress", ColFileProgress());
 			SaveColumnWidth("Files.Done", ColFileDone());
 			SaveColumnWidth("Files.Priority", ColFilePriority());
+			ReleaseFileState();
 		});
 	}
 
 	TaskFilesPage::~TaskFilesPage()
 	{
+		::OpenNet::Helpers::PageMemoryDiagnostics::Retire(std::exchange(m_memoryVisit, 0), nullptr);
+		StopRefreshTimer();
+		Unsubscribe();
+#ifdef _DEBUG
+		OutputDebugStringA(std::format("TaskFilesPage: destroyed {}\n", static_cast<void*>(this)).c_str());
+#endif
 	}
 
 	void TaskFilesPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& e)
@@ -97,13 +126,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_viewModel = this->DataContext().try_as<winrt::OpenNet::ViewModels::TasksViewModel>();
 		}
 
-		if (m_viewModel)
-		{
-			this->DataContext(m_viewModel);
-			m_vmPropertyChangedToken = m_viewModel.PropertyChanged(
-				{ this, &TaskFilesPage::OnViewModelPropertyChanged });
-		}
+		m_navigationViewModel = m_viewModel;
+		Subscribe(m_viewModel);
+		FilesListView().ItemsSource(m_fileItems);
+		StartRefreshTimer();
+		RefreshFileList();
+	}
 
+	void TaskFilesPage::Subscribe(winrt::OpenNet::ViewModels::TasksViewModel const& viewModel)
+	{
+		auto current = viewModel;
+		Unsubscribe();
+		m_viewModel = std::move(current);
+		if (!m_viewModel) return;
+		DataContext(m_viewModel);
+		m_vmPropertyChangedToken = m_viewModel.PropertyChanged({ get_weak(), &TaskFilesPage::OnViewModelPropertyChanged });
+	}
+
+	void TaskFilesPage::StartRefreshTimer()
+	{
 		if (!m_refreshTimer)
 		{
 			m_refreshTimer = winrt::Microsoft::UI::Xaml::DispatcherTimer();
@@ -121,12 +162,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				100,
 				60000)));
 		m_refreshTimer.Start();
-
-		RefreshFileList();
 	}
 
 	void TaskFilesPage::OnNavigatedFrom(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const&)
 	{
+		m_navigationViewModel = {};
 		m_isActive.store(false, std::memory_order_release);
 		StopRefreshTimer();
 		Unsubscribe();
@@ -155,6 +195,28 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			m_vmPropertyChangedToken = {};
 		}
 		m_viewModel = nullptr;
+	}
+
+	void TaskFilesPage::ReleaseFileState()
+	{
+		// Clear after Unloaded, when Frame has finished removing the outgoing page.
+		FilesListView().ItemsSource(nullptr);
+		m_selectedFile = nullptr;
+		m_contextColumn = nullptr;
+		auto clearChildren = [&](auto&& self, auto const& items) -> void
+		{
+			for (auto const& item : items)
+			{
+				if (!item.IsFolder()) continue;
+				auto children = item.Children();
+				self(self, children);
+				children.Clear();
+			}
+		};
+		clearChildren(clearChildren, m_fileItems);
+		m_fileItems.Clear();
+		m_displayedTaskKey = {};
+		DataContext(nullptr);
 	}
 
 	void TaskFilesPage::OnViewModelPropertyChanged(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::Data::PropertyChangedEventArgs const& args)
@@ -270,6 +332,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 	void TaskFilesPage::FileDataRow_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+		::OpenNet::Helpers::PageMemoryDiagnostics::WatchTree(m_memoryVisit, sender.try_as<DependencyObject>());
 		std::array const columns{
 			ColFileName(), ColFileSize(), ColFileProgress(), ColFileDone(), ColFilePriority() };
 		::OpenNet::UI::Xaml::Control::DataTableColumnVisibilityHelper::SynchronizeRow(
