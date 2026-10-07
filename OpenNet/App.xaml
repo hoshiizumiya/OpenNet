@@ -118,6 +118,12 @@
             <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
                 <Setter Property="essential:ComboBoxHelper.AcrylicWorkaround" Value="True" />
             </Style>
+            <Style BasedOn="{StaticResource DefaultFlyoutStyle}" TargetType="Flyout">
+                <Setter Property="essential:FlyoutHelper.AcrylicWorkaround" Value="True" />
+            </Style>
+            <Style BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
+                <Setter Property="essential:SliderHelper.AcrylicWorkaround" Value="True" />
+            </Style>
 
         </ResourceDictionary>
     </Application.Resources>
