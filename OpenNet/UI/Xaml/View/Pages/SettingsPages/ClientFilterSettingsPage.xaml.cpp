@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "ClientFilterSettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ClientFilterSettingsPage.g.cpp")
@@ -32,14 +33,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
-			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
 			return std::nullopt;
 		}
 		void SetToggleIsOn(IInspectable const& target, bool value)
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
-			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 
 		std::string TrimCopy(std::string value)
@@ -213,7 +212,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		co_await winrtplus::resume_foreground(dispatcher);
 		m_loading = true;
 		SetToggleIsOn(EnableFilterToggle(), enabled);
-		SetToggleIsOn(EnableFilterGlassToggle(), enabled);
 		m_loading = false;
 		m_allRules = std::move(rules);
 		m_hits = std::move(hits);
@@ -334,7 +332,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_loading = true;
 		SetToggleIsOn(EnableFilterToggle(), *enabled);
-		SetToggleIsOn(EnableFilterGlassToggle(), *enabled);
 		m_loading = false;
 		::OpenNet::Core::ClientFilterManager::Instance().SetEnabled(*enabled);
 		RuntimeBlocksText().Text(L"0");
@@ -369,7 +366,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			m_caseSensitive = *enabled;
 			m_loading = true;
 			SetToggleIsOn(CaseSensitiveToggle(), *enabled);
-			SetToggleIsOn(CaseSensitiveGlassToggle(), *enabled);
 			m_loading = false;
 		}
 	}
@@ -645,4 +641,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		RefreshSnapshot();
 		ShowStatus(ResourceGetString(L"ClientFilterHitHistoryCleared"), InfoBarSeverity::Informational);
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+    void ClientFilterSettingsPage::MaterialLoaded_187(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        EnableFilterToggle_Loaded(EnableFilterToggle(), args);
+    }
+    void ClientFilterSettingsPage::MaterialLoaded_192(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        CaseSensitiveToggle_Loaded(CaseSensitiveToggle(), args);
+    }
 }

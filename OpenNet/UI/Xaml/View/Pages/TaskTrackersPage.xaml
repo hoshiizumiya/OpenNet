@@ -10,7 +10,9 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -163,7 +165,7 @@
                             <Button
                                 x:Name="SortTrackerUrlButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerUrlButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="URL">
@@ -191,7 +193,7 @@
                             <Button
                                 x:Name="SortTrackerRetriesButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerRetriesButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Retries">
@@ -206,7 +208,7 @@
                             <Button
                                 x:Name="SortTrackerTimeRemainingButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerTimeRemainingButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="TimeRemaining">
@@ -221,7 +223,7 @@
                             <Button
                                 x:Name="SortTrackerSeedersButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerSeedersButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Seeders">
@@ -236,7 +238,7 @@
                             <Button
                                 x:Name="SortTrackerLeechersButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerLeechersButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Leechers">
@@ -251,7 +253,7 @@
                             <Button
                                 x:Name="SortTrackerDownloadedButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerDownloadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Downloaded">
@@ -266,7 +268,7 @@
                             <Button
                                 x:Name="SortTrackerStatusButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortTrackerStatusButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Status">
@@ -304,7 +306,8 @@
                             Padding="8,2"
                             Click="TrackerLogButton_Click"
                             Style="{StaticResource SubtleButtonStyle}"
-                            Tag="{x:Bind}">
+                            Tag="{x:Bind}"
+                            x:Name="GlassPresenter_17330">
                             <FontIcon FontSize="14" Glyph="&#xE946;" />
                         </Button>
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Retries, Mode=OneWay}" />
@@ -343,10 +346,11 @@
                 Text="No trackers" />
             <Button
                 x:Uid="ViewTaskTrackersPageText29"
-                HorizontalAlignment="Center"
                 AutomationProperties.AutomationId="ViewTaskTrackersPageText29"
                 Click="EditTrackers_Click"
-                Content="Add trackers" />
+                Content="Add trackers" x:Name="GlassPresenter_19514"
+                ouxct:ControlAppearance.IsEnabled="True"
+                HorizontalAlignment="Center" />
         </StackPanel>
     </Grid>
 </Page>

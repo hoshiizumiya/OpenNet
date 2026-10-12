@@ -6,5 +6,6 @@
 		MainSettingsPage();
 
 		Windows.Foundation.Collections.IObservableVector<String> SettingsBarItems{ get; };
+		Microsoft.UI.Xaml.Controls.AutoSuggestBox SettingsSearchBox;
 	}
 }

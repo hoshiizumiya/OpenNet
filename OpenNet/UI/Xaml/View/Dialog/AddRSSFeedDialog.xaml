@@ -4,8 +4,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Name="ViewDialogAddRSSFeedDialog"
     x:Uid="RSSAddFeedDialog"
     Title="Add RSS Feed"
@@ -20,19 +23,22 @@
             x:Uid="RSSFeedUrlTextBox"
             AutomationProperties.AutomationId="RSSFeedUrlTextBox"
             Header="Feed URL"
-            PlaceholderText="https://example.com/rss.xml" />
+            PlaceholderText="https://example.com/rss.xml"
+            ouxct:ControlAppearance.IsEnabled="True" />
         <TextBox
             x:Name="FeedNameTextBox"
             x:Uid="RSSFeedNameTextBox"
             AutomationProperties.AutomationId="RSSFeedNameTextBox"
             Header="Name (optional)"
-            PlaceholderText="My RSS Feed" />
+            PlaceholderText="My RSS Feed"
+            ouxct:ControlAppearance.IsEnabled="True" />
         <TextBox
             x:Name="FeedSavePathTextBox"
             x:Uid="RSSFeedSavePathTextBox"
             AutomationProperties.AutomationId="RSSFeedSavePathTextBox"
             Header="Save Path (optional)"
-            PlaceholderText="Leave empty to use default" />
+            PlaceholderText="Leave empty to use default"
+            ouxct:ControlAppearance.IsEnabled="True" />
         <InfoBar
             x:Name="UrlErrorInfoBar"
             x:Uid="RSSUrlErrorInfoBar"

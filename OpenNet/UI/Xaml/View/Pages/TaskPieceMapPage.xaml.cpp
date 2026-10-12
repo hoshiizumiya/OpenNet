@@ -8,7 +8,7 @@ import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Aria2.Aria2Models;
 import OpenNet.Core.P2PManager;
 import OpenNet.Core.DownloadManager;
-import OpenNet.Core.Utils.Message;
+import winrt.Microsoft.Windows.ApplicationModel.Resources;
 import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Windows.UI;
 
@@ -23,11 +23,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	namespace
 	{
 		hstring FormatPieceTooltip(
+			hstring const& format,
 			std::uint32_t index,
 			hstring const& state,
 			int availability)
 		{
-			std::wstring text{ ResourceGetString(L"TaskPieceMapTooltipFormat").c_str() };
+			std::wstring text{ format.c_str() };
 			std::array<std::wstring, 3> values{
 				std::to_wstring(index),
 				std::wstring{ state.c_str() },
@@ -46,9 +47,31 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 	}
 
+	void TaskPieceMapPage::LoadStrings()
+	{
+		// Reuse one loader; piece rendering and timer refreshes only use the snapshot.
+		winrt::Microsoft::Windows::ApplicationModel::Resources::ResourceLoader loader;
+		m_strings.stateNames = {
+			loader.GetString(L"TaskPieceMapEmpty"),
+			loader.GetString(L"TaskStatusDownloading"),
+			loader.GetString(L"TaskStatusCompleted"),
+			loader.GetString(L"CommonDisabled"),
+			loader.GetString(L"TaskPieceMapUnchecked") };
+		m_strings.tooltipFormat = loader.GetString(L"TaskPieceMapTooltipFormat");
+		m_strings.hashPrefix = loader.GetString(L"TaskPieceMapHashPrefix");
+		m_strings.hashUnavailable = loader.GetString(L"TaskPieceMapHashUnavailable");
+		m_strings.bitTorrentOnly = loader.GetString(L"ViewTaskPieceMapPageBitTorrentOnly");
+		m_strings.metadataPending = loader.GetString(L"ViewTaskPieceMapPageMetadataPending");
+		m_strings.pieceSize = loader.GetString(L"ViewTaskPieceMapPagePieceSize");
+		m_strings.webSeeds = loader.GetString(L"ViewTaskPieceMapPageWebSeeds");
+		m_strings.pieces = loader.GetString(L"ViewTaskPieceMapPagePieces");
+		m_renderedStates.clear();
+	}
+
 	void TaskPieceMapPage::OnNavigatedTo(winrt::Microsoft::UI::Xaml::Navigation::NavigationEventArgs const& args)
 	{
 		Unsubscribe();
+		LoadStrings();
 		m_isActive.store(true, std::memory_order_release);
 		if (!m_unloadedHandlerRegistered)
 		{
@@ -133,7 +156,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto const information = ::OpenNet::Core::DownloadManager::Instance().GetHttpTaskInformation(to_string(task.Gid()));
 			if (!information)
 			{
-				PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageMetadataPending"));
+				PieceMapSubtitle().Text(m_strings.metadataPending);
 				return;
 			}
 			auto const pieceMap = ::OpenNet::Core::Aria2::BuildPieceMapInformation(*information);
@@ -146,7 +169,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (!task || task.TaskType() != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
 			PieceGrid().Items().Clear();
-			PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageBitTorrentOnly"));
+			PieceMapSubtitle().Text(m_strings.bitTorrentOnly);
 			DownloadedPiecesText().Text(L"0 / 0");
 			AvailablePiecesText().Text(L"0 / 0");
 			DownloadedPiecesProgress().Value(0);
@@ -170,7 +193,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		if (pieces.states.empty())
 		{
 			PieceGrid().Items().Clear();
-			PieceMapSubtitle().Text(ResourceGetString(L"ViewTaskPieceMapPageMetadataPending"));
+			PieceMapSubtitle().Text(m_strings.metadataPending);
 			return;
 		}
 
@@ -216,9 +239,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		AvailablePiecesProgress().Value(total ? available * 100.0 / total : 0.0);
 		DownloadedPiecesProgress().Pieces(hstring{ downloadedStates });
 		AvailablePiecesProgress().Pieces(hstring{ availableStates });
-		PieceSizeText().Text(ResourceGetString(L"ViewTaskPieceMapPagePieceSize") + L" " + FormatBytes(pieceSize));
-		WebSeedCountText().Text(ResourceGetString(L"ViewTaskPieceMapPageWebSeeds") + L" " + std::to_wstring(sourceCount));
-		PieceMapSubtitle().Text(taskName + L" · " + std::to_wstring(total) + L" " + ResourceGetString(L"ViewTaskPieceMapPagePieces"));
+		PieceSizeText().Text(m_strings.pieceSize + L" " + FormatBytes(pieceSize));
+		WebSeedCountText().Text(m_strings.webSeeds + L" " + std::to_wstring(sourceCount));
+		PieceMapSubtitle().Text(taskName + L" · " + std::to_wstring(total) + L" " + m_strings.pieces);
 
 		if (taskId == m_renderedTaskId
 			&& states == m_renderedStates
@@ -320,7 +343,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		std::size_t index,
 		int state,
 		int availability,
-		hstring const& hash)
+		hstring const& hash) const
 	{
 		Border piece;
 		piece.Width(16);
@@ -334,28 +357,22 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 				2.0 });
 
 		Color color{};
-		hstring stateName;
 		switch (state)
 		{
 			case 1:
 				color = Color{ 255, 215, 47, 154 };
-				stateName = ResourceGetString(L"TaskStatusDownloading");
 				break;
 			case 2:
 				color = Color{ 255, 22, 131, 216 };
-				stateName = ResourceGetString(L"TaskStatusCompleted");
 				break;
 			case 3:
 				color = Color{ 255, 105, 105, 105 };
-				stateName = ResourceGetString(L"CommonDisabled");
 				break;
 			case 4:
 				color = Color{ 255, 242, 200, 17 };
-				stateName = ResourceGetString(L"TaskPieceMapUnchecked");
 				break;
 			default:
 				color = Color{ 255, 205, 205, 205 };
-				stateName = ResourceGetString(L"TaskPieceMapEmpty");
 				break;
 		}
 		piece.Background(SolidColorBrush{ color });
@@ -369,15 +386,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			piece.Child(cross);
 		}
 
-		std::wstring tooltip{ FormatPieceTooltip(static_cast<std::uint32_t>(index), stateName, availability).c_str() };
+		auto const& stateName = m_strings.stateNames[state >= 0 && state < 5 ? state : 0];
+		std::wstring tooltip{ FormatPieceTooltip(m_strings.tooltipFormat, static_cast<std::uint32_t>(index), stateName, availability).c_str() };
 		if (!hash.empty())
 		{
-			tooltip += ResourceGetString(L"TaskPieceMapHashPrefix").c_str();
+			tooltip += m_strings.hashPrefix.c_str();
 			tooltip += hash.c_str();
 		}
 		else
 		{
-			tooltip += ResourceGetString(L"TaskPieceMapHashUnavailable").c_str();
+			tooltip += m_strings.hashUnavailable.c_str();
 		}
 		ToolTipService::SetToolTip(piece, box_value(hstring{ tooltip }));
 		return piece;

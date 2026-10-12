@@ -49,6 +49,8 @@ import winrt.Windows.UI.Xaml.Navigation;
 import winrt.Microsoft.UI.Content;
 import winrt.Microsoft.UI.Xaml;
 import winrt.Microsoft.UI.Xaml.Controls;
+import winrt.WinUI.LiquidGlass;
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 import winrt.Microsoft.UI.Xaml.Data;
 import winrt.Microsoft.UI.Xaml.Input;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -834,9 +836,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	void TasksPage::SearchKeyboardAccelerator_Invoked(winrt::Microsoft::UI::Xaml::Input::KeyboardAccelerator const&, winrt::Microsoft::UI::Xaml::Input::KeyboardAcceleratorInvokedEventArgs const& args)
 	{
 		auto strong = get_strong();
-		SearchBox().Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+		auto search = SearchBox();
+        search.Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
 
-		if (auto textBox = ::OpenNet::Extension::DependencyObjectEx::FindDescendant<winrt::Microsoft::UI::Xaml::Controls::TextBox>(SearchBox()))
+		if (auto textBox = ::OpenNet::Extension::DependencyObjectEx::FindDescendant<winrt::Microsoft::UI::Xaml::Controls::TextBox>(search))
 		{
 			textBox.SelectAll();
 		}
@@ -1619,12 +1622,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		unfinished.Content(box_value(L"Delete unfinished files only"));
 		unfinished.Foreground(red);
 		unfinished.IsChecked(true);
-		choices.Children().Append(unfinished);
+		choices.Children().Append(winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::CreateRadioButtonPresenter(unfinished));
 		RadioButton allFiles;
 		allFiles.GroupName(L"TaskCleanup");
 		allFiles.Content(box_value(L"Delete all downloaded files"));
 		allFiles.Foreground(red);
-		choices.Children().Append(allFiles);
+		choices.Children().Append(winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::CreateRadioButtonPresenter(allFiles));
 
 		ContentDialog dialog;
 		dialog.XamlRoot(XamlRoot());

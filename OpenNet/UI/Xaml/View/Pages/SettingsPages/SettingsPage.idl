@@ -6,7 +6,13 @@ namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
     runtimeclass SettingsPage : Microsoft.UI.Xaml.Controls.Page
     {
         SettingsPage();
+        Microsoft.UI.Xaml.Controls.Primitives.ButtonBase CreateRestartActionButton(Int32 material);
         OpenNet.ViewModels.SettingsViewModel ViewModel { get; };
         Int32 MaterialStyleIndex { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox SoftLanguageCombobox { get; };
+        Microsoft.UI.Xaml.Controls.ToggleSwitch MemoryDiagnosticsSwitch { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox StartPageCombobox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox themeMode { get; };
+        Microsoft.UI.Xaml.Controls.CheckBox AutoCheckUpdateCheckbox { get; };
     }
 }

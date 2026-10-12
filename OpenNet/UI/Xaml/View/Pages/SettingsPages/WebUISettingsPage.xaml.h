@@ -9,6 +9,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	struct WebUISettingsPage : WebUISettingsPageT<WebUISettingsPage>
 	{
 		WebUISettingsPage();
+        void MaterialLoaded_271(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_274(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_282(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_283(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_284(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_285(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
 		winrt::OpenNet::ViewModels::WebUISettingsViewModel ViewModel()
 		{

@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Title="DevWindow"
     MinWidth="480"
     MinHeight="360"
@@ -25,6 +27,11 @@
     </essential:WindowEx.ContextMenu>
 
     <Grid Loaded="Root_Loaded">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -52,14 +59,16 @@
                     <Button
                         Click="OpenLiveGraphTestWindow_Click"
                         Content="Open test studio"
-                        Style="{StaticResource AccentButtonStyle}" />
+                        Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_1991"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
                     x:Uid="ViewDevWindowSettingsCardOpenOperationProgressDialog"
                     Description="Show the operation progress dialog test."
                     Header="Operation dialog">
-                    <Button Click="OpenOperationProgressDialog_Click" Content="Open dialog" />
+                    <Button Click="OpenOperationProgressDialog_Click" Content="Open dialog" x:Name="GlassPresenter_2488"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -69,11 +78,13 @@
                     <Button
                         x:Uid="ViewDevWindowButton"
                         Click="TriggerXamlException_Click"
-                        Content="Trigger exception" />
+                        Content="Trigger exception" x:Name="GlassPresenter_2848"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard Description="Send a test notification in the InfoBar." Header="Send a notification in the app">
-                    <Button Click="SendAppNotify_Click" Content="Send App Notify" />
+                    <Button Click="SendAppNotify_Click" Content="Send App Notify" x:Name="GlassPresenter_3221"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
             </StackPanel>

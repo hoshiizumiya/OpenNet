@@ -4,8 +4,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:piece="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -43,11 +46,13 @@
             </StackPanel>
             <Button
                 x:Uid="ViewTaskPieceMapPageText3"
-                Grid.Column="1"
                 AutomationProperties.AutomationId="ViewTaskPieceMapPageText3"
                 Click="RefreshButton_Click"
                 Content="Refresh"
-                Style="{StaticResource SubtleButtonStyle}" />
+                Style="{StaticResource SubtleButtonStyle}"
+                ouxct:ControlAppearance.IsEnabled="True"
+                x:Name="GlassPresenter_1851"
+                Grid.Column="1" />
         </Grid>
 
         <Grid Grid.Row="1" ColumnSpacing="12">

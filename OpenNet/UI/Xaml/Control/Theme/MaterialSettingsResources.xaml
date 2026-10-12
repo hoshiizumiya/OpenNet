@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary x:Class="OpenNet.UI.Xaml.Control.Theme.MaterialSettingsResources" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:essential="using:WinUI3Package" xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme" xmlns:wl="using:WinUI.LiquidGlass">
+    <!--  Typed setting contracts: one native control, compiled bindings, shared templates.  -->
+    <Style x:Key="MaterialToggleSettingStyle" TargetType="ContentControl">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid x:Name="ToggleSettingRoot">
+                        <ToggleSwitch x:Name="MaterialNative_2" ouxct:ControlAppearance.IsEnabled="True" IsOn="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingIsOn), Mode=TwoWay}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="MaterialParameterSettingStyle" TargetType="ContentControl">
+        <Setter Property="Width" Value="300" />
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ContentControl">
+                    <Grid x:Name="SliderSettingRoot" ColumnSpacing="12">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="56" />
+                        </Grid.ColumnDefinitions>
+                        <Slider x:Name="MaterialNative_3" HorizontalAlignment="Stretch" ouxct:ControlAppearance.IsEnabled="True" IsThumbToolTipEnabled="True" LargeChange="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingLargeStep), Mode=OneWay}" Maximum="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingMaximum), Mode=OneWay}" Minimum="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingMinimum), Mode=OneWay}" SmallChange="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingStep), Mode=OneWay}" StepFrequency="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingStep), Mode=OneWay}" Value="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingValue), Mode=TwoWay}" />
+                        <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue((ContentControl).(ouxct:MaterialControlState.SettingValue)), Mode=OneWay}" TextAlignment="Right" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

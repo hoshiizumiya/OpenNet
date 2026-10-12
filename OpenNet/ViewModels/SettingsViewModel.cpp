@@ -102,7 +102,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_startWithWindows(false)
 		, m_minimizeToTray(true)
 		, m_showNotifications(true)
-		, m_currentLanguage(Language::Auto)
 		, m_listenPort(DEFAULT_LISTEN_PORT)
 		, m_enableUPnP(true)
 		, m_enableIPv6(true)
@@ -149,39 +148,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		, m_enableTelemetry(false)
 		, m_hasUnsavedChanges(false)
 	{
-		m_userName = GetStringFromResources(L"SettingsDefaultUserName");
-		m_deviceName = GetStringFromResources(L"SettingsThisPc");
-		m_availableLanguages = single_threaded_vector<hstring>();
 		m_serverEndpoints = single_threaded_observable_vector<hstring>();
 		m_serverEndpointStatusText = GetStringFromResources(L"ServerEndpointLoading");
-
-		// Use resource strings if available, fall back to defaults
-		try
-		{
-			ResourceLoader rl;
-			auto autoStr = rl.GetString(L"Lang_Auto");
-			auto chineseStr = rl.GetString(L"Lang_Chinese");
-			auto englishStr = rl.GetString(L"Lang_English");
-
-			if (!autoStr.empty() && !chineseStr.empty() && !englishStr.empty())
-			{
-				m_availableLanguages.Append(autoStr);
-				m_availableLanguages.Append(chineseStr);
-				m_availableLanguages.Append(englishStr);
-			}
-			else
-			{
-				m_availableLanguages.Append(GetStringFromResources(L"Lang_Auto"));
-				m_availableLanguages.Append(GetStringFromResources(L"Lang_Chinese"));
-				m_availableLanguages.Append(GetStringFromResources(L"Lang_English"));
-			}
-		}
-		catch (...)
-		{
-			m_availableLanguages.Append(GetStringFromResources(L"Lang_Auto"));
-			m_availableLanguages.Append(GetStringFromResources(L"Lang_Chinese"));
-			m_availableLanguages.Append(GetStringFromResources(L"Lang_English"));
-		}
 
 		m_customPorts = single_threaded_observable_vector<hstring>();
 		m_blockedPorts = single_threaded_observable_vector<hstring>();
@@ -473,99 +441,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		wchar_t buf[64]{};
 		swprintf(buf, 64, L"%.2f %s", bytesPerSecond, units[unit]);
 		return buf;
-	}
-
-	// Localized text implementations
-	std::wstring SettingsViewModel::CurrentLanguageText() const
-	{
-		try
-		{
-			ResourceLoader rl;
-			switch (m_currentLanguage)
-			{
-				case Language::Auto: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
-				case Language::Chinese: return std::wstring(rl.GetString(L"Lang_Chinese").c_str());
-				case Language::English: return std::wstring(rl.GetString(L"Lang_English").c_str());
-				default: return std::wstring(rl.GetString(L"Lang_Auto").c_str());
-			}
-		}
-		catch (...)
-		{
-			switch (m_currentLanguage)
-			{
-				case Language::Auto: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
-				case Language::Chinese: return std::wstring(GetStringFromResources(L"Lang_Chinese").c_str());
-				case Language::English: return std::wstring(GetStringFromResources(L"Lang_English").c_str());
-				default: return std::wstring(GetStringFromResources(L"Lang_Auto").c_str());
-			}
-		}
-	}
-
-	std::wstring SettingsViewModel::ProtocolPriorityText() const
-	{
-		try
-		{
-			ResourceLoader rl;
-			switch (m_protocolPriority)
-			{
-				case Models::IPProtocolPriority::IPv4First: return std::wstring(rl.GetString(L"Protocol_IPv4First").c_str());
-				case Models::IPProtocolPriority::IPv6First: return std::wstring(rl.GetString(L"Protocol_IPv6First").c_str());
-				case Models::IPProtocolPriority::IPv4Only: return std::wstring(rl.GetString(L"Protocol_IPv4Only").c_str());
-				case Models::IPProtocolPriority::IPv6Only: return std::wstring(rl.GetString(L"Protocol_IPv6Only").c_str());
-				case Models::IPProtocolPriority::Auto: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
-				default: return std::wstring(rl.GetString(L"Protocol_Auto").c_str());
-			}
-		}
-		catch (...)
-		{
-			return std::wstring(GetStringFromResources(L"Protocol_Auto").c_str());
-		}
-	}
-
-	std::wstring SettingsViewModel::PreferredProtocolText() const
-	{
-		try
-		{
-			ResourceLoader rl;
-			switch (m_preferredProtocol)
-			{
-				case Models::ConnectionProtocol::Auto: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
-				case Models::ConnectionProtocol::TCP: return std::wstring(rl.GetString(L"ConnProtocol_TCP").c_str());
-				case Models::ConnectionProtocol::UDP: return std::wstring(rl.GetString(L"ConnProtocol_UDP").c_str());
-				case Models::ConnectionProtocol::UTP: return std::wstring(rl.GetString(L"ConnProtocol_UTP").c_str());
-				case Models::ConnectionProtocol::BitTorrent: return std::wstring(rl.GetString(L"ConnProtocol_BitTorrent").c_str());
-				case Models::ConnectionProtocol::DHT: return std::wstring(rl.GetString(L"ConnProtocol_DHT").c_str());
-				case Models::ConnectionProtocol::WebRTC: return std::wstring(rl.GetString(L"ConnProtocol_WebRTC").c_str());
-				case Models::ConnectionProtocol::HTTP: return std::wstring(rl.GetString(L"ConnProtocol_HTTP").c_str());
-				default: return std::wstring(rl.GetString(L"ConnProtocol_Auto").c_str());
-			}
-		}
-		catch (...)
-		{
-			return std::wstring(GetStringFromResources(L"ConnProtocol_Auto").c_str());
-		}
-	}
-
-	std::wstring SettingsViewModel::EncryptionLevelText() const
-	{
-		try
-		{
-			ResourceLoader rl;
-			switch (m_encryptionLevel)
-			{
-				case EncryptionLevel::None: return std::wstring(rl.GetString(L"Enc_None").c_str());
-				case EncryptionLevel::Basic: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
-				case EncryptionLevel::Strong: return std::wstring(rl.GetString(L"Enc_Strong").c_str());
-				default: return std::wstring(rl.GetString(L"Enc_Basic").c_str());
-			}
-		}
-		catch (...)
-		{
-			return std::wstring(GetStringFromResources(
-				m_encryptionLevel == EncryptionLevel::None ? L"Enc_None" :
-				m_encryptionLevel == EncryptionLevel::Strong ? L"Enc_Strong" :
-				L"Enc_Basic").c_str());
-		}
 	}
 
 	// Summary: 序列化设置（占位）

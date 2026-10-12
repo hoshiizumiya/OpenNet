@@ -8,6 +8,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	struct RSSFeedSettingsDialog : RSSFeedSettingsDialogT<RSSFeedSettingsDialog>
 	{
 		RSSFeedSettingsDialog();
+        void MaterialLoaded_50(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_51(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_54(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
 		void OnPrimaryButtonClick(winrt::Microsoft::UI::Xaml::Controls::ContentDialog const& sender, winrt::Microsoft::UI::Xaml::Controls::ContentDialogButtonClickEventArgs const& args);
 		void SetFeed(OpenNet::ViewModels::RSSFeedViewModel const& feed);

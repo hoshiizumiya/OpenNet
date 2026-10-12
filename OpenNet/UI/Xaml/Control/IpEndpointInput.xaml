@@ -4,7 +4,10 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Grid RowSpacing="4">
@@ -24,7 +27,8 @@
             AutomationProperties.AutomationId="IpEndpointInputAddress"
             Header="IP address"
             PlaceholderText="0.0.0.0 or ::"
-            TextChanged="AddressTextBox_TextChanged" />
+            TextChanged="AddressTextBox_TextChanged"
+            ouxct:ControlAppearance.IsEnabled="True" />
         <NumberBox
             x:Name="PortNumberBox"
             x:Uid="IpEndpointInputPort"

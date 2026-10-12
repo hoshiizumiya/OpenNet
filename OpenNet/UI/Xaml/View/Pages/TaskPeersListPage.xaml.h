@@ -9,6 +9,7 @@ import winrt.XamlToolkit.Labs.WinUI;
 import winrt.XamlToolkit.WinUI.Animations;
 import winrt.XamlToolkit.WinUI.Behaviors;
 import winrt.XamlToolkit.WinUI.Controls;
+import winrt.XamlToolkit.WinUI.Converters;
 import winrt.XamlToolkit.WinUI.Interactivity;
 import winrt.XamlToolkit.WinUI.Media;
 import winrt.OpenNet.UI.Xaml.Markup;

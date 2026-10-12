@@ -10,11 +10,13 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
-    xmlns:ouxm="using:OpenNet.UI.Xaml.Markup"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:ouxm="using:OpenNet.UI.Xaml.Markup"
     xmlns:storage="using:OpenNet.UI.Xaml.Control.Progress.Storage"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
@@ -76,31 +78,43 @@
                                 VerticalAlignment="Center"
                                 Text="Save to:" />
 
-                            <AutoSuggestBox
-                                x:Name="TorrentCheckGeneralPageSavePath"
+                            <essential:SwitchPresenter x:Name="TorrentCheckGeneralPageSavePathMaterialHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ouxct:ControlAppearance.IsMaterialHost="True" Value="{x:Bind ouxct:MaterialControlState.BoxInt32(ouxct:MaterialControlState.Current.SearchBoxMaterial), Mode=OneWay}" Grid.Column="1">
+                                <essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+                                    <AutoSuggestBox
                                 x:Uid="TorrentCheckGeneralPageSavePath"
-                                Grid.Column="1"
                                 PlaceholderText="Choose download location"
-                                TextChanged="TorrentCheckGeneralPageSavePath_TextChanged">
+                                TextChanged="TorrentCheckGeneralPageSavePath_TextChanged" x:Name="TorrentCheckGeneralPageSavePath">
                                 <AutoSuggestBox.QueryIcon>
                                     <FontIcon HorizontalAlignment="Center" Glyph="&#xE70D;" />
                                 </AutoSuggestBox.QueryIcon>
                             </AutoSuggestBox>
+                                </essential:Case>
+                                <essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                                    <wl:LiquidGlassSearchBox
+                                x:Uid="TorrentCheckGeneralPageSavePath"
+                                PlaceholderText="Choose download location"
+                                TextChanged="TorrentCheckGeneralPageSavePath_TextChanged" x:Name="TorrentCheckGeneralPageSavePathGlass" ouxct:MaterialControlState.IsManaged="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <wl:LiquidGlassSearchBox.QueryIcon>
+                                    <FontIcon HorizontalAlignment="Center" Glyph="&#xE70D;" />
+                                </wl:LiquidGlassSearchBox.QueryIcon>
+                            </wl:LiquidGlassSearchBox>
+                                </essential:Case>
+                            </essential:SwitchPresenter>
 
                             <Button
                                 x:Uid="TorrentCheckGeneralPage_FolderPickerButton"
-                                Grid.Column="2"
-                                MinWidth="36"
                                 AutomationProperties.AutomationId="TorrentCheckGeneralPage_FolderPickerButton"
-                                Click="TorrentCheckGeneralPageFolderPicker_Click">
+                                Click="TorrentCheckGeneralPageFolderPicker_Click" x:Name="GlassPresenter_4477" MinWidth="36"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="2">
                                 <ToolTipService.ToolTip>
-                                    <ToolTip
-                                        x:Uid="CommonContentBrowse"
-                                        essential:ToolTipHelper.AcrylicWorkaround="True"
-                                        Content="Browse..." />
+                            <ToolTip
+                                x:Uid="CommonContentBrowse"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Browse..." />
                                 </ToolTipService.ToolTip>
                                 <Button.Content>
-                                    <FontIcon Glyph="&#xEC50;" />
+                            <FontIcon Glyph="&#xEC50;" />
                                 </Button.Content>
                             </Button>
 
@@ -111,22 +125,22 @@
                                 VerticalAlignment="Center"
                                 Text="Save as:" />
                             <TextBox
-                                x:Name="TorrentFileNameTextBox"
                                 x:Uid="TorrentCheckGeneralPage_FileNameTextBox"
+                                AutomationProperties.AutomationId="TorrentCheckGeneralPage_FileNameTextBox" x:Name="TorrentFileNameTextBox"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Grid.Row="1"
                                 Grid.Column="1"
-                                Grid.ColumnSpan="2"
-                                AutomationProperties.AutomationId="TorrentCheckGeneralPage_FileNameTextBox" />
+                                Grid.ColumnSpan="2" />
 
                             <CheckBox
-                                x:Name="CreateSubfolderCheckBox"
                                 x:Uid="TorrentCheckGeneralPage_CreateSubfolderCheckBox"
-                                Grid.Row="2"
-                                Grid.Column="1"
-                                Grid.ColumnSpan="2"
                                 AutomationProperties.AutomationId="TorrentCheckGeneralPage_CreateSubfolderCheckBox"
                                 Content="Create subfolder"
-                                IsChecked="{x:Bind ViewModel.CreateSubfolder, Mode=TwoWay}" />
+                                IsChecked="{x:Bind ViewModel.CreateSubfolder, Mode=TwoWay}" x:Name="CreateSubfolderCheckBox"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Row="2"
+                                Grid.Column="1"
+                                Grid.ColumnSpan="2" />
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -459,11 +473,18 @@
                                                                 <ColumnDefinition Width="*" />
                                                             </Grid.ColumnDefinitions>
                                                             <!--  Checkbox for selection  -->
-                                                            <CheckBox
-                                                                Width="Auto"
-                                                                MinWidth="0"
+                                                            <essential:SwitchPresenter x:Name="GlassPresenter_28880MaterialHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ouxct:ControlAppearance.IsMaterialHost="True" Value="{x:Bind ouxct:MaterialControlState.BoxInt32(ouxct:MaterialControlState.Current.CheckBoxMaterial), Mode=OneWay}">
+                                                                <essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+                                                                    <CheckBox
                                                                 Click="FileCheckBox_Click"
-                                                                IsChecked="{x:Bind IsSelected, Mode=TwoWay}" />
+                                                                IsChecked="{x:Bind IsSelected, Mode=TwoWay}" x:Name="GlassPresenter_28880" Width="Auto" MinWidth="0" />
+                                                                </essential:Case>
+                                                                <essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                                                                    <wl:LiquidGlassCheckBox
+                                                                Click="FileCheckBox_Click"
+                                                                IsChecked="{x:Bind IsSelected, Mode=TwoWay}" x:Name="GlassPresenter_28880Glass" ouxct:MaterialControlState.IsManaged="True" Width="Auto" MinWidth="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                                                </essential:Case>
+                                                            </essential:SwitchPresenter>
                                                             <FontIcon
                                                                 x:Name="TorrentMDFileTypePreviewFontIcon"
                                                                 Grid.Column="1"
@@ -518,47 +539,46 @@
                 Orientation="Horizontal"
                 Spacing="4">
                 <CheckBox
-                    x:Name="SelectAllFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_SelectAll"
-                    MinHeight="12"
                     AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_SelectAll"
                     Checked="SelectAllCheckBox_Checked"
                     Content="Select All"
                     IsChecked="True"
-                    Unchecked="SelectAllCheckBox_Unchecked" />
+                    Unchecked="SelectAllCheckBox_Unchecked" x:Name="SelectAllFilterCheckBox" MinHeight="12"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <CheckBox
-                    x:Name="VideoFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Video"
                     AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Video"
                     Checked="FilterCheckBox_Checked"
                     Content="Video"
                     Tag=".mp4,.mkv,.avi,.mov,.wmv"
-                    Unchecked="FilterCheckBox_Unchecked" />
+                    Unchecked="FilterCheckBox_Unchecked" x:Name="VideoFilterCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <CheckBox
-                    x:Name="AudioFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Audio"
                     AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Audio"
                     Checked="FilterCheckBox_Checked"
                     Content="Audio"
                     Tag=".mp3,.flac,.wav,.aac,.ogg"
-                    Unchecked="FilterCheckBox_Unchecked" />
+                    Unchecked="FilterCheckBox_Unchecked" x:Name="AudioFilterCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <CheckBox
-                    x:Name="PictureFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Picture"
                     AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Picture"
                     Checked="FilterCheckBox_Checked"
                     Content="Picture"
                     Tag=".jpg,.jpeg,.png,.gif,.bmp,.webp"
-                    Unchecked="FilterCheckBox_Unchecked" />
+                    Unchecked="FilterCheckBox_Unchecked" x:Name="PictureFilterCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <CheckBox
-                    x:Name="OtherFilterCheckBox"
                     x:Uid="TorrentCheckGeneralPage_Filter_Other"
                     AutomationProperties.AutomationId="TorrentCheckGeneralPage_Filter_Other"
                     Checked="FilterCheckBox_Checked"
                     Content="Other"
                     IsChecked="True"
                     Tag="other"
-                    Unchecked="FilterCheckBox_Unchecked" />
+                    Unchecked="FilterCheckBox_Unchecked" x:Name="OtherFilterCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </StackPanel>
         </Grid>
     </Grid>

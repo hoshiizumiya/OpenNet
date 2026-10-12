@@ -6,7 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:viewmodels="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Loaded="RSSPage_Loaded"
     NavigationCacheMode="Disabled"
     Unloaded="RSSPage_Unloaded"
@@ -79,9 +81,8 @@
                         VerticalAlignment="Center"
                         Text="Open article links:" />
                     <ComboBox
-                        x:Name="LinkOpenBehaviorBox"
-                        MinWidth="150"
-                        SelectionChanged="LinkOpenBehaviorBox_SelectionChanged">
+                        SelectionChanged="LinkOpenBehaviorBox_SelectionChanged" x:Name="LinkOpenBehaviorBox" MinWidth="150"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ComboBoxItem Content="In-app tabs" />
                         <ComboBoxItem Content="System browser" />
                     </ComboBox>
@@ -131,23 +132,24 @@
                     Orientation="Horizontal"
                     Spacing="4">
                     <Button
-                        x:Name="AddFeedButton"
                         Padding="8"
-                        Click="AddFeedButton_Click">
+                        Click="AddFeedButton_Click" x:Name="AddFeedButton"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ToolTipService.ToolTip>
-                            <ToolTip
-                                x:Uid="ViewRSSPageAddNewFeed"
-                                essential:ToolTipHelper.AcrylicWorkaround="True"
-                                Content="Add new feed" />
+                    <ToolTip
+                        x:Uid="ViewRSSPageAddNewFeed"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Add new feed" />
                         </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xED0E;" />
                     </Button>
-                    <Button Padding="8" Click="RefreshAllButton_Click">
+                    <Button Padding="8" Click="RefreshAllButton_Click" x:Name="GlassPresenter_5963"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ToolTipService.ToolTip>
-                            <ToolTip
-                                x:Uid="ViewRSSPageRefreshAllFeeds"
-                                essential:ToolTipHelper.AcrylicWorkaround="True"
-                                Content="Refresh all feeds" />
+                    <ToolTip
+                        x:Uid="ViewRSSPageRefreshAllFeeds"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Refresh all feeds" />
                         </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE72C;" />
                     </Button>
@@ -186,11 +188,11 @@
                                 </StackPanel>
                             </StackPanel>
                             <ToggleSwitch
-                                Grid.Column="1"
-                                MinWidth="0"
                                 IsOn="{x:Bind Enabled, Mode=TwoWay}"
                                 OffContent=""
-                                OnContent="" />
+                                OnContent="" x:Name="GlassPresenter_8378" MinWidth="0"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="1" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
@@ -224,36 +226,39 @@
                     <Button
                         Padding="8"
                         Click="RefreshFeedButton_Click"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
+                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}" x:Name="GlassPresenter_9939"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ToolTipService.ToolTip>
-                            <ToolTip
-                                x:Uid="ViewRSSPageRefreshThisFeed"
-                                essential:ToolTipHelper.AcrylicWorkaround="True"
-                                Content="Refresh this feed" />
+                    <ToolTip
+                        x:Uid="ViewRSSPageRefreshThisFeed"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Refresh this feed" />
                         </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE72C;" />
                     </Button>
                     <Button
                         Padding="8"
                         Click="FeedSettingsButton_Click"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
+                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}" x:Name="GlassPresenter_10589"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ToolTipService.ToolTip>
-                            <ToolTip
-                                x:Uid="ViewRSSPageFeedSetting"
-                                essential:ToolTipHelper.AcrylicWorkaround="True"
-                                Content="Feed settings" />
+                    <ToolTip
+                        x:Uid="ViewRSSPageFeedSetting"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Feed settings" />
                         </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE713;" />
                     </Button>
                     <Button
                         Padding="8"
                         Click="RemoveFeedButton_Click"
-                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}">
+                        IsEnabled="{x:Bind ViewModel.HasSelectedFeed, Mode=OneWay}" x:Name="GlassPresenter_11232"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ToolTipService.ToolTip>
-                            <ToolTip
-                                x:Uid="ViewRSSPageRemoveFeed"
-                                essential:ToolTipHelper.AcrylicWorkaround="True"
-                                Content="Remove feed" />
+                    <ToolTip
+                        x:Uid="ViewRSSPageRemoveFeed"
+                        essential:ToolTipHelper.AcrylicWorkaround="True"
+                        Content="Remove feed" />
                         </ToolTipService.ToolTip>
                         <FontIcon FontSize="14" Glyph="&#xE74D;" />
                     </Button>
@@ -326,20 +331,21 @@
                                 </StackPanel>
                             </StackPanel>
                             <Button
-                                Grid.Column="1"
                                 Padding="8"
                                 Click="DownloadItemButton_Click"
-                                Tag="{x:Bind}">
+                                Tag="{x:Bind}" x:Name="GlassPresenter_15557"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="1">
                                 <ToolTipService.ToolTip>
-                                    <ToolTip
-                                        x:Uid="CommonContentDownload"
-                                        essential:ToolTipHelper.AcrylicWorkaround="True"
-                                        Content="Download" />
+                            <ToolTip
+                                x:Uid="CommonContentDownload"
+                                essential:ToolTipHelper.AcrylicWorkaround="True"
+                                Content="Download" />
                                 </ToolTipService.ToolTip>
                                 <FontIcon
-                                    FontSize="14"
-                                    Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
-                                    Glyph="&#xE896;" />
+                            FontSize="14"
+                            Foreground="{ThemeResource AccentTextFillColorPrimaryBrush}"
+                            Glyph="&#xE896;" />
                             </Button>
                         </Grid>
                     </DataTemplate>

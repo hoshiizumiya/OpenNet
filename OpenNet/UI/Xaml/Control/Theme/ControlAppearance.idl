@@ -1,0 +1,23 @@
+namespace OpenNet.UI.Xaml.Control.Theme
+{
+    [default_interface]
+    runtimeclass ControlAppearance : Microsoft.UI.Xaml.DependencyObject
+    {
+        ControlAppearance();
+        static Microsoft.UI.Xaml.DependencyProperty IsMaterialHostProperty{ get; };
+        static Boolean GetIsMaterialHost(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetIsMaterialHost(Microsoft.UI.Xaml.DependencyObject target, Boolean value);
+        static Microsoft.UI.Xaml.DependencyProperty IsPreviewProperty{ get; };
+        static Boolean GetIsPreview(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetIsPreview(Microsoft.UI.Xaml.DependencyObject target, Boolean value);
+        static Microsoft.UI.Xaml.DependencyProperty IsEnabledProperty{ get; };
+        static Boolean GetIsEnabled(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetIsEnabled(Microsoft.UI.Xaml.DependencyObject target, Boolean value);
+        static Microsoft.UI.Xaml.DependencyProperty SurfaceProperty{ get; };
+        static String GetSurface(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetSurface(Microsoft.UI.Xaml.DependencyObject target, String value);
+        static Microsoft.UI.Xaml.DependencyProperty BrushProperty{ get; };
+        static Microsoft.UI.Xaml.Media.Brush GetBrush(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetBrush(Microsoft.UI.Xaml.DependencyObject target, Microsoft.UI.Xaml.Media.Brush value);
+    }
+}

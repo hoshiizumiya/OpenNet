@@ -330,6 +330,17 @@
       <DependentUpon>UI\Xaml\Control\Theme\MaterialControlState.idl</DependentUpon>
       <SubType>Code</SubType>
     </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Theme\ControlAppearance.h">
+      <DependentUpon>UI\Xaml\Control\Theme\ControlAppearance.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Theme\Typography.h">
+      <DependentUpon>UI\Xaml\Control\Theme\Typography.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialSettingsResources.xaml.h">
+      <DependentUpon>UI\Xaml\Control\Theme\MaterialSettingsResources.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="UI\Xaml\Control\Graph\LiveGraph.h">
       <DependentUpon>UI\Xaml\Control\Graph\LiveGraph.idl</DependentUpon>
       <SubType>Code</SubType>
@@ -774,6 +785,9 @@
     </Page>
     <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\FontStyle_ResourceDictionary.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\MaterialLibraryTemplates.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\TypographyResources.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\MaterialSettingsResources.xaml" />
     <Page Include="UI\Xaml\Control\Theme\InfoBarOverride.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -1002,6 +1016,17 @@
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\Theme\MaterialControlState.cpp">
       <DependentUpon>UI\Xaml\Control\Theme\MaterialControlState.idl</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Theme\ControlAppearance.cpp">
+      <DependentUpon>UI\Xaml\Control\Theme\ControlAppearance.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Theme\Typography.cpp">
+      <DependentUpon>UI\Xaml\Control\Theme\Typography.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialSettingsResources.xaml.cpp">
+      <DependentUpon>UI\Xaml\Control\Theme\MaterialSettingsResources.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml.cpp">
       <DependentUpon>UI\Xaml\Control\HomePage\Header\HeaderCarousel.xaml</DependentUpon>
@@ -1360,6 +1385,9 @@
     <Midl Include="UI\Xaml\Behavior\InfoBarDelayCloseBehavior.idl" />
     <Midl Include="UI\Xaml\Control\Effect\AnimatedNumber.idl" />
     <Midl Include="UI\Xaml\Control\Theme\MaterialControlState.idl" />
+    <Midl Include="UI\Xaml\Control\Theme\ControlAppearance.idl" />
+    <Midl Include="UI\Xaml\Control\Theme\Typography.idl" />
+    <Midl Include="UI\Xaml\Control\Theme\MaterialSettingsResources.idl" />
     <Midl Include="UI\Xaml\Control\Graph\LiveGraph.idl">
       <SubType>Code</SubType>
     </Midl>
@@ -1884,6 +1912,49 @@
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
   </PropertyGroup>
+  <ItemGroup>
+    <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassOptics.h" />
+    <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassProfile.h">
+      <DependentUpon>UI\Xaml\Control\Theme\LiquidGlassProfile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClCompile Include="UI\Xaml\Control\Theme\LiquidGlassProfile.cpp">
+      <DependentUpon>UI\Xaml\Control\Theme\LiquidGlassProfile.idl</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <Midl Include="UI\Xaml\Control\Theme\LiquidGlassProfile.idl" />
+    <ClInclude Include="UI\Xaml\View\Windows\LiquidGlassPreview.h" />
+    <ClInclude Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClCompile Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <Page Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml" />
+    <Midl Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+    <ClInclude Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml.h">
+      <DependentUpon>UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClInclude>
+    <ClCompile Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml.cpp">
+      <DependentUpon>UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </ClCompile>
+    <Page Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml" />
+    <Midl Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.idl">
+      <DependentUpon>UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Midl>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialControlBridge.h" />
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialControlBridge.cpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <!-- Inject module imports into XAML-generated source files -->
   <Target Name="InjectModuleImportsIntoXamlGenerated" AfterTargets="ComputeXamlGeneratedCompileInputs" BeforeTargets="ClCompile">

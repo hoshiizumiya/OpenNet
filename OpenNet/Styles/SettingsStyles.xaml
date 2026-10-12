@@ -1,8 +1,9 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme">
 
     <!--  Settings Card Style  -->
     <Style x:Key="SettingsCardStyle" TargetType="Border">
-        <Setter Property="Background" Value="{ThemeResource OpenNetCardBrush}" />
+        <Setter Property="ouxct:ControlAppearance.Surface" Value="Card" />
+        <Setter Property="Background" Value="{Binding Path=(ouxct:ControlAppearance.Brush), RelativeSource={RelativeSource Self}}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="4" />
@@ -37,7 +38,8 @@
 
     <!--  Settings Card Border Style (for custom cards)  -->
     <Style x:Key="SettingsCardBorderStyle" TargetType="Border">
-        <Setter Property="Background" Value="{ThemeResource OpenNetTitleCardBrush}" />
+        <Setter Property="ouxct:ControlAppearance.Surface" Value="Card" />
+        <Setter Property="Background" Value="{Binding Path=(ouxct:ControlAppearance.Brush), RelativeSource={RelativeSource Self}}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />
@@ -47,7 +49,8 @@
 
     <!--  Settings Clickable Card Style (for navigation cards)  -->
     <Style x:Key="SettingsClickableCardStyle" TargetType="Button">
-        <Setter Property="Background" Value="{ThemeResource OpenNetTitleCardBrush}" />
+        <Setter Property="ouxct:ControlAppearance.Surface" Value="Card" />
+        <Setter Property="Background" Value="{Binding Path=(ouxct:ControlAppearance.Brush), RelativeSource={RelativeSource Self}}" />
         <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="CornerRadius" Value="8" />

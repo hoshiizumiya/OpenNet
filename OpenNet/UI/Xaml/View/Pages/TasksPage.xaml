@@ -7,14 +7,15 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
-    xmlns:liquidglass="using:WinUI.LiquidGlass"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxm="using:Microsoft.UI.Xaml.Media"
     xmlns:ouxc="using:OpenNet.UI.Xaml.Control"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:ouxm="using:OpenNet.UI.Xaml.Media"
     xmlns:speedgraph="using:OpenNet.Controls.SpeedGraph"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     xmlns:xtlw="using:XamlToolkit.Labs.WinUI"
     xmlns:xtwc="using:XamlToolkit.WinUI.Controls"
     xmlns:xtwm="using:XamlToolkit.WinUI.Media"
@@ -40,7 +41,7 @@
             Grid.Row="0"
             Margin="4,2,4,0"
             essential:CommandBarHelper.AcrylicWorkaround="True"
-            Background="{ThemeResource OpenNetSurfaceBrush}"
+            Background="{Binding Path=(ouxct:ControlAppearance.Brush), RelativeSource={RelativeSource Self}}"
             CornerRadius="4"
             DefaultLabelPosition="Right">
             <AppBarButton
@@ -178,24 +179,64 @@
 
         </CommandBar>
 
-        <AutoSuggestBox
-            x:Name="SearchBox"
-            x:Uid="ViewTasksPageAutoSuggestBox"
+        <essential:SwitchPresenter
+            x:Name="SearchBoxMaterialHost"
             Grid.Row="0"
-            Width="280"
             Margin="12,6"
             HorizontalAlignment="Left"
-            essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
-            PlaceholderText="Search"
-            QueryIcon="Find"
-            Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-            <AutoSuggestBox.KeyboardAccelerators>
-                <KeyboardAccelerator
-                    Key="F"
-                    Invoked="SearchKeyboardAccelerator_Invoked"
-                    Modifiers="Control" />
-            </AutoSuggestBox.KeyboardAccelerators>
-        </AutoSuggestBox>
+            VerticalAlignment="Center"
+            HorizontalContentAlignment="Stretch"
+            VerticalContentAlignment="Center"
+            ouxct:ControlAppearance.IsMaterialHost="True"
+            Value="{x:Bind ouxct:MaterialControlState.BoxInt32(ouxct:MaterialControlState.Current.SearchBoxMaterial), Mode=OneWay}">
+            <essential:Case>
+                <essential:Case.Value>
+                    <x:Int32>0</x:Int32>
+                </essential:Case.Value>
+                <AutoSuggestBox
+                    x:Name="SearchBox"
+                    x:Uid="ViewTasksPageAutoSuggestBox"
+                    Width="280"
+                    Height="36"
+                    essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
+                    PlaceholderText="Search"
+                    QueryIcon="Find"
+                    Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <AutoSuggestBox.KeyboardAccelerators>
+                        <KeyboardAccelerator
+                            Key="F"
+                            Invoked="SearchKeyboardAccelerator_Invoked"
+                            Modifiers="Control" />
+                    </AutoSuggestBox.KeyboardAccelerators>
+                </AutoSuggestBox>
+            </essential:Case>
+            <essential:Case>
+                <essential:Case.Value>
+                    <x:Int32>1</x:Int32>
+                </essential:Case.Value>
+                <wl:LiquidGlassSearchBox
+                    x:Name="SearchBoxGlass"
+                    x:Uid="ViewTasksPageAutoSuggestBox"
+                    Width="280"
+                    Height="36"
+                    MinHeight="0"
+                    HorizontalAlignment="Stretch"
+                    VerticalAlignment="Center"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    wl:LiquidGlassInteraction.FocusedScale="1"
+                    wl:LiquidGlassInteraction.RestScale="1"
+                    PlaceholderText="Search"
+                    QueryIcon="Find"
+                    Text="{x:Bind ViewModel.SearchText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <wl:LiquidGlassSearchBox.KeyboardAccelerators>
+                        <KeyboardAccelerator
+                            Key="F"
+                            Invoked="SearchKeyboardAccelerator_Invoked"
+                            Modifiers="Control" />
+                    </wl:LiquidGlassSearchBox.KeyboardAccelerators>
+                </wl:LiquidGlassSearchBox>
+            </essential:Case>
+        </essential:SwitchPresenter>
 
         <Grid
             Grid.Row="1"
@@ -305,7 +346,7 @@
                                         HorizontalContentAlignment="Stretch"
                                         VerticalContentAlignment="Center"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskNameButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Name">
@@ -328,14 +369,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskSizeButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Size">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_Size"
                                             Text="Size"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -350,14 +391,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskProgressButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Progress">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_Progress"
                                             Text="Progress"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -372,14 +413,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskDownloadSizeButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="DownloadSize">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_DownloadSize"
                                             Text="Download Size"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -394,14 +435,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskUploadSizeButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="UploadSize">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_UploadSize"
                                             Text="Upload Size"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -416,14 +457,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskTotalDownloadButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="TotalDownloadSize">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_TotalDownloadSize"
                                             Text="Total Download Size"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -438,14 +479,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskTotalUploadButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="TotalUploadSize">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_TotalUploadSize"
                                             Text="Total Upload Size"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -460,14 +501,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskDlRateButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="DLRate">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_DLRate"
                                             Text="DL Rate"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -482,14 +523,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskUlRateButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="ULRate">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_ULRate"
                                             Text="UL Rate"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -504,14 +545,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskRemainingButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Remaining">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_Remaining"
                                             Text="Remaining"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -526,14 +567,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskAddDateButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="AddDate">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="Header_AddDate"
                                             Text="Add Date"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -548,14 +589,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskCompletedDateButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="CompletedDate">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="ViewTasksPageCompletedDateTextBlock"
                                             Text="Completed Date"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -570,14 +611,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskShareRatioButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="ShareRatio">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="ViewTasksPageShareRatioTextBlock"
                                             Text="Share Ratio"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>
@@ -592,14 +633,14 @@
                                         VerticalAlignment="Stretch"
                                         HorizontalContentAlignment="Stretch"
                                         Command="{x:Bind SortState.ToggleCommand}"
-                                        CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                        CommandParameter="{x:Bind SortTaskSeedsButton.Tag, Mode=OneWay}"
                                         FontWeight="SemiBold"
                                         Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                         Tag="Seeds">
                                         <TextBlock
-                                            TextAlignment="Right"
                                             x:Uid="ViewTasksPageSeedsPeersTextBlock"
                                             Text="Seeds/Peers[all]"
+                                            TextAlignment="Right"
                                             TextTrimming="CharacterEllipsis" />
                                     </Button>
                                 </xtlw:DataColumn>

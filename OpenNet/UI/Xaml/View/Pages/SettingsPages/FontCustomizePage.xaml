@@ -7,9 +7,38 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    mc:Ignorable="d" xmlns:wl="using:WinUI.LiquidGlass">
 
-    <ScrollView>
-        
+    <ScrollView Margin="24">
+        <StackPanel MaxWidth="1000" HorizontalAlignment="Stretch" Spacing="16">
+            <TextBlock x:Uid="FontCustomizeTitle" Style="{StaticResource TitleTextBlockStyle}" Text="Text size" />
+            <TextBlock x:Uid="FontCustomizeDescription" TextWrapping="Wrap"
+                Text="Adjust application text size. Changes apply immediately and preserve Windows accessibility text scaling." />
+            <essential:SettingsCard x:Uid="FontCustomizeScale" Header="Text size" Description="80%–200%; default 100%">
+                <Grid MinWidth="260" MaxWidth="400" ColumnSpacing="12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="60" />
+                    </Grid.ColumnDefinitions>
+                    <Slider
+                        Minimum="0.8" Maximum="2" StepFrequency="0.05" SmallChange="0.05" LargeChange="0.1"
+                        AutomationProperties.Name="Text size"
+                        Value="{x:Bind ouxct:Typography.Current.Scale, Mode=TwoWay}" x:Name="MaterialNative_214"
+                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <TextBlock Grid.Column="1" VerticalAlignment="Center" TextAlignment="Right"
+                        Text="{x:Bind ouxct:Typography.FormatScale(ouxct:Typography.Current.Scale), Mode=OneWay}" />
+                </Grid>
+            </essential:SettingsCard>
+            <essential:SettingsCard x:Uid="FontCustomizePreview" Header="Preview">
+                <StackPanel Spacing="8">
+                    <TextBlock x:Uid="FontCustomizePreviewHeading" Style="{StaticResource SubtitleTextBlockStyle}" Text="OpenNet — readable at every size" TextWrapping="Wrap" />
+                    <TextBlock x:Uid="FontCustomizePreviewBody" Text="Download tasks, network details, and settings follow the same text-size preference." TextWrapping="Wrap" />
+                    <TextBlock x:Uid="FontCustomizePreviewCaption" Style="{StaticResource CaptionTextBlockStyle}" Text="Caption and secondary information" TextWrapping="Wrap" />
+                </StackPanel>
+            </essential:SettingsCard>
+            <Button x:Uid="FontCustomizeReset" Content="Reset to 100%" Click="Reset_Click" x:Name="MaterialNative_215"
+                ouxct:ControlAppearance.IsEnabled="True" />
+        </StackPanel>
     </ScrollView>
 </Page>

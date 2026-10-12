@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "DownloadSettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/DownloadSettingsPage.g.cpp")
@@ -29,14 +30,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
-			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
 			return std::nullopt;
 		}
 		void SetToggleIsOn(IInspectable const& target, bool value)
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
-			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 	}
 	DownloadSettingsPage::DownloadSettingsPage()
@@ -75,13 +74,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		m_recheckBeforeResume = s.recheckBeforeResume;
 		m_moveCompleted = s.moveCompletedEnabled;
 		SetToggleIsOn(PreallocateStorageToggle(), m_preallocateStorage);
-		SetToggleIsOn(PreallocateStorageGlassToggle(), m_preallocateStorage);
 		SetToggleIsOn(AutoStartDownloadsToggle(), m_autoStartDownloads);
-		SetToggleIsOn(AutoStartDownloadsGlassToggle(), m_autoStartDownloads);
 		SetToggleIsOn(RecheckBeforeResumeToggle(), m_recheckBeforeResume);
-		SetToggleIsOn(RecheckBeforeResumeGlassToggle(), m_recheckBeforeResume);
 		SetToggleIsOn(MoveCompletedToggle(), m_moveCompleted);
-		SetToggleIsOn(MoveCompletedGlassToggle(), m_moveCompleted);
 		MoveCompletedPathTextBox().Text(s.moveCompletedPath);
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
@@ -95,9 +90,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		SetToggleIsOn(
 			HttpP2PPreferredToggle(),
 			m_httpP2PPreferred);
-		SetToggleIsOn(
-			HttpP2PPreferredGlassToggle(),
-			m_httpP2PPreferred);
 	}
 
 	void DownloadSettingsPage::OnSettingChanged(IInspectable const& sender, IInspectable const&)
@@ -107,11 +99,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (auto value = ToggleIsOn(sender))
 		{
 			auto const name = sender.as<FrameworkElement>().Name();
-			if (name == L"PreallocateStorageToggle" || name == L"PreallocateStorageGlassToggle") m_preallocateStorage = *value;
-			else if (name == L"AutoStartDownloadsToggle" || name == L"AutoStartDownloadsGlassToggle") m_autoStartDownloads = *value;
-			else if (name == L"RecheckBeforeResumeToggle" || name == L"RecheckBeforeResumeGlassToggle") m_recheckBeforeResume = *value;
-			else if (name == L"MoveCompletedToggle" || name == L"MoveCompletedGlassToggle") m_moveCompleted = *value;
-			else if (name == L"HttpP2PPreferredToggle" || name == L"HttpP2PPreferredGlassToggle") m_httpP2PPreferred = *value;
+			if (name == L"PreallocateStorageToggle" || name == L"PreallocateStorageToggle") m_preallocateStorage = *value;
+			else if (name == L"AutoStartDownloadsToggle" || name == L"AutoStartDownloadsToggle") m_autoStartDownloads = *value;
+			else if (name == L"RecheckBeforeResumeToggle" || name == L"RecheckBeforeResumeToggle") m_recheckBeforeResume = *value;
+			else if (name == L"MoveCompletedToggle" || name == L"MoveCompletedToggle") m_moveCompleted = *value;
+			else if (name == L"HttpP2PPreferredToggle" || name == L"HttpP2PPreferredToggle") m_httpP2PPreferred = *value;
 		}
 		SaveSettings();
 	}
@@ -121,11 +113,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const name = sender.as<FrameworkElement>().Name();
 		const bool wasLoading = m_loading;
 		m_loading = true;
-		if (name == L"PreallocateStorageToggle" || name == L"PreallocateStorageGlassToggle") SetToggleIsOn(sender, m_preallocateStorage);
-		else if (name == L"AutoStartDownloadsToggle" || name == L"AutoStartDownloadsGlassToggle") SetToggleIsOn(sender, m_autoStartDownloads);
-		else if (name == L"RecheckBeforeResumeToggle" || name == L"RecheckBeforeResumeGlassToggle") SetToggleIsOn(sender, m_recheckBeforeResume);
-		else if (name == L"MoveCompletedToggle" || name == L"MoveCompletedGlassToggle") SetToggleIsOn(sender, m_moveCompleted);
-		else if (name == L"HttpP2PPreferredToggle" || name == L"HttpP2PPreferredGlassToggle") SetToggleIsOn(sender, m_httpP2PPreferred);
+		if (name == L"PreallocateStorageToggle" || name == L"PreallocateStorageToggle") SetToggleIsOn(sender, m_preallocateStorage);
+		else if (name == L"AutoStartDownloadsToggle" || name == L"AutoStartDownloadsToggle") SetToggleIsOn(sender, m_autoStartDownloads);
+		else if (name == L"RecheckBeforeResumeToggle" || name == L"RecheckBeforeResumeToggle") SetToggleIsOn(sender, m_recheckBeforeResume);
+		else if (name == L"MoveCompletedToggle" || name == L"MoveCompletedToggle") SetToggleIsOn(sender, m_moveCompleted);
+		else if (name == L"HttpP2PPreferredToggle" || name == L"HttpP2PPreferredToggle") SetToggleIsOn(sender, m_httpP2PPreferred);
 		m_loading = wasLoading;
 	}
 
@@ -177,4 +169,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			SaveSettings();
 		}
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+    void DownloadSettingsPage::MaterialLoaded_207(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        MaterialToggle_Loaded(PreallocateStorageToggle(), args);
+    }
+    void DownloadSettingsPage::MaterialLoaded_208(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        MaterialToggle_Loaded(AutoStartDownloadsToggle(), args);
+    }
+    void DownloadSettingsPage::MaterialLoaded_209(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        MaterialToggle_Loaded(RecheckBeforeResumeToggle(), args);
+    }
+    void DownloadSettingsPage::MaterialLoaded_210(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        MaterialToggle_Loaded(HttpP2PPreferredToggle(), args);
+    }
+    void DownloadSettingsPage::MaterialLoaded_211(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        MaterialToggle_Loaded(MoveCompletedToggle(), args);
+    }
 }

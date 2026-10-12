@@ -9,6 +9,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	struct ThemesSettingsPage : ThemesSettingsPageT<ThemesSettingsPage>
 	{
 		ThemesSettingsPage();
+        void MaterialLoaded_258(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_261(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_262(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_267(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_268(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		winrt::OpenNet::ViewModels::SettingsViewModel ViewModel()
 		{
 			if (!m_viewModel) m_viewModel = winrt::OpenNet::ViewModels::SettingsViewModel();
@@ -25,7 +30,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		void ApplyBackgroundToSecondaryWindowsSwitch_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void AnimatedDigitsSwitch_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void AnimatedDigitsControl_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
-		void MaterialStyleSelector_SelectionChanged(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::Controls::SelectionChangedEventArgs const& e);
+		void OpenGlassControls(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void OpenGlassEffects(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
 		winrt::Windows::Foundation::IAsyncAction SetImageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
 		void ClearImageButton_Click(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);
@@ -57,6 +63,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		// XAML property assignment can raise SelectionChanged/ValueChanged before
 		// every named element has been connected. Keep handlers disabled until the
 		// first Loaded pass has populated all settings controls.
+		winrt::weak_ref<winrt::Microsoft::UI::Xaml::Window> m_glassControlsWindow, m_glassEffectsWindow;
 		bool m_isInitializing{ true };
 		winrt::OpenNet::ViewModels::SettingsViewModel m_viewModel{ nullptr };
 	};

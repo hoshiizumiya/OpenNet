@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "WebUISettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/WebUISettingsPage.g.cpp")
@@ -61,7 +62,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
-			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
 			return std::nullopt;
 		}
 
@@ -69,7 +69,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
-			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 	}
 
@@ -185,15 +184,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	void WebUISettingsPage::SyncMaterialToggles()
 	{
 		SetToggleIsOn(FollowApplicationLanguageToggle(), m_followApplicationLanguage);
-		SetToggleIsOn(FollowApplicationLanguageGlassToggle(), m_followApplicationLanguage);
 		SetToggleIsOn(BypassLocalAuthToggle(), m_bypassLocalAuth);
-		SetToggleIsOn(BypassLocalAuthGlassToggle(), m_bypassLocalAuth);
 		SetToggleIsOn(CsrfProtectionToggle(), m_csrfProtection);
-		SetToggleIsOn(CsrfProtectionGlassToggle(), m_csrfProtection);
 		SetToggleIsOn(HostValidationToggle(), m_hostValidation);
-		SetToggleIsOn(HostValidationGlassToggle(), m_hostValidation);
 		SetToggleIsOn(SecureCookieToggle(), m_secureCookie);
-		SetToggleIsOn(SecureCookieGlassToggle(), m_secureCookie);
 	}
 
 	hstring WebUISettingsPage::WebUIUrl()
@@ -440,12 +434,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const name = sender.as<FrameworkElement>().Name();
 		const bool wasInitializing = m_initializing;
 		m_initializing = true;
-		if (name == L"EnableWebUIToggle" || name == L"EnableWebUIGlassToggle") SetToggleIsOn(sender, ViewModel().Enabled());
-		else if (name == L"FollowApplicationLanguageToggle" || name == L"FollowApplicationLanguageGlassToggle") SetToggleIsOn(sender, m_followApplicationLanguage);
-		else if (name == L"BypassLocalAuthToggle" || name == L"BypassLocalAuthGlassToggle") SetToggleIsOn(sender, m_bypassLocalAuth);
-		else if (name == L"CsrfProtectionToggle" || name == L"CsrfProtectionGlassToggle") SetToggleIsOn(sender, m_csrfProtection);
-		else if (name == L"HostValidationToggle" || name == L"HostValidationGlassToggle") SetToggleIsOn(sender, m_hostValidation);
-		else if (name == L"SecureCookieToggle" || name == L"SecureCookieGlassToggle") SetToggleIsOn(sender, m_secureCookie);
+		if (name == L"EnableWebUIToggle" || name == L"EnableWebUIToggle") SetToggleIsOn(sender, ViewModel().Enabled());
+		else if (name == L"FollowApplicationLanguageToggle" || name == L"FollowApplicationLanguageToggle") SetToggleIsOn(sender, m_followApplicationLanguage);
+		else if (name == L"BypassLocalAuthToggle" || name == L"BypassLocalAuthToggle") SetToggleIsOn(sender, m_bypassLocalAuth);
+		else if (name == L"CsrfProtectionToggle" || name == L"CsrfProtectionToggle") SetToggleIsOn(sender, m_csrfProtection);
+		else if (name == L"HostValidationToggle" || name == L"HostValidationToggle") SetToggleIsOn(sender, m_hostValidation);
+		else if (name == L"SecureCookieToggle" || name == L"SecureCookieToggle") SetToggleIsOn(sender, m_secureCookie);
 		m_initializing = wasInitializing;
 	}
 
@@ -456,16 +450,16 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!value) return;
 		auto const name = sender.as<FrameworkElement>().Name();
 		bool followChanged = false;
-		if (name == L"EnableWebUIToggle" || name == L"EnableWebUIGlassToggle") ViewModel().Enabled(*value);
-		else if (name == L"FollowApplicationLanguageToggle" || name == L"FollowApplicationLanguageGlassToggle")
+		if (name == L"EnableWebUIToggle" || name == L"EnableWebUIToggle") ViewModel().Enabled(*value);
+		else if (name == L"FollowApplicationLanguageToggle" || name == L"FollowApplicationLanguageToggle")
 		{
 			m_followApplicationLanguage = *value;
 			followChanged = true;
 		}
-		else if (name == L"BypassLocalAuthToggle" || name == L"BypassLocalAuthGlassToggle") m_bypassLocalAuth = *value;
-		else if (name == L"CsrfProtectionToggle" || name == L"CsrfProtectionGlassToggle") m_csrfProtection = *value;
-		else if (name == L"HostValidationToggle" || name == L"HostValidationGlassToggle") m_hostValidation = *value;
-		else if (name == L"SecureCookieToggle" || name == L"SecureCookieGlassToggle") m_secureCookie = *value;
+		else if (name == L"BypassLocalAuthToggle" || name == L"BypassLocalAuthToggle") m_bypassLocalAuth = *value;
+		else if (name == L"CsrfProtectionToggle" || name == L"CsrfProtectionToggle") m_csrfProtection = *value;
+		else if (name == L"HostValidationToggle" || name == L"HostValidationToggle") m_hostValidation = *value;
+		else if (name == L"SecureCookieToggle" || name == L"SecureCookieToggle") m_secureCookie = *value;
 		else return;
 		m_initializing = true;
 		SyncMaterialToggles();
@@ -538,4 +532,38 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		co_await Windows::System::Launcher::LaunchUriAsync(
 			Windows::Foundation::Uri{ WebUIUrl() });
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+    void WebUISettingsPage::MaterialLoaded_271(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        OnMaterialToggleLoaded(EnableWebUIToggle(), args);
+    }
+    void WebUISettingsPage::MaterialLoaded_274(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        OnMaterialToggleLoaded(FollowApplicationLanguageToggle(), args);
+    }
+    void WebUISettingsPage::MaterialLoaded_282(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        OnMaterialToggleLoaded(BypassLocalAuthToggle(), args);
+    }
+    void WebUISettingsPage::MaterialLoaded_283(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        OnMaterialToggleLoaded(CsrfProtectionToggle(), args);
+    }
+    void WebUISettingsPage::MaterialLoaded_284(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        OnMaterialToggleLoaded(HostValidationToggle(), args);
+    }
+    void WebUISettingsPage::MaterialLoaded_285(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        OnMaterialToggleLoaded(SecureCookieToggle(), args);
+    }
 }

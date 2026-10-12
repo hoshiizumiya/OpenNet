@@ -5,18 +5,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:controls="using:OpenNet.UI.Xaml.Control.HomePage.Header"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
     <Page.Resources>
         <Style x:Key="FeatureCardStyle" TargetType="Grid">
-            <Setter Property="Padding" Value="16,12,16,16" />
-            <Setter Property="CornerRadius" Value="8" />
             <Setter Property="Background" Value="{ThemeResource CardBackgroundFillColorDefaultBrush}" />
             <Setter Property="BorderBrush" Value="{ThemeResource CardStrokeColorDefaultBrush}" />
             <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="Padding" Value="16,12,16,16" />
         </Style>
     </Page.Resources>
 
@@ -83,10 +86,12 @@
                                 Text="Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed."
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton Grid.Row="1" Padding="0">
+                        <HyperlinkButton Padding="0" x:Name="GlassPresenter_4150"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            Grid.Row="1">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock x:Uid="ViewHomePageText5" Text="Start transferring" />
-                                <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                        <TextBlock x:Uid="ViewHomePageText5" Text="Start transferring" />
+                        <FontIcon FontSize="12" Glyph="&#xE76C;" />
                             </StackPanel>
                         </HyperlinkButton>
                     </Grid>
@@ -114,10 +119,12 @@
                                 Text="Automatically find available peers on your local network"
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton Grid.Row="1" Padding="0">
+                        <HyperlinkButton Padding="0" x:Name="GlassPresenter_5844"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            Grid.Row="1">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                                <TextBlock x:Uid="ViewHomePageText8" Text="Scan network" />
-                                <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                        <TextBlock x:Uid="ViewHomePageText8" Text="Scan network" />
+                        <FontIcon FontSize="12" Glyph="&#xE76C;" />
                             </StackPanel>
                         </HyperlinkButton>
                     </Grid>
@@ -193,10 +200,11 @@
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="OpenNet is open-source. Contributions, issues, and feature requests are welcome."
                                 TextWrapping="Wrap" />
-                            <HyperlinkButton Padding="0" NavigateUri="https://github.com/hoshiizumiya/OpenNet">
+                            <HyperlinkButton Padding="0" NavigateUri="https://github.com/hoshiizumiya/OpenNet" x:Name="GlassPresenter_10101"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                                    <TextBlock x:Uid="ViewHomePageText15" Text="OpenNet repository" />
-                                    <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                            <TextBlock x:Uid="ViewHomePageText15" Text="OpenNet repository" />
+                            <FontIcon FontSize="12" Glyph="&#xE76C;" />
                                 </StackPanel>
                             </HyperlinkButton>
                         </StackPanel>

@@ -5,7 +5,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:animations="using:XamlToolkit.WinUI.Animations"
     xmlns:essential="using:WinUI3Package"
-    xmlns:local="using:OpenNet">
+    xmlns:local="using:OpenNet"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -14,6 +15,7 @@
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsCard_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///WinUI3Package/SettingsExpander_Resource.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/VisualMaterials.xaml" />
+                <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/TypographyResources.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Card/TitleCard_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/HomePage/Header/HeaderTile_ResourceDictionary.xaml" />
                 <ResourceDictionary Source="ms-appx:///UI/Xaml/Control/Theme/AcrylicBrush_ResourceDictionary.xaml" />
@@ -117,12 +119,14 @@
             </Style>
             <Style BasedOn="{StaticResource DefaultComboBoxStyle}" TargetType="ComboBox">
                 <Setter Property="essential:ComboBoxHelper.AcrylicWorkaround" Value="True" />
+                <Setter Property="ouxct:Typography.BaseFontSize" Value="14" />
             </Style>
             <Style BasedOn="{StaticResource DefaultFlyoutStyle}" TargetType="Flyout">
                 <Setter Property="essential:FlyoutHelper.AcrylicWorkaround" Value="True" />
             </Style>
             <Style BasedOn="{StaticResource DefaultSliderStyle}" TargetType="Slider">
                 <Setter Property="essential:SliderHelper.AcrylicWorkaround" Value="True" />
+                <Setter Property="ouxct:Typography.BaseFontSize" Value="14" />
             </Style>
 
         </ResourceDictionary>

@@ -20,6 +20,12 @@
     </essential:WindowEx.ContextMenu>
 
     <Grid>
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="32" />
             <RowDefinition />

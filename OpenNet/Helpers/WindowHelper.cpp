@@ -44,6 +44,41 @@ namespace
 	std::unordered_map<HWND, SecondaryWindowVisualState> g_secondaryWindowVisualStates;
 	std::unordered_map<HWND, winrt::WinUI3Package::WindowEx> g_windowExHosts;
 
+	void ResetBackgroundSources(SecondaryWindowVisualState const& state) noexcept
+	{
+		// A state also preserves the original brush when secondary backgrounds are
+		// disabled, so neither presenter is guaranteed to have been created.
+		if (auto image = state.ImagePresenter)
+		{
+			try
+			{
+				image.Opacity(0);
+				image.Source(nullptr);
+			}
+			catch (...)
+			{
+				// The visual tree may already be tearing down during Closed.
+			}
+		}
+		if (auto video = state.VideoPresenter)
+		{
+			try
+			{
+				if (auto player = video.MediaPlayer())
+				{
+					player.Pause();
+					player.Source(nullptr);
+				}
+				video.Source(nullptr);
+				video.SetMediaPlayer(nullptr);
+				video.Opacity(0);
+			}
+			catch (...)
+			{
+			}
+		}
+	}
+
 	bool IsSecondaryWindow(Window const& window)
 	{
 		auto const& mainWindow = winrt::OpenNet::implementation::App::window;
@@ -169,24 +204,9 @@ namespace
 			applyToSecondary ? Visibility::Visible : Visibility::Collapsed);
 		if (state.VideoPresenter) state.VideoPresenter.Visibility(
 			applyToSecondary ? Visibility::Visible : Visibility::Collapsed);
-		if (!applyToSecondary && state.ImagePresenter && state.VideoPresenter)
+		if (!applyToSecondary)
 		{
-			try
-			{
-				state.ImagePresenter.Opacity(0);
-				state.ImagePresenter.Source(nullptr);
-				if (auto player = state.VideoPresenter.MediaPlayer())
-				{
-					player.Pause();
-					player.Source(nullptr);
-				}
-				state.VideoPresenter.Source(nullptr);
-				state.VideoPresenter.SetMediaPlayer(nullptr);
-				state.VideoPresenter.Opacity(0);
-			}
-			catch (...)
-			{
-			}
+			ResetBackgroundSources(state);
 		}
 
 		auto const backgroundType = std::clamp(static_cast<int>(
@@ -276,25 +296,12 @@ namespace OpenNet::Helpers::WinUIWindowHelper
 			{
 				if (trackedHwnd)
 				{
+					// Remove the entry before WinRT calls can reenter background updates.
+					auto visual = g_secondaryWindowVisualStates.extract(trackedHwnd);
 					g_windowExHosts.erase(trackedHwnd);
-					auto const visual = g_secondaryWindowVisualStates.find(trackedHwnd);
-					if (visual != g_secondaryWindowVisualStates.end())
+					if (!visual.empty())
 					{
-						try
-						{
-							visual->second.ImagePresenter.Source(nullptr);
-							if (auto player = visual->second.VideoPresenter.MediaPlayer())
-							{
-								player.Pause();
-								player.Source(nullptr);
-							}
-							visual->second.VideoPresenter.Source(nullptr);
-							visual->second.VideoPresenter.SetMediaPlayer(nullptr);
-						}
-						catch (...)
-						{
-						}
-						g_secondaryWindowVisualStates.erase(visual);
+						ResetBackgroundSources(visual.mapped());
 					}
 				}
 				auto it = std::remove(m_activeWindows.begin(), m_activeWindows.end(), closedWindow);

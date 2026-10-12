@@ -16,6 +16,7 @@
 #include "Helpers/PageMemoryDiagnostics.h"
 
 import OpenNet.Core.Utils.Message;
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.Setting.LocalSetting;
 import OpenNet.Core.Setting.SettingKeys;
@@ -61,6 +62,19 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 				value.wMinute) };
 		}
 	}
+
+    winrt::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase SettingsPage::CreateRestartActionButton(std::int32_t material)
+    {
+        winrt::Microsoft::UI::Xaml::Controls::Button button = material == 1
+            ? winrt::WinUI::LiquidGlass::LiquidGlassButton().as<winrt::Microsoft::UI::Xaml::Controls::Button>()
+            : winrt::Microsoft::UI::Xaml::Controls::Button{};
+        // MRT addresses XAML property resources through a slash-separated path.
+        button.Content(winrt::box_value(ResourceGetString(L"RestartToApplyLanguageButton/Content")));
+        button.Click([weak = get_weak()](auto const& sender, auto const& args)
+        { if (auto self = weak.get()) self->RestartToApplyLanguage_Click(sender, args); });
+        if (material == 1) winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::SetIsManaged(button, true);
+        return button;
+    }
 
 	// 正确定义类静态成员（不要使用文件作用域的 static 关键字）
 	SettingsPage* SettingsPage::s_current = nullptr;

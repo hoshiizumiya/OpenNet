@@ -11,9 +11,11 @@
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:segment="using:OpenNet.UI.Xaml.Control.Progress.HttpSegment"
     xmlns:svg="using:WinUI3Package.Svg"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
     <Page.Resources>
         <ResourceDictionary>
@@ -188,10 +190,11 @@
                             <Button
                                 x:Name="SortPeerIpButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerIpButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="IP">
+                                Tag="IP"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_IP"
                                     Text="IP"
@@ -202,10 +205,11 @@
                             <Button
                                 x:Name="SortPeerLocationButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerLocationButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Location">
+                                Tag="Location"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Location"
                                     HorizontalTextAlignment="Right"
@@ -217,10 +221,11 @@
                             <Button
                                 x:Name="SortPeerProgressButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerProgressButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Progress">
+                                Tag="Progress"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Progress"
                                     HorizontalTextAlignment="Right"
@@ -232,10 +237,11 @@
                             <Button
                                 x:Name="SortPeerDlSpeedButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerDlSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="DLSpeed">
+                                Tag="DLSpeed"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_DLSpeed"
                                     HorizontalTextAlignment="Right"
@@ -247,10 +253,11 @@
                             <Button
                                 x:Name="SortPeerUlSpeedButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerUlSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="ULSpeed">
+                                Tag="ULSpeed"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_ULSpeed"
                                     HorizontalTextAlignment="Right"
@@ -262,10 +269,11 @@
                             <Button
                                 x:Name="SortPeerDownloadedButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerDownloadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Downloaded">
+                                Tag="Downloaded"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="CommonTextDownloaded"
                                     HorizontalTextAlignment="Right"
@@ -277,10 +285,11 @@
                             <Button
                                 x:Name="SortPeerUploadedButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerUploadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Uploaded">
+                                Tag="Uploaded"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Uploaded"
                                     HorizontalTextAlignment="Right"
@@ -292,10 +301,11 @@
                             <Button
                                 x:Name="SortPeerClientButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerClientButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Client">
+                                Tag="Client"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Client"
                                     Text="Client"
@@ -306,10 +316,11 @@
                             <Button
                                 x:Name="SortPeerRemoteDLSpeedButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerRemoteDLSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="RemoteDLSpeed">
+                                Tag="RemoteDLSpeed"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_RemoteDLSpeed"
                                     HorizontalTextAlignment="Right"
@@ -321,10 +332,11 @@
                             <Button
                                 x:Name="SortPeerConnectionTimeButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerConnectionTimeButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="ConnectionTime">
+                                Tag="ConnectionTime"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_ConnectionTime"
                                     HorizontalTextAlignment="Right"
@@ -336,10 +348,11 @@
                             <Button
                                 x:Name="SortPeerStatusButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerStatusButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Status">
+                                Tag="Status"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_PeerStatus"
                                     Text="Status"
@@ -350,10 +363,11 @@
                             <Button
                                 x:Name="SortPeerReasonButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerReasonButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Reason">
+                                Tag="Reason"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Reason"
                                     Text="Reason"
@@ -364,10 +378,11 @@
                             <Button
                                 x:Name="SortPeerProtocolButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerProtocolButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Protocol">
+                                Tag="Protocol"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Protocol"
                                     HorizontalTextAlignment="Center"
@@ -379,10 +394,11 @@
                             <Button
                                 x:Name="SortPeerInitiatorButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerInitiatorButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Initiator">
+                                Tag="Initiator"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Initiator"
                                     HorizontalTextAlignment="Right"
@@ -394,10 +410,11 @@
                             <Button
                                 x:Name="SortPeerSourceButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortPeerSourceButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Source">
+                                Tag="Source"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <TextBlock
                                     x:Uid="PeerHeader_Source"
                                     Text="Source"

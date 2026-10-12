@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Width="1200"
     Height="760"
     MinWidth="640"
@@ -17,6 +19,11 @@
     </essential:WindowEx.ContextMenu>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -56,10 +63,10 @@
             </Button>
             <Button
                 x:Name="ForwardButton"
-                Grid.Column="1"
                 Click="ForwardButton_Click"
                 IsEnabled="False"
-                Style="{StaticResource SubtleButtonStyle}">
+                Style="{StaticResource SubtleButtonStyle}"
+                Grid.Column="1">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentForward"
@@ -68,10 +75,9 @@
                 </ToolTipService.ToolTip>
                 <FontIcon Glyph="&#xE72A;" />
             </Button>
-            <Button
-                Grid.Column="2"
-                Click="ReloadButton_Click"
-                Style="{StaticResource SubtleButtonStyle}">
+            <Button Click="ReloadButton_Click" Style="{StaticResource SubtleButtonStyle}"
+                x:Name="GlassPresenter_2643"
+                Grid.Column="2">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentReload"
@@ -81,15 +87,14 @@
                 <FontIcon Glyph="&#xE72C;" />
             </Button>
             <TextBox
-                x:Name="AddressBox"
-                Grid.Column="3"
-                VerticalAlignment="Center"
                 KeyDown="AddressBox_KeyDown"
-                PlaceholderText="Enter a web address" />
-            <Button
-                Grid.Column="4"
-                Click="GoButton_Click"
-                Style="{StaticResource SubtleButtonStyle}">
+                PlaceholderText="Enter a web address" x:Name="AddressBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                VerticalAlignment="Center"
+                Grid.Column="3" />
+            <Button Click="GoButton_Click" Style="{StaticResource SubtleButtonStyle}"
+                x:Name="GlassPresenter_3381"
+                Grid.Column="4">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentGo"
@@ -98,10 +103,9 @@
                 </ToolTipService.ToolTip>
                 <FontIcon Glyph="&#xE751;" />
             </Button>
-            <Button
-                Grid.Column="5"
-                Click="OpenExternalButton_Click"
-                Style="{StaticResource SubtleButtonStyle}">
+            <Button Click="OpenExternalButton_Click" Style="{StaticResource SubtleButtonStyle}"
+                x:Name="GlassPresenter_3873"
+                Grid.Column="5">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentOpenSysBrowser"

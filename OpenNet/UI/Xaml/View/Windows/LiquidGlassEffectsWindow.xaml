@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<essential:WindowEx
+    x:Class="OpenNet.UI.Xaml.View.Windows.LiquidGlassEffectsWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    Width="1120" Height="760" MinWidth="920" MinHeight="580">
+    <essential:WindowEx.ContextMenu>
+        <essential:ModernStandardWindowContextMenu />
+    </essential:WindowEx.ContextMenu>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.Resources>
+            <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <TitleBar x:Name="WindowTitleBar" x:Uid="LiquidGlassEffectsWindowTitle" Title="Liquid glass effects" />
+
+        <StackPanel Grid.Row="1" Margin="24,12,24,20" Spacing="12">
+            <TextBlock x:Uid="GlassEffectsIntro" Text="Each control type has its own optics. Changes apply immediately and are saved automatically." TextWrapping="Wrap" />
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <ComboBox x:Name="TypeSelector" MinWidth="230" ItemsSource="{x:Bind Profiles}" SelectionChanged="TypeChanged">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="ouxct:LiquidGlassProfile">
+                            <TextBlock Text="{x:Bind Name}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button x:Uid="GlassResetType" Content="Restore this type's defaults" Click="ResetClicked" />
+            </StackPanel>
+        </StackPanel>
+        <Grid Grid.Row="2" Margin="24,0,24,24" ColumnSpacing="24">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="390" /></Grid.ColumnDefinitions>
+            <ScrollView>
+                <ItemsControl ItemsSource="{x:Bind SelectedProfile.Parameters, Mode=OneWay}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="ouxct:LiquidGlassParameter">
+                            <StackPanel Spacing="4" Margin="0,0,12,16">
+                                <Grid ColumnSpacing="12">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                                    <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" x:Uid="GlassResetParameter" Content="Reset" Click="{x:Bind Reset}" />
+                                </Grid>
+                                <Grid ColumnSpacing="16">
+                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="64" /></Grid.ColumnDefinitions>
+                                    <Slider Minimum="{x:Bind Minimum}" Maximum="{x:Bind Maximum}" StepFrequency="{x:Bind Step}" Value="{x:Bind Value, Mode=TwoWay}" AutomationProperties.Name="{x:Bind Label}" />
+                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(Value), Mode=OneWay}" />
+                                </Grid>
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock x:Uid="GlassDefaultValue" Text="Default:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    <TextBlock Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(DefaultValue)}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollView>
+            <StackPanel Grid.Column="1" Spacing="12">
+                <TextBlock x:Uid="GlassPreviewHeading" Text="Interactive preview" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock Text="{x:Bind SelectedProfile.Name, Mode=OneWay}" />
+                <Border x:Name="PreviewHost" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" />
+                <TextBlock x:Uid="GlassEffectsPreviewHint" Text="The preview always shows glass, even if this type is disabled in the application. Try hover, press, focus, typing and dragging." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <TextBlock x:Uid="GlassPresetHint" Text="Defaults come from the library preset. Compact native knobs retain contrast and geometry adaptation. Resetting a type does not change other types or enable switches." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+            </StackPanel>
+        </Grid>
+
+    </Grid>
+</essential:WindowEx>

@@ -4,8 +4,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Uid="ViewDialogCloseToTrayDialog"
     Title="window close action"
     CloseButtonText="Exit application"
@@ -22,6 +25,7 @@
             x:Name="ChkRemember"
             x:Uid="ViewDialogCloseToTrayRememberCheckBox"
             AutomationProperties.AutomationId="ViewDialogCloseToTrayRememberCheckBox"
-            Content="Remember my choice, do not ask again" />
+            Content="Remember my choice, do not ask again"
+            ouxct:ControlAppearance.IsEnabled="True" />
     </StackPanel>
 </ContentDialog>

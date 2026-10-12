@@ -8,6 +8,8 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Uid="NetworkSettingsPageRoot"
     mc:Ignorable="d">
 
@@ -50,9 +52,10 @@
                     <Button
                         x:Uid="ViewNetworkSettingsPageButton"
                         Click="RefreshTrackersButton_Click"
-                        Content="Refresh">
+                        Content="Refresh" x:Name="GlassPresenter_2342"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ToolTipService.ToolTip>
-                            <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Refresh all trackers" />
+                    <ToolTip essential:ToolTipHelper.AcrylicWorkaround="True" Content="Refresh all trackers" />
                         </ToolTipService.ToolTip>
                     </Button>
                     <essential:SettingsExpander.Items>
@@ -60,7 +63,9 @@
                             x:Uid="ViewSettingsPageAutoAddTrackers"
                             Description="Append every enabled custom and subscribed tracker when a new BitTorrent task is first added"
                             Header="Automatically add custom trackers">
-                            <ToggleSwitch x:Name="AutoAddTrackersToggle" Toggled="AutoAddTrackersToggle_Toggled" />
+                            <ToggleSwitch
+                                Toggled="AutoAddTrackersToggle_Toggled" x:Name="AutoAddTrackersToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard
                             x:Uid="ViewNetworkSettingsPageSettingsCard"
@@ -72,17 +77,18 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    x:Name="NewTrackerTextBox"
                                     x:Uid="ViewNetworkSettingsPageNewTrackerTextBox"
                                     AutomationProperties.AutomationId="ViewNetworkSettingsPageNewTrackerTextBox"
-                                    PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)" />
+                                    PlaceholderText="Enter tracker URL (e.g., tracker.example.com:6969)" x:Name="NewTrackerTextBox"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                                 <Button
                                     x:Uid="ViewNetworkSettingsPageButton"
-                                    Grid.Column="1"
-                                    Margin="8,0,0,0"
                                     Click="AddTrackerButton_Click"
                                     Content="Add"
-                                    Style="{StaticResource AccentButtonStyle}" />
+                                    Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_4274"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0" />
                             </Grid>
                         </essential:SettingsCard>
                         <essential:SettingsCard
@@ -106,10 +112,11 @@
                                                 Text="{x:Bind}"
                                                 TextTrimming="CharacterEllipsis" />
                                             <Button
-                                                Grid.Column="1"
                                                 Background="Transparent"
                                                 Click="RemoveTrackerButton_Click"
-                                                Tag="{x:Bind}">
+                                                Tag="{x:Bind}" x:Name="GlassPresenter_6045"
+                                                ouxct:ControlAppearance.IsEnabled="True"
+                                                Grid.Column="1">
                                                 <FontIcon FontSize="12" Glyph="&#xE74D;" />
                                             </Button>
                                         </Grid>
@@ -145,25 +152,26 @@
                             Header="Add subscription">
                             <StackPanel MinWidth="400" Spacing="8">
                                 <TextBox
-                                    x:Name="SubscriptionNameTextBox"
                                     x:Uid="ViewNetworkSettingsPageTextBox"
-                                    PlaceholderText="Subscription name (e.g., Public Trackers)" />
+                                    PlaceholderText="Subscription name (e.g., Public Trackers)" x:Name="SubscriptionNameTextBox"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                                 <Grid>
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <TextBox
-                                        x:Name="SubscriptionUrlTextBox"
                                         x:Uid="ViewNetworkSettingsPageTextBox"
-                                        PlaceholderText="Subscription URL (e.g., https://example.com/trackers.txt)" />
+                                        PlaceholderText="Subscription URL (e.g., https://example.com/trackers.txt)" x:Name="SubscriptionUrlTextBox"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                     <Button
                                         x:Uid="ViewNetworkSettingsPageButton"
-                                        Grid.Column="1"
-                                        Margin="8,0,0,0"
                                         Click="AddSubscriptionButton_Click"
                                         Content="Subscribe"
-                                        Style="{StaticResource AccentButtonStyle}" />
+                                        Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_9358"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        Grid.Column="1"
+                                        Margin="8,0,0,0" />
                                 </Grid>
                             </StackPanel>
                         </essential:SettingsCard>
@@ -188,10 +196,11 @@
                                                 Text="{x:Bind}"
                                                 TextTrimming="CharacterEllipsis" />
                                             <Button
-                                                Grid.Column="1"
                                                 Background="Transparent"
                                                 Click="RemoveSubscriptionButton_Click"
-                                                Tag="{x:Bind}">
+                                                Tag="{x:Bind}" x:Name="GlassPresenter_11228"
+                                                ouxct:ControlAppearance.IsEnabled="True"
+                                                Grid.Column="1">
                                                 <FontIcon FontSize="12" Glyph="&#xE74D;" />
                                             </Button>
                                         </Grid>
@@ -210,33 +219,34 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <ComboBox
-                                    x:Name="PresetTrackerListComboBox"
-                                    HorizontalAlignment="Stretch"
-                                    SelectedIndex="0">
+                                    SelectedIndex="0" x:Name="PresetTrackerListComboBox"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    HorizontalAlignment="Stretch">
                                     <ComboBoxItem
-                                        x:Uid="ViewNetworkSettingsPageBestItem"
-                                        Content="精选列表（best.txt）"
-                                        Tag="https://cf.trackerslist.com/best.txt" />
+                                x:Uid="ViewNetworkSettingsPageBestItem"
+                                Content="精选列表（best.txt）"
+                                Tag="https://cf.trackerslist.com/best.txt" />
                                     <ComboBoxItem
-                                        x:Uid="ViewNetworkSettingsPageAllItem"
-                                        Content="完整列表（all.txt）"
-                                        Tag="https://cf.trackerslist.com/all.txt" />
+                                x:Uid="ViewNetworkSettingsPageAllItem"
+                                Content="完整列表（all.txt）"
+                                Tag="https://cf.trackerslist.com/all.txt" />
                                     <ComboBoxItem
-                                        x:Uid="ViewNetworkSettingsPageHttpItem"
-                                        Content="HTTP(S) 列表（http.txt）"
-                                        Tag="https://cf.trackerslist.com/http.txt" />
+                                x:Uid="ViewNetworkSettingsPageHttpItem"
+                                Content="HTTP(S) 列表（http.txt）"
+                                Tag="https://cf.trackerslist.com/http.txt" />
                                     <ComboBoxItem
-                                        x:Uid="ViewNetworkSettingsPageNoHttpItem"
-                                        Content="无 HTTP 列表（nohttp.txt）"
-                                        Tag="https://cf.trackerslist.com/nohttp.txt" />
+                                x:Uid="ViewNetworkSettingsPageNoHttpItem"
+                                Content="无 HTTP 列表（nohttp.txt）"
+                                Tag="https://cf.trackerslist.com/nohttp.txt" />
                                 </ComboBox>
                                 <Button
                                     x:Uid="ViewNetworkSettingsPageButton"
-                                    Grid.Column="1"
-                                    Margin="8,0,0,0"
                                     Click="AddPresetTrackerListButton_Click"
                                     Content="Subscribe"
-                                    Style="{StaticResource AccentButtonStyle}" />
+                                    Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_14004"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    Grid.Column="1"
+                                    Margin="8,0,0,0" />
                             </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
@@ -326,21 +336,27 @@
                     x:Uid="ViewNetworkSettingsPageSettingsCardDHT"
                     Description="Distributed Hash Table for decentralized peer discovery"
                     Header="Enable DHT">
-                    <ToggleSwitch x:Name="EnableDHTToggle" IsOn="True" />
+                    <ToggleSwitch
+                        IsOn="True" x:Name="EnableDHTToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
                     x:Uid="ViewNetworkSettingsPageSettingsCardPEX"
                     Description="Exchange peer lists with connected peers"
                     Header="Enable Peer Exchange (PEX)">
-                    <ToggleSwitch x:Name="EnablePEXToggle" IsOn="True" />
+                    <ToggleSwitch
+                        IsOn="True" x:Name="EnablePEXToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
                     x:Uid="ViewNetworkSettingsPageSettingsCardLSD"
                     Description="Discover peers on the local network"
                     Header="Enable Local Peer Discovery (LSD)">
-                    <ToggleSwitch x:Name="EnableLSDToggle" IsOn="True" />
+                    <ToggleSwitch
+                        IsOn="True" x:Name="EnableLSDToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
             </StackPanel>

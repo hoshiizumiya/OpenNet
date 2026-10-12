@@ -8,6 +8,13 @@ namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
         ThemesSettingsPage();
         OpenNet.ViewModels.SettingsViewModel ViewModel { get; };
         Int32 MaterialStyleIndex { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox VideoModeComboBox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox VideoStretchComboBox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox ImageModeComboBox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox ImageStretchComboBox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox BackgroundComboBox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox MicaTypeComboBox { get; };
+        Microsoft.UI.Xaml.Controls.ComboBox AcrylicTypeComboBox { get; };
 
     }
 }

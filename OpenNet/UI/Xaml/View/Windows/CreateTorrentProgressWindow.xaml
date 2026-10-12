@@ -6,6 +6,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Width="1080"
     Height="480"
     MinWidth="480"
@@ -23,6 +25,12 @@
     </essential:WindowEx.ContextMenu>
 
     <Grid x:Name="RootGrid" Loaded="RootGrid_Loaded">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -102,21 +110,19 @@
                 Orientation="Horizontal"
                 Spacing="8">
                 <Button
-                    x:Name="OpenFolderButton"
                     x:Uid="CreateTorrentProgressOpenFolder"
                     Click="OpenFolderButton_Click"
-                    Content="Open folder"
-                    Visibility="Collapsed" />
+                    Content="Open folder" x:Name="OpenFolderButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
-                    x:Name="CloseButton"
                     x:Uid="CommonClose"
                     Click="CloseButton_Click"
-                    Content="Close"
-                    Visibility="Collapsed" />
+                    Content="Close" x:Name="CloseButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
-                    x:Name="CancelButton"
                     Click="CancelButton_Click"
-                    Content="Cancel" />
+                    Content="Cancel" x:Name="CancelButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </StackPanel>
         </Grid>
     </Grid>

@@ -8,6 +8,8 @@
     xmlns:graph="using:OpenNet.UI.Xaml.Control.Graph"
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Title="LiveGraph Developer Test"
     MinWidth="780"
     MinHeight="600"
@@ -29,6 +31,11 @@
     </essential:WindowEx.ContextMenu>
 
     <Grid Loaded="Root_Loaded">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -93,10 +100,11 @@
                             </StackPanel>
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="1"
                                 Click="ResetDynamicGraph_Click"
                                 Content="Reset dynamic streams"
-                                Style="{StaticResource AccentButtonStyle}" />
+                                Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_4106"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="1" />
                         </Grid>
 
                         <Border
@@ -157,27 +165,32 @@
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
                                 Click="GreenBrush_Click"
-                                Content="Green" />
+                                Content="Green" x:Name="GlassPresenter_7863"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="1"
                                 Click="BlueBrush_Click"
-                                Content="Blue" />
+                                Content="Blue" x:Name="GlassPresenter_8077"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="1" />
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="2"
                                 Click="RedBrush_Click"
-                                Content="Red" />
+                                Content="Red" x:Name="GlassPresenter_8337"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="2" />
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="3"
                                 Click="PurpleBrush_Click"
-                                Content="Purple" />
+                                Content="Purple" x:Name="GlassPresenter_8595"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="3" />
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="4"
                                 Click="CustomBrush_Click"
-                                Content="Custom sunset" />
+                                Content="Custom sunset" x:Name="GlassPresenter_8859"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="4" />
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -208,15 +221,17 @@
                             </StackPanel>
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="1"
                                 Click="AddStaticLine_Click"
-                                Content="Add line batch" />
+                                Content="Add line batch" x:Name="GlassPresenter_10623"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="1" />
                             <Button
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Grid.Column="2"
                                 Click="AddStaticRounded_Click"
                                 Content="Add rounded batch"
-                                Style="{StaticResource AccentButtonStyle}" />
+                                Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_10897"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="2" />
                         </Grid>
 
                         <Border

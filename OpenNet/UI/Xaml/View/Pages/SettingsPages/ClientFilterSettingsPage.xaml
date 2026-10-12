@@ -5,8 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -40,16 +41,10 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE71C;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                        <essential:Case>
-                            <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                            <ToggleSwitch x:Name="EnableFilterToggle" Loaded="EnableFilterToggle_Loaded" Toggled="OnEnableToggled" />
-                        </essential:Case>
-                        <essential:Case>
-                            <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                            <liquid:LiquidGlassToggleSwitch x:Name="EnableFilterGlassToggle" Loaded="EnableFilterToggle_Loaded" Click="OnEnableToggled" />
-                        </essential:Case>
-                    </essential:SwitchPresenter>
+                    <ToggleSwitch
+                        Loaded="EnableFilterToggle_Loaded"
+                        Toggled="OnEnableToggled" x:Name="EnableFilterToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="CF_RuleCount">
@@ -75,7 +70,8 @@
                     <Button
                         x:Uid="CF_AddBtn"
                         AutomationProperties.AutomationId="CF_AddBtn"
-                        Click="OnAddRuleClick" />
+                        Click="OnAddRuleClick" x:Name="GlassPresenter_3875"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid ColumnSpacing="12" RowSpacing="10">
@@ -90,39 +86,36 @@
                                 </Grid.RowDefinitions>
 
                                 <TextBox
-                                    x:Name="PatternTextBox"
                                     x:Uid="CF_Pattern"
-                                    MinWidth="300"
-                                    AutomationProperties.AutomationId="CF_Pattern" />
+                                    AutomationProperties.AutomationId="CF_Pattern" x:Name="PatternTextBox" MinWidth="300"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                                 <ComboBox
-                                    x:Name="MatchTypeComboBox"
                                     x:Uid="CF_MatchType"
-                                    Grid.Column="1"
-                                    HorizontalAlignment="Stretch"
                                     essential:ComboBoxHelper.AcrylicWorkaround="True"
                                     AutomationProperties.AutomationId="CF_MatchType"
-                                    SelectedIndex="0">
+                                    SelectedIndex="0" x:Name="MatchTypeComboBox"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    HorizontalAlignment="Stretch"
+                                    Grid.Column="1">
                                     <ComboBoxItem x:Uid="CF_MatchContains" />
                                     <ComboBoxItem x:Uid="CF_MatchExact" />
                                     <ComboBoxItem x:Uid="CF_MatchWildcard" />
                                     <ComboBoxItem x:Uid="CF_MatchRegex" />
                                 </ComboBox>
                                 <TextBox
-                                    x:Name="DescriptionTextBox"
                                     x:Uid="CF_Description"
+                                    AutomationProperties.AutomationId="CF_Description" x:Name="DescriptionTextBox"
+                                    ouxct:ControlAppearance.IsEnabled="True"
                                     Grid.Row="1"
-                                    Grid.ColumnSpan="2"
-                                    AutomationProperties.AutomationId="CF_Description" />
-                                <essential:SwitchPresenter Grid.Row="2" Grid.ColumnSpan="2" Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                                    <essential:Case>
-                                        <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                                        <ToggleSwitch x:Name="CaseSensitiveToggle" x:Uid="CF_CaseSensitive" AutomationProperties.AutomationId="CF_CaseSensitive" Loaded="CaseSensitiveToggle_Loaded" Toggled="CaseSensitiveToggle_Changed" />
-                                    </essential:Case>
-                                    <essential:Case>
-                                        <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                                        <liquid:LiquidGlassToggleSwitch x:Name="CaseSensitiveGlassToggle" x:Uid="CF_CaseSensitive" AutomationProperties.AutomationId="CF_CaseSensitive" Loaded="CaseSensitiveToggle_Loaded" Click="CaseSensitiveToggle_Changed" />
-                                    </essential:Case>
-                                </essential:SwitchPresenter>
+                                    Grid.ColumnSpan="2" />
+                                <ToggleSwitch
+                                    x:Uid="CF_CaseSensitive"
+                                    AutomationProperties.AutomationId="CF_CaseSensitive"
+                                    Loaded="CaseSensitiveToggle_Loaded"
+                                    Toggled="CaseSensitiveToggle_Changed" x:Name="CaseSensitiveToggle"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    Grid.Row="2"
+                                    Grid.ColumnSpan="2" />
                             </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
@@ -135,14 +128,14 @@
                     <StackPanel MinWidth="440" Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBox
-                                x:Name="TestClientTextBox"
                                 x:Uid="CF_TestInput"
-                                MinWidth="320"
-                                AutomationProperties.AutomationId="CF_TestInput" />
+                                AutomationProperties.AutomationId="CF_TestInput" x:Name="TestClientTextBox" MinWidth="320"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                             <Button
                                 x:Uid="CF_TestBtn"
                                 AutomationProperties.AutomationId="CF_TestBtn"
-                                Click="OnTestClick" />
+                                Click="OnTestClick" x:Name="GlassPresenter_8311"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </StackPanel>
                         <TextBlock
                             x:Name="TestResultText"
@@ -160,7 +153,8 @@
                     <Button
                         x:Uid="CF_RefreshBtn"
                         AutomationProperties.AutomationId="CF_RefreshBtn"
-                        Click="OnRefreshClick" />
+                        Click="OnRefreshClick" x:Name="GlassPresenter_9223"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -171,10 +165,10 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBox
-                                    x:Name="RuleSearchTextBox"
                                     x:Uid="CF_Search"
                                     AutomationProperties.AutomationId="CF_Search"
-                                    TextChanged="OnRuleSearchTextChanged" />
+                                    TextChanged="OnRuleSearchTextChanged" x:Name="RuleSearchTextBox"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                                 <TextBlock
                                     x:Name="RulesShownText"
                                     Grid.Row="1"
@@ -205,23 +199,23 @@
                                     Orientation="Horizontal"
                                     Spacing="8">
                                     <Button
-                                        x:Name="ToggleSelectedRuleButton"
                                         x:Uid="CF_ToggleRuleBtn"
                                         AutomationProperties.AutomationId="CF_ToggleRuleBtn"
                                         Click="OnToggleRuleClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="ToggleSelectedRuleButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                     <Button
-                                        x:Name="EditSelectedRuleButton"
                                         x:Uid="CF_EditRuleBtn"
                                         AutomationProperties.AutomationId="CF_EditRuleBtn"
                                         Click="OnEditRuleClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="EditSelectedRuleButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                     <Button
-                                        x:Name="DeleteSelectedRuleButton"
                                         x:Uid="CF_DeleteRuleBtn"
                                         AutomationProperties.AutomationId="CF_DeleteRuleBtn"
                                         Click="OnDeleteRuleClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="DeleteSelectedRuleButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                 </StackPanel>
                             </Grid>
                         </essential:SettingsCard>
@@ -236,15 +230,18 @@
                         <Button
                             x:Uid="CF_ImportBtn"
                             AutomationProperties.AutomationId="CF_ImportBtn"
-                            Click="OnImportClick" />
+                            Click="OnImportClick" x:Name="GlassPresenter_13859"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <Button
                             x:Uid="CF_ExportBtn"
                             AutomationProperties.AutomationId="CF_ExportBtn"
-                            Click="OnExportClick" />
+                            Click="OnExportClick" x:Name="GlassPresenter_14070"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <Button
                             x:Uid="CF_ClearRulesBtn"
                             AutomationProperties.AutomationId="CF_ClearRulesBtn"
-                            Click="OnClearRulesClick" />
+                            Click="OnClearRulesClick" x:Name="GlassPresenter_14281"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </StackPanel>
                 </essential:SettingsCard>
 
@@ -257,7 +254,8 @@
                     <Button
                         x:Uid="CF_RefreshHistoryBtn"
                         AutomationProperties.AutomationId="CF_RefreshHistoryBtn"
-                        Click="OnRefreshClick" />
+                        Click="OnRefreshClick" x:Name="GlassPresenter_14935"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -285,10 +283,11 @@
                                 </ListView>
                                 <Button
                                     x:Uid="CF_ClearHistoryBtn"
-                                    Grid.Row="1"
-                                    HorizontalAlignment="Right"
                                     AutomationProperties.AutomationId="CF_ClearHistoryBtn"
-                                    Click="OnClearHistoryClick" />
+                                    Click="OnClearHistoryClick" x:Name="GlassPresenter_16740"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    HorizontalAlignment="Right"
+                                    Grid.Row="1" />
                             </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>

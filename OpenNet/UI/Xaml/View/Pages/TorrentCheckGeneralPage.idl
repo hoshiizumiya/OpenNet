@@ -9,6 +9,14 @@ namespace OpenNet.UI.Xaml.View.Pages
 
 	// ViewModel for data binding
 	OpenNet.ViewModels.TorrentMetadataViewModel ViewModel{ get; };
+	Microsoft.UI.Xaml.Controls.CheckBox OtherFilterCheckBox;
+	Microsoft.UI.Xaml.Controls.CheckBox PictureFilterCheckBox;
+	Microsoft.UI.Xaml.Controls.CheckBox AudioFilterCheckBox;
+	Microsoft.UI.Xaml.Controls.CheckBox VideoFilterCheckBox;
+	Microsoft.UI.Xaml.Controls.CheckBox SelectAllFilterCheckBox;
+	Microsoft.UI.Xaml.Controls.CheckBox CreateSubfolderCheckBox;
+	Microsoft.UI.Xaml.Controls.TextBox TorrentFileNameTextBox;
+	Microsoft.UI.Xaml.Controls.AutoSuggestBox TorrentCheckGeneralPageSavePath;
 
 	// Static helper for XAML binding to get folder/file icon
 	static String GetNodeIcon(Boolean isFolder);

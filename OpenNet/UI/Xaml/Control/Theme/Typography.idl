@@ -1,0 +1,15 @@
+namespace OpenNet.UI.Xaml.Control.Theme
+{
+    [default_interface]
+    runtimeclass Typography : Microsoft.UI.Xaml.DependencyObject
+    {
+        Typography();
+        static Typography Current{ get; };
+        Double Scale;
+        static Microsoft.UI.Xaml.DependencyProperty ScaleProperty{ get; };
+        static String FormatScale(Double value);
+        static Microsoft.UI.Xaml.DependencyProperty BaseFontSizeProperty{ get; };
+        static Double GetBaseFontSize(Microsoft.UI.Xaml.DependencyObject target);
+        static void SetBaseFontSize(Microsoft.UI.Xaml.DependencyObject target, Double value);
+    }
+}

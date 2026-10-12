@@ -4,6 +4,9 @@
     runtimeclass RSSBrowserWindow : WinUI3Package.WindowEx
     {
         RSSBrowserWindow();
+    
+		Microsoft.UI.Xaml.Controls.TextBox AddressBox;
+
         void AddNewTab(String url, String title);
         void CloseTab(String tabId);
         void SwitchToTab(String tabId);

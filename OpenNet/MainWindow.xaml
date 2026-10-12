@@ -19,7 +19,10 @@
         Loaded="Grid_Loaded"
         PointerPressed="RootGrid_PointerPressed">
         <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+            <ResourceDictionary>
+                <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />

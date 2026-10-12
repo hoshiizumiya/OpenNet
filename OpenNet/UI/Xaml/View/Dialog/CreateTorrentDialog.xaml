@@ -7,6 +7,8 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Name="CreateTorrentDialog"
     x:Uid="CreateTorrentDialog"
     CloseButtonText="Cancel"
@@ -35,24 +37,30 @@
                     x:Name="CreateTorrentSourceTextBox"
                     x:Uid="CreateTorrentSource"
                     IsReadOnly="True"
-                    PlaceholderText="Source file or folder" />
+                    PlaceholderText="Source file or folder"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
+                    x:Name="GlassPresenter_1743"
                     x:Uid="CreateTorrentBrowseFile"
-                    Grid.Column="1"
                     Click="CreateTorrentBrowseFile_Click"
-                    Content="File..." />
+                    Content="File..."
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    Grid.Column="1" />
                 <Button
+                    x:Name="GlassPresenter_1954"
                     x:Uid="CreateTorrentBrowseFolder"
-                    Grid.Column="2"
                     Click="CreateTorrentBrowseFolder_Click"
-                    Content="Folder..." />
+                    Content="Folder..."
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    Grid.Column="2" />
             </Grid>
             <ComboBox
                 x:Name="CreateTorrentFormatComboBox"
                 x:Uid="CreateTorrentFormat"
                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                 Header="Torrent format"
-                SelectedIndex="0">
+                SelectedIndex="0"
+                ouxct:ControlAppearance.IsEnabled="True">
                 <ComboBoxItem x:Uid="CreateTorrentFormatHybrid" Content="Hybrid (v1 + v2)" />
                 <ComboBoxItem x:Uid="CreateTorrentFormatV1" Content="BitTorrent v1" />
                 <ComboBoxItem x:Uid="CreateTorrentFormatV2" Content="BitTorrent v2" />
@@ -61,7 +69,8 @@
                 x:Name="CreateTorrentPieceSizeComboBox"
                 x:Uid="CreateTorrentPieceSize"
                 Header="Piece size"
-                SelectedIndex="0">
+                SelectedIndex="0"
+                ouxct:ControlAppearance.IsEnabled="True">
                 <ComboBoxItem
                     x:Uid="CreateTorrentPieceSizeAuto"
                     Content="Auto"
@@ -84,21 +93,25 @@
             <CheckBox
                 x:Name="CreateTorrentPrivateCheckBox"
                 x:Uid="CreateTorrentPrivate"
-                Content="Private torrent" />
+                Content="Private torrent"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <CheckBox
                 x:Name="CreateTorrentIgnoreDotFilesCheckBox"
                 x:Uid="CreateTorrentIgnoreDotFiles"
                 Content="Ignore hidden dot files"
-                IsChecked="True" />
+                IsChecked="True"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <CheckBox
                 x:Name="CreateTorrentStartSeedingCheckBox"
                 x:Uid="CreateTorrentStartSeeding"
-                Content="Start seeding immediately" />
+                Content="Start seeding immediately"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBox
                 x:Name="CreateTorrentCommentTextBox"
                 x:Uid="CreateTorrentComment"
                 Header="Comment"
-                PlaceholderText="Optional comment" />
+                PlaceholderText="Optional comment"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBox
                 x:Name="CreateTorrentTrackersTextBox"
                 x:Uid="CreateTorrentTrackers"
@@ -106,7 +119,8 @@
                 AcceptsReturn="True"
                 Header="Trackers"
                 PlaceholderText="One tracker URL per line"
-                TextWrapping="NoWrap" />
+                TextWrapping="NoWrap"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBox
                 x:Name="CreateTorrentUrlSeedsTextBox"
                 x:Uid="CreateTorrentUrlSeeds"
@@ -114,12 +128,14 @@
                 AcceptsReturn="True"
                 Header="Web seed URLs"
                 PlaceholderText="One web seed URL per line"
-                TextWrapping="NoWrap" />
+                TextWrapping="NoWrap"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBox
                 x:Name="CreateTorrentSourceFieldTextBox"
                 x:Uid="CreateTorrentSourceField"
                 Header="Source"
-                PlaceholderText="Optional source identifier" />
+                PlaceholderText="Optional source identifier"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBlock
                 x:Name="CreateTorrentStatusText"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"

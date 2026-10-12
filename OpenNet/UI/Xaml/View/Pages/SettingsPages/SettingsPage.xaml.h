@@ -13,6 +13,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	{
 	public:
 		SettingsPage();
+        winrt::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase CreateRestartActionButton(std::int32_t material);
 		~SettingsPage();
 		winrt::OpenNet::ViewModels::SettingsViewModel ViewModel()
 		{

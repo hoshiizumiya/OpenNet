@@ -1,4 +1,4 @@
-import "ViewModels/NetworkSettingsViewModel.idl";
+﻿import "ViewModels/NetworkSettingsViewModel.idl";
 
 namespace OpenNet.UI.Xaml.View.Pages
 {
@@ -7,6 +7,15 @@ namespace OpenNet.UI.Xaml.View.Pages
     {
         NetworkSettingsPage();
         OpenNet.ViewModels.NetworkSettingsViewModel ViewModel { get; };
+
+        Microsoft.UI.Xaml.Controls.ToggleSwitch EnableLSDToggle;
+        Microsoft.UI.Xaml.Controls.ToggleSwitch EnablePEXToggle;
+        Microsoft.UI.Xaml.Controls.ToggleSwitch EnableDHTToggle;
+        Microsoft.UI.Xaml.Controls.ComboBox PresetTrackerListComboBox;
+        Microsoft.UI.Xaml.Controls.TextBox SubscriptionUrlTextBox;
+        Microsoft.UI.Xaml.Controls.TextBox SubscriptionNameTextBox;
+        Microsoft.UI.Xaml.Controls.TextBox NewTrackerTextBox;
+        Microsoft.UI.Xaml.Controls.ToggleSwitch AutoAddTrackersToggle;
 
         // Tracker properties
         Windows.Foundation.Collections.IObservableVector<String> TrackerList{ get; };

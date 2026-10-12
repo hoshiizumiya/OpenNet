@@ -6,12 +6,17 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Title="NAT and port detection"
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+            <ResourceDictionary>
+                <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
         </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -63,9 +68,9 @@
                             FontWeight="SemiBold"
                             Text="Traversal directory" />
                         <TextBox
-                            x:Name="DirectoryUriBox"
-                            Grid.Column="1"
-                            PlaceholderText="https://server.example/api/v1/traversal/servers" />
+                            PlaceholderText="https://server.example/api/v1/traversal/servers" x:Name="DirectoryUriBox"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            Grid.Column="1" />
                         <NumberBox
                             x:Name="ListenPortNumber"
                             Grid.Column="2"
@@ -516,21 +521,22 @@
                 Orientation="Horizontal"
                 Spacing="8">
                 <Button
-                    x:Name="QuickPortButton"
                     Click="QuickPortButton_Click"
-                    Content="Quick port test" />
+                    Content="Quick port test" x:Name="QuickPortButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
-                    x:Name="StartButton"
                     x:Uid="ViewNATDetectorWindowText48"
                     AutomationProperties.AutomationId="ViewNATDetectorWindowText48"
                     Click="StartButton_Click"
                     Content="Start detection"
-                    Style="{StaticResource AccentButtonStyle}" />
+                    Style="{StaticResource AccentButtonStyle}" x:Name="StartButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
                     x:Uid="ViewNATDetectorWindowText49"
                     AutomationProperties.AutomationId="ViewNATDetectorWindowText49"
                     Click="CloseButton_Click"
-                    Content="Close" />
+                    Content="Close" x:Name="GlassPresenter_27114"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </StackPanel>
         </Grid>
     </Grid>

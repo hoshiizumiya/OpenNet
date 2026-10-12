@@ -29,24 +29,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		using ::OpenNet::ViewModels::ObservableMixin<SettingsViewModel>::RaisePropertyChanged;
 
 		// 常规设置 / General Settings
-		std::wstring UserName() const
-		{
-			return m_userName;
-		}
-		void UserName(std::wstring_view value)
-		{
-			SetProperty(m_userName, std::wstring(value), L"UserName");
-		}
-
-		std::wstring DeviceName() const
-		{
-			return m_deviceName;
-		}
-		void DeviceName(std::wstring_view value)
-		{
-			SetProperty(m_deviceName, std::wstring(value), L"DeviceName");
-		}
-
 		std::wstring DefaultSavePath() const
 		{
 			return m_defaultSavePath;
@@ -139,33 +121,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		void RefreshServerEndpoints();
 		void UpdateServerEndpointStatus();
 
-		// 语言设置 / Language Settings
-		enum class Language
-		{
-			Auto,                          // 自动 / Auto
-			Chinese,                       // 中文 / Chinese
-			English                        // 英文 / English
-		};
-
-		Language CurrentLanguage() const
-		{
-			return m_currentLanguage;
-		}
-		void CurrentLanguage(Language value)
-		{
-			if (SetProperty(m_currentLanguage, value, L"CurrentLanguage"))
-			{
-				RaisePropertyChanged(L"CurrentLanguageText");
-			}
-		}
-
-		std::wstring CurrentLanguageText() const; // implemented in cpp (localized)
-
-		winrt::Windows::Foundation::Collections::IVector<winrt::hstring> AvailableLanguages() const
-		{
-			return m_availableLanguages;
-		}
-
 		// 网络设置 / Network Settings
 		uint16_t ListenPort() const
 		{
@@ -221,12 +176,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			if (SetProperty(m_protocolPriority, value, L"ProtocolPriority"))
 			{
-				RaisePropertyChanged(L"ProtocolPriorityText");
 				OnSettingChanged();
 			}
 		}
-
-		std::wstring ProtocolPriorityText() const; // implemented in cpp (localized)
 
 		bool EnableIPv4() const
 		{
@@ -246,12 +198,9 @@ namespace winrt::OpenNet::ViewModels::implementation
 		{
 			if (SetProperty(m_preferredProtocol, value, L"PreferredProtocol"))
 			{
-				RaisePropertyChanged(L"PreferredProtocolText");
 				OnSettingChanged();
 			}
 		}
-
-		std::wstring PreferredProtocolText() const; // implemented in cpp (localized)
 
 		// STUN服务器设置 / STUN Server Settings
 		winrt::Windows::Foundation::Collections::IVector<winrt::hstring> STUNServers() const
@@ -370,13 +319,8 @@ namespace winrt::OpenNet::ViewModels::implementation
 		}
 		void CurrentEncryptionLevel(EncryptionLevel value)
 		{
-			if (SetProperty(m_encryptionLevel, value, L"CurrentEncryptionLevel"))
-			{
-				RaisePropertyChanged(L"EncryptionLevelText");
-			}
+			SetProperty(m_encryptionLevel, value, L"CurrentEncryptionLevel");
 		}
-
-		std::wstring EncryptionLevelText() const; // implemented in cpp (localized)
 
 		bool RequireAuthentication() const
 		{
@@ -557,8 +501,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 
 	private:
 		// 常规设置 / General Settings
-		std::wstring m_userName;
-		std::wstring m_deviceName;
 		std::wstring m_defaultSavePath;
 		bool m_startWithWindows;
 		bool m_minimizeToTray;
@@ -578,10 +520,6 @@ namespace winrt::OpenNet::ViewModels::implementation
 		winrt::Windows::Foundation::IAsyncAction m_serverEndpointAction{ nullptr };
 		bool m_loadingServerEndpoints{ false };
 		bool m_refreshServerEndpoints{ false };
-
-		// 语言设置 / Language Settings
-		Language m_currentLanguage;
-		winrt::Windows::Foundation::Collections::IVector<winrt::hstring> m_availableLanguages;
 
 		// 网络设置 / Network Settings
 		uint16_t m_listenPort;

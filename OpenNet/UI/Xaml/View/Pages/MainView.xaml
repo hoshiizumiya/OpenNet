@@ -9,8 +9,10 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:ouxv="using:OpenNet.UI.Xaml.View"
     xmlns:settings="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
+    xmlns:wl="using:WinUI.LiquidGlass"
     xmlns:xtwa="using:XamlToolkit.WinUI.Animations"
     Loaded="MainView_Loaded"
     Unloaded="MainView_Unloaded"
@@ -244,11 +246,10 @@
             </StackPanel>
 
             <!--  Port State  -->
-            <Button
+            <Button Padding="6,3" Style="{StaticResource SubtleButtonStyle}"
+                x:Name="GlassPresenter_11319"
                 Grid.Column="3"
-                Margin="16,0,0,0"
-                Padding="6,3"
-                Style="{StaticResource SubtleButtonStyle}">
+                Margin="16,0,0,0">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="ViewMainViewPortButtonToolTip"
@@ -272,10 +273,7 @@
                                     FontWeight="SemiBold"
                                     Text="{essential:StringResource Name=ViewMainViewPortButtonToolTip/Content}" />
 
-                                <Border
-                                    Padding="12"
-                                    Background="{ThemeResource CardBackgroundFillColorSecondaryBrush}"
-                                    CornerRadius="8">
+                                <Border Padding="12" CornerRadius="8">
                                     <Grid ColumnSpacing="16" RowSpacing="8">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="72" />
@@ -550,21 +548,21 @@
                                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                             Text="{x:Bind ViewModel.PortCheckStatusText, Mode=OneWay}"
                                             TextWrapping="Wrap" />
-                                        <effects:AnimatedNumber
-                                            FontFamily="Consolas"
-                                            Value="{x:Bind ViewModel.PortCheckCountdownText, Mode=OneWay}" />
+                                        <effects:AnimatedNumber FontFamily="Consolas" Value="{x:Bind ViewModel.PortCheckCountdownText, Mode=OneWay}" />
                                     </StackPanel>
                                     <Button
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
                                         Command="{x:Bind ViewModel.RecheckPortsCommand, Mode=OneWay}"
-                                        Content="{essential:StringResource Name=MainViewRecheckPorts}" />
-                                    <Button
-                                        Grid.Column="2"
+                                        Content="{essential:StringResource Name=MainViewRecheckPorts}" x:Name="GlassPresenter_31891"
+                                        ouxct:ControlAppearance.IsEnabled="True"
                                         VerticalAlignment="Center"
+                                        Grid.Column="1" />
+                                    <Button
                                         HorizontalContentAlignment="Center"
                                         Click="OpenPortTestWindow_Click"
-                                        Content="{essential:StringResource Name=NatTools_PortTest/Text}" />
+                                        Content="{essential:StringResource Name=NatTools_PortTest/Text}" x:Name="GlassPresenter_32266"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        VerticalAlignment="Center"
+                                        Grid.Column="2" />
                                 </Grid>
                             </StackPanel>
                         </ScrollViewer>

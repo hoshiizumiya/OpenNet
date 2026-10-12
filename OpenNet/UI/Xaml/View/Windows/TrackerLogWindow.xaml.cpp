@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 import winrt.XamlToolkit.Labs.WinUI;
 #include "TrackerLogWindow.xaml.h"
 #if __has_include("UI/Xaml/View/Windows/TrackerLogWindow.g.cpp")
@@ -128,4 +129,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 			m_loadingAlwaysOnTop = false;
 		}
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
+{
+    void TrackerLogWindow::MaterialLoaded_399(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        AlwaysOnTopToggle_Loaded(AlwaysOnTopToggle(), args);
+    }
 }

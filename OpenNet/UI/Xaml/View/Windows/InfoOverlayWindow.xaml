@@ -32,6 +32,11 @@
         Background="{ThemeResource SolidBackgroundFillColorBaseBrush}"
         CornerRadius="10"
         Loaded="OverlayRoot_Loaded">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />

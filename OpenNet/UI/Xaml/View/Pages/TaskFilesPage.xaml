@@ -10,7 +10,9 @@
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -128,7 +130,7 @@
                             <Button
                                 x:Name="SortFileNameButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortFileNameButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Path">
@@ -142,7 +144,7 @@
                             <Button
                                 x:Name="SortFileSizeButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortFileSizeButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Size">
@@ -156,7 +158,7 @@
                             <Button
                                 x:Name="SortFileProgressButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortFileProgressButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Progress">
@@ -170,7 +172,7 @@
                             <Button
                                 x:Name="SortFileDoneButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortFileDoneButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Done">
@@ -184,7 +186,7 @@
                             <Button
                                 x:Name="SortFilePriorityButton"
                                 Command="{x:Bind SortState.ToggleCommand}"
-                                CommandParameter="{Binding Tag, RelativeSource={RelativeSource Self}}"
+                                CommandParameter="{x:Bind SortFilePriorityButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
                                 Tag="Priority">
@@ -239,14 +241,13 @@
                                 Value="{x:Bind ProgressValue, Mode=OneWay}" />
                             <TextBlock Text="{x:Bind Done, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <ComboBox
-                                x:Name="FilePriorityComboBox"
-                                MinWidth="80"
-                                HorizontalAlignment="Stretch"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
-                                x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}"
                                 SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
                                 SelectionChanged="FilePriority_SelectionChanged"
-                                Tag="{Binding FileIndex}">
+                                Tag="{x:Bind ouxct:MaterialControlState.BoxInt32(FileIndex), Mode=OneWay}" x:Name="FilePriorityComboBox" MinWidth="80"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                HorizontalAlignment="Stretch"
+                                x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}">
                                 <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
                                 <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
                                 <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />

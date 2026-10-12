@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ThemeSettingBackdropCustomizePage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/ThemeSettingBackdropCustomizePage.g.cpp"
@@ -89,8 +90,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (auto slider = sender.try_as<Slider>())
 		{
 			auto const name = slider.Name();
-			if (name == L"LuminosityOpacitySlider" || name == L"LuminosityOpacityGlassSlider") m_luminosityOpacity = slider.Value();
-			else if (name == L"TintOpacitySlider" || name == L"TintOpacityGlassSlider") m_tintOpacity = slider.Value();
+			if (name == L"LuminosityOpacitySlider" || name == L"LuminosityOpacitySlider") m_luminosityOpacity = slider.Value();
+			else if (name == L"TintOpacitySlider" || name == L"TintOpacitySlider") m_tintOpacity = slider.Value();
 		}
 		UpdateMaterialControls();
 		SaveToSettings();
@@ -121,11 +122,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		const bool wasUpdating = m_isUpdatingUI;
 		m_isUpdatingUI = true;
 		if (auto standard = LuminosityOpacitySlider()) standard.Value(m_luminosityOpacity);
-		if (auto glass = LuminosityOpacityGlassSlider()) glass.Value(m_luminosityOpacity);
 		if (auto standard = TintOpacitySlider()) standard.Value(m_tintOpacity);
-		if (auto glass = TintOpacityGlassSlider()) glass.Value(m_tintOpacity);
 		if (auto standard = EnableSwitch()) standard.IsOn(m_enableWhenInactive);
-		if (auto glass = EnableGlassSwitch()) glass.IsOn(m_enableWhenInactive);
 		m_isUpdatingUI = wasUpdating;
 	}
 
@@ -136,11 +134,10 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (auto slider = sender.try_as<Slider>())
 		{
 			auto const name = slider.Name();
-			if (name == L"LuminosityOpacitySlider" || name == L"LuminosityOpacityGlassSlider") slider.Value(m_luminosityOpacity);
-			else if (name == L"TintOpacitySlider" || name == L"TintOpacityGlassSlider") slider.Value(m_tintOpacity);
+			if (name == L"LuminosityOpacitySlider" || name == L"LuminosityOpacitySlider") slider.Value(m_luminosityOpacity);
+			else if (name == L"TintOpacitySlider" || name == L"TintOpacitySlider") slider.Value(m_tintOpacity);
 		}
 		if (auto standard = sender.try_as<ToggleSwitch>()) standard.IsOn(m_enableWhenInactive);
-		if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(m_enableWhenInactive);
 		m_isUpdatingUI = wasUpdating;
 	}
 
@@ -233,4 +230,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 		}
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+    void ThemeSettingBackdropCustomizePage::MaterialLoaded_249(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        MaterialControl_Loaded(EnableSwitch(), args);
+    }
 }

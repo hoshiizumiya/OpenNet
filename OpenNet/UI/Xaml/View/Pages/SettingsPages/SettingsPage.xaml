@@ -6,11 +6,13 @@
     xmlns:animatedvisuals="using:Microsoft.UI.Xaml.Controls.AnimatedVisuals"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
+    xmlns:materialconversion="using:XamlToolkit.WinUI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ouxc="using:OpenNet.UI.Xaml.Control"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:ouxvp="using:OpenNet.UI.Xaml.View.Pages"
+    xmlns:wl="using:WinUI.LiquidGlass"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
 
@@ -207,22 +209,22 @@
                             UpdateAvailableVersion="" />
                     </essential:SettingsExpander.Header>
                     <Button
-                        x:Name="AppUpdateCheckButton"
                         x:Uid="AppUpdateCheckButton"
                         AutomationProperties.AutomationId="AppUpdateCheckButton"
                         Click="AppUpdateCheckButton_Click"
                         Content="Check update"
-                        Style="{StaticResource AccentButtonStyle}" />
+                        Style="{StaticResource AccentButtonStyle}" x:Name="AppUpdateCheckButton"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard ContentAlignment="Left">
                             <CheckBox
-                                x:Name="AutoCheckUpdateCheckbox"
                                 x:Uid="AutoCheckUpdateCheckbox"
                                 AutomationProperties.AutomationId="AutoCheckUpdateCheckbox"
                                 Checked="AutoCheckUpdateCheckbox_Checked"
                                 Content="Automatically check for updates"
                                 IsChecked="True"
-                                Unchecked="AutoCheckUpdateCheckbox_Unchecked" />
+                                Unchecked="AutoCheckUpdateCheckbox_Unchecked" x:Name="AutoCheckUpdateCheckbox"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -250,29 +252,27 @@
                         <FontIcon Glyph="&#xE793;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
-                        x:Name="themeMode"
-                        Width="Auto"
-                        MinWidth="240"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
                         AutomationProperties.AutomationId="themeModeComboBox"
-                        SelectionChanged="themeMode_SelectionChanged">
+                        SelectionChanged="themeMode_SelectionChanged" x:Name="themeMode" Width="Auto" MinWidth="240"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ComboBoxItem Tag="Light">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="16" Glyph="&#xE706;" />
-                                <TextBlock x:Uid="ThemesLight" />
-                            </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE706;" />
+                        <TextBlock x:Uid="ThemesLight" />
+                    </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem Tag="Dark">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="16" Glyph="&#xE708;" />
-                                <TextBlock x:Uid="ThemesDark" />
-                            </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE708;" />
+                        <TextBlock x:Uid="ThemesDark" />
+                    </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem Tag="Default">
-                            <StackPanel Orientation="Horizontal" Spacing="8">
-                                <FontIcon FontSize="16" Glyph="&#xE770;" />
-                                <TextBlock x:Uid="ThemesDefault" />
-                            </StackPanel>
+                    <StackPanel Orientation="Horizontal" Spacing="8">
+                        <FontIcon FontSize="16" Glyph="&#xE770;" />
+                        <TextBlock x:Uid="ThemesDefault" />
+                    </StackPanel>
                         </ComboBoxItem>
                     </ComboBox>
                 </essential:SettingsCard>
@@ -286,11 +286,9 @@
                         <FontIcon Glyph="&#xE8A1;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
-                        x:Name="StartPageCombobox"
-                        Width="Auto"
-                        MinWidth="260"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="StartPageCombobox_SelectionChanged">
+                        SelectionChanged="StartPageCombobox_SelectionChanged" x:Name="StartPageCombobox" Width="Auto" MinWidth="260"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ComboBoxItem x:Uid="NavItem_Tasks" Tag="{essential:TypeName Type=ouxvp:TasksPage}" />
                         <ComboBoxItem x:Uid="NavItem_RSS" Tag="{essential:TypeName Type=ouxvp:RSSPage}" />
                         <ComboBoxItem x:Uid="NavItem_Settings" Tag="{essential:TypeName Type=local:MainSettingsPage}" />
@@ -306,11 +304,9 @@
                         <FontIcon Glyph="&#xF2B7;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
-                        x:Name="SoftLanguageCombobox"
-                        Width="Auto"
-                        MinWidth="260"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
+                        SelectionChanged="SoftLanguageCombobox_SelectionChanged" x:Name="SoftLanguageCombobox" Width="Auto" MinWidth="260"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -333,17 +329,15 @@
                         Value="1000" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard
-                    Description="Collect page lifetime and process memory diagnostics in a temporary log file."
-                    Header="Memory diagnostics">
+                <essential:SettingsCard Description="Collect page lifetime and process memory diagnostics in a temporary log file." Header="Memory diagnostics">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE9D9;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ToggleSwitch
-                        x:Name="MemoryDiagnosticsSwitch"
                         AutomationProperties.AutomationId="MemoryDiagnosticsSwitch"
                         IsOn="False"
-                        Toggled="MemoryDiagnosticsSwitch_Toggled" />
+                        Toggled="MemoryDiagnosticsSwitch_Toggled" x:Name="MemoryDiagnosticsSwitch"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -356,10 +350,10 @@
                     <StackPanel MinWidth="260" Spacing="8">
                         <ComboBox
                             x:Uid="ServerEndpointModeBox"
-                            MinWidth="240"
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
                             AutomationProperties.AutomationId="ServerEndpointModeBox"
-                            SelectedIndex="{x:Bind ViewModel.ServerEndpointModeIndex, Mode=TwoWay}">
+                            SelectedIndex="{x:Bind ViewModel.ServerEndpointModeIndex, Mode=TwoWay}" x:Name="GlassPresenter_20383" MinWidth="240"
+                            ouxct:ControlAppearance.IsEnabled="True">
                             <ComboBoxItem x:Uid="ServerEndpointAuto" Content="Automatic" />
                             <ComboBoxItem Content="IP" />
                             <ComboBoxItem Content="HTTP" />
@@ -386,7 +380,8 @@
                             x:Uid="ServerEndpointRefreshButton"
                             Command="{x:Bind ViewModel.RefreshServerEndpointsCommand}"
                             Content="Refresh endpoints"
-                            IsEnabled="{x:Bind ViewModel.CanRefreshServerEndpoints, Mode=OneWay}" />
+                            IsEnabled="{x:Bind ViewModel.CanRefreshServerEndpoints, Mode=OneWay}" x:Name="GlassPresenter_22209"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </StackPanel>
                 </essential:SettingsCard>
 
@@ -397,38 +392,20 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE7F4;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <essential:SwitchPresenter Value="{x:Bind MaterialStyleIndex, Mode=OneWay}">
-                        <essential:Case>
-                            <essential:Case.Value>
-                                <x:Int32>0</x:Int32>
-                            </essential:Case.Value>
-                            <ToggleSwitch x:Uid="DownloadCompletionNotificationsSwitch" IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
-                        </essential:Case>
-                        <essential:Case>
-                            <essential:Case.Value>
-                                <x:Int32>1</x:Int32>
-                            </essential:Case.Value>
-                            <liquid:LiquidGlassToggleSwitch x:Uid="DownloadCompletionNotificationsGlassSwitch" IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
-                        </essential:Case>
-                    </essential:SwitchPresenter>
+                    <ToggleSwitch x:Uid="DownloadCompletionNotificationsSwitch" IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" x:Name="MaterialNative_245"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <InfoBar
                     x:Name="RestartLanguageInfoBar"
+                    ActionButton="{x:Bind CreateRestartActionButton(ouxct:MaterialControlState.Current.ButtonMaterial), Mode=OneWay}"
                     x:Uid="RestartLanguageInfoBar"
                     Title="Restart OpenNet to apply language change"
                     Margin="0,4,0,0"
                     IsClosable="True"
                     IsOpen="False"
                     Severity="Warning">
-                    <InfoBar.ActionButton>
-                        <Button
-                            x:Uid="RestartToApplyLanguageButton"
-                            AutomationProperties.AutomationId="RestartToApplyLanguageButton"
-                            Click="RestartToApplyLanguage_Click"
-                            Content="Restart now"
-                            Style="{StaticResource AccentButtonStyle}" />
-                    </InfoBar.ActionButton>
+
                     <InfoBar.Transitions>
                         <TransitionCollection>
                             <EntranceThemeTransition FromVerticalOffset="50" />

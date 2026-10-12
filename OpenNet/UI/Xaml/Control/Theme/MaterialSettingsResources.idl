@@ -1,0 +1,8 @@
+namespace OpenNet.UI.Xaml.Control.Theme
+{
+    [default_interface]
+    runtimeclass MaterialSettingsResources : Microsoft.UI.Xaml.ResourceDictionary
+    {
+        MaterialSettingsResources();
+    }
+}

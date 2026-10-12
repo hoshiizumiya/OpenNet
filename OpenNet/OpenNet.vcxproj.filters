@@ -1569,4 +1569,24 @@
       <Filter>UI\Xaml\View\Pages</Filter>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassOptics.h" />
+    <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassProfile.h" />
+    <ClCompile Include="UI\Xaml\Control\Theme\LiquidGlassProfile.cpp" />
+    <Midl Include="UI\Xaml\Control\Theme\LiquidGlassProfile.idl" />
+    <ClInclude Include="UI\Xaml\View\Windows\LiquidGlassPreview.h" />
+    <ClInclude Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml.h" />
+    <ClCompile Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml.cpp" />
+    <Page Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.xaml" />
+    <Midl Include="UI\Xaml\View\Windows\LiquidGlassControlsWindow.idl" />
+    <ClInclude Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml.h" />
+    <ClCompile Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml.cpp" />
+    <Page Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.xaml" />
+    <Midl Include="UI\Xaml\View\Windows\LiquidGlassEffectsWindow.idl" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialControlBridge.h" />
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialControlBridge.cpp" />
+    <Page Include="UI\Xaml\Control\Theme\MaterialLibraryTemplates.xaml" />
+  </ItemGroup>
 </Project>

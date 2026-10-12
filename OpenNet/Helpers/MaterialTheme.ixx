@@ -44,21 +44,7 @@ export namespace OpenNet::Helpers
 					if (state)
 						state.StyleIndex(static_cast<std::int32_t>(style));
 				}
-				for (auto const& variant : dictionary.ThemeDictionaries())
-				{
-					auto const values = variant.Value().try_as<winrt::Microsoft::UI::Xaml::ResourceDictionary>();
-					if (!values)
-						continue;
-					for (auto const key : { L"OpenNetTitleCardBrush", L"OpenNetCardBrush", L"OpenNetSurfaceBrush", L"OpenNetGuideLiquidGlassBrush" })
-					{
-						auto const boxedKey = winrt::box_value(key);
-						if (!values.HasKey(boxedKey))
-							continue;
-						auto const brush = values.Lookup(boxedKey).try_as<winrt::WinUI::Composition::Hlsl::LiquidGlassBrush>();
-						if (brush)
-							brush.IsEnabled(style == MaterialStyle::LiquidGlass);
-					}
-				}
+
 			}
 		}
 

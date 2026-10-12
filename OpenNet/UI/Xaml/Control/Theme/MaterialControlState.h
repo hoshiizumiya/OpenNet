@@ -1,22 +1,189 @@
 #pragma once
-
 #include "UI/Xaml/Control/Theme/MaterialControlState.g.h"
 
 namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 {
     struct MaterialControlState : MaterialControlStateT<MaterialControlState>
     {
-        MaterialControlState() = default;
-
+        MaterialControlState();
+        static winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState Current();
+        static winrt::hstring FormatSettingValue(double value);
+        static bool IsTrue(winrt::Windows::Foundation::IReference<bool> const& value);
+        static winrt::Windows::Foundation::IInspectable BoxInt32(std::int32_t value);
         static winrt::Microsoft::UI::Xaml::DependencyProperty StyleIndexProperty();
         std::int32_t StyleIndex();
         void StyleIndex(std::int32_t value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ButtonEnabledProperty();
+        bool ButtonEnabled();
+        void ButtonEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ButtonMaterialProperty();
+        std::int32_t ButtonMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ToggleButtonEnabledProperty();
+        bool ToggleButtonEnabled();
+        void ToggleButtonEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ToggleButtonMaterialProperty();
+        std::int32_t ToggleButtonMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty HyperlinkButtonEnabledProperty();
+        bool HyperlinkButtonEnabled();
+        void HyperlinkButtonEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty HyperlinkButtonMaterialProperty();
+        std::int32_t HyperlinkButtonMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty CheckBoxEnabledProperty();
+        bool CheckBoxEnabled();
+        void CheckBoxEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty CheckBoxMaterialProperty();
+        std::int32_t CheckBoxMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty RadioButtonEnabledProperty();
+        bool RadioButtonEnabled();
+        void RadioButtonEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty RadioButtonMaterialProperty();
+        std::int32_t RadioButtonMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SliderEnabledProperty();
+        bool SliderEnabled();
+        void SliderEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SliderMaterialProperty();
+        std::int32_t SliderMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty TextBoxEnabledProperty();
+        bool TextBoxEnabled();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SearchBoxEnabledProperty();
+        bool SearchBoxEnabled();
+        void SearchBoxEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SearchBoxMaterialProperty();
+        std::int32_t SearchBoxMaterial();
+        void TextBoxEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty TextBoxMaterialProperty();
+        std::int32_t TextBoxMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty PasswordBoxEnabledProperty();
+        bool PasswordBoxEnabled();
+        void PasswordBoxEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty PasswordBoxMaterialProperty();
+        std::int32_t PasswordBoxMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ComboBoxEnabledProperty();
+        bool ComboBoxEnabled();
+        void ComboBoxEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ComboBoxMaterialProperty();
+        std::int32_t ComboBoxMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ToggleSwitchEnabledProperty();
+        bool ToggleSwitchEnabled();
+        void ToggleSwitchEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty ToggleSwitchMaterialProperty();
+        std::int32_t ToggleSwitchMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty CardEnabledProperty();
+        bool CardEnabled();
+        void CardEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty CardMaterialProperty();
+        std::int32_t CardMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty FloatingPanelEnabledProperty();
+        bool FloatingPanelEnabled();
+        void FloatingPanelEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty FloatingPanelMaterialProperty();
+        std::int32_t FloatingPanelMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty TabBarEnabledProperty();
+        bool TabBarEnabled();
+        void TabBarEnabled(bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty TabBarMaterialProperty();
+        std::int32_t TabBarMaterial();
+        static winrt::Microsoft::UI::Xaml::DependencyProperty StrengthProperty();
+        double Strength();
+        void Strength(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty BlurScaleProperty();
+        double BlurScale();
+        void BlurScale(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty RefractionScaleProperty();
+        double RefractionScale();
+        void RefractionScale(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty DispersionScaleProperty();
+        double DispersionScale();
+        void DispersionScale(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty HighlightScaleProperty();
+        double HighlightScale();
+        void HighlightScale(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty MagnificationScaleProperty();
+        double MagnificationScale();
+        void MagnificationScale(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty DispersionRangeProperty();
+        double DispersionRange();
+        void DispersionRange(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty RefFresnelRangeProperty();
+        double RefFresnelRange();
+        void RefFresnelRange(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty RefFresnelHardnessProperty();
+        double RefFresnelHardness();
+        void RefFresnelHardness(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty RefFresnelFactorProperty();
+        double RefFresnelFactor();
+        void RefFresnelFactor(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty GlareRangeProperty();
+        double GlareRange();
+        void GlareRange(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty GlareHardnessProperty();
+        double GlareHardness();
+        void GlareHardness(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty GlareFactorProperty();
+        double GlareFactor();
+        void GlareFactor(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty GlareConvergenceProperty();
+        double GlareConvergence();
+        void GlareConvergence(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty GlareOppositeFactorProperty();
+        double GlareOppositeFactor();
+        void GlareOppositeFactor(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty GlareAngleProperty();
+        double GlareAngle();
+        void GlareAngle(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty MagnificationProperty();
+        double Magnification();
+        void Magnification(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty BloomAmountProperty();
+        double BloomAmount();
+        void BloomAmount(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty BrightnessProperty();
+        double Brightness();
+        void Brightness(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty TemperatureProperty();
+        double Temperature();
+        void Temperature(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty VibranceProperty();
+        double Vibrance();
+        void Vibrance(double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SettingValueProperty();
+        static double GetSettingValue(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetSettingValue(winrt::Microsoft::UI::Xaml::DependencyObject const& target, double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SettingMinimumProperty();
+        static double GetSettingMinimum(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetSettingMinimum(winrt::Microsoft::UI::Xaml::DependencyObject const& target, double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SettingMaximumProperty();
+        static double GetSettingMaximum(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetSettingMaximum(winrt::Microsoft::UI::Xaml::DependencyObject const& target, double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SettingStepProperty();
+        static double GetSettingStep(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetSettingStep(winrt::Microsoft::UI::Xaml::DependencyObject const& target, double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SettingLargeStepProperty();
+        static double GetSettingLargeStep(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetSettingLargeStep(winrt::Microsoft::UI::Xaml::DependencyObject const& target, double value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty SettingIsOnProperty();
+        static bool GetSettingIsOn(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetSettingIsOn(winrt::Microsoft::UI::Xaml::DependencyObject const& target, bool value);
+        static winrt::Microsoft::UI::Xaml::DependencyProperty IsManagedProperty();
+        static bool GetIsManaged(winrt::Microsoft::UI::Xaml::DependencyObject const& target);
+        static void SetIsManaged(winrt::Microsoft::UI::Xaml::DependencyObject const& target, bool value);
+        static winrt::Microsoft::UI::Xaml::FrameworkElement CreateTextBoxPresenter(winrt::Microsoft::UI::Xaml::Controls::TextBox const& native);
+        static winrt::Microsoft::UI::Xaml::FrameworkElement CreateRadioButtonPresenter(winrt::Microsoft::UI::Xaml::Controls::RadioButton const& native);
+        static void RefreshBrushes();
+        static winrt::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase CreateActionButton(winrt::Microsoft::UI::Xaml::Input::ICommand const& command, winrt::Windows::Foundation::IInspectable const& content, std::int32_t material);
+
+    private:
+        static void SettingChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& sender, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+        static void ManagedChanged(winrt::Microsoft::UI::Xaml::DependencyObject const& sender, winrt::Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const& args);
+        static void ManagedLoaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        static void ManagedUnloaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void UpdateSelection();
+        void ApplyManagedControls();
+        void ApplyManagedControl(winrt::Microsoft::UI::Xaml::FrameworkElement const& element);
+        bool m_loading{ true };
     };
 }
-
 namespace winrt::OpenNet::UI::Xaml::Control::Theme::factory_implementation
 {
-    struct MaterialControlState : MaterialControlStateT<MaterialControlState, implementation::MaterialControlState>
-    {
-    };
+    struct MaterialControlState : MaterialControlStateT<MaterialControlState, implementation::MaterialControlState> {};
 }

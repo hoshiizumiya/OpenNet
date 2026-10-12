@@ -26,5 +26,6 @@ namespace OpenNet.UI.Xaml.View.Pages
         Microsoft.UI.Xaml.TextWrapping TextWrappingAddDateTextBlock;
 
         Microsoft.UI.Xaml.Controls.TabViewWidthMode TaskTabViewTabWidthMode;
+        Microsoft.UI.Xaml.Controls.AutoSuggestBox SearchBox;
     }
 }

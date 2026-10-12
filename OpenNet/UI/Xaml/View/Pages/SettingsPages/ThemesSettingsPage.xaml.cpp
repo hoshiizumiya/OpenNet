@@ -1,12 +1,15 @@
 ﻿#include <Shlwapi.h>
 
 #include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "ThemesSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.cpp"
 #endif
 
 #include "FontCustomizePage.xaml.h"
+#include "UI/Xaml/View/Windows/LiquidGlassControlsWindow.xaml.h"
+#include "UI/Xaml/View/Windows/LiquidGlassEffectsWindow.xaml.h"
 #include <include/ScopedButtonDisabler.hpp>
 #include "MainSettingsPage.xaml.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
@@ -39,8 +42,6 @@ namespace
 		if (!sender) return std::nullopt;
 		if (auto standard = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>())
 			return standard.IsOn();
-		if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>())
-			return glass.IsOn();
 		return std::nullopt;
 	}
 
@@ -49,8 +50,6 @@ namespace
 		if (!target) return;
 		if (auto standard = target.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>())
 			standard.IsOn(value);
-		if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>())
-			glass.IsOn(value);
 	}
 }
 
@@ -70,21 +69,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		return static_cast<std::int32_t>(::OpenNet::Helpers::MaterialTheme::Current());
 	}
 
-	void ThemesSettingsPage::MaterialStyleSelector_SelectionChanged(IInspectable const&, SelectionChangedEventArgs const&)
-	{
-		if (m_isInitializing) return;
-		auto const index = MaterialStyleSelector().SelectedIndex();
-		if (index >= 0 && index <= 1)
-		{
-			::OpenNet::Helpers::MaterialTheme::Set(static_cast<::OpenNet::Helpers::MaterialStyle>(index));
-			Bindings->Update();
-		}
-	}
+
+    void ThemesSettingsPage::OpenGlassControls(IInspectable const&, RoutedEventArgs const&)
+    {
+        if (auto current = m_glassControlsWindow.get()) { current.Activate(); return; }
+        auto window = make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::LiquidGlassControlsWindow>();
+        m_glassControlsWindow = make_weak(window.Window());
+        window.Activate();
+    }
+    void ThemesSettingsPage::OpenGlassEffects(IInspectable const&, RoutedEventArgs const&)
+    {
+        if (auto current = m_glassEffectsWindow.get()) { current.Activate(); return; }
+        auto window = make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::LiquidGlassEffectsWindow>();
+        m_glassEffectsWindow = make_weak(window.Window());
+        window.Activate();
+    }
 
 	void ThemesSettingsPage::LoadBackdropSettings()
 	{
 		m_isInitializing = true;
-		MaterialStyleSelector().SelectedIndex(static_cast<int>(::OpenNet::Helpers::MaterialTheme::Current()));
 
 		auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		auto const backgroundType = std::clamp(static_cast<int>(db.GetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", 1)), 0, 4);
@@ -103,25 +106,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		AcrylicTypeComboBox().SelectedIndex(acrylicType);
 		ImageStretchComboBox().SelectedIndex(mediaOptions.ImageStretch);
 		if (auto standard = ImageOpacitySlider()) standard.Value(mediaOptions.ImageOpacity);
-		if (auto glass = ImageOpacityGlassSlider()) glass.Value(mediaOptions.ImageOpacity);
 		SetMaterialSwitchValue(BackdropFallbackSwitch(), useFallback);
-		SetMaterialSwitchValue(BackdropFallbackGlassSwitch(), useFallback);
 		SetMaterialSwitchValue(ApplyBackgroundToSecondaryWindowsSwitch(), applyBackgroundToSecondaryWindows);
-		SetMaterialSwitchValue(ApplyBackgroundToSecondaryWindowsGlassSwitch(), applyBackgroundToSecondaryWindows);
 		const bool animatedDigits = db.GetBool(
 			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
 			kAnimatedDigitsKey).value_or(false);
 		if (auto standard = AnimatedDigitsSwitch()) standard.IsOn(animatedDigits);
-		if (auto glass = AnimatedDigitsGlassSwitch()) glass.IsOn(animatedDigits);
 		ImageModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.ImageMode));
 		VideoModeComboBox().SelectedIndex(static_cast<int>(mediaOptions.VideoMode));
 		VideoStretchComboBox().SelectedIndex(mediaOptions.VideoStretch);
 		if (auto standard = VideoOpacitySlider()) standard.Value(mediaOptions.VideoOpacity);
-		if (auto glass = VideoOpacityGlassSlider()) glass.Value(mediaOptions.VideoOpacity);
 		SetMaterialSwitchValue(VideoMutedSwitch(), mediaOptions.VideoMuted);
-		SetMaterialSwitchValue(VideoMutedGlassSwitch(), mediaOptions.VideoMuted);
 		SetMaterialSwitchValue(VideoLoopingSwitch(), mediaOptions.VideoLooping);
-		SetMaterialSwitchValue(VideoLoopingGlassSwitch(), mediaOptions.VideoLooping);
 		BackgroundRotationMinutesBox().Value(
 			static_cast<double>(mediaOptions.RotationMinutes));
 		ImagePathText().Text(mediaOptions.ImagePath);
@@ -143,7 +139,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		// BackdropFallbackSwitch enabled only for native Mica (index 1)
 		if (auto standard = BackdropFallbackSwitch()) standard.IsEnabled(backgroundType == 1);
-		if (auto glass = BackdropFallbackGlassSwitch()) glass.IsEnabled(backgroundType == 1);
 
 		// SoftBackground (Colors Style) enabled only for custom modes (index 2 or 4)
 		bool const isCustomMode = (backgroundType == 2 || backgroundType == 4);
@@ -182,19 +177,11 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		auto const videoPath = VideoPathText();
 		auto const imageStretch = ImageStretchComboBox();
 		auto const videoStretch = VideoStretchComboBox();
-		const bool glassMaterial = ::OpenNet::Helpers::MaterialTheme::Current() == ::OpenNet::Helpers::MaterialStyle::LiquidGlass;
-		winrt::Microsoft::UI::Xaml::Controls::Slider imageOpacity = glassMaterial
-			? ImageOpacityGlassSlider().try_as<winrt::Microsoft::UI::Xaml::Controls::Slider>()
-			: ImageOpacitySlider();
-		winrt::Microsoft::UI::Xaml::Controls::Slider videoOpacity = glassMaterial
-			? VideoOpacityGlassSlider().try_as<winrt::Microsoft::UI::Xaml::Controls::Slider>()
-			: VideoOpacitySlider();
-		auto const videoMuted = glassMaterial
-			? MaterialSwitchValue(VideoMutedGlassSwitch())
-			: MaterialSwitchValue(VideoMutedSwitch());
-		auto const videoLooping = glassMaterial
-			? MaterialSwitchValue(VideoLoopingGlassSwitch())
-			: MaterialSwitchValue(VideoLoopingSwitch());
+		// Values belong to the native control, independently of its material template.
+		auto const imageOpacity = ImageOpacitySlider();
+		auto const videoOpacity = VideoOpacitySlider();
+		auto const videoMuted = MaterialSwitchValue(VideoMutedSwitch());
+		auto const videoLooping = MaterialSwitchValue(VideoLoopingSwitch());
 		auto const rotationMinutes = BackgroundRotationMinutesBox();
 
 		if (!imageMode || !videoMode || !imagePath || !videoPath
@@ -240,6 +227,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (m_isInitializing) return;
 
 		auto const selectedIndex = static_cast<int>(BackgroundComboBox().SelectedIndex());
+		if (selectedIndex < 0 || selectedIndex >= static_cast<int>(BackgroundComboBox().Items().Size())) return;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "background_type", selectedIndex);
 
 		UpdateBackdropCardState();
@@ -251,6 +239,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (m_isInitializing) return;
 
 		auto const selectedIndex = static_cast<int>(MicaTypeComboBox().SelectedIndex());
+		if (selectedIndex < 0 || selectedIndex >= static_cast<int>(MicaTypeComboBox().Items().Size())) return;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "mica_type", selectedIndex);
 
 		ApplyBackdropFromSelection();
@@ -261,6 +250,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (m_isInitializing) return;
 
 		auto const selectedIndex = static_cast<int>(AcrylicTypeComboBox().SelectedIndex());
+		if (selectedIndex < 0 || selectedIndex >= static_cast<int>(AcrylicTypeComboBox().Items().Size())) return;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetInt(::OpenNet::Core::AppSettingsDatabase::CAT_UI, "acrylic_type", selectedIndex);
 
 		ApplyBackdropFromSelection();
@@ -273,7 +263,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_isInitializing = true;
 		SetMaterialSwitchValue(BackdropFallbackSwitch(), *enabled);
-		SetMaterialSwitchValue(BackdropFallbackGlassSwitch(), *enabled);
 		m_isInitializing = false;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(::OpenNet::Core::AppSettingsDatabase::CAT_UI, kBackdropUseFallbackKey, *enabled);
 		ApplyBackdropFromSelection();
@@ -296,7 +285,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_isInitializing = true;
 		SetMaterialSwitchValue(ApplyBackgroundToSecondaryWindowsSwitch(), *enabled);
-		SetMaterialSwitchValue(ApplyBackgroundToSecondaryWindowsGlassSwitch(), *enabled);
 		m_isInitializing = false;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(
 			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
@@ -323,7 +311,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_isInitializing = true;
 		SetMaterialSwitchValue(AnimatedDigitsSwitch(), *enabled);
-		SetMaterialSwitchValue(AnimatedDigitsGlassSwitch(), *enabled);
 		m_isInitializing = false;
 		::OpenNet::Core::AppSettingsDatabase::Instance().SetBool(
 			::OpenNet::Core::AppSettingsDatabase::CAT_UI,
@@ -434,7 +421,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_isInitializing = true;
 		SetMaterialSwitchValue(VideoMutedSwitch(), *enabled);
-		SetMaterialSwitchValue(VideoMutedGlassSwitch(), *enabled);
 		m_isInitializing = false;
 		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
@@ -455,7 +441,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_isInitializing = true;
 		SetMaterialSwitchValue(VideoLoopingSwitch(), *enabled);
-		SetMaterialSwitchValue(VideoLoopingGlassSwitch(), *enabled);
 		m_isInitializing = false;
 		PersistMediaOptions();
 		ApplyImageBackgroundFromSettings();
@@ -483,7 +468,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			m_isInitializing = true;
 			if (auto standard = VideoOpacitySlider()) standard.Value(slider.Value());
-			if (auto glass = VideoOpacityGlassSlider()) glass.Value(slider.Value());
 			m_isInitializing = false;
 		}
 		PersistMediaOptions();
@@ -508,7 +492,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			m_isInitializing = true;
 			if (auto standard = ImageOpacitySlider()) standard.Value(slider.Value());
-			if (auto glass = ImageOpacityGlassSlider()) glass.Value(slider.Value());
 			m_isInitializing = false;
 		}
 		PersistMediaOptions();
@@ -545,4 +528,33 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			nullptr,
 			transitionInfo);
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+    void ThemesSettingsPage::MaterialLoaded_258(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        ApplyBackgroundToSecondaryWindowsSwitch_Loaded(ApplyBackgroundToSecondaryWindowsSwitch(), args);
+    }
+    void ThemesSettingsPage::MaterialLoaded_261(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        BackdropFallbackSwitch_Loaded(BackdropFallbackSwitch(), args);
+    }
+    void ThemesSettingsPage::MaterialLoaded_262(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        AnimatedDigitsControl_Loaded(AnimatedDigitsSwitch(), args);
+    }
+    void ThemesSettingsPage::MaterialLoaded_267(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        VideoMutedSwitch_Loaded(VideoMutedSwitch(), args);
+    }
+    void ThemesSettingsPage::MaterialLoaded_268(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        VideoLoopingSwitch_Loaded(VideoLoopingSwitch(), args);
+    }
 }

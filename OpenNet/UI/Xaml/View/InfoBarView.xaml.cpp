@@ -12,11 +12,26 @@ using namespace winrt::Microsoft::UI::Xaml::Media;
 
 namespace winrt::OpenNet::UI::Xaml::View::implementation
 {
-	InfoBarView::InfoBarView()
+	namespace
+	{
+		void LogInitializationFailure(wchar_t const* phase, winrt::hresult_error const& error)
+		{
+			auto message = std::format(L"InfoBarView [{}] HRESULT=0x{:08X}: {}\r\n",
+				phase, static_cast<std::uint32_t>(error.code().value), error.message().c_str());
+			OutputDebugStringW(message.c_str());
+		}
+	}
+
+	InfoBarView::InfoBarView() try
 	{
 		auto& service = ::OpenNet::Service::Notification::InfoBarService::Instance();
 		service.AttachDispatcher(DispatcherQueue());
 		m_infoBars = service.InfoBars();
+	}
+	catch (winrt::hresult_error const& error)
+	{
+		LogInitializationFailure(L"constructor/notification service", error);
+		throw;
 	}
 
 	InfoBarView::~InfoBarView()
@@ -30,28 +45,45 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 
 	void InfoBarView::InitializeComponent()
 	{
-		InfoBarViewT::InitializeComponent();
-		UpdateBadge();
+		auto phase = L"LoadComponent: UI/Xaml/View/InfoBarView.xaml";
+		try
+		{
+			InfoBarViewT::InitializeComponent();
+			phase = L"badge initialization";
+			UpdateBadge();
 
-		auto weak = get_weak();
-		SubscribeInfoBars();
-		SynchronizeState();
-		Loaded([weak](auto const&, auto const&)
-		{
-			if (auto self = weak.get())
+			auto weak = get_weak();
+			phase = L"local lifetime handlers";
+			Loaded([weak](auto const&, auto const&)
 			{
-				self->SubscribeInfoBars();
-				self->UpdateBadge();
-				self->SynchronizeState();
-			}
-		});
-		Unloaded([weak](auto const&, auto const&)
-		{
-			if (auto self = weak.get())
+				if (auto self = weak.get())
+				{
+					self->DispatcherQueue().TryEnqueue([weak]
+					{
+						if (auto ready = weak.get(); ready && ready->IsLoaded())
+						{
+							ready->SubscribeInfoBars();
+							ready->UpdateBadge();
+							ready->SynchronizeState();
+						}
+					});
+				}
+			});
+			Unloaded([weak](auto const&, auto const&)
 			{
-				self->UnsubscribeInfoBars();
-			}
-		});
+				if (auto self = weak.get())
+				{
+					self->UnsubscribeInfoBars();
+					++self->m_transitionVersion;
+				}
+			});
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			// Log before parent XAML loading replaces this with "Cannot create instance".
+			LogInitializationFailure(phase, error);
+			throw;
+		}
 	}
 
 	void InfoBarView::SubscribeInfoBars()
@@ -127,14 +159,12 @@ namespace winrt::OpenNet::UI::Xaml::View::implementation
 
 	void InfoBarView::SynchronizeState()
 	{
-		if (m_infoBars.Size() == 0)
-		{
-			++m_transitionVersion;
-			VisibilityRoot().Visibility(Visibility::Collapsed);
-			return;
-		}
-		auto const version = ++m_transitionVersion;
-		HandleInfoBarsCollectionChangedAsync(true, version);
+		// Initial attachment has no guaranteed measured source for an animation.
+		++m_transitionVersion;
+		auto const hasItems = m_infoBars.Size() != 0;
+		VisibilityRoot().Visibility(hasItems ? Visibility::Visible : Visibility::Collapsed);
+		ShowButtonBorder().Visibility(hasItems ? Visibility::Collapsed : Visibility::Visible);
+		InfoBarItemsBorder().Visibility(hasItems ? Visibility::Visible : Visibility::Collapsed);
 	}
 
 	winrt::fire_and_forget InfoBarView::HandleInfoBarsCollectionChangedAsync(bool added, std::uint64_t const version)

@@ -17,13 +17,17 @@
         BasedOn="{StaticResource SubtleButtonStyle}"
         TargetType="Button">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
-        <!-- Use the complete measured slot on the finite-width pass. The label
-             stays left aligned inside the sort Grid; shrinking that Grid to
-             its fractional DesiredSize can trim text at the width boundary. -->
+        <!--
+            Use the complete measured slot on the finite-width pass. The label
+            stays left aligned inside the sort Grid; shrinking that Grid to
+            its fractional DesiredSize can trim text at the width boundary.
+        -->
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="MinHeight" Value="0" />
         <Setter Property="MinWidth" Value="0" />
         <Setter Property="Padding" Value="0" />
         <Setter Property="VerticalAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
     </Style>
 
 </ResourceDictionary>

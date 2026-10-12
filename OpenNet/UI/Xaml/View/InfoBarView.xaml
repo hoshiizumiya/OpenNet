@@ -6,10 +6,14 @@
     xmlns:behavior="using:OpenNet.UI.Xaml.Behavior"
     xmlns:control="using:OpenNet.UI.Xaml.Control"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:interactivity="using:XamlToolkit.WinUI.Interactivity"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
+    xmlns:materialconversion="using:XamlToolkit.WinUI.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:notification="using:OpenNet.Service.Notification"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <UserControl.Resources>
@@ -41,10 +45,9 @@
                     Content="{x:Bind Content}"
                     IsOpen="True"
                     Message="{x:Bind Message}"
+                    ActionButton="{x:Bind ouxct:MaterialControlState.CreateActionButton(ActionButtonCommand, ActionButtonContent, ouxct:MaterialControlState.Current.ButtonMaterial), Mode=OneWay}"
                     Severity="{x:Bind Severity}">
-                    <InfoBar.ActionButton>
-                        <Button Command="{x:Bind ActionButtonCommand}" Content="{x:Bind ActionButtonContent}" />
-                    </InfoBar.ActionButton>
+
                     <interactivity:Interaction.Behaviors>
                         <behavior:InfoBarDelayCloseBehavior MilliSecondsDelay="{x:Bind MilliSecondsDelay}" />
                     </interactivity:Interaction.Behaviors>
@@ -82,7 +85,8 @@
             <Button
                 x:Uid="InfoBarShowButton"
                 AutomationProperties.AutomationId="InfoBarShowButton"
-                Style="{StaticResource SubtleButtonStyle}">
+                Style="{StaticResource SubtleButtonStyle}"
+                x:Name="GlassPresenter_4774">
                 <interactivity:Interaction.Behaviors>
                     <interactivity:EventTriggerBehavior EventName="Click">
                         <labs:StartTransitionAction
@@ -168,14 +172,16 @@
                             AutomationProperties.AutomationId="InfoBarClearAllButton"
                             Click="OnClearAllButtonClick"
                             Style="{StaticResource SubtleButtonStyle}"
-                            ToolTipService.ToolTip="Clear all">
+                            ToolTipService.ToolTip="Clear all"
+                            x:Name="GlassPresenter_7827">
                             <FontIcon FontSize="14" Glyph="&#xE74D;" />
                         </Button>
                         <Button
                             x:Uid="InfoBarCollapseButton"
                             AutomationProperties.AutomationId="InfoBarCollapseButton"
                             Style="{StaticResource SubtleButtonStyle}"
-                            ToolTipService.ToolTip="Collapse">
+                            ToolTipService.ToolTip="Collapse"
+                            x:Name="GlassPresenter_8302">
                             <interactivity:Interaction.Behaviors>
                                 <interactivity:EventTriggerBehavior EventName="Click">
                                     <labs:StartTransitionAction

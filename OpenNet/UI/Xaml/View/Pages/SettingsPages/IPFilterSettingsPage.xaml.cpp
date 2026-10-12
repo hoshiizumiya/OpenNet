@@ -1,6 +1,7 @@
 #include <time.h>
 
 #include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "IPFilterSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp"
@@ -44,14 +45,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
-			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
 			return std::nullopt;
 		}
 		void SetToggleIsOn(IInspectable const& target, bool value)
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
-			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 
 		winrt::hstring FormatTimestamp(std::int64_t timestamp)
@@ -361,7 +360,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 		m_loading = true;
 		SetToggleIsOn(EnableFilterToggle(), enabled);
-		SetToggleIsOn(EnableFilterGlassToggle(), enabled);
 		m_allRules = std::move(rules);
 		RebuildRuleItems();
 		LoadSubscriptionState();
@@ -425,7 +423,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		m_loading = true;
 		m_subscriptions = manager.GetSubscriptions();
 		SetToggleIsOn(SubscriptionAutoUpdateToggle(), manager.SubscriptionAutoUpdateEnabled());
-		SetToggleIsOn(SubscriptionAutoUpdateGlassToggle(), manager.SubscriptionAutoUpdateEnabled());
 		auto const replace = manager.SubscriptionReplaceExisting();
 		SubscriptionMergeRadio().IsChecked(!replace);
 		SubscriptionReplaceRadio().IsChecked(replace);
@@ -506,7 +503,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_loading = true;
 		SetToggleIsOn(SubscriptionAutoUpdateToggle(), *enabled);
-		SetToggleIsOn(SubscriptionAutoUpdateGlassToggle(), *enabled);
 		m_loading = false;
 		::OpenNet::Core::IPFilterManager::Instance().
 			SubscriptionAutoUpdateEnabled(*enabled);
@@ -673,7 +669,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		if (!enabled) return;
 		m_loading = true;
 		SetToggleIsOn(EnableFilterToggle(), *enabled);
-		SetToggleIsOn(EnableFilterGlassToggle(), *enabled);
 		m_loading = false;
 
 		auto& mgr = ::OpenNet::Core::IPFilterManager::Instance();
@@ -932,4 +927,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		RefreshRules();
 		ShowStatus(ResourceGetString(L"IPF_AllRulesCleared"), InfoBarSeverity::Informational);
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+    void IPFilterSettingsPage::MaterialLoaded_216(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        EnableFilterToggle_Loaded(EnableFilterToggle(), args);
+    }
+    void IPFilterSettingsPage::MaterialLoaded_224(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        SubscriptionAutoUpdateToggle_Loaded(SubscriptionAutoUpdateToggle(), args);
+    }
 }

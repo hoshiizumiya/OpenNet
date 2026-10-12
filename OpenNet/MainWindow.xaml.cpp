@@ -26,6 +26,7 @@ import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Media;
 import winrt.Microsoft.UI.Xaml.Media.Imaging;
 import winrt.OpenNet.UI.Xaml.View.Pages;
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 
 using namespace winrt;
 using namespace winrt::Windows::Foundation;
@@ -167,7 +168,7 @@ namespace winrt::OpenNet::implementation
 			ContentDialog dialog;
 			dialog.XamlRoot(tasksPage.XamlRoot());
 			dialog.Title(box_value(ResourceGetString(L"MainWindowHttpFtpBatchDownloadTitle")));
-			dialog.Content(urls);
+			dialog.Content(winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::CreateTextBoxPresenter(urls));
 			dialog.PrimaryButtonText(ResourceGetString(L"CommonAdd"));
 			dialog.CloseButtonText(ResourceGetString(L"CommonCancel"));
 			dialog.DefaultButton(ContentDialogButton::Primary);

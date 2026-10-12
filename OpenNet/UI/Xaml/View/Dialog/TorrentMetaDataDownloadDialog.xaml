@@ -4,8 +4,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Name="ViewDialogTorrentMetaDataDownloadDialog"
     x:Uid="ViewDialogTorrentMetaDataDownloadDialog"
     DefaultButton="Primary"
@@ -18,24 +21,22 @@
         Padding="16"
         Spacing="8">
         <TextBox
-            x:Name="MagnetBox"
             x:Uid="ViewTorrentMetaDataDownloadDialogMagnetBox"
-            MinWidth="480"
-            MinHeight="300"
             AcceptsReturn="False"
             PlaceholderText="magnet:?xt=..."
             ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextWrapping="Wrap" />
+            TextWrapping="Wrap" x:Name="MagnetBox" MinWidth="480" MinHeight="300"
+            ouxct:ControlAppearance.IsEnabled="True" />
         <Button
-            x:Name="PasteTextFromTheClipboard"
             x:Uid="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
             AutomationProperties.AutomationId="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
             AutomationProperties.Name="PasteTextFromTheClipboard"
-            Click="PasteTextFromTheClipboard_Click">
+            Click="PasteTextFromTheClipboard_Click" x:Name="PasteTextFromTheClipboard"
+            ouxct:ControlAppearance.IsEnabled="True">
             <Button.Content>
-                <StackPanel Orientation="Horizontal" Spacing="4">
-                    <FontIcon Glyph="&#xE16F;" />
-                </StackPanel>
+        <StackPanel Orientation="Horizontal" Spacing="4">
+            <FontIcon Glyph="&#xE16F;" />
+        </StackPanel>
             </Button.Content>
         </Button>
         <InfoBar

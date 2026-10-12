@@ -5,9 +5,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -34,17 +35,16 @@
                 </essential:SettingsCard.HeaderIcon>
                 <StackPanel Orientation="Horizontal" Spacing="8">
                     <TextBox
-                        x:Name="DefaultSavePathTextBox"
                         x:Uid="DL_DefaultSavePathTextBox"
-                        Width="360"
                         AutomationProperties.AutomationId="DL_DefaultSavePathTextBox"
-                        LostFocus="OnSettingChanged" />
+                        LostFocus="OnSettingChanged" x:Name="DefaultSavePathTextBox" Width="360"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <Button
-                        x:Name="BrowseSavePathButton"
                         x:Uid="DL_BrowseSavePath"
                         AutomationProperties.AutomationId="DL_BrowseSavePath"
                         Click="BrowseSavePathButton_Click"
-                        Content="Browse..." />
+                        Content="Browse..." x:Name="BrowseSavePathButton"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </StackPanel>
             </essential:SettingsCard>
 
@@ -52,10 +52,10 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xEDA2;" />
                 </essential:SettingsCard.HeaderIcon>
-                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                    <essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value><ToggleSwitch x:Name="PreallocateStorageToggle" Loaded="MaterialToggle_Loaded" Toggled="OnSettingChanged" /></essential:Case>
-                    <essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value><liquid:LiquidGlassToggleSwitch x:Name="PreallocateStorageGlassToggle" Loaded="MaterialToggle_Loaded" Click="OnSettingChanged" /></essential:Case>
-                </essential:SwitchPresenter>
+                <ToggleSwitch
+                    Loaded="MaterialToggle_Loaded"
+                    Toggled="OnSettingChanged" x:Name="PreallocateStorageToggle"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </essential:SettingsCard>
 
             <!--  Section: Behaviour  -->
@@ -65,45 +65,33 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE768;" />
                 </essential:SettingsCard.HeaderIcon>
-                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                    <essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value><ToggleSwitch x:Name="AutoStartDownloadsToggle" Loaded="MaterialToggle_Loaded" Toggled="OnSettingChanged" /></essential:Case>
-                    <essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value><liquid:LiquidGlassToggleSwitch x:Name="AutoStartDownloadsGlassToggle" Loaded="MaterialToggle_Loaded" Click="OnSettingChanged" /></essential:Case>
-                </essential:SwitchPresenter>
+                <ToggleSwitch
+                    Loaded="MaterialToggle_Loaded"
+                    Toggled="OnSettingChanged" x:Name="AutoStartDownloadsToggle"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </essential:SettingsCard>
 
-			<essential:SettingsCard x:Uid="DL_RecheckBeforeResume">
-				<essential:SettingsCard.HeaderIcon>
-					<FontIcon Glyph="&#xE9D5;" />
-				</essential:SettingsCard.HeaderIcon>
-				<essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-					<essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value><ToggleSwitch x:Name="RecheckBeforeResumeToggle" Loaded="MaterialToggle_Loaded" Toggled="OnSettingChanged" /></essential:Case>
-					<essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value><liquid:LiquidGlassToggleSwitch x:Name="RecheckBeforeResumeGlassToggle" Loaded="MaterialToggle_Loaded" Click="OnSettingChanged" /></essential:Case>
-				</essential:SwitchPresenter>
-			</essential:SettingsCard>
+            <essential:SettingsCard x:Uid="DL_RecheckBeforeResume">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE9D5;" />
+                </essential:SettingsCard.HeaderIcon>
+                <ToggleSwitch
+                    Loaded="MaterialToggle_Loaded"
+                    Toggled="OnSettingChanged" x:Name="RecheckBeforeResumeToggle"
+                    ouxct:ControlAppearance.IsEnabled="True" />
+            </essential:SettingsCard>
 
             <essential:SettingsCard
                 x:Uid="DL_HttpP2PPreferred"
-                Header="Prefer P2P acceleration for HTTP downloads"
-                Description="New HTTP tasks try the verified libtorrent HTTP/P2P path first and fall back to aria2 when canonical metadata is unavailable.">
+                Description="New HTTP tasks try the verified libtorrent HTTP/P2P path first and fall back to aria2 when canonical metadata is unavailable."
+                Header="Prefer P2P acceleration for HTTP downloads">
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE968;" />
                 </essential:SettingsCard.HeaderIcon>
-                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                    <essential:Case>
-                        <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                        <ToggleSwitch
-                            x:Name="HttpP2PPreferredToggle"
-                            Loaded="MaterialToggle_Loaded"
-                            Toggled="OnSettingChanged" />
-                    </essential:Case>
-                    <essential:Case>
-                        <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                        <liquid:LiquidGlassToggleSwitch
-                            x:Name="HttpP2PPreferredGlassToggle"
-                            Loaded="MaterialToggle_Loaded"
-                            Click="OnSettingChanged" />
-                    </essential:Case>
-                </essential:SwitchPresenter>
+                <ToggleSwitch
+                    Loaded="MaterialToggle_Loaded"
+                    Toggled="OnSettingChanged" x:Name="HttpP2PPreferredToggle"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -126,25 +114,24 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE8DE;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                    <essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value><ToggleSwitch x:Name="MoveCompletedToggle" Loaded="MaterialToggle_Loaded" Toggled="OnSettingChanged" /></essential:Case>
-                    <essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value><liquid:LiquidGlassToggleSwitch x:Name="MoveCompletedGlassToggle" Loaded="MaterialToggle_Loaded" Click="OnSettingChanged" /></essential:Case>
-                </essential:SwitchPresenter>
+                <ToggleSwitch
+                    Loaded="MaterialToggle_Loaded"
+                    Toggled="OnSettingChanged" x:Name="MoveCompletedToggle"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="DL_MoveCompletedPath">
                         <StackPanel Orientation="Horizontal" Spacing="8">
                             <TextBox
-                                x:Name="MoveCompletedPathTextBox"
                                 x:Uid="DL_MoveCompletedPathTextBox"
-                                Width="360"
                                 AutomationProperties.AutomationId="DL_MoveCompletedPathTextBox"
-                                LostFocus="OnSettingChanged" />
+                                LostFocus="OnSettingChanged" x:Name="MoveCompletedPathTextBox" Width="360"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                             <Button
-                                x:Name="BrowseMovePathButton"
                                 x:Uid="DL_BrowseMovePath"
                                 AutomationProperties.AutomationId="DL_BrowseMovePath"
                                 Click="BrowseMovePathButton_Click"
-                                Content="Browse..." />
+                                Content="Browse..." x:Name="BrowseMovePathButton"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </StackPanel>
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>

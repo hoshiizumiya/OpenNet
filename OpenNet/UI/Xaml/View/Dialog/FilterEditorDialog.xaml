@@ -5,8 +5,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Name="RootDialog"
     DefaultButton="Primary"
     Style="{StaticResource DefaultContentDialogStyle}"
@@ -17,39 +18,32 @@
             Spacing="8"
             Visibility="Collapsed">
             <TextBlock x:Uid="CF_EditPatternLabel" />
-            <TextBox x:Name="PatternTextBox" MinWidth="460" />
+            <TextBox x:Name="PatternTextBox" MinWidth="460"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBlock x:Uid="CF_EditMatchTypeLabel" />
-            <ComboBox
-                x:Name="MatchTypeComboBox"
-                HorizontalAlignment="Stretch"
-                essential:ComboBoxHelper.AcrylicWorkaround="True">
+            <ComboBox x:Name="MatchTypeComboBox" essential:ComboBoxHelper.AcrylicWorkaround="True"
+                ouxct:ControlAppearance.IsEnabled="True"
+                HorizontalAlignment="Stretch">
                 <ComboBoxItem x:Uid="CF_EditMatchContains" />
                 <ComboBoxItem x:Uid="CF_EditMatchExact" />
                 <ComboBoxItem x:Uid="CF_EditMatchWildcard" />
                 <ComboBoxItem x:Uid="CF_EditMatchRegex" />
             </ComboBox>
-            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                <essential:Case>
-                    <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                    <ToggleSwitch x:Name="CaseSensitiveToggle" x:Uid="CF_EditCaseSensitive" Loaded="CaseSensitiveToggle_Loaded" Toggled="CaseSensitiveToggle_Changed" />
-                </essential:Case>
-                <essential:Case>
-                    <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                    <liquid:LiquidGlassToggleSwitch x:Name="CaseSensitiveGlassToggle" x:Uid="CF_EditCaseSensitive" Loaded="CaseSensitiveToggle_Loaded" Click="CaseSensitiveToggle_Changed" />
-                </essential:Case>
-            </essential:SwitchPresenter>
-            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                <essential:Case>
-                    <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                    <ToggleSwitch x:Name="EnabledToggle" x:Uid="CF_EditEnabled" Loaded="EnabledToggle_Loaded" Toggled="EnabledToggle_Changed" />
-                </essential:Case>
-                <essential:Case>
-                    <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                    <liquid:LiquidGlassToggleSwitch x:Name="EnabledGlassToggle" x:Uid="CF_EditEnabled" Loaded="EnabledToggle_Loaded" Click="EnabledToggle_Changed" />
-                </essential:Case>
-            </essential:SwitchPresenter>
+            <ToggleSwitch
+                x:Name="CaseSensitiveToggle"
+                x:Uid="CF_EditCaseSensitive"
+                Loaded="CaseSensitiveToggle_Loaded"
+                Toggled="CaseSensitiveToggle_Changed"
+                ouxct:ControlAppearance.IsEnabled="True" />
+            <ToggleSwitch
+                x:Name="EnabledToggle"
+                x:Uid="CF_EditEnabled"
+                Loaded="EnabledToggle_Loaded"
+                Toggled="EnabledToggle_Changed"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBlock x:Uid="CF_EditDescriptionLabel" />
-            <TextBox x:Name="DescriptionTextBox" />
+            <TextBox x:Name="DescriptionTextBox"
+                ouxct:ControlAppearance.IsEnabled="True" />
         </StackPanel>
 
         <StackPanel
@@ -57,15 +51,18 @@
             Spacing="8"
             Visibility="Collapsed">
             <TextBlock x:Name="ImportHintText" TextWrapping="Wrap" />
-            <CheckBox x:Name="ReplaceExistingCheckBox" x:Uid="CF_ReplaceExisting" />
+            <CheckBox x:Name="ReplaceExistingCheckBox" x:Uid="CF_ReplaceExisting"
+                ouxct:ControlAppearance.IsEnabled="True" />
         </StackPanel>
 
         <StackPanel
             x:Name="SubscriptionPanel"
             Spacing="10"
             Visibility="Collapsed">
-            <TextBox x:Name="SubscriptionUrlTextBox" MinWidth="480" />
-            <CheckBox x:Name="SubscriptionEnabledCheckBox" x:Uid="IPF_EditSubscriptionEnabled" />
+            <TextBox x:Name="SubscriptionUrlTextBox" MinWidth="480"
+                ouxct:ControlAppearance.IsEnabled="True" />
+            <CheckBox x:Name="SubscriptionEnabledCheckBox" x:Uid="IPF_EditSubscriptionEnabled"
+                ouxct:ControlAppearance.IsEnabled="True" />
         </StackPanel>
 
         <StackPanel
@@ -73,9 +70,11 @@
             Spacing="8"
             Visibility="Collapsed">
             <TextBlock x:Uid="IPF_EditRuleEntryLabel" />
-            <TextBox x:Name="RuleEntryTextBox" MinWidth="460" />
+            <TextBox x:Name="RuleEntryTextBox" MinWidth="460"
+                ouxct:ControlAppearance.IsEnabled="True" />
             <TextBlock x:Uid="IPF_EditRuleDescriptionLabel" />
-            <TextBox x:Name="RuleDescriptionTextBox" />
+            <TextBox x:Name="RuleDescriptionTextBox"
+                ouxct:ControlAppearance.IsEnabled="True" />
         </StackPanel>
     </Grid>
 </ContentDialog>

@@ -6883,7 +6883,6 @@ Availability: {}</value>
   <data name="NatTcpMappingFirewallRemoved" xml:space="preserve">
     <value>OpenNet TCP firewall rule removed.</value>
   </data>
-
   <data name="SettingsBreadcrumbRoot" xml:space="preserve">
     <value>Settings</value>
   </data>
@@ -7051,5 +7050,320 @@ Availability: {}</value>
   </data>
   <data name="NetworkSettingsPortCheckInterval.Description" xml:space="preserve">
     <value>Automatically check port accessibility at this interval. Default: 5 minutes; minimum: 1 minute.</value>
+  </data>
+  <data name="LiquidGlassOptions.Header" xml:space="preserve">
+    <value>Liquid glass controls and effects</value>
+  </data>
+  <data name="LiquidGlassOptions.Description" xml:space="preserve">
+    <value>Choose which controls use glass. Changes apply immediately; optical multipliers preserve each control's preset.</value>
+  </data>
+  <data name="LiquidGlassButton.Header" xml:space="preserve">
+    <value>Buttons</value>
+  </data>
+  <data name="LiquidGlassToggleButton.Header" xml:space="preserve">
+    <value>Toggle buttons</value>
+  </data>
+  <data name="LiquidGlassHyperlinkButton.Header" xml:space="preserve">
+    <value>Hyperlinks</value>
+  </data>
+  <data name="LiquidGlassCheckBox.Header" xml:space="preserve">
+    <value>Check boxes</value>
+  </data>
+  <data name="LiquidGlassRadioButton.Header" xml:space="preserve">
+    <value>Radio buttons</value>
+  </data>
+  <data name="LiquidGlassSlider.Header" xml:space="preserve">
+    <value>Sliders</value>
+  </data>
+  <data name="LiquidGlassTextBox.Header" xml:space="preserve">
+    <value>Text inputs</value>
+  </data>
+  <data name="LiquidGlassPasswordBox.Header" xml:space="preserve">
+    <value>Password inputs</value>
+  </data>
+  <data name="LiquidGlassComboBox.Header" xml:space="preserve">
+    <value>Combo boxes</value>
+  </data>
+  <data name="LiquidGlassToggleSwitch.Header" xml:space="preserve">
+    <value>Switches</value>
+  </data>
+  <data name="LiquidGlassCard.Header" xml:space="preserve">
+    <value>Cards and surfaces</value>
+  </data>
+  <data name="LiquidGlassStrength.Header" xml:space="preserve">
+    <value>Overall strength (0–2×)</value>
+  </data>
+  <data name="LiquidGlassBlurScale.Header" xml:space="preserve">
+    <value>Blur (0–2×)</value>
+  </data>
+  <data name="LiquidGlassRefractionScale.Header" xml:space="preserve">
+    <value>Refraction (0–2×)</value>
+  </data>
+  <data name="LiquidGlassDispersionScale.Header" xml:space="preserve">
+    <value>Dispersion (0–2×)</value>
+  </data>
+  <data name="LiquidGlassHighlightScale.Header" xml:space="preserve">
+    <value>Highlights (0–2×)</value>
+  </data>
+  <data name="LiquidGlassMagnificationScale.Header" xml:space="preserve">
+    <value>Magnification (0–2×)</value>
+  </data>
+  <data name="LiquidGlassSearchBox.Header" xml:space="preserve">
+    <value>Search inputs</value>
+  </data>
+  <data name="LiquidGlassDispersionRange.Header" xml:space="preserve">
+    <value>Dispersion range</value>
+  </data>
+  <data name="LiquidGlassRefFresnelRange.Header" xml:space="preserve">
+    <value>Fresnel range (DIP)</value>
+  </data>
+  <data name="LiquidGlassRefFresnelHardness.Header" xml:space="preserve">
+    <value>Fresnel hardness</value>
+  </data>
+  <data name="LiquidGlassRefFresnelFactor.Header" xml:space="preserve">
+    <value>Fresnel intensity</value>
+  </data>
+  <data name="LiquidGlassGlareRange.Header" xml:space="preserve">
+    <value>Glare range (DIP)</value>
+  </data>
+  <data name="LiquidGlassGlareHardness.Header" xml:space="preserve">
+    <value>Glare hardness</value>
+  </data>
+  <data name="LiquidGlassGlareFactor.Header" xml:space="preserve">
+    <value>Glare intensity</value>
+  </data>
+  <data name="LiquidGlassGlareConvergence.Header" xml:space="preserve">
+    <value>Glare convergence</value>
+  </data>
+  <data name="LiquidGlassGlareOppositeFactor.Header" xml:space="preserve">
+    <value>Opposite glare factor</value>
+  </data>
+  <data name="LiquidGlassGlareAngle.Header" xml:space="preserve">
+    <value>Glare angle (degrees)</value>
+  </data>
+  <data name="LiquidGlassMagnification.Header" xml:space="preserve">
+    <value>Uniform backdrop zoom</value>
+  </data>
+  <data name="LiquidGlassBloomAmount.Header" xml:space="preserve">
+    <value>Blur blend amount</value>
+  </data>
+  <data name="LiquidGlassBrightness.Header" xml:space="preserve">
+    <value>Brightness</value>
+  </data>
+  <data name="LiquidGlassTemperature.Header" xml:space="preserve">
+    <value>Temperature</value>
+  </data>
+  <data name="LiquidGlassVibrance.Header" xml:space="preserve">
+    <value>Vibrance</value>
+  </data>
+  <data name="FontCustomizeTitle.Text" xml:space="preserve">
+    <value>Text size</value>
+  </data>
+  <data name="FontCustomizeDescription.Text" xml:space="preserve">
+    <value>Adjust application text size. Changes apply immediately and preserve Windows accessibility text scaling.</value>
+  </data>
+  <data name="FontCustomizeScale.Header" xml:space="preserve">
+    <value>Text size</value>
+  </data>
+  <data name="FontCustomizeScale.Description" xml:space="preserve">
+    <value>80%–200%; default 100%</value>
+  </data>
+  <data name="FontCustomizePreview.Header" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="FontCustomizePreviewHeading.Text" xml:space="preserve">
+    <value>OpenNet — readable at every size</value>
+  </data>
+  <data name="FontCustomizePreviewBody.Text" xml:space="preserve">
+    <value>Download tasks, network details, and settings follow the same text-size preference.</value>
+  </data>
+  <data name="FontCustomizePreviewCaption.Text" xml:space="preserve">
+    <value>Caption and secondary information</value>
+  </data>
+  <data name="FontCustomizeReset.Content" xml:space="preserve">
+    <value>Reset to 100%</value>
+  </data>
+  <data name="GuideMaterialPreviewTitle.Text" xml:space="preserve">
+    <value>Material preview</value>
+  </data>
+  <data name="LiquidGlassControlsWindowTitle.Title" xml:space="preserve">
+    <value>Liquid glass controls</value>
+  </data>
+  <data name="LiquidGlassEffectsWindowTitle.Title" xml:space="preserve">
+    <value>Liquid glass effects</value>
+  </data>
+  <data name="GlassControlsIntro.Text" xml:space="preserve">
+    <value>Choose which controls use glass. Changes are saved and applied to open windows immediately.</value>
+  </data>
+  <data name="GlassEffectsIntro.Text" xml:space="preserve">
+    <value>Each control type has its own optics. Changes apply immediately and are saved automatically.</value>
+  </data>
+  <data name="GlassResetSwitches.Content" xml:space="preserve">
+    <value>Reset switches</value>
+  </data>
+  <data name="GlassResetType.Content" xml:space="preserve">
+    <value>Restore this type's defaults</value>
+  </data>
+  <data name="GlassResetParameter.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="GlassPreviewHeading.Text" xml:space="preserve">
+    <value>Interactive preview</value>
+  </data>
+  <data name="GlassControlsPreviewHint.Text" xml:space="preserve">
+    <value>Select a type to preview it. This preview follows the global material and that type's switch.</value>
+  </data>
+  <data name="GlassEffectsPreviewHint.Text" xml:space="preserve">
+    <value>The preview always shows glass, even if this type is disabled in the application. Try hover, press, focus, typing and dragging.</value>
+  </data>
+  <data name="GlassPresetHint.Text" xml:space="preserve">
+    <value>Defaults and interaction visuals come from the actual library controls. Resetting a type does not change other types or enable switches.</value>
+  </data>
+  <data name="GlassControlsNavigation.Header" xml:space="preserve">
+    <value>Liquid glass controls</value>
+  </data>
+  <data name="GlassControlsNavigation.Description" xml:space="preserve">
+    <value>Choose the material and enabled control types, with interactive previews.</value>
+  </data>
+  <data name="GlassEffectsNavigation.Header" xml:space="preserve">
+    <value>Liquid glass effects</value>
+  </data>
+  <data name="GlassEffectsNavigation.Description" xml:space="preserve">
+    <value>Customize and restore each control type's optics independently.</value>
+  </data>
+  <data name="GlassKind_Button" xml:space="preserve">
+    <value>Buttons</value>
+  </data>
+  <data name="GlassKind_ToggleButton" xml:space="preserve">
+    <value>Toggle buttons</value>
+  </data>
+  <data name="GlassKind_HyperlinkButton" xml:space="preserve">
+    <value>Hyperlinks</value>
+  </data>
+  <data name="GlassKind_CheckBox" xml:space="preserve">
+    <value>Check boxes</value>
+  </data>
+  <data name="GlassKind_RadioButton" xml:space="preserve">
+    <value>Radio buttons</value>
+  </data>
+  <data name="GlassKind_Slider" xml:space="preserve">
+    <value>Sliders</value>
+  </data>
+  <data name="GlassKind_TextBox" xml:space="preserve">
+    <value>Text inputs</value>
+  </data>
+  <data name="GlassKind_SearchBox" xml:space="preserve">
+    <value>Search inputs</value>
+  </data>
+  <data name="GlassKind_PasswordBox" xml:space="preserve">
+    <value>Password inputs</value>
+  </data>
+  <data name="GlassKind_ComboBox" xml:space="preserve">
+    <value>Combo boxes</value>
+  </data>
+  <data name="GlassKind_ToggleSwitch" xml:space="preserve">
+    <value>Switches</value>
+  </data>
+  <data name="GlassKind_Card" xml:space="preserve">
+    <value>Cards and surfaces</value>
+  </data>
+  <data name="GlassKind_FloatingPanel" xml:space="preserve">
+    <value>Floating panels</value>
+  </data>
+  <data name="GlassKind_TabBar" xml:space="preserve">
+    <value>Tab bars</value>
+  </data>
+  <data name="GlassParameter_BlurRadius" xml:space="preserve">
+    <value>Blur radius</value>
+  </data>
+  <data name="GlassParameter_RefractionStrength" xml:space="preserve">
+    <value>Refraction</value>
+  </data>
+  <data name="GlassParameter_DispersionStrength" xml:space="preserve">
+    <value>Chromatic dispersion</value>
+  </data>
+  <data name="GlassParameter_HighlightStrength" xml:space="preserve">
+    <value>Highlights</value>
+  </data>
+  <data name="GlassParameter_HighlightSharpness" xml:space="preserve">
+    <value>Highlight sharpness</value>
+  </data>
+  <data name="GlassParameter_SpecularSaturation" xml:space="preserve">
+    <value>Specular saturation</value>
+  </data>
+  <data name="GlassParameter_SpecularWidth" xml:space="preserve">
+    <value>Specular width</value>
+  </data>
+  <data name="GlassParameter_RefractiveIndex" xml:space="preserve">
+    <value>Refractive index</value>
+  </data>
+  <data name="GlassParameter_TintOpacity" xml:space="preserve">
+    <value>Tint opacity</value>
+  </data>
+  <data name="GlassParameter_InnerShadowStrength" xml:space="preserve">
+    <value>Inner shadow</value>
+  </data>
+  <data name="GlassParameter_Saturation" xml:space="preserve">
+    <value>Saturation</value>
+  </data>
+  <data name="GlassParameter_Contrast" xml:space="preserve">
+    <value>Contrast</value>
+  </data>
+  <data name="GlassParameter_Exposure" xml:space="preserve">
+    <value>Exposure</value>
+  </data>
+  <data name="GlassParameter_MaterialOpacity" xml:space="preserve">
+    <value>Material opacity</value>
+  </data>
+  <data name="GlassParameter_DispersionRange" xml:space="preserve">
+    <value>Dispersion range</value>
+  </data>
+  <data name="GlassParameter_RefFresnelRange" xml:space="preserve">
+    <value>Fresnel range</value>
+  </data>
+  <data name="GlassParameter_RefFresnelHardness" xml:space="preserve">
+    <value>Fresnel hardness</value>
+  </data>
+  <data name="GlassParameter_RefFresnelFactor" xml:space="preserve">
+    <value>Fresnel intensity</value>
+  </data>
+  <data name="GlassParameter_GlareRange" xml:space="preserve">
+    <value>Glare range</value>
+  </data>
+  <data name="GlassParameter_GlareHardness" xml:space="preserve">
+    <value>Glare hardness</value>
+  </data>
+  <data name="GlassParameter_GlareFactor" xml:space="preserve">
+    <value>Glare intensity</value>
+  </data>
+  <data name="GlassParameter_GlareConvergence" xml:space="preserve">
+    <value>Glare convergence</value>
+  </data>
+  <data name="GlassParameter_GlareOppositeFactor" xml:space="preserve">
+    <value>Opposite glare</value>
+  </data>
+  <data name="GlassParameter_GlareAngle" xml:space="preserve">
+    <value>Glare angle</value>
+  </data>
+  <data name="GlassParameter_Magnification" xml:space="preserve">
+    <value>Magnification</value>
+  </data>
+  <data name="GlassParameter_MagnificationStrength" xml:space="preserve">
+    <value>Magnification strength</value>
+  </data>
+  <data name="GlassParameter_BloomAmount" xml:space="preserve">
+    <value>Bloom</value>
+  </data>
+  <data name="GlassParameter_Brightness" xml:space="preserve">
+    <value>Brightness</value>
+  </data>
+  <data name="GlassParameter_Temperature" xml:space="preserve">
+    <value>Temperature</value>
+  </data>
+  <data name="GlassParameter_Vibrance" xml:space="preserve">
+    <value>Vibrance</value>
+  </data>
+  <data name="GlassDefaultValue.Text" xml:space="preserve">
+    <value>Default:</value>
   </data>
 </root>

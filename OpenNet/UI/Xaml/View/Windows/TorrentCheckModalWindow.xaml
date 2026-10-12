@@ -7,11 +7,16 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Windows"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Grid x:Name="GridRoot" Loaded="TorrentCreateGrid_Loaded">
         <Grid.Resources>
-            <essential:ModernStandardWindowContextMenu x:Name="DevWindowMenu" Window="{x:Bind Window}" />
+            <ResourceDictionary>
+                <essential:ModernStandardWindowContextMenu x:Name="Menu" Window="{x:Bind Window}" />
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
         </Grid.Resources>
 
         <Grid.RowDefinitions>
@@ -88,14 +93,14 @@
                         TextWrapping="Wrap" />
                 </StackPanel>
                 <TextBox
-                    x:Name="TrackerListTextBox"
-                    Grid.Row="1"
                     AcceptsReturn="True"
                     FontFamily="Consolas"
                     PlaceholderText="https://tracker.example.com/announce"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    TextWrapping="NoWrap" />
+                    TextWrapping="NoWrap" x:Name="TrackerListTextBox"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    Grid.Row="1" />
                 <TextBlock
                     x:Uid="TorrentTrackerListFooter"
                     Grid.Row="2"
@@ -163,31 +168,40 @@
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Peer discovery and behavior" />
                     <essential:SettingsCard x:Uid="TorrentTaskEnableDht">
-                        <ToggleSwitch x:Name="TaskEnableDhtToggle" />
+                        <ToggleSwitch x:Name="TaskEnableDhtToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskEnableLsd">
-                        <ToggleSwitch x:Name="TaskEnableLsdToggle" />
+                        <ToggleSwitch x:Name="TaskEnableLsdToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskEnablePex">
-                        <ToggleSwitch x:Name="TaskEnablePexToggle" />
+                        <ToggleSwitch x:Name="TaskEnablePexToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskApplyIpFilter">
-                        <ToggleSwitch x:Name="TaskApplyIpFilterToggle" />
+                        <ToggleSwitch x:Name="TaskApplyIpFilterToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskSequentialDownload">
-                        <ToggleSwitch x:Name="TaskSequentialDownloadToggle" />
+                        <ToggleSwitch x:Name="TaskSequentialDownloadToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskSuperSeeding">
-                        <ToggleSwitch x:Name="TaskSuperSeedingToggle" />
+                        <ToggleSwitch x:Name="TaskSuperSeedingToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskForceStart">
-                        <ToggleSwitch x:Name="TaskForceStartToggle" />
+                        <ToggleSwitch x:Name="TaskForceStartToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskUploadMode">
-                        <ToggleSwitch x:Name="TaskUploadModeToggle" />
+                        <ToggleSwitch x:Name="TaskUploadModeToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskShareMode">
-                        <ToggleSwitch x:Name="TaskShareModeToggle" />
+                        <ToggleSwitch x:Name="TaskShareModeToggle"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                     </essential:SettingsCard>
                     <InfoBar
                         x:Name="TaskSettingsStatusInfoBar"
@@ -218,21 +232,20 @@
                 Orientation="Horizontal"
                 Spacing="8">
                 <CheckBox
-                    x:Name="StartImmediatelyCheckBox"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
                     AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
                     Content="Start immediately"
-                    IsChecked="True" />
+                    IsChecked="True" x:Name="StartImmediatelyCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <CheckBox
-                    x:Name="SaveTorrentCopyCheckBox"
                     x:Uid="ViewTorrentCheckModalWindowCheckBoxText1"
-                    Content="Save a .torrent copy to the download folder" />
+                    Content="Save a .torrent copy to the download folder" x:Name="SaveTorrentCopyCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <ComboBox
-                    x:Name="SaveTorrentCopyLocationComboBox"
-                    MinWidth="190"
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
-                    IsEnabled="{Binding IsChecked, ElementName=SaveTorrentCopyCheckBox, Mode=OneWay}"
-                    SelectedIndex="0">
+                    IsEnabled="{x:Bind ouxct:MaterialControlState.IsTrue(SaveTorrentCopyCheckBox.IsChecked), Mode=OneWay}"
+                    SelectedIndex="0" x:Name="SaveTorrentCopyLocationComboBox" MinWidth="190"
+                    ouxct:ControlAppearance.IsEnabled="True">
                     <ComboBoxItem x:Uid="TorrentCopyLocationDownloadFolder" Content="Download target folder" />
                     <ComboBoxItem x:Uid="TorrentCopyLocationContentFolder" Content="Torrent content folder" />
                 </ComboBox>
@@ -243,25 +256,24 @@
                 Orientation="Horizontal"
                 Spacing="8">
                 <Button
-                    x:Name="ApplyTaskSettingsButton"
                     x:Uid="TorrentTaskApplySettingsButton"
                     Click="ApplyTaskSettingsButton_Click"
                     Content="Apply"
-                    Style="{StaticResource AccentButtonStyle}"
-                    Visibility="Collapsed" />
+                    Style="{StaticResource AccentButtonStyle}" x:Name="ApplyTaskSettingsButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
-                    x:Name="StartDownloadButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"
                     AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"
                     Click="StartDownloadButton_Click"
                     Content="Start Download"
-                    Style="{StaticResource AccentButtonStyle}" />
+                    Style="{StaticResource AccentButtonStyle}" x:Name="StartDownloadButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <Button
-                    x:Name="CloseButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowCloseButton"
                     AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowCloseButton"
                     Click="CancelButton_Click"
-                    Content="Cancel" />
+                    Content="Cancel" x:Name="CloseButton"
+                    ouxct:ControlAppearance.IsEnabled="True" />
             </StackPanel>
         </Grid>
     </Grid>

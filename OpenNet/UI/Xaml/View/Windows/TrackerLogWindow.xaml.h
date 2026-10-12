@@ -11,6 +11,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 	struct TrackerLogWindow : TrackerLogWindowT<TrackerLogWindow>, WindowExBase<TrackerLogWindow>
 	{
 		TrackerLogWindow();
+        void MaterialLoaded_399(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		TrackerLogWindow(
 			winrt::hstring const& taskId,
 			winrt::hstring const& taskName,

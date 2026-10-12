@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "FilterEditorDialog.xaml.h"
 #if __has_include("UI/Xaml/View/Dialog/FilterEditorDialog.g.cpp")
 #include "UI/Xaml/View/Dialog/FilterEditorDialog.g.cpp"
@@ -17,7 +18,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		std::optional<bool> ToggleIsOn(IInspectable const& sender)
 		{
 			if (auto native = sender.try_as<Microsoft::UI::Xaml::Controls::ToggleSwitch>()) return native.IsOn();
-			if (auto glass = sender.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return glass.IsOn();
 			return std::nullopt;
 		}
 
@@ -25,7 +25,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		{
 			if (!target) return;
 			if (auto native = target.try_as<Microsoft::UI::Xaml::Controls::ToggleSwitch>()) native.IsOn(value);
-			if (auto glass = target.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 	}
 
@@ -56,9 +55,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		m_enabled = enabled;
 		m_configuring = true;
 		SetToggleIsOn(CaseSensitiveToggle(), caseSensitive);
-		SetToggleIsOn(CaseSensitiveGlassToggle(), caseSensitive);
 		SetToggleIsOn(EnabledToggle(), enabled);
-		SetToggleIsOn(EnabledGlassToggle(), enabled);
 		m_configuring = false;
 		DescriptionTextBox().Text(description);
 	}
@@ -125,7 +122,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			m_caseSensitive = *value;
 			m_configuring = true;
 			SetToggleIsOn(CaseSensitiveToggle(), *value);
-			SetToggleIsOn(CaseSensitiveGlassToggle(), *value);
 			m_configuring = false;
 		}
 	}
@@ -143,7 +139,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 			m_enabled = *value;
 			m_configuring = true;
 			SetToggleIsOn(EnabledToggle(), *value);
-			SetToggleIsOn(EnabledGlassToggle(), *value);
 			m_configuring = false;
 		}
 	}
@@ -164,4 +159,18 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	{
 		return RuleEntryTextBox().Text();
 	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
+{
+    void FilterEditorDialog::MaterialLoaded_23(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        CaseSensitiveToggle_Loaded(CaseSensitiveToggle(), args);
+    }
+    void FilterEditorDialog::MaterialLoaded_24(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+    {
+        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+        EnabledToggle_Loaded(EnabledToggle(), args);
+    }
 }

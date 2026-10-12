@@ -9,6 +9,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	struct IPFilterSettingsPage : IPFilterSettingsPageT<IPFilterSettingsPage>
 	{
 		IPFilterSettingsPage();
+        void MaterialLoaded_216(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_224(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
 		// Used by the application-level scheduler as well as the settings page.
 		static winrt::Windows::Foundation::IAsyncAction	RunSubscriptionUpdateAsync(bool force, bool notify);

@@ -7,6 +7,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	struct FilterEditorDialog : FilterEditorDialogT<FilterEditorDialog>
 	{
 		FilterEditorDialog();
+        void MaterialLoaded_23(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void MaterialLoaded_24(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		void ConfigureClientRule(winrt::hstring const& title, winrt::hstring const& pattern, std::int32_t matchType, bool caseSensitive, bool enabled, winrt::hstring const& description, winrt::hstring const& primaryButtonText, winrt::hstring const& closeButtonText);
 		void ConfigureClientImport(winrt::hstring const& title, winrt::hstring const& hint, bool replaceExisting, winrt::hstring const& primaryButtonText, winrt::hstring const& closeButtonText);
 		void ConfigureSubscription(winrt::hstring const& title, winrt::hstring const& url, bool enabled, winrt::hstring const& primaryButtonText, winrt::hstring const& closeButtonText);

@@ -4,8 +4,11 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Dialog"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     x:Name="ViewDialogHttpDownloadDialog"
     x:Uid="ViewDialogHttpDownloadDialog"
     Title="New HTTP Download"
@@ -48,7 +51,8 @@
                 PlaceholderText="https://example.com/file.zip"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 Text="{x:Bind Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                ouxct:ControlAppearance.IsEnabled="True" />
 
             <!--  Paste from clipboard  -->
             <StackPanel Orientation="Horizontal" Spacing="12">
@@ -56,7 +60,8 @@
                     x:Name="PasteUrlButton"
                     x:Uid="HttpDownloadDialogPasteButton"
                     AutomationProperties.AutomationId="HttpDownloadDialogPasteButton"
-                    Click="PasteUrlButton_Click">
+                    Click="PasteUrlButton_Click"
+                    ouxct:ControlAppearance.IsEnabled="True">
                     <Button.Content>
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <FontIcon
@@ -86,21 +91,23 @@
                 <TextBox
                     x:Name="SaveDirBox"
                     x:Uid="HttpDownloadDialogSaveDirBox"
-                    Grid.Column="0"
                     AutomationProperties.AutomationId="HttpDownloadDialogSaveDirBox"
                     Header="Save to"
                     IsReadOnly="True"
                     PlaceholderText="Default download directory"
-                    Text="{x:Bind SaveDirectory, Mode=TwoWay}" />
+                    Text="{x:Bind SaveDirectory, Mode=TwoWay}"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    Grid.Column="0" />
                 <Button
                     x:Name="BrowseDirButton"
                     x:Uid="CommonContentBrowse"
-                    Grid.Column="1"
-                    Margin="8,0,0,0"
-                    VerticalAlignment="Bottom"
                     AutomationProperties.AutomationId="CommonContentBrowse"
                     Click="BrowseDirButton_Click"
-                    Content="Browse..." />
+                    Content="Browse..."
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    Grid.Column="1"
+                    Margin="8,0,0,0"
+                    VerticalAlignment="Bottom" />
             </Grid>
 
             <!--  Custom Filename  -->
@@ -110,7 +117,8 @@
                 AutomationProperties.AutomationId="HttpDownloadDialogFileNameBox"
                 Header="File name (optional)"
                 PlaceholderText="Leave empty to auto-detect"
-                Text="{x:Bind FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                Text="{x:Bind FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                ouxct:ControlAppearance.IsEnabled="True" />
 
             <Grid ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
@@ -121,7 +129,8 @@
                     x:Name="FetchMetadataButton"
                     Click="FetchMetadataButton_Click"
                     Content="Get file information"
-                    IsEnabled="{x:Bind CanFetchMetadata, Mode=OneWay}" />
+                    IsEnabled="{x:Bind CanFetchMetadata, Mode=OneWay}"
+                    ouxct:ControlAppearance.IsEnabled="True" />
                 <StackPanel
                     Grid.Column="1"
                     VerticalAlignment="Center"
@@ -141,7 +150,8 @@
                             Header="P2P acceleration"
                             IsOn="{x:Bind UseP2PAcceleration, Mode=TwoWay}"
                             OffContent="Aria2 only"
-                            OnContent="Prefer P2P + HTTP Web Seed" />
+                            OnContent="Prefer P2P + HTTP Web Seed"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <TextBlock
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="P2P mode uses libtorrent only when verified canonical metadata and HTTP byte ranges are available; otherwise the task falls back to aria2."
@@ -168,24 +178,28 @@
                             x:Name="RefererBox"
                             Header="Referer"
                             PlaceholderText="Optional"
-                            Text="{x:Bind Referer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind Referer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <TextBox
                             x:Name="UserAgentBox"
                             Header="User agent"
                             PlaceholderText="Optional"
-                            Text="{x:Bind UserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind UserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <TextBox
                             x:Name="CookieBox"
                             Header="Cookie"
                             PlaceholderText="name=value; name2=value2"
-                            Text="{x:Bind Cookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind Cookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <TextBox
                             x:Name="HeadersBox"
                             AcceptsReturn="True"
                             Header="Custom HTTP headers"
                             PlaceholderText="One Header: value per line"
                             Text="{x:Bind Headers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            TextWrapping="NoWrap" />
+                            TextWrapping="NoWrap"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
@@ -194,13 +208,15 @@
                             <TextBox
                                 x:Name="UsernameBox"
                                 Header="Username"
-                                Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                             <PasswordBox
                                 x:Name="PasswordBox"
-                                Grid.Column="1"
                                 Header="Password"
                                 Password="{x:Bind Password, Mode=TwoWay}"
-                                PasswordRevealMode="Peek" />
+                                PasswordRevealMode="Peek"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                Grid.Column="1" />
                         </Grid>
                     </StackPanel>
                 </TabViewItem>
@@ -208,12 +224,13 @@
                     <TextBox
                         x:Name="MirrorsBox"
                         MinHeight="120"
-                        Margin="4,12"
                         AcceptsReturn="True"
                         Header="Mirror URLs"
                         PlaceholderText="One URL per line"
                         Text="{x:Bind Mirrors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="NoWrap" />
+                        TextWrapping="NoWrap"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        Margin="4,12" />
                 </TabViewItem>
                 <TabViewItem Header="MD5/SHA" IsClosable="False">
                     <StackPanel Padding="4,12" Spacing="8">
@@ -221,7 +238,8 @@
                             x:Name="ChecksumBox"
                             Header="Checksum"
                             PlaceholderText="MD5, SHA-1, SHA-256, SHA-512, or type=hex"
-                            Text="{x:Bind Checksum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            Text="{x:Bind Checksum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ouxct:ControlAppearance.IsEnabled="True" />
                         <TextBlock
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="The hash type is detected from its length when omitted."
@@ -232,11 +250,12 @@
                     <TextBox
                         x:Name="DescriptionBox"
                         MinHeight="120"
-                        Margin="4,12"
                         AcceptsReturn="True"
                         Header="Notes"
                         Text="{x:Bind Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="Wrap" />
+                        TextWrapping="Wrap"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        Margin="4,12" />
                 </TabViewItem>
             </TabView>
 

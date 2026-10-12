@@ -7,6 +7,8 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -57,19 +59,29 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_IncomingTcp">
-                            <ToggleSwitch x:Name="EnableIncomingTcpToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="EnableIncomingTcpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_OutgoingTcp">
-                            <ToggleSwitch x:Name="EnableOutgoingTcpToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="EnableOutgoingTcpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_IncomingUtp">
-                            <ToggleSwitch x:Name="EnableIncomingUtpToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="EnableIncomingUtpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_OutgoingUtp">
-                            <ToggleSwitch x:Name="EnableOutgoingUtpToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="EnableOutgoingUtpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MultiConnPerIp">
-                            <ToggleSwitch x:Name="AllowMultipleConnectionsPerIpToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="AllowMultipleConnectionsPerIpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -78,7 +90,9 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE72E;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch x:Name="AnonymousModeToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="AnonymousModeToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <!--  Discovery  -->
@@ -88,23 +102,33 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE909;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch x:Name="EnableDhtToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="EnableDhtToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_EnableLsd">
-                    <ToggleSwitch x:Name="EnableLsdToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="EnableLsdToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_EnableUpnp">
-                    <ToggleSwitch x:Name="EnableUpnpToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="EnableUpnpToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_EnableNatpmp">
-                    <ToggleSwitch x:Name="EnableNatpmpToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="EnableNatpmpToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_ApplyIpFilterToDht">
-                    <ToggleSwitch x:Name="ApplyIpFilterToDhtToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="ApplyIpFilterToDhtToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -126,18 +150,21 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE774;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch x:Name="AnnounceToAllTiersToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="AnnounceToAllTiersToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_AnnounceAllTrackers">
-                    <ToggleSwitch x:Name="AnnounceToAllTrackersToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="AnnounceToAllTrackersToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_NatPmpGateway">
                     <TextBox
-                        x:Name="NatPmpGatewayTextBox"
-                        MinWidth="200"
-                        LostFocus="OnSettingChanged" />
+                        LostFocus="OnSettingChanged" x:Name="NatPmpGatewayTextBox" MinWidth="200"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_NatPmpLeaseDuration">
@@ -153,15 +180,16 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE774;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <ToggleSwitch x:Name="EnableWebTorrentToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="EnableWebTorrentToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
-                        <essential:SettingsCard x:Uid="BT_WebTorrentStunServer" IsEnabled="{Binding IsOn, ElementName=EnableWebTorrentToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_WebTorrentStunServer" IsEnabled="{x:Bind EnableWebTorrentToggle.IsOn, Mode=OneWay}">
                             <TextBox
-                                x:Name="WebTorrentStunServerTextBox"
-                                MinWidth="220"
-                                LostFocus="OnSettingChanged" />
+                                LostFocus="OnSettingChanged" x:Name="WebTorrentStunServerTextBox" MinWidth="220"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_WebTorrentOffers" IsEnabled="{Binding IsOn, ElementName=EnableWebTorrentToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_WebTorrentOffers" IsEnabled="{x:Bind EnableWebTorrentToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="MaxWebTorrentOffersNumberBox"
                                 Maximum="100"
@@ -169,7 +197,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_WebTorrentTimeout" IsEnabled="{Binding IsOn, ElementName=EnableWebTorrentToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_WebTorrentTimeout" IsEnabled="{x:Bind EnableWebTorrentToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="WebTorrentConnectionTimeoutNumberBox"
                                 Maximum="3600"
@@ -177,7 +205,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_WebSocketAnnounceInterval" IsEnabled="{Binding IsOn, ElementName=EnableWebTorrentToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_WebSocketAnnounceInterval" IsEnabled="{x:Bind EnableWebTorrentToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="MinWebSocketAnnounceIntervalNumberBox"
                                 Maximum="3600"
@@ -195,10 +223,12 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8EF;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch x:Name="QueueingEnabledToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="QueueingEnabledToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard x:Uid="BT_ActiveDownloads" IsEnabled="{Binding IsOn, ElementName=QueueingEnabledToggle, Mode=OneWay}">
+                <essential:SettingsCard x:Uid="BT_ActiveDownloads" IsEnabled="{x:Bind QueueingEnabledToggle.IsOn, Mode=OneWay}">
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE896;" />
                     </essential:SettingsCard.HeaderIcon>
@@ -210,7 +240,7 @@
                         ValueChanged="OnSettingChanged" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard x:Uid="BT_ActiveSeeds" IsEnabled="{Binding IsOn, ElementName=QueueingEnabledToggle, Mode=OneWay}">
+                <essential:SettingsCard x:Uid="BT_ActiveSeeds" IsEnabled="{x:Bind QueueingEnabledToggle.IsOn, Mode=OneWay}">
                     <NumberBox
                         x:Name="ActiveSeedsNumberBox"
                         Maximum="9999"
@@ -219,7 +249,7 @@
                         ValueChanged="OnSettingChanged" />
                 </essential:SettingsCard>
 
-                <essential:SettingsCard x:Uid="BT_ActiveLimit" IsEnabled="{Binding IsOn, ElementName=QueueingEnabledToggle, Mode=OneWay}">
+                <essential:SettingsCard x:Uid="BT_ActiveLimit" IsEnabled="{x:Bind QueueingEnabledToggle.IsOn, Mode=OneWay}">
                     <NumberBox
                         x:Name="ActiveLimitNumberBox"
                         Maximum="9999"
@@ -281,7 +311,9 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard Description="Keep completed torrents active until a configured share limit is reached." Header="Continue seeding after download completes">
-                    <ToggleSwitch x:Name="ContinueSeedingAfterCompletionToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="ContinueSeedingAfterCompletionToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <!--  Peer  -->
@@ -312,7 +344,9 @@
                 </essential:SettingsExpander>
 
                 <essential:SettingsCard x:Uid="BT_CloseRedundant">
-                    <ToggleSwitch x:Name="CloseRedundantConnectionsToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="CloseRedundantConnectionsToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <!--  Disk I/O  -->
@@ -355,14 +389,15 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_DisableV1HashesForHybrid">
-                    <ToggleSwitch x:Name="DisableV1HashesForHybridToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="DisableV1HashesForHybridToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_PartFileDirectory">
                     <TextBox
-                        x:Name="PartFileDirectoryTextBox"
-                        MinWidth="220"
-                        LostFocus="OnSettingChanged" />
+                        LostFocus="OnSettingChanged" x:Name="PartFileDirectoryTextBox" MinWidth="220"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_MaxTorrentDirectoryDepth">
@@ -382,11 +417,10 @@
                         <FontIcon Glyph="&#xE77B;" />
                     </essential:SettingsCard.HeaderIcon>
                     <TextBox
-                        x:Name="UserAgentTextBox"
                         x:Uid="BT_UserAgentInput"
-                        MinWidth="220"
                         LostFocus="OnSettingChanged"
-                        PlaceholderText="libtorrent/2.1.1" />
+                        PlaceholderText="libtorrent/2.1.1" x:Name="UserAgentTextBox" MinWidth="220"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <!--  Encryption  -->
@@ -397,10 +431,9 @@
                         <FontIcon Glyph="&#xE72E;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
-                        x:Name="EncryptionPolicyComboBox"
-                        MinWidth="180"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="OnSettingChanged">
+                        SelectionChanged="OnSettingChanged" x:Name="EncryptionPolicyComboBox" MinWidth="180"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ComboBoxItem x:Uid="BT_Enc_Forced" Tag="0" />
                         <ComboBoxItem x:Uid="BT_Enc_Enabled" Tag="1" />
                         <ComboBoxItem x:Uid="BT_Enc_Disabled" Tag="2" />
@@ -408,7 +441,9 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_PreferRc4">
-                    <ToggleSwitch x:Name="PreferRc4Toggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="PreferRc4Toggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <!--  Proxy  -->
@@ -419,10 +454,9 @@
                         <FontIcon Glyph="&#xE968;" />
                     </essential:SettingsCard.HeaderIcon>
                     <ComboBox
-                        x:Name="ProxyTypeComboBox"
-                        MinWidth="180"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="OnSettingChanged">
+                        SelectionChanged="OnSettingChanged" x:Name="ProxyTypeComboBox" MinWidth="180"
+                        ouxct:ControlAppearance.IsEnabled="True">
                         <ComboBoxItem x:Uid="BT_Proxy_None" Tag="0" />
                         <ComboBoxItem x:Uid="BT_Proxy_Socks4" Tag="1" />
                         <ComboBoxItem x:Uid="BT_Proxy_Socks5" Tag="2" />
@@ -440,11 +474,10 @@
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_ProxyHostname">
                             <TextBox
-                                x:Name="ProxyHostnameTextBox"
                                 x:Uid="BT_ProxyHostnameInput"
-                                MinWidth="200"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="proxy.example.com" />
+                                PlaceholderText="proxy.example.com" x:Name="ProxyHostnameTextBox" MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyPort">
                             <NumberBox
@@ -456,25 +489,29 @@
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyUsername">
                             <TextBox
-                                x:Name="ProxyUsernameTextBox"
-                                MinWidth="200"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="" />
+                                PlaceholderText="" x:Name="ProxyUsernameTextBox" MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyPassword">
                             <PasswordBox
-                                x:Name="ProxyPasswordBox"
-                                MinWidth="200"
-                                LostFocus="OnSettingChanged" />
+                                LostFocus="OnSettingChanged" x:Name="ProxyPasswordBox" MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyPeerConn">
-                            <ToggleSwitch x:Name="ProxyPeerConnectionsToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="ProxyPeerConnectionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyTrackerConn">
-                            <ToggleSwitch x:Name="ProxyTrackerConnectionsToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="ProxyTrackerConnectionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxySendHostInConnect">
-                            <ToggleSwitch x:Name="ProxySendHostInConnectToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="ProxySendHostInConnectToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -483,15 +520,16 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE72E;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <ToggleSwitch x:Name="EnableI2pToggle" Toggled="OnSettingChanged" />
+                    <ToggleSwitch
+                        Toggled="OnSettingChanged" x:Name="EnableI2pToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
-                        <essential:SettingsCard x:Uid="BT_I2pHostname" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pHostname" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <TextBox
-                                x:Name="I2pHostnameTextBox"
-                                MinWidth="200"
-                                LostFocus="OnSettingChanged" />
+                                LostFocus="OnSettingChanged" x:Name="I2pHostnameTextBox" MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pPort" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pPort" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pPortNumberBox"
                                 Maximum="65535"
@@ -499,10 +537,12 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pMixedMode" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
-                            <ToggleSwitch x:Name="AllowI2pMixedToggle" Toggled="OnSettingChanged" />
+                        <essential:SettingsCard x:Uid="BT_I2pMixedMode" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="AllowI2pMixedToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pInboundQuantity" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pInboundQuantity" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pInboundQuantityNumberBox"
                                 Maximum="16"
@@ -510,7 +550,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pOutboundQuantity" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pOutboundQuantity" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pOutboundQuantityNumberBox"
                                 Maximum="16"
@@ -518,7 +558,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pInboundLength" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pInboundLength" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pInboundLengthNumberBox"
                                 Maximum="7"
@@ -526,7 +566,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pOutboundLength" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pOutboundLength" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pOutboundLengthNumberBox"
                                 Maximum="7"
@@ -534,7 +574,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pInboundVariance" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pInboundVariance" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pInboundVarianceNumberBox"
                                 Maximum="7"
@@ -542,7 +582,7 @@
                                 SpinButtonPlacementMode="Inline"
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
-                        <essential:SettingsCard x:Uid="BT_I2pOutboundVariance" IsEnabled="{Binding IsOn, ElementName=EnableI2pToggle, Mode=OneWay}">
+                        <essential:SettingsCard x:Uid="BT_I2pOutboundVariance" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
                                 x:Name="I2pOutboundVarianceNumberBox"
                                 Maximum="7"
@@ -582,11 +622,10 @@
                         <FontIcon Glyph="&#xE8AF;" />
                     </essential:SettingsCard.HeaderIcon>
                     <TextBox
-                        x:Name="PeerFingerprintTextBox"
                         x:Uid="BT_PeerFingerprintInput"
-                        MinWidth="180"
                         LostFocus="OnSettingChanged"
-                        PlaceholderText="-ON0100-" />
+                        PlaceholderText="-ON0100-" x:Name="PeerFingerprintTextBox" MinWidth="180"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsExpander
@@ -614,10 +653,14 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_PieceExtentAffinity" Header="Use piece extent affinity">
-                            <ToggleSwitch x:Name="PieceExtentAffinityToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="PieceExtentAffinityToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UploadSuggestions" Header="Send upload piece suggestions">
-                            <ToggleSwitch x:Name="UploadSuggestionsToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="UploadSuggestionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SendBufferWatermark" Header="Send buffer watermark (KiB)">
                             <NumberBox
@@ -663,7 +706,9 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SeedingOutgoingConnections" Header="Allow outgoing connections when seeding">
-                            <ToggleSwitch x:Name="SeedingOutgoingConnectionsToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="SeedingOutgoingConnectionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SocketSendBufferSize" Header="Socket send buffer size (KiB)">
                             <NumberBox
@@ -691,10 +736,10 @@
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MixedMode" Header="μTP/TCP mixed mode">
                             <ComboBox
-                                x:Name="MixedModeComboBox"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                                 SelectedIndex="0"
-                                SelectionChanged="OnSettingChanged">
+                                SelectionChanged="OnSettingChanged" x:Name="MixedModeComboBox"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <ComboBoxItem x:Uid="BT_MixedModePreferTcp" Content="Prefer TCP" />
                                 <ComboBoxItem x:Uid="BT_MixedModePeerProportional" Content="Peer proportional" />
                             </ComboBox>
@@ -708,30 +753,36 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ValidateHttpsTrackers" Header="Validate HTTPS tracker certificates">
-                            <ToggleSwitch x:Name="ValidateHttpsTrackersToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="ValidateHttpsTrackersToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SsrfMitigation" Header="SSRF mitigation">
-                            <ToggleSwitch x:Name="SsrfMitigationToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="SsrfMitigationToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_BlockPrivilegedPorts" Header="Block peers on privileged ports">
-                            <ToggleSwitch x:Name="BlockPrivilegedPortsToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="BlockPrivilegedPortsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UploadSlotsBehavior" Header="Upload slots behavior">
                             <ComboBox
-                                x:Name="UploadSlotsBehaviorComboBox"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                                 SelectedIndex="0"
-                                SelectionChanged="OnSettingChanged">
+                                SelectionChanged="OnSettingChanged" x:Name="UploadSlotsBehaviorComboBox"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <ComboBoxItem x:Uid="BT_UploadSlotsFixed" Content="Fixed slots" />
                                 <ComboBoxItem x:Uid="BT_UploadSlotsRateBased" Content="Upload rate based" />
                             </ComboBox>
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UploadChokingAlgorithm" Header="Upload choking algorithm">
                             <ComboBox
-                                x:Name="UploadChokingAlgorithmComboBox"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                                 SelectedIndex="1"
-                                SelectionChanged="OnSettingChanged">
+                                SelectionChanged="OnSettingChanged" x:Name="UploadChokingAlgorithmComboBox"
+                                ouxct:ControlAppearance.IsEnabled="True">
                                 <ComboBoxItem x:Uid="BT_UploadChokingRoundRobin" Content="Round-robin" />
                                 <ComboBoxItem x:Uid="BT_UploadChokingFastest" Content="Fastest upload" />
                                 <ComboBoxItem x:Uid="BT_UploadChokingAntiLeech" Content="Anti-leech" />
@@ -766,15 +817,13 @@
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_DhtBootstrapNodes" Header="DHT bootstrap nodes">
                             <TextBox
-                                x:Name="DhtBootstrapNodesTextBox"
-                                MinWidth="240"
-                                LostFocus="OnSettingChanged" />
+                                LostFocus="OnSettingChanged" x:Name="DhtBootstrapNodesTextBox" MinWidth="240"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_AnnounceIp" Header="IP reported to trackers">
                             <TextBox
-                                x:Name="AnnounceIpTextBox"
-                                MinWidth="180"
-                                LostFocus="OnSettingChanged" />
+                                LostFocus="OnSettingChanged" x:Name="AnnounceIpTextBox" MinWidth="180"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_AnnouncePort" Header="Port reported to trackers">
                             <NumberBox
@@ -845,27 +894,31 @@
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_DefaultSavePath" Header="Default Save Path">
                             <TextBox
-                                x:Name="DefaultSavePathTextBox"
                                 x:Uid="BT_DefaultSavePathInput"
-                                MinWidth="300"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="Downloads folder" />
+                                PlaceholderText="Downloads folder" x:Name="DefaultSavePathTextBox" MinWidth="300"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_PreallocateStorage" Header="Pre-allocate Storage">
-                            <ToggleSwitch x:Name="PreallocateStorageToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="PreallocateStorageToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_AutoStartDownloads" Header="Auto-start Downloads">
-                            <ToggleSwitch x:Name="AutoStartDownloadsToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="AutoStartDownloadsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MoveCompleted" Header="Move Completed Downloads">
-                            <ToggleSwitch x:Name="MoveCompletedToggle" Toggled="OnSettingChanged" />
+                            <ToggleSwitch
+                                Toggled="OnSettingChanged" x:Name="MoveCompletedToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MoveCompletedPath" Header="Move Completed Path">
                             <TextBox
-                                x:Name="MoveCompletedPathTextBox"
-                                MinWidth="300"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="" />
+                                PlaceholderText="" x:Name="MoveCompletedPathTextBox" MinWidth="300"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>

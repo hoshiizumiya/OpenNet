@@ -7,6 +7,8 @@
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     NavigationCacheMode="Disabled"
     mc:Ignorable="d">
     <!--  Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"  -->
@@ -113,35 +115,41 @@
                                         FontWeight="Thin"
                                         Text="Dependencies &amp; References" />
                                     <HyperlinkButton
-                                        Margin="-12,0,0,0"
-                                        HorizontalAlignment="Left"
                                         Content="Windows App SDK"
-                                        NavigateUri="https://aka.ms/windowsappsdk" />
-                                    <HyperlinkButton
-                                        Margin="-12,0,0,0"
+                                        NavigateUri="https://aka.ms/windowsappsdk" x:Name="GlassPresenter_5886"
+                                        ouxct:ControlAppearance.IsEnabled="True"
                                         HorizontalAlignment="Left"
+                                        Margin="-12,0,0,0" />
+                                    <HyperlinkButton
                                         Content="Windows UI Library"
-                                        NavigateUri="https://github.com/microsoft/microsoft-ui-xaml" />
-                                    <HyperlinkButton
-                                        Margin="-12,0,0,0"
+                                        NavigateUri="https://github.com/microsoft/microsoft-ui-xaml" x:Name="GlassPresenter_6217"
+                                        ouxct:ControlAppearance.IsEnabled="True"
                                         HorizontalAlignment="Left"
+                                        Margin="-12,0,0,0" />
+                                    <HyperlinkButton
                                         Content="Sample-Windows-CppWinRT"
-                                        NavigateUri="https://github.com/CommunityToolkit/Sample-Windows-CppWinRT" />
-                                    <HyperlinkButton
-                                        Margin="-12,0,0,0"
+                                        NavigateUri="https://github.com/CommunityToolkit/Sample-Windows-CppWinRT" x:Name="GlassPresenter_6569"
+                                        ouxct:ControlAppearance.IsEnabled="True"
                                         HorizontalAlignment="Left"
+                                        Margin="-12,0,0,0" />
+                                    <HyperlinkButton
                                         Content="C++/WinRT"
-                                        NavigateUri="https://github.com/microsoft/cppwinrt" />
-                                    <HyperlinkButton
-                                        Margin="-12,0,0,0"
+                                        NavigateUri="https://github.com/microsoft/cppwinrt" x:Name="GlassPresenter_6939"
+                                        ouxct:ControlAppearance.IsEnabled="True"
                                         HorizontalAlignment="Left"
+                                        Margin="-12,0,0,0" />
+                                    <HyperlinkButton
                                         Content="WinUI Essentials"
-                                        NavigateUri="https://github.com/HO-COOH/WinUIEssentials" />
-                                    <HyperlinkButton
-                                        Margin="-12,0,0,0"
+                                        NavigateUri="https://github.com/HO-COOH/WinUIEssentials" x:Name="GlassPresenter_7273"
+                                        ouxct:ControlAppearance.IsEnabled="True"
                                         HorizontalAlignment="Left"
+                                        Margin="-12,0,0,0" />
+                                    <HyperlinkButton
                                         Content="libtorrent"
-                                        NavigateUri="https://github.com/arvidn/libtorrent" />
+                                        NavigateUri="https://github.com/arvidn/libtorrent" x:Name="GlassPresenter_7619"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        HorizontalAlignment="Left"
+                                        Margin="-12,0,0,0" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
@@ -160,9 +168,10 @@
                                         TextWrapping="Wrap" />
                                     <HyperlinkButton
                                         x:Uid="AboutLicenseSourceLink"
-                                        Margin="-12,0,0,0"
                                         Content="License &amp; Source"
-                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" />
+                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" x:Name="GlassPresenter_9222"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        Margin="-12,0,0,0" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
@@ -264,9 +273,7 @@
                                                 FontWeight="Black"
                                                 Text="AlexAdas" />
                                             <LineBreak />
-                                            <Run
-                                                FontWeight="Medium"
-                                                Text="ㅤㅤㅤㅤ" />
+                                            <Run FontWeight="Medium" Text="ㅤㅤㅤㅤ" />
                                         </TextBlock>
                                         <TextBlock Margin="0,12,0,1">
                                             <Run
@@ -276,13 +283,9 @@
                                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                                 Text="Special Thanks" />
                                             <LineBreak />
-                                            <Run
-                                                FontWeight="Medium"
-                                                Text="AlexAdas" />
+                                            <Run FontWeight="Medium" Text="AlexAdas" />
                                             <LineBreak />
-                                            <Run
-                                                FontWeight="Medium"
-                                                Text="HO-COOH" />
+                                            <Run FontWeight="Medium" Text="HO-COOH" />
                                             <LineBreak />
                                             <Run
                                                 x:Uid="AboutYouText"
@@ -313,9 +316,10 @@
                                             NavigateUri="" />-->
                                     <HyperlinkButton
                                         x:Uid="AboutHelpFeedbackLink"
-                                        Margin="-12,0,0,0"
                                         Content="Help &amp; Feedback"
-                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues" />
+                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues" x:Name="GlassPresenter_19456"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        Margin="-12,0,0,0" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
@@ -342,9 +346,10 @@
                                 <StackPanel Orientation="Vertical">
                                     <HyperlinkButton
                                         x:Uid="AboutJoinProjectLink"
-                                        Margin="-12,0,0,0"
                                         Content="Join the project on Github"
-                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" />
+                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" x:Name="GlassPresenter_21242"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        Margin="-12,0,0,0" />
                                 </StackPanel>
                             </essential:SettingsCard>
 
@@ -369,8 +374,8 @@
                                                 Spacing="8">
                                                 <StackPanel.Resources>
                                                     <Style TargetType="StackPanel">
-                                                        <Setter Property="Spacing" Value="4" />
                                                         <Setter Property="Orientation" Value="Horizontal" />
+                                                        <Setter Property="Spacing" Value="4" />
                                                     </Style>
                                                 </StackPanel.Resources>
                                                 <StackPanel>

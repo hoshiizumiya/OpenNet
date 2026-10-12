@@ -205,6 +205,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			}
 		}
 		sender.ItemsSource(suggestions);
+		if (sender != SettingsSearchBox()) SettingsSearchBox().ItemsSource(suggestions);
 	}
 
 	std::wstring MainSettingsPage::NormalizeSearchText(hstring const& value)

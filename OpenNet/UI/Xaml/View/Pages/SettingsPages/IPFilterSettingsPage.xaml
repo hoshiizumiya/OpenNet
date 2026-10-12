@@ -6,8 +6,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:local="using:OpenNet.UI.Xaml.View.Pages.SettingsPages"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
+    xmlns:wl="using:WinUI.LiquidGlass"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -44,16 +45,10 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8D7;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                        <essential:Case>
-                            <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                            <ToggleSwitch x:Name="EnableFilterToggle" Loaded="EnableFilterToggle_Loaded" Toggled="OnEnableToggled" />
-                        </essential:Case>
-                        <essential:Case>
-                            <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                            <liquid:LiquidGlassToggleSwitch x:Name="EnableFilterGlassToggle" Loaded="EnableFilterToggle_Loaded" Click="OnEnableToggled" />
-                        </essential:Case>
-                    </essential:SwitchPresenter>
+                    <ToggleSwitch
+                        Loaded="EnableFilterToggle_Loaded"
+                        Toggled="OnEnableToggled" x:Name="EnableFilterToggle"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="IPF_RuleCount">
@@ -77,17 +72,16 @@
                     <Button
                         x:Uid="IPF_AddBtn"
                         AutomationProperties.AutomationId="IPF_AddBtn"
-                        Click="OnAddRuleClick" />
+                        Click="OnAddRuleClick" x:Name="GlassPresenter_3903"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="IPF_ManualInput">
                             <TextBox
-                                x:Name="ManualIpTextBox"
                                 x:Uid="ViewIPFilterSettingsPageTextBox"
-                                MinWidth="360"
-                                MaxHeight="120"
                                 AcceptsReturn="True"
                                 PlaceholderText="1.2.3.4&#x0a;10.0.0.0/8&#x0a;192.168.1.0-192.168.1.255&#x0a;2400:1a00::/32"
-                                TextWrapping="Wrap" />
+                                TextWrapping="Wrap" x:Name="ManualIpTextBox" MinWidth="360" MaxHeight="120"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -100,7 +94,8 @@
                         x:Uid="CommonContentBrowse"
                         AutomationProperties.AutomationId="CommonContentBrowse"
                         Click="OnImportClick"
-                        Content="Browse..." />
+                        Content="Browse..." x:Name="GlassPresenter_5101"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="IPF_RuleFiles">
@@ -117,17 +112,20 @@
                             <Button
                                 x:Uid="IPF_OpenFolderBtn"
                                 AutomationProperties.AutomationId="IPF_OpenFolderBtn"
-                                Click="OnOpenRulesFolderClick" />
+                                Click="OnOpenRulesFolderClick" x:Name="GlassPresenter_6068"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                             <Button
                                 x:Uid="IPF_OpenPrimaryFileBtn"
                                 AutomationProperties.AutomationId="IPF_OpenPrimaryFileBtn"
                                 Click="OnOpenRuleFileClick"
-                                Tag="ipfilter.txt" />
+                                Tag="ipfilter.txt" x:Name="GlassPresenter_6314"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                             <Button
                                 x:Uid="IPF_OpenSecondaryFileBtn"
                                 AutomationProperties.AutomationId="IPF_OpenSecondaryFileBtn"
                                 Click="OnOpenRuleFileClick"
-                                Tag="ipfilter2.txt" />
+                                Tag="ipfilter2.txt" x:Name="GlassPresenter_6618"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </StackPanel>
                     </StackPanel>
                 </essential:SettingsCard>
@@ -150,25 +148,19 @@
                             IsActive="False"
                             Visibility="Collapsed" />
                         <Button
-                            x:Name="UpdateSubscriptionsButton"
                             x:Uid="IPF_UpdateSubscriptionsNow"
                             AutomationProperties.AutomationId="IPF_UpdateSubscriptionsNow"
-                            Click="OnUpdateSubscriptionsClick">
+                            Click="OnUpdateSubscriptionsClick" x:Name="UpdateSubscriptionsButton"
+                            ouxct:ControlAppearance.IsEnabled="True">
                             <FontIcon Glyph="&#xE72C;" />
                         </Button>
                     </StackPanel>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="IPF_SubscriptionAutoUpdate">
-                            <essential:SwitchPresenter Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                                <essential:Case>
-                                    <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                                    <ToggleSwitch x:Name="SubscriptionAutoUpdateToggle" Loaded="SubscriptionAutoUpdateToggle_Loaded" Toggled="OnSubscriptionAutoUpdateToggled" />
-                                </essential:Case>
-                                <essential:Case>
-                                    <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                                    <liquid:LiquidGlassToggleSwitch x:Name="SubscriptionAutoUpdateGlassToggle" Loaded="SubscriptionAutoUpdateToggle_Loaded" Click="OnSubscriptionAutoUpdateToggled" />
-                                </essential:Case>
-                            </essential:SwitchPresenter>
+                            <ToggleSwitch
+                                Loaded="SubscriptionAutoUpdateToggle_Loaded"
+                                Toggled="OnSubscriptionAutoUpdateToggled" x:Name="SubscriptionAutoUpdateToggle"
+                                ouxct:ControlAppearance.IsEnabled="True" />
                         </essential:SettingsCard>
 
                         <essential:SettingsCard x:Uid="IPF_SubscriptionAdd">
@@ -178,19 +170,19 @@
                                     <ColumnDefinition Width="Auto" />
                                 </Grid.ColumnDefinitions>
                                 <TextBox
-                                    x:Name="SubscriptionUrlTextBox"
                                     x:Uid="IPF_SubscriptionUrl"
-                                    MinHeight="72"
-                                    HorizontalAlignment="Stretch"
                                     AcceptsReturn="True"
                                     AutomationProperties.AutomationId="IPF_SubscriptionUrl"
-                                    TextWrapping="Wrap" />
+                                    TextWrapping="Wrap" x:Name="SubscriptionUrlTextBox" MinHeight="72"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    HorizontalAlignment="Stretch" />
                                 <Button
                                     x:Uid="IPF_AddSubscription"
-                                    Grid.Column="1"
-                                    VerticalAlignment="Center"
                                     AutomationProperties.AutomationId="IPF_AddSubscription"
-                                    Click="OnAddSubscriptionClick" />
+                                    Click="OnAddSubscriptionClick" x:Name="GlassPresenter_10428"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    VerticalAlignment="Center"
+                                    Grid.Column="1" />
                             </Grid>
                         </essential:SettingsCard>
 
@@ -224,17 +216,17 @@
                                     Orientation="Horizontal"
                                     Spacing="8">
                                     <Button
-                                        x:Name="EditSubscriptionButton"
                                         x:Uid="IPF_EditSubscription"
                                         AutomationProperties.AutomationId="IPF_EditSubscription"
                                         Click="OnEditSubscriptionClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="EditSubscriptionButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                     <Button
-                                        x:Name="DeleteSubscriptionButton"
                                         x:Uid="IPF_DeleteSubscription"
                                         AutomationProperties.AutomationId="IPF_DeleteSubscription"
                                         Click="OnDeleteSubscriptionClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="DeleteSubscriptionButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                 </StackPanel>
                             </Grid>
                         </essential:SettingsCard>
@@ -242,17 +234,17 @@
                         <essential:SettingsCard x:Uid="IPF_SubscriptionMode">
                             <StackPanel Spacing="4">
                                 <RadioButton
-                                    x:Name="SubscriptionMergeRadio"
                                     x:Uid="IPF_SubscriptionMerge"
                                     AutomationProperties.AutomationId="IPF_SubscriptionMerge"
                                     Checked="OnSubscriptionModeChanged"
-                                    GroupName="IPFilterSubscriptionMode" />
+                                    GroupName="IPFilterSubscriptionMode" x:Name="SubscriptionMergeRadio"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                                 <RadioButton
-                                    x:Name="SubscriptionReplaceRadio"
                                     x:Uid="IPF_SubscriptionReplace"
                                     AutomationProperties.AutomationId="IPF_SubscriptionReplace"
                                     Checked="OnSubscriptionModeChanged"
-                                    GroupName="IPFilterSubscriptionMode" />
+                                    GroupName="IPFilterSubscriptionMode" x:Name="SubscriptionReplaceRadio"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                             </StackPanel>
                         </essential:SettingsCard>
 
@@ -290,7 +282,8 @@
                     <Button
                         x:Uid="IPF_RefreshRulesBtn"
                         AutomationProperties.AutomationId="IPF_RefreshRulesBtn"
-                        Click="OnRefreshRulesClick" />
+                        Click="OnRefreshRulesClick" x:Name="GlassPresenter_16482"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -301,10 +294,10 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
                                 <TextBox
-                                    x:Name="RuleSearchTextBox"
                                     x:Uid="IPF_RuleSearch"
                                     AutomationProperties.AutomationId="IPF_RuleSearch"
-                                    TextChanged="OnRuleSearchTextChanged" />
+                                    TextChanged="OnRuleSearchTextChanged" x:Name="RuleSearchTextBox"
+                                    ouxct:ControlAppearance.IsEnabled="True" />
                                 <TextBlock
                                     x:Name="RulesShownText"
                                     Grid.Row="1"
@@ -336,17 +329,17 @@
                                     Orientation="Horizontal"
                                     Spacing="8">
                                     <Button
-                                        x:Name="EditSelectedRuleButton"
                                         x:Uid="IPF_EditRuleBtn"
                                         AutomationProperties.AutomationId="IPF_EditRuleBtn"
                                         Click="OnEditRuleClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="EditSelectedRuleButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                     <Button
-                                        x:Name="DeleteSelectedRuleButton"
                                         x:Uid="IPF_DeleteRuleBtn"
                                         AutomationProperties.AutomationId="IPF_DeleteRuleBtn"
                                         Click="OnDeleteRuleClick"
-                                        IsEnabled="False" />
+                                        IsEnabled="False" x:Name="DeleteSelectedRuleButton"
+                                        ouxct:ControlAppearance.IsEnabled="True" />
                                 </StackPanel>
                             </Grid>
                         </essential:SettingsCard>
@@ -360,7 +353,8 @@
                     <Button
                         x:Uid="IPF_ClearBtn"
                         AutomationProperties.AutomationId="IPF_ClearBtn"
-                        Click="OnClearAllClick" />
+                        Click="OnClearAllClick" x:Name="GlassPresenter_20732"
+                        ouxct:ControlAppearance.IsEnabled="True" />
                 </essential:SettingsCard>
 
                 <!--  Status InfoBar  -->

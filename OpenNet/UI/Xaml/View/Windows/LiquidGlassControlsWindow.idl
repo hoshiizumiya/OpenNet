@@ -1,0 +1,11 @@
+import "UI/Xaml/Control/Theme/LiquidGlassProfile.idl";
+namespace OpenNet.UI.Xaml.View.Windows
+{
+    [default_interface]
+    runtimeclass LiquidGlassControlsWindow : WinUI3Package.WindowEx
+    {
+        LiquidGlassControlsWindow();
+        Windows.Foundation.Collections.IObservableVector<OpenNet.UI.Xaml.Control.Theme.LiquidGlassProfile> Profiles{ get; };
+        OpenNet.UI.Xaml.Control.Theme.LiquidGlassProfile SelectedProfile{ get; };
+    }
+}

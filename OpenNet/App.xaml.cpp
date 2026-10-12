@@ -11,11 +11,14 @@
 #include "UI/Xaml/View/Windows/TorrentCheckModalWindow.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.xaml.h"
 #include "UI/Xaml/Control/Effect/TextMorphEffect.h"
+#include "UI/Xaml/Control/Theme/Typography.h"
+#include "UI/Xaml/Control/Theme/ControlAppearance.h"
 #include "Helpers/PageMemoryDiagnostics.h"
 
 module OpenNet.App;
 
 import OpenNet.Core.ExceptionService.ExceptionHandling;
+import OpenNet.XamlApplicationLifetime;
 import OpenNet.Core.AppSettingsDatabase;
 import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Content.ContentCatalogService;
@@ -53,6 +56,14 @@ namespace winrt::OpenNet::implementation
 	/// </summary>
 	App::App()
 	{
+		// Register DPs used by optimized Style.Setters before App.xaml or any view
+		// is loaded. Their native lookup does not call lazy Get/Set accessors.
+		winrt::OpenNet::UI::Xaml::Control::Theme::implementation::Typography::EnsureProperties();
+		winrt::OpenNet::UI::Xaml::Control::Theme::implementation::ControlAppearance::EnsureProperties();
+#if defined(_DEBUG)
+		DebugSettings().IsXamlResourceReferenceTracingEnabled(true);
+		OutputDebugStringW(L"Appearance bootstrap: dependency properties registered before App.xaml.\r\n");
+#endif
 		// Initialize theme system early
 		::OpenNet::Helpers::ThemeHelper::Initialize();
 		try
@@ -650,6 +661,8 @@ namespace winrt::OpenNet::implementation
 		{
 			co_return;
 		}
+		::OpenNet::XamlApplicationLifetime::Exiting = true;
+		winrt::OpenNet::UI::Xaml::Control::Theme::implementation::ControlAppearance::Shutdown();
 
 		auto dispatcher = Microsoft::UI::Dispatching::DispatcherQueue::GetForCurrentThread();
 		StopIPFilterSubscriptionUpdates();

@@ -4,9 +4,7 @@
 
 `OpenNet/UI/Xaml/Control/Theme/VisualMaterials.xaml` defines semantic card and surface brushes for light, dark, and high-contrast themes. `OpenNet.Helpers.MaterialTheme` applies the saved material setting independently from the light/dark theme. Keep high contrast on system brushes. Avoid sharing one animated glass brush between controls whose pointer or pressed state changes its optical parameters; the `WinUI.LiquidGlass` controls own brushes for those cases.
 
-`LiquidGlassSlider` derives from `Slider`; `LiquidGlassToggleSwitch` derives from `ToggleButton` and adds `IsOn`. The event names differ, but native `Toggled` and glass `Click` can invoke the **same** `RoutedEventArgs` handler. `MaterialControlState` is the application resource whose `StyleIndex` dependency property is updated by `MaterialTheme::Apply`. Use `SwitchPresenter` with standard and glass cases and bind `Value` to `{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}`. This changes the actual child control type when the material changes. Both branches must read and write the same underlying setting, rather than copying values from one visual to the other. Do not assume that assigning `IsOn` on a glass switch raises `Click`.
-
-For a new control, verify that changing the material while its page remains visible replaces the active child, preserves the setting value, and leaves no glass branch connected in standard mode. The onboarding material preview is the minimal two-case example. `ThemesSettingsPage` shows the same-handler pattern for persisted settings, and `FilterEditorDialog` shows it for temporary dialog state. Use a typed `<essential:Case.Value><x:Int32>…</x:Int32></essential:Case.Value>`; a string `Value="0"` will not match the boxed integer material index.
+Control type selection now uses per-kind persisted settings and an application resource as its source. See [液态玻璃控件切换与参数设置](liquid-glass-control-migration.md) for the settings, explicit SwitchPresenter cases, imperative control bridges, brush lifecycle, strongly typed slots, and programmatic control factories.
 
 ## Web UI frontend and runtime settings
 

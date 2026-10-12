@@ -6,9 +6,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:essential="using:WinUI3Package"
     xmlns:labs="using:XamlToolkit.Labs.WinUI"
-    xmlns:liquid="using:WinUI.LiquidGlass"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
     xmlns:vm="using:OpenNet.ViewModels"
+    xmlns:wl="using:WinUI.LiquidGlass"
     Width="1000"
     Height="600"
     MinWidth="480"
@@ -20,6 +21,11 @@
     </essential:WindowEx.ContextMenu>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.Resources>
+            <ResourceDictionary>
+                <essential:ModernWindowCaptionButtonToolTip x:Name="CaptionButtonToolTip" Window="{x:Bind Window}" />
+            </ResourceDictionary>
+        </Grid.Resources>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
@@ -53,21 +59,16 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
-            <essential:SwitchPresenter
+            <ToggleSwitch
+                x:Uid="ViewTrackerLogWindowText2"
+                AutomationProperties.AutomationId="ViewTrackerLogWindowText2"
+                Header="Always on top"
+                Loaded="AlwaysOnTopToggle_Loaded"
+                Toggled="AlwaysOnTopToggle_Changed" x:Name="AlwaysOnTopToggle"
+                ouxct:ControlAppearance.IsEnabled="True"
                 Grid.RowSpan="2"
                 Grid.Column="2"
-                VerticalAlignment="Center"
-               
-                Value="{Binding StyleIndex, Source={StaticResource MaterialControlState}, Mode=OneWay}">
-                <essential:Case>
-                    <essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
-                    <ToggleSwitch x:Name="AlwaysOnTopToggle" x:Uid="ViewTrackerLogWindowText2" AutomationProperties.AutomationId="ViewTrackerLogWindowText2" Header="Always on top" Loaded="AlwaysOnTopToggle_Loaded" Toggled="AlwaysOnTopToggle_Changed" />
-                </essential:Case>
-                <essential:Case>
-                    <essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
-                    <liquid:LiquidGlassToggleSwitch x:Name="AlwaysOnTopGlassToggle" x:Uid="ViewTrackerLogWindowText2" AutomationProperties.AutomationId="ViewTrackerLogWindowText2" Header="Always on top" Loaded="AlwaysOnTopToggle_Loaded" Click="AlwaysOnTopToggle_Changed" />
-                </essential:Case>
-            </essential:SwitchPresenter>
+                VerticalAlignment="Center" />
 
             <TextBlock
                 x:Uid="ViewTrackerLogWindowText3"
@@ -123,7 +124,7 @@
                                 <ColumnDefinition Width="Auto" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <essential:SwitchPresenter Value="{Binding IsError, Mode=OneWay}">
+                            <essential:SwitchPresenter Value="{x:Bind IsError, Mode=OneWay}">
                                 <essential:Case>
                                     <essential:Case.Value>
                                         <x:Boolean>True</x:Boolean>
