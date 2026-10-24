@@ -38,24 +38,24 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 		bool s_brushRefreshQueued{};
 		// Keep baselines across unload/reload without retaining controls or brushes.
 		std::vector<SurfaceDefaults> s_controlDefaults;
-        hstring LibraryKind(FrameworkElement const& element)
-        {
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassButton>()) return L"Button";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassToggleButton>()) return L"ToggleButton";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassHyperlinkButton>()) return L"HyperlinkButton";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassCheckBox>()) return L"CheckBox";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassRadioButton>()) return L"RadioButton";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassSlider>()) return L"Slider";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassTextBox>()) return L"TextBox";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassSearchBox>()) return L"SearchBox";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassPasswordBox>()) return L"PasswordBox";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassComboBox>()) return L"ComboBox";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return L"ToggleSwitch";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassCard>()) return L"Card";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassFloatingPanel>()) return L"FloatingPanel";
-            if (element.try_as<WinUI::LiquidGlass::LiquidGlassTabBar>()) return L"TabBar";
-            return L"";
-        }
+		hstring LibraryKind(FrameworkElement const& element)
+		{
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassButton>()) return L"Button";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassToggleButton>()) return L"ToggleButton";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassHyperlinkButton>()) return L"HyperlinkButton";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassCheckBox>()) return L"CheckBox";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassRadioButton>()) return L"RadioButton";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassSlider>()) return L"Slider";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassTextBox>()) return L"TextBox";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassSearchBox>()) return L"SearchBox";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassPasswordBox>()) return L"PasswordBox";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassComboBox>()) return L"ComboBox";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return L"ToggleSwitch";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassCard>()) return L"Card";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassFloatingPanel>()) return L"FloatingPanel";
+			if (element.try_as<WinUI::LiquidGlass::LiquidGlassTabBar>()) return L"TabBar";
+			return L"";
+		}
 		WinUI::Composition::Hlsl::LiquidGlassBrush GetBrush(FrameworkElement const& element)
 		{
 			if (auto brush = ControlAppearance::GetBrush(element).try_as<WinUI::Composition::Hlsl::LiquidGlassBrush>()) return brush;
@@ -1324,11 +1324,11 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 	}
 
 
-    FrameworkElement MaterialControlState::CreateRadioButtonPresenter(Controls::RadioButton const& native)
-    {
-        ControlAppearance::SetIsEnabled(native, true);
-        return native;
-    }
+	FrameworkElement MaterialControlState::CreateRadioButtonPresenter(Controls::RadioButton const& native)
+	{
+		ControlAppearance::SetIsEnabled(native, true);
+		return native;
+	}
 
 	void MaterialControlState::ManagedChanged(DependencyObject const& sender, DependencyPropertyChangedEventArgs const& args)
 	{
@@ -1353,16 +1353,25 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 		auto brush = GetBrush(element);
 		if (!brush) return;
 
-        std::erase_if(s_controlDefaults, [](auto const& item) { return !item.Brush.get(); });
-        auto baseline = std::find_if(s_controlDefaults.begin(), s_controlDefaults.end(), [&brush](auto const& item) { return item.Brush.get() == brush; });
-        if (baseline == s_controlDefaults.end())
-        {
-            s_controlDefaults.push_back({ make_weak(brush), ::OpenNet::UI::LiquidGlassOptics::Capture(brush) });
-            baseline = std::prev(s_controlDefaults.end());
-        }
-        auto entry = std::find_if(s_managed.begin(), s_managed.end(), [&element](auto const& item) { return item.Element.get() == element; });
-        if (entry == s_managed.end()) s_managed.push_back({ make_weak(element), brush, baseline->Defaults });
-        else if (entry->Brush != brush) *entry = { make_weak(element), brush, baseline->Defaults };
+		std::erase_if(s_controlDefaults, [](auto const& item)
+		{
+			return !item.Brush.get();
+		});
+		auto baseline = std::find_if(s_controlDefaults.begin(), s_controlDefaults.end(), [&brush](auto const& item)
+		{
+			return item.Brush.get() == brush;
+		});
+		if (baseline == s_controlDefaults.end())
+		{
+			s_controlDefaults.push_back({ make_weak(brush), ::OpenNet::UI::LiquidGlassOptics::Capture(brush) });
+			baseline = std::prev(s_controlDefaults.end());
+		}
+		auto entry = std::find_if(s_managed.begin(), s_managed.end(), [&element](auto const& item)
+		{
+			return item.Element.get() == element;
+		});
+		if (entry == s_managed.end()) s_managed.push_back({ make_weak(element), brush, baseline->Defaults });
+		else if (entry->Brush != brush) *entry = { make_weak(element), brush, baseline->Defaults };
 		for (auto const& dictionary : Application::Current().Resources().MergedDictionaries())
 		{
 			auto key = box_value(L"MaterialControlState");
@@ -1383,59 +1392,112 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 	}
 
 
-    Controls::Primitives::ButtonBase MaterialControlState::CreateActionButton(Input::ICommand const& command, Windows::Foundation::IInspectable const& content, std::int32_t material)
-    {
-        Controls::Button button = material == 1 ? WinUI::LiquidGlass::LiquidGlassButton().as<Controls::Button>() : Controls::Button{};
-        button.Command(command); button.Content(content);
-        if (material == 1) SetIsManaged(button, true);
-        return button;
-    }
+	Controls::Primitives::ButtonBase MaterialControlState::CreateActionButton(Input::ICommand const& command, Windows::Foundation::IInspectable const& content, std::int32_t material)
+	{
+		Controls::Button button = material == 1 ? WinUI::LiquidGlass::LiquidGlassButton().as<Controls::Button>() : Controls::Button{};
+		button.Command(command); button.Content(content);
+		if (material == 1) SetIsManaged(button, true);
+		return button;
+	}
 
-    void MaterialControlState::RefreshBrushes()
-    {
-        if (::OpenNet::XamlApplicationLifetime::Exiting.load() || s_brushRefreshQueued) return;
-        auto state = Current();
-        s_brushRefreshQueued = state.DispatcherQueue().TryEnqueue([weak = make_weak(state)]
-        {
-            s_brushRefreshQueued = false;
-            if (::OpenNet::XamlApplicationLifetime::Exiting.load()) return;
-            if (auto current = weak.get()) { auto self = get_self<MaterialControlState>(current); self->UpdateSelection(); self->ApplyManagedControls(); }
-        });
-    }
+	void MaterialControlState::RefreshBrushes()
+	{
+		if (::OpenNet::XamlApplicationLifetime::Exiting.load() || s_brushRefreshQueued) return;
+		s_brushRefreshQueued = true;
+		try
+		{
+			auto state = Current();
+			if (state.DispatcherQueue().TryEnqueue([weak = make_weak(state)]
+			{
+				try
+				{
+					if (::OpenNet::XamlApplicationLifetime::Exiting.load()) LiquidGlassProfile::RollbackChanges();
+					else if (auto current = weak.get())
+					{
+						auto self = get_self<MaterialControlState>(current);
+						LiquidGlassProfile::ValidatePendingChanges();
+						bool stable = false;
+						for (int attempt = 0; attempt < 3; ++attempt)
+						{
+							auto revision = LiquidGlassProfile::Revision();
+							self->UpdateSelection();
+							self->ApplyManagedControls();
+							if (revision != LiquidGlassProfile::Revision()) continue;
+							LiquidGlassProfile::CommitChanges();
+							stable = true;
+							break;
+						}
+						if (!stable) throw hresult_error(E_FAIL, L"Liquid glass parameter recovery did not stabilize.");
+					}
+					else LiquidGlassProfile::RollbackChanges();
+				}
+				catch (...)
+				{
+					// Nothing may escape DispatcherQueue into CoreMessaging fail-fast.
+					LiquidGlassProfile::ReportCurrentFailure(L"Apply optical refresh");
+					LiquidGlassProfile::RollbackChanges();
+					try
+					{
+						if (!::OpenNet::XamlApplicationLifetime::Exiting.load())
+							if (auto current = weak.get()) get_self<MaterialControlState>(current)->ApplyManagedControls();
+					}
+					catch (...)
+					{
+						LiquidGlassProfile::ReportCurrentFailure(L"Restore optical refresh");
+					}
+				}
+				s_brushRefreshQueued = false;
+			})) return;
+		}
+		catch (...)
+		{
+			LiquidGlassProfile::ReportCurrentFailure(L"Queue optical refresh");
+		}
+		s_brushRefreshQueued = false;
+		LiquidGlassProfile::RollbackChanges();
+	}
 
-    void MaterialControlState::ApplyManagedControls()
-    {
-        if (::OpenNet::XamlApplicationLifetime::Exiting.load()) return;
-        std::erase_if(s_managed, [](auto const& item) { return !item.Element.get(); });
-        for (auto const& item : s_managed)
-            if (auto element = item.Element.get(); element && element.IsLoaded()) ApplyManagedControl(element);
-    }
+	void MaterialControlState::ApplyManagedControls()
+	{
+		if (::OpenNet::XamlApplicationLifetime::Exiting.load()) return;
+		std::erase_if(s_managed, [](auto const& item)
+		{
+			return !item.Element.get();
+		});
+		for (auto const& item : s_managed)
+			if (auto element = item.Element.get(); element && element.IsLoaded()) ApplyManagedControl(element);
+	}
 
-    void MaterialControlState::ApplyManagedControl(FrameworkElement const& element)
-    {
-        if (::OpenNet::XamlApplicationLifetime::Exiting.load()) return;
-        auto item = std::find_if(s_managed.begin(), s_managed.end(), [&element](auto const& entry) { return entry.Element.get() == element; });
-        if (item == s_managed.end()) return;
-        auto kind = ::OpenNet::UI::LiquidGlassOptics::Canonical(ControlAppearance::GetSurface(element));
-        auto libraryKind = LibraryKind(element);
-        if (!libraryKind.empty()) kind = libraryKind;
-        if (kind.empty()) kind = L"Card";
-        if (libraryKind.empty())
-        {
-            ::OpenNet::UI::LiquidGlassOptics::Restore(item->Brush, item->Defaults);
-            ControlAppearance::AdaptSurface(element);
-        }
-        else
-        {
-            // Library controls own their geometry, DPI and interaction motion.
-            for (std::size_t i = 0; i < ::OpenNet::UI::LiquidGlassOptics::Descriptors.size(); ++i)
-                ::OpenNet::UI::LiquidGlassOptics::Descriptors[i].Write(item->Brush, item->Defaults[i]);
-        }
-        LiquidGlassProfile::Apply(kind, item->Brush);
-        auto enabled = StyleIndex() == 1;
-        if (kind == L"Card") enabled = enabled && CardEnabled();
-        if (kind == L"FloatingPanel") enabled = enabled && FloatingPanelEnabled();
-        if (kind == L"TabBar") enabled = enabled && TabBarEnabled();
-        item->Brush.IsEnabled((ControlAppearance::GetIsPreview(element) || enabled) && ControlAppearance::CanUseGlass());
-    }
+	void MaterialControlState::ApplyManagedControl(FrameworkElement const& element)
+	{
+		if (::OpenNet::XamlApplicationLifetime::Exiting.load()) return;
+		auto item = std::find_if(s_managed.begin(), s_managed.end(), [&element](auto const& entry)
+		{
+			return entry.Element.get() == element;
+		});
+		if (item == s_managed.end()) return;
+		auto kind = ::OpenNet::UI::LiquidGlassOptics::Canonical(ControlAppearance::GetSurface(element));
+		auto libraryKind = LibraryKind(element);
+		if (!libraryKind.empty()) kind = libraryKind;
+		if (kind.empty()) kind = L"Card";
+		if (libraryKind.empty())
+		{
+			::OpenNet::UI::LiquidGlassOptics::RestoreGeometry(item->Brush, item->Defaults);
+		}
+		// Optical defaults and overrides go through the same guarded native setters.
+		// Library controls still own geometry, DPI and interaction motion.
+		auto result = LiquidGlassProfile::Apply(kind, item->Brush, item->Defaults);
+		if (libraryKind.empty())
+		{
+			// Keep automatic accent contrast/tint adaptation when no override exists.
+			ControlAppearance::AdaptSurface(element);
+			result = std::max(result, LiquidGlassProfile::Apply(kind, item->Brush, item->Defaults, true));
+		}
+		auto enabled = StyleIndex() == 1;
+		if (kind == L"Card") enabled = enabled && CardEnabled();
+		if (kind == L"FloatingPanel") enabled = enabled && FloatingPanelEnabled();
+		if (kind == L"TabBar") enabled = enabled && TabBarEnabled();
+		item->Brush.IsEnabled(result != LiquidGlassApplyResult::Unsupported
+							  && (ControlAppearance::GetIsPreview(element) || enabled) && ControlAppearance::CanUseGlass());
+	}
 }

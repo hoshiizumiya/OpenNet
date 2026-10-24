@@ -7366,4 +7366,7 @@ Availability: {}</value>
   <data name="GlassDefaultValue.Text" xml:space="preserve">
     <value>Default:</value>
   </data>
+  <data name="GlassParameterInvalidValue" xml:space="preserve">
+    <value>The value is outside the supported range. The previous valid value or library preset has been restored.</value>
+  </data>
 </root>

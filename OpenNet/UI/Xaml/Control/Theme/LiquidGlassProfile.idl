@@ -1,29 +1,33 @@
-namespace OpenNet.UI.Xaml.Control.Theme
+﻿namespace OpenNet.UI.Xaml.Control.Theme
 {
-    [default_interface]
-    runtimeclass LiquidGlassParameter : Microsoft.UI.Xaml.DependencyObject
-    {
-        LiquidGlassParameter();
-        String Key{ get; };
-        String Label{ get; };
-        Double Minimum{ get; };
-        Double Maximum{ get; };
-        Double Step{ get; };
-        Double DefaultValue{ get; };
-        Double Value;
-        static Microsoft.UI.Xaml.DependencyProperty ValueProperty{ get; };
-        void Reset();
-    }
-    [default_interface]
-    runtimeclass LiquidGlassProfile : Microsoft.UI.Xaml.DependencyObject
-    {
-        LiquidGlassProfile();
-        static Windows.Foundation.Collections.IObservableVector<LiquidGlassProfile> All{ get; };
-        String Key{ get; };
-        String Name{ get; };
-        Boolean Enabled;
-        static Microsoft.UI.Xaml.DependencyProperty EnabledProperty{ get; };
-        Windows.Foundation.Collections.IObservableVector<LiquidGlassParameter> Parameters{ get; };
-        void Reset();
-    }
+	[default_interface]
+	runtimeclass LiquidGlassParameter : Microsoft.UI.Xaml.DependencyObject
+	{
+		LiquidGlassParameter();
+		String Key{ get; };
+		String Label{ get; };
+		Double Minimum{ get; };
+		Double Maximum{ get; };
+		Double Step{ get; };
+		Double DefaultValue{ get; };
+		Double Value;
+		static Microsoft.UI.Xaml.DependencyProperty ValueProperty{ get; };
+		String ErrorMessage{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty ErrorMessageProperty{ get; };
+		Boolean HasError{ get; };
+		static Microsoft.UI.Xaml.DependencyProperty HasErrorProperty{ get; };
+		void Reset();
+	}
+	[default_interface]
+	runtimeclass LiquidGlassProfile : Microsoft.UI.Xaml.DependencyObject
+	{
+		LiquidGlassProfile();
+		static Windows.Foundation.Collections.IObservableVector<LiquidGlassProfile> All{ get; };
+		String Key{ get; };
+		String Name{ get; };
+		Boolean Enabled;
+		static Microsoft.UI.Xaml.DependencyProperty EnabledProperty{ get; };
+		Windows.Foundation.Collections.IObservableVector<LiquidGlassParameter> Parameters{ get; };
+		void Reset();
+	}
 }

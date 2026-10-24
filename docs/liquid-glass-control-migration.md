@@ -132,6 +132,20 @@ TypographyResources.xaml 定义默认文字层级；BaseFontSize 是未缩放的
 
 ## 维护与验证
 
+### 2026-10-24 参数验证与恢复
+
+同步胡桃现有参数的拒绝/恢复机制，保持 OpenNet 的 `liquid_glass_profiles_v1` 分类和按类型、参数命名的存储键，不修改数据库结构或底层 Hlsl 校验。
+
+- HighlightSharpness 范围为 0.25–64，SpecularWidth 为 0.25–32，HighlightStrength 为 0–4；步长分别为 0.05、0.05、0.01。
+- 旧越界、NaN/无穷配置拒绝加载，只移除该参数键并恢复库预设；不会夹取成另一个值，也不会清空整个类型或其他类型。
+- Value 的普通 setter 和 DP 变更回调都验证输入，后者覆盖直接 SetValue/TwoWay 写入。编辑先暂存，先用真实库预设验证，再应用到当前画刷；状态稳定后才提交到数据库。
+- 原生 E_INVALIDARG 保持可诊断，按“已提交有效值→库预设”逐参数恢复；连预设也被拒绝的画刷留在 fallback。错误在参数行显示，OutputDebugString 包含类型、参数、拒绝值和 HRESULT。
+- DispatcherQueue 刷新、回滚和重置回调不向 CoreMessaging 泄漏异常。非参数类意外失败回滚未提交修改并记录日志，不冒充有效参数写入。
+- 库控件仍拥有几何、DPI 和交互；非库表面保留自动色调/对比度适配，再覆盖用户明确设置的光学参数。
+
+验证：OpenNet.slnx /t:OpenNet /p:Configuration=Debug /p:Platform=x64 /m:2 /nr:false 增量编译通过，0 错误、11 警告，日志 `artifacts/liquid-glass-parameter-recovery-final.log`。未 Clean/Rebuild、未覆盖应用输出目录，未启动/安装应用。
+共用生产头文件的 C++ 状态及原生拒绝恢复算法测试通过；参数范围契约检查通过。全量 23 项 JS 源码检查中 21 项通过，另有两项既有焦点回调/排序表头断言失败，相关代码和断言本轮均未修改。实机连续拖动、恢复旧配置、切换/重启验证仍未执行。
+
 升级 WinUI 时核对原生模板契约和主题资源，来源许可见 material-templates-notice.md。新增控件首先保持原生行为，只给模板中的视觉表面接入独立画刷。
 
 本次机械迁移脚本 scripts/collapse-material-presenters.mjs 默认只列出可迁移项，--write 才修改源 XAML；不会触碰生成目录或执行编译。

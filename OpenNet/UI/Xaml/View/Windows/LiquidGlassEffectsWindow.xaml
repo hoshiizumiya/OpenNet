@@ -1,11 +1,14 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <essential:WindowEx
     x:Class="OpenNet.UI.Xaml.View.Windows.LiquidGlassEffectsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:essential="using:WinUI3Package"
     xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
-    Width="1120" Height="760" MinWidth="920" MinHeight="580">
+    Width="1120"
+    Height="760"
+    MinWidth="920"
+    MinHeight="580">
     <essential:WindowEx.ContextMenu>
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>
@@ -18,53 +21,117 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TitleBar x:Name="WindowTitleBar" x:Uid="LiquidGlassEffectsWindowTitle" Title="Liquid glass effects" />
+        <TitleBar
+            x:Name="WindowTitleBar"
+            x:Uid="LiquidGlassEffectsWindowTitle"
+            Title="Liquid glass effects" />
 
-        <StackPanel Grid.Row="1" Margin="24,12,24,20" Spacing="12">
-            <TextBlock x:Uid="GlassEffectsIntro" Text="Each control type has its own optics. Changes apply immediately and are saved automatically." TextWrapping="Wrap" />
+        <StackPanel
+            Grid.Row="1"
+            Margin="24,12,24,20"
+            Spacing="12">
+            <TextBlock
+                x:Uid="GlassEffectsIntro"
+                Text="Each control type has its own optics. Changes apply immediately and are saved automatically."
+                TextWrapping="Wrap" />
             <StackPanel Orientation="Horizontal" Spacing="16">
-                <ComboBox x:Name="TypeSelector" MinWidth="230" ItemsSource="{x:Bind Profiles}" SelectionChanged="TypeChanged">
+                <ComboBox
+                    x:Name="TypeSelector"
+                    MinWidth="230"
+                    ItemsSource="{x:Bind Profiles}"
+                    SelectionChanged="TypeChanged">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="ouxct:LiquidGlassProfile">
                             <TextBlock Text="{x:Bind Name}" />
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
-                <Button x:Uid="GlassResetType" Content="Restore this type's defaults" Click="ResetClicked" />
+                <Button
+                    x:Uid="GlassResetType"
+                    Click="ResetClicked"
+                    Content="Restore this type's defaults" />
             </StackPanel>
         </StackPanel>
-        <Grid Grid.Row="2" Margin="24,0,24,24" ColumnSpacing="24">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="390" /></Grid.ColumnDefinitions>
+        <Grid
+            Grid.Row="2"
+            Margin="24,0,24,24"
+            ColumnSpacing="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="390" />
+            </Grid.ColumnDefinitions>
             <ScrollView>
                 <ItemsControl ItemsSource="{x:Bind SelectedProfile.Parameters, Mode=OneWay}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate x:DataType="ouxct:LiquidGlassParameter">
-                            <StackPanel Spacing="4" Margin="0,0,12,16">
+                            <StackPanel Margin="0,0,12,16" Spacing="4">
                                 <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                                    <TextBlock Text="{x:Bind Label}" VerticalAlignment="Center" />
-                                    <Button Grid.Column="1" x:Uid="GlassResetParameter" Content="Reset" Click="{x:Bind Reset}" />
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Label}" />
+                                    <Button
+                                        x:Uid="GlassResetParameter"
+                                        Grid.Column="1"
+                                        Click="{x:Bind Reset}"
+                                        Content="Reset" />
                                 </Grid>
                                 <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="64" /></Grid.ColumnDefinitions>
-                                    <Slider Minimum="{x:Bind Minimum}" Maximum="{x:Bind Maximum}" StepFrequency="{x:Bind Step}" Value="{x:Bind Value, Mode=TwoWay}" AutomationProperties.Name="{x:Bind Label}" />
-                                    <TextBlock Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(Value), Mode=OneWay}" />
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="64" />
+                                    </Grid.ColumnDefinitions>
+                                    <Slider
+                                        AutomationProperties.Name="{x:Bind Label}"
+                                        Maximum="{x:Bind Maximum}"
+                                        Minimum="{x:Bind Minimum}"
+                                        StepFrequency="{x:Bind Step}"
+                                        Value="{x:Bind Value, Mode=TwoWay}" />
+                                    <TextBlock
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Center"
+                                        Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(Value), Mode=OneWay}" />
                                 </Grid>
                                 <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock x:Uid="GlassDefaultValue" Text="Default:" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                                    <TextBlock Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(DefaultValue)}" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                                    <TextBlock
+                                        x:Uid="GlassDefaultValue"
+                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                        Text="Default:" />
+                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(DefaultValue)}" />
                                 </StackPanel>
+                                <TextBlock
+                                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                    Text="{x:Bind ErrorMessage, Mode=OneWay}"
+                                    TextWrapping="Wrap"
+                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(HasError), Mode=OneWay}" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </ScrollView>
             <StackPanel Grid.Column="1" Spacing="12">
-                <TextBlock x:Uid="GlassPreviewHeading" Text="Interactive preview" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock
+                    x:Uid="GlassPreviewHeading"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Interactive preview" />
                 <TextBlock Text="{x:Bind SelectedProfile.Name, Mode=OneWay}" />
-                <Border x:Name="PreviewHost" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" />
-                <TextBlock x:Uid="GlassEffectsPreviewHint" Text="The preview always shows glass, even if this type is disabled in the application. Try hover, press, focus, typing and dragging." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
-                <TextBlock x:Uid="GlassPresetHint" Text="Defaults come from the library preset. Compact native knobs retain contrast and geometry adaptation. Resetting a type does not change other types or enable switches." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <Border
+                    x:Name="PreviewHost"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12" />
+                <TextBlock
+                    x:Uid="GlassEffectsPreviewHint"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="The preview always shows glass, even if this type is disabled in the application. Try hover, press, focus, typing and dragging."
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Uid="GlassPresetHint"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Defaults come from the library preset. Compact native knobs retain contrast and geometry adaptation. Resetting a type does not change other types or enable switches."
+                    TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
 

@@ -1571,6 +1571,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassOptics.h" />
+    <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassParameterState.h" />
     <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassProfile.h" />
     <ClCompile Include="UI\Xaml\Control\Theme\LiquidGlassProfile.cpp" />
     <Midl Include="UI\Xaml\Control\Theme\LiquidGlassProfile.idl" />

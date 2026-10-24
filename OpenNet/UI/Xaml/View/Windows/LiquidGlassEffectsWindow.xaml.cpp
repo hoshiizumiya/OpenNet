@@ -1,4 +1,4 @@
-#include "XamlWorkaround.h"
+﻿#include "XamlWorkaround.h"
 #include "LiquidGlassEffectsWindow.xaml.h"
 #include "LiquidGlassPreview.h"
 #include "UI/Xaml/Control/Theme/LiquidGlassProfile.h"
@@ -10,34 +10,43 @@ using namespace winrt;
 using namespace Microsoft::UI::Xaml;
 namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 {
-    LiquidGlassEffectsWindow::LiquidGlassEffectsWindow()
-    {
-        m_profile = Profiles().GetAt(0);
-        InitializeComponent();
-        ExtendsContentIntoTitleBar(true);
-        SetTitleBar(WindowTitleBar());
-        InitializeWindowExBase();
-        
-        TypeSelector().SelectedIndex(0);
-        PreviewHost().Child(::OpenNet::UI::GlassPreview(m_profile.Key(), true));
-        m_loading = false;
-    }
-    winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::UI::Xaml::Control::Theme::LiquidGlassProfile> LiquidGlassEffectsWindow::Profiles()
-    {
-        return winrt::OpenNet::UI::Xaml::Control::Theme::implementation::LiquidGlassProfile::All();
-    }
-    void LiquidGlassEffectsWindow::TypeChanged(winrt::Windows::Foundation::IInspectable const&, Controls::SelectionChangedEventArgs const&)
-    {
-        if (m_loading) return;
-        auto profile = TypeSelector().SelectedItem().try_as<winrt::OpenNet::UI::Xaml::Control::Theme::LiquidGlassProfile>();
-        if (!profile) return;
-        m_profile = profile;
-        PreviewHost().Child(::OpenNet::UI::GlassPreview(profile.Key(), true));
-        Bindings->Update();
-    }
-    void LiquidGlassEffectsWindow::ResetClicked(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
-    {
-        if (m_profile) m_profile.Reset();
-    }
+	LiquidGlassEffectsWindow::LiquidGlassEffectsWindow()
+	{
+		m_profile = Profiles().GetAt(0);
+		InitializeComponent();
+		ExtendsContentIntoTitleBar(true);
+		SetTitleBar(WindowTitleBar());
+		InitializeWindowExBase();
+
+		TypeSelector().SelectedIndex(0);
+		PreviewHost().Child(::OpenNet::UI::GlassPreview(m_profile.Key(), true));
+		m_loading = false;
+	}
+	winrt::Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::UI::Xaml::Control::Theme::LiquidGlassProfile> LiquidGlassEffectsWindow::Profiles()
+	{
+		return winrt::OpenNet::UI::Xaml::Control::Theme::implementation::LiquidGlassProfile::All();
+	}
+	void LiquidGlassEffectsWindow::TypeChanged(winrt::Windows::Foundation::IInspectable const&, Controls::SelectionChangedEventArgs const&)
+	{
+		if (m_loading) return;
+		auto profile = TypeSelector().SelectedItem().try_as<winrt::OpenNet::UI::Xaml::Control::Theme::LiquidGlassProfile>();
+		if (!profile) return;
+		m_profile = profile;
+		PreviewHost().Child(::OpenNet::UI::GlassPreview(profile.Key(), true));
+		Bindings->Update();
+	}
+	void LiquidGlassEffectsWindow::ResetClicked(winrt::Windows::Foundation::IInspectable const&, RoutedEventArgs const&)
+	{
+		try
+		{
+			if (m_profile) m_profile.Reset();
+		}
+		catch (...)
+		{
+			using Profile = winrt::OpenNet::UI::Xaml::Control::Theme::implementation::LiquidGlassProfile;
+			Profile::ReportCurrentFailure(L"Reset optical profile");
+			Profile::RollbackChanges();
+		}
+	}
 
 }

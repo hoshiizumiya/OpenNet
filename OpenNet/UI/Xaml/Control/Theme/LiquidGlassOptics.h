@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 import std;
 import winrt.WinUI.Composition.Hlsl;
 import winrt.WinUI.LiquidGlass;
@@ -18,10 +18,10 @@ namespace OpenNet::UI::LiquidGlassOptics
         { L"BlurRadius", L"Blur radius", 0.0, 32.0, 0.1, [](Brush const& b) { return b.BlurRadius(); }, [](Brush const& b, double v) { b.BlurRadius(v); } },
         { L"RefractionStrength", L"Refraction", 0.0, 64.0, 0.5, [](Brush const& b) { return b.RefractionStrength(); }, [](Brush const& b, double v) { b.RefractionStrength(v); } },
         { L"DispersionStrength", L"Chromatic dispersion", 0.0, 8.0, 0.05, [](Brush const& b) { return b.DispersionStrength(); }, [](Brush const& b, double v) { b.DispersionStrength(v); } },
-        { L"HighlightStrength", L"Highlights", 0.0, 2.0, 0.05, [](Brush const& b) { return b.HighlightStrength(); }, [](Brush const& b, double v) { b.HighlightStrength(v); } },
-        { L"HighlightSharpness", L"Highlight sharpness", 0.1, 4.0, 0.1, [](Brush const& b) { return b.HighlightSharpness(); }, [](Brush const& b, double v) { b.HighlightSharpness(v); } },
+        { L"HighlightStrength", L"Highlights", 0.0, 4.0, 0.01, [](Brush const& b) { return b.HighlightStrength(); }, [](Brush const& b, double v) { b.HighlightStrength(v); } },
+        { L"HighlightSharpness", L"Highlight sharpness", 0.25, 64.0, 0.05, [](Brush const& b) { return b.HighlightSharpness(); }, [](Brush const& b, double v) { b.HighlightSharpness(v); } },
         { L"SpecularSaturation", L"Specular saturation", 0.0, 10.0, 0.1, [](Brush const& b) { return b.SpecularSaturation(); }, [](Brush const& b, double v) { b.SpecularSaturation(v); } },
-        { L"SpecularWidth", L"Specular width", 0.1, 4.0, 0.1, [](Brush const& b) { return b.SpecularWidth(); }, [](Brush const& b, double v) { b.SpecularWidth(v); } },
+        { L"SpecularWidth", L"Specular width", 0.25, 32.0, 0.05, [](Brush const& b) { return b.SpecularWidth(); }, [](Brush const& b, double v) { b.SpecularWidth(v); } },
         { L"RefractiveIndex", L"Refractive index", 1.0, 2.0, 0.01, [](Brush const& b) { return b.RefractiveIndex(); }, [](Brush const& b, double v) { b.RefractiveIndex(v); } },
         { L"TintOpacity", L"Tint opacity", 0.0, 1.0, 0.01, [](Brush const& b) { return b.TintOpacity(); }, [](Brush const& b, double v) { b.TintOpacity(v); } },
         { L"InnerShadowStrength", L"Inner shadow", 0.0, 1.0, 0.01, [](Brush const& b) { return b.InnerShadowStrength(); }, [](Brush const& b, double v) { b.InnerShadowStrength(v); } },
@@ -55,9 +55,8 @@ namespace OpenNet::UI::LiquidGlassOptics
         result[Count] = brush.BezelWidth(); result[Count + 1] = brush.GlassThickness(); result[Count + 2] = brush.CornerRadius();
         return result;
     }
-    inline void Restore(Brush const& brush, Snapshot const& defaults)
+    inline void RestoreGeometry(Brush const& brush, Snapshot const& defaults)
     {
-        for (std::size_t i = 0; i < Descriptors.size(); ++i) Descriptors[i].Write(brush, defaults[i]);
         brush.BezelWidth(defaults[Count]); brush.GlassThickness(defaults[Count + 1]); brush.CornerRadius(defaults[Count + 2]);
     }
     inline winrt::hstring Canonical(winrt::hstring const& kind)

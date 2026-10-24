@@ -7366,4 +7366,7 @@
   <data name="GlassDefaultValue.Text" xml:space="preserve">
     <value>默认值：</value>
   </data>
+  <data name="GlassParameterInvalidValue" xml:space="preserve">
+    <value>参数超出支持范围，已恢复上一有效值或库预设。</value>
+  </data>
 </root>

@@ -1914,6 +1914,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassOptics.h" />
+    <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassParameterState.h" />
     <ClInclude Include="UI\Xaml\Control\Theme\LiquidGlassProfile.h">
       <DependentUpon>UI\Xaml\Control\Theme\LiquidGlassProfile.idl</DependentUpon>
       <SubType>Code</SubType>
