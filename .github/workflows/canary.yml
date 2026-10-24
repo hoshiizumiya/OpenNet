@@ -1,4 +1,4 @@
-name: Canary
+﻿name: Canary
 
 on:
   workflow_dispatch:
@@ -123,6 +123,12 @@ jobs:
       
           Write-Host "MSVC Preview toolset found:"
           Write-Host $toolsetPath
+          
+      - name: Setup .NET
+        if: ${{ steps.merge.outputs.continue == 'true' }}
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 11
 
       - name: Set up vcpkg
         working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}

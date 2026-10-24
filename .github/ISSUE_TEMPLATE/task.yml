@@ -1,0 +1,13 @@
+﻿name: Internal Task
+description: This Issue template is only for creating internal tasks. Non-members please do not use.
+title: "[Task]: Fill in a suitable title here"
+type: "Task"
+labels: ["priority:none"]
+body:
+  - type: textarea
+    id: content
+    attributes:
+      label: Reason and Motivation
+      description: Add relevant context
+    validations:
+      required: true
