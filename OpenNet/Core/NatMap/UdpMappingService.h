@@ -22,6 +22,12 @@ namespace OpenNet::Core::NatMap
         std::uint16_t targetPort{};
         std::uint16_t publicPort{};
         std::wstring publicAddress;
+        std::uint64_t observationGeneration{};
+        // STUN only observes an endpoint toward one server. These fields are
+        // set only after an independent traversal server probes that exact
+        // observation from outside the local network.
+        bool externalProbeCompleted{};
+        bool externallyReachable{};
         std::wstring targetError;
         std::wstring error;
     };
@@ -51,6 +57,11 @@ namespace OpenNet::Core::NatMap
         // address, or connectivity change. This is non-blocking and safe to
         // call from Windows.Networking.Connectivity event callbacks.
         void RequestNetworkRecovery() noexcept;
+        // Apply an asynchronous external-probe result only if it still refers
+        // to the current bound port and STUN observation.
+        bool RecordExternalProbe(std::uint16_t localPort, std::wstring const& publicAddress,
+                                 std::uint16_t publicPort, std::uint64_t observationGeneration,
+                                 bool completed, bool reachable) noexcept;
         void Stop();
         MappingSnapshot Snapshot() const;
 

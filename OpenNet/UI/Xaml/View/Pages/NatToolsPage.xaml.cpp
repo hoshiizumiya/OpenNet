@@ -409,10 +409,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			auto const mapped = ::OpenNet::Core::NatMap::SharedUdpMappingService().Snapshot();
 			if (mapped.running && mapped.localPort == port)
 			{
+				if (mapped.publicAddress.empty() || mapped.publicPort == 0)
+				{
+					co_await winrtplus::resume_foreground(dispatcher);
+					PortResultText().Text(L"Wait for a valid STUN observation before testing this mapping");
+					PortMappedText().Text(L"The external probe needs the observed public port; STUN alone is not treated as reachability proof.");
+					TestPortButton().IsEnabled(true);
+					PortTestProgress().IsActive(false);
+					PortTestProgress().Visibility(Visibility::Collapsed);
+					co_return;
+				}
 				auto details = std::make_shared<::OpenNet::Core::PortProbeResult>();
-				co_await m_detector.TestPortAccessibilityDetailedAsync(port, details, ::OpenNet::Core::PortProbeAddressFamily::IPv4);
+				// The traversal server is outside the NAT and must probe the public
+				// port reported by STUN, not the local bound port shown in the box.
+				co_await m_detector.TestPortAccessibilityDetailedAsync(mapped.publicPort, details, ::OpenNet::Core::PortProbeAddressFamily::IPv4);
+				bool const probeApplied = ::OpenNet::Core::NatMap::SharedUdpMappingService().RecordExternalProbe(
+					mapped.localPort, mapped.publicAddress, mapped.publicPort, mapped.observationGeneration,
+					details->udpCompleted, details->udpReachable);
 				co_await winrtplus::resume_foreground(dispatcher);
-				PortResultText().Text(details->udpCompleted ?
+				PortResultText().Text(!probeApplied ? L"The mapping changed while the external probe was running" : details->udpCompleted ?
 					(details->udpReachable ? L"UDP reachable from the probe server" : L"UDP reachability was not confirmed") :
 					L"UDP reachability could not be verified");
 				PortMappedText().Text(details->detail);

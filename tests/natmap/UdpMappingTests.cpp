@@ -142,6 +142,20 @@ int main()
         WaitFor([&] { return service.Snapshot().publicPort == 45678; }, "valid mapping published");
         Require(service.Snapshot().publicAddress == L"203.0.113.9", "mapped address parsed");
         Require(service.Snapshot().localPort == ntohs(mapping.sin_port), "one socket owns mapping and relay port");
+        auto const observed = service.Snapshot();
+        Require(!observed.externalProbeCompleted && !observed.externallyReachable,
+            "STUN observation is not treated as reachability evidence");
+        Require(!service.RecordExternalProbe(observed.localPort, L"203.0.113.8", observed.publicPort,
+            observed.observationGeneration, true, true),
+            "probe for a different public address is rejected");
+        Require(!service.RecordExternalProbe(observed.localPort, observed.publicAddress, 45679,
+            observed.observationGeneration, true, true),
+            "probe for a different public port is rejected");
+        Require(service.RecordExternalProbe(observed.localPort, observed.publicAddress, observed.publicPort,
+            observed.observationGeneration, true, true),
+            "matching external probe is recorded");
+        Require(service.Snapshot().externalProbeCompleted && service.Snapshot().externallyReachable,
+            "matching positive probe publishes verified reachability");
         mapping.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         clientA.Send("d1:ad2:id20:abcdefghijklmnopqrstee", mapping);
         Require(!target.HasDatagram(150ms), "automatic target rejects DHT traffic with loopback source identity");
@@ -181,6 +195,11 @@ int main()
         flood.join();
         service.RequestNetworkRecovery();
         WaitFor([&] { return service.Snapshot().publicPort == 0 && service.Snapshot().error.empty(); }, "network recovery clears stale observation");
+        Require(!service.Snapshot().externalProbeCompleted && !service.Snapshot().externallyReachable,
+            "network recovery invalidates external reachability evidence");
+        Require(!service.RecordExternalProbe(observed.localPort, observed.publicAddress, observed.publicPort,
+            observed.observationGeneration, true, true),
+            "probe completed against the old observation is rejected");
         sockaddr_in recoveredMapping{};
         // Keepalive requests queued before recovery carry an obsolete
         // transaction ID. Reply to the bounded backlog as a real STUN server
@@ -194,6 +213,12 @@ int main()
             std::this_thread::sleep_for(20ms);
         }
         WaitFor([&] { return service.Snapshot().publicPort == 45678; }, "network recovery refreshes STUN observation");
+        auto const recoveredObservation = service.Snapshot();
+        Require(service.RecordExternalProbe(recoveredObservation.localPort, recoveredObservation.publicAddress,
+            recoveredObservation.publicPort, recoveredObservation.observationGeneration, true, false),
+            "matching negative probe is recorded");
+        Require(service.Snapshot().externalProbeCompleted && !service.Snapshot().externallyReachable,
+            "completed negative probe never publishes a reachable candidate");
         recoveredMapping.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
         std::string const recoveredPeer = UtpSyn(0x2001);
         clientA.Send(recoveredPeer, recoveredMapping);
