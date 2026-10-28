@@ -101,7 +101,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Download Canary artifact
-        uses: dawidd6/action-download-artifact@v24
+        uses: dawidd6/action-download-artifact@v27
         with:
           workflow: canary.yml
           run_id: ${{ needs.resolve_canary.outputs.run_id }}
