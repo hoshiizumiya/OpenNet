@@ -243,20 +243,10 @@
   <ImportGroup Label="ExtensionTargets" />
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2" />
-    <PackageReference Include="Microsoft.Windows.AI.MachineLearning" />
     <PackageReference Include="Microsoft.Windows.CppWinRT" />
     <PackageReference Include="Microsoft.Windows.ImplementationLibrary" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools" />
     <PackageReference Include="Microsoft.Windows.SDK.BuildTools.MSIX" />
     <PackageReference Include="Microsoft.WindowsAppSDK" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.AI" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Base" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.DWrite" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Foundation" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.InteractiveExperiences" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.ML" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Runtime" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.Widgets" />
-    <PackageReference Include="Microsoft.WindowsAppSDK.WinUI" />
   </ItemGroup>
 </Project>
