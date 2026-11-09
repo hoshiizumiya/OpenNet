@@ -137,7 +137,8 @@
                                 <TextBlock
                                     x:Uid="FileHeader_Path"
                                     Text="File"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFileSize" CanResize="True">
@@ -151,7 +152,8 @@
                                 <TextBlock
                                     x:Uid="FileHeader_Size"
                                     Text="Size"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFileProgress" CanResize="True">
@@ -165,7 +167,8 @@
                                 <TextBlock
                                     x:Uid="FileHeader_Progress"
                                     Text="Progress"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFileDone" CanResize="True">
@@ -179,7 +182,8 @@
                                 <TextBlock
                                     x:Uid="FileHeader_Done"
                                     Text="Done"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColFilePriority" CanResize="True">
@@ -193,7 +197,8 @@
                                 <TextBlock
                                     x:Uid="FileHeader_Priority"
                                     Text="Priority"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                     </labs:DataTable>
@@ -241,13 +246,15 @@
                                 Value="{x:Bind ProgressValue, Mode=OneWay}" />
                             <TextBlock Text="{x:Bind Done, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <ComboBox
+                                x:Name="FilePriorityComboBox"
+                                MinWidth="80"
+                                HorizontalAlignment="Stretch"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}"
                                 SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
                                 SelectionChanged="FilePriority_SelectionChanged"
-                                Tag="{x:Bind ouxct:MaterialControlState.BoxInt32(FileIndex), Mode=OneWay}" x:Name="FilePriorityComboBox" MinWidth="80"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                HorizontalAlignment="Stretch"
-                                x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}">
+                                Tag="{x:Bind ouxct:MaterialControlState.BoxInt32(FileIndex), Mode=OneWay}">
                                 <ComboBoxItem x:Uid="FilePriority_Skip" Content="Skip" />
                                 <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
                                 <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />

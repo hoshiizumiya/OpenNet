@@ -59,9 +59,16 @@
                         <TextBlock
                             VerticalAlignment="Center"
                             Text="{x:Bind URL, Mode=OneWay}"
-                            TextTrimming="CharacterEllipsis" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Bind DownloadRate, Mode=OneWay}" />
-                        <TextBlock VerticalAlignment="Center" Text="{x:Bind DownloadSize, Mode=OneWay}" />
+                            TextTrimming="CharacterEllipsis"
+                            TextWrapping="NoWrap" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Text="{x:Bind DownloadRate, Mode=OneWay}"
+                            TextWrapping="NoWrap" />
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            Text="{x:Bind DownloadSize, Mode=OneWay}"
+                            TextWrapping="NoWrap" />
                         <Grid MinWidth="180">
                             <segment:RangePieceBar
                                 Height="12"
@@ -88,6 +95,7 @@
             VerticalAlignment="Center"
             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
             IsHitTestVisible="False"
-            Text="Waiting for HTTP connection information" />
+            Text="Waiting for HTTP connection information"
+            TextWrapping="NoWrap" />
     </Grid>
 </Page>

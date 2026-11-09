@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:essential="using:WinUI3Package"
+    xmlns:local="using:OpenNet.UI.Xaml.Control.TextBlock">
+
+    <Style BasedOn="{StaticResource DefaultDataColumnBlockControlStyle}" TargetType="local:DataColumnBlock" />
+
+    <Style x:Key="DefaultDataColumnBlockControlStyle" TargetType="local:DataColumnBlock">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="local:DataColumnBlock">
+                    <Button>
+                        <TextBlock TextWrapping="{TemplateBinding TextWrapping}" />
+                    </Button>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

@@ -1,0 +1,8 @@
+﻿namespace OpenNet.UI.Xaml.Control.TextBlock
+{
+	[default_interface]
+	runtimeclass DataColumnBlock : Microsoft.UI.Xaml.Controls.Control
+	{
+		DataColumnBlock();
+	}
+}

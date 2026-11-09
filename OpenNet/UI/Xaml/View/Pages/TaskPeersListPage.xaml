@@ -189,236 +189,251 @@
                         <labs:DataColumn x:Name="ColPeerIP" CanResize="True">
                             <Button
                                 x:Name="SortPeerIpButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerIpButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="IP"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="IP">
                                 <TextBlock
                                     x:Uid="PeerHeader_IP"
                                     Text="IP"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerLocation" CanResize="True">
                             <Button
                                 x:Name="SortPeerLocationButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerLocationButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Location"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Location">
                                 <TextBlock
                                     x:Uid="PeerHeader_Location"
                                     HorizontalTextAlignment="Right"
                                     Text="Location"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProgress" CanResize="True">
                             <Button
                                 x:Name="SortPeerProgressButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerProgressButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Progress"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Progress">
                                 <TextBlock
                                     x:Uid="PeerHeader_Progress"
                                     HorizontalTextAlignment="Right"
                                     Text="Progress"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerDLSpeed" CanResize="True">
                             <Button
                                 x:Name="SortPeerDlSpeedButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerDlSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="DLSpeed"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="DLSpeed">
                                 <TextBlock
                                     x:Uid="PeerHeader_DLSpeed"
                                     HorizontalTextAlignment="Right"
                                     Text="DL Speed"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerULSpeed" CanResize="True">
                             <Button
                                 x:Name="SortPeerUlSpeedButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerUlSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="ULSpeed"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="ULSpeed">
                                 <TextBlock
                                     x:Uid="PeerHeader_ULSpeed"
                                     HorizontalTextAlignment="Right"
                                     Text="UL Speed"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerDownloaded" CanResize="True">
                             <Button
                                 x:Name="SortPeerDownloadedButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerDownloadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Downloaded"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Downloaded">
                                 <TextBlock
                                     x:Uid="CommonTextDownloaded"
                                     HorizontalTextAlignment="Right"
                                     Text="Downloaded"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerUploaded" CanResize="True">
                             <Button
                                 x:Name="SortPeerUploadedButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerUploadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Uploaded"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Uploaded">
                                 <TextBlock
                                     x:Uid="PeerHeader_Uploaded"
                                     HorizontalTextAlignment="Right"
                                     Text="Uploaded"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerClient" CanResize="True">
                             <Button
                                 x:Name="SortPeerClientButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerClientButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Client"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Client">
                                 <TextBlock
                                     x:Uid="PeerHeader_Client"
                                     Text="Client"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerRemoteDLSpeed" CanResize="True">
                             <Button
                                 x:Name="SortPeerRemoteDLSpeedButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerRemoteDLSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="RemoteDLSpeed"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="RemoteDLSpeed">
                                 <TextBlock
                                     x:Uid="PeerHeader_RemoteDLSpeed"
                                     HorizontalTextAlignment="Right"
                                     Text="Peer DL Speed"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerConnectionTime" CanResize="True">
                             <Button
                                 x:Name="SortPeerConnectionTimeButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerConnectionTimeButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="ConnectionTime"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="ConnectionTime">
                                 <TextBlock
                                     x:Uid="PeerHeader_ConnectionTime"
                                     HorizontalTextAlignment="Right"
                                     Text="Connection Time"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerStatus" CanResize="True">
                             <Button
                                 x:Name="SortPeerStatusButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerStatusButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Status"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Status">
                                 <TextBlock
                                     x:Uid="PeerHeader_PeerStatus"
                                     Text="Status"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerReason" CanResize="True">
                             <Button
                                 x:Name="SortPeerReasonButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerReasonButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Reason"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Reason">
                                 <TextBlock
                                     x:Uid="PeerHeader_Reason"
                                     Text="Reason"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProtocol" CanResize="True">
                             <Button
                                 x:Name="SortPeerProtocolButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerProtocolButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Protocol"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Protocol">
                                 <TextBlock
                                     x:Uid="PeerHeader_Protocol"
                                     HorizontalTextAlignment="Center"
                                     Text="Protocol"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerInitiator" CanResize="True">
                             <Button
                                 x:Name="SortPeerInitiatorButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerInitiatorButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Initiator"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Initiator">
                                 <TextBlock
                                     x:Uid="PeerHeader_Initiator"
                                     HorizontalTextAlignment="Right"
                                     Text="Initiator"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerSource" CanResize="True">
                             <Button
                                 x:Name="SortPeerSourceButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerSourceButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
                                 Style="{StaticResource DataTableColumnHeaderButtonStyle}"
-                                Tag="Source"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                Tag="Source">
                                 <TextBlock
                                     x:Uid="PeerHeader_Source"
                                     Text="Source"
-                                    TextTrimming="CharacterEllipsis" />
+                                    TextTrimming="CharacterEllipsis"
+                                    TextWrapping="NoWrap" />
                             </Button>
                         </labs:DataColumn>
                     </labs:DataTable>
@@ -494,42 +509,57 @@
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind DLSpeed, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind ULSpeed, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind Downloaded, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind Uploaded, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock Text="{x:Bind Client, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind RemoteDLSpeed, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind ConnectionTime, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind PeerStatus, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                            <TextBlock Text="{x:Bind Reason, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                            <TextBlock
+                                Text="{x:Bind PeerStatus, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
+                            <TextBlock
+                                Text="{x:Bind Reason, Mode=OneWay}"
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Center"
                                 Text="{x:Bind Protocol, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind Initiator, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                             <TextBlock
                                 HorizontalTextAlignment="Right"
                                 Text="{x:Bind Source, Mode=OneWay}"
-                                TextTrimming="CharacterEllipsis" />
+                                TextTrimming="CharacterEllipsis"
+                                TextWrapping="NoWrap" />
                         </labs:DataRow>
                     </muxc:TreeViewItem>
                 </DataTemplate>

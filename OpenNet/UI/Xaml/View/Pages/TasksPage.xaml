@@ -354,7 +354,8 @@
                                             x:Uid="Header_TaskName"
                                             Padding="0"
                                             Text="Name"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -377,7 +378,8 @@
                                             x:Uid="Header_Size"
                                             Text="Size"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -399,7 +401,8 @@
                                             x:Uid="Header_Progress"
                                             Text="Progress"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -421,7 +424,8 @@
                                             x:Uid="Header_DownloadSize"
                                             Text="Download Size"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -443,7 +447,8 @@
                                             x:Uid="Header_UploadSize"
                                             Text="Upload Size"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -465,7 +470,8 @@
                                             x:Uid="Header_TotalDownloadSize"
                                             Text="Total Download Size"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -487,7 +493,8 @@
                                             x:Uid="Header_TotalUploadSize"
                                             Text="Total Upload Size"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -509,7 +516,8 @@
                                             x:Uid="Header_DLRate"
                                             Text="DL Rate"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -531,7 +539,8 @@
                                             x:Uid="Header_ULRate"
                                             Text="UL Rate"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -553,7 +562,8 @@
                                             x:Uid="Header_Remaining"
                                             Text="Remaining"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -575,7 +585,8 @@
                                             x:Uid="Header_AddDate"
                                             Text="Add Date"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -597,7 +608,8 @@
                                             x:Uid="ViewTasksPageCompletedDateTextBlock"
                                             Text="Completed Date"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -619,7 +631,8 @@
                                             x:Uid="ViewTasksPageShareRatioTextBlock"
                                             Text="Share Ratio"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                                 <xtlw:DataColumn
@@ -641,7 +654,8 @@
                                             x:Uid="ViewTasksPageSeedsPeersTextBlock"
                                             Text="Seeds/Peers[all]"
                                             TextAlignment="Right"
-                                            TextTrimming="CharacterEllipsis" />
+                                            TextTrimming="CharacterEllipsis"
+                                            TextWrapping="NoWrap" />
                                     </Button>
                                 </xtlw:DataColumn>
                             </xtlw:DataTable>

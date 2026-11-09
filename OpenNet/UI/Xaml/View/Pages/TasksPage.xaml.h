@@ -11,6 +11,7 @@ import OpenNet.Presentation.ScopedPage;
 // in its declarations. If that type is not visible at the point the generated header is included
 // the compiler will fail with errors such as "symbol must be a type" or "variable cannot have type void".
 #include "Controls/SpeedGraph/SpeedGraph.xaml.h"
+#include "UI/Xaml/Control/TextBlock/DataColumnBlock.h"
 #include "UI/Xaml/View/Pages/TaskSummaryPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskSpeedGraphPage.xaml.h"
 #include "UI/Xaml/View/Pages/TaskPieceMapPage.xaml.h"
