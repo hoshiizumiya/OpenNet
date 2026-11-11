@@ -5,6 +5,7 @@
 
 import OpenNet.App;
 import OpenNet.Core.ApplicationModel;
+import std;
 import winrt.Windows.ApplicationModel.Activation;
 import winrt.Windows.Foundation;
 import winrt.Microsoft.UI.Composition;
@@ -157,7 +158,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 	// https://learn.microsoft.com/windows/apps/develop/cpp-winrt/get-started#a-cwinrt-quick-start
 	winrt::init_apartment(winrt::apartment_type::single_threaded);
 
-	std::jthread sentryInitThread([]() noexcept
+	// Crash reporting must be ready before AppLifecycle/notification activation:
+	// those APIs can fail fast without reaching XAML's UnhandledException event.
+	[]() noexcept
 	{
 		sentry_options_t* options = sentry_options_new();
 		if (!options)
@@ -177,6 +180,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			sentry_options_set_database_pathw(
 				options,
 				sentryDatabasePath.c_str());
+			std::wstring executablePath(32768, L'\0');
+			auto const pathLength = GetModuleFileNameW(nullptr, executablePath.data(),
+				static_cast<DWORD>(executablePath.size()));
+			if (!pathLength || pathLength >= executablePath.size())
+				throw winrt::hresult_error(HRESULT_FROM_WIN32(ERROR_BAD_PATHNAME));
+			executablePath.resize(pathLength);
+			auto const handlerPath = std::filesystem::path(executablePath).parent_path() / L"sentry-crash.exe";
+			sentry_options_set_handler_pathw(options, handlerPath.c_str());
 			sentry_options_set_release(options, (winrt::to_string(::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetFamilyName()) + "@" + ::OpenNet::Core::ApplicationModel::PackageIdentityAdapter::GetAppVersion().ToString()).c_str());
 #if defined _DEBUG
 			sentry_options_set_debug(options, 1);
@@ -193,16 +204,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
 			sentry_options_free(options);
 			OutputDebugStringW(L"An exception occurred while initializing Sentry.\r\n");
 		}
-	});
+	}();
 
-	// Decide redirection while Sentry initializes in parallel, then always join
-	// before leaving wWinMain. Destroying a joinable std::thread calls
-	// std::terminate(), which was the source of the ucrtbased.dll shutdown crash.
+	// Register the notification COM server before GetActivatedEventArgs tries to
+	// deserialize a ----AppNotificationActivated: launch (including redirects).
+	winrt::OpenNet::implementation::App::RegisterNotifications();
 	const bool shouldRedirect = DecideRedirection();
-	if (sentryInitThread.joinable())
-	{
-		sentryInitThread.join();
-	}
 
 	if (shouldRedirect)
 	{

@@ -32,6 +32,7 @@ export namespace winrt::OpenNet::implementation
 		void Exit();
 		static void RequestExit();
 		static void CompleteFirstRun();
+		static void RegisterNotifications();
 
 		static bool CreateSetMainWindow();
 		static AppActivationSnapshot SnapshotActivation(winrt::Microsoft::Windows::AppLifecycle::AppActivationArguments const&);

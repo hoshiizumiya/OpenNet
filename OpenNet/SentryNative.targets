@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- Sentry loads these files dynamically. vcpkg's import-table scan deploys sentry.dll, but cannot discover the helper executable or the WER module. -->
+	<Target Name="CollectSentryNativeRuntime"
+			BeforeTargets="AssignTargetPaths"
+			DependsOnTargets="VcpkgInstallManifestDependencies"
+			Condition="'$(DesignTimeBuild)' != 'true'">
+		<Error Condition="'$(_ZVcpkgCurrentInstalledDir)' == ''"
+			   Text="Sentry Native deployment requires vcpkg MSBuild integration." />
+		<ItemGroup>
+			<_OpenNetSentryRuntime Include="$(_ZVcpkgCurrentInstalledDir)tools\sentry-native\sentry-crash.exe" />
+			<_OpenNetSentryRuntime Include="$(_ZVcpkgCurrentInstalledDir)$(_ZVcpkgConfigSubdir)bin\sentry-wer.dll" />
+			<_OpenNetSentryRuntime Include="$(_ZVcpkgCurrentInstalledDir)tools\sentry-native\*.dll" />
+		</ItemGroup>
+		<Error Condition="!Exists('%(_OpenNetSentryRuntime.Identity)')"
+			   Text="Missing Sentry Native runtime file: %(_OpenNetSentryRuntime.Identity). Restore vcpkg dependencies using the repository's custom triplet." />
+		<ItemGroup>
+			<Content Include="@(_OpenNetSentryRuntime)">
+				<Link>%(Filename)%(Extension)</Link>
+				<TargetPath>%(Filename)%(Extension)</TargetPath>
+				<DeploymentContent>true</DeploymentContent>
+				<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			</Content>
+		</ItemGroup>
+	</Target>
+	<Target Name="DeploySentryNativeRuntime"
+			AfterTargets="CopyFilesToOutputDirectory"
+			BeforeTargets="CopyLocalFilesOutputGroup;RegisterOutput"
+			DependsOnTargets="CollectSentryNativeRuntime"
+			Condition="'$(DesignTimeBuild)' != 'true'">
+		<Copy SourceFiles="@(_OpenNetSentryRuntime)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true" />
+		<ItemGroup>
+			<FileWrites Include="@(_OpenNetSentryRuntime -> '$(OutDir)%(Filename)%(Extension)')" />
+		</ItemGroup>
+	</Target>
+</Project>

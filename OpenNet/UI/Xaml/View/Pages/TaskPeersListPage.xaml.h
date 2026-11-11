@@ -96,6 +96,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 			std::vector<::OpenNet::Core::Torrent::LibtorrentHandle::TorrentPeerInfo> peers,
 			bool forceRefresh);
 		void BanSelectedPeer(std::int64_t durationSeconds);
+		void ClearPeerSelection();
 		void ResetPeerGroups();
 		void EnsurePeerGroups();
 		void SavePeerGroupExpansionState();

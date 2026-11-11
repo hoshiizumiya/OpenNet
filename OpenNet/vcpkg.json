@@ -10,7 +10,9 @@
     "nlohmann-json",
     {
       "name": "sentry-native",
-      "version>=": "0.17.1"
+      "version>=": "0.17.1",
+      "default-features": false,
+      "features": ["backend", "transport"]
     },
     "zlib"
   ]

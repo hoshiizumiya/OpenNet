@@ -5,3 +5,8 @@ set(VCPKG_LIBRARY_LINKAGE dynamic)
 if(PORT STREQUAL "sqlite3")
     set(VCPKG_LIBRARY_LINKAGE static)
 endif()
+
+if(PORT STREQUAL "sentry-native")
+    list(APPEND VCPKG_CMAKE_CONFIGURE_OPTIONS "-DSENTRY_BACKEND=native")
+    list(APPEND VCPKG_POST_PORTFILE_INCLUDES "${CMAKE_CURRENT_LIST_DIR}/sentry-native-post.cmake")
+endif()

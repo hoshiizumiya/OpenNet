@@ -129,3 +129,42 @@ unload/reload can reattach through a weak navigation view-model reference.
 The existing SQL regression suites run on Linux, but they do not verify WinUI
 lifetimes. Windows CI compiles the application and the pinned toolkit changes;
 the navigation/heap measurements above still require a Windows runtime.
+
+## TreeView selection access violation
+
+The supplied crash enters `ResetPeerGroups` when SelectedTask changes, then
+`TreeView.SelectedItem(nullptr)` -> `SelectedItemsVector::Clear` ->
+`SelectedTreeNodeVector::RemoveAt` -> `ViewModel::UpdateNodeSelection` ->
+`TreeViewNode::ChildrenChanged` -> `tracker_ref`. This is consistent with a
+selected TreeViewNode lifetime failure, rather than a peer-query exception.
+
+Upstream [WinUI issue #5683](https://github.com/microsoft/microsoft-ui-xaml/issues/5683)
+is still open and reports closely matching selection crashes after tree edits,
+including a single-selection SelectedItem stack in its comments. The current
+[ViewModel implementation](https://github.com/microsoft/microsoft-ui-xaml/blob/main/controls/dev/TreeView/ViewModel.cpp)
+also removes a node from selected storage before unregistering its ChildrenChanged
+handler. This supports the workaround below; it does not prove the exact binary
+failure without a runtime reproduction.
+
+`ClearPeerSelection` snapshots strong references to the actual selected
+TreeViewNodes before clearing selection. Holding PeerDisplayItem content alone
+does not keep these generated nodes alive. Reset now clears selection before
+detaching ItemsSource in every branch. Snapshot reconciliation also clears
+selection before any structural change, then restores a surviving peer/group by
+object identity. Updates that only change peer properties leave selection alone.
+The strong node snapshot is local to selection cleanup, so it does not retain
+outgoing nodes for the lifetime of the page.
+
+Runtime checks when next running a built application:
+
+1. Select a peer, enable rate sorting, and wait for rows to reorder. Selection
+   and the ban/unban context-menu target should follow the same peer.
+2. With a peer selected, switch between torrents, clear task selection, select
+   an HTTP task, and leave the peers tab. None should crash during cleanup.
+3. Select peers that disconnect, reconnect, move groups or disappear when a ban
+   expires. Surviving items retain selection; removed items leave it empty.
+4. Repeat with a selected group and with groups collapsed, then repeat the
+   memory-diagnostic navigation checks above.
+
+This workaround was reviewed statically; no build or runtime verification was
+performed for this crash fix.

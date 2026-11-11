@@ -50,6 +50,26 @@ using namespace winrt::Microsoft::Windows::AppLifecycle;
 
 namespace winrt::OpenNet::implementation
 {
+	void App::RegisterNotifications()
+	{
+		if (s_notificationRegistered) return;
+		try
+		{
+			winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Register();
+			s_notificationRegistered = true;
+		}
+		catch (winrt::hresult_error const& error)
+		{
+			OutputDebugStringW((L"App: notification registration failed: "
+				+ std::wstring{ error.message().c_str() } + L"\n").c_str());
+			// Only notification launches require registration to deserialize their
+			// activation arguments. Ordinary launches can continue without toasts.
+			if (std::wstring_view{ GetCommandLineW() }.find(L"----AppNotificationActivated:")
+				!= std::wstring_view::npos)
+				throw;
+		}
+	}
+
 	/// <summary>
 	/// Initializes the singleton application object.  This is the first line of authored code
 	/// executed, and as such is the logical equivalent of main() or WinMain().
@@ -66,16 +86,6 @@ namespace winrt::OpenNet::implementation
 #endif
 		// Initialize theme system early
 		::OpenNet::Helpers::ThemeHelper::Initialize();
-		try
-		{
-			winrt::Microsoft::Windows::AppNotifications::AppNotificationManager::Default().Register();
-			s_notificationRegistered = true;
-		}
-		catch (winrt::hresult_error const& error)
-		{
-			OutputDebugStringW((L"App: notification registration failed: "
-								+ std::wstring{ error.message().c_str() } + L"\n").c_str());
-		}
 
 		// Xaml objects should not call InitializeComponent during construction.
 		// See https://github.com/microsoft/cppwinrt/tree/master/nuget#initializecomponent

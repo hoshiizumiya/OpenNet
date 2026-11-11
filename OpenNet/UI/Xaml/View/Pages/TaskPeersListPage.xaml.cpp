@@ -481,16 +481,34 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		}
 	}
 
+	void TaskPeersListPage::ClearPeerSelection()
+	{
+		auto const tree = PeersTreeView();
+		if (!tree) return;
+
+		// WinUI can retain a selected node after its source item is replaced.
+		// Keep the actual TreeViewNodes (not just their PeerDisplayItem content)
+		// alive while UpdateNodeSelection removes them and unhooks their events.
+		// https://github.com/microsoft/microsoft-ui-xaml/issues/5683
+		auto const selectedNodes = tree.SelectedNodes();
+		std::vector<winrt::Microsoft::UI::Xaml::Controls::TreeViewNode> keepAlive;
+		keepAlive.reserve(selectedNodes.Size());
+		for (auto const& node : selectedNodes) keepAlive.push_back(node);
+		tree.SelectedItem(nullptr);
+		// SelectedItem may already be null while SelectedNodes still has entries.
+		selectedNodes.Clear();
+	}
+
 	void TaskPeersListPage::ResetPeerGroups()
 	{
 		SavePeerGroupExpansionState();
 		m_hasPeerSnapshot = false;
+		ClearPeerSelection();
 		auto peerItems = std::exchange(m_peerItems, nullptr);
 		// Detach the tree and empty the source collections before dropping our
 		// handles. A recycled container may still hold a group's Children vector.
 		if (auto tree = PeersTreeView())
 		{
-			tree.SelectedItem(nullptr);
 			tree.ItemsSource(nullptr);
 		}
 		for (auto const& group : std::array{ m_connectedGroup, m_connectingGroup, m_disconnectingGroup, m_banIpGroup })
@@ -764,7 +782,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		if (!m_viewModel || !m_viewModel.SelectedTask())
 		{
-			listView.ItemsSource(nullptr);
 			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
@@ -777,7 +794,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		// Only show peers for BitTorrent tasks
 		if (taskType != winrt::OpenNet::ViewModels::DownloadTaskType::BitTorrent)
 		{
-			listView.ItemsSource(nullptr);
 			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
@@ -786,7 +802,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto taskId = winrt::to_string(selectedTask.TaskId());
 		if (taskId.empty())
 		{
-			listView.ItemsSource(nullptr);
 			ResetPeerGroups();
 			m_lastTaskId.clear();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
@@ -803,7 +818,6 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		auto& p2p = ::OpenNet::Core::P2PManager::Instance();
 		if (!p2p.IsTorrentCoreInitialized() || !p2p.TorrentCore())
 		{
-			listView.ItemsSource(nullptr);
 			ResetPeerGroups();
 			if (emptyText) emptyText.Visibility(Visibility::Visible);
 			co_return;
@@ -1237,7 +1251,24 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		SortPeerItems(connecting);
 		SortPeerItems(disconnecting);
 		SortPeerItems(banned);
+		auto childrenChanged = [](auto const& target, auto const& values)
+		{
+			if (target.Size() != values.size()) return true;
+			for (std::uint32_t index = 0; index < target.Size(); ++index)
+			{
+				if (target.GetAt(index) != values[index]) return true;
+			}
+			return false;
+		};
+		auto const structureChanged = childrenChanged(m_connectedGroup.Children(), connected)
+			|| childrenChanged(m_connectingGroup.Children(), connecting)
+			|| childrenChanged(m_disconnectingGroup.Children(), disconnecting)
+			|| childrenChanged(m_banIpGroup.Children(), banned);
 		auto const selectedItem = PeersTreeView().SelectedItem();
+		// SetAt/RemoveAtEnd recreate or detach TreeViewNodes even when the peer
+		// objects survive. Unselect before those mutations, while nodes are live.
+		// Rate-only updates leave selection alone to avoid unnecessary UI churn.
+		if (structureChanged) ClearPeerSelection();
 		replaceChildren(m_connectedGroup.Children(), connected);
 		replaceChildren(m_connectingGroup.Children(), connecting);
 		replaceChildren(m_disconnectingGroup.Children(), disconnecting);
@@ -1245,7 +1276,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 
 		// TreeView replacement removes/recreates nodes internally. Restore the
 		// selected peer by object identity after all four groups are reconciled.
-		if (auto selectedPeer = selectedItem.try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>())
+		if (auto selectedPeer = selectedItem.try_as<winrt::OpenNet::ViewModels::PeerDisplayItem>();
+			structureChanged && selectedPeer)
 		{
 			auto const containsSelected = [&selectedPeer](auto const& items)
 			{
