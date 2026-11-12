@@ -38,7 +38,6 @@ jobs:
 
       - name: Install MSVC Preview Build Tools
         shell: cmd
-        if: false
         run: |
           echo Installing MSVC Preview Build Tools...
           start "" /wait "C:\Program Files (x86)\Microsoft Visual Studio\Installer\setup.exe" modify ^
@@ -56,7 +55,6 @@ jobs:
 
       - name: Verify MSVC Preview Build Tools
         shell: pwsh
-        if: false
         run: |
           $vsPath = "C:\Program Files\Microsoft Visual Studio\18\Enterprise"
           $previewVersionFile = Join-Path $vsPath "VC\Auxiliary\Build\Microsoft.VCToolsVersion.Preview.txt"
@@ -70,6 +68,11 @@ jobs:
             throw "MSVC Preview directory does not exist: $toolsetPath"
           }
           Write-Host "MSVC Preview toolset found: $toolsetPath"
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 11
 
       - name: Set up vcpkg
         working-directory: ${{ env.VCPKG_INSTALLATION_ROOT }}
