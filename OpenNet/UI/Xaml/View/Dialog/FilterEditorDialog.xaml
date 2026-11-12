@@ -18,32 +18,44 @@
             Spacing="8"
             Visibility="Collapsed">
             <TextBlock x:Uid="CF_EditPatternLabel" />
-            <TextBox x:Name="PatternTextBox" MinWidth="460"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBlock x:Uid="CF_EditMatchTypeLabel" />
-            <ComboBox x:Name="MatchTypeComboBox" essential:ComboBoxHelper.AcrylicWorkaround="True"
+            <wl:LiquidGlassTextBox
+                x:Name="PatternTextBox"
+                MinWidth="460"
                 ouxct:ControlAppearance.IsEnabled="True"
-                HorizontalAlignment="Stretch">
+                ouxct:MaterialControlState.IsManaged="True" />
+            <TextBlock x:Uid="CF_EditMatchTypeLabel" />
+            <wl:LiquidGlassComboBox
+                x:Name="MatchTypeComboBox"
+                HorizontalAlignment="Stretch"
+                essential:ComboBoxHelper.AcrylicWorkaround="True"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True">
                 <ComboBoxItem x:Uid="CF_EditMatchContains" />
                 <ComboBoxItem x:Uid="CF_EditMatchExact" />
                 <ComboBoxItem x:Uid="CF_EditMatchWildcard" />
                 <ComboBoxItem x:Uid="CF_EditMatchRegex" />
-            </ComboBox>
-            <ToggleSwitch
+            </wl:LiquidGlassComboBox>
+            <wl:LiquidGlassToggleSwitch
                 x:Name="CaseSensitiveToggle"
                 x:Uid="CF_EditCaseSensitive"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
+                Checked="CaseSensitiveToggle_Changed"
                 Loaded="CaseSensitiveToggle_Loaded"
-                Toggled="CaseSensitiveToggle_Changed"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <ToggleSwitch
+                Unchecked="CaseSensitiveToggle_Changed" />
+            <wl:LiquidGlassToggleSwitch
                 x:Name="EnabledToggle"
                 x:Uid="CF_EditEnabled"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
+                Checked="EnabledToggle_Changed"
                 Loaded="EnabledToggle_Loaded"
-                Toggled="EnabledToggle_Changed"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                Unchecked="EnabledToggle_Changed" />
             <TextBlock x:Uid="CF_EditDescriptionLabel" />
-            <TextBox x:Name="DescriptionTextBox"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <wl:LiquidGlassTextBox
+                x:Name="DescriptionTextBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True" />
         </StackPanel>
 
         <StackPanel
@@ -51,18 +63,27 @@
             Spacing="8"
             Visibility="Collapsed">
             <TextBlock x:Name="ImportHintText" TextWrapping="Wrap" />
-            <CheckBox x:Name="ReplaceExistingCheckBox" x:Uid="CF_ReplaceExisting"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <wl:LiquidGlassCheckBox
+                x:Name="ReplaceExistingCheckBox"
+                x:Uid="CF_ReplaceExisting"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True" />
         </StackPanel>
 
         <StackPanel
             x:Name="SubscriptionPanel"
             Spacing="10"
             Visibility="Collapsed">
-            <TextBox x:Name="SubscriptionUrlTextBox" MinWidth="480"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <CheckBox x:Name="SubscriptionEnabledCheckBox" x:Uid="IPF_EditSubscriptionEnabled"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <wl:LiquidGlassTextBox
+                x:Name="SubscriptionUrlTextBox"
+                MinWidth="480"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True" />
+            <wl:LiquidGlassCheckBox
+                x:Name="SubscriptionEnabledCheckBox"
+                x:Uid="IPF_EditSubscriptionEnabled"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True" />
         </StackPanel>
 
         <StackPanel
@@ -70,11 +91,16 @@
             Spacing="8"
             Visibility="Collapsed">
             <TextBlock x:Uid="IPF_EditRuleEntryLabel" />
-            <TextBox x:Name="RuleEntryTextBox" MinWidth="460"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <wl:LiquidGlassTextBox
+                x:Name="RuleEntryTextBox"
+                MinWidth="460"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True" />
             <TextBlock x:Uid="IPF_EditRuleDescriptionLabel" />
-            <TextBox x:Name="RuleDescriptionTextBox"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <wl:LiquidGlassTextBox
+                x:Name="RuleDescriptionTextBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True" />
         </StackPanel>
     </Grid>
 </ContentDialog>

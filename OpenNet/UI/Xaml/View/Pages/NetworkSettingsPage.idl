@@ -8,14 +8,14 @@ namespace OpenNet.UI.Xaml.View.Pages
         NetworkSettingsPage();
         OpenNet.ViewModels.NetworkSettingsViewModel ViewModel { get; };
 
-        Microsoft.UI.Xaml.Controls.ToggleSwitch EnableLSDToggle;
-        Microsoft.UI.Xaml.Controls.ToggleSwitch EnablePEXToggle;
-        Microsoft.UI.Xaml.Controls.ToggleSwitch EnableDHTToggle;
-        Microsoft.UI.Xaml.Controls.ComboBox PresetTrackerListComboBox;
-        Microsoft.UI.Xaml.Controls.TextBox SubscriptionUrlTextBox;
-        Microsoft.UI.Xaml.Controls.TextBox SubscriptionNameTextBox;
-        Microsoft.UI.Xaml.Controls.TextBox NewTrackerTextBox;
-        Microsoft.UI.Xaml.Controls.ToggleSwitch AutoAddTrackersToggle;
+        WinUI.LiquidGlass.LiquidGlassToggleSwitch EnableLSDToggle;
+        WinUI.LiquidGlass.LiquidGlassToggleSwitch EnablePEXToggle;
+        WinUI.LiquidGlass.LiquidGlassToggleSwitch EnableDHTToggle;
+        WinUI.LiquidGlass.LiquidGlassComboBox PresetTrackerListComboBox;
+        WinUI.LiquidGlass.LiquidGlassTextBox SubscriptionUrlTextBox;
+        WinUI.LiquidGlass.LiquidGlassTextBox SubscriptionNameTextBox;
+        WinUI.LiquidGlass.LiquidGlassTextBox NewTrackerTextBox;
+        WinUI.LiquidGlass.LiquidGlassToggleSwitch AutoAddTrackersToggle;
 
         // Tracker properties
         Windows.Foundation.Collections.IObservableVector<String> TrackerList{ get; };

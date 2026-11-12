@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "DownloadSettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
@@ -30,12 +31,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+			else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return ::OpenNet::UI::ReadMaterialSwitch(sender);
 			return std::nullopt;
 		}
 		void SetToggleIsOn(IInspectable const& target, bool value)
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+			else if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 	}
 	DownloadSettingsPage::DownloadSettingsPage()
@@ -94,6 +97,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void DownloadSettingsPage::OnSettingChanged(IInspectable const& sender, IInspectable const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loading)
 			return;
 		if (auto value = ToggleIsOn(sender))
@@ -173,29 +177,29 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-    void DownloadSettingsPage::MaterialLoaded_207(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        MaterialToggle_Loaded(PreallocateStorageToggle(), args);
-    }
-    void DownloadSettingsPage::MaterialLoaded_208(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        MaterialToggle_Loaded(AutoStartDownloadsToggle(), args);
-    }
-    void DownloadSettingsPage::MaterialLoaded_209(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        MaterialToggle_Loaded(RecheckBeforeResumeToggle(), args);
-    }
-    void DownloadSettingsPage::MaterialLoaded_210(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        MaterialToggle_Loaded(HttpP2PPreferredToggle(), args);
-    }
-    void DownloadSettingsPage::MaterialLoaded_211(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        MaterialToggle_Loaded(MoveCompletedToggle(), args);
-    }
+	void DownloadSettingsPage::MaterialLoaded_207(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		MaterialToggle_Loaded(PreallocateStorageToggle(), args);
+	}
+	void DownloadSettingsPage::MaterialLoaded_208(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		MaterialToggle_Loaded(AutoStartDownloadsToggle(), args);
+	}
+	void DownloadSettingsPage::MaterialLoaded_209(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		MaterialToggle_Loaded(RecheckBeforeResumeToggle(), args);
+	}
+	void DownloadSettingsPage::MaterialLoaded_210(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		MaterialToggle_Loaded(HttpP2PPreferredToggle(), args);
+	}
+	void DownloadSettingsPage::MaterialLoaded_211(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		MaterialToggle_Loaded(MoveCompletedToggle(), args);
+	}
 }

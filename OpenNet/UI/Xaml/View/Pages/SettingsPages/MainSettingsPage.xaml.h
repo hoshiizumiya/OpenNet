@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 #include "UI/Xaml/View/Pages/SettingsPages/MainSettingsPage.g.h"
 
 import winrt.Microsoft.UI.Xaml.Media.Animation;

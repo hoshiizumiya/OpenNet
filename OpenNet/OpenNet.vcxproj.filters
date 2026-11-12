@@ -1589,5 +1589,12 @@
     <ClInclude Include="UI\Xaml\Control\Theme\MaterialControlBridge.h" />
     <ClCompile Include="UI\Xaml\Control\Theme\MaterialControlBridge.cpp" />
     <Page Include="UI\Xaml\Control\Theme\MaterialLibraryTemplates.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\MaterialNative.xaml" />
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialAppearance.h" />
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialSwitch.h" />
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialAppearance.cpp" />
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialSwap.h" />
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialSwap.cpp" />
+    <Midl Include="UI\Xaml\Control\Theme\MaterialSwap.idl" />
   </ItemGroup>
 </Project>

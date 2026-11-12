@@ -20,15 +20,16 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBox
+        <wl:LiquidGlassTextBox
             x:Name="AddressTextBox"
             x:Uid="IpEndpointInputAddress"
             MinWidth="220"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AutomationProperties.AutomationId="IpEndpointInputAddress"
             Header="IP address"
             PlaceholderText="0.0.0.0 or ::"
-            TextChanged="AddressTextBox_TextChanged"
-            ouxct:ControlAppearance.IsEnabled="True" />
+            TextChanged="AddressTextBox_TextChanged" />
         <NumberBox
             x:Name="PortNumberBox"
             x:Uid="IpEndpointInputPort"

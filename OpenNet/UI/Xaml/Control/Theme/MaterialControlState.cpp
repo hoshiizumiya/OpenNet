@@ -2,6 +2,7 @@
 #include "MaterialControlState.h"
 #include "ControlAppearance.h"
 #include "LiquidGlassProfile.h"
+#include "MaterialAppearance.h"
 #if __has_include("UI/Xaml/Control/Theme/MaterialControlState.g.cpp")
 #include "UI/Xaml/Control/Theme/MaterialControlState.g.cpp"
 #endif
@@ -1320,6 +1321,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 	FrameworkElement MaterialControlState::CreateTextBoxPresenter(Controls::TextBox const& native)
 	{
 		ControlAppearance::SetIsEnabled(native, true);
+		SetIsManaged(native, true);
 		return native;
 	}
 
@@ -1327,6 +1329,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 	FrameworkElement MaterialControlState::CreateRadioButtonPresenter(Controls::RadioButton const& native)
 	{
 		ControlAppearance::SetIsEnabled(native, true);
+		SetIsManaged(native, true);
 		return native;
 	}
 
@@ -1348,7 +1351,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 	void MaterialControlState::ManagedLoaded(Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&)
 	{
 		auto element = sender.try_as<FrameworkElement>();
-		if (!element || !GetIsManaged(element)) return;
+		if (::OpenNet::XamlApplicationLifetime::Exiting.load() || !element || !GetIsManaged(element)) return;
+		if (!::OpenNet::UI::MaterialAppearance::Kind(element).empty()) ControlAppearance::SetIsEnabled(element, true);
 		if (auto control = element.try_as<Controls::Control>()) control.ApplyTemplate();
 		auto brush = GetBrush(element);
 		if (!brush) return;
@@ -1384,6 +1388,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 	void MaterialControlState::ManagedUnloaded(Windows::Foundation::IInspectable const& sender, RoutedEventArgs const&)
 	{
 		auto element = sender.try_as<FrameworkElement>();
+		if (element && element.IsLoaded() && GetIsManaged(element)) return;
+		::OpenNet::UI::MaterialAppearance::Release(element);
 		// No composition writes during unload/disconnection.
 		std::erase_if(s_managed, [&element](auto const& item)
 		{
@@ -1464,7 +1470,8 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 		{
 			return !item.Element.get();
 		});
-		for (auto const& item : s_managed)
+		auto snapshot = s_managed;
+		for (auto const& item : snapshot)
 			if (auto element = item.Element.get(); element && element.IsLoaded()) ApplyManagedControl(element);
 	}
 
@@ -1476,28 +1483,41 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 			return entry.Element.get() == element;
 		});
 		if (item == s_managed.end()) return;
+		auto managed = *item; // Style changes may re-enter Loaded and grow s_managed.
 		auto kind = ::OpenNet::UI::LiquidGlassOptics::Canonical(ControlAppearance::GetSurface(element));
 		auto libraryKind = LibraryKind(element);
 		if (!libraryKind.empty()) kind = libraryKind;
 		if (kind.empty()) kind = L"Card";
 		if (libraryKind.empty())
 		{
-			::OpenNet::UI::LiquidGlassOptics::RestoreGeometry(item->Brush, item->Defaults);
+			::OpenNet::UI::LiquidGlassOptics::RestoreGeometry(managed.Brush, managed.Defaults);
 		}
 		// Optical defaults and overrides go through the same guarded native setters.
 		// Library controls still own geometry, DPI and interaction motion.
-		auto result = LiquidGlassProfile::Apply(kind, item->Brush, item->Defaults);
+		auto result = LiquidGlassProfile::Apply(kind, managed.Brush, managed.Defaults);
 		if (libraryKind.empty())
 		{
 			// Keep automatic accent contrast/tint adaptation when no override exists.
 			ControlAppearance::AdaptSurface(element);
-			result = std::max(result, LiquidGlassProfile::Apply(kind, item->Brush, item->Defaults, true));
+			result = std::max(result, LiquidGlassProfile::Apply(kind, managed.Brush, managed.Defaults, true));
+		}
+		if (!libraryKind.empty())
+		{
+			::OpenNet::UI::MaterialAppearance::Track(element);
+			for (auto const& profile : LiquidGlassProfile::All()) if (profile.Key() == kind)
+			{
+				auto glass = ::OpenNet::UI::MaterialAppearance::IsGlass(element);
+				WinUI::LiquidGlass::LiquidGlassInteraction::SetPointerLightingEnabled(element, glass && profile.PointerLightingEnabled());
+				WinUI::LiquidGlass::LiquidGlassInteraction::SetPointerLightInfluence(element, glass ? profile.PointerLightInfluence() : 0.0);
+				if (auto toggle = element.try_as<WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) toggle.SwitchScale(profile.SwitchScale());
+				break;
+			}
 		}
 		auto enabled = StyleIndex() == 1;
 		if (kind == L"Card") enabled = enabled && CardEnabled();
 		if (kind == L"FloatingPanel") enabled = enabled && FloatingPanelEnabled();
 		if (kind == L"TabBar") enabled = enabled && TabBarEnabled();
-		item->Brush.IsEnabled(result != LiquidGlassApplyResult::Unsupported
-							  && (ControlAppearance::GetIsPreview(element) || enabled) && ControlAppearance::CanUseGlass());
+		managed.Brush.IsEnabled(result != LiquidGlassApplyResult::Unsupported
+								&& (ControlAppearance::GetIsPreview(element) || enabled) && ControlAppearance::CanUseGlass());
 	}
 }

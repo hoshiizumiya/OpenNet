@@ -9,10 +9,10 @@ namespace OpenNet.UI.Xaml.View.Pages.SettingsPages
         Microsoft.UI.Xaml.Controls.Primitives.ButtonBase CreateRestartActionButton(Int32 material);
         OpenNet.ViewModels.SettingsViewModel ViewModel { get; };
         Int32 MaterialStyleIndex { get; };
-        Microsoft.UI.Xaml.Controls.ComboBox SoftLanguageCombobox { get; };
-        Microsoft.UI.Xaml.Controls.ToggleSwitch MemoryDiagnosticsSwitch { get; };
-        Microsoft.UI.Xaml.Controls.ComboBox StartPageCombobox { get; };
-        Microsoft.UI.Xaml.Controls.ComboBox themeMode { get; };
-        Microsoft.UI.Xaml.Controls.CheckBox AutoCheckUpdateCheckbox { get; };
+        WinUI.LiquidGlass.LiquidGlassComboBox SoftLanguageCombobox { get; };
+        WinUI.LiquidGlass.LiquidGlassToggleSwitch MemoryDiagnosticsSwitch { get; };
+        WinUI.LiquidGlass.LiquidGlassComboBox StartPageCombobox { get; };
+        WinUI.LiquidGlass.LiquidGlassComboBox themeMode { get; };
+        WinUI.LiquidGlass.LiquidGlassCheckBox AutoCheckUpdateCheckbox { get; };
     }
 }

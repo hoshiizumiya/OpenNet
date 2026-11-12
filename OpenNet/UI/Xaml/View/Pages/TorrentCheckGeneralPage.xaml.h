@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.OpenNet.UI.Xaml.Control.Progress.Storage;
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 #include "UI/Xaml/View/Pages/TorrentCheckGeneralPage.g.h"
 
 import winrt.OpenNet.ViewModels;

@@ -98,13 +98,15 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="Sine-wave CPU load and a secondary network-like signal are appended from Draw." />
                             </StackPanel>
-                            <Button
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_4106"
                                 x:Uid="ViewLiveGraphTestWindowButton"
+                                Grid.Column="1"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Click="ResetDynamicGraph_Click"
                                 Content="Reset dynamic streams"
-                                Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_4106"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="1" />
+                                Style="{StaticResource AccentButtonStyle}" />
                         </Grid>
 
                         <Border
@@ -162,35 +164,45 @@
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <Button
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_7863"
                                 x:Uid="ViewLiveGraphTestWindowButton"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Click="GreenBrush_Click"
-                                Content="Green" x:Name="GlassPresenter_7863"
-                                ouxct:ControlAppearance.IsEnabled="True" />
-                            <Button
+                                Content="Green" />
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_8077"
                                 x:Uid="ViewLiveGraphTestWindowButton"
+                                Grid.Column="1"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Click="BlueBrush_Click"
-                                Content="Blue" x:Name="GlassPresenter_8077"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="1" />
-                            <Button
+                                Content="Blue" />
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_8337"
                                 x:Uid="ViewLiveGraphTestWindowButton"
+                                Grid.Column="2"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Click="RedBrush_Click"
-                                Content="Red" x:Name="GlassPresenter_8337"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="2" />
-                            <Button
+                                Content="Red" />
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_8595"
                                 x:Uid="ViewLiveGraphTestWindowButton"
+                                Grid.Column="3"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Click="PurpleBrush_Click"
-                                Content="Purple" x:Name="GlassPresenter_8595"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="3" />
-                            <Button
+                                Content="Purple" />
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_8859"
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Click="CustomBrush_Click"
-                                Content="Custom sunset" x:Name="GlassPresenter_8859"
+                                Grid.Column="4"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="4" />
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Click="CustomBrush_Click"
+                                Content="Custom sunset" />
                         </Grid>
                     </StackPanel>
                 </Border>
@@ -219,19 +231,23 @@
                                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                     Text="Push a complete normalized point collection with optional curve smoothing." />
                             </StackPanel>
-                            <Button
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_10623"
                                 x:Uid="ViewLiveGraphTestWindowButton"
-                                Click="AddStaticLine_Click"
-                                Content="Add line batch" x:Name="GlassPresenter_10623"
+                                Grid.Column="1"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="1" />
-                            <Button
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Click="AddStaticLine_Click"
+                                Content="Add line batch" />
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_10897"
                                 x:Uid="ViewLiveGraphTestWindowButton"
+                                Grid.Column="2"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Click="AddStaticRounded_Click"
                                 Content="Add rounded batch"
-                                Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_10897"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="2" />
+                                Style="{StaticResource AccentButtonStyle}" />
                         </Grid>
 
                         <Border

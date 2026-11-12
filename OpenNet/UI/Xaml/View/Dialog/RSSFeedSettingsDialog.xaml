@@ -19,21 +19,27 @@
 
     <ScrollViewer>
         <StackPanel MinWidth="400" Spacing="16">
-            <TextBox
+            <wl:LiquidGlassTextBox
+                x:Name="SettingsTitleTextBox"
                 x:Uid="RSSSettingsTitleTextBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsTitleTextBox"
-                Header="Name" x:Name="SettingsTitleTextBox"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                Header="Name" />
+            <wl:LiquidGlassTextBox
+                x:Name="SettingsUrlTextBox"
                 x:Uid="RSSSettingsUrlTextBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsUrlTextBox"
-                Header="Feed URL" x:Name="SettingsUrlTextBox"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                Header="Feed URL" />
+            <wl:LiquidGlassTextBox
+                x:Name="SettingsSavePathTextBox"
                 x:Uid="RSSSettingsSavePathTextBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsSavePathTextBox"
-                Header="Save Path" x:Name="SettingsSavePathTextBox"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                Header="Save Path" />
             <NumberBox
                 x:Name="SettingsIntervalNumberBox"
                 x:Uid="RSSSettingsIntervalNumberBox"
@@ -42,46 +48,60 @@
                 Maximum="1440"
                 Minimum="5"
                 SpinButtonPlacementMode="Inline" />
-            <ToggleSwitch
+            <wl:LiquidGlassToggleSwitch
+                x:Name="SettingsEnabledToggle"
                 x:Uid="RSSSettingsEnabledToggle"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsEnabledToggle"
+                Checked="SettingsEnabledToggle_Changed"
                 Header="Feed enabled"
                 Loaded="SettingsEnabledToggle_Loaded"
                 OffContent="Disabled"
                 OnContent="Enabled"
-                Toggled="SettingsEnabledToggle_Changed" x:Name="SettingsEnabledToggle"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <ToggleSwitch
+                Unchecked="SettingsEnabledToggle_Changed" />
+            <wl:LiquidGlassToggleSwitch
+                x:Name="SettingsAutoDownloadToggle"
                 x:Uid="RSSSettingsAutoDownloadToggle"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsAutoDownloadToggle"
+                Checked="SettingsAutoDownloadToggle_Changed"
                 Header="Auto Download"
                 Loaded="SettingsAutoDownloadToggle_Loaded"
                 OffContent="Disabled"
                 OnContent="Enabled"
-                Toggled="SettingsAutoDownloadToggle_Changed" x:Name="SettingsAutoDownloadToggle"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                Unchecked="SettingsAutoDownloadToggle_Changed" />
+            <wl:LiquidGlassTextBox
+                x:Name="SettingsFilterTextBox"
                 x:Uid="RSSSettingsFilterTextBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsFilterTextBox"
                 Header="Filter Pattern (regex)"
-                PlaceholderText="e.g., 1080p|720p" x:Name="SettingsFilterTextBox"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <ComboBox
+                PlaceholderText="e.g., 1080p|720p" />
+            <wl:LiquidGlassComboBox
+                x:Name="ItemDoubleClickActionBox"
                 x:Uid="RSSSettingsDoubleClickActionBox"
+                MinWidth="160"
                 essential:ComboBoxHelper.AcrylicWorkaround="True"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsDoubleClickActionBox"
-                Header="Double-click action" x:Name="ItemDoubleClickActionBox" MinWidth="160"
-                ouxct:ControlAppearance.IsEnabled="True">
+                Header="Double-click action">
                 <ComboBoxItem x:Uid="RSSSettingsDoubleClickAddToTasks" Content="Add to tasks" />
                 <ComboBoxItem x:Uid="RSSSettingsDoubleClickShowDetails" Content="Show details" />
-            </ComboBox>
-            <ToggleSwitch
+            </wl:LiquidGlassComboBox>
+            <wl:LiquidGlassToggleSwitch
+                x:Name="IsShowWebViewPreviewFlyout"
                 x:Uid="RSSSettingsWebViewPreviewToggle"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="RSSSettingsWebViewPreviewToggle"
+                Checked="WebViewPreviewToggle_Changed"
                 Header="Show WebView Preview"
                 Loaded="WebViewPreviewToggle_Loaded"
-                Toggled="WebViewPreviewToggle_Changed" x:Name="IsShowWebViewPreviewFlyout"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                Unchecked="WebViewPreviewToggle_Changed" />
             <InfoBar
                 x:Name="SettingsValidationInfoBar"
                 x:Uid="RSSSettingsValidationInfoBar"

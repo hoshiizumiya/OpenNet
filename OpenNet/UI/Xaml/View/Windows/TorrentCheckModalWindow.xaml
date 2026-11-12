@@ -92,15 +92,17 @@
                         Text="One tracker URL per line. Trackers already present in the magnet or .torrent file and enabled custom trackers are merged automatically."
                         TextWrapping="Wrap" />
                 </StackPanel>
-                <TextBox
+                <wl:LiquidGlassTextBox
+                    x:Name="TrackerListTextBox"
+                    Grid.Row="1"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AcceptsReturn="True"
                     FontFamily="Consolas"
                     PlaceholderText="https://tracker.example.com/announce"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.VerticalScrollBarVisibility="Auto"
-                    TextWrapping="NoWrap" x:Name="TrackerListTextBox"
-                    ouxct:ControlAppearance.IsEnabled="True"
-                    Grid.Row="1" />
+                    TextWrapping="NoWrap" />
                 <TextBlock
                     x:Uid="TorrentTrackerListFooter"
                     Grid.Row="2"
@@ -168,40 +170,58 @@
                         Style="{StaticResource BodyStrongTextBlockStyle}"
                         Text="Peer discovery and behavior" />
                     <essential:SettingsCard x:Uid="TorrentTaskEnableDht">
-                        <ToggleSwitch x:Name="TaskEnableDhtToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskEnableDhtToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskEnableLsd">
-                        <ToggleSwitch x:Name="TaskEnableLsdToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskEnableLsdToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskEnablePex">
-                        <ToggleSwitch x:Name="TaskEnablePexToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskEnablePexToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskApplyIpFilter">
-                        <ToggleSwitch x:Name="TaskApplyIpFilterToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskApplyIpFilterToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskSequentialDownload">
-                        <ToggleSwitch x:Name="TaskSequentialDownloadToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskSequentialDownloadToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskSuperSeeding">
-                        <ToggleSwitch x:Name="TaskSuperSeedingToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskSuperSeedingToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskForceStart">
-                        <ToggleSwitch x:Name="TaskForceStartToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskForceStartToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskUploadMode">
-                        <ToggleSwitch x:Name="TaskUploadModeToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskUploadModeToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="TorrentTaskShareMode">
-                        <ToggleSwitch x:Name="TaskShareModeToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="TaskShareModeToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True" />
                     </essential:SettingsCard>
                     <InfoBar
                         x:Name="TaskSettingsStatusInfoBar"
@@ -231,49 +251,62 @@
                 VerticalAlignment="Center"
                 Orientation="Horizontal"
                 Spacing="8">
-                <CheckBox
+                <wl:LiquidGlassCheckBox
+                    x:Name="StartImmediatelyCheckBox"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowStartImmediatelyCheckBox"
                     Content="Start immediately"
-                    IsChecked="True" x:Name="StartImmediatelyCheckBox"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <CheckBox
+                    IsChecked="True" />
+                <wl:LiquidGlassCheckBox
+                    x:Name="SaveTorrentCopyCheckBox"
                     x:Uid="ViewTorrentCheckModalWindowCheckBoxText1"
-                    Content="Save a .torrent copy to the download folder" x:Name="SaveTorrentCopyCheckBox"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <ComboBox
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Content="Save a .torrent copy to the download folder" />
+                <wl:LiquidGlassComboBox
+                    x:Name="SaveTorrentCopyLocationComboBox"
+                    MinWidth="190"
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     IsEnabled="{x:Bind ouxct:MaterialControlState.IsTrue(SaveTorrentCopyCheckBox.IsChecked), Mode=OneWay}"
-                    SelectedIndex="0" x:Name="SaveTorrentCopyLocationComboBox" MinWidth="190"
-                    ouxct:ControlAppearance.IsEnabled="True">
+                    SelectedIndex="0">
                     <ComboBoxItem x:Uid="TorrentCopyLocationDownloadFolder" Content="Download target folder" />
                     <ComboBoxItem x:Uid="TorrentCopyLocationContentFolder" Content="Torrent content folder" />
-                </ComboBox>
+                </wl:LiquidGlassComboBox>
             </StackPanel>
 
             <StackPanel
                 Grid.Column="1"
                 Orientation="Horizontal"
                 Spacing="8">
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="ApplyTaskSettingsButton"
                     x:Uid="TorrentTaskApplySettingsButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="ApplyTaskSettingsButton_Click"
                     Content="Apply"
-                    Style="{StaticResource AccentButtonStyle}" x:Name="ApplyTaskSettingsButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    Style="{StaticResource AccentButtonStyle}" />
+                <wl:LiquidGlassButton
+                    x:Name="StartDownloadButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowStartDownloadButton"
                     Click="StartDownloadButton_Click"
                     Content="Start Download"
-                    Style="{StaticResource AccentButtonStyle}" x:Name="StartDownloadButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    Style="{StaticResource AccentButtonStyle}" />
+                <wl:LiquidGlassButton
+                    x:Name="CloseButton"
                     x:Uid="ViewModalWindowTorrentCheckModalWindowCloseButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="ViewModalWindowTorrentCheckModalWindowCloseButton"
                     Click="CancelButton_Click"
-                    Content="Cancel" x:Name="CloseButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Content="Cancel" />
             </StackPanel>
         </Grid>
     </Grid>

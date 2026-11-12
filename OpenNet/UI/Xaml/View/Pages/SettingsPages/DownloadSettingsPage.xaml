@@ -34,17 +34,22 @@
                     <FontIcon Glyph="&#xE8B7;" />
                 </essential:SettingsCard.HeaderIcon>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="DefaultSavePathTextBox"
                         x:Uid="DL_DefaultSavePathTextBox"
+                        Width="360"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="DL_DefaultSavePathTextBox"
-                        LostFocus="OnSettingChanged" x:Name="DefaultSavePathTextBox" Width="360"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        LostFocus="OnSettingChanged" />
+                    <wl:LiquidGlassButton
+                        x:Name="BrowseSavePathButton"
                         x:Uid="DL_BrowseSavePath"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="DL_BrowseSavePath"
                         Click="BrowseSavePathButton_Click"
-                        Content="Browse..." x:Name="BrowseSavePathButton"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Content="Browse..." />
                 </StackPanel>
             </essential:SettingsCard>
 
@@ -52,10 +57,13 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xEDA2;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="PreallocateStorageToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnSettingChanged"
                     Loaded="MaterialToggle_Loaded"
-                    Toggled="OnSettingChanged" x:Name="PreallocateStorageToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnSettingChanged" />
             </essential:SettingsCard>
 
             <!--  Section: Behaviour  -->
@@ -65,20 +73,26 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE768;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="AutoStartDownloadsToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnSettingChanged"
                     Loaded="MaterialToggle_Loaded"
-                    Toggled="OnSettingChanged" x:Name="AutoStartDownloadsToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnSettingChanged" />
             </essential:SettingsCard>
 
             <essential:SettingsCard x:Uid="DL_RecheckBeforeResume">
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE9D5;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="RecheckBeforeResumeToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnSettingChanged"
                     Loaded="MaterialToggle_Loaded"
-                    Toggled="OnSettingChanged" x:Name="RecheckBeforeResumeToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnSettingChanged" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -88,10 +102,13 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE968;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="HttpP2PPreferredToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnSettingChanged"
                     Loaded="MaterialToggle_Loaded"
-                    Toggled="OnSettingChanged" x:Name="HttpP2PPreferredToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnSettingChanged" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -114,24 +131,32 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE8DE;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="MoveCompletedToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnSettingChanged"
                     Loaded="MaterialToggle_Loaded"
-                    Toggled="OnSettingChanged" x:Name="MoveCompletedToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnSettingChanged" />
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="DL_MoveCompletedPath">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBox
+                            <wl:LiquidGlassTextBox
+                                x:Name="MoveCompletedPathTextBox"
                                 x:Uid="DL_MoveCompletedPathTextBox"
+                                Width="360"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 AutomationProperties.AutomationId="DL_MoveCompletedPathTextBox"
-                                LostFocus="OnSettingChanged" x:Name="MoveCompletedPathTextBox" Width="360"
-                                ouxct:ControlAppearance.IsEnabled="True" />
-                            <Button
+                                LostFocus="OnSettingChanged" />
+                            <wl:LiquidGlassButton
+                                x:Name="BrowseMovePathButton"
                                 x:Uid="DL_BrowseMovePath"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 AutomationProperties.AutomationId="DL_BrowseMovePath"
                                 Click="BrowseMovePathButton_Click"
-                                Content="Browse..." x:Name="BrowseMovePathButton"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                Content="Browse..." />
                         </StackPanel>
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>

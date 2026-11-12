@@ -245,12 +245,13 @@
                                 Maximum="100"
                                 Value="{x:Bind ProgressValue, Mode=OneWay}" />
                             <TextBlock Text="{x:Bind Done, Mode=OneWay}" TextTrimming="CharacterEllipsis" />
-                            <ComboBox
+                            <wl:LiquidGlassComboBox
                                 x:Name="FilePriorityComboBox"
                                 MinWidth="80"
                                 HorizontalAlignment="Stretch"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 x:Load="{x:Bind IsPriorityEditable, Mode=OneWay}"
                                 SelectedIndex="{x:Bind PriorityIndex, Mode=OneWay}"
                                 SelectionChanged="FilePriority_SelectionChanged"
@@ -259,7 +260,7 @@
                                 <ComboBoxItem x:Uid="FilePriority_Low" Content="Low" />
                                 <ComboBoxItem x:Uid="FilePriority_Normal" Content="Normal" />
                                 <ComboBoxItem x:Uid="FilePriority_High" Content="High" />
-                            </ComboBox>
+                            </wl:LiquidGlassComboBox>
                         </labs:DataRow>
                     </TreeViewItem>
                 </DataTemplate>

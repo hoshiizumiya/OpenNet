@@ -37,12 +37,14 @@
                     Style="{StaticResource SettingsSectionHeaderTextBlockStyle}"
                     Text="NAT Type Detection" />
 
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="DetectNatButton"
                     x:Uid="NatTools_DetectButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="NatTools_DetectButton"
                     Click="DetectNat_Click"
-                    Content="Detect NAT Type" x:Name="DetectNatButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Content="Detect NAT Type" />
 
                 <ProgressRing
                     x:Name="DetectingProgress"
@@ -313,11 +315,14 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="GlassPresenter_13145"
                         x:Uid="NatTools_StunHost"
+                        Width="220"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Header="STUN server"
-                        Text="{x:Bind ViewModel.StunHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="GlassPresenter_13145" Width="220"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Text="{x:Bind ViewModel.StunHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <NumberBox
                         x:Uid="NatTools_StunPort"
                         Width="110"
@@ -330,16 +335,20 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_13842"
                         x:Uid="NatTools_StartMapping"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.StartCommand}"
-                        Content="Start mapping" x:Name="GlassPresenter_13842"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        Content="Start mapping" />
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_14041"
                         x:Uid="NatTools_StopMapping"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.StopCommand}"
-                        Content="Stop mapping" x:Name="GlassPresenter_14041"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Content="Stop mapping" />
                     <ProgressRing
                         Width="20"
                         Height="20"
@@ -358,16 +367,20 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_14895"
                         x:Uid="NatTools_AllowFirewall"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.AllowFirewallCommand}"
-                        Content="Allow this UDP port in Windows Firewall" x:Name="GlassPresenter_14895"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        Content="Allow this UDP port in Windows Firewall" />
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_15129"
                         x:Uid="NatTools_RemoveFirewall"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.RemoveFirewallCommand}"
-                        Content="Remove OpenNet firewall rule" x:Name="GlassPresenter_15129"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Content="Remove OpenNet firewall rule" />
                 </StackPanel>
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -397,12 +410,15 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="GlassPresenter_17081"
                         x:Uid="NatTools_TcpLocalAddress"
+                        Width="175"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Header="Local IPv4 address"
                         PlaceholderText="192.168.1.10"
-                        Text="{x:Bind ViewModel.TcpLocalAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="GlassPresenter_17081" Width="175"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Text="{x:Bind ViewModel.TcpLocalAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <NumberBox
                         x:Uid="NatTools_TcpMappingPort"
                         Width="175"
@@ -424,11 +440,14 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="GlassPresenter_18332"
                         x:Uid="NatTools_TcpKeepaliveHost"
+                        Width="220"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Header="HTTP keepalive host"
-                        Text="{x:Bind ViewModel.TcpKeepaliveHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="GlassPresenter_18332" Width="220"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Text="{x:Bind ViewModel.TcpKeepaliveHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <NumberBox
                         x:Uid="NatTools_TcpKeepalivePort"
                         Width="110"
@@ -436,11 +455,14 @@
                         Maximum="65535"
                         Minimum="1"
                         Value="{x:Bind ViewModel.TcpKeepalivePort, Mode=TwoWay}" />
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="GlassPresenter_18956"
                         x:Uid="NatTools_TcpStunHost"
+                        Width="220"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Header="TCP STUN server"
-                        Text="{x:Bind ViewModel.TcpStunHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="GlassPresenter_18956" Width="220"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Text="{x:Bind ViewModel.TcpStunHost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <NumberBox
                         x:Uid="NatTools_TcpStunPort"
                         Width="110"
@@ -453,16 +475,20 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_19673"
                         x:Uid="NatTools_StartTcpMapping"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.StartTcpCommand}"
-                        Content="Start TCP mapping" x:Name="GlassPresenter_19673"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        Content="Start TCP mapping" />
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_19882"
                         x:Uid="NatTools_StopTcpMapping"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.StopTcpCommand}"
-                        Content="Stop TCP mapping" x:Name="GlassPresenter_19882"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Content="Stop TCP mapping" />
                     <ProgressRing
                         Width="20"
                         Height="20"
@@ -481,16 +507,20 @@
                     Margin="0,8,0,0"
                     Orientation="Horizontal"
                     Spacing="8">
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_20762"
                         x:Uid="NatTools_AllowTcpFirewall"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.AllowTcpFirewallCommand}"
-                        Content="Allow this TCP port in Windows Firewall" x:Name="GlassPresenter_20762"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        Content="Allow this TCP port in Windows Firewall" />
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_21002"
                         x:Uid="NatTools_RemoveTcpFirewall"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         Command="{x:Bind ViewModel.RemoveTcpFirewallCommand}"
-                        Content="Remove OpenNet TCP firewall rule" x:Name="GlassPresenter_21002"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Content="Remove OpenNet TCP firewall rule" />
                 </StackPanel>
                 <TextBlock
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
@@ -515,12 +545,14 @@
                         PlaceholderText="Port"
                         SpinButtonPlacementMode="Inline"
                         Value="{x:Bind ViewModel.ProbePort, Mode=TwoWay}" />
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="TestPortButton"
                         x:Uid="NatTools_TestPortButton"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="NatTools_TestPortButton"
                         Click="TestPort_Click"
-                        Content="Test Port" x:Name="TestPortButton"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Content="Test Port" />
                 </StackPanel>
 
                 <ProgressRing

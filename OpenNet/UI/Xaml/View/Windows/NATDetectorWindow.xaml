@@ -67,10 +67,12 @@
                             VerticalAlignment="Center"
                             FontWeight="SemiBold"
                             Text="Traversal directory" />
-                        <TextBox
-                            PlaceholderText="https://server.example/api/v1/traversal/servers" x:Name="DirectoryUriBox"
+                        <wl:LiquidGlassTextBox
+                            x:Name="DirectoryUriBox"
+                            Grid.Column="1"
                             ouxct:ControlAppearance.IsEnabled="True"
-                            Grid.Column="1" />
+                            ouxct:MaterialControlState.IsManaged="True"
+                            PlaceholderText="https://server.example/api/v1/traversal/servers" />
                         <NumberBox
                             x:Name="ListenPortNumber"
                             Grid.Column="2"
@@ -520,23 +522,29 @@
                 Grid.Column="1"
                 Orientation="Horizontal"
                 Spacing="8">
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="QuickPortButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="QuickPortButton_Click"
-                    Content="Quick port test" x:Name="QuickPortButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    Content="Quick port test" />
+                <wl:LiquidGlassButton
+                    x:Name="StartButton"
                     x:Uid="ViewNATDetectorWindowText48"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="ViewNATDetectorWindowText48"
                     Click="StartButton_Click"
                     Content="Start detection"
-                    Style="{StaticResource AccentButtonStyle}" x:Name="StartButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    Style="{StaticResource AccentButtonStyle}" />
+                <wl:LiquidGlassButton
+                    x:Name="GlassPresenter_27114"
                     x:Uid="ViewNATDetectorWindowText49"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="ViewNATDetectorWindowText49"
                     Click="CloseButton_Click"
-                    Content="Close" x:Name="GlassPresenter_27114"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Content="Close" />
             </StackPanel>
         </Grid>
     </Grid>

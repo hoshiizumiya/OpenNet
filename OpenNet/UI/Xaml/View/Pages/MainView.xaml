@@ -246,10 +246,12 @@
             </StackPanel>
 
             <!--  Port State  -->
-            <Button Padding="6,3" Style="{StaticResource SubtleButtonStyle}"
+            <Button
                 x:Name="GlassPresenter_11319"
                 Grid.Column="3"
-                Margin="16,0,0,0">
+                Margin="16,0,0,0"
+                Padding="6,3"
+                Style="{StaticResource SubtleButtonStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="ViewMainViewPortButtonToolTip"
@@ -550,19 +552,23 @@
                                             TextWrapping="Wrap" />
                                         <effects:AnimatedNumber FontFamily="Consolas" Value="{x:Bind ViewModel.PortCheckCountdownText, Mode=OneWay}" />
                                     </StackPanel>
-                                    <Button
+                                    <wl:LiquidGlassButton
+                                        x:Name="GlassPresenter_31891"
+                                        Grid.Column="1"
+                                        VerticalAlignment="Center"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Command="{x:Bind ViewModel.RecheckPortsCommand, Mode=OneWay}"
-                                        Content="{essential:StringResource Name=MainViewRecheckPorts}" x:Name="GlassPresenter_31891"
-                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        Content="{essential:StringResource Name=MainViewRecheckPorts}" />
+                                    <wl:LiquidGlassButton
+                                        x:Name="GlassPresenter_32266"
+                                        Grid.Column="2"
                                         VerticalAlignment="Center"
-                                        Grid.Column="1" />
-                                    <Button
                                         HorizontalContentAlignment="Center"
-                                        Click="OpenPortTestWindow_Click"
-                                        Content="{essential:StringResource Name=NatTools_PortTest/Text}" x:Name="GlassPresenter_32266"
                                         ouxct:ControlAppearance.IsEnabled="True"
-                                        VerticalAlignment="Center"
-                                        Grid.Column="2" />
+                                        ouxct:MaterialControlState.IsManaged="True"
+                                        Click="OpenPortTestWindow_Click"
+                                        Content="{essential:StringResource Name=NatTools_PortTest/Text}" />
                                 </Grid>
                             </StackPanel>
                         </ScrollViewer>

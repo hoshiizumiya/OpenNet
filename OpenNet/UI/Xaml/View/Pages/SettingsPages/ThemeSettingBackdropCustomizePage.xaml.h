@@ -7,6 +7,8 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
     struct ThemeSettingBackdropCustomizePage : ThemeSettingBackdropCustomizePageT<ThemeSettingBackdropCustomizePage>
     {
         ThemeSettingBackdropCustomizePage();
+        void TintOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+        void LuminosityOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
         void MaterialLoaded_249(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 
         void Page_Loaded(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& e);

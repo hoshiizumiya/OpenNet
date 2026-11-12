@@ -14,7 +14,7 @@ namespace OpenNet::UI::LiquidGlassOptics
         double (*Read)(Brush const&);
         void (*Write)(Brush const&, double);
     };
-    inline std::array<Descriptor, 30> const Descriptors{{
+    inline std::array<Descriptor, 31> const Descriptors{{
         { L"BlurRadius", L"Blur radius", 0.0, 32.0, 0.1, [](Brush const& b) { return b.BlurRadius(); }, [](Brush const& b, double v) { b.BlurRadius(v); } },
         { L"RefractionStrength", L"Refraction", 0.0, 64.0, 0.5, [](Brush const& b) { return b.RefractionStrength(); }, [](Brush const& b, double v) { b.RefractionStrength(v); } },
         { L"DispersionStrength", L"Chromatic dispersion", 0.0, 8.0, 0.05, [](Brush const& b) { return b.DispersionStrength(); }, [](Brush const& b, double v) { b.DispersionStrength(v); } },
@@ -38,6 +38,7 @@ namespace OpenNet::UI::LiquidGlassOptics
         { L"GlareFactor", L"Glare intensity", 0.0, 120.0, 1, [](Brush const& b) { return b.GlareFactor(); }, [](Brush const& b, double v) { b.GlareFactor(v); } },
         { L"GlareConvergence", L"Glare convergence", 0.0, 100.0, 1, [](Brush const& b) { return b.GlareConvergence(); }, [](Brush const& b, double v) { b.GlareConvergence(v); } },
         { L"GlareOppositeFactor", L"Opposite glare", 0.0, 100.0, 1, [](Brush const& b) { return b.GlareOppositeFactor(); }, [](Brush const& b, double v) { b.GlareOppositeFactor(v); } },
+        { L"LightAngle", L"Resting light angle (radians)", -3.141592653589793, 3.141592653589793, 0.05, [](Brush const& b) { return b.LightAngle(); }, [](Brush const& b, double v) { b.LightAngle(v); } },
         { L"GlareAngle", L"Glare angle", -180.0, 180.0, 1, [](Brush const& b) { return b.GlareAngle(); }, [](Brush const& b, double v) { b.GlareAngle(v); } },
         { L"Magnification", L"Magnification", 1.0, 3.0, 0.05, [](Brush const& b) { return b.Magnification(); }, [](Brush const& b, double v) { b.Magnification(v); } },
         { L"MagnificationStrength", L"Magnification strength", 0.0, 64.0, 0.5, [](Brush const& b) { return b.MagnificationStrength(); }, [](Brush const& b, double v) { b.MagnificationStrength(v); } },

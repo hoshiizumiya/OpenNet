@@ -45,31 +45,48 @@
 
             </xwc:WrapPanel>
 
-            <Slider
-                x:Uid="ViewThemeSettingLuminosityOpacitySlider"
-                essential:SliderHelper.AcrylicWorkaround="True"
-                AutomationProperties.AutomationId="ViewThemeSettingLuminosityOpacitySlider"
-                Header="LuminosityOpacity"
-                Loaded="MaterialControl_Loaded"
-                ValueChanged="BackdropValueChanged" x:Name="LuminosityOpacitySlider"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <ouxct:MaterialSwap>
+                <ouxct:MaterialSwap.Native>
+                    <Slider
+                        x:Name="LuminosityOpacitySlider"
+                        x:Uid="ViewThemeSettingLuminosityOpacitySlider"
+                        essential:SliderHelper.AcrylicWorkaround="True"
+                        AutomationProperties.AutomationId="ViewThemeSettingLuminosityOpacitySlider"
+                        Header="LuminosityOpacity"
+                        Loaded="MaterialControl_Loaded"
+                        ValueChanged="BackdropValueChanged" />
+                </ouxct:MaterialSwap.Native>
+                <ouxct:MaterialSwap.Glass>
+                    <wl:LiquidGlassSlider ouxct:MaterialControlState.IsManaged="True" Loaded="LuminosityOpacitySliderMaterialLoaded" />
+                </ouxct:MaterialSwap.Glass>
+            </ouxct:MaterialSwap>
 
-            <Slider
-                x:Uid="ViewThemeSettingTintOpacitySlider"
-                essential:SliderHelper.AcrylicWorkaround="True"
-                AutomationProperties.AutomationId="ViewThemeSettingTintOpacitySlider"
-                Header="TintOpacity"
-                Loaded="MaterialControl_Loaded"
-                ValueChanged="BackdropValueChanged" x:Name="TintOpacitySlider"
-                ouxct:ControlAppearance.IsEnabled="True" />
+            <ouxct:MaterialSwap>
+                <ouxct:MaterialSwap.Native>
+                    <Slider
+                        x:Name="TintOpacitySlider"
+                        x:Uid="ViewThemeSettingTintOpacitySlider"
+                        essential:SliderHelper.AcrylicWorkaround="True"
+                        AutomationProperties.AutomationId="ViewThemeSettingTintOpacitySlider"
+                        Header="TintOpacity"
+                        Loaded="MaterialControl_Loaded"
+                        ValueChanged="BackdropValueChanged" />
+                </ouxct:MaterialSwap.Native>
+                <ouxct:MaterialSwap.Glass>
+                    <wl:LiquidGlassSlider ouxct:MaterialControlState.IsManaged="True" Loaded="TintOpacitySliderMaterialLoaded" />
+                </ouxct:MaterialSwap.Glass>
+            </ouxct:MaterialSwap>
 
-            <ToggleSwitch
+            <wl:LiquidGlassToggleSwitch
+                x:Name="EnableSwitch"
                 x:Uid="ViewThemeSettingEnableAcrylicSwitch"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="ViewThemeSettingEnableAcrylicSwitch"
+                Checked="BackdropValueChanged"
                 Header="Enable acrylic when window is inactive"
                 Loaded="MaterialControl_Loaded"
-                Toggled="BackdropValueChanged" x:Name="EnableSwitch"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                Unchecked="BackdropValueChanged" />
         </StackPanel>
     </ScrollView>
 </Page>

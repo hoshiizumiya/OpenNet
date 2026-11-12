@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/View/Pages/NetworkSettingsPage.xaml.h"
 #include "UI/Xaml/View/Pages/SettingsPages/SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/NetworkSettingsPage.g.cpp")
@@ -174,7 +175,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		m_listenApplyTimer.Interval(std::chrono::milliseconds(450));
 		m_listenApplyTimer.Tick([weak](auto const& sender, auto const&)
 		{
-			sender.as<Microsoft::UI::Dispatching::DispatcherQueueTimer>()
+			sender.template as<Microsoft::UI::Dispatching::DispatcherQueueTimer>()
 				.Stop();
 			if (auto self = weak.get())
 			{
@@ -527,8 +528,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	}
 
 	void NetworkSettingsPage::AutoAddTrackersToggle_Toggled(
-		IInspectable const&, RoutedEventArgs const&)
+		IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loadingTrackerSettings)
 		{
 			return;

@@ -187,9 +187,10 @@
                     </interactivity:Interaction.Behaviors>
                     <labs:DataTable ColumnSpacing="16" PointerPressed="ColumnHeader_PointerPressed">
                         <labs:DataColumn x:Name="ColPeerIP" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerIpButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerIpButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -200,12 +201,13 @@
                                     Text="IP"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerLocation" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerLocationButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerLocationButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -217,12 +219,13 @@
                                     Text="Location"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProgress" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerProgressButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerProgressButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -234,12 +237,13 @@
                                     Text="Progress"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerDLSpeed" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerDlSpeedButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerDlSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -251,12 +255,13 @@
                                     Text="DL Speed"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerULSpeed" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerUlSpeedButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerUlSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -268,12 +273,13 @@
                                     Text="UL Speed"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerDownloaded" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerDownloadedButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerDownloadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -285,12 +291,13 @@
                                     Text="Downloaded"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerUploaded" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerUploadedButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerUploadedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -302,12 +309,13 @@
                                     Text="Uploaded"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerClient" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerClientButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerClientButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -318,12 +326,13 @@
                                     Text="Client"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerRemoteDLSpeed" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerRemoteDLSpeedButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerRemoteDLSpeedButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -335,12 +344,13 @@
                                     Text="Peer DL Speed"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerConnectionTime" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerConnectionTimeButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerConnectionTimeButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -352,12 +362,13 @@
                                     Text="Connection Time"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerStatus" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerStatusButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerStatusButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -368,12 +379,13 @@
                                     Text="Status"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerReason" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerReasonButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerReasonButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -384,12 +396,13 @@
                                     Text="Reason"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerProtocol" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerProtocolButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerProtocolButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -401,12 +414,13 @@
                                     Text="Protocol"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerInitiator" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerInitiatorButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerInitiatorButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -418,12 +432,13 @@
                                     Text="Initiator"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                         <labs:DataColumn x:Name="ColPeerSource" CanResize="True">
-                            <Button
+                            <wl:LiquidGlassButton
                                 x:Name="SortPeerSourceButton"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 Command="{x:Bind SortState.ToggleCommand}"
                                 CommandParameter="{x:Bind SortPeerSourceButton.Tag, Mode=OneWay}"
                                 FontWeight="SemiBold"
@@ -434,7 +449,7 @@
                                     Text="Source"
                                     TextTrimming="CharacterEllipsis"
                                     TextWrapping="NoWrap" />
-                            </Button>
+                            </wl:LiquidGlassButton>
                         </labs:DataColumn>
                     </labs:DataTable>
 

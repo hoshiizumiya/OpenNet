@@ -59,29 +59,44 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_IncomingTcp">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="EnableIncomingTcpToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="EnableIncomingTcpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_OutgoingTcp">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="EnableOutgoingTcpToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="EnableOutgoingTcpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_IncomingUtp">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="EnableIncomingUtpToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="EnableIncomingUtpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_OutgoingUtp">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="EnableOutgoingUtpToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="EnableOutgoingUtpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MultiConnPerIp">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="AllowMultipleConnectionsPerIpToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="AllowMultipleConnectionsPerIpToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -90,9 +105,12 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE72E;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="AnonymousModeToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="AnonymousModeToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <!--  Discovery  -->
@@ -102,33 +120,48 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE909;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="EnableDhtToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableDhtToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_EnableLsd">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="EnableLsdToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableLsdToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_EnableUpnp">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="EnableUpnpToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableUpnpToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_EnableNatpmp">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="EnableNatpmpToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableNatpmpToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_ApplyIpFilterToDht">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="ApplyIpFilterToDhtToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="ApplyIpFilterToDhtToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -150,21 +183,30 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE774;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="AnnounceToAllTiersToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="AnnounceToAllTiersToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_AnnounceAllTrackers">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="AnnounceToAllTrackersToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="AnnounceToAllTrackersToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_NatPmpGateway">
-                    <TextBox
-                        LostFocus="OnSettingChanged" x:Name="NatPmpGatewayTextBox" MinWidth="200"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassTextBox
+                        x:Name="NatPmpGatewayTextBox"
+                        MinWidth="200"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        LostFocus="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_NatPmpLeaseDuration">
@@ -180,14 +222,20 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE774;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="EnableWebTorrentToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableWebTorrentToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_WebTorrentStunServer" IsEnabled="{x:Bind EnableWebTorrentToggle.IsOn, Mode=OneWay}">
-                            <TextBox
-                                LostFocus="OnSettingChanged" x:Name="WebTorrentStunServerTextBox" MinWidth="220"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassTextBox
+                                x:Name="WebTorrentStunServerTextBox"
+                                MinWidth="220"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                LostFocus="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_WebTorrentOffers" IsEnabled="{x:Bind EnableWebTorrentToggle.IsOn, Mode=OneWay}">
                             <NumberBox
@@ -223,9 +271,12 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8EF;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="QueueingEnabledToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="QueueingEnabledToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_ActiveDownloads" IsEnabled="{x:Bind QueueingEnabledToggle.IsOn, Mode=OneWay}">
@@ -311,9 +362,12 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard Description="Keep completed torrents active until a configured share limit is reached." Header="Continue seeding after download completes">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="ContinueSeedingAfterCompletionToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="ContinueSeedingAfterCompletionToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <!--  Peer  -->
@@ -344,9 +398,12 @@
                 </essential:SettingsExpander>
 
                 <essential:SettingsCard x:Uid="BT_CloseRedundant">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="CloseRedundantConnectionsToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="CloseRedundantConnectionsToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <!--  Disk I/O  -->
@@ -389,15 +446,21 @@
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_DisableV1HashesForHybrid">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="DisableV1HashesForHybridToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="DisableV1HashesForHybridToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_PartFileDirectory">
-                    <TextBox
-                        LostFocus="OnSettingChanged" x:Name="PartFileDirectoryTextBox" MinWidth="220"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassTextBox
+                        x:Name="PartFileDirectoryTextBox"
+                        MinWidth="220"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        LostFocus="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_MaxTorrentDirectoryDepth">
@@ -416,11 +479,14 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE77B;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="UserAgentTextBox"
                         x:Uid="BT_UserAgentInput"
+                        MinWidth="220"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         LostFocus="OnSettingChanged"
-                        PlaceholderText="libtorrent/2.1.1" x:Name="UserAgentTextBox" MinWidth="220"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        PlaceholderText="libtorrent/2.1.1" />
                 </essential:SettingsCard>
 
                 <!--  Encryption  -->
@@ -430,20 +496,26 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE72E;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ComboBox
+                    <wl:LiquidGlassComboBox
+                        x:Name="EncryptionPolicyComboBox"
+                        MinWidth="180"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="OnSettingChanged" x:Name="EncryptionPolicyComboBox" MinWidth="180"
-                        ouxct:ControlAppearance.IsEnabled="True">
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        SelectionChanged="OnSettingChanged">
                         <ComboBoxItem x:Uid="BT_Enc_Forced" Tag="0" />
                         <ComboBoxItem x:Uid="BT_Enc_Enabled" Tag="1" />
                         <ComboBoxItem x:Uid="BT_Enc_Disabled" Tag="2" />
-                    </ComboBox>
+                    </wl:LiquidGlassComboBox>
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="BT_PreferRc4">
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="PreferRc4Toggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="PreferRc4Toggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                 </essential:SettingsCard>
 
                 <!--  Proxy  -->
@@ -453,10 +525,13 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE968;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ComboBox
+                    <wl:LiquidGlassComboBox
+                        x:Name="ProxyTypeComboBox"
+                        MinWidth="180"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="OnSettingChanged" x:Name="ProxyTypeComboBox" MinWidth="180"
-                        ouxct:ControlAppearance.IsEnabled="True">
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        SelectionChanged="OnSettingChanged">
                         <ComboBoxItem x:Uid="BT_Proxy_None" Tag="0" />
                         <ComboBoxItem x:Uid="BT_Proxy_Socks4" Tag="1" />
                         <ComboBoxItem x:Uid="BT_Proxy_Socks5" Tag="2" />
@@ -464,7 +539,7 @@
                         <ComboBoxItem x:Uid="BT_Proxy_Http" Tag="4" />
                         <ComboBoxItem x:Uid="BT_Proxy_HttpPw" Tag="5" />
                         <ComboBoxItem x:Uid="BT_Proxy_I2p" Tag="6" />
-                    </ComboBox>
+                    </wl:LiquidGlassComboBox>
                 </essential:SettingsCard>
 
                 <essential:SettingsExpander x:Uid="BT_ProxyDetails">
@@ -473,11 +548,14 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_ProxyHostname">
-                            <TextBox
+                            <wl:LiquidGlassTextBox
+                                x:Name="ProxyHostnameTextBox"
                                 x:Uid="BT_ProxyHostnameInput"
+                                MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="proxy.example.com" x:Name="ProxyHostnameTextBox" MinWidth="200"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                PlaceholderText="proxy.example.com" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyPort">
                             <NumberBox
@@ -488,30 +566,50 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyUsername">
-                            <TextBox
+                            <wl:LiquidGlassTextBox
+                                x:Name="ProxyUsernameTextBox"
+                                MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="" x:Name="ProxyUsernameTextBox" MinWidth="200"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                PlaceholderText="" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyPassword">
-                            <PasswordBox
-                                LostFocus="OnSettingChanged" x:Name="ProxyPasswordBox" MinWidth="200"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <ouxct:MaterialSwap>
+                                <ouxct:MaterialSwap.Native>
+                                    <PasswordBox
+                                        x:Name="ProxyPasswordBox"
+                                        MinWidth="200"
+                                        LostFocus="OnSettingChanged" />
+                                </ouxct:MaterialSwap.Native>
+                                <ouxct:MaterialSwap.Glass>
+                                    <wl:LiquidGlassPasswordBox ouxct:MaterialControlState.IsManaged="True" />
+                                </ouxct:MaterialSwap.Glass>
+                            </ouxct:MaterialSwap>
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyPeerConn">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="ProxyPeerConnectionsToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="ProxyPeerConnectionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxyTrackerConn">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="ProxyTrackerConnectionsToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="ProxyTrackerConnectionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ProxySendHostInConnect">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="ProxySendHostInConnectToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="ProxySendHostInConnectToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -520,14 +618,20 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE72E;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <ToggleSwitch
-                        Toggled="OnSettingChanged" x:Name="EnableI2pToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableI2pToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnSettingChanged"
+                        Unchecked="OnSettingChanged" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_I2pHostname" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
-                            <TextBox
-                                LostFocus="OnSettingChanged" x:Name="I2pHostnameTextBox" MinWidth="200"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassTextBox
+                                x:Name="I2pHostnameTextBox"
+                                MinWidth="200"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                LostFocus="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_I2pPort" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
@@ -538,9 +642,12 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_I2pMixedMode" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="AllowI2pMixedToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="AllowI2pMixedToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_I2pInboundQuantity" IsEnabled="{x:Bind EnableI2pToggle.IsOn, Mode=OneWay}">
                             <NumberBox
@@ -621,11 +728,14 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8AF;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <TextBox
+                    <wl:LiquidGlassTextBox
+                        x:Name="PeerFingerprintTextBox"
                         x:Uid="BT_PeerFingerprintInput"
+                        MinWidth="180"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         LostFocus="OnSettingChanged"
-                        PlaceholderText="-ON0100-" x:Name="PeerFingerprintTextBox" MinWidth="180"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        PlaceholderText="-ON0100-" />
                 </essential:SettingsCard>
 
                 <essential:SettingsExpander
@@ -653,14 +763,20 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_PieceExtentAffinity" Header="Use piece extent affinity">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="PieceExtentAffinityToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="PieceExtentAffinityToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UploadSuggestions" Header="Send upload piece suggestions">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="UploadSuggestionsToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="UploadSuggestionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SendBufferWatermark" Header="Send buffer watermark (KiB)">
                             <NumberBox
@@ -706,9 +822,12 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SeedingOutgoingConnections" Header="Allow outgoing connections when seeding">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="SeedingOutgoingConnectionsToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="SeedingOutgoingConnectionsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SocketSendBufferSize" Header="Socket send buffer size (KiB)">
                             <NumberBox
@@ -735,14 +854,16 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MixedMode" Header="μTP/TCP mixed mode">
-                            <ComboBox
+                            <wl:LiquidGlassComboBox
+                                x:Name="MixedModeComboBox"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 SelectedIndex="0"
-                                SelectionChanged="OnSettingChanged" x:Name="MixedModeComboBox"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                SelectionChanged="OnSettingChanged">
                                 <ComboBoxItem x:Uid="BT_MixedModePreferTcp" Content="Prefer TCP" />
                                 <ComboBoxItem x:Uid="BT_MixedModePeerProportional" Content="Peer proportional" />
-                            </ComboBox>
+                            </wl:LiquidGlassComboBox>
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_HostnameCacheTtl" Header="Hostname cache TTL (seconds)">
                             <NumberBox
@@ -753,40 +874,53 @@
                                 ValueChanged="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_ValidateHttpsTrackers" Header="Validate HTTPS tracker certificates">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="ValidateHttpsTrackersToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="ValidateHttpsTrackersToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_SsrfMitigation" Header="SSRF mitigation">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="SsrfMitigationToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="SsrfMitigationToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_BlockPrivilegedPorts" Header="Block peers on privileged ports">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="BlockPrivilegedPortsToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="BlockPrivilegedPortsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UploadSlotsBehavior" Header="Upload slots behavior">
-                            <ComboBox
+                            <wl:LiquidGlassComboBox
+                                x:Name="UploadSlotsBehaviorComboBox"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 SelectedIndex="0"
-                                SelectionChanged="OnSettingChanged" x:Name="UploadSlotsBehaviorComboBox"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                SelectionChanged="OnSettingChanged">
                                 <ComboBoxItem x:Uid="BT_UploadSlotsFixed" Content="Fixed slots" />
                                 <ComboBoxItem x:Uid="BT_UploadSlotsRateBased" Content="Upload rate based" />
-                            </ComboBox>
+                            </wl:LiquidGlassComboBox>
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UploadChokingAlgorithm" Header="Upload choking algorithm">
-                            <ComboBox
+                            <wl:LiquidGlassComboBox
+                                x:Name="UploadChokingAlgorithmComboBox"
                                 essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 SelectedIndex="1"
-                                SelectionChanged="OnSettingChanged" x:Name="UploadChokingAlgorithmComboBox"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                                SelectionChanged="OnSettingChanged">
                                 <ComboBoxItem x:Uid="BT_UploadChokingRoundRobin" Content="Round-robin" />
                                 <ComboBoxItem x:Uid="BT_UploadChokingFastest" Content="Fastest upload" />
                                 <ComboBoxItem x:Uid="BT_UploadChokingAntiLeech" Content="Anti-leech" />
-                            </ComboBox>
+                            </wl:LiquidGlassComboBox>
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_UnchokeSlotsLimit">
                             <NumberBox
@@ -816,14 +950,20 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_DhtBootstrapNodes" Header="DHT bootstrap nodes">
-                            <TextBox
-                                LostFocus="OnSettingChanged" x:Name="DhtBootstrapNodesTextBox" MinWidth="240"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassTextBox
+                                x:Name="DhtBootstrapNodesTextBox"
+                                MinWidth="240"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                LostFocus="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_AnnounceIp" Header="IP reported to trackers">
-                            <TextBox
-                                LostFocus="OnSettingChanged" x:Name="AnnounceIpTextBox" MinWidth="180"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassTextBox
+                                x:Name="AnnounceIpTextBox"
+                                MinWidth="180"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                LostFocus="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_AnnouncePort" Header="Port reported to trackers">
                             <NumberBox
@@ -893,32 +1033,47 @@
                     </essential:SettingsExpander.HeaderIcon>
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard x:Uid="BT_DefaultSavePath" Header="Default Save Path">
-                            <TextBox
+                            <wl:LiquidGlassTextBox
+                                x:Name="DefaultSavePathTextBox"
                                 x:Uid="BT_DefaultSavePathInput"
+                                MinWidth="300"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="Downloads folder" x:Name="DefaultSavePathTextBox" MinWidth="300"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                PlaceholderText="Downloads folder" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_PreallocateStorage" Header="Pre-allocate Storage">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="PreallocateStorageToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="PreallocateStorageToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_AutoStartDownloads" Header="Auto-start Downloads">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="AutoStartDownloadsToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="AutoStartDownloadsToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MoveCompleted" Header="Move Completed Downloads">
-                            <ToggleSwitch
-                                Toggled="OnSettingChanged" x:Name="MoveCompletedToggle"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                            <wl:LiquidGlassToggleSwitch
+                                x:Name="MoveCompletedToggle"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Checked="OnSettingChanged"
+                                Unchecked="OnSettingChanged" />
                         </essential:SettingsCard>
                         <essential:SettingsCard x:Uid="BT_MoveCompletedPath" Header="Move Completed Path">
-                            <TextBox
+                            <wl:LiquidGlassTextBox
+                                x:Name="MoveCompletedPathTextBox"
+                                MinWidth="300"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 LostFocus="OnSettingChanged"
-                                PlaceholderText="" x:Name="MoveCompletedPathTextBox" MinWidth="300"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                PlaceholderText="" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>

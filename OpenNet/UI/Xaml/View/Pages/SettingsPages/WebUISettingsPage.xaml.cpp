@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "WebUISettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
@@ -62,6 +63,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+        else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return ::OpenNet::UI::ReadMaterialSwitch(sender);
 			return std::nullopt;
 		}
 
@@ -69,6 +71,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+        else if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 	}
 
@@ -445,6 +448,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void WebUISettingsPage::OnMaterialToggleChanged(IInspectable const& sender, RoutedEventArgs const&)
 	{
+        ::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_initializing) return;
 		auto const value = ToggleIsOn(sender);
 		if (!value) return;

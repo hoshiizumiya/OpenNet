@@ -44,15 +44,16 @@
                     Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                     Text="Select a BitTorrent task to inspect its pieces." />
             </StackPanel>
-            <Button
+            <wl:LiquidGlassButton
+                x:Name="GlassPresenter_1851"
                 x:Uid="ViewTaskPieceMapPageText3"
+                Grid.Column="1"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="ViewTaskPieceMapPageText3"
                 Click="RefreshButton_Click"
                 Content="Refresh"
-                Style="{StaticResource SubtleButtonStyle}"
-                ouxct:ControlAppearance.IsEnabled="True"
-                x:Name="GlassPresenter_1851"
-                Grid.Column="1" />
+                Style="{StaticResource SubtleButtonStyle}" />
         </Grid>
 
         <Grid Grid.Row="1" ColumnSpacing="12">

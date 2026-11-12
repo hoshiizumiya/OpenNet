@@ -3,6 +3,7 @@
 #include <Shlwapi.h>   // UrlCreateFromPathW
 
 #include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "SettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/SettingsPage.g.cpp")
 #include "UI/Xaml/View/Pages/SettingsPages/SettingsPage.g.cpp"
@@ -63,18 +64,20 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-    winrt::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase SettingsPage::CreateRestartActionButton(std::int32_t material)
-    {
-        winrt::Microsoft::UI::Xaml::Controls::Button button = material == 1
-            ? winrt::WinUI::LiquidGlass::LiquidGlassButton().as<winrt::Microsoft::UI::Xaml::Controls::Button>()
-            : winrt::Microsoft::UI::Xaml::Controls::Button{};
-        // MRT addresses XAML property resources through a slash-separated path.
-        button.Content(winrt::box_value(ResourceGetString(L"RestartToApplyLanguageButton/Content")));
-        button.Click([weak = get_weak()](auto const& sender, auto const& args)
-        { if (auto self = weak.get()) self->RestartToApplyLanguage_Click(sender, args); });
-        if (material == 1) winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::SetIsManaged(button, true);
-        return button;
-    }
+	winrt::Microsoft::UI::Xaml::Controls::Primitives::ButtonBase SettingsPage::CreateRestartActionButton(std::int32_t material)
+	{
+		winrt::Microsoft::UI::Xaml::Controls::Button button = material == 1
+			? winrt::WinUI::LiquidGlass::LiquidGlassButton().as<winrt::Microsoft::UI::Xaml::Controls::Button>()
+			: winrt::Microsoft::UI::Xaml::Controls::Button{};
+		// MRT addresses XAML property resources through a slash-separated path.
+		button.Content(winrt::box_value(ResourceGetString(L"RestartToApplyLanguageButton/Content")));
+		button.Click([weak = get_weak()](auto const& sender, auto const& args)
+		{
+			if (auto self = weak.get()) self->RestartToApplyLanguage_Click(sender, args);
+		});
+		if (material == 1) winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::SetIsManaged(button, true);
+		return button;
+	}
 
 	// 正确定义类静态成员（不要使用文件作用域的 static 关键字）
 	SettingsPage* SettingsPage::s_current = nullptr;
@@ -255,13 +258,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void SettingsPage::MemoryDiagnosticsSwitch_Toggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isMemoryDiagnosticsLoading) return;
-		auto toggle = sender.try_as<ToggleSwitch>();
-		if (!toggle) return;
+		if (!::OpenNet::UI::IsMaterialSwitch(sender)) return;
 		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
 		database.Initialize();
-		database.SetBool("ui", "memory_diagnostics_enabled", toggle.IsOn());
-		::OpenNet::Helpers::PageMemoryDiagnostics::SetEnabled(toggle.IsOn());
+		database.SetBool("ui", "memory_diagnostics_enabled", ::OpenNet::UI::ReadMaterialSwitch(sender));
+		::OpenNet::Helpers::PageMemoryDiagnostics::SetEnabled(::OpenNet::UI::ReadMaterialSwitch(sender));
 	}
 
 	winrt::Windows::Foundation::IAsyncAction SettingsPage::SetDesktopBackground()

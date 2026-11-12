@@ -12,8 +12,11 @@
     DefaultButton="Primary"
     Style="{StaticResource DefaultContentDialogStyle}"
     mc:Ignorable="d">
-    <TextBox
+    <wl:LiquidGlassTextBox
+        x:Name="InputTextBox"
+        MinWidth="460"
+        ouxct:ControlAppearance.IsEnabled="True"
+        ouxct:MaterialControlState.IsManaged="True"
         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-        ScrollViewer.VerticalScrollBarVisibility="Auto" x:Name="InputTextBox" MinWidth="460"
-        ouxct:ControlAppearance.IsEnabled="True" />
+        ScrollViewer.VerticalScrollBarVisibility="Auto" />
 </ContentDialog>

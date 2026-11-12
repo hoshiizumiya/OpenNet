@@ -8,7 +8,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="ContentControl">
                     <Grid x:Name="ToggleSettingRoot">
-                        <ToggleSwitch x:Name="MaterialNative_2" ouxct:ControlAppearance.IsEnabled="True" IsOn="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingIsOn), Mode=TwoWay}" />
+                        <wl:LiquidGlassToggleSwitch x:Name="MaterialNative_2" ouxct:ControlAppearance.IsEnabled="True" ouxct:MaterialControlState.IsManaged="True" IsOn="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingIsOn), Mode=TwoWay}" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -26,7 +26,14 @@
                             <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="56" />
                         </Grid.ColumnDefinitions>
-                        <Slider x:Name="MaterialNative_3" HorizontalAlignment="Stretch" ouxct:ControlAppearance.IsEnabled="True" IsThumbToolTipEnabled="True" LargeChange="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingLargeStep), Mode=OneWay}" Maximum="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingMaximum), Mode=OneWay}" Minimum="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingMinimum), Mode=OneWay}" SmallChange="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingStep), Mode=OneWay}" StepFrequency="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingStep), Mode=OneWay}" Value="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingValue), Mode=TwoWay}" />
+                        <ouxct:MaterialSwap HorizontalAlignment="Stretch">
+                            <ouxct:MaterialSwap.Native>
+                                <Slider x:Name="MaterialNative_3" IsThumbToolTipEnabled="True" LargeChange="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingLargeStep), Mode=OneWay}" Maximum="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingMaximum), Mode=OneWay}" Minimum="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingMinimum), Mode=OneWay}" SmallChange="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingStep), Mode=OneWay}" StepFrequency="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingStep), Mode=OneWay}" Value="{x:Bind (ContentControl).(ouxct:MaterialControlState.SettingValue), Mode=TwoWay}" />
+                            </ouxct:MaterialSwap.Native>
+                            <ouxct:MaterialSwap.Glass>
+                                <wl:LiquidGlassSlider ouxct:MaterialControlState.IsManaged="True" />
+                            </ouxct:MaterialSwap.Glass>
+                        </ouxct:MaterialSwap>
                         <TextBlock Grid.Column="1" VerticalAlignment="Center" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue((ContentControl).(ouxct:MaterialControlState.SettingValue)), Mode=OneWay}" TextAlignment="Right" />
                     </Grid>
                 </ControlTemplate>

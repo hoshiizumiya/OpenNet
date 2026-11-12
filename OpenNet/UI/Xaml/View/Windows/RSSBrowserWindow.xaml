@@ -63,10 +63,10 @@
             </Button>
             <Button
                 x:Name="ForwardButton"
+                Grid.Column="1"
                 Click="ForwardButton_Click"
                 IsEnabled="False"
-                Style="{StaticResource SubtleButtonStyle}"
-                Grid.Column="1">
+                Style="{StaticResource SubtleButtonStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentForward"
@@ -75,9 +75,11 @@
                 </ToolTipService.ToolTip>
                 <FontIcon Glyph="&#xE72A;" />
             </Button>
-            <Button Click="ReloadButton_Click" Style="{StaticResource SubtleButtonStyle}"
+            <Button
                 x:Name="GlassPresenter_2643"
-                Grid.Column="2">
+                Grid.Column="2"
+                Click="ReloadButton_Click"
+                Style="{StaticResource SubtleButtonStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentReload"
@@ -86,15 +88,19 @@
                 </ToolTipService.ToolTip>
                 <FontIcon Glyph="&#xE72C;" />
             </Button>
-            <TextBox
-                KeyDown="AddressBox_KeyDown"
-                PlaceholderText="Enter a web address" x:Name="AddressBox"
-                ouxct:ControlAppearance.IsEnabled="True"
+            <wl:LiquidGlassTextBox
+                x:Name="AddressBox"
+                Grid.Column="3"
                 VerticalAlignment="Center"
-                Grid.Column="3" />
-            <Button Click="GoButton_Click" Style="{StaticResource SubtleButtonStyle}"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
+                KeyDown="AddressBox_KeyDown"
+                PlaceholderText="Enter a web address" />
+            <Button
                 x:Name="GlassPresenter_3381"
-                Grid.Column="4">
+                Grid.Column="4"
+                Click="GoButton_Click"
+                Style="{StaticResource SubtleButtonStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentGo"
@@ -103,9 +109,11 @@
                 </ToolTipService.ToolTip>
                 <FontIcon Glyph="&#xE751;" />
             </Button>
-            <Button Click="OpenExternalButton_Click" Style="{StaticResource SubtleButtonStyle}"
+            <Button
                 x:Name="GlassPresenter_3873"
-                Grid.Column="5">
+                Grid.Column="5"
+                Click="OpenExternalButton_Click"
+                Style="{StaticResource SubtleButtonStyle}">
                 <ToolTipService.ToolTip>
                     <ToolTip
                         x:Uid="CommonContentOpenSysBrowser"

@@ -18,27 +18,30 @@
     mc:Ignorable="d">
 
     <StackPanel MinWidth="400" Spacing="16">
-        <TextBox
+        <wl:LiquidGlassTextBox
             x:Name="FeedUrlTextBox"
             x:Uid="RSSFeedUrlTextBox"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AutomationProperties.AutomationId="RSSFeedUrlTextBox"
             Header="Feed URL"
-            PlaceholderText="https://example.com/rss.xml"
-            ouxct:ControlAppearance.IsEnabled="True" />
-        <TextBox
+            PlaceholderText="https://example.com/rss.xml" />
+        <wl:LiquidGlassTextBox
             x:Name="FeedNameTextBox"
             x:Uid="RSSFeedNameTextBox"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AutomationProperties.AutomationId="RSSFeedNameTextBox"
             Header="Name (optional)"
-            PlaceholderText="My RSS Feed"
-            ouxct:ControlAppearance.IsEnabled="True" />
-        <TextBox
+            PlaceholderText="My RSS Feed" />
+        <wl:LiquidGlassTextBox
             x:Name="FeedSavePathTextBox"
             x:Uid="RSSFeedSavePathTextBox"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AutomationProperties.AutomationId="RSSFeedSavePathTextBox"
             Header="Save Path (optional)"
-            PlaceholderText="Leave empty to use default"
-            ouxct:ControlAppearance.IsEnabled="True" />
+            PlaceholderText="Leave empty to use default" />
         <InfoBar
             x:Name="UrlErrorInfoBar"
             x:Uid="RSSUrlErrorInfoBar"

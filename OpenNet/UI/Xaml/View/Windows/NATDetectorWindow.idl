@@ -5,6 +5,6 @@
 	{
 		NATDetectorWindow();
 
-		Microsoft.UI.Xaml.Controls.TextBox DirectoryUriBox;
+		WinUI.LiquidGlass.LiquidGlassTextBox DirectoryUriBox;
 	}
 }

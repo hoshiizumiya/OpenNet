@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "FilterEditorDialog.xaml.h"
 #if __has_include("UI/Xaml/View/Dialog/FilterEditorDialog.g.cpp")
@@ -18,6 +19,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		std::optional<bool> ToggleIsOn(IInspectable const& sender)
 		{
 			if (auto native = sender.try_as<Microsoft::UI::Xaml::Controls::ToggleSwitch>()) return native.IsOn();
+			else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return ::OpenNet::UI::ReadMaterialSwitch(sender);
 			return std::nullopt;
 		}
 
@@ -25,6 +27,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 		{
 			if (!target) return;
 			if (auto native = target.try_as<Microsoft::UI::Xaml::Controls::ToggleSwitch>()) native.IsOn(value);
+			else if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 	}
 
@@ -116,6 +119,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	}
 	void FilterEditorDialog::CaseSensitiveToggle_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_configuring) return;
 		if (auto value = ToggleIsOn(sender))
 		{
@@ -133,6 +137,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 	}
 	void FilterEditorDialog::EnabledToggle_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_configuring) return;
 		if (auto value = ToggleIsOn(sender))
 		{
@@ -163,14 +168,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Dialog::implementation
 {
-    void FilterEditorDialog::MaterialLoaded_23(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        CaseSensitiveToggle_Loaded(CaseSensitiveToggle(), args);
-    }
-    void FilterEditorDialog::MaterialLoaded_24(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        EnabledToggle_Loaded(EnabledToggle(), args);
-    }
+	void FilterEditorDialog::MaterialLoaded_23(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		CaseSensitiveToggle_Loaded(CaseSensitiveToggle(), args);
+	}
+	void FilterEditorDialog::MaterialLoaded_24(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		EnabledToggle_Loaded(EnabledToggle(), args);
+	}
 }

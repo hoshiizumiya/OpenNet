@@ -1,6 +1,7 @@
 ﻿#include <Shlwapi.h>
 
 #include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "ThemesSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ThemesSettingsPage.g.cpp")
@@ -42,6 +43,7 @@ namespace
 		if (!sender) return std::nullopt;
 		if (auto standard = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>())
 			return standard.IsOn();
+		else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return ::OpenNet::UI::ReadMaterialSwitch(sender);
 		return std::nullopt;
 	}
 
@@ -50,6 +52,7 @@ namespace
 		if (!target) return;
 		if (auto standard = target.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>())
 			standard.IsOn(value);
+		else if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 	}
 }
 
@@ -70,20 +73,26 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	}
 
 
-    void ThemesSettingsPage::OpenGlassControls(IInspectable const&, RoutedEventArgs const&)
-    {
-        if (auto current = m_glassControlsWindow.get()) { current.Activate(); return; }
-        auto window = make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::LiquidGlassControlsWindow>();
-        m_glassControlsWindow = make_weak(window.Window());
-        window.Activate();
-    }
-    void ThemesSettingsPage::OpenGlassEffects(IInspectable const&, RoutedEventArgs const&)
-    {
-        if (auto current = m_glassEffectsWindow.get()) { current.Activate(); return; }
-        auto window = make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::LiquidGlassEffectsWindow>();
-        m_glassEffectsWindow = make_weak(window.Window());
-        window.Activate();
-    }
+	void ThemesSettingsPage::OpenGlassControls(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (auto current = m_glassControlsWindow.get())
+		{
+			current.Activate(); return;
+		}
+		auto window = make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::LiquidGlassControlsWindow>();
+		m_glassControlsWindow = make_weak(window.Window());
+		window.Activate();
+	}
+	void ThemesSettingsPage::OpenGlassEffects(IInspectable const&, RoutedEventArgs const&)
+	{
+		if (auto current = m_glassEffectsWindow.get())
+		{
+			current.Activate(); return;
+		}
+		auto window = make<winrt::OpenNet::UI::Xaml::View::Windows::implementation::LiquidGlassEffectsWindow>();
+		m_glassEffectsWindow = make_weak(window.Window());
+		window.Activate();
+	}
 
 	void ThemesSettingsPage::LoadBackdropSettings()
 	{
@@ -258,6 +267,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::BackdropFallbackSwitch_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isInitializing) return;
 		auto const enabled = MaterialSwitchValue(sender);
 		if (!enabled) return;
@@ -280,6 +290,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::ApplyBackgroundToSecondaryWindowsSwitch_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isInitializing) return;
 		auto const enabled = MaterialSwitchValue(sender);
 		if (!enabled) return;
@@ -306,6 +317,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::AnimatedDigitsSwitch_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isInitializing) return;
 		auto const enabled = MaterialSwitchValue(sender);
 		if (!enabled) return;
@@ -416,6 +428,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::VideoMutedSwitch_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isInitializing) return;
 		auto const enabled = MaterialSwitchValue(sender);
 		if (!enabled) return;
@@ -436,6 +449,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemesSettingsPage::VideoLoopingSwitch_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isInitializing) return;
 		auto const enabled = MaterialSwitchValue(sender);
 		if (!enabled) return;
@@ -532,29 +546,45 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-    void ThemesSettingsPage::MaterialLoaded_258(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        ApplyBackgroundToSecondaryWindowsSwitch_Loaded(ApplyBackgroundToSecondaryWindowsSwitch(), args);
-    }
-    void ThemesSettingsPage::MaterialLoaded_261(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        BackdropFallbackSwitch_Loaded(BackdropFallbackSwitch(), args);
-    }
-    void ThemesSettingsPage::MaterialLoaded_262(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        AnimatedDigitsControl_Loaded(AnimatedDigitsSwitch(), args);
-    }
-    void ThemesSettingsPage::MaterialLoaded_267(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        VideoMutedSwitch_Loaded(VideoMutedSwitch(), args);
-    }
-    void ThemesSettingsPage::MaterialLoaded_268(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        VideoLoopingSwitch_Loaded(VideoLoopingSwitch(), args);
-    }
+	void ThemesSettingsPage::MaterialLoaded_258(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		ApplyBackgroundToSecondaryWindowsSwitch_Loaded(ApplyBackgroundToSecondaryWindowsSwitch(), args);
+	}
+	void ThemesSettingsPage::MaterialLoaded_261(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		BackdropFallbackSwitch_Loaded(BackdropFallbackSwitch(), args);
+	}
+	void ThemesSettingsPage::MaterialLoaded_262(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		AnimatedDigitsControl_Loaded(AnimatedDigitsSwitch(), args);
+	}
+	void ThemesSettingsPage::MaterialLoaded_267(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		VideoMutedSwitch_Loaded(VideoMutedSwitch(), args);
+	}
+	void ThemesSettingsPage::MaterialLoaded_268(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		VideoLoopingSwitch_Loaded(VideoLoopingSwitch(), args);
+	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+	void ThemesSettingsPage::VideoOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		VideoOpacitySlider_Loaded(VideoOpacitySlider(), args);
+	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+	void ThemesSettingsPage::ImageOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		ImageOpacitySlider_Loaded(ImageOpacitySlider(), args);
+	}
 }

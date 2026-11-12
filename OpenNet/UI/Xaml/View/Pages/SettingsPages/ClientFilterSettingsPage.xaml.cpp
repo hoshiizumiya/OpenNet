@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "ClientFilterSettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
@@ -33,12 +34,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+			else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return ::OpenNet::UI::ReadMaterialSwitch(sender);
 			return std::nullopt;
 		}
 		void SetToggleIsOn(IInspectable const& target, bool value)
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+			else if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 
 		std::string TrimCopy(std::string value)
@@ -101,12 +104,12 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			std::wstring text{ ResourceGetString(L"ClientFilterRuleNumberPrefix").c_str() };
 			text += winrt::to_hstring(rule.id).c_str();
 			text += (rule.enabled
-				? ResourceGetString(L"ClientFilterRuleEnabledMarker")
-				: ResourceGetString(L"ClientFilterRuleDisabledMarker")).c_str();
+					 ? ResourceGetString(L"ClientFilterRuleEnabledMarker")
+					 : ResourceGetString(L"ClientFilterRuleDisabledMarker")).c_str();
 			text += LocalizedMatchTypeName(rule.matchType).c_str();
 			text += (rule.caseSensitive
-				? ResourceGetString(L"ClientFilterCaseSensitive")
-				: ResourceGetString(L"ClientFilterIgnoreCase")).c_str();
+					 ? ResourceGetString(L"ClientFilterCaseSensitive")
+					 : ResourceGetString(L"ClientFilterIgnoreCase")).c_str();
 			text += L" ";
 			text += winrt::to_hstring(rule.pattern).c_str();
 			if (!rule.description.empty())
@@ -326,6 +329,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ClientFilterSettingsPage::OnEnableToggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loading)
 			return;
 		auto const enabled = ToggleIsOn(sender);
@@ -360,6 +364,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ClientFilterSettingsPage::CaseSensitiveToggle_Changed(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loading) return;
 		if (auto enabled = ToggleIsOn(sender))
 		{
@@ -645,14 +650,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-    void ClientFilterSettingsPage::MaterialLoaded_187(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        EnableFilterToggle_Loaded(EnableFilterToggle(), args);
-    }
-    void ClientFilterSettingsPage::MaterialLoaded_192(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        CaseSensitiveToggle_Loaded(CaseSensitiveToggle(), args);
-    }
+	void ClientFilterSettingsPage::MaterialLoaded_187(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		EnableFilterToggle_Loaded(EnableFilterToggle(), args);
+	}
+	void ClientFilterSettingsPage::MaterialLoaded_192(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		CaseSensitiveToggle_Loaded(CaseSensitiveToggle(), args);
+	}
 }

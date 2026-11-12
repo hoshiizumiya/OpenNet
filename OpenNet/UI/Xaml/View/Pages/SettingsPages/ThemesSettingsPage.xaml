@@ -54,18 +54,26 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE9CE;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch x:Uid="TaskProgressEffectsSwitch" IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" x:Name="MaterialNative_250"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="MaterialNative_250"
+                    x:Uid="TaskProgressEffectsSwitch"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    IsOn="{x:Bind ViewModel.ProgressEffectsEnabled, Mode=TwoWay}" />
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard
                         x:Uid="TaskProgressScopeCard"
                         Description="Choose the progress cell or the full task row."
                         Header="Highlight area">
-                        <ComboBox SelectedIndex="{x:Bind ViewModel.ProgressEffectScope, Mode=TwoWay}" x:Name="GlassPresenter_3555" MinWidth="175"
-                            ouxct:ControlAppearance.IsEnabled="True">
+                        <wl:LiquidGlassComboBox
+                            x:Name="GlassPresenter_3555"
+                            MinWidth="175"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            SelectedIndex="{x:Bind ViewModel.ProgressEffectScope, Mode=TwoWay}">
                             <ComboBoxItem x:Uid="TaskProgressScopeColumn" Content="Progress cell" />
                             <ComboBoxItem x:Uid="TaskProgressScopeRow" Content="Entire task row" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressPreviewCard"
@@ -129,102 +137,124 @@
                         x:Uid="TaskProgressDownloadColorCard"
                         Description="Color for HTTP and BitTorrent downloads."
                         Header="Download highlight">
-                        <Button x:Uid="TaskProgressChooseDownloadColor" Content="Choose color" x:Name="GlassPresenter_7633"
-                            ouxct:ControlAppearance.IsEnabled="True">
-                            <Button.Flyout>
-                        <Flyout>
-                            <ColorPicker
-                                x:Uid="TaskProgressDownloadColorPicker"
-                                IsAlphaEnabled="False"
-                                IsAlphaSliderVisible="False"
-                                IsAlphaTextInputVisible="False"
-                                Color="{x:Bind ViewModel.DownloadProgressColor, Mode=TwoWay}" />
-                        </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_7633"
+                            x:Uid="TaskProgressChooseDownloadColor"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Content="Choose color">
+                            <wl:LiquidGlassButton.Flyout>
+                                <Flyout>
+                                    <ColorPicker
+                                        x:Uid="TaskProgressDownloadColorPicker"
+                                        IsAlphaEnabled="False"
+                                        IsAlphaSliderVisible="False"
+                                        IsAlphaTextInputVisible="False"
+                                        Color="{x:Bind ViewModel.DownloadProgressColor, Mode=TwoWay}" />
+                                </Flyout>
+                            </wl:LiquidGlassButton.Flyout>
+                        </wl:LiquidGlassButton>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressSeedingColorCard"
                         Description="Color for BitTorrent upload after download completion."
                         Header="Seeding highlight">
-                        <Button x:Uid="TaskProgressChooseSeedingColor" Content="Choose color" x:Name="GlassPresenter_8669"
-                            ouxct:ControlAppearance.IsEnabled="True">
-                            <Button.Flyout>
-                        <Flyout>
-                            <ColorPicker
-                                x:Uid="TaskProgressSeedingColorPicker"
-                                IsAlphaEnabled="False"
-                                IsAlphaSliderVisible="False"
-                                IsAlphaTextInputVisible="False"
-                                Color="{x:Bind ViewModel.SeedingProgressColor, Mode=TwoWay}" />
-                        </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_8669"
+                            x:Uid="TaskProgressChooseSeedingColor"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Content="Choose color">
+                            <wl:LiquidGlassButton.Flyout>
+                                <Flyout>
+                                    <ColorPicker
+                                        x:Uid="TaskProgressSeedingColorPicker"
+                                        IsAlphaEnabled="False"
+                                        IsAlphaSliderVisible="False"
+                                        IsAlphaTextInputVisible="False"
+                                        Color="{x:Bind ViewModel.SeedingProgressColor, Mode=TwoWay}" />
+                                </Flyout>
+                            </wl:LiquidGlassButton.Flyout>
+                        </wl:LiquidGlassButton>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressCheckingColorCard"
                         Description="Color while a BitTorrent task checks its files."
                         Header="Verification highlight">
-                        <Button x:Uid="TaskProgressChooseCheckingColor" Content="Choose color" x:Name="GlassPresenter_9701"
-                            ouxct:ControlAppearance.IsEnabled="True">
-                            <Button.Flyout>
-                        <Flyout>
-                            <ColorPicker
-                                x:Uid="TaskProgressCheckingColorPicker"
-                                IsAlphaEnabled="False"
-                                IsAlphaSliderVisible="False"
-                                IsAlphaTextInputVisible="False"
-                                Color="{x:Bind ViewModel.CheckingProgressColor, Mode=TwoWay}" />
-                        </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_9701"
+                            x:Uid="TaskProgressChooseCheckingColor"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Content="Choose color">
+                            <wl:LiquidGlassButton.Flyout>
+                                <Flyout>
+                                    <ColorPicker
+                                        x:Uid="TaskProgressCheckingColorPicker"
+                                        IsAlphaEnabled="False"
+                                        IsAlphaSliderVisible="False"
+                                        IsAlphaTextInputVisible="False"
+                                        Color="{x:Bind ViewModel.CheckingProgressColor, Mode=TwoWay}" />
+                                </Flyout>
+                            </wl:LiquidGlassButton.Flyout>
+                        </wl:LiquidGlassButton>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressBaseColorCard"
                         Description="Color behind the highlight; transparent by default."
                         Header="Base color">
-                        <Button x:Uid="TaskProgressChooseBaseColor" Content="Choose color" x:Name="GlassPresenter_10724"
-                            ouxct:ControlAppearance.IsEnabled="True">
-                            <Button.Flyout>
-                        <Flyout>
-                            <ColorPicker
-                                x:Uid="TaskProgressBaseColorPicker"
-                                IsAlphaEnabled="True"
-                                IsAlphaSliderVisible="True"
-                                IsAlphaTextInputVisible="True"
-                                Color="{x:Bind ViewModel.ProgressBaseColor, Mode=TwoWay}" />
-                        </Flyout>
-                            </Button.Flyout>
-                        </Button>
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_10724"
+                            x:Uid="TaskProgressChooseBaseColor"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Content="Choose color">
+                            <wl:LiquidGlassButton.Flyout>
+                                <Flyout>
+                                    <ColorPicker
+                                        x:Uid="TaskProgressBaseColorPicker"
+                                        IsAlphaEnabled="True"
+                                        IsAlphaSliderVisible="True"
+                                        IsAlphaTextInputVisible="True"
+                                        Color="{x:Bind ViewModel.ProgressBaseColor, Mode=TwoWay}" />
+                                </Flyout>
+                            </wl:LiquidGlassButton.Flyout>
+                        </wl:LiquidGlassButton>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Uid="TaskProgressResetCard"
                         Description="Restore the default area and colors."
                         Header="Default appearance">
-                        <Button
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_11721"
                             x:Uid="TaskProgressResetButton"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Command="{x:Bind ViewModel.ResetProgressAppearanceCommand}"
-                            Content="Restore defaults" x:Name="GlassPresenter_11721"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Content="Restore defaults" />
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>
 
             <essential:SettingsCard
                 x:Uid="GlassControlsNavigation"
-                Header="Liquid glass controls"
+                Click="OpenGlassControls"
                 Description="Choose the material and enabled control types, with interactive previews."
-                IsClickEnabled="True"
-                Click="OpenGlassControls">
-                <essential:SettingsCard.HeaderIcon><FontIcon Glyph="&#xE790;" /></essential:SettingsCard.HeaderIcon>
+                Header="Liquid glass controls"
+                IsClickEnabled="True">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE790;" />
+                </essential:SettingsCard.HeaderIcon>
             </essential:SettingsCard>
             <essential:SettingsCard
                 x:Uid="GlassEffectsNavigation"
-                Header="Liquid glass effects"
+                Click="OpenGlassEffects"
                 Description="Customize and restore each control type's optics independently."
-                IsClickEnabled="True"
-                Click="OpenGlassEffects">
-                <essential:SettingsCard.HeaderIcon><FontIcon Glyph="&#xE771;" /></essential:SettingsCard.HeaderIcon>
+                Header="Liquid glass effects"
+                IsClickEnabled="True">
+                <essential:SettingsCard.HeaderIcon>
+                    <FontIcon Glyph="&#xE771;" />
+                </essential:SettingsCard.HeaderIcon>
             </essential:SettingsCard>
 
             <!--  Background  -->
@@ -239,19 +269,22 @@
                         FontSize="16"
                         Glyph="&#xef1f;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ComboBox
+                <wl:LiquidGlassComboBox
+                    x:Name="BackgroundComboBox"
+                    MinWidth="150"
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
-                    SelectionChanged="BackgroundComboBox_SelectionChanged" x:Name="BackgroundComboBox" MinWidth="150"
-                    ouxct:ControlAppearance.IsEnabled="True">
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    SelectionChanged="BackgroundComboBox_SelectionChanged">
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundStatic" Content="Static" />
                     <ComboBoxItem
-                x:Name="MicaComboBoxItem"
-                x:Uid="ViewThemesSettingsPageBackgroundMica"
-                Content="Mica" />
+                        x:Name="MicaComboBoxItem"
+                        x:Uid="ViewThemesSettingsPageBackgroundMica"
+                        Content="Mica" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundCustomMica" Content="Custom Mica" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundAcrylic" Content="Acrylic" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageBackgroundCustomAcrylic" Content="Custom Acrylic" />
-                </ComboBox>
+                </wl:LiquidGlassComboBox>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard
                         x:Uid="ViewThemesSettingsPageApplyBackgroundToSecondaryWindowsCard"
@@ -261,10 +294,13 @@
                         <essential:SettingsCard.HeaderIcon>
                             <FontIcon Glyph="&#xE737;" />
                         </essential:SettingsCard.HeaderIcon>
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="ApplyBackgroundToSecondaryWindowsSwitch"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Checked="ApplyBackgroundToSecondaryWindowsSwitch_Changed"
                             Loaded="ApplyBackgroundToSecondaryWindowsSwitch_Loaded"
-                            Toggled="ApplyBackgroundToSecondaryWindowsSwitch_Changed" x:Name="ApplyBackgroundToSecondaryWindowsSwitch"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Unchecked="ApplyBackgroundToSecondaryWindowsSwitch_Changed" />
                     </essential:SettingsCard>
                     <!--  Acrylic  -->
                     <essential:SettingsCard
@@ -275,14 +311,17 @@
                         HeaderIcon="{essential:FontIcon Glyph=&#xF5EF;}"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
-                        <ComboBox
+                        <wl:LiquidGlassComboBox
+                            x:Name="AcrylicTypeComboBox"
+                            MinWidth="150"
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
-                            SelectionChanged="AcrylicTypeComboBox_SelectionChanged" x:Name="AcrylicTypeComboBox" MinWidth="150"
-                            ouxct:ControlAppearance.IsEnabled="True">
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            SelectionChanged="AcrylicTypeComboBox_SelectionChanged">
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageAcrylicTypeDefault" Content="Default" />
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageAcrylicTypeBase" Content="Base" />
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageAcrylicTypeThin" Content="Thin" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
                     </essential:SettingsCard>
                     <!--  Mica  -->
                     <essential:SettingsCard
@@ -293,13 +332,16 @@
                         HeaderIcon="{essential:FontIcon Glyph=&#xF5EF;}"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
-                        <ComboBox
+                        <wl:LiquidGlassComboBox
+                            x:Name="MicaTypeComboBox"
+                            MinWidth="150"
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
-                            SelectionChanged="MicaTypeComboBox_SelectionChanged" x:Name="MicaTypeComboBox" MinWidth="150"
-                            ouxct:ControlAppearance.IsEnabled="True">
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            SelectionChanged="MicaTypeComboBox_SelectionChanged">
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageMicaTypeBase" Content="Base" />
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageMicaTypeBaseAlt" Content="Alt" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
                     </essential:SettingsCard>
                     <!--  TenMica (Fallback)  -->
                     <essential:SettingsCard
@@ -308,10 +350,13 @@
                         Header="Mica error fallback"
                         IsClickEnabled="False"
                         IsEnabled="{x:Bind MicaComboBoxItem.IsSelected, Mode=OneWay}">
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="BackdropFallbackSwitch"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Checked="BackdropFallbackSwitch_Changed"
                             Loaded="BackdropFallbackSwitch_Loaded"
-                            Toggled="BackdropFallbackSwitch_Changed" x:Name="BackdropFallbackSwitch"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Unchecked="BackdropFallbackSwitch_Changed" />
                     </essential:SettingsCard>
                     <!--  Theme color custom  -->
                     <essential:SettingsCard
@@ -337,11 +382,14 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE9D2;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="AnimatedDigitsSwitch"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="AnimatedDigitsSwitch_Changed"
                     IsOn="True"
                     Loaded="AnimatedDigitsControl_Loaded"
-                    Toggled="AnimatedDigitsSwitch_Changed" x:Name="AnimatedDigitsSwitch"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="AnimatedDigitsSwitch_Changed" />
             </essential:SettingsCard>
 
             <!--  图片背景 Image Background  -->
@@ -357,14 +405,17 @@
                         FontSize="16"
                         Glyph="&#xee71;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ComboBox
+                <wl:LiquidGlassComboBox
+                    x:Name="ImageModeComboBox"
+                    MinWidth="150"
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
-                    SelectionChanged="ImageModeComboBox_SelectionChanged" x:Name="ImageModeComboBox" MinWidth="150"
-                    ouxct:ControlAppearance.IsEnabled="True">
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    SelectionChanged="ImageModeComboBox_SelectionChanged">
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageImageModeNone" Content="None" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageImageModeSingle" Content="Single image" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageImageModeFolder" Content="Local folder" />
-                </ComboBox>
+                </wl:LiquidGlassComboBox>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard
                         x:Name="ImageSourceCard"
@@ -396,15 +447,19 @@
                         Header="Image Stretch Mode"
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
-                        <ComboBox
+                        <wl:LiquidGlassComboBox
+                            x:Name="ImageStretchComboBox"
+                            Width="Auto"
+                            MinWidth="150"
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
-                            SelectionChanged="ImageStretchComboBox_SelectionChanged" x:Name="ImageStretchComboBox" Width="Auto" MinWidth="150"
-                            ouxct:ControlAppearance.IsEnabled="True">
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            SelectionChanged="ImageStretchComboBox_SelectionChanged">
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageImageStretchComboBoxNone" Content="None" />
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageImageStretchComboBoxFill" Content="Fill" />
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageImageStretchComboBoxUniform" Content="Uniform" />
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageImageStretchComboBoxUniformToFill" Content="Uniform To Fill" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Name="ImageOpacityCard"
@@ -414,14 +469,21 @@
                         IsActionIconVisible="False"
                         IsClickEnabled="False">
                         <StackPanel Orientation="Horizontal">
-                            <Slider
-                                essential:SliderHelper.AcrylicWorkaround="True"
-                                Loaded="ImageOpacitySlider_Loaded"
-                                Maximum="100"
-                                Minimum="0"
-                                ValueChanged="ImageOpacitySlider_ValueChanged" x:Name="ImageOpacitySlider" Width="300"
-                                ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="0,0,10,0" />
+                            <ouxct:MaterialSwap Margin="0,0,10,0">
+                                <ouxct:MaterialSwap.Native>
+                                    <Slider
+                                        x:Name="ImageOpacitySlider"
+                                        Width="300"
+                                        essential:SliderHelper.AcrylicWorkaround="True"
+                                        Loaded="ImageOpacitySlider_Loaded"
+                                        Maximum="100"
+                                        Minimum="0"
+                                        ValueChanged="ImageOpacitySlider_ValueChanged" />
+                                </ouxct:MaterialSwap.Native>
+                                <ouxct:MaterialSwap.Glass>
+                                    <wl:LiquidGlassSlider ouxct:MaterialControlState.IsManaged="True" Loaded="ImageOpacitySliderMaterialLoaded" />
+                                </ouxct:MaterialSwap.Glass>
+                            </ouxct:MaterialSwap>
                         </StackPanel>
                     </essential:SettingsCard>
                     <essential:SettingsCard
@@ -454,14 +516,17 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE714;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ComboBox
+                <wl:LiquidGlassComboBox
+                    x:Name="VideoModeComboBox"
+                    MinWidth="150"
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
-                    SelectionChanged="VideoModeComboBox_SelectionChanged" x:Name="VideoModeComboBox" MinWidth="150"
-                    ouxct:ControlAppearance.IsEnabled="True">
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    SelectionChanged="VideoModeComboBox_SelectionChanged">
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageVideoModeNone" Content="None" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageVideoModeSingle" Content="Single video" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageVideoModeFolder" Content="Local folder" />
-                </ComboBox>
+                </wl:LiquidGlassComboBox>
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard
                         x:Name="VideoSourceCard"
@@ -491,20 +556,26 @@
                         x:Uid="ViewThemesSettingsPageVideoMutedCard"
                         Header="Mute background video"
                         HeaderIcon="{essential:FontIcon Glyph=&#xE8D6;}">
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="VideoMutedSwitch"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Checked="VideoMutedSwitch_Changed"
                             Loaded="VideoMutedSwitch_Loaded"
-                            Toggled="VideoMutedSwitch_Changed" x:Name="VideoMutedSwitch"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Unchecked="VideoMutedSwitch_Changed" />
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Name="VideoLoopingCard"
                         x:Uid="ViewThemesSettingsPageVideoLoopingCard"
                         Header="Loop video"
                         HeaderIcon="{essential:FontIcon Glyph=&#xE8ED;}">
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="VideoLoopingSwitch"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Checked="VideoLoopingSwitch_Changed"
                             Loaded="VideoLoopingSwitch_Loaded"
-                            Toggled="VideoLoopingSwitch_Changed" x:Name="VideoLoopingSwitch"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Unchecked="VideoLoopingSwitch_Changed" />
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Name="VideoStretchCard"
@@ -512,15 +583,18 @@
                         Description="How the video fills the window"
                         Header="Video stretch mode"
                         IsClickEnabled="False">
-                        <ComboBox
+                        <wl:LiquidGlassComboBox
+                            x:Name="VideoStretchComboBox"
+                            MinWidth="150"
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
-                            SelectionChanged="VideoStretchComboBox_SelectionChanged" x:Name="VideoStretchComboBox" MinWidth="150"
-                            ouxct:ControlAppearance.IsEnabled="True">
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            SelectionChanged="VideoStretchComboBox_SelectionChanged">
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxNone" Content="None" />
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxFill" Content="Fill" />
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxUniform" Content="Uniform" />
                             <ComboBoxItem x:Uid="ViewThemeSettingsPageVideoStretchComboBoxUniformToFill" Content="Uniform To Fill" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
                     </essential:SettingsCard>
                     <essential:SettingsCard
                         x:Name="VideoOpacityCard"
@@ -528,13 +602,21 @@
                         Description="Video opacity above the image/backdrop layer"
                         Header="Video opacity"
                         IsClickEnabled="False">
-                        <Slider
-                            essential:SliderHelper.AcrylicWorkaround="True"
-                            Loaded="VideoOpacitySlider_Loaded"
-                            Maximum="100"
-                            Minimum="0"
-                            ValueChanged="VideoOpacitySlider_ValueChanged" x:Name="VideoOpacitySlider" Width="300"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <ouxct:MaterialSwap>
+                            <ouxct:MaterialSwap.Native>
+                                <Slider
+                                    x:Name="VideoOpacitySlider"
+                                    Width="300"
+                                    essential:SliderHelper.AcrylicWorkaround="True"
+                                    Loaded="VideoOpacitySlider_Loaded"
+                                    Maximum="100"
+                                    Minimum="0"
+                                    ValueChanged="VideoOpacitySlider_ValueChanged" />
+                            </ouxct:MaterialSwap.Native>
+                            <ouxct:MaterialSwap.Glass>
+                                <wl:LiquidGlassSlider ouxct:MaterialControlState.IsManaged="True" Loaded="VideoOpacitySliderMaterialLoaded" />
+                            </ouxct:MaterialSwap.Glass>
+                        </ouxct:MaterialSwap>
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>

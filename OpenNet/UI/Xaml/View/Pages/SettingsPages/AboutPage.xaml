@@ -114,42 +114,54 @@
                                         FontSize="14"
                                         FontWeight="Thin"
                                         Text="Dependencies &amp; References" />
-                                    <HyperlinkButton
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_5886"
+                                        Margin="-12,0,0,0"
+                                        HorizontalAlignment="Left"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Content="Windows App SDK"
-                                        NavigateUri="https://aka.ms/windowsappsdk" x:Name="GlassPresenter_5886"
-                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        NavigateUri="https://aka.ms/windowsappsdk" />
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_6217"
+                                        Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Margin="-12,0,0,0" />
-                                    <HyperlinkButton
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Content="Windows UI Library"
-                                        NavigateUri="https://github.com/microsoft/microsoft-ui-xaml" x:Name="GlassPresenter_6217"
-                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        NavigateUri="https://github.com/microsoft/microsoft-ui-xaml" />
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_6569"
+                                        Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Margin="-12,0,0,0" />
-                                    <HyperlinkButton
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Content="Sample-Windows-CppWinRT"
-                                        NavigateUri="https://github.com/CommunityToolkit/Sample-Windows-CppWinRT" x:Name="GlassPresenter_6569"
-                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        NavigateUri="https://github.com/CommunityToolkit/Sample-Windows-CppWinRT" />
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_6939"
+                                        Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Margin="-12,0,0,0" />
-                                    <HyperlinkButton
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Content="C++/WinRT"
-                                        NavigateUri="https://github.com/microsoft/cppwinrt" x:Name="GlassPresenter_6939"
-                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        NavigateUri="https://github.com/microsoft/cppwinrt" />
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_7273"
+                                        Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Margin="-12,0,0,0" />
-                                    <HyperlinkButton
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Content="WinUI Essentials"
-                                        NavigateUri="https://github.com/HO-COOH/WinUIEssentials" x:Name="GlassPresenter_7273"
-                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        NavigateUri="https://github.com/HO-COOH/WinUIEssentials" />
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_7619"
+                                        Margin="-12,0,0,0"
                                         HorizontalAlignment="Left"
-                                        Margin="-12,0,0,0" />
-                                    <HyperlinkButton
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         Content="libtorrent"
-                                        NavigateUri="https://github.com/arvidn/libtorrent" x:Name="GlassPresenter_7619"
-                                        ouxct:ControlAppearance.IsEnabled="True"
-                                        HorizontalAlignment="Left"
-                                        Margin="-12,0,0,0" />
+                                        NavigateUri="https://github.com/arvidn/libtorrent" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
@@ -166,12 +178,14 @@
                                         Margin="0,0,0,0"
                                         Text="THIS CODE AND INFORMATION IS PROVIDED ‘AS IS’ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR PURPOSE."
                                         TextWrapping="Wrap" />
-                                    <HyperlinkButton
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_9222"
                                         x:Uid="AboutLicenseSourceLink"
-                                        Content="License &amp; Source"
-                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" x:Name="GlassPresenter_9222"
+                                        Margin="-12,0,0,0"
                                         ouxct:ControlAppearance.IsEnabled="True"
-                                        Margin="-12,0,0,0" />
+                                        ouxct:MaterialControlState.IsManaged="True"
+                                        Content="License &amp; Source"
+                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
@@ -314,12 +328,14 @@
                                             Margin="-12,0,0,0"
                                             Content="Visit Our Studio Website"
                                             NavigateUri="" />-->
-                                    <HyperlinkButton
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_19456"
                                         x:Uid="AboutHelpFeedbackLink"
-                                        Content="Help &amp; Feedback"
-                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues" x:Name="GlassPresenter_19456"
+                                        Margin="-12,0,0,0"
                                         ouxct:ControlAppearance.IsEnabled="True"
-                                        Margin="-12,0,0,0" />
+                                        ouxct:MaterialControlState.IsManaged="True"
+                                        Content="Help &amp; Feedback"
+                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues" />
 
                                     <StackPanel.ChildrenTransitions>
                                         <TransitionCollection>
@@ -344,12 +360,14 @@
                         <essential:SettingsExpander.Items>
                             <essential:SettingsCard HorizontalContentAlignment="Left" ContentAlignment="Left">
                                 <StackPanel Orientation="Vertical">
-                                    <HyperlinkButton
+                                    <wl:LiquidGlassHyperlinkButton
+                                        x:Name="GlassPresenter_21242"
                                         x:Uid="AboutJoinProjectLink"
-                                        Content="Join the project on Github"
-                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" x:Name="GlassPresenter_21242"
+                                        Margin="-12,0,0,0"
                                         ouxct:ControlAppearance.IsEnabled="True"
-                                        Margin="-12,0,0,0" />
+                                        ouxct:MaterialControlState.IsManaged="True"
+                                        Content="Join the project on Github"
+                                        NavigateUri="https://github.com/hoshiizumiya/OpenNet" />
                                 </StackPanel>
                             </essential:SettingsCard>
 

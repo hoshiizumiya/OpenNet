@@ -4,6 +4,7 @@
 #include "LibtorrentIncludeRestore.h"
 
 #include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "BittorrentSettingsPage.xaml.h"
 #include "SettingsPageTagRegister.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/BittorrentSettingsPage.g.cpp")
@@ -348,8 +349,9 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		}
 	}
 
-	void BittorrentSettingsPage::OnSettingChanged(IInspectable const&, IInspectable const&)
+	void BittorrentSettingsPage::OnSettingChanged(IInspectable const& sender, IInspectable const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		// ComboBox.SelectedIndex and other XAML properties may raise their
 		// events from InitializeComponent before every named control has
 		// been connected. CollectFromUI must only run for a fully loaded

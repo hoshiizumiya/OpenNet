@@ -34,7 +34,9 @@
             IsTextSelectionEnabled="True"
             TextWrapping="WrapWholeWords"
             Visibility="Collapsed" />
-        <CheckBox x:Name="OptionCheckBox"
-            ouxct:ControlAppearance.IsEnabled="True" />
+        <wl:LiquidGlassCheckBox
+            x:Name="OptionCheckBox"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True" />
     </StackPanel>
 </ContentDialog>

@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 import winrt.XamlToolkit.Labs.WinUI;
 #include "TrackerLogWindow.xaml.h"
@@ -105,6 +106,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 
 	void TrackerLogWindow::AlwaysOnTopToggle_Changed(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&)
 	{
+        ::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loadingAlwaysOnTop) return;
 		bool enabled{};
 		if (auto standard = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>())
@@ -125,6 +127,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Windows::implementation
 		{
 			m_loadingAlwaysOnTop = true;
 			if (auto standard = sender.try_as<winrt::Microsoft::UI::Xaml::Controls::ToggleSwitch>()) standard.IsOn(presenter.IsAlwaysOnTop());
+        else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(presenter.IsAlwaysOnTop());
 			if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(presenter.IsAlwaysOnTop());
 			m_loadingAlwaysOnTop = false;
 		}

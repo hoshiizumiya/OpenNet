@@ -86,14 +86,17 @@
                                 Text="Transfer files directly between peers with end-to-end encryption. No cloud intermediary needed."
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton Padding="0" x:Name="GlassPresenter_4150"
+                        <wl:LiquidGlassHyperlinkButton
+                            x:Name="GlassPresenter_4150"
+                            Grid.Row="1"
+                            Padding="0"
                             ouxct:ControlAppearance.IsEnabled="True"
-                            Grid.Row="1">
+                            ouxct:MaterialControlState.IsManaged="True">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock x:Uid="ViewHomePageText5" Text="Start transferring" />
-                        <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                                <TextBlock x:Uid="ViewHomePageText5" Text="Start transferring" />
+                                <FontIcon FontSize="12" Glyph="&#xE76C;" />
                             </StackPanel>
-                        </HyperlinkButton>
+                        </wl:LiquidGlassHyperlinkButton>
                     </Grid>
 
                     <!--  Network Discovery Card  -->
@@ -119,14 +122,17 @@
                                 Text="Automatically find available peers on your local network"
                                 TextWrapping="Wrap" />
                         </StackPanel>
-                        <HyperlinkButton Padding="0" x:Name="GlassPresenter_5844"
+                        <wl:LiquidGlassHyperlinkButton
+                            x:Name="GlassPresenter_5844"
+                            Grid.Row="1"
+                            Padding="0"
                             ouxct:ControlAppearance.IsEnabled="True"
-                            Grid.Row="1">
+                            ouxct:MaterialControlState.IsManaged="True">
                             <StackPanel Orientation="Horizontal" Spacing="4">
-                        <TextBlock x:Uid="ViewHomePageText8" Text="Scan network" />
-                        <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                                <TextBlock x:Uid="ViewHomePageText8" Text="Scan network" />
+                                <FontIcon FontSize="12" Glyph="&#xE76C;" />
                             </StackPanel>
-                        </HyperlinkButton>
+                        </wl:LiquidGlassHyperlinkButton>
                     </Grid>
 
                     <!--  Real-time Chat Card  -->
@@ -200,13 +206,17 @@
                                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                                 Text="OpenNet is open-source. Contributions, issues, and feature requests are welcome."
                                 TextWrapping="Wrap" />
-                            <HyperlinkButton Padding="0" NavigateUri="https://github.com/hoshiizumiya/OpenNet" x:Name="GlassPresenter_10101"
-                                ouxct:ControlAppearance.IsEnabled="True">
+                            <wl:LiquidGlassHyperlinkButton
+                                x:Name="GlassPresenter_10101"
+                                Padding="0"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                NavigateUri="https://github.com/hoshiizumiya/OpenNet">
                                 <StackPanel Orientation="Horizontal" Spacing="4">
-                            <TextBlock x:Uid="ViewHomePageText15" Text="OpenNet repository" />
-                            <FontIcon FontSize="12" Glyph="&#xE76C;" />
+                                    <TextBlock x:Uid="ViewHomePageText15" Text="OpenNet repository" />
+                                    <FontIcon FontSize="12" Glyph="&#xE76C;" />
                                 </StackPanel>
-                            </HyperlinkButton>
+                            </wl:LiquidGlassHyperlinkButton>
                         </StackPanel>
                     </Grid>
 

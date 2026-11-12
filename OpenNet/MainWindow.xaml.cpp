@@ -21,6 +21,7 @@ import OpenNet.Core.DownloadManager;
 import OpenNet.Core.Utils.Message;
 import OpenNet.Helpers.WindowHelper;
 import OpenNet.Helpers.MaterialTheme;
+import winrt.WinUI.LiquidGlass;
 import winrtplus.Microsoft.UI.Interop;
 import winrt.Microsoft.UI.Windowing;
 import winrt.Microsoft.UI.Xaml.Media;
@@ -157,7 +158,7 @@ namespace winrt::OpenNet::implementation
 		}
 		else if (kind == L"http-batch")
 		{
-			TextBox urls;
+			winrt::WinUI::LiquidGlass::LiquidGlassTextBox urls;
 			urls.AcceptsReturn(true);
 			urls.TextWrapping(TextWrapping::Wrap);
 			urls.MinWidth(420);

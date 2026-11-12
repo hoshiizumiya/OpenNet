@@ -7369,4 +7369,22 @@ Availability: {}</value>
   <data name="GlassParameterInvalidValue" xml:space="preserve">
     <value>The value is outside the supported range. The previous valid value or library preset has been restored.</value>
   </data>
+  <data name="GlassParameter_LightAngle" xml:space="preserve">
+    <value>Resting light angle (radians)</value>
+  </data>
+  <data name="GlassParameterSwitchScale.Text" xml:space="preserve">
+    <value>Switch size</value>
+  </data>
+  <data name="GlassParameterSwitchScaleDescription.Text" xml:space="preserve">
+    <value>Scale the switch graphic without changing its text size. Changes apply immediately.</value>
+  </data>
+  <data name="GlassPointerLighting.Header" xml:space="preserve">
+    <value>Pointer lighting</value>
+  </data>
+  <data name="GlassPointerLightingDescription.Text" xml:space="preserve">
+    <value>Let the light follow the pointer while using glass.</value>
+  </data>
+  <data name="GlassPointerLightInfluence.Text" xml:space="preserve">
+    <value>Pointer light influence</value>
+  </data>
 </root>

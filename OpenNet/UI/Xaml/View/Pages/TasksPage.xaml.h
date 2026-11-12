@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 import winrt.OpenNet.ViewModels;
+import winrt.OpenNet.UI.Xaml.Control.Theme;
 
 import winrt.XamlToolkit.Labs.WinUI;
 import OpenNet.ViewModels.ObservableMixin;

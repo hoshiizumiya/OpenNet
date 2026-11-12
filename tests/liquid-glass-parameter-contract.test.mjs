@@ -1,4 +1,4 @@
-import test from 'node:test';
+﻿import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 
@@ -10,7 +10,8 @@ test('optical editor bounds agree with the shipped Hlsl native setter contracts'
     assert.deepEqual(ranges.get('HighlightSharpness'), [0.25, 64, 0.05]);
     assert.deepEqual(ranges.get('SpecularWidth'), [0.25, 32, 0.05]);
     assert.deepEqual(ranges.get('HighlightStrength'), [0, 4, 0.01]);
-    assert.equal(ranges.size, 30);
+    assert.equal(ranges.size, 31);
+    assert.deepEqual(ranges.get('LightAngle'), [-Math.PI, Math.PI, 0.05]);
     for (const [key, [min, max, step]] of ranges) {
         assert.ok(Number.isFinite(min) && Number.isFinite(max) && min <= max, key);
         assert.ok(step > 0 && Number.isFinite(step), key);

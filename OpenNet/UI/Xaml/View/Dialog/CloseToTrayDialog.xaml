@@ -21,11 +21,12 @@
             x:Uid="ViewDialogCloseToTrayQuestion"
             Text="When closing the main window, please choose an action:"
             TextWrapping="Wrap" />
-        <CheckBox
+        <wl:LiquidGlassCheckBox
             x:Name="ChkRemember"
             x:Uid="ViewDialogCloseToTrayRememberCheckBox"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AutomationProperties.AutomationId="ViewDialogCloseToTrayRememberCheckBox"
-            Content="Remember my choice, do not ask again"
-            ouxct:ControlAppearance.IsEnabled="True" />
+            Content="Remember my choice, do not ask again" />
     </StackPanel>
 </ContentDialog>

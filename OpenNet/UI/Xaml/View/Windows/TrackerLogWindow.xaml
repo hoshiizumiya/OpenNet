@@ -59,16 +59,19 @@
                 Grid.Column="1"
                 VerticalAlignment="Center"
                 TextTrimming="CharacterEllipsis" />
-            <ToggleSwitch
+            <wl:LiquidGlassToggleSwitch
+                x:Name="AlwaysOnTopToggle"
                 x:Uid="ViewTrackerLogWindowText2"
-                AutomationProperties.AutomationId="ViewTrackerLogWindowText2"
-                Header="Always on top"
-                Loaded="AlwaysOnTopToggle_Loaded"
-                Toggled="AlwaysOnTopToggle_Changed" x:Name="AlwaysOnTopToggle"
-                ouxct:ControlAppearance.IsEnabled="True"
                 Grid.RowSpan="2"
                 Grid.Column="2"
-                VerticalAlignment="Center" />
+                VerticalAlignment="Center"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
+                AutomationProperties.AutomationId="ViewTrackerLogWindowText2"
+                Checked="AlwaysOnTopToggle_Changed"
+                Header="Always on top"
+                Loaded="AlwaysOnTopToggle_Loaded"
+                Unchecked="AlwaysOnTopToggle_Changed" />
 
             <TextBlock
                 x:Uid="ViewTrackerLogWindowText3"

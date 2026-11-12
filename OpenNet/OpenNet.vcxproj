@@ -796,6 +796,17 @@
     <Page Include="UI\Xaml\Control\Theme\FlyoutStyle_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\FontStyle_ResourceDictionary.xaml" />
     <Page Include="UI\Xaml\Control\Theme\MaterialLibraryTemplates.xaml" />
+    <Page Include="UI\Xaml\Control\Theme\MaterialNative.xaml" />
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialAppearance.h" />
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialSwitch.h" />
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialAppearance.cpp" />
+    <ClInclude Include="UI\Xaml\Control\Theme\MaterialSwap.h">
+      <DependentUpon>UI\Xaml\Control\Theme\MaterialSwap.idl</DependentUpon>
+    </ClInclude>
+    <ClCompile Include="UI\Xaml\Control\Theme\MaterialSwap.cpp">
+      <DependentUpon>UI\Xaml\Control\Theme\MaterialSwap.idl</DependentUpon>
+    </ClCompile>
+    <Midl Include="UI\Xaml\Control\Theme\MaterialSwap.idl" />
     <Page Include="UI\Xaml\Control\Theme\TypographyResources.xaml" />
     <Page Include="UI\Xaml\Control\Theme\MaterialSettingsResources.xaml" />
     <Page Include="UI\Xaml\Control\Theme\InfoBarOverride.xaml">

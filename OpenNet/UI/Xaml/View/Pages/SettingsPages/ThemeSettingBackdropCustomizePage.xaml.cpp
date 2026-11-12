@@ -1,4 +1,5 @@
 ﻿#include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "ThemeSettingBackdropCustomizePage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/ThemeSettingBackdropCustomizePage.g.cpp")
@@ -69,6 +70,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void ThemeSettingBackdropCustomizePage::BackdropValueChanged(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_isUpdatingUI) return;
 		if (auto standard = sender.try_as<ToggleSwitch>()) m_enableWhenInactive = standard.IsOn();
 		else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) m_enableWhenInactive = glass.IsOn();
@@ -138,6 +140,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 			else if (name == L"TintOpacitySlider" || name == L"TintOpacitySlider") slider.Value(m_tintOpacity);
 		}
 		if (auto standard = sender.try_as<ToggleSwitch>()) standard.IsOn(m_enableWhenInactive);
+		else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(m_enableWhenInactive);
 		m_isUpdatingUI = wasUpdating;
 	}
 
@@ -234,9 +237,25 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-    void ThemeSettingBackdropCustomizePage::MaterialLoaded_249(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        MaterialControl_Loaded(EnableSwitch(), args);
-    }
+	void ThemeSettingBackdropCustomizePage::MaterialLoaded_249(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		MaterialControl_Loaded(EnableSwitch(), args);
+	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+	void ThemeSettingBackdropCustomizePage::TintOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		MaterialControl_Loaded(TintOpacitySlider(), args);
+	}
+}
+
+namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
+{
+	void ThemeSettingBackdropCustomizePage::LuminosityOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		MaterialControl_Loaded(LuminosityOpacitySlider(), args);
+	}
 }

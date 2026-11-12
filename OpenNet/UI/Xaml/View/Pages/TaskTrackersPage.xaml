@@ -303,11 +303,11 @@
                             </ToolTipService.ToolTip>
                         </TextBlock>
                         <Button
+                            x:Name="GlassPresenter_17330"
                             Padding="8,2"
                             Click="TrackerLogButton_Click"
                             Style="{StaticResource SubtleButtonStyle}"
-                            Tag="{x:Bind}"
-                            x:Name="GlassPresenter_17330">
+                            Tag="{x:Bind}">
                             <FontIcon FontSize="14" Glyph="&#xE946;" />
                         </Button>
                         <effects:AnimatedNumber VerticalAlignment="Center" Value="{x:Bind Retries, Mode=OneWay}" />
@@ -344,13 +344,15 @@
                 x:Uid="ViewTaskTrackersPageText28"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                 Text="No trackers" />
-            <Button
+            <wl:LiquidGlassButton
+                x:Name="GlassPresenter_19514"
                 x:Uid="ViewTaskTrackersPageText29"
+                HorizontalAlignment="Center"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="ViewTaskTrackersPageText29"
                 Click="EditTrackers_Click"
-                Content="Add trackers" x:Name="GlassPresenter_19514"
-                ouxct:ControlAppearance.IsEnabled="True"
-                HorizontalAlignment="Center" />
+                Content="Add trackers" />
         </StackPanel>
     </Grid>
 </Page>

@@ -77,8 +77,12 @@
                     IsTextSelectionEnabled="True"
                     Text="{x:Bind TraceId}" />
             </StackPanel>
-            <TextBox
+            <wl:LiquidGlassTextBox
+                x:Name="GlassPresenter_2746"
                 x:Uid="ViewExceptionWindowStacktraceHeader"
+                Grid.Row="1"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AcceptsReturn="True"
                 AutomationProperties.AutomationId="ViewExceptionWindowStacktraceHeader"
                 FontFamily="Consolas"
@@ -87,29 +91,31 @@
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 Text="{x:Bind Exception}"
-                TextWrapping="NoWrap" x:Name="GlassPresenter_2746"
-                ouxct:ControlAppearance.IsEnabled="True"
-                Grid.Row="1" />
-            <TextBox
+                TextWrapping="NoWrap" />
+            <wl:LiquidGlassTextBox
+                x:Name="GlassPresenter_3309"
                 x:Uid="ViewExceptionWindowComment"
+                Grid.Row="2"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AcceptsReturn="True"
                 AutomationProperties.AutomationId="ViewExceptionWindowComment"
                 Description="Clear, step-by-step descriptions will help us locate the issue faster"
                 Header="What actions did you perform before the crash occurred?"
                 ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                Text="{x:Bind Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" x:Name="GlassPresenter_3309"
-                ouxct:ControlAppearance.IsEnabled="True"
-                Grid.Row="2" />
+                Text="{x:Bind Comment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
             <StackPanel
                 Grid.Row="3"
                 HorizontalAlignment="Right"
                 Orientation="Horizontal">
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="ExceptionWindowCloseButton"
                     x:Uid="ViewWindowExceptionClose"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="ViewWindowExceptionClose"
                     Click="ViewWindowExceptionCloseButton_Click"
-                    Content="Close" x:Name="ExceptionWindowCloseButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Content="Close" />
             </StackPanel>
         </Grid>
     </Grid>

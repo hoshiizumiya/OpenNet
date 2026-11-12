@@ -69,92 +69,98 @@
                 FontWeight="SemiBold"
                 Text="OpenNet tools" />
 
-            <Button
+            <wl:LiquidGlassButton
+                x:Name="GlassPresenter_2699"
                 x:Uid="MoreRuntimeStatusItem"
+                HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="MoreRuntimeStatusItem"
-                Click="OnRuntimeStatusClick" x:Name="GlassPresenter_2699"
-                ouxct:ControlAppearance.IsEnabled="True"
-                HorizontalAlignment="Stretch">
+                Click="OnRuntimeStatusClick">
                 <Grid ColumnSpacing="12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="32" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <FontIcon Glyph="&#xE9D9;" />
-            <StackPanel Grid.Column="1">
-                <TextBlock
-                    x:Uid="MoreRuntimeStatusTitle"
-                    FontWeight="SemiBold"
-                    Text="Complete runtime status" />
-                <TextBlock
-                    x:Uid="MoreRuntimeStatusDescription"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Engine, network, transfer, CPU, memory, disk and queues"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-            <FontIcon Grid.Column="2" Glyph="&#xE76C;" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Glyph="&#xE9D9;" />
+                    <StackPanel Grid.Column="1">
+                        <TextBlock
+                            x:Uid="MoreRuntimeStatusTitle"
+                            FontWeight="SemiBold"
+                            Text="Complete runtime status" />
+                        <TextBlock
+                            x:Uid="MoreRuntimeStatusDescription"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Engine, network, transfer, CPU, memory, disk and queues"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" />
                 </Grid>
-            </Button>
+            </wl:LiquidGlassButton>
 
-            <Button
+            <wl:LiquidGlassButton
+                x:Name="GlassPresenter_4055"
                 x:Uid="MoreNatDetectionItem"
+                HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="MoreNatDetectionItem"
-                Click="OnNatDetectionClick" x:Name="GlassPresenter_4055"
-                ouxct:ControlAppearance.IsEnabled="True"
-                HorizontalAlignment="Stretch">
+                Click="OnNatDetectionClick">
                 <Grid ColumnSpacing="12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="32" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <FontIcon Glyph="&#xE968;" />
-            <StackPanel Grid.Column="1">
-                <TextBlock
-                    x:Uid="MoreNatDetectionTitle"
-                    FontWeight="SemiBold"
-                    Text="NAT and port detection" />
-                <TextBlock
-                    x:Uid="MoreNatDetectionDescription"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="STUN observations and libtorrent port mapping"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-            <FontIcon Grid.Column="2" Glyph="&#xE76C;" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Glyph="&#xE968;" />
+                    <StackPanel Grid.Column="1">
+                        <TextBlock
+                            x:Uid="MoreNatDetectionTitle"
+                            FontWeight="SemiBold"
+                            Text="NAT and port detection" />
+                        <TextBlock
+                            x:Uid="MoreNatDetectionDescription"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="STUN observations and libtorrent port mapping"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" />
                 </Grid>
-            </Button>
+            </wl:LiquidGlassButton>
 
-            <Button
+            <wl:LiquidGlassButton
+                x:Name="GlassPresenter_5395"
                 x:Uid="MoreGuideItem"
+                HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Stretch"
-                AutomationProperties.AutomationId="MoreGuideItem"
-                Click="OnGuideClick" x:Name="GlassPresenter_5395"
                 ouxct:ControlAppearance.IsEnabled="True"
-                HorizontalAlignment="Stretch">
+                ouxct:MaterialControlState.IsManaged="True"
+                AutomationProperties.AutomationId="MoreGuideItem"
+                Click="OnGuideClick">
                 <Grid ColumnSpacing="12">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="32" />
-                <ColumnDefinition />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-            <FontIcon Glyph="&#xE897;" />
-            <StackPanel Grid.Column="1">
-                <TextBlock
-                    x:Uid="MoreGuideTitle"
-                    FontWeight="SemiBold"
-                    Text="Setup guide" />
-                <TextBlock
-                    x:Uid="MoreGuideDescription"
-                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                    Text="Reopen Web UI credentials and GUI setup"
-                    TextWrapping="Wrap" />
-            </StackPanel>
-            <FontIcon Grid.Column="2" Glyph="&#xE76C;" />
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="32" />
+                        <ColumnDefinition />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <FontIcon Glyph="&#xE897;" />
+                    <StackPanel Grid.Column="1">
+                        <TextBlock
+                            x:Uid="MoreGuideTitle"
+                            FontWeight="SemiBold"
+                            Text="Setup guide" />
+                        <TextBlock
+                            x:Uid="MoreGuideDescription"
+                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                            Text="Reopen Web UI credentials and GUI setup"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+                    <FontIcon Grid.Column="2" Glyph="&#xE76C;" />
                 </Grid>
-            </Button>
+            </wl:LiquidGlassButton>
 
             <Border
                 Padding="10"
@@ -179,20 +185,24 @@
                             TextWrapping="Wrap" />
                     </StackPanel>
                     <StackPanel Grid.Column="1" Orientation="Horizontal">
-                        <Button
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_7802"
                             x:Uid="MoreCopyWebUIAddress"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="MoreCopyWebUIAddress"
                             Click="OnCopyUrlClick"
-                            Content="Copy" x:Name="GlassPresenter_7802"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <Button
+                            Content="Copy" />
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_8073"
                             x:Uid="MoreOpenWebUIButton"
+                            Margin="6,0,0,0"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="MoreOpenWebUIButton"
                             Click="OnOpenWebUIClick"
                             Content="Open"
-                            Style="{StaticResource AccentButtonStyle}" x:Name="GlassPresenter_8073"
-                            ouxct:ControlAppearance.IsEnabled="True"
-                            Margin="6,0,0,0" />
+                            Style="{StaticResource AccentButtonStyle}" />
                     </StackPanel>
                 </Grid>
             </Border>

@@ -208,23 +208,27 @@
                             LastUpdateCheckDate="Never"
                             UpdateAvailableVersion="" />
                     </essential:SettingsExpander.Header>
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="AppUpdateCheckButton"
                         x:Uid="AppUpdateCheckButton"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="AppUpdateCheckButton"
                         Click="AppUpdateCheckButton_Click"
                         Content="Check update"
-                        Style="{StaticResource AccentButtonStyle}" x:Name="AppUpdateCheckButton"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Style="{StaticResource AccentButtonStyle}" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard ContentAlignment="Left">
-                            <CheckBox
+                            <wl:LiquidGlassCheckBox
+                                x:Name="AutoCheckUpdateCheckbox"
                                 x:Uid="AutoCheckUpdateCheckbox"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 AutomationProperties.AutomationId="AutoCheckUpdateCheckbox"
                                 Checked="AutoCheckUpdateCheckbox_Checked"
                                 Content="Automatically check for updates"
                                 IsChecked="True"
-                                Unchecked="AutoCheckUpdateCheckbox_Unchecked" x:Name="AutoCheckUpdateCheckbox"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                Unchecked="AutoCheckUpdateCheckbox_Unchecked" />
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
                 </essential:SettingsExpander>
@@ -251,30 +255,34 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE793;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ComboBox
+                    <wl:LiquidGlassComboBox
+                        x:Name="themeMode"
+                        Width="Auto"
+                        MinWidth="240"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="themeModeComboBox"
-                        SelectionChanged="themeMode_SelectionChanged" x:Name="themeMode" Width="Auto" MinWidth="240"
-                        ouxct:ControlAppearance.IsEnabled="True">
+                        SelectionChanged="themeMode_SelectionChanged">
                         <ComboBoxItem Tag="Light">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE706;" />
-                        <TextBlock x:Uid="ThemesLight" />
-                    </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE706;" />
+                                <TextBlock x:Uid="ThemesLight" />
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem Tag="Dark">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE708;" />
-                        <TextBlock x:Uid="ThemesDark" />
-                    </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE708;" />
+                                <TextBlock x:Uid="ThemesDark" />
+                            </StackPanel>
                         </ComboBoxItem>
                         <ComboBoxItem Tag="Default">
-                    <StackPanel Orientation="Horizontal" Spacing="8">
-                        <FontIcon FontSize="16" Glyph="&#xE770;" />
-                        <TextBlock x:Uid="ThemesDefault" />
-                    </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <FontIcon FontSize="16" Glyph="&#xE770;" />
+                                <TextBlock x:Uid="ThemesDefault" />
+                            </StackPanel>
                         </ComboBoxItem>
-                    </ComboBox>
+                    </wl:LiquidGlassComboBox>
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -285,14 +293,18 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE8A1;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ComboBox
+                    <wl:LiquidGlassComboBox
+                        x:Name="StartPageCombobox"
+                        Width="Auto"
+                        MinWidth="260"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="StartPageCombobox_SelectionChanged" x:Name="StartPageCombobox" Width="Auto" MinWidth="260"
-                        ouxct:ControlAppearance.IsEnabled="True">
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        SelectionChanged="StartPageCombobox_SelectionChanged">
                         <ComboBoxItem x:Uid="NavItem_Tasks" Tag="{essential:TypeName Type=ouxvp:TasksPage}" />
                         <ComboBoxItem x:Uid="NavItem_RSS" Tag="{essential:TypeName Type=ouxvp:RSSPage}" />
                         <ComboBoxItem x:Uid="NavItem_Settings" Tag="{essential:TypeName Type=local:MainSettingsPage}" />
-                    </ComboBox>
+                    </wl:LiquidGlassComboBox>
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -303,10 +315,14 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xF2B7;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ComboBox
+                    <wl:LiquidGlassComboBox
+                        x:Name="SoftLanguageCombobox"
+                        Width="Auto"
+                        MinWidth="260"
                         essential:ComboBoxHelper.AcrylicWorkaround="True"
-                        SelectionChanged="SoftLanguageCombobox_SelectionChanged" x:Name="SoftLanguageCombobox" Width="Auto" MinWidth="260"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        SelectionChanged="SoftLanguageCombobox_SelectionChanged" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -333,11 +349,14 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE9D9;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="MemoryDiagnosticsSwitch"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="MemoryDiagnosticsSwitch"
+                        Checked="MemoryDiagnosticsSwitch_Toggled"
                         IsOn="False"
-                        Toggled="MemoryDiagnosticsSwitch_Toggled" x:Name="MemoryDiagnosticsSwitch"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Unchecked="MemoryDiagnosticsSwitch_Toggled" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard
@@ -348,17 +367,20 @@
                         <FontIcon Glyph="&#xE774;" />
                     </essential:SettingsCard.HeaderIcon>
                     <StackPanel MinWidth="260" Spacing="8">
-                        <ComboBox
+                        <wl:LiquidGlassComboBox
+                            x:Name="GlassPresenter_20383"
                             x:Uid="ServerEndpointModeBox"
+                            MinWidth="240"
                             essential:ComboBoxHelper.AcrylicWorkaround="True"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="ServerEndpointModeBox"
-                            SelectedIndex="{x:Bind ViewModel.ServerEndpointModeIndex, Mode=TwoWay}" x:Name="GlassPresenter_20383" MinWidth="240"
-                            ouxct:ControlAppearance.IsEnabled="True">
+                            SelectedIndex="{x:Bind ViewModel.ServerEndpointModeIndex, Mode=TwoWay}">
                             <ComboBoxItem x:Uid="ServerEndpointAuto" Content="Automatic" />
                             <ComboBoxItem Content="IP" />
                             <ComboBoxItem Content="HTTP" />
                             <ComboBoxItem Content="HTTPS" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
                         <TextBlock
                             x:Uid="ServerEndpointCurrentLabel"
                             FontWeight="SemiBold"
@@ -376,12 +398,14 @@
                                 </DataTemplate>
                             </ListView.ItemTemplate>
                         </ListView>
-                        <Button
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_22209"
                             x:Uid="ServerEndpointRefreshButton"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Command="{x:Bind ViewModel.RefreshServerEndpointsCommand}"
                             Content="Refresh endpoints"
-                            IsEnabled="{x:Bind ViewModel.CanRefreshServerEndpoints, Mode=OneWay}" x:Name="GlassPresenter_22209"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            IsEnabled="{x:Bind ViewModel.CanRefreshServerEndpoints, Mode=OneWay}" />
                     </StackPanel>
                 </essential:SettingsCard>
 
@@ -392,16 +416,20 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE7F4;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch x:Uid="DownloadCompletionNotificationsSwitch" IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" x:Name="MaterialNative_245"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="MaterialNative_245"
+                        x:Uid="DownloadCompletionNotificationsSwitch"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        IsOn="{x:Bind ViewModel.ShowNotifications, Mode=TwoWay}" />
                 </essential:SettingsCard>
 
                 <InfoBar
                     x:Name="RestartLanguageInfoBar"
-                    ActionButton="{x:Bind CreateRestartActionButton(ouxct:MaterialControlState.Current.ButtonMaterial), Mode=OneWay}"
                     x:Uid="RestartLanguageInfoBar"
                     Title="Restart OpenNet to apply language change"
                     Margin="0,4,0,0"
+                    ActionButton="{x:Bind CreateRestartActionButton(ouxct:MaterialControlState.Current.ButtonMaterial), Mode=OneWay}"
                     IsClosable="True"
                     IsOpen="False"
                     Severity="Warning">

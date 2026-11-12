@@ -41,10 +41,13 @@
                     <essential:SettingsCard.HeaderIcon>
                         <FontIcon Glyph="&#xE71C;" />
                     </essential:SettingsCard.HeaderIcon>
-                    <ToggleSwitch
+                    <wl:LiquidGlassToggleSwitch
+                        x:Name="EnableFilterToggle"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        Checked="OnEnableToggled"
                         Loaded="EnableFilterToggle_Loaded"
-                        Toggled="OnEnableToggled" x:Name="EnableFilterToggle"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Unchecked="OnEnableToggled" />
                 </essential:SettingsCard>
 
                 <essential:SettingsCard x:Uid="CF_RuleCount">
@@ -67,11 +70,13 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE710;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_3875"
                         x:Uid="CF_AddBtn"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="CF_AddBtn"
-                        Click="OnAddRuleClick" x:Name="GlassPresenter_3875"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Click="OnAddRuleClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid ColumnSpacing="12" RowSpacing="10">
@@ -85,37 +90,47 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <TextBox
+                                <wl:LiquidGlassTextBox
+                                    x:Name="PatternTextBox"
                                     x:Uid="CF_Pattern"
-                                    AutomationProperties.AutomationId="CF_Pattern" x:Name="PatternTextBox" MinWidth="300"
-                                    ouxct:ControlAppearance.IsEnabled="True" />
-                                <ComboBox
-                                    x:Uid="CF_MatchType"
-                                    essential:ComboBoxHelper.AcrylicWorkaround="True"
-                                    AutomationProperties.AutomationId="CF_MatchType"
-                                    SelectedIndex="0" x:Name="MatchTypeComboBox"
+                                    MinWidth="300"
                                     ouxct:ControlAppearance.IsEnabled="True"
+                                    ouxct:MaterialControlState.IsManaged="True"
+                                    AutomationProperties.AutomationId="CF_Pattern" />
+                                <wl:LiquidGlassComboBox
+                                    x:Name="MatchTypeComboBox"
+                                    x:Uid="CF_MatchType"
+                                    Grid.Column="1"
                                     HorizontalAlignment="Stretch"
-                                    Grid.Column="1">
+                                    essential:ComboBoxHelper.AcrylicWorkaround="True"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    ouxct:MaterialControlState.IsManaged="True"
+                                    AutomationProperties.AutomationId="CF_MatchType"
+                                    SelectedIndex="0">
                                     <ComboBoxItem x:Uid="CF_MatchContains" />
                                     <ComboBoxItem x:Uid="CF_MatchExact" />
                                     <ComboBoxItem x:Uid="CF_MatchWildcard" />
                                     <ComboBoxItem x:Uid="CF_MatchRegex" />
-                                </ComboBox>
-                                <TextBox
+                                </wl:LiquidGlassComboBox>
+                                <wl:LiquidGlassTextBox
+                                    x:Name="DescriptionTextBox"
                                     x:Uid="CF_Description"
-                                    AutomationProperties.AutomationId="CF_Description" x:Name="DescriptionTextBox"
-                                    ouxct:ControlAppearance.IsEnabled="True"
                                     Grid.Row="1"
-                                    Grid.ColumnSpan="2" />
-                                <ToggleSwitch
-                                    x:Uid="CF_CaseSensitive"
-                                    AutomationProperties.AutomationId="CF_CaseSensitive"
-                                    Loaded="CaseSensitiveToggle_Loaded"
-                                    Toggled="CaseSensitiveToggle_Changed" x:Name="CaseSensitiveToggle"
+                                    Grid.ColumnSpan="2"
                                     ouxct:ControlAppearance.IsEnabled="True"
+                                    ouxct:MaterialControlState.IsManaged="True"
+                                    AutomationProperties.AutomationId="CF_Description" />
+                                <wl:LiquidGlassToggleSwitch
+                                    x:Name="CaseSensitiveToggle"
+                                    x:Uid="CF_CaseSensitive"
                                     Grid.Row="2"
-                                    Grid.ColumnSpan="2" />
+                                    Grid.ColumnSpan="2"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    ouxct:MaterialControlState.IsManaged="True"
+                                    AutomationProperties.AutomationId="CF_CaseSensitive"
+                                    Checked="CaseSensitiveToggle_Changed"
+                                    Loaded="CaseSensitiveToggle_Loaded"
+                                    Unchecked="CaseSensitiveToggle_Changed" />
                             </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>
@@ -127,15 +142,20 @@
                     </essential:SettingsCard.HeaderIcon>
                     <StackPanel MinWidth="440" Spacing="8">
                         <StackPanel Orientation="Horizontal" Spacing="8">
-                            <TextBox
+                            <wl:LiquidGlassTextBox
+                                x:Name="TestClientTextBox"
                                 x:Uid="CF_TestInput"
-                                AutomationProperties.AutomationId="CF_TestInput" x:Name="TestClientTextBox" MinWidth="320"
-                                ouxct:ControlAppearance.IsEnabled="True" />
-                            <Button
+                                MinWidth="320"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                AutomationProperties.AutomationId="CF_TestInput" />
+                            <wl:LiquidGlassButton
+                                x:Name="GlassPresenter_8311"
                                 x:Uid="CF_TestBtn"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
                                 AutomationProperties.AutomationId="CF_TestBtn"
-                                Click="OnTestClick" x:Name="GlassPresenter_8311"
-                                ouxct:ControlAppearance.IsEnabled="True" />
+                                Click="OnTestClick" />
                         </StackPanel>
                         <TextBlock
                             x:Name="TestResultText"
@@ -150,11 +170,13 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE70F;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_9223"
                         x:Uid="CF_RefreshBtn"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="CF_RefreshBtn"
-                        Click="OnRefreshClick" x:Name="GlassPresenter_9223"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Click="OnRefreshClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -164,11 +186,13 @@
                                     <RowDefinition Height="360" />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <TextBox
+                                <wl:LiquidGlassTextBox
+                                    x:Name="RuleSearchTextBox"
                                     x:Uid="CF_Search"
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    ouxct:MaterialControlState.IsManaged="True"
                                     AutomationProperties.AutomationId="CF_Search"
-                                    TextChanged="OnRuleSearchTextChanged" x:Name="RuleSearchTextBox"
-                                    ouxct:ControlAppearance.IsEnabled="True" />
+                                    TextChanged="OnRuleSearchTextChanged" />
                                 <TextBlock
                                     x:Name="RulesShownText"
                                     Grid.Row="1"
@@ -198,24 +222,30 @@
                                     HorizontalAlignment="Right"
                                     Orientation="Horizontal"
                                     Spacing="8">
-                                    <Button
+                                    <wl:LiquidGlassButton
+                                        x:Name="ToggleSelectedRuleButton"
                                         x:Uid="CF_ToggleRuleBtn"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         AutomationProperties.AutomationId="CF_ToggleRuleBtn"
                                         Click="OnToggleRuleClick"
-                                        IsEnabled="False" x:Name="ToggleSelectedRuleButton"
-                                        ouxct:ControlAppearance.IsEnabled="True" />
-                                    <Button
+                                        IsEnabled="False" />
+                                    <wl:LiquidGlassButton
+                                        x:Name="EditSelectedRuleButton"
                                         x:Uid="CF_EditRuleBtn"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         AutomationProperties.AutomationId="CF_EditRuleBtn"
                                         Click="OnEditRuleClick"
-                                        IsEnabled="False" x:Name="EditSelectedRuleButton"
-                                        ouxct:ControlAppearance.IsEnabled="True" />
-                                    <Button
+                                        IsEnabled="False" />
+                                    <wl:LiquidGlassButton
+                                        x:Name="DeleteSelectedRuleButton"
                                         x:Uid="CF_DeleteRuleBtn"
+                                        ouxct:ControlAppearance.IsEnabled="True"
+                                        ouxct:MaterialControlState.IsManaged="True"
                                         AutomationProperties.AutomationId="CF_DeleteRuleBtn"
                                         Click="OnDeleteRuleClick"
-                                        IsEnabled="False" x:Name="DeleteSelectedRuleButton"
-                                        ouxct:ControlAppearance.IsEnabled="True" />
+                                        IsEnabled="False" />
                                 </StackPanel>
                             </Grid>
                         </essential:SettingsCard>
@@ -227,21 +257,27 @@
                         <FontIcon Glyph="&#xE8E5;" />
                     </essential:SettingsCard.HeaderIcon>
                     <StackPanel Orientation="Horizontal" Spacing="8">
-                        <Button
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_13859"
                             x:Uid="CF_ImportBtn"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="CF_ImportBtn"
-                            Click="OnImportClick" x:Name="GlassPresenter_13859"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <Button
+                            Click="OnImportClick" />
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_14070"
                             x:Uid="CF_ExportBtn"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="CF_ExportBtn"
-                            Click="OnExportClick" x:Name="GlassPresenter_14070"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <Button
+                            Click="OnExportClick" />
+                        <wl:LiquidGlassButton
+                            x:Name="GlassPresenter_14281"
                             x:Uid="CF_ClearRulesBtn"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="CF_ClearRulesBtn"
-                            Click="OnClearRulesClick" x:Name="GlassPresenter_14281"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Click="OnClearRulesClick" />
                     </StackPanel>
                 </essential:SettingsCard>
 
@@ -251,11 +287,13 @@
                     <essential:SettingsExpander.HeaderIcon>
                         <FontIcon Glyph="&#xE81C;" />
                     </essential:SettingsExpander.HeaderIcon>
-                    <Button
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_14935"
                         x:Uid="CF_RefreshHistoryBtn"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="CF_RefreshHistoryBtn"
-                        Click="OnRefreshClick" x:Name="GlassPresenter_14935"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        Click="OnRefreshClick" />
                     <essential:SettingsExpander.Items>
                         <essential:SettingsCard>
                             <Grid RowSpacing="8">
@@ -281,13 +319,15 @@
                                         </DataTemplate>
                                     </ListView.ItemTemplate>
                                 </ListView>
-                                <Button
+                                <wl:LiquidGlassButton
+                                    x:Name="GlassPresenter_16740"
                                     x:Uid="CF_ClearHistoryBtn"
-                                    AutomationProperties.AutomationId="CF_ClearHistoryBtn"
-                                    Click="OnClearHistoryClick" x:Name="GlassPresenter_16740"
-                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    Grid.Row="1"
                                     HorizontalAlignment="Right"
-                                    Grid.Row="1" />
+                                    ouxct:ControlAppearance.IsEnabled="True"
+                                    ouxct:MaterialControlState.IsManaged="True"
+                                    AutomationProperties.AutomationId="CF_ClearHistoryBtn"
+                                    Click="OnClearHistoryClick" />
                             </Grid>
                         </essential:SettingsCard>
                     </essential:SettingsExpander.Items>

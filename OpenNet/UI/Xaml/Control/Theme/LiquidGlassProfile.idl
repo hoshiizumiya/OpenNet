@@ -28,6 +28,14 @@
 		Boolean Enabled;
 		static Microsoft.UI.Xaml.DependencyProperty EnabledProperty{ get; };
 		Windows.Foundation.Collections.IObservableVector<LiquidGlassParameter> Parameters{ get; };
+		Boolean SupportsSwitchScale{ get; };
+		Double SwitchScale;
+		static Microsoft.UI.Xaml.DependencyProperty SwitchScaleProperty{ get; };
+		Boolean PointerLightingEnabled;
+		static Microsoft.UI.Xaml.DependencyProperty PointerLightingEnabledProperty{ get; };
+		Double PointerLightInfluence;
+		static Microsoft.UI.Xaml.DependencyProperty PointerLightInfluenceProperty{ get; };
+		void ResetSwitchScale();
 		void Reset();
 	}
 }

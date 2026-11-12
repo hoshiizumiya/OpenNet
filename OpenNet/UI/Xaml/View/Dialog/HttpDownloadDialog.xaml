@@ -41,28 +41,30 @@
             Spacing="12">
 
             <!--  URL Input  -->
-            <TextBox
+            <wl:LiquidGlassTextBox
                 x:Name="UrlBox"
                 x:Uid="HttpDownloadDialogUrlBox"
                 MinHeight="80"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AcceptsReturn="False"
                 AutomationProperties.AutomationId="HttpDownloadDialogUrlBox"
                 Header="URL"
                 PlaceholderText="https://example.com/file.zip"
                 ScrollViewer.VerticalScrollBarVisibility="Auto"
                 Text="{x:Bind Url, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                TextWrapping="Wrap"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                TextWrapping="Wrap" />
 
             <!--  Paste from clipboard  -->
             <StackPanel Orientation="Horizontal" Spacing="12">
-                <Button
+                <wl:LiquidGlassButton
                     x:Name="PasteUrlButton"
                     x:Uid="HttpDownloadDialogPasteButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="HttpDownloadDialogPasteButton"
-                    Click="PasteUrlButton_Click"
-                    ouxct:ControlAppearance.IsEnabled="True">
-                    <Button.Content>
+                    Click="PasteUrlButton_Click">
+                    <wl:LiquidGlassButton.Content>
                         <StackPanel Orientation="Horizontal" Spacing="6">
                             <FontIcon
                                 FontFamily="Segoe Fluent Icons"
@@ -70,8 +72,8 @@
                                 Glyph="&#xE16F;" />
                             <TextBlock x:Uid="HttpDownloadDialogPasteButtonText" />
                         </StackPanel>
-                    </Button.Content>
-                </Button>
+                    </wl:LiquidGlassButton.Content>
+                </wl:LiquidGlassButton>
                 <TextBlock
                     x:Name="ClipboardPreview"
                     x:Uid="DialogClipboardPreview"
@@ -88,49 +90,53 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox
+                <wl:LiquidGlassTextBox
                     x:Name="SaveDirBox"
                     x:Uid="HttpDownloadDialogSaveDirBox"
+                    Grid.Column="0"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="HttpDownloadDialogSaveDirBox"
                     Header="Save to"
                     IsReadOnly="True"
                     PlaceholderText="Default download directory"
-                    Text="{x:Bind SaveDirectory, Mode=TwoWay}"
-                    ouxct:ControlAppearance.IsEnabled="True"
-                    Grid.Column="0" />
-                <Button
+                    Text="{x:Bind SaveDirectory, Mode=TwoWay}" />
+                <wl:LiquidGlassButton
                     x:Name="BrowseDirButton"
                     x:Uid="CommonContentBrowse"
-                    AutomationProperties.AutomationId="CommonContentBrowse"
-                    Click="BrowseDirButton_Click"
-                    Content="Browse..."
-                    ouxct:ControlAppearance.IsEnabled="True"
                     Grid.Column="1"
                     Margin="8,0,0,0"
-                    VerticalAlignment="Bottom" />
+                    VerticalAlignment="Bottom"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    AutomationProperties.AutomationId="CommonContentBrowse"
+                    Click="BrowseDirButton_Click"
+                    Content="Browse..." />
             </Grid>
 
             <!--  Custom Filename  -->
-            <TextBox
+            <wl:LiquidGlassTextBox
                 x:Name="FileNameBox"
                 x:Uid="HttpDownloadDialogFileNameBox"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AutomationProperties.AutomationId="HttpDownloadDialogFileNameBox"
                 Header="File name (optional)"
                 PlaceholderText="Leave empty to auto-detect"
-                Text="{x:Bind FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                Text="{x:Bind FileName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <Grid ColumnSpacing="8">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
-                <Button
+                <wl:LiquidGlassButton
                     x:Name="FetchMetadataButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="FetchMetadataButton_Click"
                     Content="Get file information"
-                    IsEnabled="{x:Bind CanFetchMetadata, Mode=OneWay}"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    IsEnabled="{x:Bind CanFetchMetadata, Mode=OneWay}" />
                 <StackPanel
                     Grid.Column="1"
                     VerticalAlignment="Center"
@@ -145,13 +151,14 @@
             <TabView IsAddTabButtonVisible="False" TabWidthMode="SizeToContent">
                 <TabViewItem Header="Acceleration" IsClosable="False">
                     <StackPanel Padding="4,12" Spacing="10">
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
                             x:Name="P2PAccelerationToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Header="P2P acceleration"
                             IsOn="{x:Bind UseP2PAcceleration, Mode=TwoWay}"
                             OffContent="Aria2 only"
-                            OnContent="Prefer P2P + HTTP Web Seed"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            OnContent="Prefer P2P + HTTP Web Seed" />
                         <TextBlock
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="P2P mode uses libtorrent only when verified canonical metadata and HTTP byte ranges are available; otherwise the task falls back to aria2."
@@ -174,72 +181,84 @@
                 </TabViewItem>
                 <TabViewItem Header="HTTP" IsClosable="False">
                     <StackPanel Padding="4,12" Spacing="8">
-                        <TextBox
+                        <wl:LiquidGlassTextBox
                             x:Name="RefererBox"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Header="Referer"
                             PlaceholderText="Optional"
-                            Text="{x:Bind Referer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <TextBox
+                            Text="{x:Bind Referer, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <wl:LiquidGlassTextBox
                             x:Name="UserAgentBox"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Header="User agent"
                             PlaceholderText="Optional"
-                            Text="{x:Bind UserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <TextBox
+                            Text="{x:Bind UserAgent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <wl:LiquidGlassTextBox
                             x:Name="CookieBox"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Header="Cookie"
                             PlaceholderText="name=value; name2=value2"
-                            Text="{x:Bind Cookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <TextBox
+                            Text="{x:Bind Cookie, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <wl:LiquidGlassTextBox
                             x:Name="HeadersBox"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AcceptsReturn="True"
                             Header="Custom HTTP headers"
                             PlaceholderText="One Header: value per line"
                             Text="{x:Bind Headers, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            TextWrapping="NoWrap"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            TextWrapping="NoWrap" />
                         <Grid ColumnSpacing="8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
-                            <TextBox
+                            <wl:LiquidGlassTextBox
                                 x:Name="UsernameBox"
-                                Header="Username"
-                                Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                ouxct:ControlAppearance.IsEnabled="True" />
-                            <PasswordBox
-                                x:Name="PasswordBox"
-                                Header="Password"
-                                Password="{x:Bind Password, Mode=TwoWay}"
-                                PasswordRevealMode="Peek"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Grid.Column="1" />
+                                ouxct:MaterialControlState.IsManaged="True"
+                                Header="Username"
+                                Text="{x:Bind Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <ouxct:MaterialSwap Grid.Column="1">
+                                <ouxct:MaterialSwap.Native>
+                                    <PasswordBox
+                                        x:Name="PasswordBox"
+                                        Header="Password"
+                                        Password="{x:Bind Password, Mode=TwoWay}"
+                                        PasswordRevealMode="Peek" />
+                                </ouxct:MaterialSwap.Native>
+                                <ouxct:MaterialSwap.Glass>
+                                    <wl:LiquidGlassPasswordBox ouxct:MaterialControlState.IsManaged="True" />
+                                </ouxct:MaterialSwap.Glass>
+                            </ouxct:MaterialSwap>
                         </Grid>
                     </StackPanel>
                 </TabViewItem>
                 <TabViewItem Header="Mirrors" IsClosable="False">
-                    <TextBox
+                    <wl:LiquidGlassTextBox
                         x:Name="MirrorsBox"
                         MinHeight="120"
+                        Margin="4,12"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AcceptsReturn="True"
                         Header="Mirror URLs"
                         PlaceholderText="One URL per line"
                         Text="{x:Bind Mirrors, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="NoWrap"
-                        ouxct:ControlAppearance.IsEnabled="True"
-                        Margin="4,12" />
+                        TextWrapping="NoWrap" />
                 </TabViewItem>
                 <TabViewItem Header="MD5/SHA" IsClosable="False">
                     <StackPanel Padding="4,12" Spacing="8">
-                        <TextBox
+                        <wl:LiquidGlassTextBox
                             x:Name="ChecksumBox"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             Header="Checksum"
                             PlaceholderText="MD5, SHA-1, SHA-256, SHA-512, or type=hex"
-                            Text="{x:Bind Checksum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Text="{x:Bind Checksum, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         <TextBlock
                             Foreground="{ThemeResource TextFillColorSecondaryBrush}"
                             Text="The hash type is detected from its length when omitted."
@@ -247,15 +266,16 @@
                     </StackPanel>
                 </TabViewItem>
                 <TabViewItem Header="Description" IsClosable="False">
-                    <TextBox
+                    <wl:LiquidGlassTextBox
                         x:Name="DescriptionBox"
                         MinHeight="120"
+                        Margin="4,12"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AcceptsReturn="True"
                         Header="Notes"
                         Text="{x:Bind Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        TextWrapping="Wrap"
-                        ouxct:ControlAppearance.IsEnabled="True"
-                        Margin="4,12" />
+                        TextWrapping="Wrap" />
                 </TabViewItem>
             </TabView>
 

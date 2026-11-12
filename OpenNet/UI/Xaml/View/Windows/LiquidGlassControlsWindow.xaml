@@ -1,11 +1,14 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <essential:WindowEx
     x:Class="OpenNet.UI.Xaml.View.Windows.LiquidGlassControlsWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:essential="using:WinUI3Package"
     xmlns:ouxct="using:OpenNet.UI.Xaml.Control.Theme"
-    Width="1120" Height="760" MinWidth="920" MinHeight="580">
+    Width="1120"
+    Height="760"
+    MinWidth="920"
+    MinHeight="580">
     <essential:WindowEx.ContextMenu>
         <essential:ModernStandardWindowContextMenu />
     </essential:WindowEx.ContextMenu>
@@ -18,36 +21,82 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <TitleBar x:Name="WindowTitleBar" x:Uid="LiquidGlassControlsWindowTitle" Title="Liquid glass controls" />
+        <TitleBar
+            x:Name="WindowTitleBar"
+            x:Uid="LiquidGlassControlsWindowTitle"
+            Title="Liquid glass controls" />
 
-        <StackPanel Grid.Row="1" Margin="24,12,24,20" Spacing="12">
-            <TextBlock x:Uid="GlassControlsIntro" Text="Choose which controls use glass. Changes are saved and applied to open windows immediately." TextWrapping="Wrap" />
+        <StackPanel
+            Grid.Row="1"
+            Margin="24,12,24,20"
+            Spacing="12">
+            <TextBlock
+                x:Uid="GlassControlsIntro"
+                Text="Choose which controls use glass. Changes are saved and applied to open windows immediately."
+                TextWrapping="Wrap" />
             <StackPanel Orientation="Horizontal" Spacing="16">
-                <ComboBox x:Name="MaterialStyleSelector" SelectionChanged="StyleChanged" MinWidth="190">
+                <ComboBox
+                    x:Name="MaterialStyleSelector"
+                    MinWidth="190"
+                    SelectedIndex="{x:Bind Settings.StyleIndex, Mode=OneWay}"
+                    SelectionChanged="StyleChanged">
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialDefault" Content="Default" />
                     <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialLiquidGlass" Content="Liquid glass" />
                 </ComboBox>
-                <Button x:Uid="GlassResetSwitches" Content="Reset switches" Click="ResetClicked" />
+                <Button
+                    x:Uid="GlassResetSwitches"
+                    Click="ResetClicked"
+                    Content="Reset switches" />
             </StackPanel>
         </StackPanel>
-        <Grid Grid.Row="2" Margin="24,0,24,24" ColumnSpacing="24">
-            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="390" /></Grid.ColumnDefinitions>
-            <ListView x:Name="TypeSelector" ItemsSource="{x:Bind Profiles}" SelectionMode="Single" SelectionChanged="TypeChanged">
+        <Grid
+            Grid.Row="2"
+            Margin="24,0,24,24"
+            ColumnSpacing="24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="390" />
+            </Grid.ColumnDefinitions>
+            <ListView
+                x:Name="TypeSelector"
+                ItemsSource="{x:Bind Profiles}"
+                SelectionChanged="TypeChanged"
+                SelectionMode="Single">
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="ouxct:LiquidGlassProfile">
-                        <Grid Padding="8" MinWidth="330" ColumnSpacing="24">
-                            <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-                            <TextBlock Text="{x:Bind Name}" VerticalAlignment="Center" />
-                            <ToggleSwitch Grid.Column="1" IsOn="{x:Bind Enabled, Mode=TwoWay}" AutomationProperties.Name="{x:Bind Name}" />
+                        <Grid
+                            MinWidth="330"
+                            Padding="8"
+                            ColumnSpacing="24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock VerticalAlignment="Center" Text="{x:Bind Name}" />
+                            <ToggleSwitch
+                                Grid.Column="1"
+                                AutomationProperties.Name="{x:Bind Name}"
+                                IsOn="{x:Bind Enabled, Mode=TwoWay}" />
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
             <StackPanel Grid.Column="1" Spacing="12">
-                <TextBlock x:Uid="GlassPreviewHeading" Text="Interactive preview" Style="{ThemeResource SubtitleTextBlockStyle}" />
+                <TextBlock
+                    x:Uid="GlassPreviewHeading"
+                    Style="{ThemeResource SubtitleTextBlockStyle}"
+                    Text="Interactive preview" />
                 <TextBlock Text="{x:Bind SelectedProfile.Name, Mode=OneWay}" />
-                <Border x:Name="PreviewHost" BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" CornerRadius="12" />
-                <TextBlock x:Uid="GlassControlsPreviewHint" Text="Select a type to preview it. This preview follows the global material and that type's switch." TextWrapping="Wrap" Foreground="{ThemeResource TextFillColorSecondaryBrush}" />
+                <Border
+                    x:Name="PreviewHost"
+                    BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                    BorderThickness="1"
+                    CornerRadius="12" />
+                <TextBlock
+                    x:Uid="GlassControlsPreviewHint"
+                    Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                    Text="Select a type to preview it. This preview follows the global material and that type's switch."
+                    TextWrapping="Wrap" />
             </StackPanel>
         </Grid>
 

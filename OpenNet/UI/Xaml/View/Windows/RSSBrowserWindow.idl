@@ -5,7 +5,7 @@
     {
         RSSBrowserWindow();
     
-		Microsoft.UI.Xaml.Controls.TextBox AddressBox;
+		WinUI.LiquidGlass.LiquidGlassTextBox AddressBox;
 
         void AddNewTab(String url, String title);
         void CloseTab(String tabId);

@@ -8,19 +8,19 @@ namespace OpenNet.UI.Xaml.View.Windows
 		TorrentCheckModalWindow();
 		TorrentCheckModalWindow(String torrentLink);
 
-		Microsoft.UI.Xaml.Controls.ComboBox SaveTorrentCopyLocationComboBox;
-		Microsoft.UI.Xaml.Controls.CheckBox SaveTorrentCopyCheckBox;
-		Microsoft.UI.Xaml.Controls.CheckBox StartImmediatelyCheckBox;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskShareModeToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskUploadModeToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskForceStartToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskSuperSeedingToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskSequentialDownloadToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskApplyIpFilterToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskEnablePexToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskEnableLsdToggle;
-		Microsoft.UI.Xaml.Controls.ToggleSwitch TaskEnableDhtToggle;
-		Microsoft.UI.Xaml.Controls.TextBox TrackerListTextBox;
+		WinUI.LiquidGlass.LiquidGlassComboBox SaveTorrentCopyLocationComboBox;
+		WinUI.LiquidGlass.LiquidGlassCheckBox SaveTorrentCopyCheckBox;
+		WinUI.LiquidGlass.LiquidGlassCheckBox StartImmediatelyCheckBox;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskShareModeToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskUploadModeToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskForceStartToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskSuperSeedingToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskSequentialDownloadToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskApplyIpFilterToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskEnablePexToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskEnableLsdToggle;
+		WinUI.LiquidGlass.LiquidGlassToggleSwitch TaskEnableDhtToggle;
+		WinUI.LiquidGlass.LiquidGlassTextBox TrackerListTextBox;
 
 		// Bindable properties
 		OpenNet.ViewModels.TorrentMetadataViewModel MetadataViewModel{ get; };

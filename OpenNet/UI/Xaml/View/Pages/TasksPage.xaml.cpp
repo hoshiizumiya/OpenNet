@@ -837,7 +837,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 	{
 		auto strong = get_strong();
 		auto search = SearchBox();
-        search.Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
+		search.Focus(winrt::Microsoft::UI::Xaml::FocusState::Keyboard);
 
 		if (auto textBox = ::OpenNet::Extension::DependencyObjectEx::FindDescendant<winrt::Microsoft::UI::Xaml::Controls::TextBox>(search))
 		{
@@ -1617,13 +1617,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::implementation
 		prompt.Text(L"What do you want to do with the selected tasks?");
 		choices.Children().Append(prompt);
 		auto const red = SolidColorBrush{ winrt::Windows::UI::Colors::Red() };
-		RadioButton unfinished;
+		winrt::WinUI::LiquidGlass::LiquidGlassRadioButton unfinished;
 		unfinished.GroupName(L"TaskCleanup");
 		unfinished.Content(box_value(L"Delete unfinished files only"));
 		unfinished.Foreground(red);
 		unfinished.IsChecked(true);
 		choices.Children().Append(winrt::OpenNet::UI::Xaml::Control::Theme::MaterialControlState::CreateRadioButtonPresenter(unfinished));
-		RadioButton allFiles;
+		winrt::WinUI::LiquidGlass::LiquidGlassRadioButton allFiles;
 		allFiles.GroupName(L"TaskCleanup");
 		allFiles.Content(box_value(L"Delete all downloaded files"));
 		allFiles.Foreground(red);

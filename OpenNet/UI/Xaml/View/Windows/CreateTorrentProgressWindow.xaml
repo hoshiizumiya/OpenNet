@@ -109,20 +109,26 @@
                 HorizontalAlignment="Right"
                 Orientation="Horizontal"
                 Spacing="8">
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="OpenFolderButton"
                     x:Uid="CreateTorrentProgressOpenFolder"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="OpenFolderButton_Click"
-                    Content="Open folder" x:Name="OpenFolderButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    Content="Open folder" />
+                <wl:LiquidGlassButton
+                    x:Name="CloseButton"
                     x:Uid="CommonClose"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="CloseButton_Click"
-                    Content="Close" x:Name="CloseButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    Content="Close" />
+                <wl:LiquidGlassButton
+                    x:Name="CancelButton"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="CancelButton_Click"
-                    Content="Cancel" x:Name="CancelButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Content="Cancel" />
             </StackPanel>
         </Grid>
     </Grid>

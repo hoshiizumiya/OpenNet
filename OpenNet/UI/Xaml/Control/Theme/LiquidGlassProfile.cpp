@@ -245,6 +245,19 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 		for (std::size_t i = 0; i < optics::Descriptors.size(); ++i)
 			m_parameters.Append(make<LiquidGlassParameter>(key, i, optics::Descriptors[i].Read(defaults)));
 		Enabled(IsEnabled(key));
+		auto& database = ::OpenNet::Core::AppSettingsDatabase::Instance();
+		auto loadNumber = [&](wchar_t const* name, double fallback, double minimum, double maximum)
+		{
+			auto stored = database.GetDouble(Category, StorageKey(key, name));
+			if (!stored) return fallback;
+			if (std::isfinite(*stored) && *stored >= minimum && *stored <= maximum) return *stored;
+			ReportRejected(key, name, *stored, ResourceGetString(L"GlassParameterInvalidValue"));
+			database.Delete(Category, StorageKey(key, name));
+			return fallback;
+		};
+		SwitchScale(loadNumber(L"SwitchScale", 0.7, 0.25, 2.0));
+		PointerLightInfluence(loadNumber(L"PointerLightInfluence", 1.0, 0.0, 1.0));
+		PointerLightingEnabled(database.GetBool(Category, StorageKey(key, L"PointerLightingEnabled")).value_or(true));
 		m_loading = false;
 		// Validate the saved baseline through real native setters before first use.
 		ApplyToBrush(defaults, optics::Capture(defaults));
@@ -302,9 +315,88 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 			self->m_loading = false;
 		}
 	}
+	DependencyProperty LiquidGlassProfile::SwitchScaleProperty()
+	{
+		static auto property = DependencyProperty::Register(L"SwitchScale", xaml_typename<double>(), xaml_typename<class_type>(),
+															PropertyMetadata{ box_value(0.7), PropertyChangedCallback{ InteractionChanged } });
+		return property;
+	}
+	double LiquidGlassProfile::SwitchScale() const
+	{
+		return unbox_value<double>(GetValue(SwitchScaleProperty()));
+	}
+	void LiquidGlassProfile::SwitchScale(double value)
+	{
+		if (std::isfinite(value) && value >= 0.25 && value <= 2.0) SetValue(SwitchScaleProperty(), box_value(value));
+	}
+	DependencyProperty LiquidGlassProfile::PointerLightingEnabledProperty()
+	{
+		static auto property = DependencyProperty::Register(L"PointerLightingEnabled", xaml_typename<bool>(), xaml_typename<class_type>(),
+															PropertyMetadata{ box_value(true), PropertyChangedCallback{ InteractionChanged } });
+		return property;
+	}
+	bool LiquidGlassProfile::PointerLightingEnabled() const
+	{
+		return unbox_value<bool>(GetValue(PointerLightingEnabledProperty()));
+	}
+	void LiquidGlassProfile::PointerLightingEnabled(bool value)
+	{
+		SetValue(PointerLightingEnabledProperty(), box_value(value));
+	}
+	DependencyProperty LiquidGlassProfile::PointerLightInfluenceProperty()
+	{
+		static auto property = DependencyProperty::Register(L"PointerLightInfluence", xaml_typename<double>(), xaml_typename<class_type>(),
+															PropertyMetadata{ box_value(1.0), PropertyChangedCallback{ InteractionChanged } });
+		return property;
+	}
+	double LiquidGlassProfile::PointerLightInfluence() const
+	{
+		return unbox_value<double>(GetValue(PointerLightInfluenceProperty()));
+	}
+	void LiquidGlassProfile::PointerLightInfluence(double value)
+	{
+		if (std::isfinite(value) && value >= 0.0 && value <= 1.0) SetValue(PointerLightInfluenceProperty(), box_value(value));
+	}
+	void LiquidGlassProfile::ResetSwitchScale()
+	{
+		if (SupportsSwitchScale()) SwitchScale(0.7);
+	}
+	void LiquidGlassProfile::InteractionChanged(DependencyObject const& sender, DependencyPropertyChangedEventArgs const& args)
+	{
+		auto self = get_self<LiquidGlassProfile>(sender.as<class_type>());
+		if (self->m_loading) return;
+		try
+		{
+			auto& db = ::OpenNet::Core::AppSettingsDatabase::Instance();
+			if (args.Property() == PointerLightingEnabledProperty())
+				db.SetBool(Category, StorageKey(self->Key(), L"PointerLightingEnabled"), self->PointerLightingEnabled());
+			else
+			{
+				bool scale = args.Property() == SwitchScaleProperty();
+				auto value = unbox_value<double>(args.NewValue());
+				if ((scale && !self->SupportsSwitchScale()) || !std::isfinite(value) || value < (scale ? 0.25 : 0.0) || value >(scale ? 2.0 : 1.0))
+				{
+					self->m_loading = true;
+					self->SetValue(args.Property(), args.OldValue());
+					self->m_loading = false;
+					return;
+				}
+				db.SetDouble(Category, StorageKey(self->Key(), scale ? L"SwitchScale" : L"PointerLightInfluence"), value);
+			}
+			MaterialControlState::RefreshBrushes();
+		}
+		catch (...)
+		{
+			self->m_loading = false;
+			ReportCurrentFailure(L"update control interaction");
+		}
+	}
 	void LiquidGlassProfile::Reset()
 	{
-		// Reset only this type's optics. Its enable switch and other types are untouched.
+		// Reset this type's optics and interaction settings, preserving its enable switch.
+		ResetSwitchScale();
+		PointerLightingEnabled(true);
+		PointerLightInfluence(1.0);
 		for (auto const& parameter : m_parameters) parameter.Reset();
 	}
 	LiquidGlassApplyResult LiquidGlassProfile::Apply(hstring const& kind, WinUI::Composition::Hlsl::LiquidGlassBrush const& brush, optics::Snapshot const& defaults, bool overridesOnly)

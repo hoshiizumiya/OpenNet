@@ -1,6 +1,7 @@
-#include <time.h>
+﻿#include <time.h>
 
 #include "XamlWorkaround.h"
+#include "UI/Xaml/Control/Theme/MaterialSwitch.h"
 #include "UI/Xaml/Control/Theme/MaterialControlBridge.h"
 #include "IPFilterSettingsPage.xaml.h"
 #if __has_include("UI/Xaml/View/Pages/SettingsPages/IPFilterSettingsPage.g.cpp")
@@ -45,12 +46,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 		{
 			if (!sender) return std::nullopt;
 			if (auto standard = sender.try_as<ToggleSwitch>()) return standard.IsOn();
+			else if (auto glass = sender.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) return ::OpenNet::UI::ReadMaterialSwitch(sender);
 			return std::nullopt;
 		}
 		void SetToggleIsOn(IInspectable const& target, bool value)
 		{
 			if (!target) return;
 			if (auto standard = target.try_as<ToggleSwitch>()) standard.IsOn(value);
+			else if (auto glass = target.try_as<winrt::WinUI::LiquidGlass::LiquidGlassToggleSwitch>()) glass.IsOn(value);
 		}
 
 		winrt::hstring FormatTimestamp(std::int64_t timestamp)
@@ -497,6 +500,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void IPFilterSettingsPage::OnSubscriptionAutoUpdateToggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loading)
 			return;
 		auto const enabled = ToggleIsOn(sender);
@@ -664,6 +668,7 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 	void IPFilterSettingsPage::OnEnableToggled(IInspectable const& sender, RoutedEventArgs const&)
 	{
+		::OpenNet::UI::PrepareMaterialSwitchEvent(sender);
 		if (m_loading) return;
 		auto const enabled = ToggleIsOn(sender);
 		if (!enabled) return;
@@ -931,14 +936,14 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 
 namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 {
-    void IPFilterSettingsPage::MaterialLoaded_216(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        EnableFilterToggle_Loaded(EnableFilterToggle(), args);
-    }
-    void IPFilterSettingsPage::MaterialLoaded_224(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
-    {
-        ::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
-        SubscriptionAutoUpdateToggle_Loaded(SubscriptionAutoUpdateToggle(), args);
-    }
+	void IPFilterSettingsPage::MaterialLoaded_216(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		EnableFilterToggle_Loaded(EnableFilterToggle(), args);
+	}
+	void IPFilterSettingsPage::MaterialLoaded_224(winrt::Windows::Foundation::IInspectable const& sender, winrt::Microsoft::UI::Xaml::RoutedEventArgs const& args)
+	{
+		::OpenNet::UI::EnsureMaterialHostBridge(sender.as<winrt::Microsoft::UI::Xaml::DependencyObject>());
+		SubscriptionAutoUpdateToggle_Loaded(SubscriptionAutoUpdateToggle(), args);
+	}
 }

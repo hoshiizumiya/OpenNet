@@ -307,16 +307,27 @@ namespace OpenNet::UI
 	void EnsureMaterialHostBridge(DependencyObject const& sender)
 	{
 		auto cursor = sender;
-		WinUI3Package::SwitchPresenter host{ nullptr };
+		FrameworkElement host{ nullptr };
+		C::Control native{ nullptr }, glass{ nullptr };
+		bool active{};
 		while (cursor)
 		{
-			if (auto found = cursor.try_as<WinUI3Package::SwitchPresenter>(); found && found.SwitchCases().Size() == 2)
+			if (auto swap = cursor.try_as<winrt::OpenNet::UI::Xaml::Control::Theme::MaterialSwap>())
 			{
-				auto native = found.SwitchCases().GetAt(0).as<WinUI3Package::Case>().Content().try_as<C::Control>();
-				auto glass = found.SwitchCases().GetAt(1).as<WinUI3Package::Case>().Content().try_as<C::Control>();
+				native = swap.Native().try_as<C::Control>();
+				glass = swap.Glass().try_as<C::Control>();
 				if (native && glass)
 				{
-					host = found; break;
+					host = swap; active = swap.Content() == glass; break;
+				}
+			}
+			if (auto found = cursor.try_as<WinUI3Package::SwitchPresenter>(); found && found.SwitchCases().Size() == 2)
+			{
+				native = found.SwitchCases().GetAt(0).as<WinUI3Package::Case>().Content().try_as<C::Control>();
+				glass = found.SwitchCases().GetAt(1).as<WinUI3Package::Case>().Content().try_as<C::Control>();
+				if (native && glass)
+				{
+					host = found; active = found.CurrentCase() == found.SwitchCases().GetAt(1).as<WinUI3Package::Case>(); break;
 				}
 			}
 			cursor = Media::VisualTreeHelper::GetParent(cursor);
@@ -326,9 +337,6 @@ namespace OpenNet::UI
 																  xaml_typename<winrt::OpenNet::UI::Xaml::Control::Theme::ControlAppearance>(), PropertyMetadata{ box_value(false) });
 		if (unbox_value<bool>(host.GetValue(hooked))) return;
 		host.SetValue(hooked, box_value(true));
-		auto native = host.SwitchCases().GetAt(0).as<WinUI3Package::Case>().Content().as<C::Control>();
-		auto glass = host.SwitchCases().GetAt(1).as<WinUI3Package::Case>().Content().as<C::Control>();
-		auto active = host.CurrentCase() == host.SwitchCases().GetAt(1).as<WinUI3Package::Case>();
 		// An inactive Case is detached, so it cannot inherit the visible row's
 		// DataContext. Keep the original contract usable by existing code-behind,
 		// then remove only our inherited-context local copy when it re-enters.
@@ -359,6 +367,24 @@ namespace OpenNet::UI
 				if (!content || !content.template try_as<UIElement>())
 					if (auto to = weak.get()) to.SetValue(C::ContentControl::ContentProperty(), content);
 			});
+		}
+		if (host.try_as<winrt::OpenNet::UI::Xaml::Control::Theme::MaterialSwap>())
+		{
+			for (auto const& property : { FrameworkElement::WidthProperty(), FrameworkElement::HeightProperty(), FrameworkElement::MinWidthProperty(),
+				FrameworkElement::MinHeightProperty(), FrameworkElement::MaxWidthProperty(), FrameworkElement::MaxHeightProperty(),
+				C::Control::FontFamilyProperty(), C::Control::FontSizeProperty(), C::Control::FontWeightProperty(), C::Control::FontStyleProperty(),
+				C::Control::ForegroundProperty(), C::Control::PaddingProperty(), C::Control::HorizontalContentAlignmentProperty(), C::Control::VerticalContentAlignmentProperty(),
+				UIElement::IsTabStopProperty(), FrameworkElement::FlowDirectionProperty() })
+				Mirror(native, property, glass, property, false, false);
+			if (glass.try_as<W::LiquidGlassSlider>())
+				for (auto const& property : { C::Slider::HeaderProperty(), C::Slider::HeaderTemplateProperty(), C::Slider::OrientationProperty(),
+					C::Slider::StepFrequencyProperty(), C::Primitives::RangeBase::SmallChangeProperty(), C::Primitives::RangeBase::LargeChangeProperty(), C::Slider::TickFrequencyProperty(),
+					C::Slider::TickPlacementProperty(), C::Slider::SnapsToProperty(), C::Slider::IsThumbToolTipEnabledProperty(), C::Slider::ThumbToolTipValueConverterProperty() })
+					Mirror(native, property, glass, property, false, false);
+			else if (glass.try_as<W::LiquidGlassPasswordBox>())
+			{
+				Mirror(native, C::PasswordBox::PlaceholderTextProperty(), glass, W::LiquidGlassPasswordBox::PlaceholderTextProperty(), false, false);
+			}
 		}
 		if (auto toggle = glass.try_as<W::LiquidGlassToggleSwitch>())
 			Mirror(native, C::ToggleSwitch::IsOnProperty(), toggle, W::LiquidGlassToggleSwitch::IsOnProperty(), active);

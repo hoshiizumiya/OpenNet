@@ -20,25 +20,31 @@
         x:Name="ViewDialogTorrentMetaDataDownloadDialogRoot"
         Padding="16"
         Spacing="8">
-        <TextBox
+        <wl:LiquidGlassTextBox
+            x:Name="MagnetBox"
             x:Uid="ViewTorrentMetaDataDownloadDialogMagnetBox"
+            MinWidth="480"
+            MinHeight="300"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AcceptsReturn="False"
             PlaceholderText="magnet:?xt=..."
             ScrollViewer.VerticalScrollBarVisibility="Auto"
-            TextWrapping="Wrap" x:Name="MagnetBox" MinWidth="480" MinHeight="300"
-            ouxct:ControlAppearance.IsEnabled="True" />
-        <Button
+            TextWrapping="Wrap" />
+        <wl:LiquidGlassButton
+            x:Name="PasteTextFromTheClipboard"
             x:Uid="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
+            ouxct:ControlAppearance.IsEnabled="True"
+            ouxct:MaterialControlState.IsManaged="True"
             AutomationProperties.AutomationId="ViewDialogTorrentMetaDataDownloadDialogPasteFromClip"
             AutomationProperties.Name="PasteTextFromTheClipboard"
-            Click="PasteTextFromTheClipboard_Click" x:Name="PasteTextFromTheClipboard"
-            ouxct:ControlAppearance.IsEnabled="True">
-            <Button.Content>
-        <StackPanel Orientation="Horizontal" Spacing="4">
-            <FontIcon Glyph="&#xE16F;" />
-        </StackPanel>
-            </Button.Content>
-        </Button>
+            Click="PasteTextFromTheClipboard_Click">
+            <wl:LiquidGlassButton.Content>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                    <FontIcon Glyph="&#xE16F;" />
+                </StackPanel>
+            </wl:LiquidGlassButton.Content>
+        </wl:LiquidGlassButton>
         <InfoBar
             x:Name="ViewDialogTorrentMetaDataDownloadDialogLinkErrorInfoBar"
             x:Uid="ViewDialogTorrentMetaDataDownloadDialogLinkErrorInfoBar"

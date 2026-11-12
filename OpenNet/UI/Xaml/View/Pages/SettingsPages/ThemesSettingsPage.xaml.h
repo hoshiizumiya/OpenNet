@@ -9,11 +9,13 @@ namespace winrt::OpenNet::UI::Xaml::View::Pages::SettingsPages::implementation
 	struct ThemesSettingsPage : ThemesSettingsPageT<ThemesSettingsPage>
 	{
 		ThemesSettingsPage();
-        void MaterialLoaded_258(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
-        void MaterialLoaded_261(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
-        void MaterialLoaded_262(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
-        void MaterialLoaded_267(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
-        void MaterialLoaded_268(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void VideoOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void ImageOpacitySliderMaterialLoaded(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void MaterialLoaded_258(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void MaterialLoaded_261(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void MaterialLoaded_262(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void MaterialLoaded_267(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
+		void MaterialLoaded_268(winrt::Windows::Foundation::IInspectable const&, winrt::Microsoft::UI::Xaml::RoutedEventArgs const&);
 		winrt::OpenNet::ViewModels::SettingsViewModel ViewModel()
 		{
 			if (!m_viewModel) m_viewModel = winrt::OpenNet::ViewModels::SettingsViewModel();

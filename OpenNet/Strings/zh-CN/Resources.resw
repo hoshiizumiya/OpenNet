@@ -7369,4 +7369,22 @@
   <data name="GlassParameterInvalidValue" xml:space="preserve">
     <value>参数超出支持范围，已恢复上一有效值或库预设。</value>
   </data>
+  <data name="GlassParameter_LightAngle" xml:space="preserve">
+    <value>静止光照角度（弧度）</value>
+  </data>
+  <data name="GlassParameterSwitchScale.Text" xml:space="preserve">
+    <value>开关大小比例</value>
+  </data>
+  <data name="GlassParameterSwitchScaleDescription.Text" xml:space="preserve">
+    <value>等比例调整开关图形大小，不改变文字字号。修改立即生效。</value>
+  </data>
+  <data name="GlassPointerLighting.Header" xml:space="preserve">
+    <value>指针光照</value>
+  </data>
+  <data name="GlassPointerLightingDescription.Text" xml:space="preserve">
+    <value>使用液态玻璃时，让光照随指针位置变化。</value>
+  </data>
+  <data name="GlassPointerLightInfluence.Text" xml:space="preserve">
+    <value>指针光照影响强度</value>
+  </data>
 </root>

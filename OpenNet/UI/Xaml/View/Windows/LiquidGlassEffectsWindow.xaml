@@ -61,55 +61,118 @@
                 <ColumnDefinition Width="390" />
             </Grid.ColumnDefinitions>
             <ScrollView>
-                <ItemsControl ItemsSource="{x:Bind SelectedProfile.Parameters, Mode=OneWay}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate x:DataType="ouxct:LiquidGlassParameter">
-                            <StackPanel Margin="0,0,12,16" Spacing="4">
-                                <Grid ColumnSpacing="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="Auto" />
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock VerticalAlignment="Center" Text="{x:Bind Label}" />
-                                    <Button
-                                        x:Uid="GlassResetParameter"
-                                        Grid.Column="1"
-                                        Click="{x:Bind Reset}"
-                                        Content="Reset" />
-                                </Grid>
-                                <Grid ColumnSpacing="16">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*" />
-                                        <ColumnDefinition Width="64" />
-                                    </Grid.ColumnDefinitions>
-                                    <Slider
-                                        AutomationProperties.Name="{x:Bind Label}"
-                                        Maximum="{x:Bind Maximum}"
-                                        Minimum="{x:Bind Minimum}"
-                                        StepFrequency="{x:Bind Step}"
-                                        Value="{x:Bind Value, Mode=TwoWay}" />
+                <StackPanel Spacing="12">
+                    <StackPanel
+                        Margin="0,0,12,16"
+                        Spacing="4"
+                        Visibility="{x:Bind essential:Convert.BoolToVisibility(SelectedProfile.SupportsSwitchScale), Mode=OneWay}">
+                        <Grid ColumnSpacing="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock
+                                x:Uid="GlassParameterSwitchScale"
+                                VerticalAlignment="Center"
+                                Text="Switch size" />
+                            <Button
+                                x:Uid="GlassResetParameter"
+                                Grid.Column="1"
+                                Click="{x:Bind SelectedProfile.ResetSwitchScale}"
+                                Content="Reset" />
+                        </Grid>
+                        <TextBlock
+                            x:Uid="GlassParameterSwitchScaleDescription"
+                            Text="Scale the switch graphic without changing its text size. Changes apply immediately."
+                            TextWrapping="Wrap" />
+                        <Grid ColumnSpacing="16">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="64" />
+                            </Grid.ColumnDefinitions>
+                            <Slider
+                                Maximum="2"
+                                Minimum="0.25"
+                                StepFrequency="0.05"
+                                Value="{x:Bind SelectedProfile.SwitchScale, Mode=TwoWay}" />
+                            <TextBlock
+                                Grid.Column="1"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(SelectedProfile.SwitchScale), Mode=OneWay}" />
+                        </Grid>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock
+                                x:Uid="GlassDefaultValue"
+                                Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                Text="Default:" />
+                            <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="0.70" />
+                        </StackPanel>
+                    </StackPanel>
+                    <ToggleSwitch
+                        x:Uid="GlassPointerLighting"
+                        Header="Pointer lighting"
+                        IsOn="{x:Bind SelectedProfile.PointerLightingEnabled, Mode=TwoWay}" />
+                    <TextBlock
+                        x:Uid="GlassPointerLightingDescription"
+                        Text="Let the light follow the pointer while using glass."
+                        TextWrapping="Wrap" />
+                    <TextBlock x:Uid="GlassPointerLightInfluence" Text="Pointer light influence" />
+                    <Slider
+                        Maximum="1"
+                        Minimum="0"
+                        StepFrequency="0.05"
+                        Value="{x:Bind SelectedProfile.PointerLightInfluence, Mode=TwoWay}" />
+                    <ItemsControl ItemsSource="{x:Bind SelectedProfile.Parameters, Mode=OneWay}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate x:DataType="ouxct:LiquidGlassParameter">
+                                <StackPanel Margin="0,0,12,16" Spacing="4">
+                                    <Grid ColumnSpacing="12">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock VerticalAlignment="Center" Text="{x:Bind Label}" />
+                                        <Button
+                                            x:Uid="GlassResetParameter"
+                                            Grid.Column="1"
+                                            Click="{x:Bind Reset}"
+                                            Content="Reset" />
+                                    </Grid>
+                                    <Grid ColumnSpacing="16">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="64" />
+                                        </Grid.ColumnDefinitions>
+                                        <Slider
+                                            AutomationProperties.Name="{x:Bind Label}"
+                                            Maximum="{x:Bind Maximum}"
+                                            Minimum="{x:Bind Minimum}"
+                                            StepFrequency="{x:Bind Step}"
+                                            Value="{x:Bind Value, Mode=TwoWay}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Center"
+                                            Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(Value), Mode=OneWay}" />
+                                    </Grid>
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <TextBlock
+                                            x:Uid="GlassDefaultValue"
+                                            Foreground="{ThemeResource TextFillColorSecondaryBrush}"
+                                            Text="Default:" />
+                                        <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(DefaultValue)}" />
+                                    </StackPanel>
                                     <TextBlock
-                                        Grid.Column="1"
-                                        HorizontalAlignment="Right"
-                                        VerticalAlignment="Center"
-                                        Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(Value), Mode=OneWay}" />
-                                </Grid>
-                                <StackPanel Orientation="Horizontal" Spacing="8">
-                                    <TextBlock
-                                        x:Uid="GlassDefaultValue"
-                                        Foreground="{ThemeResource TextFillColorSecondaryBrush}"
-                                        Text="Default:" />
-                                    <TextBlock Foreground="{ThemeResource TextFillColorSecondaryBrush}" Text="{x:Bind ouxct:MaterialControlState.FormatSettingValue(DefaultValue)}" />
+                                        Foreground="{ThemeResource SystemFillColorCriticalBrush}"
+                                        Text="{x:Bind ErrorMessage, Mode=OneWay}"
+                                        TextWrapping="Wrap"
+                                        Visibility="{x:Bind essential:Convert.BoolToVisibility(HasError), Mode=OneWay}" />
                                 </StackPanel>
-                                <TextBlock
-                                    Foreground="{ThemeResource SystemFillColorCriticalBrush}"
-                                    Text="{x:Bind ErrorMessage, Mode=OneWay}"
-                                    TextWrapping="Wrap"
-                                    Visibility="{x:Bind essential:Convert.BoolToVisibility(HasError), Mode=OneWay}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
             </ScrollView>
             <StackPanel Grid.Column="1" Spacing="12">
                 <TextBlock

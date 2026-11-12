@@ -228,130 +228,160 @@
                                 <RowDefinition />
                             </Grid.RowDefinitions>
 
-                            <CheckBox IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}" x:Name="GlassPresenter_11912"
-                                ouxct:ControlAppearance.IsEnabled="True"
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_11912"
                                 Grid.Row="0"
-                                Grid.Column="0">
-                                <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                    <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="the project README and usage notice" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
-                                </TextBlock>
-                            </CheckBox>
-
-                            <CheckBox IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}" x:Name="GlassPresenter_12820"
+                                Grid.Column="0"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
+                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="the project README and usage notice" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </wl:LiquidGlassCheckBox>
+
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_12820"
                                 Grid.Row="0"
-                                Grid.Column="1">
-                                <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                    <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="the privacy notice" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
-                                </TextBlock>
-                            </CheckBox>
-
-                            <CheckBox IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}" x:Name="GlassPresenter_13711"
+                                Grid.Column="1"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
+                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="the privacy notice" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </wl:LiquidGlassCheckBox>
+
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_13711"
                                 Grid.Row="1"
-                                Grid.Column="0">
-                                <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
-                                    <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="the issue reporting guidelines" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
-                                </TextBlock>
-                            </CheckBox>
-
-                            <CheckBox IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}" x:Name="GlassPresenter_14595"
+                                Grid.Column="0"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
+                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="the issue reporting guidelines" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </wl:LiquidGlassCheckBox>
+
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_14595"
                                 Grid.Row="1"
-                                Grid.Column="1">
-                                <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
-                                    <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="the OpenNet open-source license" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
-                                </TextBlock>
-                            </CheckBox>
-
-                            <CheckBox IsChecked="{x:Bind IsAgreementCopyAgreed, Mode=TwoWay}" x:Name="GlassPresenter_15505"
+                                Grid.Column="1"
                                 ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}">
+                                <TextBlock>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
+                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="the OpenNet open-source license" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
+                                </TextBlock>
+                            </wl:LiquidGlassCheckBox>
+
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_15505"
                                 Grid.Row="2"
                                 Grid.Column="0"
-                                Grid.ColumnSpan="2">
+                                Grid.ColumnSpan="2"
+                                ouxct:ControlAppearance.IsEnabled="True"
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsAgreementCopyAgreed, Mode=TwoWay}">
                                 <TextBlock Text="{x:Bind AgreementCopyTarget}" TextWrapping="Wrap" />
-                            </CheckBox>
+                            </wl:LiquidGlassCheckBox>
                         </Grid>
 
                         <!--  Vertical layout for non-Chinese locales  -->
                         <StackPanel Margin="0,8,0,0" Visibility="{x:Bind AgreementUseGrid, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=Reverse}">
-                            <CheckBox IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}" x:Name="GlassPresenter_16202"
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_16202"
+                                Margin="0,4,0,0"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="0,4,0,0">
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsTermOfServiceAgreed, Mode=TwoWay}">
                                 <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                    <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="the project README and usage notice" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
+                                            <Run x:Uid="ViewGuideStepAgreementTermOfService" Text="the project README and usage notice" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
                                 </TextBlock>
-                            </CheckBox>
+                            </wl:LiquidGlassCheckBox>
 
-                            <CheckBox IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}" x:Name="GlassPresenter_17002"
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_17002"
+                                Margin="0,4,0,0"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="0,4,0,0">
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsPrivacyPolicyAgreed, Mode=TwoWay}">
                                 <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
-                                    <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="the privacy notice" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/README.md">
+                                            <Run x:Uid="ViewGuideStepAgreementPrivacyPolicy" Text="the privacy notice" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
                                 </TextBlock>
-                            </CheckBox>
+                            </wl:LiquidGlassCheckBox>
 
-                            <CheckBox IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}" x:Name="GlassPresenter_17785"
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_17785"
+                                Margin="0,4,0,0"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="0,4,0,0">
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsIssueReportAgreed, Mode=TwoWay}">
                                 <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
-                                    <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="the issue reporting guidelines" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/issues">
+                                            <Run x:Uid="ViewGuideStepAgreementIssueReport" Text="the issue reporting guidelines" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
                                 </TextBlock>
-                            </CheckBox>
+                            </wl:LiquidGlassCheckBox>
 
-                            <CheckBox IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}" x:Name="GlassPresenter_18561"
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_18561"
+                                Margin="0,4,0,0"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="0,4,0,0">
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsOpenSourceLicenseAgreed, Mode=TwoWay}">
                                 <TextBlock>
-                            <TextBlock.Inlines>
-                                <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
-                                <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
-                                    <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="the OpenNet open-source license" />
-                                </Hyperlink>
-                            </TextBlock.Inlines>
+                                    <TextBlock.Inlines>
+                                        <Run x:Uid="ViewGuideStepAgreementIHaveReadText" Text="I have read and agree to " />
+                                        <Hyperlink NavigateUri="https://github.com/hoshiizumiya/OpenNet/blob/master/LICENSE">
+                                            <Run x:Uid="ViewGuideStepAgreementOpenSourceLicense" Text="the OpenNet open-source license" />
+                                        </Hyperlink>
+                                    </TextBlock.Inlines>
                                 </TextBlock>
-                            </CheckBox>
+                            </wl:LiquidGlassCheckBox>
 
-                            <CheckBox IsChecked="{x:Bind IsAgreementCopyAgreed, Mode=TwoWay}" x:Name="GlassPresenter_19363"
+                            <wl:LiquidGlassCheckBox
+                                x:Name="GlassPresenter_19363"
+                                Margin="0,4,0,0"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="0,4,0,0">
+                                ouxct:MaterialControlState.IsManaged="True"
+                                IsChecked="{x:Bind IsAgreementCopyAgreed, Mode=TwoWay}">
                                 <TextBlock Text="{x:Bind AgreementCopyTarget}" TextWrapping="Wrap" />
-                            </CheckBox>
+                            </wl:LiquidGlassCheckBox>
                         </StackPanel>
                     </StackPanel>
                 </Grid>
@@ -480,12 +510,14 @@
                             IsOpen="False"
                             Message="Enter a valid address, port, account and a password of at least 6 characters."
                             Severity="Error" />
-                        <TextBox
+                        <wl:LiquidGlassTextBox
+                            x:Name="WebUIAddressBox"
                             x:Uid="GuideWebUIAddress"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="GuideWebUIAddress"
                             Header="Listen address"
-                            PlaceholderText="127.0.0.1" x:Name="WebUIAddressBox"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            PlaceholderText="127.0.0.1" />
                         <NumberBox
                             x:Name="WebUIPortBox"
                             x:Uid="GuideWebUIPort"
@@ -494,19 +526,28 @@
                             Maximum="65535"
                             Minimum="1"
                             SpinButtonPlacementMode="Inline" />
-                        <TextBox
+                        <wl:LiquidGlassTextBox
+                            x:Name="WebUIUserNameBox"
                             x:Uid="GuideWebUIUsername"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
                             AutomationProperties.AutomationId="GuideWebUIUsername"
                             Header="Account"
-                            PlaceholderText="admin" x:Name="WebUIUserNameBox"
-                            ouxct:ControlAppearance.IsEnabled="True" />
-                        <PasswordBox
-                            x:Uid="GuideWebUIPassword"
-                            AutomationProperties.AutomationId="GuideWebUIPassword"
-                            Header="Password"
-                            PasswordRevealMode="Peek"
-                            PlaceholderText="At least 6 characters" x:Name="WebUIPasswordBox"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            PlaceholderText="admin" />
+                        <ouxct:MaterialSwap>
+                            <ouxct:MaterialSwap.Native>
+                                <PasswordBox
+                                    x:Name="WebUIPasswordBox"
+                                    x:Uid="GuideWebUIPassword"
+                                    AutomationProperties.AutomationId="GuideWebUIPassword"
+                                    Header="Password"
+                                    PasswordRevealMode="Peek"
+                                    PlaceholderText="At least 6 characters" />
+                            </ouxct:MaterialSwap.Native>
+                            <ouxct:MaterialSwap.Glass>
+                                <wl:LiquidGlassPasswordBox ouxct:MaterialControlState.IsManaged="True" />
+                            </ouxct:MaterialSwap.Glass>
+                        </ouxct:MaterialSwap>
                     </StackPanel>
                 </ScrollViewer>
             </essential:Case>
@@ -565,15 +606,18 @@
                             Text="Compare the original Fluent surface with liquid glass, then choose the material used throughout OpenNet."
                             TextAlignment="Center"
                             TextWrapping="Wrap" />
-                        <ComboBox
+                        <wl:LiquidGlassComboBox
+                            x:Name="GuideMaterialStyleSelector"
                             x:Uid="GuideMaterialStyleSelector"
-                            Header="Control material"
-                            SelectionChanged="GuideMaterialStyleSelector_SelectionChanged" x:Name="GuideMaterialStyleSelector" MinWidth="220"
+                            MinWidth="220"
+                            HorizontalAlignment="Center"
                             ouxct:ControlAppearance.IsEnabled="True"
-                            HorizontalAlignment="Center">
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Header="Control material"
+                            SelectionChanged="GuideMaterialStyleSelector_SelectionChanged">
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialDefault" Content="Default" />
                             <ComboBoxItem x:Uid="ViewThemesSettingsPageControlMaterialLiquidGlass" Content="Liquid glass" />
-                        </ComboBox>
+                        </wl:LiquidGlassComboBox>
 
                         <Grid
                             x:Name="MaterialPreviewStage"
@@ -609,42 +653,65 @@
                                     </Rectangle.RenderTransform>
                                 </Rectangle>
                             </Canvas>
-                            <ContentControl Padding="24" CornerRadius="16"
-                                IsTabStop="False" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch"
-                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
-                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}" BorderThickness="1" x:Name="MaterialNative_1"
+                            <ContentControl
+                                x:Name="MaterialNative_1"
+                                Margin="36"
+                                Padding="24"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
                                 ouxct:ControlAppearance.IsEnabled="True"
-                                Margin="36">
+                                Background="{ThemeResource CardBackgroundFillColorDefaultBrush}"
+                                BorderBrush="{ThemeResource CardStrokeColorDefaultBrush}"
+                                BorderThickness="1"
+                                CornerRadius="16"
+                                IsTabStop="False">
                                 <ContentControl.Template>
-                            <ControlTemplate TargetType="ContentControl">
-                                <Border Padding="{TemplateBinding Padding}" CornerRadius="{TemplateBinding CornerRadius}"
-                                    Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
-                                    <ContentPresenter Content="{TemplateBinding Content}" />
-                                </Border>
-                            </ControlTemplate>
+                                    <ControlTemplate TargetType="ContentControl">
+                                        <Border
+                                            Padding="{TemplateBinding Padding}"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                            CornerRadius="{TemplateBinding CornerRadius}">
+                                            <ContentPresenter Content="{TemplateBinding Content}" />
+                                        </Border>
+                                    </ControlTemplate>
                                 </ContentControl.Template>
                                 <StackPanel VerticalAlignment="Center" Spacing="12">
-                            <FontIcon FontSize="32" Glyph="&#xE8A5;" />
-                            <TextBlock
-                                x:Uid="GuideMaterialPreviewTitle"
-                                HorizontalAlignment="Center"
-                                FontSize="22"
-                                FontWeight="SemiBold"
-                                Text="Material preview" />
-                            <StackPanel
-                                HorizontalAlignment="Center"
-                                Orientation="Horizontal"
-                                Spacing="12">
-                                <Button Content="Button" x:Name="GuidePreviewButton1"
-                                    ouxct:ControlAppearance.IsEnabled="True" />
-                                <ToggleSwitch
-                                    Header="Switch"
-                                    IsOn="True" x:Name="GuidePreviewToggleSwitch2"
-                                    ouxct:ControlAppearance.IsEnabled="True" />
-                                <Slider
-                                    Value="60" x:Name="GuidePreviewSlider3" Width="150"
-                                    ouxct:ControlAppearance.IsEnabled="True" />
-                            </StackPanel>
+                                    <FontIcon FontSize="32" Glyph="&#xE8A5;" />
+                                    <TextBlock
+                                        x:Uid="GuideMaterialPreviewTitle"
+                                        HorizontalAlignment="Center"
+                                        FontSize="22"
+                                        FontWeight="SemiBold"
+                                        Text="Material preview" />
+                                    <StackPanel
+                                        HorizontalAlignment="Center"
+                                        Orientation="Horizontal"
+                                        Spacing="12">
+                                        <wl:LiquidGlassButton
+                                            x:Name="GuidePreviewButton1"
+                                            ouxct:ControlAppearance.IsEnabled="True"
+                                            ouxct:MaterialControlState.IsManaged="True"
+                                            Content="Button" />
+                                        <wl:LiquidGlassToggleSwitch
+                                            x:Name="GuidePreviewToggleSwitch2"
+                                            ouxct:ControlAppearance.IsEnabled="True"
+                                            ouxct:MaterialControlState.IsManaged="True"
+                                            Header="Switch"
+                                            IsOn="True" />
+                                        <ouxct:MaterialSwap>
+                                            <ouxct:MaterialSwap.Native>
+                                                <Slider
+                                                    x:Name="GuidePreviewSlider3"
+                                                    Width="150"
+                                                    Value="60" />
+                                            </ouxct:MaterialSwap.Native>
+                                            <ouxct:MaterialSwap.Glass>
+                                                <wl:LiquidGlassSlider ouxct:MaterialControlState.IsManaged="True" />
+                                            </ouxct:MaterialSwap.Glass>
+                                        </ouxct:MaterialSwap>
+                                    </StackPanel>
                                 </StackPanel>
                             </ContentControl>
                         </Grid>
@@ -798,12 +865,14 @@
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE790;}" />
                     <cwc:SegmentedItem Icon="{essential:FontIcon Glyph=&#xE8B9;}" />
                 </cwc:Segmented>
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="GlassPresenter_47460"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     Click="NextOrComplete"
                     Content="{x:Bind ViewModel.NextOrCompleteButtonText, Mode=OneWay}"
                     IsEnabled="{x:Bind ViewModel.IsNextOrCompleteButtonEnabled, Mode=OneWay}"
-                    Style="{ThemeResource AccentButtonStyle}" x:Name="GlassPresenter_47460"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Style="{ThemeResource AccentButtonStyle}" />
             </StackPanel>
         </Grid>
     </Grid>

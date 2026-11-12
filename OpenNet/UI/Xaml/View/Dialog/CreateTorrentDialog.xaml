@@ -33,44 +33,49 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox
+                <wl:LiquidGlassTextBox
                     x:Name="CreateTorrentSourceTextBox"
                     x:Uid="CreateTorrentSource"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     IsReadOnly="True"
-                    PlaceholderText="Source file or folder"
-                    ouxct:ControlAppearance.IsEnabled="True" />
-                <Button
+                    PlaceholderText="Source file or folder" />
+                <wl:LiquidGlassButton
                     x:Name="GlassPresenter_1743"
                     x:Uid="CreateTorrentBrowseFile"
-                    Click="CreateTorrentBrowseFile_Click"
-                    Content="File..."
+                    Grid.Column="1"
                     ouxct:ControlAppearance.IsEnabled="True"
-                    Grid.Column="1" />
-                <Button
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Click="CreateTorrentBrowseFile_Click"
+                    Content="File..." />
+                <wl:LiquidGlassButton
                     x:Name="GlassPresenter_1954"
                     x:Uid="CreateTorrentBrowseFolder"
-                    Click="CreateTorrentBrowseFolder_Click"
-                    Content="Folder..."
+                    Grid.Column="2"
                     ouxct:ControlAppearance.IsEnabled="True"
-                    Grid.Column="2" />
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Click="CreateTorrentBrowseFolder_Click"
+                    Content="Folder..." />
             </Grid>
-            <ComboBox
+            <wl:LiquidGlassComboBox
                 x:Name="CreateTorrentFormatComboBox"
                 x:Uid="CreateTorrentFormat"
                 essential:ComboBoxHelper.AcrylicWorkaround="True"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 Header="Torrent format"
-                SelectedIndex="0"
-                ouxct:ControlAppearance.IsEnabled="True">
+                SelectedIndex="0">
                 <ComboBoxItem x:Uid="CreateTorrentFormatHybrid" Content="Hybrid (v1 + v2)" />
                 <ComboBoxItem x:Uid="CreateTorrentFormatV1" Content="BitTorrent v1" />
                 <ComboBoxItem x:Uid="CreateTorrentFormatV2" Content="BitTorrent v2" />
-            </ComboBox>
-            <ComboBox
+            </wl:LiquidGlassComboBox>
+            <wl:LiquidGlassComboBox
                 x:Name="CreateTorrentPieceSizeComboBox"
                 x:Uid="CreateTorrentPieceSize"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 Header="Piece size"
-                SelectedIndex="0"
-                ouxct:ControlAppearance.IsEnabled="True">
+                SelectedIndex="0">
                 <ComboBoxItem
                     x:Uid="CreateTorrentPieceSizeAuto"
                     Content="Auto"
@@ -89,53 +94,60 @@
                 <ComboBoxItem Content="32 MiB" Tag="33554432" />
                 <ComboBoxItem Content="64 MiB" Tag="67108864" />
                 <ComboBoxItem Content="128 MiB" Tag="134217728" />
-            </ComboBox>
-            <CheckBox
+            </wl:LiquidGlassComboBox>
+            <wl:LiquidGlassCheckBox
                 x:Name="CreateTorrentPrivateCheckBox"
                 x:Uid="CreateTorrentPrivate"
-                Content="Private torrent"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <CheckBox
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
+                Content="Private torrent" />
+            <wl:LiquidGlassCheckBox
                 x:Name="CreateTorrentIgnoreDotFilesCheckBox"
                 x:Uid="CreateTorrentIgnoreDotFiles"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 Content="Ignore hidden dot files"
-                IsChecked="True"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <CheckBox
+                IsChecked="True" />
+            <wl:LiquidGlassCheckBox
                 x:Name="CreateTorrentStartSeedingCheckBox"
                 x:Uid="CreateTorrentStartSeeding"
-                Content="Start seeding immediately"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
+                Content="Start seeding immediately" />
+            <wl:LiquidGlassTextBox
                 x:Name="CreateTorrentCommentTextBox"
                 x:Uid="CreateTorrentComment"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 Header="Comment"
-                PlaceholderText="Optional comment"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                PlaceholderText="Optional comment" />
+            <wl:LiquidGlassTextBox
                 x:Name="CreateTorrentTrackersTextBox"
                 x:Uid="CreateTorrentTrackers"
                 MaxHeight="120"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AcceptsReturn="True"
                 Header="Trackers"
                 PlaceholderText="One tracker URL per line"
-                TextWrapping="NoWrap"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                TextWrapping="NoWrap" />
+            <wl:LiquidGlassTextBox
                 x:Name="CreateTorrentUrlSeedsTextBox"
                 x:Uid="CreateTorrentUrlSeeds"
                 MaxHeight="120"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 AcceptsReturn="True"
                 Header="Web seed URLs"
                 PlaceholderText="One web seed URL per line"
-                TextWrapping="NoWrap"
-                ouxct:ControlAppearance.IsEnabled="True" />
-            <TextBox
+                TextWrapping="NoWrap" />
+            <wl:LiquidGlassTextBox
                 x:Name="CreateTorrentSourceFieldTextBox"
                 x:Uid="CreateTorrentSourceField"
+                ouxct:ControlAppearance.IsEnabled="True"
+                ouxct:MaterialControlState.IsManaged="True"
                 Header="Source"
-                PlaceholderText="Optional source identifier"
-                ouxct:ControlAppearance.IsEnabled="True" />
+                PlaceholderText="Optional source identifier" />
             <TextBlock
                 x:Name="CreateTorrentStatusText"
                 Foreground="{ThemeResource TextFillColorSecondaryBrush}"

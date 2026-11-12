@@ -179,20 +179,15 @@
 
         </CommandBar>
 
-        <essential:SwitchPresenter
+        <ouxct:MaterialSwap
             x:Name="SearchBoxMaterialHost"
             Grid.Row="0"
             Margin="12,6"
             HorizontalAlignment="Left"
             VerticalAlignment="Center"
             HorizontalContentAlignment="Stretch"
-            VerticalContentAlignment="Center"
-            ouxct:ControlAppearance.IsMaterialHost="True"
-            Value="{x:Bind ouxct:MaterialControlState.BoxInt32(ouxct:MaterialControlState.Current.SearchBoxMaterial), Mode=OneWay}">
-            <essential:Case>
-                <essential:Case.Value>
-                    <x:Int32>0</x:Int32>
-                </essential:Case.Value>
+            VerticalContentAlignment="Center">
+            <ouxct:MaterialSwap.Native>
                 <AutoSuggestBox
                     x:Name="SearchBox"
                     x:Uid="ViewTasksPageAutoSuggestBox"
@@ -209,11 +204,8 @@
                             Modifiers="Control" />
                     </AutoSuggestBox.KeyboardAccelerators>
                 </AutoSuggestBox>
-            </essential:Case>
-            <essential:Case>
-                <essential:Case.Value>
-                    <x:Int32>1</x:Int32>
-                </essential:Case.Value>
+            </ouxct:MaterialSwap.Native>
+            <ouxct:MaterialSwap.Glass>
                 <wl:LiquidGlassSearchBox
                     x:Name="SearchBoxGlass"
                     x:Uid="ViewTasksPageAutoSuggestBox"
@@ -235,8 +227,8 @@
                             Modifiers="Control" />
                     </wl:LiquidGlassSearchBox.KeyboardAccelerators>
                 </wl:LiquidGlassSearchBox>
-            </essential:Case>
-        </essential:SwitchPresenter>
+            </ouxct:MaterialSwap.Glass>
+        </ouxct:MaterialSwap>
 
         <Grid
             Grid.Row="1"

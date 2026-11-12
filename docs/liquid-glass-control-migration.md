@@ -1,4 +1,19 @@
-# OpenNet 材质与文字外观架构
+﻿# OpenNet 材质与文字外观架构
+
+## 单实例材质同步（2026-11-12）
+
+编译日志反馈修正：同步 8 个页面/窗口 IDL 中的 43 个具名玻璃控件声明；TasksPage、TorrentCheckGeneralPage 和 MainSettingsPage 在包含生成头前显式导入 Control.Theme 投影。MaterialSwitch 头放在 libtorrent 原生头和 XamlWorkaround 边界之后，避免标准库/模块重复定义。IsTabStopProperty 使用 UIElement，SmallChangeProperty / LargeChangeProperty 使用 RangeBase。仅修正源文件，生成文件由下次常规构建更新；本轮仍不自行编译。
+
+对照 Snap.Hutao.Remastered 的 b5b7f10ad33ad03d3e2955451137e6e9ae4ab39e 与 e8e1ade592b593c77230d33dc64c1600d0faaed3。本文较早的“原生业务控件内嵌库视觉模板”章节保留为历史记录，不再用于新页面的常规控件。
+
+- Button、HyperlinkButton、CheckBox、RadioButton、TextBox、ComboBox、ToggleSwitch 等直接声明实际 LiquidGlass 控件。MaterialAppearance 保留原样式、玻璃背景和交互参数，在同一实例上切换原生样式与玻璃样式；不再转交这些控件的焦点、选区或业务事件。原生模式清除玻璃背景并停止玻璃缩放/位移，切回时恢复捕获的交互设置。
+- 原生外观来自 MaterialNative.xaml，包括 ToggleButton 派生玻璃开关的独立原生模板。原生开关使用独立部件名，避免 Kube 将玻璃镜片和轨道挂到原生视觉上。标题显隐继续由库控件管理。
+- Slider、PasswordBox、SearchBox 使用 MaterialSwap，保留各自原生契约和实际库控件。只有这一兼容边界同步状态；不再由 SwitchPresenter 选择材质。原有搜索事件、快捷键、密码策略和滑块初始化继续沿用。现存普通 ContentControl 卡片宿主仍使用表面适配。
+- 开关的 Checked/Unchecked 接入原有业务处理，先同步 IsChecked 到 IsOn，再读取及保存设置。设置页、过滤器、RSS 和动态创建的单选/输入框均纳入迁移。InfoBar.ActionButton 使用单个实际库按钮，保留现有 TransitionHelper 动画。
+- 效果窗口补齐指针光照、影响强度与静止光照角度。开关大小调用库 SwitchScale，仅缩放图形：默认 0.7，范围 0.25–2.0，步进 0.05；支持当前类型重置，文字字号不变。
+- 延用 liquid_glass_profiles_v1 和现有类型/参数键，新增 ToggleSwitch.SwitchScale 及各类型的 PointerLightingEnabled、PointerLightInfluence。31 项光学参数仍走已有的范围检查、实际 setter 校验、回退和成功后保存流程。
+- 材质选择框通过 OneWay 绑定统一 StyleIndex，效果参数使用 TwoWay，数值及提示使用 OneWay。预览走与业务控件相同的路径。
+- 保留桌面高对比度查询、窗口 subclass 及退出保护。忽略控件重新 Loaded 后的旧 Unloaded；刷新快照和逐控件重入保护避免样式变化使跟踪迭代器失效。
 
 ## TextBox 输入焦点修复（2026-10-17）
 

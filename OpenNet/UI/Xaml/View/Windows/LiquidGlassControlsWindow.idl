@@ -1,11 +1,13 @@
-import "UI/Xaml/Control/Theme/LiquidGlassProfile.idl";
+﻿import "UI/Xaml/Control/Theme/LiquidGlassProfile.idl";
+import "UI/Xaml/Control/Theme/MaterialControlState.idl";
 namespace OpenNet.UI.Xaml.View.Windows
 {
-    [default_interface]
-    runtimeclass LiquidGlassControlsWindow : WinUI3Package.WindowEx
-    {
-        LiquidGlassControlsWindow();
-        Windows.Foundation.Collections.IObservableVector<OpenNet.UI.Xaml.Control.Theme.LiquidGlassProfile> Profiles{ get; };
-        OpenNet.UI.Xaml.Control.Theme.LiquidGlassProfile SelectedProfile{ get; };
-    }
+	[default_interface]
+	runtimeclass LiquidGlassControlsWindow : WinUI3Package.WindowEx
+	{
+		LiquidGlassControlsWindow();
+		OpenNet.UI.Xaml.Control.Theme.MaterialControlState Settings{ get; };
+		Windows.Foundation.Collections.IObservableVector<OpenNet.UI.Xaml.Control.Theme.LiquidGlassProfile> Profiles{ get; };
+		OpenNet.UI.Xaml.Control.Theme.LiquidGlassProfile SelectedProfile{ get; };
+	}
 }

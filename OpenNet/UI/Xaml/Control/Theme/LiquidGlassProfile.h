@@ -74,6 +74,20 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 		{
 			return m_parameters;
 		}
+		bool SupportsSwitchScale() const
+		{
+			return m_key == L"ToggleSwitch";
+		}
+		double SwitchScale() const;
+		void SwitchScale(double value);
+		static Microsoft::UI::Xaml::DependencyProperty SwitchScaleProperty();
+		bool PointerLightingEnabled() const;
+		void PointerLightingEnabled(bool value);
+		static Microsoft::UI::Xaml::DependencyProperty PointerLightingEnabledProperty();
+		double PointerLightInfluence() const;
+		void PointerLightInfluence(double value);
+		static Microsoft::UI::Xaml::DependencyProperty PointerLightInfluenceProperty();
+		void ResetSwitchScale();
 		void Reset();
 		static void SyncEnabled();
 		static LiquidGlassApplyResult Apply(hstring const& kind, WinUI::Composition::Hlsl::LiquidGlassBrush const& brush,
@@ -87,6 +101,7 @@ namespace winrt::OpenNet::UI::Xaml::Control::Theme::implementation
 		LiquidGlassApplyResult ApplyToBrush(WinUI::Composition::Hlsl::LiquidGlassBrush const& brush,
 											::OpenNet::UI::LiquidGlassOptics::Snapshot const& defaults, bool overridesOnly = false);
 		static void Changed(Microsoft::UI::Xaml::DependencyObject const&, Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const&);
+		static void InteractionChanged(Microsoft::UI::Xaml::DependencyObject const&, Microsoft::UI::Xaml::DependencyPropertyChangedEventArgs const&);
 		hstring m_key, m_name;
 		bool m_loading{ true };
 		Windows::Foundation::Collections::IObservableVector<winrt::OpenNet::UI::Xaml::Control::Theme::LiquidGlassParameter> m_parameters{ nullptr };

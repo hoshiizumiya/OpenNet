@@ -46,11 +46,14 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE774;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="EnableWebUIToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnMaterialToggleChanged"
                     IsOn="{x:Bind ViewModel.Enabled, Mode=TwoWay}"
                     Loaded="OnMaterialToggleLoaded"
-                    Toggled="OnMaterialToggleChanged" x:Name="EnableWebUIToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnMaterialToggleChanged" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -60,13 +63,16 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE8A5;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ComboBox
+                <wl:LiquidGlassComboBox
+                    x:Name="FrontendComboBox"
+                    MinWidth="220"
                     essential:ComboBoxHelper.AcrylicWorkaround="True"
-                    SelectedIndex="0" x:Name="FrontendComboBox" MinWidth="220"
-                    ouxct:ControlAppearance.IsEnabled="True">
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    SelectedIndex="0">
                     <ComboBoxItem Content="qBittorrent WebUI" />
                     <ComboBoxItem Content="VueTorrent" />
-                </ComboBox>
+                </wl:LiquidGlassComboBox>
             </essential:SettingsCard>
 
             <TextBlock
@@ -81,10 +87,13 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE968;" />
                 </essential:SettingsCard.HeaderIcon>
-                <TextBox
+                <wl:LiquidGlassTextBox
+                    x:Name="AddressTextBox"
+                    MinWidth="240"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="WebUISettingsAddress"
-                    PlaceholderText="127.0.0.1" x:Name="AddressTextBox" MinWidth="240"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    PlaceholderText="127.0.0.1" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -110,22 +119,28 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE8C1;" />
                 </essential:SettingsCard.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="FollowApplicationLanguageToggle"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="WebUISettingsFollowLanguage"
+                    Checked="OnMaterialToggleChanged"
                     Loaded="OnMaterialToggleLoaded"
-                    Toggled="OnMaterialToggleChanged" x:Name="FollowApplicationLanguageToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnMaterialToggleChanged" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
                 x:Uid="WebUISettingsLocaleCard"
                 Description="Used only when following the application language is turned off."
                 Header="Locale">
-                <TextBox
+                <wl:LiquidGlassTextBox
+                    x:Name="LocaleTextBox"
                     x:Uid="WebUISettingsLocale"
+                    MinWidth="180"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="WebUISettingsLocale"
-                    PlaceholderText="en" x:Name="LocaleTextBox" MinWidth="180"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    PlaceholderText="en" />
             </essential:SettingsCard>
 
             <TextBlock
@@ -140,9 +155,12 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE77B;" />
                 </essential:SettingsCard.HeaderIcon>
-                <TextBox
-                    AutomationProperties.AutomationId="WebUISettingsUsername" x:Name="UsernameTextBox" MinWidth="240"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                <wl:LiquidGlassTextBox
+                    x:Name="UsernameTextBox"
+                    MinWidth="240"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    AutomationProperties.AutomationId="WebUISettingsUsername" />
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -152,10 +170,18 @@
                 <essential:SettingsCard.HeaderIcon>
                     <FontIcon Glyph="&#xE72E;" />
                 </essential:SettingsCard.HeaderIcon>
-                <PasswordBox
-                    AutomationProperties.AutomationId="WebUISettingsPassword"
-                    PasswordRevealMode="Peek" x:Name="PasswordInput" MinWidth="240"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                <ouxct:MaterialSwap>
+                    <ouxct:MaterialSwap.Native>
+                        <PasswordBox
+                            x:Name="PasswordInput"
+                            MinWidth="240"
+                            AutomationProperties.AutomationId="WebUISettingsPassword"
+                            PasswordRevealMode="Peek" />
+                    </ouxct:MaterialSwap.Native>
+                    <ouxct:MaterialSwap.Glass>
+                        <wl:LiquidGlassPasswordBox ouxct:MaterialControlState.IsManaged="True" />
+                    </ouxct:MaterialSwap.Glass>
+                </ouxct:MaterialSwap>
             </essential:SettingsCard>
 
             <essential:SettingsCard
@@ -166,31 +192,45 @@
                     <FontIcon Glyph="&#xE8D7;" />
                 </essential:SettingsCard.HeaderIcon>
                 <StackPanel Orientation="Horizontal" Spacing="8">
-                    <PasswordBox
-                        AutomationProperties.AutomationId="WebUISettingsApiKey"
-                        Password="{x:Bind ViewModel.ApiKey, Mode=TwoWay}"
-                        PasswordRevealMode="Peek" x:Name="ApiKeyInput" MinWidth="240"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                    <ouxct:MaterialSwap>
+                        <ouxct:MaterialSwap.Native>
+                            <PasswordBox
+                                x:Name="ApiKeyInput"
+                                MinWidth="240"
+                                AutomationProperties.AutomationId="WebUISettingsApiKey"
+                                Password="{x:Bind ViewModel.ApiKey, Mode=TwoWay}"
+                                PasswordRevealMode="Peek" />
+                        </ouxct:MaterialSwap.Native>
+                        <ouxct:MaterialSwap.Glass>
+                            <wl:LiquidGlassPasswordBox ouxct:MaterialControlState.IsManaged="True" />
+                        </ouxct:MaterialSwap.Glass>
+                    </ouxct:MaterialSwap>
+                    <wl:LiquidGlassButton
+                        x:Name="GlassPresenter_10070"
                         x:Uid="WebUISettingsGenerateApiKey"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="WebUISettingsGenerateApiKey"
                         Click="OnGenerateApiKeyClick"
-                        Content="Generate" x:Name="GlassPresenter_10070"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        Content="Generate" />
+                    <wl:LiquidGlassButton
+                        x:Name="CopyApiKeyButton"
                         x:Uid="WebUISettingsCopyApiKey"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="WebUISettingsCopyApiKey"
                         Click="OnCopyApiKeyClick"
                         Content="Copy"
-                        IsEnabled="{x:Bind ViewModel.HasApiKey, Mode=OneWay}" x:Name="CopyApiKeyButton"
-                        ouxct:ControlAppearance.IsEnabled="True" />
-                    <Button
+                        IsEnabled="{x:Bind ViewModel.HasApiKey, Mode=OneWay}" />
+                    <wl:LiquidGlassButton
+                        x:Name="ClearApiKeyButton"
                         x:Uid="WebUISettingsClearApiKey"
+                        ouxct:ControlAppearance.IsEnabled="True"
+                        ouxct:MaterialControlState.IsManaged="True"
                         AutomationProperties.AutomationId="WebUISettingsClearApiKey"
                         Click="OnClearApiKeyClick"
                         Content="Clear"
-                        IsEnabled="{x:Bind ViewModel.HasApiKey, Mode=OneWay}" x:Name="ClearApiKeyButton"
-                        ouxct:ControlAppearance.IsEnabled="True" />
+                        IsEnabled="{x:Bind ViewModel.HasApiKey, Mode=OneWay}" />
                 </StackPanel>
             </essential:SettingsCard>
 
@@ -206,12 +246,15 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE72E;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="BypassLocalAuthToggle"
                     x:Uid="WebUISettingsBypassLocalAuth"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnMaterialToggleChanged"
                     Header="Bypass authentication on localhost"
                     Loaded="OnMaterialToggleLoaded"
-                    Toggled="OnMaterialToggleChanged" x:Name="BypassLocalAuthToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnMaterialToggleChanged" />
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="WebUISettingsSessionTimeoutCard" Header="Session timeout (seconds)">
                         <NumberBox
@@ -251,29 +294,41 @@
                 <essential:SettingsExpander.HeaderIcon>
                     <FontIcon Glyph="&#xE83D;" />
                 </essential:SettingsExpander.HeaderIcon>
-                <ToggleSwitch
+                <wl:LiquidGlassToggleSwitch
+                    x:Name="CsrfProtectionToggle"
                     x:Uid="WebUISettingsCsrfProtection"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
+                    Checked="OnMaterialToggleChanged"
                     Header="CSRF protection"
                     Loaded="OnMaterialToggleLoaded"
-                    Toggled="OnMaterialToggleChanged" x:Name="CsrfProtectionToggle"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Unchecked="OnMaterialToggleChanged" />
                 <essential:SettingsExpander.Items>
                     <essential:SettingsCard x:Uid="WebUISettingsHostValidationCard" Header="Host header validation">
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="HostValidationToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Checked="OnMaterialToggleChanged"
                             Loaded="OnMaterialToggleLoaded"
-                            Toggled="OnMaterialToggleChanged" x:Name="HostValidationToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Unchecked="OnMaterialToggleChanged" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="WebUISettingsSecureCookieCard" Header="Secure cookie flag">
-                        <ToggleSwitch
+                        <wl:LiquidGlassToggleSwitch
+                            x:Name="SecureCookieToggle"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            Checked="OnMaterialToggleChanged"
                             Loaded="OnMaterialToggleLoaded"
-                            Toggled="OnMaterialToggleChanged" x:Name="SecureCookieToggle"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                            Unchecked="OnMaterialToggleChanged" />
                     </essential:SettingsCard>
                     <essential:SettingsCard x:Uid="WebUISettingsDomainsCard" Header="Allowed server domains">
-                        <TextBox
-                            PlaceholderText="* or domain1;domain2" x:Name="DomainListTextBox" MinWidth="280"
-                            ouxct:ControlAppearance.IsEnabled="True" />
+                        <wl:LiquidGlassTextBox
+                            x:Name="DomainListTextBox"
+                            MinWidth="280"
+                            ouxct:ControlAppearance.IsEnabled="True"
+                            ouxct:MaterialControlState.IsManaged="True"
+                            PlaceholderText="* or domain1;domain2" />
                     </essential:SettingsCard>
                 </essential:SettingsExpander.Items>
             </essential:SettingsExpander>
@@ -282,14 +337,16 @@
                 Margin="0,24,0,0"
                 Orientation="Horizontal"
                 Spacing="8">
-                <Button
+                <wl:LiquidGlassButton
+                    x:Name="OpenWebUIButton"
                     x:Uid="WebUISettingsOpen"
+                    ouxct:ControlAppearance.IsEnabled="True"
+                    ouxct:MaterialControlState.IsManaged="True"
                     AutomationProperties.AutomationId="WebUISettingsOpen"
                     Click="OnOpenWebUIClick"
                     Content="Open Web UI"
                     IsEnabled="{x:Bind ViewModel.IsRunning, Mode=OneWay}"
-                    Style="{StaticResource AccentButtonStyle}" x:Name="OpenWebUIButton"
-                    ouxct:ControlAppearance.IsEnabled="True" />
+                    Style="{StaticResource AccentButtonStyle}" />
             </StackPanel>
         </StackPanel>
     </ScrollViewer>

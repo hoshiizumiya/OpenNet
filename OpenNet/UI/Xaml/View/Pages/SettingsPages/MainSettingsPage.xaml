@@ -25,38 +25,49 @@
         PaneDisplayMode="Left"
         SelectionChanged="SettingsNavView_SelectionChanged">
         <NavigationView.Resources>
-            <!-- Align the expanded header with the settings content without
-                 translating the BreadcrumbBar outside its layout slot. -->
+            <!--
+                Align the expanded header with the settings content without
+                translating the BreadcrumbBar outside its layout slot.
+            -->
             <Thickness x:Key="NavigationViewHeaderMargin">24,32,24,0</Thickness>
         </NavigationView.Resources>
         <NavigationView.PaneCustomContent>
-            <essential:SwitchPresenter x:Name="SettingsSearchBoxMaterialHost" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ouxct:ControlAppearance.IsMaterialHost="True" Value="{x:Bind ouxct:MaterialControlState.BoxInt32(ouxct:MaterialControlState.Current.SearchBoxMaterial), Mode=OneWay}" Margin="8,8,8,12">
-                <essential:Case><essential:Case.Value><x:Int32>0</x:Int32></essential:Case.Value>
+            <ouxct:MaterialSwap
+                x:Name="SettingsSearchBoxMaterialHost"
+                Margin="8,8,8,12"
+                HorizontalContentAlignment="Stretch"
+                VerticalContentAlignment="Stretch">
+                <ouxct:MaterialSwap.Native>
                     <AutoSuggestBox
-                x:Uid="SettingsSearchBox"
-                essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
-                AutomationProperties.AutomationId="SettingsSearchBox"
-                PlaceholderText="Search settings"
-                QuerySubmitted="SettingsSearchBox_QuerySubmitted"
-                TextChanged="SettingsSearchBox_TextChanged" x:Name="SettingsSearchBox">
-                <AutoSuggestBox.QueryIcon>
-                    <SymbolIcon Symbol="Find" />
-                </AutoSuggestBox.QueryIcon>
-            </AutoSuggestBox>
-                </essential:Case>
-                <essential:Case><essential:Case.Value><x:Int32>1</x:Int32></essential:Case.Value>
+                        x:Name="SettingsSearchBox"
+                        x:Uid="SettingsSearchBox"
+                        essential:AutoSuggestBoxHelper.AcrylicWorkaround="True"
+                        AutomationProperties.AutomationId="SettingsSearchBox"
+                        PlaceholderText="Search settings"
+                        QuerySubmitted="SettingsSearchBox_QuerySubmitted"
+                        TextChanged="SettingsSearchBox_TextChanged">
+                        <AutoSuggestBox.QueryIcon>
+                            <SymbolIcon Symbol="Find" />
+                        </AutoSuggestBox.QueryIcon>
+                    </AutoSuggestBox>
+                </ouxct:MaterialSwap.Native>
+                <ouxct:MaterialSwap.Glass>
                     <wl:LiquidGlassSearchBox
-                x:Uid="SettingsSearchBox"
-                AutomationProperties.AutomationId="SettingsSearchBox"
-                PlaceholderText="Search settings"
-                QuerySubmitted="SettingsSearchBox_QuerySubmitted"
-                TextChanged="SettingsSearchBox_TextChanged" x:Name="SettingsSearchBoxGlass" ouxct:MaterialControlState.IsManaged="True" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <wl:LiquidGlassSearchBox.QueryIcon>
-                    <SymbolIcon Symbol="Find" />
-                </wl:LiquidGlassSearchBox.QueryIcon>
-            </wl:LiquidGlassSearchBox>
-                </essential:Case>
-            </essential:SwitchPresenter>
+                        x:Name="SettingsSearchBoxGlass"
+                        x:Uid="SettingsSearchBox"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Stretch"
+                        ouxct:MaterialControlState.IsManaged="True"
+                        AutomationProperties.AutomationId="SettingsSearchBox"
+                        PlaceholderText="Search settings"
+                        QuerySubmitted="SettingsSearchBox_QuerySubmitted"
+                        TextChanged="SettingsSearchBox_TextChanged">
+                        <wl:LiquidGlassSearchBox.QueryIcon>
+                            <SymbolIcon Symbol="Find" />
+                        </wl:LiquidGlassSearchBox.QueryIcon>
+                    </wl:LiquidGlassSearchBox>
+                </ouxct:MaterialSwap.Glass>
+            </ouxct:MaterialSwap>
         </NavigationView.PaneCustomContent>
         <NavigationView.Header>
             <BreadcrumbBar
@@ -72,8 +83,8 @@
                             Margin="0,0,10,0"
                             VerticalAlignment="Center"
                             FontSize="24"
-                            TextWrapping="NoWrap"
-                            Text="{x:Bind}" />
+                            Text="{x:Bind}"
+                            TextWrapping="NoWrap" />
                     </DataTemplate>
                 </BreadcrumbBar.ItemTemplate>
             </BreadcrumbBar>

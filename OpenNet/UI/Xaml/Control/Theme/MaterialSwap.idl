@@ -1,0 +1,13 @@
+﻿import "UI/Xaml/Control/Theme/MaterialControlState.idl";
+namespace OpenNet.UI.Xaml.Control.Theme
+{
+	[default_interface]
+	runtimeclass MaterialSwap : Microsoft.UI.Xaml.Controls.ContentControl
+	{
+		MaterialSwap();
+		Object Native;
+		static Microsoft.UI.Xaml.DependencyProperty NativeProperty{ get; };
+		Object Glass;
+		static Microsoft.UI.Xaml.DependencyProperty GlassProperty{ get; };
+	}
+}
